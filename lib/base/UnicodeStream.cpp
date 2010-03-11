@@ -62,33 +62,20 @@ namespace s1
       }
       if (U_IS_SURROGATE(uc))
       {
-	UChar32 uc32 = 0;
-	if (U_IS_SURROGATE_LEAD(uc))
+	UChar uc2;
+	uc2 = GetNextUChar ();
+	if (U_FAILURE (currentError))
 	{
-	  uc32 = 0x10000 + ((uc & 0x03ff) << 10);
-	  uc = GetNextUChar ();
-	  if (U_FAILURE (currentError))
-	  {
-	    // Give errors from ICU precedence
-	    currentChar = errorCharacter;
-	    return *this;
-	  }
-	  if (U_IS_SURROGATE_TRAIL(uc))
-	  {
-	    uc32 |= (uc & 0x3ff);
-	    currentChar = uc32;
-	  }
-	  else
-	  {
-	    currentChar = errorCharacter;
-	    currentError = U_ILLEGAL_CHAR_FOUND;
-	  }
-	}
-	else
-	{
+	  // Give errors from ICU precedence
 	  currentChar = errorCharacter;
-	  currentError = U_ILLEGAL_CHAR_FOUND;
+	  return *this;
 	}
+	// Assume ICU always gives us a correct pair of surrogates
+	assert(U_IS_SURROGATE_LEAD(uc));
+	assert(U_IS_SURROGATE_TRAIL(uc2));
+	
+	currentChar = 0x10000 + ((uc & 0x03ff) << 10);
+	currentChar |= (uc2 & 0x3ff);
       }
       else
 	currentChar = uc;
