@@ -173,7 +173,7 @@ namespace s1
     /* Since 'source' should point after the last byte consumed, it should
        also point beyond any troublesome input.
        Since we buffer as much UChars as input bytes, a buffer overflow should
-       _not_ occur. (A single byte expanding into a surrogate pait? Won't happen.)
+       _not_ occur. (A single byte expanding into a surrogate pair? Won't happen.)
      */
   }
 
