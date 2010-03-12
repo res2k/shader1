@@ -4,8 +4,9 @@
 #include <cxxtest/ValueTraits.h>
 
 CXXTEST_ENUM_TRAITS (s1::Lexer::TokenType,
-		     CXXTEST_ENUM_MEMBER (s1::Lexer::EndOfFile)
 		     CXXTEST_ENUM_MEMBER (s1::Lexer::Invalid)
+		     CXXTEST_ENUM_MEMBER (s1::Lexer::EndOfFile)
+		     CXXTEST_ENUM_MEMBER (s1::Lexer::Unknown)
 		     CXXTEST_ENUM_MEMBER (s1::Lexer::Identifier)
 		     CXXTEST_ENUM_MEMBER (s1::Lexer::Numeric)
 		     CXXTEST_ENUM_MEMBER (s1::Lexer::Semicolon)

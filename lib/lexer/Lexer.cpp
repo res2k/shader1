@@ -279,11 +279,15 @@ namespace s1
       else
       {
 	if (currentChar != 0xfffd)
+	{
 	  /* Replacement character (0xFFFD) indicates an invalid input sequence.
-	     Error handler was already called for that.
-	     Otherwise, it's an unrecognized character. */
+	     Error handler was already called for that. */
 	  errorHandler.StrayCharacter (currentChar);
-	currentToken = Token (Invalid, currentChar);
+	  currentToken = Token (Unknown, currentChar);
+	}
+	else
+	  /* Otherwise, it's an unrecognized character. */
+	  currentToken = Token (Invalid, currentChar);
 	NextChar();
       }
       

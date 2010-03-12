@@ -20,11 +20,13 @@ namespace s1
   public:
     enum TokenType
     {
+      /// Invalid token (resulting from e.g. a stray character)
+      Invalid = -2,
       /// End of input was reached
       EndOfFile = -1,
-      /// Invalid token (resulting from e.g. a stray character)
-      Invalid = 0,
       
+      /// Unrecognized token
+      Unknown = 0,
       /// Identifier
       Identifier,
       /// Numeric (hex or float number)

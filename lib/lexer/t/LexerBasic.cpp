@@ -159,8 +159,8 @@ public:
     TS_ASSERT_EQUALS (errorHandler.strayCharFound, true);
     TS_ASSERT_EQUALS (errorHandler.strayCharOffender, '|');
     errorHandler.Reset();
-    // Invalid input sequence should result in an Invalid token
-    TS_ASSERT_EQUALS (token.type, s1::Lexer::Invalid);
+    // Stray input character should result in an Unknown token
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Unknown);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -168,8 +168,8 @@ public:
     // Error handler should've been triggered
     TS_ASSERT_EQUALS (errorHandler.strayCharFound, true);
     TS_ASSERT_EQUALS (errorHandler.strayCharOffender, '&');
-    // Invalid input sequence should result in an Invalid token
-    TS_ASSERT_EQUALS (token.type, s1::Lexer::Invalid);
+    // Stray input character should result in an Unknown token
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Unknown);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
