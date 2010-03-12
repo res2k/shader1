@@ -20,6 +20,14 @@ string(STRIP "${ICU_LIBRARIES}" ICU_LIBRARIES)
 execute_process(COMMAND ${ICU_CONFIG} --cppflags-searchpath
 		OUTPUT_VARIABLE ICU_INCLUDE_DIRS)
 
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-Wl,--as-needed" CXX_AS_NEEDED)
+if(CXX_AS_NEEDED)
+  set(CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
+endif()
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
+
 include_directories(include)
 
 add_subdirectory(lib)
