@@ -1,3 +1,26 @@
+// The hash<> specialization must come before Lexer.h is included
+#if defined(__GNUC__) && !defined(__GXX_EXPERIMENTAL_CXX0X__)
+#include <tr1/unordered_map>
+#else
+#include <unordered_map>
+#endif
+
+#include <unicode/unistr.h>
+
+namespace std
+{
+  namespace tr1
+  {
+    template<>
+    class hash<UnicodeString>
+    {
+    public:
+      size_t operator() (const UnicodeString& s) const
+      { return s.hashCode(); }
+    };
+  }
+}
+
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
 
@@ -12,6 +35,22 @@ namespace s1
    : inputChars (inputChars), errorHandler (errorHandler),
      currentToken (EndOfFile), currentChar (-1), putback (0)
   {
+    keywords[UnicodeString ("return")] 		= kwReturn;
+    keywords[UnicodeString ("true")] 		= kwTrue;
+    keywords[UnicodeString ("false")] 		= kwFalse;
+    keywords[UnicodeString ("bool")] 		= kwBool;
+    keywords[UnicodeString ("unsigned")] 	= kwUnsigned;
+    keywords[UnicodeString ("int")] 		= kwInt;
+    keywords[UnicodeString ("float")] 		= kwFloat;
+    keywords[UnicodeString ("typedef")] 	= kwTypedef;
+    keywords[UnicodeString ("void")] 		= kwVoid;
+    keywords[UnicodeString ("in")] 		= kwIn;
+    keywords[UnicodeString ("out")] 		= kwOut;
+    keywords[UnicodeString ("const")] 		= kwConst;
+    keywords[UnicodeString ("if")] 		= kwIf;
+    keywords[UnicodeString ("else")] 		= kwElse;
+    keywords[UnicodeString ("while")] 		= kwWhile;
+    
     if (inputChars)
     {
       NextChar();
@@ -31,6 +70,8 @@ namespace s1
 
   Lexer& Lexer::operator++() throw()
   {
+    /* This is a loop as, after a comment was handled, we still have to obtain
+       the real desired 'next' token */
     while (true)
     {
       // Skip whitespace
@@ -180,7 +221,7 @@ namespace s1
 	    currentToken = Token (Div, "/");
 	}
 	return *this;
-      case '%': currentToken = Token (Mod); 			NextChar(); return *this;
+      case '%': currentToken = Token (Mod, currentChar); 	NextChar(); return *this;
       case '~': currentToken = Token (BitwiseInvert, currentChar);NextChar(); return *this;
       case '?': currentToken = Token (TernaryIf, currentChar); 	NextChar(); return *this;
       case ':': currentToken = Token (TernaryElse, currentChar);NextChar(); return *this;
@@ -223,85 +264,13 @@ namespace s1
       if ((currentChar == '_') || u_isIDStart (currentChar))
       {
 	// Identifier
-	UnicodeString tokenStr;
-	tokenStr += currentChar;
-	NextChar();
-	while (u_isIDPart (currentChar))
-	{
-	  tokenStr += currentChar;
-	  NextChar();
-	}
-	currentToken = Token (Identifier, tokenStr);
+	ParseIdentifier ();
       }
       else if ((currentChar == '-') || (currentChar == '.')
 	  || ((currentChar >= '0') && (currentChar <= '9')))
       {
 	// Number
-	UnicodeString tokenStr;
-	tokenStr += currentChar;
-	if (currentChar == '0')
-	{
-	  NextChar();
-	  if ((currentChar == 'x') || (currentChar == 'X'))
-	  {
-	    // Hex number
-	    tokenStr += currentChar;
-	    NextChar();
-	    while (((currentChar >= '0') && (currentChar <= '9'))
-	      || ((currentChar >= 'a') && (currentChar <= 'f'))
-	      || ((currentChar >= 'A') && (currentChar <= 'F')))
-	    {
-	      tokenStr += currentChar;
-	      NextChar();
-	    }
-	    currentToken = Token (Numeric, tokenStr);
-	    return *this;
-	  }
-	  else
-	  {
-	    PutCharBack (currentChar);
-	    currentChar = '0';
-	  }
-	}
-
-	// Float number
-	bool hasDecimal = currentChar == '.';
-	bool hasExp = false;
-	while (true)
-	{
-	  NextChar();
-	  if ((currentChar == '.') && !hasDecimal)
-	  {
-	    hasDecimal = true;
-	    tokenStr += currentChar;
-	  }
-	  else if (((currentChar == 'E') || (currentChar == 'e')) && !hasExp)
-	  {
-	    hasExp = true;
-	    tokenStr += currentChar;
-	    // Force to 'true' since decimal exponents are not allowed
-	    hasDecimal = true;
-	    // Accept '-' again, once
-	    NextChar();
-	    if (currentChar == '-')
-	    {
-	      tokenStr += currentChar;
-	    }
-	    else
-	      PutCharBack (currentChar);
-	  }
-	  else if ((currentChar >= '0') && (currentChar <= '9'))
-	  {
-	    tokenStr += currentChar;
-	  }
-	  else
-	  {
-	    // End of number
-	    break;
-	  }
-	}
-	
-	currentToken = Token (Numeric, tokenStr);
+	ParseNumeric ();
       }
       else
       {
@@ -317,7 +286,142 @@ namespace s1
       return *this;
     }
   }
+
+  void Lexer::ParseIdentifier ()
+  {
+    UnicodeString tokenStr;
+    tokenStr += currentChar;
+    NextChar();
+    while (u_isIDPart (currentChar))
+    {
+      tokenStr += currentChar;
+      NextChar();
+    }
+    
+    currentToken = Token (Identifier, tokenStr);
+    KeywordMap::iterator kwType = keywords.find (tokenStr);
+    if (kwType != keywords.end())
+    {
+      // Identifier is a well-known keyword
+      currentToken.type = kwType->second;
+    }
+    else
+    {
+      /* Special handling of vector/matrix types.
+         Instead of specifying a new enum for each possible vector or matrix
+         type parse these specially by manually extracting the dimension(s). */
+      TokenType typeCandidate = Invalid;
+      UnicodeString dimensions;
+      if (tokenStr.startsWith ("int"))
+      {
+	typeCandidate = kwInt;
+	dimensions = UnicodeString (tokenStr, 3);
+      }
+      else if (tokenStr.startsWith ("float"))
+      {
+	typeCandidate = kwFloat;
+	dimensions = UnicodeString (tokenStr, 5);
+      }
+      else if (tokenStr.startsWith ("bool"))
+      {
+	typeCandidate = kwBool;
+	dimensions = UnicodeString (tokenStr, 4);
+      }
+      if (typeCandidate != Invalid)
+      {
+	if ((dimensions.length() == 1)
+	    && (dimensions[0] >= '1')
+	    && (dimensions[0] <= '4'))
+	{
+	  // It's a vector!
+	  currentToken.type = (TokenType)(typeCandidate | kwfVector);
+	  currentToken.dimension1 = dimensions[0] - '1' + 1;
+	}
+	else if ((dimensions.length() == 3)
+	    && (dimensions[0] >= '1')
+	    && (dimensions[0] <= '4')
+	    && (dimensions[1] == 'x')
+	    && (dimensions[2] >= '1')
+	    && (dimensions[2] <= '4'))
+	{
+	  // It's a matrix!
+	  currentToken.type = (TokenType)(typeCandidate | kwfMatrix);
+	  currentToken.dimension1 = dimensions[0] - '1' + 1;
+	  currentToken.dimension2 = dimensions[2] - '1' + 1;
+	}
+      }
+    }
+  }
   
+  void Lexer::ParseNumeric()
+  {
+    UnicodeString tokenStr;
+    tokenStr += currentChar;
+    if (currentChar == '0')
+    {
+      NextChar();
+      if ((currentChar == 'x') || (currentChar == 'X'))
+      {
+	// Hex number
+	tokenStr += currentChar;
+	NextChar();
+	while (((currentChar >= '0') && (currentChar <= '9'))
+	  || ((currentChar >= 'a') && (currentChar <= 'f'))
+	  || ((currentChar >= 'A') && (currentChar <= 'F')))
+	{
+	  tokenStr += currentChar;
+	  NextChar();
+	}
+	currentToken = Token (Numeric, tokenStr);
+	return;
+      }
+      else
+      {
+	PutCharBack (currentChar);
+	currentChar = '0';
+      }
+    }
+
+    // Float number
+    bool hasDecimal = currentChar == '.';
+    bool hasExp = false;
+    while (true)
+    {
+      NextChar();
+      if ((currentChar == '.') && !hasDecimal)
+      {
+	hasDecimal = true;
+	tokenStr += currentChar;
+      }
+      else if (((currentChar == 'E') || (currentChar == 'e')) && !hasExp)
+      {
+	hasExp = true;
+	tokenStr += currentChar;
+	// Force to 'true' since decimal exponents are not allowed
+	hasDecimal = true;
+	// Accept '-' again, once
+	NextChar();
+	if (currentChar == '-')
+	{
+	  tokenStr += currentChar;
+	}
+	else
+	  PutCharBack (currentChar);
+      }
+      else if ((currentChar >= '0') && (currentChar <= '9'))
+      {
+	tokenStr += currentChar;
+      }
+      else
+      {
+	// End of number
+	break;
+      }
+    }
+    
+    currentToken = Token (Numeric, tokenStr);
+  }
+
   void Lexer::NextChar()
   {
     // Handle "putback" character

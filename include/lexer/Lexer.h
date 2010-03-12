@@ -5,6 +5,12 @@
 
 #include "base/UnicodeStream.h"
 
+#if defined(__GNUC__) && !defined(__GXX_EXPERIMENTAL_CXX0X__)
+#include <tr1/unordered_map>
+#else
+#include <unordered_map>
+#endif
+
 namespace s1
 {
   class LexerErrorHandler;
@@ -14,12 +20,18 @@ namespace s1
   public:
     enum TokenType
     {
+      /// End of input was reached
       EndOfFile = -1,
+      /// Invalid token (resulting from e.g. a stray character)
       Invalid = 0,
       
+      /// Identifier
       Identifier,
+      /// Numeric (hex or float number)
       Numeric,
       
+      /**\name Operators, Symbols
+       * @{ */
       /// ';'
       Semicolon,
       
@@ -81,22 +93,62 @@ namespace s1
       /// '||'
       LogicOr,
       /// '&&'
-      LogicAnd
+      LogicAnd,
+      /** @} */
+      
+      /**\name Keywords
+       * @{ */
+      kwReturn,
+      
+      kwTrue,
+      kwFalse,
+      
+      kwBool,
+      kwUnsigned,
+      kwInt,
+      kwFloat,
+      
+      kwTypedef,
+      kwVoid,
+      kwIn,
+      kwOut,
+      kwConst,
+      
+      kwIf,
+      kwElse,
+      
+      kwWhile,
+      /** @} */
+      
+      /**\name Keyword flags
+       * @{ */
+      /// Keyword is a vector type identifier
+      kwfVector = 0x1000,
+      /// Keyword is a matrix type identifier
+      kwfMatrix = 0x2000
+      /** @} */
     };
     
+    /// Token object
     struct Token
     {
+      /// Type of this token
       TokenType type;
+      /// Input string for this token
       UnicodeString tokenString;
+      /// For vectors: vector dimension; For matrices: number of columns
+      int dimension1;
+      /// For matrices: number of rows
+      int dimension2;
       
-      Token () : type (Invalid) {}
-      Token (TokenType type) : type (type) {}
+      Token () : type (Invalid), dimension1 (0), dimension2 (0) {}
+      Token (TokenType type) : type (type), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const UnicodeString& tokenString)
-       : type (type), tokenString (tokenString) {}
+       : type (type), tokenString (tokenString), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, UChar32 tokenChar)
-       : type (type), tokenString (tokenChar) {}
+       : type (type), tokenString (tokenChar), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const char* tokenString)
-       : type (type), tokenString (tokenString) {}
+       : type (type), tokenString (tokenString), dimension1 (0), dimension2 (0) {}
     };
     
     Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler);
@@ -117,7 +169,16 @@ namespace s1
     UnicodeStream& inputChars;
     LexerErrorHandler& errorHandler;
     
+    typedef std::tr1::unordered_map<UnicodeString, TokenType> KeywordMap;
+    /// Map of identifier strings to keyword names
+    KeywordMap keywords;
+    
     Token currentToken;
+    
+    /// Parse identifier
+    void ParseIdentifier ();
+    /// Parse numeric value
+    void ParseNumeric ();
     
     /// Current character. Set by NextChar().
     UChar32 currentChar;

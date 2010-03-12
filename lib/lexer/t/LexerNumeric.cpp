@@ -24,6 +24,7 @@ public:
       TS_ASSERT_THROWS_NOTHING ((token = *lexer));
       // Token should be a "numeric"
       TS_ASSERT_EQUALS (token.type, s1::Lexer::Numeric);
+      TS_ASSERT_DIFFERS (token.tokenString, UnicodeString (""));
       // Trying to forward never throws
       TS_ASSERT_THROWS_NOTHING (++lexer);
     }
