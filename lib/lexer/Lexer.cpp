@@ -42,6 +42,10 @@ namespace s1
     keywords[UnicodeString ("unsigned")] 	= kwUnsigned;
     keywords[UnicodeString ("int")] 		= kwInt;
     keywords[UnicodeString ("float")] 		= kwFloat;
+    keywords[UnicodeString ("sampler1D")] 	= kwSampler1D;
+    keywords[UnicodeString ("sampler2D")] 	= kwSampler2D;
+    keywords[UnicodeString ("sampler3D")] 	= kwSampler3D;
+    keywords[UnicodeString ("samplerCUBE")] 	= kwSamplerCUBE;
     keywords[UnicodeString ("typedef")] 	= kwTypedef;
     keywords[UnicodeString ("void")] 		= kwVoid;
     keywords[UnicodeString ("in")] 		= kwIn;

@@ -13,7 +13,8 @@ class LexerKeywordsTestSuite : public CxxTest::TestSuite
 public:
   void testKeywords(void)
   {
-    std::istringstream in ("return true false bool unsigned int float typedef void in out const if else while");
+    std::istringstream in ("return true false bool unsigned int float sampler1D sampler2D sampler3D samplerCUBE "
+			   "typedef void in out const if else while");
     s1::UnicodeStream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

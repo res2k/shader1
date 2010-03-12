@@ -108,6 +108,11 @@ namespace s1
       kwInt,
       kwFloat,
       
+      kwSampler1D,
+      kwSampler2D,
+      kwSampler3D,
+      kwSamplerCUBE,
+      
       kwTypedef,
       kwVoid,
       kwIn,
