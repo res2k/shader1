@@ -145,13 +145,22 @@ public:
   
   void testGetUTFInvalid (void)
   {
-    std::string str ("\xC0" "a");
+    std::string str ("\xC0\x8a" "a");
     std::istringstream in (str);
     s1::UnicodeStream ustream (in, "utf-8");
+    UChar32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
-    // Invalid UTF-8 encoded char should be an error
+    // Overlong UTF-8 encoded char should be an error
     TS_ASSERT_THROWS (*ustream, s1::UnicodeStreamInvalidCharacterException);
+    TS_ASSERT_THROWS_NOTHING (++ustream);
+    // After that, input should recover
+    TS_ASSERT_THROWS_NOTHING ((ch = *ustream));
+    TS_ASSERT_EQUALS (ch, 'a');
+    TS_ASSERT_THROWS_NOTHING (++ustream);
+    // Check end is end
+    TS_ASSERT_EQUALS ((bool)ustream, false);
+    TS_ASSERT_THROWS (*ustream, s1::UnicodeStreamEndOfInputException);
   }
   
   // Hack to make UnicodeStream internal buffer size available
