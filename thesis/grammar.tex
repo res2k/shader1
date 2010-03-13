@@ -1,0 +1,911 @@
+\subsection{Programm}\label{Programm}
+\Gnt{programm}:\label{programm}\\
+\hspace*{1cm}\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})}  \Gnt{EOF}{\scriptsize (\ref{EOF})} \\
+\Gnt{programm\_statements}:\label{programm_statements}\\
+\hspace*{1cm}\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} \\
+\hspace*{1cm}\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} \Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}  \glq\Gt{;}\grq \Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
+\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})}  \glq\Gt{;}\grq \Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
+\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})}  \glq\Gt{;}\grq \Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
+
+
+Ein \emph{Programm} besteht aus jeweils keinen bis mehreren Typdefinitionen, Variablen-, Konstanten- und Funktionsdeklarationen.
+Der Gültigkeitsbereich dieser Deklarationen ist global.
+
+\label{EOF} Das Terminal \emph{EOF} markiert das Ende der Eingabe.
+
+
+\subsubsection{{Eintrittsfunktion}}\label{__Eintrittsfunktion__}
+Der Eintrittspunkt der Ausführung eines Programms ist eine Funktion~(\ref{Funktionen}) namens "`\ident{main}"'. Ist eine solche Funktion nicht definiert, so
+kann das Programm nicht ausgeführt werden.
+
+Die Eintrittsfunktion muss den Rückgabetyp \kw{void} besitzen.
+
+Es müssen genau zwei Ausgabeparameter vom Typ \kw{float4}~(siehe \Gnt{typ\_vektor\_float}{\scriptsize (\ref{typ_vektor_float})}) deklariert werden.
+Der erste Ausgabeparameter nimmt die transformierte und projizierte Position entgegen.
+Der zweite Ausgabeparameter nimmt die auszugebende Fragmentfarbe entgegen.
+
+Es können beliebig viele Eingabeparameter beliebigen Typs für die Eintrittsfunktion deklariert werden.
+Die Werte dieser Parameter entstammen der Programmumgebung.
+
+
+\subsection{Blöcke}\label{Bloecke}
+\Gnt{block}:\label{block}\\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
+\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
+\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
+\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
+\Gnt{kommando}:\label{kommando}\\
+\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\glq\Gt{return}\grq \\
+\hspace*{1cm}\glq\Gt{return}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\Gnt{verzweigung}{\scriptsize (\ref{verzweigung})} \\
+\hspace*{1cm}\Gnt{schleife\_for}{\scriptsize (\ref{schleife_for})} \\
+\hspace*{1cm}\Gnt{schleife\_while}{\scriptsize (\ref{schleife_while})} \\
+
+Ein \emph{Block} besteht aus Typdefinitionen, Variablen- und Konstantendeklarationen sowie keinem bis mehreren Kommandos.
+Der Gültigkeitsbereich dieser Deklarationen endet mit dem Ende des Blockes. Kommandos werden zur Laufzeit in Reihenfolge ihres
+Auftretens ausgeführt.
+
+Ein \kw{return}-Kommando führt zum sofortigen Verlassen der umschließenden Funktion.
+Bei Funktionen mit einem anderen Rückgabetyp als \kw{void} muss ein \emph{Ausdruck} mit angegeben
+werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt wird.
+
+\subsection{Ausdrücke}\label{Ausdruecke}
+\subsubsection{Wertebezeichner}\label{Wertebezeichner}
+\Gnt{bezeichner\_wert}:\label{bezeichner_wert}\\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
+\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \\
+\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
+\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
+\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
+
+Wertebezeichner bezeichnen Werte und können syntaktisch sowohl auf der \emph{linken} Seite
+einer Zuweisung erscheinen (d.h. Ersetzen des bezeichneten Wertes) als auch auf der
+\emph{rechten} Seite einer Zuweisung erscheinen (d.h. Auslesen des bezeichneten Wertes).
+
+Weiterhin sind \emph{Attributbezeichner} (siehe \ref{Attribute}) keine reservierten
+Schlüsselwörter, d.h. sie können auch als Variablenbezeichner, Funktionsbezeichner etc.
+verwendet werden.
+
+
+\subsubsection{Zuweisung}\label{Zuweisung}
+\Gnt{asdr\_zuweisung}:\label{asdr_zuweisung}\\
+\hspace*{1cm}\Gnt{bezeichner\_wert}{\scriptsize (\ref{bezeichner_wert})}  \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\Gnt{ausdruck}:\label{ausdruck}\\
+\hspace*{1cm}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \\
+\hspace*{1cm}\Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\Gnt{asdr\_wert}:\label{asdr_wert}\\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
+\Gnt{asdr\_basis}:\label{asdr_basis}\\
+\hspace*{1cm}\glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq \\
+\hspace*{1cm}\Gnt{bezeichner\_wert}{\scriptsize (\ref{bezeichner_wert})} \\
+\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \\
+\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \\
+\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
+\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \\
+\Gnt{attribut\_liste}:\label{attribut_liste}\\
+\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{attribut}{\scriptsize (\ref{attribut})} \\
+\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
+
+Ein Zuweisungsausdruck \Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} weist der durch \glq\Gnt{bezeichner\_wert}\grq bezeichneten Variable den Wert des Ausdrucks
+auf der rechten Seite zu. Der Typ des Ausdrucks muss zuweisungskompatibel zum bezeichneten Wert
+sein.
+
+Ein Zuweisungsausdruck selbst hat den Wert des zugewiesenen bezeichneten Wertes nach der Zuweisung.
+
+\paragraph{Zuweisungskompatibilität}\label{Zuweisungskompatibilitaet}
+
+Ein Ausdruck ist \emph{zuweisungskompatibel} zu einem bezeichneten Wert wenn
+Wert und Ausdruck den selben Typ besitzen oder eine implizite Typumwandlung
+möglich ist.
+
+Ein Ausdruck ist \emph{verlustfrei zuweisungskompatibel} zu einem bezeichneten Wert
+wenn Wert und Ausdruck den selben Typ besitzen oder eine implizite Typumwandlung
+ohne Präzisionsverlust möglich ist.
+
+Siehe auch \ref{Typumwandlung}.
+
+
+\subsubsection{Binäre Ausdrücke}\label{Binaere Ausdruecke}
+
+Ein \emph{binärer Ausdruck} wendet eine arithmetische, bitweise, logische oder vergleichende Verknüpfung
+(bestimmt durch den Operator) auf die Werte zweier Ausdrücke an.
+
+Werden zwei Vektoren verknüpft entspricht dies einer Verknüpfung der individuellen Komponenten an der gleichen
+Stelle der Vektoren (\attr{x} mit \attr{x}, \attr{y} mit \attr{y}, $\dots$). Zwei verknüpfte Vektoren müssen
+die gleiche Komponentenanzahl besitzen.
+
+Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet, und an\-schließend die Verknüpfung angewendet.
+
+\paragraph{Arithmetische Operatoren}\label{Arithmetische Operatoren}
+~\\
+\Gnt{asdr\_mult}:\label{asdr_mult}\\
+\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
+\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \glq\Gt{*}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \glq\Gt{/}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \glq\Gt{\%}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\Gnt{asdr\_add}:\label{asdr_add}\\
+\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \glq\Gt{+}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \glq\Gt{-}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+
+\op{\plus} addiert rechten und linken Operanden.
+
+\op{-} subtrahiert den rechten von dem linken Operanden.
+
+\op{*} multipliziert rechten und linken Operanden.
+
+\op{/} dividiert den linken durch den rechten Operanden.
+
+\op{\%} ist der Divisionsrest der Division des linken Operators durch den rechten Operator.
+% TODO Mod bei floats?
+
+Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
+zu einem dazu zuweisungskompatiblen Typ sein.
+
+Sind beide Operanden vom Typ \kw{unsigned int}, so ist der Typ des ausgewerteten Ausdrucks \kw{unsigned int}.
+
+Ist ein Operand vom Typ \kw{int} und ein Operand vom Typ \kw{int}, \kw{unsigned int} oder
+verlustfrei zuweisungskompatibel zu \kw{int}, so ist der Typ des ausgewerteten Ausdrucks \kw{int}.
+
+Ist ein Operand von einem Fließkommatyp und ein Operand von einem Integer- oder Fließkommatyp
+oder zuweisungskompatibel zu dem Fließkommatyp des anderen Operanden,
+so ist der Typ des ausgewerteten Ausdrucks von einem Fließkommatyp.
+%Die Präzision entspricht der höheren Präzision der beiden Operanden.
+
+
+\subsubsection{Unäre Ausdrücke}\label{Unaere Ausdruecke}
+\Gnt{asdr\_unaer}:\label{asdr_unaer}\\
+\hspace*{1cm}\glq\Gt{$\sim$}\grq  \Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
+\hspace*{1cm}\glq\Gt{-}\grq  \Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
+\hspace*{1cm}\glq\Gt{!}\grq  \Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
+\hspace*{1cm}\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
+
+Ein \emph{unärer Ausdruck} transformiert den Wert des Operanden.
+
+Ein unärer Operator, auf einen Vektor angewendet, entspricht der Anwendung auf die individuellen Komponenten.
+
+\op{-} negiert den Operanden. Der Operand muss von einem Integertyp oder Fließkommatyp sein.
+Ist der Operand von einem Integertyp, so ist der Typ des unären Ausdrucks \kw{int}.
+Ist der Operand von einem Fließkommatyp, so ist der Typ des unären Ausdrucks vom selben Typ.
+
+\op{$\sim$} bitweise invertiert den Operanden. Der Operand muss von einem Integertyp sein. Der Typ des unären Ausdrucks ist vom selben Typ.
+
+\op{!} logisch invertiert den Operanden. Der Operand muss vom Typ \kw{bool} sein. Der Typ des unären Ausdrucks ist vom Typ \kw{bool}.
+
+\subsubsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
+\Gnt{asdr\_ternaer}:\label{asdr_ternaer}\\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{?}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})}  \glq\Gt{:}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+
+Die \emph{Bedingung} ist ein boole'scher Ausdruck. Ergibt sich dieser Ausdruck zu \kw{true},
+so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
+Ausdrucks ergibt sich zu dem Wert des \emph{Wahr-Ausdrucks}.
+Ergibt sich die \emph{Bedingung} zu \kw{false}, so wird der \emph{Falsch-Ausdruck} (dem \kw{:} folgend)
+ausgewertet, und der Wert des ternären
+Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
+
+\emph{Wahr-} und \emph{Falsch-Ausdruck} müssen vom gleichen Typ sein.
+
+
+\subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
+\Gnt{asdr\_vergleich\_gleich}:\label{asdr_vergleich_gleich}\\
+\hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \glq\Gt{!=}\grq  \Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
+\hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \glq\Gt{==}\grq  \Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
+\Gnt{asdr\_vergleich\_ungleich}:\label{asdr_vergleich_ungleich}\\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{>}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{>=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{<}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{<=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+
+\op{>} gibt an ob der linke Operand größer als der rechte Operand ist.
+
+\op{>=} gibt an ob der linke Operand größer oder gleich dem der rechte Operand ist.
+
+\op{<} gibt an ob der linke Operand kleiner als der rechte Operand ist.
+
+\op{<=} gibt an ob der linke Operand kleiner oder gleich dem der rechte Operand ist.
+
+\op{==} gibt an ob der linke Operand gleich dem der rechte Operand ist.
+
+\op{!=} gibt an ob der linke Operand nicht gleich dem der rechte Operand ist.
+
+Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
+dazu zuweisungskompatiblen Typ sein.
+
+Sind beide Operanden vom Typ \kw{unsigned int} oder \kw{int}, so findet ein Vergleich von Ganzzahlwerten statt.
+
+Ist ein Operand vom Typ \kw{int} und ein Operand vom Typ \kw{int}, \kw{unsigned int} oder
+verlustfrei zuweisungskompatibel zu \kw{int} oder \kw{unsigned int}, so findet ein Vergleich von Ganzzahlwerten statt.
+
+Ist ein Operand von einem Fließkommatyp und ein Operand von einem Integer- oder Fließkommatyp
+oder zuweisungskompatibel zu dem Fließkommatyp des anderen Operanden,
+so findet ein Vergleich von Fließkommawerten statt.
+%Die Präzision entspricht der höheren Präzision der beiden Operanden.
+
+
+\subsubsection{Logische Operatoren}\label{Logische Operatoren}
+\Gnt{asdr\_logisch\_oder}:\label{asdr_logisch_oder}\\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \glq\Gt{||}\grq  \Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
+\Gnt{asdr\_logisch\_und}:\label{asdr_logisch_und}\\
+\hspace*{1cm}\Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
+\hspace*{1cm}\Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \glq\Gt{\&\&}\grq  \Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
+
+%  "!" - unäres NOT
+
+Beide Operanden müssen vom Typ \kw{bool} sein.
+
+\op{\&\&} logisch UND-verknüpft die Operanden.
+
+\op{||} logisch ODER-verknüpft die Operanden.
+
+
+\subsubsection{Boole'sche Werte}\label{Boole'sche Werte}
+\Gnt{asdr\_konst\_bool}:\label{asdr_konst_bool}\\
+\hspace*{1cm}\glq\Gt{true}\grq \\
+\hspace*{1cm}\glq\Gt{false}\grq \\
+
+\kw{true} (wahr) und \kw{false} (unwahr) sind Werte vom Typ \kw{bool} (siehe \Gnt{typ\_bool}{\scriptsize (\ref{typ_bool})}).
+
+
+\subsubsection{Attribute}\label{Attribute}
+\Gnt{attribut}:\label{attribut}\\
+\hspace*{1cm}\Gnt{attr\_vektor}{\scriptsize (\ref{attr_vektor})} \\
+\hspace*{1cm}\Gnt{attr\_matrix}{\scriptsize (\ref{attr_matrix})} \\
+\hspace*{1cm}\Gnt{attr\_array}{\scriptsize (\ref{attr_array})} \\
+
+% TODO 'Attr-Vektor', das Swizzle, Komp. ist
+% TODO kein Bzch-Attribut sondern Attribute ausschreiben
+
+Einige Variablen (und Konstanten) besitzen über den Wert hinaus weitere Eigenschaften, die
+über Attribute abgefragt werden können.
+
+Vektorattribute (\Gnt{attr\_vektor}{\scriptsize (\ref{attr_vektor})}) werden in \ref{Vektorattribute} beschrieben.\\
+Matrixattribute (\Gnt{attr\_matrix}{\scriptsize (\ref{attr_matrix})}) werden in \ref{Matrixattribute} beschrieben.\\
+Arrayattribute (\Gnt{attr\_array}{\scriptsize (\ref{attr_array})}) werden in \ref{Arrayattribute} beschrieben.\\
+
+
+\subsection{Typen}\label{Typen}
+\Gnt{typ\_basis}:\label{typ_basis}\\
+\hspace*{1cm}\Gnt{typ\_num}{\scriptsize (\ref{typ_num})} \\
+\hspace*{1cm}\Gnt{typ\_bool}{\scriptsize (\ref{typ_bool})} \\
+\hspace*{1cm}\Gnt{typ\_vektor}{\scriptsize (\ref{typ_vektor})} \\
+\hspace*{1cm}\Gnt{typ\_matrix}{\scriptsize (\ref{typ_matrix})} \\
+\hspace*{1cm}\Gnt{typ\_sampler}{\scriptsize (\ref{typ_sampler})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\Gnt{typ}:\label{typ}\\
+\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \\
+\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gnt{typ\_array}{\scriptsize (\ref{typ_array})} \\
+\subsubsection{Boole'scher Typ}\label{Boole'scher Typ}
+\Gnt{typ\_bool}:\label{typ_bool}\\
+\hspace*{1cm}\glq\Gt{bool}\grq \\
+
+Der Typ \kw{bool} spezifiziert den boole'schen Typ mit den möglichen Werten
+\kw{true} (wahr) oder \kw{false} (unwahr).
+
+
+\subsubsection{Numerische Typen}\label{Numerische Typen}
+\Gnt{typ\_num}:\label{typ_num}\\
+\hspace*{1cm} \glq\Gt{int}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int}\grq \\
+\hspace*{1cm}\glq\Gt{float}\grq \\
+
+Der Typ \kw{int} spezifiziert vorzeichenbehaftete Ganzzahlwerte.
+
+Der Typ \kw{unsigned int} spezifiziert vorzeichenlose Ganzzahlwerte.
+
+Genauigkeit und Wertebereich sind jeweils implementierungsabhängig.
+
+Der Typ \kw{float} spezifiziert Fließkommazahlen.
+
+%Optional kann durch \Gnt{Typ-Float-Präz}{\scriptsize (\ref{Typ-Float-Präz})} eine gewünschte Präzision \Gnt{Bzch-Präzision}{\scriptsize (\ref{Bzch-Präzision})} angegeben werden.
+%Dies kann beeinflussen, in welchem Format und/oder mit welcher Genauigkeit ein
+%Wert gespeichert wird.
+%\Gnt{Bzch-Präzision}{\scriptsize (\ref{Bzch-Präzision})} ist ein Bezeichner. Vordefinierte Präzisionen sind
+%\kw{half}, \kw{single} und \kw{double}. Dies sollte einem Datenformat
+%nach IEEE ??? in halber, einfacher und doppelter Genauigkeit entsprechen.
+
+%Ist keine Präzision angegeben soll \kw{single} angenommen werden.
+
+%Unbekannte Präzisionen sind keine Syntaxfehler; Programme mir unbekannten Präzisionen sind gültig.
+
+%Präzision ist Teil des Typs.
+
+%Präzision ist nicht verbindlich. Genauigkeit und Wertebereich sind jeweils implementierungsabhängig.
+
+
+\subsubsection{Vektortypen}\label{Vektortypen}
+\Gnt{typ\_vektor}:\label{typ_vektor}\\
+\hspace*{1cm}\Gnt{typ\_vektor\_int}{\scriptsize (\ref{typ_vektor_int})} \\
+\hspace*{1cm}\Gnt{typ\_vektor\_float}{\scriptsize (\ref{typ_vektor_float})} \\
+\hspace*{1cm}\Gnt{typ\_vektor\_bool}{\scriptsize (\ref{typ_vektor_bool})} \\
+\Gnt{typ\_vektor\_int}:\label{typ_vektor_int}\\
+\hspace*{1cm} \glq\Gt{int1}\grq \\
+\hspace*{1cm} \glq\Gt{int2}\grq \\
+\hspace*{1cm} \glq\Gt{int3}\grq \\
+\hspace*{1cm} \glq\Gt{int4}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int1}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int2}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int3}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int4}\grq \\
+\Gnt{typ\_vektor\_float}:\label{typ_vektor_float}\\
+\hspace*{1cm}\glq\Gt{float1}\grq \\
+\hspace*{1cm}\glq\Gt{float2}\grq \\
+\hspace*{1cm}\glq\Gt{float3}\grq \\
+\hspace*{1cm}\glq\Gt{float4}\grq \\
+\Gnt{typ\_vektor\_bool}:\label{typ_vektor_bool}\\
+\hspace*{1cm}\glq\Gt{bool1}\grq \\
+\hspace*{1cm}\glq\Gt{bool2}\grq \\
+\hspace*{1cm}\glq\Gt{bool3}\grq \\
+\hspace*{1cm}\glq\Gt{bool4}\grq \\
+
+% "normalized"?
+
+
+Der \emph{Basistyp} eines Vektors ist ein Integer-, Boole'scher oder Fließkommatyp.
+Die Zahl $N$ nach dem Basistyp ist vom Typ
+Ganzzahl, kann Werte zwischen 1 und 4 inklusive annehmen, und gibt die Komponentenanzahl an.
+Ein Vektortyp spezifiziert ein $N$-Tupel von Werten
+des Basistyps.
+
+
+% Besserer Platz?
+
+\paragraph{Vektorattribute}\label{Vektorattribute}
+~\\
+\Gnt{attr\_vektor}:\label{attr_vektor}\\
+\hspace*{1cm}\Gnt{SWIZZLE\_RGBA}{\scriptsize (\ref{SWIZZLE_RGBA})} \\
+\hspace*{1cm}\Gnt{SWIZZLE\_XYZW}{\scriptsize (\ref{SWIZZLE_XYZW})} \\
+Einzelne Komponenten können entweder mit Array-Syntax oder den Attributen \attr{x},
+\attr{y}, \attr{z}, \attr{w}, \attr{r}, \attr{g}, \attr{b}, \attr{a} angesprochen
+werden. \attr{x}/\attr{r} spezifiert die erste Komponente,
+\attr{y}/\attr{g} die zweite Komponente, \attr{z}/\attr{b} die dritte Komponente,
+\attr{w}/\attr{a} die vierte Komponente. Ansprechen einer nicht existierenden Komponente
+führt zu einem Fehler.
+
+Weitere Attribute sind die "`Swizzle"'-Attribute (\Gnt{SWIZZLE\_RGBA}{\scriptsize (\ref{SWIZZLE_RGBA})}, \Gnt{SWIZZLE\_XYZW}{\scriptsize (\ref{SWIZZLE_XYZW})}).
+Das Ergebnis eines Swizzles ist vom Typ eines Vektors des Basistyps, mit der Anzahl der Komponenten
+entsprechend der Anzahl der Komponenten im "`Swizzle"'. Die erste Komponente des Wertes entspricht
+der Komponente des Ursprungsvektors, die an erster Stelle des Swizzles identifiziert wird, usw.
+Beispiele für Swizzle-Operationen finden sich in Abschnitt~\ref{BeispieleSwizzle}.
+
+\paragraph{Vektorkonstruktoren}\label{Vektorkonstruktoren}
+
+Vektorkonstruktoren sind besondere, vorgegebene Funktionen, die gleiche Bezeichner wie Vektortypen haben
+(siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
+
+Wird ein Vektor aus einem \emph{Basisausdruck} konstruiert, so haben alle Komponenten diesen Wert.
+Der \emph{Basisausdruck} muss als Typ einen Basistyp besitzen.
+
+Wird ein Vektor aus mehreren Basis- oder Vektorausdrücken oder einem Vektorausdruck konstruiert,
+so wird der ersten Komponente der Wert des ersten Basisausdrucks bzw. der ersten Vektorausdruckskomponente zugewiesen,
+der zweiten Komponente der Wert des nächsten Basisausdrucks bzw. der nächsten Vektorausdruckskomponente usw.
+Allen Komponenten muss ein Wert zugewiesen werden. Die Anzahl aller Basisausdrücke und Komponenten der Vektorausdrücke
+zusammen muss exakt der Komponentenanzahl entsprechen.
+Alle verwendeten Vektortypen müssen vom gleichen Basistyp wie der zu konstruierende Vektor sein.
+
+
+\subsubsection{Matrixtypen}\label{Matrixtypen}
+\Gnt{typ\_matrix}:\label{typ_matrix}\\
+\hspace*{1cm}\Gnt{typ\_matrix\_float}{\scriptsize (\ref{typ_matrix_float})} \\
+\hspace*{1cm}\Gnt{typ\_matrix\_int}{\scriptsize (\ref{typ_matrix_int})} \\
+\hspace*{1cm}\Gnt{typ\_matrix\_bool}{\scriptsize (\ref{typ_matrix_bool})} \\
+\Gnt{typ\_matrix\_float}:\label{typ_matrix_float}\\
+\hspace*{1cm}\glq\Gt{float1x1}\grq \\
+\hspace*{1cm}\glq\Gt{float2x1}\grq \\
+\hspace*{1cm}\glq\Gt{float3x1}\grq \\
+\hspace*{1cm}\glq\Gt{float4x1}\grq \\
+\hspace*{1cm}\glq\Gt{float1x2}\grq \\
+\hspace*{1cm}\glq\Gt{float2x2}\grq \\
+\hspace*{1cm}\glq\Gt{float3x2}\grq \\
+\hspace*{1cm}\glq\Gt{float4x2}\grq \\
+\hspace*{1cm}\glq\Gt{float1x3}\grq \\
+\hspace*{1cm}\glq\Gt{float2x3}\grq \\
+\hspace*{1cm}\glq\Gt{float3x3}\grq \\
+\hspace*{1cm}\glq\Gt{float4x3}\grq \\
+\hspace*{1cm}\glq\Gt{float1x4}\grq \\
+\hspace*{1cm}\glq\Gt{float2x4}\grq \\
+\hspace*{1cm}\glq\Gt{float3x4}\grq \\
+\hspace*{1cm}\glq\Gt{float4x4}\grq \\
+\Gnt{typ\_matrix\_int}:\label{typ_matrix_int}\\
+\hspace*{1cm} \glq\Gt{int1x1}\grq \\
+\hspace*{1cm} \glq\Gt{int2x1}\grq \\
+\hspace*{1cm} \glq\Gt{int3x1}\grq \\
+\hspace*{1cm} \glq\Gt{int4x1}\grq \\
+\hspace*{1cm} \glq\Gt{int1x2}\grq \\
+\hspace*{1cm} \glq\Gt{int2x2}\grq \\
+\hspace*{1cm} \glq\Gt{int3x2}\grq \\
+\hspace*{1cm} \glq\Gt{int4x2}\grq \\
+\hspace*{1cm} \glq\Gt{int1x3}\grq \\
+\hspace*{1cm} \glq\Gt{int2x3}\grq \\
+\hspace*{1cm} \glq\Gt{int3x3}\grq \\
+\hspace*{1cm} \glq\Gt{int4x3}\grq \\
+\hspace*{1cm} \glq\Gt{int1x4}\grq \\
+\hspace*{1cm} \glq\Gt{int2x4}\grq \\
+\hspace*{1cm} \glq\Gt{int3x4}\grq \\
+\hspace*{1cm} \glq\Gt{int4x4}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int1x1}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int2x1}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int3x1}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int4x1}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int1x2}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int2x2}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int3x2}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int4x2}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int1x3}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int2x3}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int3x3}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int4x3}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int1x4}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int2x4}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int3x4}\grq \\
+\hspace*{1cm}\glq\Gt{unsigned}\grq  \glq\Gt{int4x4}\grq \\
+\Gnt{typ\_matrix\_bool}:\label{typ_matrix_bool}\\
+\hspace*{1cm}\glq\Gt{bool1x1}\grq \\
+\hspace*{1cm}\glq\Gt{bool2x1}\grq \\
+\hspace*{1cm}\glq\Gt{bool3x1}\grq \\
+\hspace*{1cm}\glq\Gt{bool4x1}\grq \\
+\hspace*{1cm}\glq\Gt{bool1x2}\grq \\
+\hspace*{1cm}\glq\Gt{bool2x2}\grq \\
+\hspace*{1cm}\glq\Gt{bool3x2}\grq \\
+\hspace*{1cm}\glq\Gt{bool4x2}\grq \\
+\hspace*{1cm}\glq\Gt{bool1x3}\grq \\
+\hspace*{1cm}\glq\Gt{bool2x3}\grq \\
+\hspace*{1cm}\glq\Gt{bool3x3}\grq \\
+\hspace*{1cm}\glq\Gt{bool4x3}\grq \\
+\hspace*{1cm}\glq\Gt{bool1x4}\grq \\
+\hspace*{1cm}\glq\Gt{bool2x4}\grq \\
+\hspace*{1cm}\glq\Gt{bool3x4}\grq \\
+\hspace*{1cm}\glq\Gt{bool4x4}\grq \\
+
+Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher oder Fließkommatyp.
+Der Basistyp wird von einer Zeichenkette der Form $N$\kw{x}$M$ gefolgt. $N$ und
+$M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive annehmen,
+und geben die Spalten- und Zeilenzahl
+der Matrix an. Ein Matrixtyp spezifiziert eine  $N \times M$-Matrix von Werten des Basistyps.
+
+\paragraph{Matrixattribute}\label{Matrixattribute}
+~\\
+\Gnt{attr\_matrix}:\label{attr_matrix}\\
+\hspace*{1cm}\glq\Gt{row}\grq \\
+\hspace*{1cm}\glq\Gt{col}\grq \\
+\hspace*{1cm}\glq\Gt{transposed}\grq \\
+\hspace*{1cm}\glq\Gt{inverted}\grq \\
+
+Einzelne Zeilen können über das Attribute \attr{row} angesprochen werden. Dieses
+verhält sich wie ein Array mit $M$ Elementen des Vektortyps \emph{Basistyp}$N$.
+
+Einzelne Spalten können über das Attribut \attr{col} angesprochen werden. Dieses
+verhält sich wie ein Array mit $N$ Elementen des \emph{Basistyp}$M$.
+
+Das Attribut \attr{transposed} ist eine Matrix vom Typ \emph{Basistyp}$M$x$N$
+und hat als Wert die transponierte Ursprungsmatrix.
+
+Matrizen mit gleichem $N$ und $M$ besitzen das Attribut \attr{inverted}.
+Es ist eine Matrix vom Typ \emph{Basistyp}$N$x$M$ und hat als Wert die invertierte Ursprungsmatrix.
+Das Ergebnis ist undefiniert, wenn die Ursprungsmatrix nicht invertierbar ist.
+
+\paragraph{Matrixkonstruktoren}\label{Matrixkonstruktoren}
+
+Matrixkonstruktoren sind besondere, vorgegebene Funktionen die gleiche Bezeichner wie Matrixtypen haben
+(siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
+
+%Wird eine Matrix aus einem Matrix-Ausdruck konstruiert so haben alle Felder der Matrix die
+%Werte der entsprechenden Quellmatrix. Die Dimensionen der Quellmatrix muss denen von
+%\Gnt{Typ-Matrix}{\scriptsize (\ref{Typ-Matrix})} entsprechen.
+%\Gnt{Asdr-Basis}{\scriptsize (\ref{Asdr-Basis})} muss als Typ einen Matrix-Typ besitzen.
+
+Eine Matrix wird aus einem oder mehreren Vektorausdrücken konstruiert. Den Zeilen werden
+jeweils die Werte der Vektorausdrücke zugewiesen. Die Komponentenanzahl der Vektoren muss dabei
+$N$ sein. Die Anzahl der gegebenen Vektoren muss $M$ sein.
+
+%Wird eine Matrix aus einem oder mehreren Basisausdrücken konstruiert so werden den Feldern
+%nacheinander jeweils die Werte dieser Ausdrücke zugewiesen. Den Feldern der ersten Zeile werden
+%die ersten \Gnt{N}{\scriptsize (\ref{N})} Werte zugewiesen, den Feldern der zweiten Zeile die nächsten \Gnt{N}{\scriptsize (\ref{N})} Werte
+%usw. Die Anzahl der gegebenen Werten muss \Gnt{N}{\scriptsize (\ref{N})}$\cdot$\Gnt{M}{\scriptsize (\ref{M})} sein.
+
+\subsubsection{Samplertypen}\label{Samplertypen}
+\Gnt{typ\_sampler}:\label{typ_sampler}\\
+\hspace*{1cm}\glq\Gt{sampler1D}\grq \\
+\hspace*{1cm}\glq\Gt{sampler2D}\grq \\
+\hspace*{1cm}\glq\Gt{sampler3D}\grq \\
+\hspace*{1cm}\glq\Gt{samplerCUBE}\grq \\
+
+Samplertypen repräsentieren Textureinheiten der Hardware. Texturen verschiedener
+Dimensionalität müssen in Shadingprogrammen verschiedenartig angesprochen werden;
+dies bedingt die mehrfachen Samplertypen, die jeweils einen speziellen Texturtyp
+reflektieren.
+
+Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{Texturfunktionen}).
+
+
+\subsubsection{Arraytypen}\label{Arraytypen}
+\Gnt{typ\_array}:\label{typ_array}\\
+\hspace*{1cm}\glq\Gt{[}\grq  \glq\Gt{]}\grq \\
+\hspace*{1cm}\glq\Gt{[}\grq  \glq\Gt{]}\grq \Gnt{typ\_array}{\scriptsize (\ref{typ_array})} \\
+
+Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch \Gnt{typ}{\scriptsize (\ref{typ})}).
+Die Anzahl der Elemente in individuellen Variablen oder Konstanten eines Arraytyps
+ergibt sich aus der Anzahl der Element des zugewiesenen Array-Wertes.
+
+Elemente einer Array-Variable oder -Konstante können mit \ident{Bezeichner[}$\mathit{Index}$\ident{]} angesprochen
+werden. Das erste Element wird mit dem Wert $0$ für $\mathit{Index}$ angesprochen.
+Liegt $\mathit{Index}$ ausserhalb des gültigen Bereiches ($0\dots{}N-1$) so ist der ausgelesene Wert
+undefiniert\footnote{Dies ist bedingt durch die stark beschränkte bis nicht vorhandene Unterstützung von Ausnahmen
+auf Grafik-Hardware, siehe~\ref{hwlimits}}.
+
+
+\paragraph{Arrayattribute}\label{Arrayattribute}
+~\\
+\Gnt{attr\_array}:\label{attr_array}\\
+\hspace*{1cm}\glq\Gt{length}\grq \\
+
+Arrays besitzen ein Attribut \attr{length} vom Typ \kw{unsigned int} dessen Wert
+die Anzahl der Elemente im Array ist.
+
+
+\paragraph{Arraykonstruktoren}\label{Arraykonstruktoren}
+
+%Ktor-Array:
+%  Bzch-Typ."[]" "(" [Ausdruck { "," Ausdruck } "," ] ")"
+
+Arraykonstruktoren sind besondere, vorgegebene Funktionen die gleiche Bezeichner wie Arraytypen haben
+(siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
+
+Ein Array wird aus keinem, einem oder mehreren Werten des Elementtyps konstruiert.
+Die Anzahl der Elemente entspricht der Anzahl der dem Konstruktor übergebenen Ausdrücke.
+
+\subsubsection{Typdefinitionen}\label{Typdefinitionen}
+\Gnt{typ\_definition}:\label{typ_definition}\\
+\hspace*{1cm}\glq\Gt{typedef}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+
+\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} deklariert einen neuen Typ mit dem angegeben Bezeichner der ein Alias für den durch \glq\Gnt{typ}\grq bezeichneten Typen ist.
+
+Die Sichtbarkeit des Typbezeichners beginnt hinter der \Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}
+und reicht bis zum Ende des umgebenden Gültigkeitsbereiches.
+
+Der Bezeichner darf keinen anderen Bezeichner des umgebenden Gültigkeitsbereiches überdecken.
+
+
+\subsubsection{Typumwandlung}\label{Typumwandlung}
+
+\paragraph{{Implizite Typumwandlungen}}\label{__Implizite Typumwandlungen__}
+Ausdrücke eines numerischen Typs können in einen anderen numerischen Typ umgewandelt werden.
+Wird ein Ausdruck einen numerischen Typs einer Variable oder einem formalen Funktionsparameter
+eines anderen numerischen Typs zugewiesen, findet eine \emph{implizite} Typumwandlung statt
+(Zuweisungskompatibilität).
+
+Ist \emph{verlustfreie} Zuweisungskompatibilität verlangt, wird eine implizite Typumwandlung nur
+vorgenommen, wenn kein Präzisionsverlust auftritt (nach nachfolgenden Definitionen). Tritt ein
+Präzisionsverlust auf, ist das Programm ungültig.
+
+\kw{int} und \kw{unsigned int} werden als immer untereinander ohne Präzisionsverlust zuweisbar
+angenommen.
+
+Eine Zuweisung von \kw{int} oder \kw{unsigned int} an \kw{float} wird immer als ohne Präzisionsverlust zuweisbar
+angenommen.
+
+Eine Zuweisung von \kw{float} zu \kw{int} oder \kw{unsigned int} wird immer mit Präzisionsverlust zuweisbar angenommen.
+
+\paragraph{{Explizite Typumwandlungen}}\label{__Explizite Typumwandlungen__}
+Ausdrücke können explizit in einen anderen Typ umgewandelt werden (syntaktisch ein Funktionsaufruf mit
+Typbezeichner als Funktionsbezeichner). Umwandlungen mit Präzisionsverlust sind dabei erlaubt.
+Ein Ausdruck einer expliziten Typumwandlung hat den Typ in den explizit umgewandelt wurde.
+
+
+\subsection{Funktionen}\label{Funktionen}
+\Gnt{dekl\_funktion}:\label{dekl_funktion}\\
+\hspace*{1cm}\Gnt{typ\_funktion}{\scriptsize (\ref{typ_funktion})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}  \glq\Gt{(}\grq  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\Gnt{typ\_funktion}{\scriptsize (\ref{typ_funktion})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}  \glq\Gt{(}\grq \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\Gnt{typ\_funktion}:\label{typ_funktion}\\
+\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \\
+\hspace*{1cm}\glq\Gt{void}\grq \\
+\Gnt{funktion\_param\_formal}:\label{funktion_param_formal}\\
+\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\Gnt{funktion\_aufruf}:\label{funktion_aufruf}\\
+\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})}  \glq\Gt{(}\grq  \glq\Gt{)}\grq \\
+\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})}  \glq\Gt{(}\grq \Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})}  \glq\Gt{)}\grq \\
+\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})}  \glq\Gt{(}\grq  \glq\Gt{)}\grq \\
+\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})}  \glq\Gt{(}\grq \Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})}  \glq\Gt{)}\grq \\
+\Gnt{funktion\_param\_tatsaechl}:\label{funktion_param_tatsaechl}\\
+\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})} \\
+
+% TODO: Default-Parameter
+
+\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} deklariert eine Funktion mit dem gegebenen Bezeichner.
+
+Die Sichtbarkeit des Funktionsbezeichners beginnt hinter dem \kw{)} von \Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})}
+und reicht bis zum Ende des Programms.
+
+Der Bezeichner darf keinen anderen Bezeichner des globalen Gültigkeitsbereiches überdecken.
+Ausnahme: Mehrere Funktionen können den gleichen Bezeicher besitzen; es handelt sich hierbei
+um \emph{überladene} Funktionen (siehe~\ref{Ueberladene Funktionen}).
+
+\Gnt{typ\_funktion}{\scriptsize (\ref{typ_funktion})} spezifiziert den Typ des Rückgabewertes der Funktion. Der spezielle Typ \kw{void}
+gibt an, dass die Funktion keinen Wert zurückgibt.
+%\kw{void} ist weder von, noch nach, irgendeinen anderen Typ umwandelbar.
+Weder ist der Typ \kw{void} in irgendeinen anderen Typ umwandelbar, noch ist eine Umwandlung
+von irgendeinem Typen nach \kw{void} möglich.
+
+\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} beschreibt die Parameter, welche die Funktion annimmt.
+Parameter können Eingabe- und/oder Ausgabeparameter sein: auf \emph{Eingabeparameter} kann
+nur lesend zugegriffen werden, ein Schreibzugriff ist nicht erlaubt.
+\emph{Ausgabeparameter} können beschrieben werden und jede Änderung wirkt sich auch sofort auf
+den zugeordneten tatsächlichen Parameter aus. Ausgabeparameter können auch gelesen werden,
+allerdings ist ihr Wert vor dem ersten Beschreiben undefiniert.
+\emph{Ein- und Ausgabeparameter} können jederzeit gelesen werden, jeder Schreibzugriff wirkt sich
+aber auch hier auf den zugeordneten tatsächlichen Parameter aus.
+
+Funktionen werden mit \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} aufgerufen. Zunächst werden die
+gegebenen Werteparameter(\Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})}) den Funktionsparametern der Funktion über ihre Stelle zugeordnet.
+Basierend auf der Anzahl der Parameter und den Typen der Parameterausdrücke wird eine Überladung der Funktion ausgewählt.
+Den Funktionsparametern werden die entsprechenden Werte der Parameterausdrücke zugewiesen.
+Die Parameterausdrücke werden von links nach rechts ausgewertet.
+Die Programmausführung springt dann zu dem ersten
+Kommando des Funktionsblockes. Nach Beendigung von dessen Ausführung wird dem Wert des Aufrufausdrucks der
+Rückgabewert der Funktion zugewiesen. Die Programmausführung fährt mit dem dem ursprünglichen Funktionsaufruf
+unmittelbar folgendem Kommando fort.
+
+Als Bezeichner für die aufzurufende Funktion können nicht nur Bezeichner benutzerdefinierter und
+vordefinierter Funktionen sondern auch \emph{Typbezeichner} dienen.
+Im Fall von Vektor-, Matrix- oder Arraytypen sind dies die speziellen Konstruktoren
+(siehe \ref{Vektorkonstruktoren}, \ref{Matrixkonstruktoren} und \ref{Arraykonstruktoren}).
+Im Fall von boole'schen oder numerischen Typen wird eine explizite Typumwandlung (siehe
+\ref{Typumwandlung}) veranlasst.
+
+
+\subsubsection{Überladene Funktionen}\label{Ueberladene Funktionen}
+
+Es können mehrere Funktionen mit identischem Bezeichner, aber unterschiedlicher Signatur,
+deklariert werden. Die Signatur einer Funktion wird aus Position und Typ jedes Parameters
+bestimmt. Werden zwei Funktionen mit identischem Bezeichner und Signatur deklariert ist
+das Programm ungültig.
+
+Die aufzurufende Überladung einer Funktion wird über die Signatur bestimmt. Existiert
+eine Überladung, deren Signatur genau mit den übergebenen tatsächlichen Parametern
+übereinstimmt wird diese ausgewählt. Andernfalls werden aus den Überladungen mit
+gleicher Parameteranzahl, aber unterschiedlichen Typen "`Kandidaten"' für den
+Aufruf ausgewählt. Eine Funktion ist "`Kandidat"', wenn an jeder Stelle der Signatur
+der Typ identisch mit dem übergebenen Typ oder in diesen verlustfrei umwandelbar ist.
+Gibt es genau einen Kandidaten wird dieser ausgewählt und die Programmausführung
+mit diesem fortgesetzt. Gibt es keinen oder mehrere Kandidaten ist das Programm
+ungültig.
+
+
+\subsection{Konstanten und Variablen}\label{Konstanten und Variablen}
+\subsubsection{Variablendeklarationen}\label{Variablendeklarationen}
+\Gnt{dekl\_var}:\label{dekl_var}\\
+\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{dekl\_var\_bzch\_init\_liste}{\scriptsize (\ref{dekl_var_bzch_init_liste})} \\
+\Gnt{dekl\_var\_bzch\_init\_liste}:\label{dekl_var_bzch_init_liste}\\
+\hspace*{1cm}\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \\
+\hspace*{1cm}\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \glq\Gt{,}\grq  \Gnt{dekl\_var\_bzch\_init\_liste}{\scriptsize (\ref{dekl_var_bzch_init_liste})} \\
+\Gnt{dekl\_var\_bzch\_init}:\label{dekl_var_bzch_init}\\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+
+\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} deklariert eine oder mehrere neue Variablen des gegebenen Typs und den gegebenen Bezeichnern.
+
+Die Sichtbarkeit der Bezeichner beginnt nach der jeweiligen Deklaration
+und reicht bis zum Ende des umgebenden Blockes.
+
+Der Bezeichner darf keinen anderen Bezeichner des umgebenden Gültigkeitsbereiches überdecken.
+
+Der Wert von einer deklarierten Variable ist anfänglich undefiniert.
+
+Wird ein initialer Ausdruck angegeben, so entspricht dies semantisch einer Zuweisungsoperation
+hinter \Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})}, aber vor der Deklaration der nächsten Variable.
+Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Variable sein.
+
+\subsubsection{Konstantendeklarationen}\label{Konstantendeklarationen}
+\Gnt{dekl\_konst}:\label{dekl_konst}\\
+\hspace*{1cm}\glq\Gt{const}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{dekl\_konst\_bzch\_init\_liste}{\scriptsize (\ref{dekl_konst_bzch_init_liste})} \\
+\Gnt{dekl\_konst\_bzch\_init\_liste}:\label{dekl_konst_bzch_init_liste}\\
+\hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \\
+\hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \glq\Gt{,}\grq  \Gnt{dekl\_konst\_bzch\_init\_liste}{\scriptsize (\ref{dekl_konst_bzch_init_liste})} \\
+\Gnt{dekl\_konst\_bzch\_init}:\label{dekl_konst_bzch_init}\\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}  \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+
+\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} deklariert eine oder mehrere neue Konstanten des gegebenen Typs und den gegebenen Bezeichnern.
+
+Die Sichtbarkeit der Bezeichner beginnt nach der jeweiligen Deklaration
+und reicht bis zum Ende des umgebenden Blockes.
+
+Der Bezeichner darf keinen anderen Bezeichner des umgebenden Gültigkeitsbereiches überdecken.
+
+Die Konstante wird mit dem Wert des initialen Ausdrucks initialisiert.
+Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Konstante sein.
+
+\subsection{Ablaufsteuerung}\label{Ablaufsteuerung}
+\subsubsection{Verzweigungen}\label{Verzweigungen}
+\Gnt{verzweigung}:\label{verzweigung}\\
+\hspace*{1cm}\glq\Gt{if}\grq  \glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{if}\grq  \glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \glq\Gt{else}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+
+\glq\Gnt{ausdruck}\grq ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+
+Wenn die Bedingung zu \kw{true} ausgewertet wird, werden die Kommandos des ersten Blockes (\emph{Wahr-Block}) ausgeführt,
+ansonsten die Kommandos des Blockes im \kw{else}-Zweig (\emph{Falsch-Block}).
+
+Der \kw{else}-Zweig ist optional.
+
+Die Berechnungsfrequenz der Verzweigung ist die kleinste gemeinsame Frequenz der Blöcke sowie der Bedingung.
+
+\subsubsection{\kw{for}-Schleifen}\label{$_backslash$kw__for__-Schleifen}
+\Gnt{schleife\_for}:\label{schleife_for}\\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq  \glq\Gt{;}\grq  \glq\Gt{;}\grq  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq  \glq\Gt{;}\grq  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq  \glq\Gt{;}\grq  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{for}\grq  \glq\Gt{(}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+
+Der erste Ausdruck ist die \emph{Initialisierung}. Der zweite Ausdruck ist die \emph{Schleifenbedingung}. Der dritte Ausdruck ist der \emph{Zählausdruck}.
+
+Bei der Ausführung wird zunächst die \emph{Initialisierung} ausgeführt.
+
+Die \emph{Schleifenbedingung} wird ausgewertet. Ist das Ergebnis \kw{true}, so werden die Kommandos des Schleifenblockes
+und anschließend der \emph{Zählausdruck} ausgeführt.
+Dieser Ablauf wird wiederholt bis eine Auswertung der \emph{Schleifenbedingung} das Ergebnis \kw{false} hat.
+
+Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie
+der \emph{Initialisierung}, der \emph{Schleifenbedingung} und des \emph{Zählausdrucks}.
+
+\subsubsection{\kw{while}-Schleifen}\label{$_backslash$kw__while__-Schleifen}
+\Gnt{schleife\_while}:\label{schleife_while}\\
+\hspace*{1cm}\glq\Gt{while}\grq  \glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq  \glq\Gt{\{}\grq  \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
+
+\glq\Gnt{ausdruck}\grq ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+
+Die Bedingung wird ausgewertet. Ist das Ergebnis \kw{true}, so werden die Kommandos des Schleifenblocks
+ausgeführt. Dieser Ablauf wird wiederholt bis eine Auswertung der Bedingung das Ergebnis \kw{false} hat.
+
+Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie der Bedingung.
+
+\subsection{Lexikalische Einheiten}\label{Lexikalische Einheiten}
+
+\emph{Anmerkung:} Da diese Regeln die lexikalischen Einheiten selbst beschreiben gibt es
+hier \emph{keine} weiteren Trennzeichen zwischen Terminalen!
+
+
+\subsubsection{Bezeichner}\label{Bezeichner}
+\Gnt{Number}:\label{Number}\\
+\hspace*{1cm}Unicode-Ziffer\\
+\Gnt{Letter}:\label{Letter}\\
+\hspace*{1cm}Unicode-Buchstabe\\
+\Gnt{Comp\_XYZW}:\label{Comp_XYZW}\\
+\hspace*{1cm}\glq\Gt{x}\grq \\
+\hspace*{1cm}\glq\Gt{y}\grq \\
+\hspace*{1cm}\glq\Gt{z}\grq \\
+\hspace*{1cm}\glq\Gt{w}\grq \\
+\Gnt{Comp\_RGBA}:\label{Comp_RGBA}\\
+\hspace*{1cm}\glq\Gt{r}\grq \\
+\hspace*{1cm}\glq\Gt{g}\grq \\
+\hspace*{1cm}\glq\Gt{b}\grq \\
+\hspace*{1cm}\glq\Gt{a}\grq \\
+\Gnt{SWIZZLE\_XYZW}:\label{SWIZZLE_XYZW}\\
+\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
+\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
+\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
+\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
+\Gnt{SWIZZLE\_RGBA}:\label{SWIZZLE_RGBA}\\
+\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
+\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
+\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
+\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
+\Gnt{BEZEICHNER}:\label{BEZEICHNER}\\
+\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \\
+\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\hspace*{1cm}\glq\Gt{\_}\grq \\
+\hspace*{1cm}\glq\Gt{\_}\grq \Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\Gnt{LetterNumberStr}:\label{LetterNumberStr}\\
+\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \\
+\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \\
+\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\hspace*{1cm}\glq\Gt{\_}\grq \\
+\hspace*{1cm}\glq\Gt{\_}\grq \Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\Gnt{Whitespace}:\label{Whitespace}\\
+\hspace*{1cm}Unicode-Separator\\
+\Gnt{WS}:\label{WS}\\
+\hspace*{1cm}\Gnt{Whitespace}{\scriptsize (\ref{Whitespace})} \\
+\hspace*{1cm}\Gnt{Whitespace}{\scriptsize (\ref{Whitespace})} \Gnt{WS}{\scriptsize (\ref{WS})} \\
+
+\emph{Bezeicher} ergeben sich aus ein oder mehreren Buchstaben, Ziffern und dem Zeichen \glq\kw{\_}\grq. Das erste Zeichen
+darf keine Ziffer sein.
+
+Der Unterteilung in Buchstaben und Ziffern liegen Unicode-Kategorien zugrunde (siehe~\cite{unicode}, Abschn. 4.5).
+% TODO Ref: Unicode-Standard - 5.1.0 4.1
+
+Zwei Bezeichner sind identisch wenn deren Zeichensequenzen \emph{kanonisch äquivalent} nach Unicode sind (siehe~\cite{unicode}, Kap. 3, Def. D70).
+% Unicode 5.1.0 2.12
+
+Lexikalische Einheiten können mit einem oder mehreren Zeichen der Unicode-Kategorie "`Separator"' getrennt werden.
+
+
+\subsubsection{Numerische Literale}\label{Numerische Literale}
+\Gnt{Numbers}:\label{Numbers}\\
+\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \\
+\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\Gnt{Numbers\_Sign}:\label{Numbers_Sign}\\
+\hspace*{1cm} \Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\hspace*{1cm}\glq\Gt{-}\grq  \Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\Gnt{Numbers\_Frac}:\label{Numbers_Frac}\\
+\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\Gnt{Num\_Float\_Exp}:\label{Num_Float_Exp}\\
+\hspace*{1cm}\glq\Gt{e}\grq  \Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \\
+\hspace*{1cm}\glq\Gt{E}\grq  \Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \\
+\Gnt{Num\_Float}:\label{Num_Float}\\
+\hspace*{1cm}\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \\
+\hspace*{1cm}\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
+\hspace*{1cm}\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \glq\Gt{.}\grq \\
+\hspace*{1cm}\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \glq\Gt{.}\grq \Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
+\hspace*{1cm}\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \\
+\hspace*{1cm}\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
+\hspace*{1cm} \Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \\
+\hspace*{1cm} \Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
+\hspace*{1cm}\glq\Gt{-}\grq  \Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \\
+\hspace*{1cm}\glq\Gt{-}\grq  \Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
+\Gnt{Digit\_Hex}:\label{Digit_Hex}\\
+\hspace*{1cm}\glq\kw{0}\grq..\glq\kw{9}\grq\\
+\hspace*{1cm}\glq\kw{A}\grq..\glq\kw{F}\grq\\
+\hspace*{1cm}\glq\kw{a}\grq..\glq\kw{f}\grq\\
+\Gnt{Digits\_Hex}:\label{Digits_Hex}\\
+\hspace*{1cm}\Gnt{Digit\_Hex}{\scriptsize (\ref{Digit_Hex})} \\
+\hspace*{1cm}\Gnt{Digit\_Hex}{\scriptsize (\ref{Digit_Hex})} \Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})} \\
+\Gnt{Num\_Hex}:\label{Num_Hex}\\
+\hspace*{1cm}\glq\Gt{0x}\grq  \Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})} \\
+\Gnt{NUMERIC}:\label{NUMERIC}\\
+\hspace*{1cm}\Gnt{Num\_Float}{\scriptsize (\ref{Num_Float})} \\
+\hspace*{1cm}\Gnt{Num\_Hex}{\scriptsize (\ref{Num_Hex})} \\
+
+Ganzzahlen können in Dezimal- und Hexadezimalnotation angegeben werden.
+
+Fließkommazahlen können als Dezimalbruch oder in Exponentialschreibweise
+angegeben werden.
+
+
+\subsubsection{Kommentare}\label{Kommentare}
+\Gnt{COMMENT}:\label{COMMENT}\\
+\hspace*{1cm}\glq\Gt{//}\grq  \glq\Gt{$\backslash$r}\grq \\
+\hspace*{1cm}\glq\Gt{//}\grq  \glq\Gt{$\backslash$n}\grq \\
+\Gnt{ML\_COMMENT}:\label{ML_COMMENT}\\
+\hspace*{1cm}\glq\kwMlcStart\grq beliebige Zeichen \glq\kwMlcEnd\grq\\
+
+\Gnt{COMMENT}{\scriptsize (\ref{COMMENT})} ist ein einzeiliger Kommentar. Alle Eingabezeichen bis zum nächsten Zeilenumbruch
+werden ignoriert.
+
+\Gnt{ML\_COMMENT}{\scriptsize (\ref{ML_COMMENT})} ist ein mehrzeiliger Kommentar. Alle Eingabezeichen, inklusive Zeilenumbrüchen,
+zwischen Start- (\kwMlcStart) und nächster Endmarkierung (\kwMlcEnd) werden ignoriert.
+

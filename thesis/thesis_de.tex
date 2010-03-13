@@ -3,7 +3,7 @@
 \usepackage[paper=a4paper,left=20mm,right=20mm,top=25mm,bottom=25mm]{geometry}
 \usepackage{ngerman}
 \pagestyle{fancy}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[]{amsfonts}
 \usepackage{amsmath}
 \usepackage{color}
@@ -26,7 +26,7 @@
 
 % define the title
 \author{Frank Richter 68278\\frank.richter@gmail.com}
-\title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers f�r eine auf Cg basierende Sprache zur Programmierung von Graphikkarten \normalfont}
+\title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Graphikkarten \normalfont}
 \date{\today}
 
 \begin{document}
@@ -43,7 +43,7 @@
 % Zeilenabstand 1.5
 \renewcommand{\baselinestretch}{1.50}\normalsize
 
-% Helvetoca f�r Section-Titel
+% Helvetoca für Section-Titel
 \allsectionsfont{\usefont{OT1}{phv}{b}{n}\selectfont}
 
 % Different font in captions
@@ -61,7 +61,7 @@
   \vskip\belowcaptionskip}
 \makeatother   % Cancel the effect of \makeatletter
 
-% Fussnoten: alle Zeilen einr�cken
+% Fussnoten: alle Zeilen einrücken
 \makeatletter
 \newlength{\myFootnoteWidth}
 \newlength{\myFootnoteLabel}
@@ -103,6 +103,257 @@
 \cleardoublepage
 \pagenumbering{arabic}
 \newcommand\todo[1]{\footnote{\textcolor{red}{TODO: #1}}}
+
+\section{Zielstellung}
+
+\section{Sprachspezifikation}
+
+Dieser Abschnitt beschreibt konkret eine Ein-Programm-Shadingsprache und geht zuerst auf Eckpunkte der Syntax und danach
+auf allgemeinere Aspekte (z.B. wie die Mischung von Operationen verschiedener Berechnungsfrequenzen in verschiedenen Ausführungszweigen) ein.
+
+\subsection{Anforderungen an die Sprache}
+
+Auf höherer Ebene soll die Sprache folgenden Anforderungen erfüllen:
+\begin{itemize}
+\item \emph{C-ähnliche Syntax}: Um ein schnelles Einarbeiten und Verständnis zu ermöglichen soll sich die Syntax an der der verbreiteten
+Shadingsprachen Cg, DirectX HLSL und OpenGL GLSL orientieren. Diese wiederum sind C-verwandt.
+Weitere syntaktische Anleihen können auch von passenden Stellen der anderen besprochenen  Shadingsprachen übernommen werden.
+\item \emph{Moderne Entwicklungen berücksichtigen}: Die neuesten der C-ähnlichen Sprachen sind Java und C\#. Wenn angebracht sollen
+Konzepte aus diesen übernommen werden.
+\item \emph{Vereinfachungen für Shading}: Die Sprache soll Elemente besitzen, die das Erstellen von Shading-Programmen
+vereinfachen. \item \emph{Keine Bindung an bestimmte Architektur}: Die Sprache selbst soll keine bestimmte darunterliegende Hardwarearchitektur
+vorraussetzen; auch keine Architektur-Klasse wie z.B. "`Grafikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
+Auch soll die Sprache insgesamt weniger hardwarenah als C sein.
+\end{itemize}
+
+% Mehr?
+
+Aus diesen Anforderungen leiten sich die folgenden spezifischen Kriterien ab:
+
+\begin{itemize}
+\item \emph{Syntax}: Die Syntax soll im Wesentlichen auf C basieren. Es sollen Elemente ausgelassen werden, die eher 
+unintuitiv sind und selten praktisch verwendet werden, wie die Oktalnotation bei Integerliteralen.
+Syntaxerweiterungen sollten Inkonsistenzen oder Auslassungen betreffen - so gibt es bei C z.B. 
+nur bei der Definition einer Array-Variable die Möglichkeit, dieser mehrere Element auf einmal zuzuweisen.
+Bei einer regulären Zuweisung ist dies bei C nicht möglich, soll aber in der neuen Sprache ermöglicht werden.
+\item \emph{Zeichensatz}: ANSI C basiert auf dem ASCII-Zeichensatz. % TODO Ref
+Mit Unicode gibt es es einen Zeichensatz, der alle weltweit geschriebenen Sprachen umfasst; dieser
+hat auch in den Definitionen von Programmiersprachen Einzug gehalten % TODO Ref C#
+und erlaubt z.B. Bezeichner in der Muttersprache des Programmierers zu deklarieren.
+Aus technischer Sicht gibt es keinen Grund, nicht Unicode als Basis für den Zeichensatz zu benutzen.
+\item \emph{Überdeckung von Bezeichnern}: Bei C\# können Bezeichner nicht anderer Bezeichner überdecken. Dies
+verhindert eine Klasse von Fehlern, bei der durch Überdeckung nicht die Variable benutzt wird, die der
+Programmierer angenommen hat. Das Verbot der Überdeckung soll übernommen werden.
+\item \emph{Shadingspezifische Elemente}: Es sollen Vektor- und Matrixtypen vorhanden sein.
+\item \emph{Keine Bindung an bestimmte Architektur}: Cg besitzt syntaktische Elemente, um bestimmte Variablen an
+von der Grafikhardware bereitgestellte Werte zu binden. Auch gibt es einen Mechanismus zur Überladung von Funktionen
+für verschiedene Zielhardware. Solche Elemente sollen \emph{nicht} in der neuen Sprache enthalten sein.
+\item \emph{Maschinenferne}: Dynamische Verweise und 
+Zeiger werden nicht unterstützt. Statische Verweise (z.B. für Ausgabevariablen bei Funktionen) sollten aber unterstützt
+werden.
+\end{itemize}
+
+\newpage
+
+\subsection{Allgemeine Aspekte und Probleme}
+
+\subsubsection{Programmumgebung}
+
+Ein Shaderprogramm läuft praktisch immer im Kontext einer Anwendung, die Parameter direkt oder indirekt (wie
+Vertexdaten) an das Shaderprogramm übergibt.
+Bei den Parametern der Hauptfunktion des Shaderprogramms, welche von diesem selbst nicht definiert werden,
+wird deshalb davon ausgegangen, das diese von der umgebenden Anwendung spezifiziert werden.
+
+\subsubsection{Definition Berechnungsfrequenz}
+\label{Berechnungsfrequenz}
+
+Die \emph{Berechnungsfrequenz eines Ausdrucks} beschreibt, wie oft sich der Wert des gegebenen Ausdrucks, auf alle Ausführungen eines
+Programmes gesehen, ändert.
+
+Die kleinstmögliche Frequenz besitzen statische Konstanten.
+
+Die höchstmögliche Frequenz besitzen Ausdrücke, die bei jeder Auswertung einen anderen Wert liefern.
+\emph{(Beispiel: Werte aus einer externen Datenquelle.)}
+
+\subsubsection{Berechnungsfrequenzen bei Shading}
+
+Bei Shadingsprachen sind folgende speziellen Berechnungsfrequenzen vorhanden:
+\begin{itemize}
+\item \emph{Mesh-Frequenz}: Ausdruck ist konstant während der Darstellung eines Gitternetzes, aber nicht zwischen
+verschiedenen Gitternetzen oder Darstellungsläufen. \emph{(Beispiel: Position in Weltkoordinaten.)}
+\item \emph{Vertex-Frequenz}: Ausdruck ändert sich von Vertex zu Vertex. \emph{(Beispiel: Texturkoordinaten.)}
+\item \emph{Fragment-Frequenz}: Ausdruck ändert sich von Fragment zu Fragment. \emph{(Beispiel: Aus Textur gelesener Wert.)}
+\end{itemize}
+
+Als Besonderheit kommt hinzu, dass aus Daten mit \emph{Vertex-Frequenz} durch lineare Interpolation Daten mit
+\emph{Fragment-Frequenz} gewonnen werden. \emph({Beispiel: für Auslesen einer Textur verwendete Koordinaten)}
+Dies führt dazu, dass Ausdrücke, die nach den folgenden Regeln
+eigentlich Fragment-Frequenz besitzen müssten, Vertex-Frequenz besitzen, unter der Bedingung, dass
+das Ergebnis einer linearen Interpolation des Gesamtausdrucks äquivalent zum Ergebnis bei linearer
+Interpolation aller Teilausdrücke (mit jeweils immer gleicher Gewichtung) ist.
+
+\subsubsection{Formulierte Frequenz}
+
+Zwar soll die Berechnungsfrequenz von Operationen soweit möglich automatisch bestimmt werden, trotzdem muss eine Frequenz
+gewählt werden, in der alle Operationen vorerst formuliert werden.
+
+Betrachtet man "`niedrige"' Frequenzen wie Berechnungen per Vertex, so erkennt man, dass sich damit Berechnungen höherer
+Frequenz (also Fragmente) schlecht darstellen lassen. Betrachtet man Berechnungen auf Fragment-Ebene, so lassen sich
+unter Umständen Berechnungen niedriger Frequenz ableiten (z.B. wenn beide Operatoren einer Operation nur von Vertexattributen
+oder Konstanten abhängen). Shaderprogramme sollten also grundsätzlich in "`Fragmentfrequenz"' formuliert werden.
+
+\subsubsection{Bestimmung der Berechnungsfrequenz}
+
+\paragraph{Variablen:} Variablen besitzen eine zugeordnete Berechnungsfrequenz, die angibt wie oft sich der enthaltene Wert ändert.
+Diese Frequenz entspricht der Frequenz des zuletzt zugewiesenen Ausdrucks (oder undefiniert wenn noch keine Zuweisung stattfand).
+
+\paragraph{Arrays:} Ist die Größe eines Arrays statisch bekannt kann jedes Element als einzelne Variable gesehen werden.
+Ist die Größe eines Arrays nicht statisch bekannt so muss für ein Element die höchste möglicherweise zugewiesene
+Frequenz angenommen werden.
+
+\paragraph{Ausdrücke:} Die Berechnungsfrequenz eines Wertes eines Ausdrucks ergibt sich aus der kleinsten gemeinsamen Frequenz
+der in dem Ausdruck enthaltenen Teilausdrücke \emph{nach} möglicher Anwendung von Umformungen zur Vereinfachung/Optimierung --
+sofern keine \emph{Spezialregeln} greifen (siehe Unten).
+
+\subsubsection{Spezialregeln für Berechnungsfrequenzen von Ausdrücken}
+
+\paragraph{Manuelle Bestimmung:}
+Bei einigen Ausdrücken kann eine Frequenz nicht automatisch abgeleitet werden, insbesondere bei Eingabeparametern aus der
+Umgebung. Es wird davon ausgegangen, dass die umgebende Anwendung dem Compiler mitteilt, mit welcher Frequenz ein Eingabeparameter
+von der Anwendung geändert wird.\\
+
+Die Beschaffenheit der Daten beim Shading erlaubt
+weitere
+%einige
+Spezialfälle:
+\paragraph{Lineare Operationen:} Vertexattribute werden über die Fragmente eines Dreiecks linear interpoliert; deswegen ist es
+erlaubt, lineare Operationen auf Vertex-Frequenz zu vollziehen, wenn alle Operatoren mit Vertex-Frequenz oder darunter
+berechnet wurden.
+
+\paragraph{Spezielle Eigenschaften:} "`Spezialwissen"' über mögliche Werte kann benutzt werden, um die Frequenz eines
+Ausdrucks zu bestimmen, insbesondere wenn diese niedriger als die normalerweise bestimme Frequenz wäre.
+\begin{itemize}
+\item \emph{Einheitsvektoren:} Einheitsvektoren werden oft in Shadingprogrammen benutzt. Einheitsvektoren können aber 
+nicht linear interpoliert werden, da dies einen Verlust der Einheitslänge zur Folge haben kann. Trotzdem kann es effizienter
+sein, einen Einheitsvektor mit Vertex-Frequenz zu berechnen, über die Fragmente linear zu interpolieren und per Fragment
+zu normalisieren, als den Vektor vollständig mit Fragment-Frequenz zu berechnen.
+\end{itemize}
+
+\newpage
+\section{Spezifikation}
+
+\emph{Anmerkung:} 
+Die Syntaxbeschreibung erfolgt auf der Ebene lexikalischer Einheiten. 
+Deren Regeln sind in \ref{Lexikalische Einheiten} beschrieben. 
+
+\newcommand\Gnt[1]{\emph{#1}}
+\newcommand\Gt[1]{\texttt{#1}}
+\newcommand\Gspecial[1]{#1}
+\newcommand\attr[1]{\texttt{#1}}
+\newcommand\kw[1]{\texttt{#1}}
+\newcommand\op[1]{\glq\texttt{#1}\grq}
+\newcommand\pmbr[1]{\texttt{#1}}
+\newcommand\ident[1]{\texttt{#1}}
+\newcommand\plus{+}
+\newcommand\kwMlcStart{\kw{/*}}
+\newcommand\kwMlcEnd{\kw{*/}}
+\input{grammar}
+
+\section{Standardumgebung}
+
+\subsection{Vordefinierte Funktionen}
+
+\subsubsection{Skalarprodukt}
+
+\texttt{\emph{<VektorN>} dot (\emph{<VektorN>} a, \emph{<VektorN} b);}
+
+\ident{dot} berechnet das Skalarprodukt zweier Vektoren. \ident{\emph{<VektorN>}}
+muss dabei ein Vektor eines numerischen Typs sein (siehe~\ref{typ_vektor_int}).
+
+\subsubsection{Vektorprodukt}
+\texttt{float3 cross (float3 a, float3 b);}\\
+\texttt{int3 cross (int3 a, int3 b);}\\
+\texttt{unsigned int3 cross (unsigned int3 a, unsigned int3 b);}
+
+\ident{cross} berechnet das Vektorprodukt zweier Dreikomponentenvektoren.
+
+\subsubsection{Matrixmultiplikation}
+
+\texttt{\emph{<MatrixLxN>} mul (\emph{<MatrixLxM>} a, \emph{<MatrixMxN>} b);}\\
+\texttt{\emph{<VektorN>} mul (\emph{<VektorM>} a, \emph{<MatrixMxN>} b);}\\
+\texttt{\emph{<VektorL>} mul (\emph{<MatrixLxM>} a, \emph{<VektorM>} b);}
+
+\ident{mul} multipliziert zwei Matrizen miteinander. Der Basistyp aller
+übergebenen Matrizen muss dabei gleich sein. Nur numerische Basistypen
+sind erlaubt.
+
+Als Sonderfall ist es möglich, einen Vektor an Stelle eines der Matrixparameter zu
+übergeben. Das Ergebnis ist äquivalent zu einer Matrixmultiplikation bei der
+aus dem Vektor eine einzeilige bzw. einspaltige Matrix erstellt wurde. Das
+Ergebnis ist eine einzeilige bzw. einspaltige Matrix, diese eine Zeile bzw.
+Spalte wird als Vektor zurückgegeben. Der Basistyp der übergebenen Matrix
+und des Vektors muss dabei gleich sein. Nur numerische Basistypen sind erlaubt.
+
+\subsubsection{Normalisierung}
+
+\texttt{\emph{<VektorN>} normalize (\emph{<VektorN>} v);}
+
+\ident{normalize} gibt den Einheitsvektor zurück, der in die gleiche Richtung wie
+\ident{v} zeigt. Das Ergebnis ist undefiniert wenn \ident{v} die Länge $0$ hat.
+\ident{\emph{<VektorN>}} muss dabei ein Vektor eines numerischen Typs sein.
+
+\subsubsection{Euklidische Länge}
+
+\texttt{float length (\emph{<VektorN>} v);}
+
+\ident{length} gibt die euklidische Länge des Vektors \ident{v} zurück.
+\ident{\emph{<VektorN>}} muss dabei ein Vektor eines numerischen Typs sein.
+
+\subsubsection{Texturfunktionen}
+\label{Texturfunktionen}
+
+\texttt{float4 tex1D (sampler1D tex, \emph{<Vektor1>} coord);}\\
+\texttt{float4 tex2D (sampler2D tex, \emph{<Vektor2>} coord);}\\
+\texttt{float4 tex3D (sampler3D tex, \emph{<Vektor3>} coord);}\\
+\texttt{float4 texCUBE (samplerCUBE tex, \emph{<Vektor3>} coord);}
+
+Die \ident{tex}*-Funktionen veranlassen das Auslesen der \ident{tex} entsprechenden
+Textureinheit mit den Koordinaten \ident{coord}.
+
+\ident{coord} muss dabei ein Vektor eines numerischen Typs und der angegebenen
+Komponentenzahl sein.
+
+Texturen verschiedener
+Dimensionalität müssen in Shadingprogrammen verschiedenartig angesprochen werden;
+dies bedingt die verschiedenen Texturfunktionen, die jeweils einen speziellen Texturtyp
+reflektieren.
+
+\subsubsection{Minimum}
+
+\texttt{\emph{<Basistyp>} min (\emph{<Basistyp>} a, \emph{<Basistyp>} b);}\\
+\texttt{\emph{<VektorN>} min (\emph{<VektorN>} a, \emph{<VektorN>} b);}
+
+\ident{min} gibt das Minimum zweier numerischer Werte bzw. das komponentenweise
+Minimum zweier numerischer Vektoren zurück (analog der Funktion binärer Ausdrücke,
+siehe~\ref{Binaere Ausdruecke}).
+
+\subsubsection{Maximum}
+
+\texttt{\emph{<Basistyp>} max (\emph{<Basistyp>} a, \emph{<Basistyp>} b);}\\
+\texttt{\emph{<VektorN>} max (\emph{<VektorN>} a, \emph{<VektorN>} b);}
+
+\ident{max} gibt das Maximum zweier numerischer Werte bzw. das komponentenweise
+Maximum zweier numerischer Vektoren zurück (analog der Funktion binärer Ausdrücke,
+siehe~\ref{Binaere Ausdruecke}).
+
+\subsubsection{Potenz}
+
+\texttt{float pow (float basis, float exp);}\\
+
+\ident{pow} gibt den für $\mathit{basis}^\mathit{exp}$ berechneten Wert zurück.
+
+
+\section{Ausblick}
 
 \cleardoublepage
 \appendix
