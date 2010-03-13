@@ -1,0 +1,112 @@
+\documentclass[twoside,a4paper,fleqn,12pt]{article}
+\usepackage{fancyhdr,a4wide,graphicx}
+\usepackage[paper=a4paper,left=20mm,right=20mm,top=25mm,bottom=25mm]{geometry}
+\usepackage{ngerman}
+\pagestyle{fancy}
+\usepackage[latin1]{inputenc}
+\usepackage[]{amsfonts}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{colortbl}
+\usepackage{mathptmx}
+\usepackage[scaled=.90]{helvet}
+\usepackage{courier}
+\usepackage{verbatim}
+\usepackage{sectsty}
+\usepackage{listings}
+\usepackage{scalefnt}
+\usepackage{setspace}
+
+\definecolor{darkred}{rgb}{.5,0,0}
+\definecolor{darkblue}{rgb}{0,0,.5}
+\usepackage[plainpages=false,pdfpagelabels,colorlinks=true,urlcolor=darkblue,pagecolor=darkred,citecolor=darkred,linkcolor=darkred]{hyperref}
+%\newcommand\url[1]{\texttt{#1}}
+
+\lstset{basicstyle=\ttfamily\small,lineskip=-0.5em}
+
+% define the title
+\author{Frank Richter 68278\\frank.richter@gmail.com}
+\title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Graphikkarten \normalfont}
+\date{\today}
+
+\begin{document}
+
+\newcommand\btxandlong{und}
+\newcommand\btxandshort{u}
+\newcommand\Btxinlong{In}
+\newcommand\Btxinshort{I}
+\newcommand\btxpageslong{Seiten}
+\newcommand\btxetalshort{et al}
+\newcommand\btxeditionlong{Auflage}
+\bibliographystyle{mystyle}
+
+% Zeilenabstand 1.5
+\renewcommand{\baselinestretch}{1.50}\normalsize
+
+% Helvetoca für Section-Titel
+\allsectionsfont{\usefont{OT1}{phv}{b}{n}\selectfont}
+
+% Different font in captions
+\newcommand{\captionstyle}{\small\centering}
+
+\makeatletter  % Allow the use of @ in command names
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{{\captionstyle #1: #2}}%
+  \ifdim \wd\@tempboxa >\hsize
+    {\captionstyle #1: #2\par}
+  \else
+    \hbox to\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\makeatother   % Cancel the effect of \makeatletter
+
+% Fussnoten: alle Zeilen einrücken
+\makeatletter
+\newlength{\myFootnoteWidth}
+\newlength{\myFootnoteLabel}
+\setlength{\myFootnoteLabel}{1.2em}%  <-- can be changed to any valid value
+\renewcommand{\@makefntext}[1]{%
+  \setlength{\myFootnoteWidth}{\columnwidth}%
+  \addtolength{\myFootnoteWidth}{-\myFootnoteLabel}%
+  \noindent\makebox[\myFootnoteLabel][r]{\@makefnmark\ }%
+  \parbox[t]{\myFootnoteWidth}{#1}%
+}
+\makeatother
+
+% ---------- normal title ---------- %
+\titlepage
+\maketitle
+\thispagestyle{empty}
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+% ---------- Fancyheader ---------- %
+\fancyhead[L]{}
+\fancyhead[R]{}
+\fancyfoot[C]{\today}
+\fancyfoot[R]{\footnotesize \thepage{}}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\headheight}{24pt}
+
+% generates the title
+
+
+% ---------- table of contents ---------- %
+\newpage
+\pagenumbering{roman}
+%\addcontentsline{toc}{section}{Inhaltsverzeichnis}
+\pdfbookmark[1]{Inhaltsverzeichnis}{myPDFtocLabel}
+\tableofcontents
+
+\cleardoublepage
+\pagenumbering{arabic}
+\newcommand\todo[1]{\footnote{\textcolor{red}{TODO: #1}}}
+
+\cleardoublepage
+\appendix
+\bibliography{thesis_de}
+\addcontentsline{toc}{section}{Literatur}
+
+\end{document}
