@@ -103,10 +103,26 @@
 \cleardoublepage
 \pagenumbering{arabic}
 \newcommand\todo[1]{\footnote{\textcolor{red}{TODO: #1}}}
+\newcommand\fcite[1]{\footnote{\cite{#1}}}
+\newcommand\fciteX[2]{\footnote{\cite{#1}, #2}}
 
 \section{Zielstellung}
 
+In der Echtzeit-3D-Graphik werden für 3D-Objekte überwiegend Dreiecksnetze\footnote{engl. ``triangle mesh'' und kürzer ``mesh''; siehe z.B. \cite{watt_de}}
+verwendet. Dies spiegelt sich in dem Aufbau von 3D-Graphikprozessoren~("`GPU"') wie auch
+den Programmierschnittstellen\fciteX{glspec4}{Abb. 2.1} \fciteX{dx10}{``Pipeline Stages''} wieder. Insbesondere bei der Programmierung der GPU müssen
+separate Vertex- und Fragmentprogramme % Ref oder Erklärung was Vertex/Fragment
+erstellt werden. Diese Aufteilung muss vom Programmierer manuell vorgenommen werden.
+
+Ziel dieser Arbeit ist es, einen Compiler zu entwickeln, der die Aufteilung in Vertex- und Fragmentprogramme automatisch vornimmt,
+ohne dass der Programmierer explizit angeben muss, auf welcher der Funktionseinheiten ein bestimmter Befehl ausgeführt wird.
+Die zu compilierende Sprache wird in Abschnitt~\ref{langspec} spezifiziert. Die Compilerimplementierung wird in Abschnitt~\ref{implementation}
+beschrieben.
+
+% Nochmal Abschnitt mit kurzer Beschreibung wichtiger Konzepte? (meshes, Vertices vs Fragmente, ...)
+
 \section{Sprachspezifikation}
+\label{langspec}
 
 Dieser Abschnitt beschreibt konkret eine Ein-Programm-Shadingsprache und geht zuerst auf Eckpunkte der Syntax und danach
 auf allgemeinere Aspekte (z.B. wie die Mischung von Operationen verschiedener Berechnungsfrequenzen in verschiedenen Ausführungszweigen) ein.
@@ -122,7 +138,7 @@ Weitere syntaktische Anleihen können auch von passenden Stellen der anderen bes
 Konzepte aus diesen übernommen werden.
 \item \emph{Vereinfachungen für Shading}: Die Sprache soll Elemente besitzen, die das Erstellen von Shading-Programmen
 vereinfachen. \item \emph{Keine Bindung an bestimmte Architektur}: Die Sprache selbst soll keine bestimmte darunterliegende Hardwarearchitektur
-vorraussetzen; auch keine Architektur-Klasse wie z.B. "`Grafikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
+vorraussetzen; auch keine Architektur-Klasse wie z.B. "`Graphikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
 Auch soll die Sprache insgesamt weniger hardwarenah als C sein.
 \end{itemize}
 
@@ -146,7 +162,7 @@ verhindert eine Klasse von Fehlern, bei der durch Überdeckung nicht die Variabl
 Programmierer angenommen hat. Das Verbot der Überdeckung soll übernommen werden.
 \item \emph{Shadingspezifische Elemente}: Es sollen Vektor- und Matrixtypen vorhanden sein.
 \item \emph{Keine Bindung an bestimmte Architektur}: Cg besitzt syntaktische Elemente, um bestimmte Variablen an
-von der Grafikhardware bereitgestellte Werte zu binden. Auch gibt es einen Mechanismus zur Überladung von Funktionen
+von der Graphikhardware bereitgestellte Werte zu binden. Auch gibt es einen Mechanismus zur Überladung von Funktionen
 für verschiedene Zielhardware. Solche Elemente sollen \emph{nicht} in der neuen Sprache enthalten sein.
 \item \emph{Maschinenferne}: Dynamische Verweise und 
 Zeiger werden nicht unterstützt. Statische Verweise (z.B. für Ausgabevariablen bei Funktionen) sollten aber unterstützt
