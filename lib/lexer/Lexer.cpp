@@ -59,9 +59,6 @@ namespace s1
     NextChar();
     // ... and one to set the actual current char
     NextChar();
-    // Skip BOM
-    if (currentChar == 0xfeff)
-      NextChar();
     
     if ((bool)*this)
       ++(*this);
