@@ -334,7 +334,8 @@ namespace s1
 	    && (dimensions[0] <= '4'))
 	{
 	  // It's a vector!
-	  currentToken.type = (TokenType)(typeCandidate | kwfVector);
+	  currentToken.type = typeCandidate;
+	  currentToken.typeType = Vector;
 	  currentToken.dimension1 = dimensions[0] - '1' + 1;
 	}
 	else if ((dimensions.length() == 3)
@@ -345,7 +346,8 @@ namespace s1
 	    && (dimensions[2] <= '4'))
 	{
 	  // It's a matrix!
-	  currentToken.type = (TokenType)(typeCandidate | kwfMatrix);
+	  currentToken.type = typeCandidate;
+	  currentToken.typeType = Matrix;
 	  currentToken.dimension1 = dimensions[0] - '1' + 1;
 	  currentToken.dimension2 = dimensions[2] - '1' + 1;
 	}

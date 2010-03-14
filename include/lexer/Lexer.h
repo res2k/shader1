@@ -124,16 +124,13 @@ namespace s1
       kwIf,
       kwElse,
       
-      kwWhile,
+      kwWhile
       /** @} */
-      
-      /**\name Keyword flags
-       * @{ */
-      /// Keyword is a vector type identifier
-      kwfVector = 0x1000,
-      /// Keyword is a matrix type identifier
-      kwfMatrix = 0x2000
-      /** @} */
+    };
+    
+    enum TypeKeywordType
+    {
+      Normal, Vector, Matrix
     };
     
     /// Token object
@@ -143,6 +140,8 @@ namespace s1
       TokenType type;
       /// Input string for this token
       UnicodeString tokenString;
+      /// Keyword type for types
+      TypeKeywordType typeType;
       /// For vectors: vector dimension; For matrices: number of columns
       int dimension1;
       /// For matrices: number of rows

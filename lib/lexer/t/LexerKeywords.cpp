@@ -51,7 +51,8 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.type, s1::Lexer::kwInt | s1::Lexer::kwfVector);
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::kwInt);
+    TS_ASSERT_EQUALS (token.typeType, s1::Lexer::Vector);
     TS_ASSERT_EQUALS (token.dimension1, 2);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
@@ -59,7 +60,8 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.type, s1::Lexer::kwInt | s1::Lexer::kwfMatrix);
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::kwInt);
+    TS_ASSERT_EQUALS (token.typeType, s1::Lexer::Matrix);
     TS_ASSERT_EQUALS (token.dimension1, 3);
     TS_ASSERT_EQUALS (token.dimension2, 2);
     // Trying to forward never throws
