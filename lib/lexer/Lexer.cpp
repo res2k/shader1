@@ -33,7 +33,7 @@ namespace s1
 {
   Lexer::Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler)
    : inputChars (inputChars), errorHandler (errorHandler),
-     currentToken (EndOfFile), currentChar (-1), putback (0)
+     currentToken (EndOfFile), nextChar (-1)
   {
     keywords[UnicodeString ("return")] 		= kwReturn;
     keywords[UnicodeString ("true")] 		= kwTrue;
@@ -55,16 +55,16 @@ namespace s1
     keywords[UnicodeString ("else")] 		= kwElse;
     keywords[UnicodeString ("while")] 		= kwWhile;
     
-    if (inputChars)
-    {
+    // One call to fill 'nextChar'
+    NextChar();
+    // ... and one to set the actual current char
+    NextChar();
+    // Skip BOM
+    if (currentChar == 0xfeff)
       NextChar();
-      // Skip BOM
-      if (currentChar == 0xfeff)
-	NextChar();
     
-      if ((bool)*this)
-	++(*this);
-    }
+    if ((bool)*this)
+      ++(*this);
   }
    
   Lexer::operator bool() const throw()
@@ -100,19 +100,16 @@ namespace s1
       case '}': currentToken = Token (BraceR, currentChar); 	NextChar(); return *this;
       case '.':
 	{
-	  UChar32 oldChar = currentChar;
-	  NextChar();
-	  if ((currentChar >= '0') && (currentChar <= '9'))
+	  UChar32 next = PeekChar();
+	  if ((next >= '0') && (next <= '9'))
 	  {
 	    // '.' is start of a number
-	    PutCharBack (currentChar);
-	    // '.' must be consumed again by numeric parsing code below
-	    currentChar = '.';
 	    break;
 	  }
 	  else
 	  {
 	    // '.' is member operator
+	    NextChar();
 	    currentToken = Token (Member, '.'); 
 	    return *this;
 	  }
@@ -169,19 +166,17 @@ namespace s1
       case '+': currentToken = Token (Plus, currentChar); 	NextChar(); return *this;
       case '-':
 	{
-	  NextChar();
-	  if (((currentChar >= '0') && (currentChar <= '9')) || (currentChar == '.'))
+	  UChar32 next = PeekChar();
+	  if (((next >= '0') && (next <= '9')) || (next == '.'))
 	  {
 	    // '-' is start of a number
-	    PutCharBack (currentChar);
-	    // '-' must be consumed again by numeric parsing code below
-	    currentChar = '-';
 	    break;
 	  }
 	  else
 	  {
 	    // '-' is minus operator
 	    currentToken = Token (Minus, '-'); 
+	    NextChar();
 	    return *this;
 	  }
 	}
@@ -231,34 +226,34 @@ namespace s1
       case ':': currentToken = Token (TernaryElse, currentChar);NextChar(); return *this;
       case '&':
 	{
-	  NextChar();
-	  if (currentChar == '&')
+	  UChar32 next = PeekChar();
+	  if (next == '&')
 	  {
 	    currentToken = Token (LogicAnd, "&&");
+	    // Skip first & second '&'
+	    NextChar();
 	    NextChar();
 	  }
 	  else
 	  {
 	    // Lone '&' not a valid token. Let stray character handling deal with it
-	    PutCharBack (currentChar);
-	    currentChar = '&';
 	    break;
 	  }
 	}
 	return *this;
       case '|':
 	{
-	  NextChar();
-	  if (currentChar == '|')
+	  UChar32 next = PeekChar();
+	  if (next == '|')
 	  {
 	    currentToken = Token (LogicOr, "||");
+	    // Skip first & second '|'
+	    NextChar();
 	    NextChar();
 	  }
 	  else
 	  {
 	    // Lone '|' not a valid token. Let stray character handling deal with it
-	    PutCharBack (currentChar);
-	    currentChar = '|';
 	    break;
 	  }
 	}
@@ -367,10 +362,11 @@ namespace s1
     tokenStr += currentChar;
     if (currentChar == '0')
     {
-      NextChar();
-      if ((currentChar == 'x') || (currentChar == 'X'))
+      UChar32 next = PeekChar();
+      if ((next == 'x') || (next == 'X'))
       {
 	// Hex number
+	NextChar();
 	tokenStr += currentChar;
 	NextChar();
 	while (((currentChar >= '0') && (currentChar <= '9'))
@@ -382,11 +378,6 @@ namespace s1
 	}
 	currentToken = Token (Numeric, tokenStr);
 	return;
-      }
-      else
-      {
-	PutCharBack (currentChar);
-	currentChar = '0';
       }
     }
 
@@ -408,13 +399,12 @@ namespace s1
 	// Force to 'true' since decimal exponents are not allowed
 	hasDecimal = true;
 	// Accept '-' again, once
-	NextChar();
-	if (currentChar == '-')
+	UChar32 next = PeekChar();
+	if (next == '-')
 	{
+	  NextChar();
 	  tokenStr += currentChar;
 	}
-	else
-	  PutCharBack (currentChar);
       }
       else if ((currentChar >= '0') && (currentChar <= '9'))
       {
@@ -432,40 +422,27 @@ namespace s1
 
   void Lexer::NextChar()
   {
-    // Handle "putback" character
-    if (putback != 0)
-    {
-      currentChar = putback;
-      putback = 0;
-      return;
-    }
-    
+    currentChar = nextChar;
     if (inputChars)
     {
       try
       {
-	currentChar = *inputChars;
+	nextChar = *inputChars;
       }
       catch (UnicodeStreamInvalidCharacterException& e)
       {
 	// Signal error handler ...
 	errorHandler.InputInvalidCharacter();
 	// ... and set character to the 'replacer' one
-	currentChar = 0xfffd;
+	nextChar = 0xfffd;
       }
       ++inputChars;
     }
     else
     {
       // If at the end of input, return -1
-      currentChar = -1;
+      nextChar = -1;
     }
   }
 
-  void Lexer::PutCharBack (UChar32 ch)
-  {
-    assert (putback == 0);
-    putback = ch;
-  }
-  
 } // namespace s1

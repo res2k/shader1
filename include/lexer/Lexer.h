@@ -190,16 +190,11 @@ namespace s1
     /// Current character. Set by NextChar().
     UChar32 currentChar;
     /// Read next character from input stream.
-    void NextChar();
-    /**
-     * Put back a single character; this will be used as the "next" character
-     * once.
-     * Used in some rare cases where a character may need to be consumed again,
-     * by a different code path, after it has been consumed by another.
-     */
-    void PutCharBack (UChar32 ch);
-    /// "Put back" character, set by PutCharBack()
-    UChar32 putback;
+    void NextChar ();
+    /// Next character in input stream. Set by NextChar().
+    UChar32 nextChar;
+    /// Look ahead one character
+    UChar32 PeekChar () { return nextChar; }
   };
 } // namespace s1
 
