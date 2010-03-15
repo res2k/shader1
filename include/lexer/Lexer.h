@@ -147,14 +147,14 @@ namespace s1
       /// For matrices: number of rows
       int dimension2;
       
-      Token () : type (Invalid), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type) : type (type), dimension1 (0), dimension2 (0) {}
+      Token () : type (Invalid), typeType(Normal), dimension1 (0), dimension2 (0) {}
+      Token (TokenType type) : type (type), typeType(Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const UnicodeString& tokenString)
-       : type (type), tokenString (tokenString), dimension1 (0), dimension2 (0) {}
+       : type (type), tokenString (tokenString), typeType(Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, UChar32 tokenChar)
-       : type (type), tokenString (tokenChar), dimension1 (0), dimension2 (0) {}
+       : type (type), tokenString (tokenChar), typeType(Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const char* tokenString)
-       : type (type), tokenString (tokenString), dimension1 (0), dimension2 (0) {}
+       : type (type), tokenString (tokenString), typeType(Normal), dimension1 (0), dimension2 (0) {}
     };
     
     Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler);
@@ -190,10 +190,11 @@ namespace s1
     UChar32 currentChar;
     /// Read next character from input stream.
     void NextChar ();
+    enum { LookAhead = 2 };
     /// Next character in input stream. Set by NextChar().
-    UChar32 nextChar;
-    /// Look ahead one character
-    UChar32 PeekChar () { return nextChar; }
+    UChar32 nextChar[LookAhead];
+    /// Look ahead to a character
+    UChar32 PeekChar (int la = 0) { return nextChar[la]; }
   };
 } // namespace s1
 

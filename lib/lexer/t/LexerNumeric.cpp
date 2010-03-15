@@ -12,7 +12,7 @@ class LexerNumericTestSuite : public CxxTest::TestSuite
 public:
   void testNumeric(void)
   {
-    std::istringstream in ("0 0xabc 0x12AB -0 0.0 .0 -.0 0.0 .1 -.1 1e2 1e-2 .1E3 1.E-4 ");
+    std::istringstream in ("0 0xabc 0x12AB -0 0.0 .0 -.0 0.0 .1 -.1 1e2 1e-2 .1E3 1.E-4 -.3e2");
     s1::UnicodeStream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -188,6 +188,80 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.type, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, UnicodeString ("e2"));
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Still at end
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::EndOfFile);
+  }
+  
+  void testNumericInvalid6(void)
+  {
+    std::istringstream in ("-.e2");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token;
+
+    // Should report token available
+    TS_ASSERT_EQUALS ((bool)lexer, true);
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "numeric"
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Minus);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "member"
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Member);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.tokenString, UnicodeString ("e2"));
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Still at end
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::EndOfFile);
+  }
+  
+  void testNumericInvalid7(void)
+  {
+    std::istringstream in ("-.x");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token;
+
+    // Should report token available
+    TS_ASSERT_EQUALS ((bool)lexer, true);
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "numeric"
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Minus);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "member"
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Member);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token.type, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.tokenString, UnicodeString ("x"));
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 

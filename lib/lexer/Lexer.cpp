@@ -33,7 +33,7 @@ namespace s1
 {
   Lexer::Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler)
    : inputChars (inputChars), errorHandler (errorHandler),
-     currentToken (EndOfFile), nextChar (-1)
+     currentToken (EndOfFile)
   {
     keywords[UnicodeString ("return")] 		= kwReturn;
     keywords[UnicodeString ("true")] 		= kwTrue;
@@ -55,8 +55,9 @@ namespace s1
     keywords[UnicodeString ("else")] 		= kwElse;
     keywords[UnicodeString ("while")] 		= kwWhile;
     
-    // One call to fill 'nextChar'
-    NextChar();
+    // Fill lookahead characters
+    for (int i = 0; i < LookAhead; i++)
+      NextChar();
     // ... and one to set the actual current char
     NextChar();
     
@@ -164,7 +165,10 @@ namespace s1
       case '-':
 	{
 	  UChar32 next = PeekChar();
-	  if (((next >= '0') && (next <= '9')) || (next == '.'))
+	  UChar32 next2 = PeekChar(1);
+	  if (((next >= '0') && (next <= '9'))
+	      || ((next == '.')
+		&& ((next2 >= '0') && (next2 <= '9'))))
 	  {
 	    // '-' is start of a number
 	    break;
@@ -421,26 +425,28 @@ namespace s1
 
   void Lexer::NextChar()
   {
-    currentChar = nextChar;
+    currentChar = nextChar[0];
+    for (int i = 1; i < LookAhead; i++)
+      nextChar[i-1] = nextChar[i];
     if (inputChars)
     {
       try
       {
-	nextChar = *inputChars;
+	nextChar[LookAhead-1] = *inputChars;
       }
       catch (UnicodeStreamInvalidCharacterException& e)
       {
 	// Signal error handler ...
 	errorHandler.InputInvalidCharacter();
 	// ... and set character to the 'replacer' one
-	nextChar = 0xfffd;
+	nextChar[LookAhead-1] = 0xfffd;
       }
       ++inputChars;
     }
     else
     {
       // If at the end of input, return -1
-      nextChar = -1;
+      nextChar[LookAhead-1] = -1;
     }
   }
 
