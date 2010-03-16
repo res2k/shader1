@@ -209,6 +209,8 @@ es erscheint wünschenswert, Bezeichner zuzulassen, die Attributnamen entspreche
 Bezeichner wie ``x'', ``y'' etc., welche auch Vektorattribute (Swizzles) sind. Syntaktisch gibt es keine Mehrdeutigkeiten zwischen Attributen und
 anderen Bezeichnern -- ein Attribut kann \emph{nur} rechts eines \op{.} auftauchen, ein anderer Bezeichner dort nie.
 
+Weiterhin schreibt die Spezifikation vor, dass zwei Bezeicher als identisch betrachtet werden, wenn sie kanonisch äquivalent im Sinne von Unicode sind.
+Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
 
 \section{Ausblick}
 
