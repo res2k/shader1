@@ -182,7 +182,7 @@ Leerzeichen (``Whitespace'') und Kommentare werden bereits vom Lexer ignoriert (
 Der Lexer folgt einer typischen Implementierung wie sie z.B. in \cite{wirth_compiler} beschrieben ist. Auf einige beachtenswerte Aspekte
 wird im folgenden eingegangen.
 
-\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht arbeitet der Lexer entsprechend auf der Basis von Unicode-kodierten Zeichen.
+\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht arbeitet, der Lexer entsprechend auf der Basis von Unicode-kodierten Zeichen.
 Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Lexer in einen "`Unicode-Strom"' umkodiert\footnote{Verwendet wird dazu die Bibliothek ICU,
 \url{http://site.icu-project.org/}}.
 
@@ -191,9 +191,11 @@ wird im Token eine dem Schlüsselwort eindeutig zugeordnete ID gespeichert.
 
 Die erste Ausnahme allerdings bilden die Schlüsselwörter für Vektor- und Matrixtypen (Abschn.~\ref{Vektortypen}, \ref{Matrixtypen}). Diese entsprechen
 jeweils dem Muster $\mathit{typ}\mathrm{N}$ bzw. $\mathit{typ}\mathrm{N}\mathit{x}\mathrm{M}$ (mit $N \in 1 \dots 4, M \in 1 \dots 4$).
-Da eine eigene ID insgesamt 20 weitere IDs pro Typ -- wobei später noch jeder ID wiederum die ursprünglichen Werte für $N$ und $M$ nochmals zugeordnet
-werden müssen -- prüft der Lexer, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht. Ist dies der Fall,
-so wird dies im generierten Token vermerkt; weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfalls vermerkt. % 
+Da eine eigene ID für jeden Vektor- oder Matrix insgesamt 20 weitere IDs pro Basis-Typ nach sich ziehen würde -- wobei später noch jeder ID wiederum
+die ursprünglichen Werte für $N$ und $M$ nochmals zugeordnet
+werden müssten -- wird generierten Token vermerkt, ob es sich um einen Vektor- oder Matrixtyp handelt.
+Dazu überprüft der Lexer, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht.
+Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfalls vermerkt.
 
 \begin{figure}[h]
    \centering
