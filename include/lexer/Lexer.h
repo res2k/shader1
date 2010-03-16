@@ -128,34 +128,38 @@ namespace s1
       /** @} */
     };
     
-    enum TypeKeywordType
+    enum TypeClassification
     {
       Normal, Vector, Matrix
     };
-    
+
+//@@SNIP LexerToken.txt
     /// Token object
     struct Token
     {
-      /// Type of this token
-      TokenType type;
-      /// Input string for this token
+      /// Type/symbol/keyword ID of this token
+      TokenType typeOrID;
+      /// Original string for this token
       UnicodeString tokenString;
-      /// Keyword type for types
-      TypeKeywordType typeType;
+      /// Classification (normal, vector or matrix) for type keywords
+      TypeClassification typeClass;
       /// For vectors: vector dimension; For matrices: number of columns
       int dimension1;
       /// For matrices: number of rows
       int dimension2;
-      
-      Token () : type (Invalid), typeType(Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type) : type (type), typeType(Normal), dimension1 (0), dimension2 (0) {}
+//@@ENDSNIP 
+
+      Token () : typeOrID (Invalid), typeClass (Normal), dimension1 (0), dimension2 (0) {}
+      Token (TokenType type) : typeOrID (type), typeClass (Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const UnicodeString& tokenString)
-       : type (type), tokenString (tokenString), typeType(Normal), dimension1 (0), dimension2 (0) {}
+       : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, UChar32 tokenChar)
-       : type (type), tokenString (tokenChar), typeType(Normal), dimension1 (0), dimension2 (0) {}
+       : typeOrID (type), tokenString (tokenChar), typeClass (Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const char* tokenString)
-       : type (type), tokenString (tokenString), typeType(Normal), dimension1 (0), dimension2 (0) {}
+       : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
+//@@SNIP LexerToken.txt
     };
+//@@ENDSNIP 
     
     Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler);
     

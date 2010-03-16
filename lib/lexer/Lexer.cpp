@@ -67,7 +67,7 @@ namespace s1
    
   Lexer::operator bool() const throw()
   {
-    return (currentToken.type != EndOfFile) || currentChar != -1 || inputChars;
+    return (currentToken.typeOrID != EndOfFile) || currentChar != -1 || inputChars;
   }
 
   Lexer& Lexer::operator++() throw()
@@ -307,7 +307,7 @@ namespace s1
     if (kwType != keywords.end())
     {
       // Identifier is a well-known keyword
-      currentToken.type = kwType->second;
+      currentToken.typeOrID = kwType->second;
     }
     else
     {
@@ -338,8 +338,8 @@ namespace s1
 	    && (dimensions[0] <= '4'))
 	{
 	  // It's a vector!
-	  currentToken.type = typeCandidate;
-	  currentToken.typeType = Vector;
+	  currentToken.typeOrID = typeCandidate;
+	  currentToken.typeClass = Vector;
 	  currentToken.dimension1 = dimensions[0] - '1' + 1;
 	}
 	else if ((dimensions.length() == 3)
@@ -350,8 +350,8 @@ namespace s1
 	    && (dimensions[2] <= '4'))
 	{
 	  // It's a matrix!
-	  currentToken.type = typeCandidate;
-	  currentToken.typeType = Matrix;
+	  currentToken.typeOrID = typeCandidate;
+	  currentToken.typeClass = Matrix;
 	  currentToken.dimension1 = dimensions[0] - '1' + 1;
 	  currentToken.dimension2 = dimensions[2] - '1' + 1;
 	}
