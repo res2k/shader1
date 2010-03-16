@@ -155,10 +155,58 @@ Die Programme werden vom Aufspalter in Zwischencode ausgegeben und können noch 
 Abschließend werden ein Fragment- und ein Vertexprogramm im gewünschten Zielcode ausgegeben\footnote{Diese Implementierung benutzt den
 gleichen Generator für beide Programme, prinzipiell könnten diese jedoch mit verschiedenen Generatoren ausgegeben werden.}.
 
-%ein \emph{Lexer} spaltet die als Byte-Strom vorliegenden
-%Quelldaten 
+\subsection{Implementierungsdetails}
 
-%\cite{wirth_compiler}
+Als \emph{Programmiersprache}, in der die hier beschriebene Implementierung verfasst ist, wurde C++ gewählt.
+Gründe dafür sind:
+\begin{itemize}
+\item Die Flexibilität der Sprache und deren reichhaltige Standardbibliothek,
+\item hohe Portabilität (C++-Compiler sind für praktisch jede Plattform verfügbar),
+\item eine reichhaltige Palette an von Dritten hergestellter Bibliotheken,
+\item die einfache Bindbarkeit an andere Sprachen (direkt oder über eine C-kompatible Schnittstelle),
+\item nicht zuletzt die Gewandheit des Autors dieser Arbeit in C++.
+\end{itemize}
+ 
+Um eine Wiederverwendung des Compilers zu vereinfachen wurde dieser im Wesentlichen als eine \emph{Bibliothek} realisiert;
+eine "`Kommandozeilenversion"' des Compilers setzt auch auf diese Bibliothek auf.
+ 
+Zur Sicherstellung der fortwährend korrekten Funktionsweise aller Module des Compilers wurden entwicklungsbegleitend 
+jeweils \emph{Tests} der Module geschrieben (Black-Box und White-Box); Ausführen der Tests war regelmässiger Teil des Entwicklungsprozesses.
+ 
+\subsection{Lexer}
+
+Der \emph{Lexer} wandelt die als Byte-Strom vorliegende Eingabe in eine Folge von "`Tokens"'.
+Ein Token ist eine der in Abschn.~\ref{Lexikalische Einheiten} aufgezählten lexikalischen Einheiten, ein bekanntes Symbol (Operatoren etc.) oder Schlüsselwort. 
+Leerzeichen (``Whitespace'') und Kommentare werden bereits vom Lexer ignoriert (d.h. für diese werden keine Tokens produziert).
+
+Der Lexer folgt einer typischen Implementierung wie sie z.B. in \cite{wirth_compiler} beschrieben ist. Auf einige beachtenswerte Aspekte
+wird im folgenden eingegangen.
+
+\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht arbeitet der Lexer entsprechend auf der Basis von Unicode-kodierten Zeichen.
+Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Lexer in einen "`Unicode-Strom"' umkodiert\footnote{Verwendet wird dazu die Bibliothek ICU,
+\url{http://site.icu-project.org/}}.
+
+\paragraph{Schlüsselwörter.} Erkennt der Lexer einen Bezeichner, wird auch geprüft, ob es sich um ein Schlüsselwort handelt. Ist dies der Fall
+wird im Token eine dem Schlüsselwort eindeutig zugeordnete ID gespeichert.
+
+Die erste Ausnahme allerdings bilden die Schlüsselwörter für Vektor- und Matrixtypen (Abschn.~\ref{Vektortypen}, \ref{Matrixtypen}). Diese entsprechen
+jeweils dem Muster $\mathit{typ}\mathrm{N}$ bzw. $\mathit{typ}\mathrm{N}\mathit{x}\mathrm{M}$ (mit $N \in 1 \dots 4, M \in 1 \dots 4$).
+Da eine eigene ID insgesamt 20 weitere IDs pro Typ -- wobei später noch jeder ID wiederum die ursprünglichen Werte für $N$ und $M$ nochmals zugeordnet
+werden müssen -- prüft der Lexer, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht. Ist dies der Fall,
+so wird dies im generierten Token vermerkt; weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfalls vermerkt. % 
+
+\begin{figure}[h]
+   \centering
+  \lstinputlisting[language=C++]{snips/LexerToken.txt}
+  \caption{Daten eines vom Lexer ausgegebenen Tokens}
+  \label{fig:LexerToken}
+\end{figure}
+
+Die zweite Ausnahme bilden Attributnamen~(\ref{Attribute}) inklusive Swizzles~(\ref{Vektorattribute}). Diese sind teilweise recht allgemein, und
+es erscheint wünschenswert, Bezeichner zuzulassen, die Attributnamen entsprechen -- z.B. ``length'', das auch ein Arrayattribut ist, und einbuchstabige
+Bezeichner wie ``x'', ``y'' etc., welche auch Vektorattribute (Swizzles) sind. Syntaktisch gibt es keine Mehrdeutigkeiten zwischen Attributen und
+anderen Bezeichnern -- ein Attribut kann \emph{nur} rechts eines \op{.} auftauchen, ein anderer Bezeichner dort nie.
+
 
 \section{Ausblick}
 

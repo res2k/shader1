@@ -1,0 +1,14 @@
+    /// Token object
+    struct Token
+    {
+      /// Type/symbol/keyword ID of this token
+      TokenType typeOrID;
+      /// Original string for this token
+      UnicodeString tokenString;
+      /// Classification (normal, vector or matrix) for type keywords
+      TypeClassification typeClass;
+      /// For vectors: vector dimension; For matrices: number of columns
+      int dimension1;
+      /// For matrices: number of rows
+      int dimension2;
+    };
