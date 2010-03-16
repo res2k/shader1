@@ -143,4 +143,33 @@ public:
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
   }
   
+  void testCanonicalEquivalence(void)
+  {
+    std::istringstream in ("o\xCC\x88 \xC3\xB6"); // <o, combining-diaeresis>, <ö>
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token1;
+    s1::Lexer::Token token2;
+
+    // Should report token available
+    TS_ASSERT_EQUALS ((bool)lexer, true);
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token1 = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token1.typeOrID, s1::Lexer::Identifier);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token2 = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token2.typeOrID, s1::Lexer::Identifier);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+    
+    // Both tokens are canonically equivalent, so they should result in the same token string
+    TS_ASSERT_EQUALS (token1.tokenString, token2.tokenString);
+  }
+  
 };

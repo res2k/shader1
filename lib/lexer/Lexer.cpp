@@ -28,9 +28,12 @@ namespace std
 
 #include <assert.h>
 #include <unicode/uchar.h>
+#include <unicode/normlzr.h>
 
 namespace s1
 {
+  U_NAMESPACE_USE
+  
   Lexer::Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler)
    : inputChars (inputChars), errorHandler (errorHandler),
      currentToken (EndOfFile)
@@ -300,6 +303,20 @@ namespace s1
     {
       tokenStr += currentChar;
       NextChar();
+    }
+    
+    /* Normalize token string.
+       Spec wants canonically equivalent character sequences to be treated
+       identical for identifiers. Unicode 5.2 Ch. 3 Def. D70, which defines
+       canonical equivalence as identical canonical decompositions, is
+       explicitly refered to. Hence normalize token string to NFD (canonical
+       decomposition).
+     */
+    {
+      ErrorCode err;
+      UnicodeString tokenStrN;
+      Normalizer::normalize (tokenStr, UNORM_NFD, 0, tokenStrN, err);
+      tokenStr = tokenStrN;
     }
     
     currentToken = Token (Identifier, tokenStr);
