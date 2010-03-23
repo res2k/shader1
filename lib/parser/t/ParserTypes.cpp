@@ -243,10 +243,10 @@ public:
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
     TS_ASSERT_EQUALS (testType->matrixCols, 3);
     TS_ASSERT_EQUALS (testType->matrixRows, 2);
-    TestSemanticsHandler::TestType* vecType = 
+    TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-    TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::Bool);
+    TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::Bool);
   }
   
   void testTypeMatrixInt (void)
@@ -264,10 +264,10 @@ public:
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
     TS_ASSERT_EQUALS (testType->matrixCols, 3);
     TS_ASSERT_EQUALS (testType->matrixRows, 2);
-    TestSemanticsHandler::TestType* vecType = 
+    TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-    TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::Int);
   }
   
   void testTypeMatrixUInt (void)
@@ -285,10 +285,10 @@ public:
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
     TS_ASSERT_EQUALS (testType->matrixCols, 3);
     TS_ASSERT_EQUALS (testType->matrixRows, 2);
-    TestSemanticsHandler::TestType* vecType = 
+    TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-    TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::UInt);
+    TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::UInt);
   }
   
   void testTypeMatrixFloat (void)
@@ -306,9 +306,50 @@ public:
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
     TS_ASSERT_EQUALS (testType->matrixCols, 3);
     TS_ASSERT_EQUALS (testType->matrixRows, 2);
-    TestSemanticsHandler::TestType* vecType = 
+    TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-    TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::Float);
+    TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::Float);
+  }
+  
+  void testTypeArray (void)
+  {
+    std::istringstream in ("int[]");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler);
+    
+    TestSemanticsHandler::TypePtr type = parser.ParseType ();
+    TestSemanticsHandler::TestType* testType = 
+      static_cast<TestSemanticsHandler::TestType*> (type.get());
+    TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Array);
+    TestSemanticsHandler::TestType* arrType = 
+      static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
+    TS_ASSERT_EQUALS (arrType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (arrType->base, s1::parser::SemanticsHandler::Int);
+  }
+  
+  void testTypeArrayArray (void)
+  {
+    std::istringstream in ("int[][]");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler);
+    
+    TestSemanticsHandler::TypePtr type = parser.ParseType ();
+    TestSemanticsHandler::TestType* testType = 
+      static_cast<TestSemanticsHandler::TestType*> (type.get());
+    TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Array);
+    TestSemanticsHandler::TestType* arrArrType = 
+      static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
+    TS_ASSERT_EQUALS (arrArrType->typeClass, TestSemanticsHandler::TestType::Array);
+    TestSemanticsHandler::TestType* arrType = 
+      static_cast<TestSemanticsHandler::TestType*> (arrArrType->avmBase.get());
+    TS_ASSERT_EQUALS (arrType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (arrType->base, s1::parser::SemanticsHandler::Int);
   }
 };
