@@ -40,7 +40,7 @@ public:
   
   void testVectorMatrixKeywords(void)
   {
-    std::istringstream in ("int2 int3x2 float5 float32");
+    std::istringstream in ("int2 int3x2 float5 float32 bool3");
     s1::UnicodeStream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -81,6 +81,15 @@ public:
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::kwBool);
+    TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Vector);
+    TS_ASSERT_EQUALS (token.dimension1, 3);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+    
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
