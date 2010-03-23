@@ -5,7 +5,9 @@
 
 namespace s1
 {
-  Parser::Parser (Lexer& inputLexer, ParserSemanticsHandler& semanticsHandler)
+  using namespace parser;
+  
+  Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler)
    : inputLexer (inputLexer), semanticsHandler (semanticsHandler)
   {
     NextToken ();
@@ -82,7 +84,7 @@ namespace s1
   Parser::Type Parser::ParseTypeBool ()
   {
     NextToken();
-    return semanticsHandler.CreateType (ParserSemanticsHandler::Bool);
+    return semanticsHandler.CreateType (SemanticsHandler::Bool);
   }
   
   Parser::Type Parser::ParseTypeNumeric (bool isUnsigned)
@@ -93,12 +95,12 @@ namespace s1
     case Lexer::kwInt:
       /* int */
       type = semanticsHandler.CreateType (
-	isUnsigned ? ParserSemanticsHandler::UInt : ParserSemanticsHandler::Int);
+	isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
       NextToken();
       break;
     case Lexer::kwFloat:
       /* float */
-      type = semanticsHandler.CreateType (ParserSemanticsHandler::Float);
+      type = semanticsHandler.CreateType (SemanticsHandler::Float);
       NextToken();
       break;
     default:
@@ -113,16 +115,16 @@ namespace s1
     switch (currentToken.typeOrID)
     {
     case Lexer::kwBool:
-      baseType = semanticsHandler.CreateType (ParserSemanticsHandler::Bool);
+      baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
       break;
     case Lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-	isUnsigned ? ParserSemanticsHandler::UInt : ParserSemanticsHandler::Int);
+	isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
       break;
     case Lexer::kwFloat:
       /* float */
-      baseType = semanticsHandler.CreateType (ParserSemanticsHandler::Float);
+      baseType = semanticsHandler.CreateType (SemanticsHandler::Float);
       break;
     default:
       UnexpectedToken ();
@@ -138,16 +140,16 @@ namespace s1
     switch (currentToken.typeOrID)
     {
     case Lexer::kwBool:
-      baseType = semanticsHandler.CreateType (ParserSemanticsHandler::Bool);
+      baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
       break;
     case Lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-	isUnsigned ? ParserSemanticsHandler::UInt : ParserSemanticsHandler::Int);
+	isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
       break;
     case Lexer::kwFloat:
       /* float */
-      baseType = semanticsHandler.CreateType (ParserSemanticsHandler::Float);
+      baseType = semanticsHandler.CreateType (SemanticsHandler::Float);
       break;
     default:
       UnexpectedToken ();
@@ -165,22 +167,22 @@ namespace s1
     {
     case Lexer::kwSampler1D:
       /* 1D sampler */
-      type = semanticsHandler.CreateSamplerType (ParserSemanticsHandler::_1D);
+      type = semanticsHandler.CreateSamplerType (SemanticsHandler::_1D);
       NextToken();
       break;
     case Lexer::kwSampler2D:
       /* 2D sampler */
-      type = semanticsHandler.CreateSamplerType (ParserSemanticsHandler::_2D);
+      type = semanticsHandler.CreateSamplerType (SemanticsHandler::_2D);
       NextToken();
       break;
     case Lexer::kwSampler3D:
       /* 3D sampler */
-      type = semanticsHandler.CreateSamplerType (ParserSemanticsHandler::_3D);
+      type = semanticsHandler.CreateSamplerType (SemanticsHandler::_3D);
       NextToken();
       break;
     case Lexer::kwSamplerCUBE:
       /* CUBE sampler */
-      type = semanticsHandler.CreateSamplerType (ParserSemanticsHandler::CUBE);
+      type = semanticsHandler.CreateSamplerType (SemanticsHandler::CUBE);
       NextToken();
       break;
     default:

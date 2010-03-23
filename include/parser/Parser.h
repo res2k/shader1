@@ -3,25 +3,25 @@
 
 #include "lexer/Lexer.h"
 
-#include "ParserSemanticsHandler.h"
+#include "SemanticsHandler.h"
 
 namespace s1
 {
   /// Parser implementation
   class Parser
   {
-  public:
+  public:    
     /**
      * Construct parser.
      * \param inputLexer Input token stream
      * \param semanticsHandler Handler for semantics
      */
-    Parser (Lexer& inputLexer, ParserSemanticsHandler& semanticsHandler);
+    Parser (Lexer& inputLexer, parser::SemanticsHandler& semanticsHandler);
     
     void Parse ();
   protected:
     Lexer& inputLexer;
-    ParserSemanticsHandler& semanticsHandler;
+    parser::SemanticsHandler& semanticsHandler;
     
     Lexer::Token currentToken;
     void NextToken ();
@@ -56,7 +56,7 @@ namespace s1
     void ParseAttribute ();
     
     // Types
-    typedef ParserSemanticsHandler::TypePtr Type;
+    typedef parser::SemanticsHandler::TypePtr Type;
     Type ParseTypeBase ();
     Type ParseType ();
     Type ParseTypeBool ();

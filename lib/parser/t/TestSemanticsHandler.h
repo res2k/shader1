@@ -1,9 +1,9 @@
 #ifndef __TESTSYNTAXHANDLER_H__
 #define __TESTSYNTAXHANDLER_H__
 
-#include "parser/ParserSemanticsHandler.h"
+#include "parser/SemanticsHandler.h"
 
-class TestSemanticsHandler : public s1::ParserSemanticsHandler
+class TestSemanticsHandler : public s1::parser::SemanticsHandler
 {
 public:
   struct TestType : public Type
