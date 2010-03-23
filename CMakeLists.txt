@@ -20,6 +20,10 @@ string(STRIP "${ICU_LIBRARIES}" ICU_LIBRARIES)
 execute_process(COMMAND ${ICU_CONFIG} --cppflags-searchpath
 		OUTPUT_VARIABLE ICU_INCLUDE_DIRS)
 
+SET(Boost_ADDITIONAL_VERSIONS "1.40" "1.40.0" "1.41" "1.41.0")
+find_package(Boost 1.35.0)
+include_directories(${Boost_INCLUDE_DIRS})
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-Wl,--as-needed" CXX_AS_NEEDED)
 if(CXX_AS_NEEDED)
