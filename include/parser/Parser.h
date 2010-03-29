@@ -38,22 +38,20 @@ namespace s1
     void ParseCommand ();
 
     // Expressions
-    void ParseValueIdentifier ();
-    void ParseAssignment ();
-    void ParseExpression ();
-    void ParseValue ();
-    void ParseExprBase ();
-    void ParseAttributeList ();
-    void ParseExprMultiplication ();
-    void ParseExprAddition ();
-    void ParseExprUnary ();
-    void ParseExprTernary ();
-    void ParseExprCompareEqual ();
-    void ParseExprComparison ();
-    void ParseExprLogicOr ();
-    void ParseExprLogicAnd ();
-    void ParseExprConstBool ();
-    void ParseAttribute ();
+    typedef parser::SemanticsHandler::ExpressionPtr Expression;
+    typedef parser::SemanticsHandler::NamePtr Name;
+    Expression ParseExpression ();
+    Expression ParseExprBase ();
+    Expression ParseAttributeOrArrayAccess (Expression baseExpr);
+    Expression ParseExprMultiplication ();
+    Expression ParseExprAddition ();
+    Expression ParseExprUnary ();
+    Expression ParseExprTernary ();
+    Expression ParseExprCompareEqual ();
+    Expression ParseExprComparison ();
+    Expression ParseExprLogicOr ();
+    Expression ParseExprLogicAnd ();
+    Expression ParseExprConstBool ();
     
     // Types
     typedef parser::SemanticsHandler::TypePtr Type;
