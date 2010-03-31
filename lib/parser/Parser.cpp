@@ -33,20 +33,20 @@ namespace s1
     throw Exception (parser::UnexpectedToken, currentToken);
   }
   
-  Parser::Expression Parser::ParseExpression ()
+  Parser::Expression Parser::ParseExpression (Scope scope)
   {
-    Expression expr = ParseExprTernary();
+    Expression expr = ParseExprTernary (scope);
     if (currentToken.typeOrID == Lexer::Assign)
     {
       // Assignment expression
       NextToken();
-      Expression assignedExpr = ParseExpression();
+      Expression assignedExpr = ParseExpression (scope);
       expr = semanticsHandler.CreateAssignExpression (expr, assignedExpr);
     }
     return expr;
   }
 
-  Parser::Expression Parser::ParseExprBase ()
+  Parser::Expression Parser::ParseExprBase (Scope scope)
   {
     Expression expr;
     if (currentToken.typeOrID == Lexer::Identifier)
@@ -55,7 +55,7 @@ namespace s1
          * a variable/attribute value,
 	 * function call 
        */
-      Name idName = semanticsHandler.ResolveIdentifier (currentToken.tokenString);
+      Name idName = scope->ResolveIdentifier (currentToken.tokenString);
       NextToken();
       /* if identifier is function name ... */
       if (idName->GetType() == SemanticsHandler::Name::Function)
@@ -76,7 +76,7 @@ namespace s1
     {
       // '(' - nested expression
       NextToken();
-      expr = ParseExpression();
+      expr = ParseExpression (scope);
       Expect (Lexer::ParenR);
       NextToken ();
     }
@@ -95,10 +95,11 @@ namespace s1
     {
       UnexpectedToken();
     }
-    return ParseAttributeOrArrayAccess (expr);
+    return ParseAttributeOrArrayAccess (scope, expr);
   }
   
-  Parser::Expression Parser::ParseAttributeOrArrayAccess (Expression baseExpr)
+  Parser::Expression Parser::ParseAttributeOrArrayAccess (Scope scope,
+							  Expression baseExpr)
   {
     Parser::Expression expr = baseExpr;
     while (true)
@@ -113,7 +114,7 @@ namespace s1
       else if (currentToken.typeOrID == Lexer::BracketL)
       {
 	NextToken();
-	Expression indexExpr = ParseExpression ();
+	Expression indexExpr = ParseExpression (scope);
 	Expect (Lexer::BracketR);
 	NextToken();
 	expr = semanticsHandler.CreateArrayElementAccess (expr, indexExpr);
@@ -124,9 +125,9 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprMultiplication ()
+  Parser::Expression Parser::ParseExprMultiplication (Scope scope)
   {
-    Expression expr = ParseExprUnary();
+    Expression expr = ParseExprUnary (scope);
     if ((currentToken.typeOrID == Lexer::Mult)
       || (currentToken.typeOrID == Lexer::Div)
       || (currentToken.typeOrID == Lexer::Mod))
@@ -145,15 +146,15 @@ namespace s1
 	break;
       }
       NextToken();
-      Expression expr2 = ParseExprMultiplication();
+      Expression expr2 = ParseExprMultiplication (scope);
       expr = semanticsHandler.CreateArithmeticExpression (op, expr, expr2);
     }
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprAddition ()
+  Parser::Expression Parser::ParseExprAddition (Scope scope)
   {
-    Expression expr = ParseExprMultiplication();
+    Expression expr = ParseExprMultiplication (scope);
     if ((currentToken.typeOrID == Lexer::Plus)
       || (currentToken.typeOrID == Lexer::Minus))
     {
@@ -168,13 +169,13 @@ namespace s1
 	break;
       }
       NextToken();
-      Expression expr2 = ParseExprAddition();
+      Expression expr2 = ParseExprAddition (scope);
       expr = semanticsHandler.CreateArithmeticExpression (op, expr, expr2);
     }
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprUnary ()
+  Parser::Expression Parser::ParseExprUnary (Scope scope)
   {
     Expression expr;
     if ((currentToken.typeOrID == Lexer::BitwiseInvert)
@@ -195,32 +196,32 @@ namespace s1
 	break;
       }
       NextToken();
-      expr = ParseExprBase();
+      expr = ParseExprBase (scope);
       expr = semanticsHandler.CreateUnaryExpression (op, expr);
     }
     else
-      expr = ParseExprBase();
+      expr = ParseExprBase (scope);
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprTernary ()
+  Parser::Expression Parser::ParseExprTernary (Scope scope)
   {
-    Expression expr = ParseExprLogicOr();
+    Expression expr = ParseExprLogicOr (scope);
     if (currentToken.typeOrID == Lexer::TernaryIf)
     {
       NextToken();
-      Expression expr2 = ParseExpression();
+      Expression expr2 = ParseExpression (scope);
       Expect (Lexer::TernaryElse);
       NextToken();
-      Expression expr3 = ParseExpression();
+      Expression expr3 = ParseExpression (scope);
       expr = semanticsHandler.CreateTernaryExpression (expr, expr2, expr3);
     }
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprCompareEqual ()
+  Parser::Expression Parser::ParseExprCompareEqual (Scope scope)
   {
-    Expression expr = ParseExprComparison();
+    Expression expr = ParseExprComparison (scope);
     if ((currentToken.typeOrID == Lexer::Equals)
       || (currentToken.typeOrID == Lexer::NotEquals))
     {
@@ -235,15 +236,15 @@ namespace s1
 	break;
       }
       NextToken();
-      Expression expr2 = ParseExprCompareEqual();
+      Expression expr2 = ParseExprCompareEqual (scope);
       expr = semanticsHandler.CreateComparisonExpression (op, expr, expr2);
     }
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprComparison ()
+  Parser::Expression Parser::ParseExprComparison (Scope scope)
   {
-    Expression expr = ParseExprAddition();
+    Expression expr = ParseExprAddition (scope);
     if ((currentToken.typeOrID == Lexer::Larger)
       || (currentToken.typeOrID == Lexer::LargerEqual)
       || (currentToken.typeOrID == Lexer::Smaller)
@@ -266,31 +267,31 @@ namespace s1
 	break;
       }
       NextToken();
-      Expression expr2 = ParseExprComparison();
+      Expression expr2 = ParseExprComparison (scope);
       expr = semanticsHandler.CreateComparisonExpression (op, expr, expr2);
     }
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprLogicOr ()
+  Parser::Expression Parser::ParseExprLogicOr (Scope scope)
   {
-    Expression expr = ParseExprLogicAnd();
+    Expression expr = ParseExprLogicAnd (scope);
     if (currentToken.typeOrID == Lexer::LogicOr)
     {
       NextToken();
-      Expression expr2 = ParseExprLogicOr();
+      Expression expr2 = ParseExprLogicOr (scope);
       expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::Or, expr, expr2);
     }
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprLogicAnd ()
+  Parser::Expression Parser::ParseExprLogicAnd (Scope scope)
   {
-    Expression expr = ParseExprCompareEqual();
+    Expression expr = ParseExprCompareEqual (scope);
     if (currentToken.typeOrID == Lexer::LogicAnd)
     {
       NextToken();
-      Expression expr2 = ParseExprLogicAnd();
+      Expression expr2 = ParseExprLogicAnd (scope);
       expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::And, expr, expr2);
     }
     return expr;

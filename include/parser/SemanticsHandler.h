@@ -9,17 +9,17 @@ namespace s1
   namespace parser
   {
     /**
-    * Semantics handler.
-    * The parser calls methods of this class while parsing the syntax.
-    * The idea is that implementations build an internal representation from the
-    * syntax. Also, semantic checking must be performed by the implementation.
-    *
-    * The syntax parser will ask the implementation to create objects in response
-    * to syntactic constructs. Necessary context will be provided as well.
-    *
-    * In structure of objects is, in essence, tree-like (although the exact
-    * organization is up the implementation).
-    */
+     * Semantics handler.
+     * The parser calls methods of this class while parsing the syntax.
+     * The idea is that implementations build an internal representation from the
+     * syntax. Also, semantic checking must be performed by the implementation.
+     *
+     * The syntax parser will ask the implementation to create objects in response
+     * to syntactic constructs. Necessary context will be provided as well.
+     *
+     * In structure of objects is, in essence, tree-like (although the exact
+     * organization is up the implementation).
+     */
     struct SemanticsHandler
     {
       virtual ~SemanticsHandler() {}
@@ -30,15 +30,12 @@ namespace s1
       struct Name
       {
 	/// Type of name (function or variable/parameter)
-	enum NameType { Function, Variable };
+	enum NameType { Function, Variable, TypeAlias };
 	
 	/// Get tpye of name
 	virtual NameType GetType() = 0;
       };
       typedef boost::shared_ptr<Name> NamePtr;
-      
-      /// Resolve an identifier to a name
-      virtual NamePtr ResolveIdentifier (const UnicodeString& identifier) = 0;
       /** @} */
       
       /**\name Expressions
@@ -121,6 +118,69 @@ namespace s1
       virtual TypePtr CreateMatrixType (TypePtr baseType,
 					unsigned int columns,
 					unsigned int rows) = 0;
+      /** @} */
+      
+      /**\name Scope
+       * @{ */
+      /**
+       * Scope object, managing visibility of identifiers.
+       */
+      struct Scope
+      {
+	/**
+	 * Add a variable or constant.
+	 * \param type Type of variable.
+	 * \param identifier Identifier of variable.
+	 * \param initialValue Initial value of variable, can be a 0 pointer if none
+	 *  is given. Required for constants
+	 * \param constant Whether it is a constant variable.
+	 */
+	virtual NamePtr AddVariable (TypePtr type,
+	  const UnicodeString& identifier,
+	  ExpressionPtr initialValue,
+	  bool constant) = 0;
+	  
+	/**
+	 * Add a type alias.
+	 * \param aliasedType Type to alias.
+	 * \param identifier Identifier of type alias.
+	 */
+	virtual NamePtr AddTypeAlias (TypePtr aliasedType,
+	  const UnicodeString& identifier) = 0;
+	  
+	/**
+	 * Add a function.
+	 * \param returnType Return type of function.
+	 * \param identifier Identifier of type alias.
+	 */
+	virtual NamePtr AddFunction (TypePtr returnType,
+	  const UnicodeString& identifier) = 0;
+      
+	/// Resolve an identifier to a name
+	virtual NamePtr ResolveIdentifier (const UnicodeString& identifier) = 0;
+      };
+      typedef boost::shared_ptr<Scope> ScopePtr;
+      
+      /**
+       * Levels of scope.
+       * Not all declarations are allowed in all levels.
+       */
+      enum ScopeLevel      
+      { 
+	/// Builtin functions (and possibly variables+types)
+	Builtin,
+	/// Global functions, variables and types
+	Global,
+	/// Function-local variables and types
+	Function
+      };
+      /**
+       * Create a scope.
+       * \param parentScope Parent scope. If given, identifiers will be checked against the parent
+       *   scope for uniqueness checks and identifier resolution.
+       * \param scopeLevel Level of scope.
+       */
+      virtual ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel) = 0;
       /** @} */
     };
   } // namespace parser

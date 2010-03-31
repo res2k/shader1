@@ -7,7 +7,10 @@ namespace s1
   {
     enum ErrorCode
     {
-      UnexpectedToken
+      UnexpectedToken,
+      IdentifierAlreadyDeclared,
+      IdentifierUndeclared,
+      DeclarationNotAllowedInScope
     };
   } // namespace parser
 } // namespace s1

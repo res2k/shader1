@@ -38,19 +38,20 @@ namespace s1
     void ParseCommand ();
 
     // Expressions
+    typedef parser::SemanticsHandler::ScopePtr Scope;
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
-    Expression ParseExpression ();
-    Expression ParseExprBase ();
-    Expression ParseAttributeOrArrayAccess (Expression baseExpr);
-    Expression ParseExprMultiplication ();
-    Expression ParseExprAddition ();
-    Expression ParseExprUnary ();
-    Expression ParseExprTernary ();
-    Expression ParseExprCompareEqual ();
-    Expression ParseExprComparison ();
-    Expression ParseExprLogicOr ();
-    Expression ParseExprLogicAnd ();
+    Expression ParseExpression (Scope scope);
+    Expression ParseExprBase (Scope scope);
+    Expression ParseAttributeOrArrayAccess (Scope scope, Expression baseExpr);
+    Expression ParseExprMultiplication (Scope scope);
+    Expression ParseExprAddition (Scope scope);
+    Expression ParseExprUnary (Scope scope);
+    Expression ParseExprTernary (Scope scope);
+    Expression ParseExprCompareEqual (Scope scope);
+    Expression ParseExprComparison (Scope scope);
+    Expression ParseExprLogicOr (Scope scope);
+    Expression ParseExprLogicAnd (Scope scope);
     Expression ParseExprConstBool ();
     
     // Types

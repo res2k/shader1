@@ -1,5 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
+#include "base/hash_UnicodeString.h"
+
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 
@@ -19,6 +21,7 @@ class ParserExprTestSuite : public CxxTest::TestSuite
     using s1::Parser::ParseExpression;
   };
   
+  typedef TestSemanticsHandlerTemplated<testoptIdentifiersSloppy> TestSemanticsHandler;
 public:
   void testIdentifier (void)
   {
@@ -28,9 +31,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a");
@@ -44,9 +50,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a.x");
@@ -60,9 +69,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + b).x");
@@ -76,9 +88,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a.x + b)");
@@ -92,9 +107,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + b.x)");
@@ -108,9 +126,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + (b * c))");
@@ -124,9 +145,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a = (b = c))");
@@ -140,9 +164,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b) == (c * d))");
@@ -156,9 +183,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a = (b && c))");
@@ -172,9 +202,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a && b) || c)");
@@ -188,9 +221,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a || (b && (c && d)))");
@@ -204,9 +240,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(!a && b)");
@@ -220,9 +259,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b) > (c * d))");
@@ -236,9 +278,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a = (b ? c : d))");
@@ -252,9 +297,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a == b) ? c : d)");
@@ -268,9 +316,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + -b)");
@@ -284,9 +335,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? b : c)");
@@ -300,9 +354,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? (b ? 1 : 2) : c)");
@@ -316,9 +373,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a");
@@ -332,9 +392,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a");
@@ -348,9 +411,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a * (b + c))");
@@ -364,9 +430,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a[1]");
@@ -380,9 +449,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a[(b + c)]");
@@ -396,9 +468,12 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
     
     TestSemanticsHandler::ExpressionPtr expr;
-    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b)[1] + 0)");

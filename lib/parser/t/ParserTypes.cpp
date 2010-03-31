@@ -1,5 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
+#include "base/hash_UnicodeString.h"
+
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 
@@ -19,6 +21,7 @@ class ParserTypesTestSuite : public CxxTest::TestSuite
     using s1::Parser::ParseType;
   };
   
+  typedef TestSemanticsHandlerTemplated<0> TestSemanticsHandler;
 public:
   void testTypeBool (void)
   {

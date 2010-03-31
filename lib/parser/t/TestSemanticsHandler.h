@@ -1,9 +1,20 @@
-#ifndef __TESTSYNTAXHANDLER_H__
-#define __TESTSYNTAXHANDLER_H__
+#ifndef __TESTSEMANTICSHANDLER_H__
+#define __TESTSEMANTICSHANDLER_H__
 
-#include "parser/SemanticsHandler.h"
+#include "parser/CommonSemanticsHandler.h"
 
-class TestSemanticsHandler : public s1::parser::SemanticsHandler
+
+enum
+{
+  /**
+   * Resolve undeclared identifiers without throwing
+   * (for expression tests)
+   */
+  testoptIdentifiersSloppy = 1
+};
+
+template<int Options>
+class TestSemanticsHandlerTemplated : public s1::parser::CommonSemanticsHandler
 {
 public:
   struct TestType : public Type
@@ -55,22 +66,6 @@ public:
 			    unsigned int rows)
   {
     return TypePtr (new TestType (baseType, columns, rows));
-  }
-  
-  struct TestName : public Name
-  {
-    UnicodeString identifier;
-    NameType type;
-    
-    TestName (const UnicodeString& identifier, NameType type)
-     : identifier (identifier), type (type) {}
-     
-    NameType GetType() { return type; }
-  };
-
-  NamePtr ResolveIdentifier (const UnicodeString& identifier)
-  {
-    return NamePtr (new TestName (identifier, Name::Variable));
   }
   
   struct TestExpressionBase : public Expression
@@ -198,7 +193,7 @@ public:
   ExpressionPtr CreateVariableExpression (NamePtr name)
   {
     return ExpressionPtr (new TestExpressionVar (
-      static_cast<TestName*> (name.get())->identifier));
+      static_cast<CommonName*> (name.get())->identifier));
   }
   
   ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
@@ -288,6 +283,25 @@ public:
     return ExpressionPtr (new TestExpressionOp (opStr,
       operand1, operand2));
   }
+  
+  class TestScope : public CommonScope
+  {
+  public:
+    TestScope (TestScope* parent, ScopeLevel level) : CommonScope (parent, level) {}
+    
+    NamePtr ResolveIdentifier (const UnicodeString& identifier)
+    {
+      if (Options & testoptIdentifiersSloppy)
+	return NamePtr (new CommonName (identifier, Name::Variable));
+      return CommonScope::ResolveIdentifier (identifier);
+    }
+  };
+  
+  ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
+  {
+    return ScopePtr (new TestScope (static_cast<TestScope*> (parentScope.get()),
+      scopeLevel));
+  }
 };
 
-#endif // __TESTSYNTAXHANDLER_H__
+#endif // __TESTSEMANTICSHANDLER_H__
