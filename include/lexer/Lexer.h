@@ -5,11 +5,7 @@
 
 #include "base/UnicodeStream.h"
 
-#if defined(__GNUC__) && !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#include <tr1/unordered_map>
-#else
-#include <unordered_map>
-#endif
+#include "base/unordered_map"
 
 namespace s1
 {

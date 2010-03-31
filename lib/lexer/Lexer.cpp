@@ -1,25 +1,5 @@
 // The hash<> specialization must come before Lexer.h is included
-#if defined(__GNUC__) && !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#include <tr1/unordered_map>
-#else
-#include <unordered_map>
-#endif
-
-#include <unicode/unistr.h>
-
-namespace std
-{
-  namespace tr1
-  {
-    template<>
-    class hash<UnicodeString>
-    {
-    public:
-      size_t operator() (const UnicodeString& s) const
-      { return s.hashCode(); }
-    };
-  }
-}
+#include "base/hash_UnicodeString.h"
 
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
