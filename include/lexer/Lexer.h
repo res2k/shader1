@@ -120,7 +120,8 @@ namespace s1
       kwIf,
       kwElse,
       
-      kwWhile
+      kwWhile,
+      kwFor
       /** @} */
     };
     

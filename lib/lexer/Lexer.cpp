@@ -37,6 +37,7 @@ namespace s1
     keywords[UnicodeString ("if")] 		= kwIf;
     keywords[UnicodeString ("else")] 		= kwElse;
     keywords[UnicodeString ("while")] 		= kwWhile;
+    keywords[UnicodeString ("for")] 		= kwFor;
     
     // Fill lookahead characters
     for (int i = 0; i < LookAhead; i++)
