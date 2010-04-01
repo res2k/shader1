@@ -8,6 +8,10 @@ namespace s1
 {
   namespace parser
   {
+    /**
+     * Common implementation of semantics handler behaviour that is the same across
+     * most semantics handlers (such as name or scope handling).
+     */
     class CommonSemanticsHandler : public SemanticsHandler
     {
     protected:
