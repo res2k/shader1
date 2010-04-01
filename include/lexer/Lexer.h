@@ -129,21 +129,37 @@ namespace s1
       Normal, Vector, Matrix
     };
 
-//@@SNIP LexerToken.txt
     /// Token object
+//@@SNIP LexerToken.txt
+    // Token-Objekt
     struct Token
     {
+//@@ENDSNIP
       /// Type/symbol/keyword ID of this token
+//@@SNIP LexerToken.txt
+      // Typ/Symbol/Schlüsselwort-ID dieses Tokens
       TokenType typeOrID;
+//@@ENDSNIP
       /// Original string for this token
+//@@SNIP LexerToken.txt
+      // Originale Zeichenkette des Tokens
       UnicodeString tokenString;
+//@@ENDSNIP
       /// Classification (normal, vector or matrix) for type keywords
+//@@SNIP LexerToken.txt
+      // Art (Normal, Vektor oder Matrix) von Typ-Schlüsselwörtern
       TypeClassification typeClass;
+//@@ENDSNIP
       /// For vectors: vector dimension; For matrices: number of columns
+//@@SNIP LexerToken.txt
+      // Für Vektoren: Komponentanzahl; Für Matrizen: Anzahl Spalten
       int dimension1;
+//@@ENDSNIP
       /// For matrices: number of rows
+//@@SNIP LexerToken.txt
+      // Für Matrizen: Anzahl Zeilen
       int dimension2;
-//@@ENDSNIP 
+//@@ENDSNIP
 
       Token () : typeOrID (Invalid), typeClass (Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type) : typeOrID (type), typeClass (Normal), dimension1 (0), dimension2 (0) {}
@@ -155,7 +171,7 @@ namespace s1
        : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
 //@@SNIP LexerToken.txt
     };
-//@@ENDSNIP 
+//@@ENDSNIP
     
     Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler);
     
