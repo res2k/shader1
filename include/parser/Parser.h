@@ -5,6 +5,8 @@
 
 #include "SemanticsHandler.h"
 
+#include <vector>
+
 namespace s1
 {
   /// Parser implementation
@@ -25,6 +27,8 @@ namespace s1
     
     Lexer::Token currentToken;
     void NextToken ();
+    std::vector<Lexer::Token> nextTokens;
+    const Lexer::Token& Peek (size_t lookahead = 0);
     
     /// Expect a certain token, throw an "unexpected token" error if some other is encountered
     void Expect (Lexer::TokenType tokenType);
@@ -32,13 +36,17 @@ namespace s1
     void UnexpectedToken ();
     
     // Rough structure
+    typedef parser::SemanticsHandler::BlockPtr Block;
+    typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();
     void ParseProgramStatements ();
-    void ParseBlock ();
-    void ParseCommand ();
+    void ParseBlock (Block block);
+    bool IsCommand ();
+    void ParseCommand (Block block);
 
     // Expressions
-    typedef parser::SemanticsHandler::ScopePtr Scope;
+    /// Returns whether the current token is the start of an expression.
+    bool IsExpression ();
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (Scope scope);
@@ -55,6 +63,7 @@ namespace s1
     Expression ParseExprConstBool ();
     
     // Types
+    bool IsType (int& peekAfterType);
     typedef parser::SemanticsHandler::TypePtr Type;
     Type ParseTypeBase ();
     Type ParseType ();
@@ -89,9 +98,9 @@ namespace s1
     void ParseConstIdentifierAndInitializer ();
 
     // Branches, Loops
-    void ParseIf ();
-    void ParseLoopFor (); 
-    void ParseLoopWhile (); 
+    void ParseIf (Block block);
+    void ParseLoopFor (Block block); 
+    void ParseLoopWhile (Block block); 
   };
 } // namespace s1
 

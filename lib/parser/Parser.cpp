@@ -18,8 +18,26 @@ namespace s1
   
   void Parser::NextToken ()
   {
-    currentToken = *inputLexer;
-    ++inputLexer;
+    if (nextTokens.size() == 0)
+    {
+      currentToken = *inputLexer;
+      ++inputLexer;
+    }
+    else
+    {
+      currentToken = nextTokens[0];
+      nextTokens.erase (nextTokens.begin());
+    }
+  }
+  
+  const Lexer::Token& Parser::Peek (size_t lookahead)
+  {
+    while (lookahead >= nextTokens.size())
+    {
+      nextTokens.push_back (*inputLexer);
+      ++inputLexer;
+    }
+    return nextTokens[lookahead];
   }
   
   void Parser::Expect (Lexer::TokenType tokenType)
@@ -31,6 +49,142 @@ namespace s1
   void Parser::UnexpectedToken ()
   {
     throw Exception (parser::UnexpectedToken, currentToken);
+  }
+
+  void Parser::ParseBlock (Block block)
+  {
+    while (true)
+    {
+      try
+      {
+	int beyondType;
+	bool isType = IsType (beyondType);
+	if (currentToken.typeOrID == Lexer::kwConst)
+	{
+	  /* constant declaration */
+	}
+	else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
+	{
+	  /* Variable declaration */
+	}
+	else if (IsCommand ())
+	{
+	  ParseCommand (block);
+	}
+	else
+	  break;
+      }
+      catch (const Exception&)
+      {
+	/* TODO: emit error */
+	// Seek next ';' (end of statement) or '}' (end of block)
+	while ((currentToken.typeOrID != Lexer::Semicolon)
+	  && (currentToken.typeOrID != Lexer::BraceR)
+	  && (currentToken.typeOrID != Lexer::EndOfFile))
+	{
+	  NextToken();
+	}
+	if (currentToken.typeOrID == Lexer::Semicolon)
+	{
+	  NextToken ();
+	  continue;
+	}
+	else
+	  // '}', exit block
+	  break;
+      }
+    }
+  }
+  
+  bool Parser::IsCommand ()
+  {
+    return IsExpression ()
+      || (currentToken.typeOrID == Lexer::kwReturn)
+      || (currentToken.typeOrID == Lexer::kwIf)
+      || (currentToken.typeOrID == Lexer::kwWhile)
+      || (currentToken.typeOrID == Lexer::kwFor)
+      || (currentToken.typeOrID == Lexer::BraceL);
+  }
+  
+  void Parser::ParseCommand (Block block)
+  {
+    if (IsExpression ())
+    {
+      Expression expr = ParseExpression (block->GetInnerScope());
+      Expect (Lexer::Semicolon);
+      NextToken();
+      block->AddExpressionCommand (expr);
+    }
+    else if (currentToken.typeOrID == Lexer::kwReturn)
+    {
+      /* 'return' instruction */
+      NextToken();
+      Expression returnExpr;
+      if (IsExpression())
+      {
+	/* Return with some value */
+	returnExpr = ParseExpression (block->GetInnerScope());
+      }
+      block->AddReturnCommand (returnExpr);
+      Expect (Lexer::Semicolon);
+      NextToken();
+    }
+    else if (currentToken.typeOrID == Lexer::kwIf)
+    {
+      /* 'if' */
+      ParseIf (block);
+    }
+    else if (currentToken.typeOrID == Lexer::kwWhile)
+    {
+      /* 'while' */
+      ParseLoopWhile (block);
+    }
+    else if (currentToken.typeOrID == Lexer::kwFor)
+    {
+      /* 'for' */
+      ParseLoopFor (block);
+    }
+    else if (currentToken.typeOrID == Lexer::BraceL)
+    {
+      /* nested block */
+      NextToken ();
+      Block newBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
+      ParseBlock (newBlock);
+      Expect (Lexer::BraceR);
+      NextToken ();
+      block->AddNestedBlock (newBlock);
+    }
+  }
+  
+  bool Parser::IsExpression ()
+  {
+    if ((currentToken.typeOrID == Lexer::ParenL)
+	|| (currentToken.typeOrID == Lexer::kwTrue)
+	|| (currentToken.typeOrID == Lexer::kwFalse)
+	|| (currentToken.typeOrID == Lexer::Numeric))
+      return true;
+    // Check if assignment
+    if ((currentToken.typeOrID == Lexer::Identifier)
+	  && (Peek ().typeOrID == Lexer::Assign))
+      return true;
+    /* Check if function call - can be <Identifier> '('
+       or <type> '(', where <type> can take up multiple tokens,
+       especially for arrays */
+    if ((currentToken.typeOrID == Lexer::Identifier)
+	  && (Peek ().typeOrID == Lexer::ParenL))
+      return true;
+    int checkForParens = 0;
+    if (IsType(checkForParens))
+    {
+      while ((Peek (checkForParens).typeOrID == Lexer::BracketL)
+	&& (Peek (checkForParens).typeOrID == Lexer::BracketR))
+      {
+	checkForParens += 2;
+      }
+      if (Peek (checkForParens).typeOrID == Lexer::ParenL)
+	return true;
+    }
+    return false;
   }
   
   Parser::Expression Parser::ParseExpression (Scope scope)
@@ -305,6 +459,31 @@ namespace s1
     return expr;
   }
   
+  bool Parser::IsType (int& peekAfterType)
+  {
+    Lexer::TokenType tokenID = currentToken.typeOrID;
+    peekAfterType = 0;
+    if (currentToken.typeOrID == Lexer::kwUnsigned)
+    {
+      peekAfterType++;
+      tokenID = Peek().typeOrID;
+    }
+    switch (tokenID)
+    {
+    case Lexer::kwBool:
+    case Lexer::kwInt:
+    case Lexer::kwFloat:
+    case Lexer::kwSampler1D:
+    case Lexer::kwSampler2D:
+    case Lexer::kwSampler3D:
+    case Lexer::kwSamplerCUBE:
+      return true;
+    default:
+      break;
+    }
+    return false;
+  }
+  
   Parser::Type Parser::ParseTypeBase ()
   {
     bool isUnsigned = false;
@@ -339,7 +518,7 @@ namespace s1
     case Lexer::kwSamplerCUBE:
       return ParseTypeSampler ();
     case Lexer::Identifier:
-      /* Type alias */
+      /* TODO: Type alias */
       break;
     default:
       UnexpectedToken ();
@@ -482,4 +661,71 @@ namespace s1
   
   //void ParseTypedef ();
   
+  void Parser::ParseIf (Block block)
+  {
+    NextToken();
+    Expect (Lexer::ParenL);
+    NextToken();
+    Expression conditionExpr = ParseExpression (block->GetInnerScope());
+    Expect (Lexer::ParenR);
+    NextToken();
+    Expect (Lexer::BraceL);
+    NextToken();
+    Block ifBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
+    ParseBlock (ifBlock);
+    Expect (Lexer::BraceR);
+    NextToken();
+    Block elseBlock;
+    if (currentToken.typeOrID == Lexer::kwElse)
+    {
+      NextToken();
+      Expect (Lexer::BraceL);
+      NextToken();
+      elseBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
+      ParseBlock (elseBlock);
+      Expect (Lexer::BraceR);
+      NextToken();
+    }
+    block->AddBranching (conditionExpr, ifBlock, elseBlock);
+  }
+  
+  void Parser::ParseLoopFor (Block block)
+  {
+    NextToken();
+    Expect (Lexer::ParenL);
+    NextToken();
+    Expression initExpr = ParseExpression (block->GetInnerScope());
+    Expect (Lexer::Semicolon);
+    NextToken();
+    Expression loopTestExpr = ParseExpression (block->GetInnerScope());
+    Expect (Lexer::Semicolon);
+    NextToken();
+    Expression loopFootExpr = ParseExpression (block->GetInnerScope());
+    Expect (Lexer::ParenR);
+    NextToken();
+    Expect (Lexer::BraceL);
+    NextToken();
+    Block newBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
+    ParseBlock (newBlock);
+    Expect (Lexer::BraceR);
+    NextToken();
+    block->AddForLoop (initExpr, loopTestExpr, loopFootExpr, newBlock);
+  }
+  
+  void Parser::ParseLoopWhile (Block block)
+  {
+    NextToken();
+    Expect (Lexer::ParenL);
+    NextToken();
+    Expression loopTestExpr = ParseExpression (block->GetInnerScope());
+    Expect (Lexer::ParenR);
+    NextToken();
+    Expect (Lexer::BraceL);
+    NextToken();
+    Block newBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
+    ParseBlock (newBlock);
+    Expect (Lexer::BraceR);
+    NextToken();
+    block->AddWhileLoop (loopTestExpr, newBlock);
+  }
 } // namespace s1

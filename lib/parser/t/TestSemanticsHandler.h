@@ -3,6 +3,7 @@
 
 #include "parser/CommonSemanticsHandler.h"
 
+#include <vector>
 
 enum
 {
@@ -301,6 +302,197 @@ public:
   {
     return ScopePtr (new TestScope (static_cast<TestScope*> (parentScope.get()),
       scopeLevel));
+  }
+  
+  class TestBlock : public Block
+  {
+    typedef std::vector<std::string> StrVector;
+    StrVector blockCommands;
+    
+    struct Command
+    {
+      StrVector commandStrings;
+      
+      void PushStrings (const StrVector& other)
+      {
+	commandStrings.insert (commandStrings.end(),
+				other.begin(), other.end());
+      }
+    };
+    
+    class CommandExpression : public Command
+    {
+    public:
+      CommandExpression (TestExpressionBase* expr)
+      {
+	this->commandStrings.push_back (expr->GetExprString() + ";");
+      }
+    };
+
+    class CommandReturn : public Command
+    {
+    public:
+      CommandReturn (TestExpressionBase* expr)
+      {
+	std::string returnStr ("return");
+	if (expr)
+	{
+	  returnStr.append (" ");
+	  returnStr.append (expr->GetExprString());
+	}
+	returnStr.append (";");
+	this->commandStrings.push_back (returnStr);
+      }
+    };
+
+    class CommandBlock : public Command
+    {
+    public:
+      CommandBlock (const TestBlock* block)
+      {
+	this->commandStrings.push_back ("{");
+	PushStrings (block->blockCommands);
+	this->commandStrings.push_back ("}");
+      }
+    };
+
+    class CommandIf : public Command
+    {
+    public:
+      CommandIf (TestExpressionBase* branchCondition,
+		 const TestBlock* ifBlock,
+		 const TestBlock* elseBlock)
+      {
+	std::string condStr ("if (");
+	condStr.append (branchCondition->GetExprString());
+	condStr.append (")");
+	this->commandStrings.push_back (condStr);
+	this->commandStrings.push_back ("{");
+	PushStrings (ifBlock->blockCommands);
+	this->commandStrings.push_back ("}");
+	if (elseBlock)
+	{
+	  this->commandStrings.push_back ("else");
+	  this->commandStrings.push_back ("{");
+	  PushStrings (elseBlock->blockCommands);
+	  this->commandStrings.push_back ("}");
+	}
+      }
+    };
+
+    class CommandWhile : public Command
+    {
+    public:
+      CommandWhile (TestExpressionBase* loopCondition,
+		    const TestBlock* block)
+      {
+	std::string condStr ("while (");
+	condStr.append (loopCondition->GetExprString());
+	condStr.append (")");
+	this->commandStrings.push_back (condStr);
+	this->commandStrings.push_back ("{");
+	PushStrings (block->blockCommands);
+	this->commandStrings.push_back ("}");
+      }
+    };
+
+    class CommandFor : public Command
+    {
+    public:
+      CommandFor (TestExpressionBase* initExpr,
+		  TestExpressionBase* loopCond,
+		  TestExpressionBase* tailExpr,
+		  const TestBlock* block)
+      {
+	std::string condStr ("for (");
+	condStr.append (initExpr->GetExprString());
+	condStr.append ("; ");
+	condStr.append (loopCond->GetExprString());
+	condStr.append ("; ");
+	condStr.append (tailExpr->GetExprString());
+	condStr.append (")");
+	this->commandStrings.push_back (condStr);
+	this->commandStrings.push_back ("{");
+	PushStrings (block->blockCommands);
+	this->commandStrings.push_back ("}");
+      }
+    };
+
+    void AddCommands (const Command& cmd)
+    {
+      const StrVector& cmdStrings = cmd.commandStrings;
+      for (StrVector::const_iterator str = cmdStrings.begin(); str != cmdStrings.end(); ++str)
+      {
+	blockCommands.push_back (std::string ("  ") + *str);
+      }
+    }
+    
+    ScopePtr blockScope;
+  public:
+    TestBlock (ScopePtr blockScope) : blockScope (blockScope) {}
+    
+    std::string GetBlockString()
+    {
+      std::string s;
+      for (StrVector::const_iterator str = blockCommands.begin(); str != blockCommands.end(); ++str)
+      {
+	s.append (*str);
+	s.append ("\n");
+      }
+      return s;
+    }
+    
+    ScopePtr GetInnerScope() { return blockScope; }
+    
+    void AddExpressionCommand (ExpressionPtr expr)
+    {
+      CommandExpression cmd (static_cast<TestExpressionBase*> (expr.get()));
+      AddCommands (cmd);
+    }
+    
+    void AddReturnCommand (ExpressionPtr returnValue)
+    {
+      CommandReturn cmd (static_cast<TestExpressionBase*> (returnValue.get()));
+      AddCommands (cmd);
+    }
+    
+    void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
+		       BlockPtr elseBlock)
+    {
+      CommandIf cmd (static_cast<TestExpressionBase*> (branchCondition.get()),
+		     static_cast<TestBlock*> (ifBlock.get()),
+		     static_cast<TestBlock*> (elseBlock.get()));
+      AddCommands (cmd);
+    }
+    
+    void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock)
+    {
+      CommandWhile cmd (static_cast<TestExpressionBase*> (loopCond.get()),
+			static_cast<TestBlock*> (loopBlock.get()));
+      AddCommands (cmd);
+    }
+    
+    void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
+		     BlockPtr loopBlock)
+    {
+      CommandFor cmd (static_cast<TestExpressionBase*> (initExpr.get()),
+		      static_cast<TestExpressionBase*> (loopCond.get()),
+		      static_cast<TestExpressionBase*> (tailExpr.get()),
+		      static_cast<TestBlock*> (loopBlock.get()));
+      AddCommands (cmd);
+    }
+			      
+    void AddNestedBlock (BlockPtr block)
+    {
+      CommandBlock cmd (static_cast<TestBlock*> (block.get()));
+      AddCommands (cmd);
+    }
+  };
+  
+  BlockPtr CreateBlock (ScopePtr parentScope)
+  {
+    ScopePtr blockScope = CreateScope (parentScope, Function);
+    return BlockPtr (new TestBlock (blockScope));
   }
 };
 
