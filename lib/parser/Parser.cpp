@@ -62,10 +62,12 @@ namespace s1
 	if (currentToken.typeOrID == Lexer::kwConst)
 	{
 	  /* constant declaration */
+	  ParseConstDeclare (block->GetInnerScope());
 	}
 	else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
 	{
 	  /* Variable declaration */
+	  ParseVarDeclare (block->GetInnerScope());
 	}
 	else if (IsCommand ())
 	{
@@ -661,6 +663,76 @@ namespace s1
   
   //void ParseTypedef ();
   
+  void Parser::ParseVarDeclare (Scope scope)
+  {
+    Type type = ParseType ();
+    ParseVarIdentifierAndInitializerList (scope, type);
+  }
+  
+  void Parser::ParseVarIdentifierAndInitializerList (Scope scope, Type type)
+  {
+    while (true)
+    {
+      ParseVarIdentifierAndInitializer (scope, type);
+      if (currentToken.typeOrID == Lexer::Separator)
+      {
+	// ',' - more variables follow
+	NextToken();
+	continue;
+      }
+      break;
+    }
+  }
+  
+  void Parser::ParseVarIdentifierAndInitializer (Scope scope, Type type)
+  {
+    Expect (Lexer::Identifier);
+    UnicodeString varIdentifier = currentToken.tokenString;
+    NextToken ();
+    Expression initExpr;
+    if (currentToken.typeOrID == Lexer::Assign)
+    {
+      // Variable has an initializer value
+      NextToken ();
+      initExpr = ParseExpression (scope);
+    }
+    scope->AddVariable (type, varIdentifier, initExpr, false);
+  }
+      
+  void Parser::ParseConstDeclare (Scope scope)
+  {
+    NextToken(); // skip 'const'
+    Type type = ParseType ();
+    ParseConstIdentifierAndInitializerList (scope, type);
+  }
+  
+  void Parser::ParseConstIdentifierAndInitializerList (Scope scope, Type type)
+  {
+    do
+    {
+      ParseConstIdentifierAndInitializer (scope, type);
+      if (currentToken.typeOrID == Lexer::Separator)
+      {
+	// ',' - more constants follow
+	NextToken();
+	continue;
+      }
+    }
+    while (false);
+  }
+  
+  void Parser::ParseConstIdentifierAndInitializer (Scope scope, Type type)
+  {
+    Expect (Lexer::Identifier);
+    UnicodeString varIdentifier = currentToken.tokenString;
+    NextToken ();
+    // initializer value is required
+    Expect (Lexer::Assign);
+    NextToken ();
+    Expression initExpr = ParseExpression (scope);
+    scope->AddVariable (type, varIdentifier, initExpr, true);
+  }
+    
   void Parser::ParseIf (Block block)
   {
     NextToken();

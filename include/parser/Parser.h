@@ -88,14 +88,14 @@ namespace s1
     void ParseFuncParamActual ();
     
     // Variables
-    void ParseVarDeclare ();
-    void ParseVarIdentifierAndInitializerList ();
-    void ParseVarIdentifierAndInitializer ();
+    void ParseVarDeclare (Scope scope);
+    void ParseVarIdentifierAndInitializerList (Scope scope, Type type);
+    void ParseVarIdentifierAndInitializer (Scope scope, Type type);
 	
     // Constants
-    void ParseConstDeclare ();
-    void ParseConstIdentifierAndInitializerList ();
-    void ParseConstIdentifierAndInitializer ();
+    void ParseConstDeclare (Scope scope);
+    void ParseConstIdentifierAndInitializerList (Scope scope, Type type);
+    void ParseConstIdentifierAndInitializer (Scope scope, Type type);
 
     // Branches, Loops
     void ParseIf (Block block);

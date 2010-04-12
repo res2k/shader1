@@ -139,7 +139,7 @@ namespace s1
 						      ExpressionPtr initialValue, bool constant)
     {
       CheckIdentifierUnique (identifier);
-      NamePtr newName (new CommonName (identifier, Name::Variable));
+      NamePtr newName (new CommonName (identifier, type, initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -148,7 +148,7 @@ namespace s1
     CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const UnicodeString& identifier)
     {
       CheckIdentifierUnique (identifier);
-      NamePtr newName (new CommonName (identifier, Name::TypeAlias));
+      NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -159,7 +159,7 @@ namespace s1
       if (level >= Function)
 	throw Exception (DeclarationNotAllowedInScope);
       CheckIdentifierUnique (identifier);
-      NamePtr newName (new CommonName (identifier, Name::Function));
+      NamePtr newName (new CommonName (identifier, Name::Function, returnType));
       identifiers[identifier] = newName;
       return newName;
     }

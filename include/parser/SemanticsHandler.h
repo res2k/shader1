@@ -32,7 +32,7 @@ namespace s1
 	/// Type of name (function or variable/parameter)
 	enum NameType { Function, Variable, TypeAlias };
 	
-	/// Get tpye of name
+	/// Get type of name
 	virtual NameType GetType() = 0;
       };
       typedef boost::shared_ptr<Name> NamePtr;

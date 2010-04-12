@@ -54,8 +54,22 @@ namespace s1
 	UnicodeString identifier;
 	NameType type;
 	
-	CommonName (const UnicodeString& identifier, NameType type)
-	 : identifier (identifier), type (type) {}
+	/* Variables/Constants: type of variable/constant
+	 * Functions: type of return value
+	 * Type aliases: aliased type
+	 */
+	TypePtr valueType;
+	// Variables/Constants: value
+	ExpressionPtr varValue;
+	// Distinguish between variable/constant
+	bool varConstant;
+	
+	CommonName (const UnicodeString& identifier, NameType type, TypePtr typeOfName)
+	 : identifier (identifier), type (type), valueType (typeOfName) {}
+	CommonName (const UnicodeString& identifier, TypePtr typeOfName,
+		    ExpressionPtr value, bool constant)
+	 : identifier (identifier), type (Variable), valueType (typeOfName),
+	   varValue (value), varConstant (constant) {}
 	
 	NameType GetType() { return type; }
       };

@@ -19,6 +19,7 @@ class TestSemanticsHandlerTemplated : public s1::parser::CommonSemanticsHandler
 {
 public:
   typedef CommonType TestType;
+  typedef CommonName TestName;
   
   struct TestExpressionBase : public Expression
   {
@@ -244,7 +245,7 @@ public:
     NamePtr ResolveIdentifier (const UnicodeString& identifier)
     {
       if (Options & testoptIdentifiersSloppy)
-	return NamePtr (new CommonName (identifier, Name::Variable));
+	return NamePtr (new CommonName (identifier, TypePtr (), ExpressionPtr (), false));
       return CommonScope::ResolveIdentifier (identifier);
     }
   };
