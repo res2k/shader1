@@ -38,16 +38,51 @@ namespace s1
 	 : typeClass (Matrix), avmBase (mBase), matrixCols (c), matrixRows (r) {}
 	
 	/// Returns whether this type is losslessly assignable to \a to.
-	bool CompatibleLossless (const CommonType& to);
-	bool CompatibleLossy (const s1::parser::CommonSemanticsHandler::CommonType& to);
-	bool IsEqual (const CommonType& other);
+	bool CompatibleLossless (const CommonType& to) const;
+	bool CompatibleLossy (const s1::parser::CommonSemanticsHandler::CommonType& to) const;
+	bool IsEqual (const CommonType& other) const;
+	bool IsPrecisionHigherEqual (const CommonType& other) const;
       };
       
       /**\name Type utilities
        * @{ */
-      boost::shared_ptr<CommonType> GetHigherPrecision (
+      static boost::shared_ptr<CommonType> GetHigherPrecisionType (
 	const boost::shared_ptr<CommonType>& t1, const boost::shared_ptr<CommonType>& t2);
+      static BaseType DetectNumericType (const UnicodeString& numericStr);
       /**@}*/
+      
+      /**\name Attribute utilities
+       * @{ */
+      struct Attribute
+      {
+	enum AttrClass
+	{
+	  Unknown,
+	  
+	  arrayLength,
+	  
+	  matrixRow,
+	  matrixCol,
+	  matrixTranspose,
+	  matrixInvert,
+	  
+	  vectorSwizzle
+	};
+	AttrClass attrClass;
+	unsigned char swizzleCompNum;
+	unsigned char swizzleComps;
+	
+	Attribute (AttrClass ac) : attrClass (ac), swizzleCompNum (0), swizzleComps (0) {}
+	Attribute (unsigned char swizNum, unsigned char comp1 = 0, unsigned char comp2 = 0,
+		   unsigned char comp3 = 0, unsigned char comp4 = 0)
+	 : attrClass (vectorSwizzle), swizzleCompNum (swizNum),
+	   swizzleComps ((comp1 & 3) | ((comp2 & 3) << 2) | ((comp3 & 3) << 4) | ((comp4 & 3) << 6))
+	{}
+      };
+      static Attribute IdentifyAttribute (const UnicodeString& attributeStr);
+      TypePtr GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
+				const Attribute& attr);
+      /** @} */
       
       struct CommonName : public Name
       {

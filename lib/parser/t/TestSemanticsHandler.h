@@ -11,7 +11,9 @@ enum
    * Resolve undeclared identifiers without throwing
    * (for expression tests)
    */
-  testoptIdentifiersSloppy = 1
+  testoptIdentifiersSloppy = 1,
+  /// Compute expression types
+  testoptExprType = 2
 };
 
 template<int Options>
@@ -24,33 +26,41 @@ public:
   struct TestExpressionBase : public Expression
   {
     virtual const std::string& GetExprString() = 0;
+    virtual TypePtr GetValueType() = 0;
   };
   
   struct TestExpressionConst : public TestExpressionBase
   {
     std::string str;
+    TypePtr valueType;
     
-    TestExpressionConst (const std::string& str) : str (str) { }
+    TestExpressionConst (const std::string& str,
+			 const TypePtr& valueType) : str (str), valueType (valueType) { }
     
     const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionVar : public TestExpressionBase
   {
     std::string identifier;
+    TypePtr valueType;
     
-    TestExpressionVar (const UnicodeString& identifier)
+    TestExpressionVar (const UnicodeString& identifier,
+		       const TypePtr& valueType) : valueType (valueType)
     {
       StringByteSink<std::string> utfSink (&(this->identifier));
       identifier.toUTF8 (utfSink);
     }
     
     const std::string& GetExprString() { return identifier; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionOp : public TestExpressionBase
   {
     std::string str;
+    TypePtr valueType;
     
     TestExpressionOp (const char* op, ExpressionPtr left, ExpressionPtr right)
     {
@@ -61,27 +71,41 @@ public:
       str.append (" ");
       str.append (static_cast<TestExpressionBase*> (right.get())->GetExprString());
       str.append (")");
+      
+      if (Options & testoptExprType)
+      {
+	valueType = GetHigherPrecisionType (
+	  boost::static_pointer_cast<CommonType> (
+	    static_cast<TestExpressionBase*> (left.get())->GetValueType()),
+	  boost::static_pointer_cast<CommonType> (
+	    static_cast<TestExpressionBase*> (right.get())->GetValueType()));
+      }
     }
     
     const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionUnary : public TestExpressionBase
   {
     std::string str;
+    TypePtr valueType;
     
     TestExpressionUnary (const char* op, ExpressionPtr right)
     {
       str = op;
       str.append (static_cast<TestExpressionBase*> (right.get())->GetExprString());
+      valueType = static_cast<TestExpressionBase*> (right.get())->GetValueType();
     }
     
     const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionTernary : public TestExpressionBase
   {
     std::string str;
+    TypePtr valueType;
     
     TestExpressionTernary (ExpressionPtr condition, ExpressionPtr ifExpr, ExpressionPtr thenExpr)
     {
@@ -92,16 +116,28 @@ public:
       str.append (" : ");
       str.append (static_cast<TestExpressionBase*> (thenExpr.get())->GetExprString());
       str.append (")");
+      
+      if (Options & testoptExprType)
+      {
+	valueType = GetHigherPrecisionType (
+	  boost::static_pointer_cast<CommonType> (
+	    static_cast<TestExpressionBase*> (ifExpr.get())->GetValueType()),
+	  boost::static_pointer_cast<CommonType> (
+	    static_cast<TestExpressionBase*> (thenExpr.get())->GetValueType()));
+      }
     }
     
     const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionAttr : public TestExpressionBase
   {
     std::string str;
+    TypePtr valueType;
     
-    TestExpressionAttr (ExpressionPtr base, const UnicodeString& attr)
+    TestExpressionAttr (ExpressionPtr base, const UnicodeString& attr,
+			TestSemanticsHandlerTemplated& handler)
     {
       std::string attrStr;
       StringByteSink<std::string> utfSink (&attrStr);
@@ -110,14 +146,24 @@ public:
       str = static_cast<TestExpressionBase*> (base.get())->GetExprString();
       str.append (".");
       str.append (attrStr);
+      
+      if (Options & testoptExprType)
+      {
+	Attribute attrInfo = IdentifyAttribute (attr);
+	TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+	valueType = boost::static_pointer_cast<CommonType> (handler.GetAttributeType (
+	  boost::static_pointer_cast<TestType> (baseType), attrInfo));
+      }
     }
     
     const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionArray : public TestExpressionBase
   {
     std::string str;
+    TypePtr valueType;
     
     TestExpressionArray (ExpressionPtr base, ExpressionPtr index)
     {
@@ -125,14 +171,24 @@ public:
       str.append ("[");
       str.append (static_cast<TestExpressionBase*> (index.get())->GetExprString());
       str.append ("]");
+      
+      if (Options & testoptExprType)
+      {
+	TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+	TestType* testBaseType = static_cast<TestType*> (baseType.get());
+	if (testBaseType->typeClass == TestType::Array)
+	  valueType = testBaseType->avmBase;
+      }
     }
     
     const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
   };
   
   ExpressionPtr CreateConstBoolExpression (bool value)
   {
-    return ExpressionPtr (new TestExpressionConst (value ? "true" : "false"));
+    return ExpressionPtr (new TestExpressionConst (value ? "true" : "false",
+						   CreateType (Bool)));
   }
   
   ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr)
@@ -140,19 +196,21 @@ public:
     std::string str;
     StringByteSink<std::string> utfSink (&str);
     valueStr.toUTF8 (utfSink);
-    return ExpressionPtr (new TestExpressionConst (str));
+    return ExpressionPtr (new TestExpressionConst (str,
+      CreateType (DetectNumericType (valueStr))));
   }
   
   ExpressionPtr CreateVariableExpression (NamePtr name)
   {
     return ExpressionPtr (new TestExpressionVar (
-      static_cast<CommonName*> (name.get())->identifier));
+      static_cast<CommonName*> (name.get())->identifier,
+      static_cast<CommonName*> (name.get())->valueType));
   }
   
   ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
 				       const UnicodeString& attr)
   {
-    return ExpressionPtr (new TestExpressionAttr (expr, attr));
+    return ExpressionPtr (new TestExpressionAttr (expr, attr, *this));
   }
       
   ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
