@@ -247,11 +247,13 @@ namespace s1
 	break;
       case Attribute::matrixCol:
 	if (expressionType->typeClass == CommonType::Matrix)
-	  attrType = CreateVectorType (expressionType->avmBase, expressionType->matrixRows);
+	  attrType = CreateArrayType (
+	    CreateVectorType (expressionType->avmBase, expressionType->matrixRows));
 	break;
       case Attribute::matrixRow:
 	if (expressionType->typeClass == CommonType::Matrix)
-	  attrType = CreateVectorType (expressionType->avmBase, expressionType->matrixCols);
+	  attrType = CreateArrayType (
+	    CreateVectorType (expressionType->avmBase, expressionType->matrixCols));
 	break;
       case Attribute::matrixTranspose:
 	if (expressionType->typeClass == CommonType::Matrix)
@@ -264,7 +266,13 @@ namespace s1
 	break;
       case Attribute::vectorSwizzle:
 	if (expressionType->typeClass == CommonType::Vector)
-	  attrType = CreateVectorType (expressionType->avmBase, attr.swizzleComps);
+	{
+	  if (attr.swizzleCompNum == 1)
+	    // 1-component swizzles return the base type, not a 1-component vector
+	    attrType = expressionType->avmBase;
+	  else
+	    attrType = CreateVectorType (expressionType->avmBase, attr.swizzleCompNum);
+	}
 	break;
       }
       return attrType;
