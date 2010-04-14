@@ -13,6 +13,9 @@ namespace s1
       switch (typeClass)
       {
       case Base:
+	if ((base == Void) || (to.base == Void))
+	  // Void is not even compatible to itself
+	  return false;
 	if (((base == Int) || (base == UInt))
 	    && ((to.base == Int) || (to.base == UInt)))
 	  // int and unsigned int are assumed assignable without precision loss
@@ -95,6 +98,9 @@ namespace s1
       switch (typeClass)
       {
       case Base:
+	// Void is not even of equal precision to itself...
+	if ((base == Void) || (other.base == Void))
+	  return false;
 	// Treat 'int' as higher precision as 'unsigned int' (b/c 'int' has a sign)
 	if ((base == Int)
 	    && ((other.base == Int) || (other.base == UInt)))

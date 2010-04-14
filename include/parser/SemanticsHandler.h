@@ -33,7 +33,7 @@ namespace s1
       typedef boost::shared_ptr<Type> TypePtr;
       
       /// Base types
-      enum BaseType { Bool, Int, UInt, Float };
+      enum BaseType { Void, Bool, Int, UInt, Float };
       /// Create a base type
       virtual TypePtr CreateType (BaseType type) = 0;
       /// Sampler dimensions

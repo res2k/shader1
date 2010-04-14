@@ -37,6 +37,9 @@ public:
     
     TestSemanticsHandler semanticsHandler;
     
+    TestTypePtr typeVoid;
+    TS_ASSERT_THROWS_NOTHING ((typeVoid = boost::shared_static_cast<TestType> (
+      semanticsHandler.CreateType (CommonSemanticsHandler::Void))));
     TestTypePtr typeBool;
     TS_ASSERT_THROWS_NOTHING ((typeBool = boost::shared_static_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Bool))));
@@ -50,8 +53,34 @@ public:
     TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::shared_static_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Float))));
     
+    // Void - not even compatible to itself
+    {
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossless (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossy (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeVoid->IsPrecisionHigherEqual (*typeVoid), false);
+      
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossless (*typeBool), false);
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossy (*typeBool), false);
+      TS_ASSERT_EQUALS (typeVoid->IsPrecisionHigherEqual (*typeBool), false);
+      
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossless (*typeInt), false);
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossy (*typeInt), false);
+      TS_ASSERT_EQUALS (typeVoid->IsPrecisionHigherEqual (*typeInt), false);
+      
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossless (*typeUInt), false);
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossy (*typeUInt), false);
+      TS_ASSERT_EQUALS (typeVoid->IsPrecisionHigherEqual (*typeUInt), false);
+      
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossless (*typeFloat), false);
+      TS_ASSERT_EQUALS (typeVoid->CompatibleLossy (*typeFloat), false);
+      TS_ASSERT_EQUALS (typeVoid->IsPrecisionHigherEqual (*typeFloat), false);
+    }
     // Bool - only compatible to itself
     {
+      TS_ASSERT_EQUALS (typeBool->CompatibleLossless (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeBool->CompatibleLossy (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeBool->IsPrecisionHigherEqual (*typeVoid), false);
+      
       TS_ASSERT_EQUALS (typeBool->CompatibleLossless (*typeBool), true);
       TS_ASSERT_EQUALS (typeBool->CompatibleLossy (*typeBool), true);
       TS_ASSERT_EQUALS (typeBool->IsPrecisionHigherEqual (*typeBool), true);
@@ -70,6 +99,10 @@ public:
     }
     // Int - compatible to other numeric types
     {
+      TS_ASSERT_EQUALS (typeInt->CompatibleLossless (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeInt->CompatibleLossy (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeInt->IsPrecisionHigherEqual (*typeVoid), false);
+      
       TS_ASSERT_EQUALS (typeInt->CompatibleLossless (*typeBool), false);
       TS_ASSERT_EQUALS (typeInt->CompatibleLossy (*typeBool), false);
       TS_ASSERT_EQUALS (typeInt->IsPrecisionHigherEqual (*typeBool), false);
@@ -89,6 +122,10 @@ public:
     }
     // UInt - compatible to other numeric types
     {
+      TS_ASSERT_EQUALS (typeUInt->CompatibleLossless (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeUInt->CompatibleLossy (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeUInt->IsPrecisionHigherEqual (*typeVoid), false);
+      
       TS_ASSERT_EQUALS (typeUInt->CompatibleLossless (*typeBool), false);
       TS_ASSERT_EQUALS (typeUInt->CompatibleLossy (*typeBool), false);
       TS_ASSERT_EQUALS (typeUInt->IsPrecisionHigherEqual (*typeBool), false);
@@ -109,6 +146,10 @@ public:
     }
     // Float - compatible to other numeric types
     {
+      TS_ASSERT_EQUALS (typeFloat->CompatibleLossless (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeFloat->CompatibleLossy (*typeVoid), false);
+      TS_ASSERT_EQUALS (typeFloat->IsPrecisionHigherEqual (*typeVoid), false);
+      
       TS_ASSERT_EQUALS (typeFloat->CompatibleLossless (*typeBool), false);
       TS_ASSERT_EQUALS (typeFloat->CompatibleLossy (*typeBool), false);
       TS_ASSERT_EQUALS (typeFloat->IsPrecisionHigherEqual (*typeBool), false);
@@ -139,6 +180,9 @@ public:
     
     TestSemanticsHandler semanticsHandler;
     
+    TestTypePtr typeVoid;
+    TS_ASSERT_THROWS_NOTHING ((typeVoid = boost::shared_static_cast<TestType> (
+      semanticsHandler.CreateType (CommonSemanticsHandler::Void))));
     TestTypePtr typeBool;
     TS_ASSERT_THROWS_NOTHING ((typeBool = boost::shared_static_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Bool))));
@@ -152,6 +196,15 @@ public:
     TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::shared_static_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Float))));
     
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeBool),
+		      TestTypePtr ());
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeInt),
+		      TestTypePtr ());
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeUInt),
+		      TestTypePtr ());
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeFloat),
+		      TestTypePtr ());
+      
     TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool, typeInt),
 		      TestTypePtr ());
     TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool, typeUInt),
