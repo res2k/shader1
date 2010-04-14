@@ -64,11 +64,15 @@ namespace s1
 	{
 	  /* constant declaration */
 	  ParseConstDeclare (blockScope);
+	  Expect (Lexer::Semicolon);
+	  NextToken();
 	}
 	else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
 	{
 	  /* Variable declaration */
 	  ParseVarDeclare (blockScope);
+	  Expect (Lexer::Semicolon);
+	  NextToken();
 	}
 	else if (currentToken.typeOrID == Lexer::kwTypedef)
 	{
