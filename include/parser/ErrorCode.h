@@ -10,7 +10,8 @@ namespace s1
       UnexpectedToken,
       IdentifierAlreadyDeclared,
       IdentifierUndeclared,
-      DeclarationNotAllowedInScope
+      DeclarationNotAllowedInScope,
+      ExpectedTypeName
     };
   } // namespace parser
 } // namespace s1

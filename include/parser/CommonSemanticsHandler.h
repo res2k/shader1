@@ -107,6 +107,8 @@ namespace s1
 	   varValue (value), varConstant (constant) {}
 	
 	NameType GetType() { return type; }
+	TypePtr GetAliasedType()
+	{ return type == TypeAlias ? valueType : TypePtr (); }
       };
 
       class CommonScope : public Scope

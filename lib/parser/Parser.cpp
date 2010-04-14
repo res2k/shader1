@@ -58,18 +58,26 @@ namespace s1
       try
       {
 	int beyondType;
-	bool isType = IsType (beyondType);
+	Scope blockScope = block->GetInnerScope();
+	bool isType = IsType (blockScope, beyondType);
 	if (currentToken.typeOrID == Lexer::kwConst)
 	{
 	  /* constant declaration */
-	  ParseConstDeclare (block->GetInnerScope());
+	  ParseConstDeclare (blockScope);
 	}
 	else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
 	{
 	  /* Variable declaration */
-	  ParseVarDeclare (block->GetInnerScope());
+	  ParseVarDeclare (blockScope);
 	}
-	else if (IsCommand ())
+	else if (currentToken.typeOrID == Lexer::kwTypedef)
+	{
+	  /* Type definition */
+	  ParseTypedef (blockScope);
+	  Expect (Lexer::Semicolon);
+	  NextToken();
+	}
+	else if (IsCommand (blockScope))
 	{
 	  ParseCommand (block);
 	}
@@ -98,9 +106,9 @@ namespace s1
     }
   }
   
-  bool Parser::IsCommand ()
+  bool Parser::IsCommand (Scope scope)
   {
-    return IsExpression ()
+    return IsExpression (scope)
       || (currentToken.typeOrID == Lexer::kwReturn)
       || (currentToken.typeOrID == Lexer::kwIf)
       || (currentToken.typeOrID == Lexer::kwWhile)
@@ -110,9 +118,10 @@ namespace s1
   
   void Parser::ParseCommand (Block block)
   {
-    if (IsExpression ())
+    Scope blockScope = block->GetInnerScope();
+    if (IsExpression (blockScope))
     {
-      Expression expr = ParseExpression (block->GetInnerScope());
+      Expression expr = ParseExpression (blockScope);
       Expect (Lexer::Semicolon);
       NextToken();
       block->AddExpressionCommand (expr);
@@ -122,10 +131,10 @@ namespace s1
       /* 'return' instruction */
       NextToken();
       Expression returnExpr;
-      if (IsExpression())
+      if (IsExpression (blockScope))
       {
 	/* Return with some value */
-	returnExpr = ParseExpression (block->GetInnerScope());
+	returnExpr = ParseExpression (blockScope);
       }
       block->AddReturnCommand (returnExpr);
       Expect (Lexer::Semicolon);
@@ -150,7 +159,7 @@ namespace s1
     {
       /* nested block */
       NextToken ();
-      Block newBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
+      Block newBlock = semanticsHandler.CreateBlock (blockScope);
       ParseBlock (newBlock);
       Expect (Lexer::BraceR);
       NextToken ();
@@ -158,7 +167,7 @@ namespace s1
     }
   }
   
-  bool Parser::IsExpression ()
+  bool Parser::IsExpression (Scope scope)
   {
     if ((currentToken.typeOrID == Lexer::ParenL)
 	|| (currentToken.typeOrID == Lexer::kwTrue)
@@ -176,7 +185,7 @@ namespace s1
 	  && (Peek ().typeOrID == Lexer::ParenL))
       return true;
     int checkForParens = 0;
-    if (IsType(checkForParens))
+    if (IsType (scope, checkForParens))
     {
       while ((Peek (checkForParens).typeOrID == Lexer::BracketL)
 	&& (Peek (checkForParens).typeOrID == Lexer::BracketR))
@@ -461,7 +470,7 @@ namespace s1
     return expr;
   }
   
-  bool Parser::IsType (int& peekAfterType)
+  bool Parser::IsType (Scope scope, int& peekAfterType)
   {
     Lexer::TokenType tokenID = currentToken.typeOrID;
     peekAfterType = 0;
@@ -480,13 +489,20 @@ namespace s1
     case Lexer::kwSampler3D:
     case Lexer::kwSamplerCUBE:
       return true;
+    case Lexer::Identifier:
+      /* Might be a type alias */
+      {
+	Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
+	return (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
+      }
+      break;
     default:
       break;
     }
     return false;
   }
   
-  Parser::Type Parser::ParseTypeBase ()
+  Parser::Type Parser::ParseTypeBase (Scope scope)
   {
     bool isUnsigned = false;
     if (currentToken.typeOrID == Lexer::kwUnsigned)
@@ -520,7 +536,20 @@ namespace s1
     case Lexer::kwSamplerCUBE:
       return ParseTypeSampler ();
     case Lexer::Identifier:
-      /* TODO: Type alias */
+      {
+	Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
+	Type type;
+	if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
+	{
+	  type = typeName->GetAliasedType();
+	}
+	else
+	{
+	  throw Exception (parser::ExpectedTypeName, currentToken);
+	}
+	NextToken ();
+	return type;
+      }
       break;
     default:
       UnexpectedToken ();
@@ -528,9 +557,9 @@ namespace s1
     }
   }
   
-  Parser::Type Parser::ParseType ()
+  Parser::Type Parser::ParseType (Scope scope)
   {
-    Type type = ParseTypeBase ();
+    Type type = ParseTypeBase (scope);
     if (currentToken.typeOrID == Lexer::BracketL)
     {
       type = ParseTypeArray (type);
@@ -661,11 +690,19 @@ namespace s1
     return type;
   }
   
-  //void ParseTypedef ();
+  void Parser::ParseTypedef (Scope scope)
+  {
+    // Skip typedef
+    NextToken();
+    Type aliasedType = ParseType (scope);
+    // Add to scope
+    scope->AddTypeAlias (aliasedType, currentToken.tokenString);
+    NextToken();
+  }
   
   void Parser::ParseVarDeclare (Scope scope)
   {
-    Type type = ParseType ();
+    Type type = ParseType (scope);
     ParseVarIdentifierAndInitializerList (scope, type);
   }
   
@@ -702,7 +739,7 @@ namespace s1
   void Parser::ParseConstDeclare (Scope scope)
   {
     NextToken(); // skip 'const'
-    Type type = ParseType ();
+    Type type = ParseType (scope);
     ParseConstIdentifierAndInitializerList (scope, type);
   }
   

@@ -24,6 +24,33 @@ namespace s1
     {
       virtual ~SemanticsHandler() {}
       
+      /**\name Types
+       * @{ */
+      /// Representation of a type
+      struct Type
+      {
+      };
+      typedef boost::shared_ptr<Type> TypePtr;
+      
+      /// Base types
+      enum BaseType { Bool, Int, UInt, Float };
+      /// Create a base type
+      virtual TypePtr CreateType (BaseType type) = 0;
+      /// Sampler dimensions
+      enum SamplerType { _1D, _2D, _3D, CUBE };
+      /// Create a sampler type
+      virtual TypePtr CreateSamplerType (SamplerType dim) = 0;
+      /// Create an array type
+      virtual TypePtr CreateArrayType (TypePtr baseType) = 0;
+      /// Create a vector type
+      virtual TypePtr CreateVectorType (TypePtr baseType,
+					unsigned int components) = 0;
+      /// Create a matrix type
+      virtual TypePtr CreateMatrixType (TypePtr baseType,
+					unsigned int columns,
+					unsigned int rows) = 0;
+      /** @} */
+      
       /**\name Names
        * A name refers to a variable, an attribute of it or an element.
        * @{ */
@@ -34,6 +61,9 @@ namespace s1
 	
 	/// Get type of name
 	virtual NameType GetType() = 0;
+	
+	/// Get aliased type
+	virtual TypePtr GetAliasedType() = 0;
       };
       typedef boost::shared_ptr<Name> NamePtr;
       /** @} */
@@ -91,33 +121,6 @@ namespace s1
       virtual ExpressionPtr CreateLogicExpression (LogicOp op,
 						   ExpressionPtr operand1,
 						   ExpressionPtr operand2) = 0;
-      /** @} */
-      
-      /**\name Types
-       * @{ */
-      /// Representation of a type
-      struct Type
-      {
-      };
-      typedef boost::shared_ptr<Type> TypePtr;
-      
-      /// Base types
-      enum BaseType { Bool, Int, UInt, Float };
-      /// Create a base type
-      virtual TypePtr CreateType (BaseType type) = 0;
-      /// Sampler dimensions
-      enum SamplerType { _1D, _2D, _3D, CUBE };
-      /// Create a sampler type
-      virtual TypePtr CreateSamplerType (SamplerType dim) = 0;
-      /// Create an array type
-      virtual TypePtr CreateArrayType (TypePtr baseType) = 0;
-      /// Create a vector type
-      virtual TypePtr CreateVectorType (TypePtr baseType,
-					unsigned int components) = 0;
-      /// Create a matrix type
-      virtual TypePtr CreateMatrixType (TypePtr baseType,
-					unsigned int columns,
-					unsigned int rows) = 0;
       /** @} */
       
       /**\name Scope

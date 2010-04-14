@@ -41,12 +41,12 @@ namespace s1
     void ParseProgram ();
     void ParseProgramStatements ();
     void ParseBlock (Block block);
-    bool IsCommand ();
+    bool IsCommand (Scope scope);
     void ParseCommand (Block block);
 
     // Expressions
     /// Returns whether the current token is the start of an expression.
-    bool IsExpression ();
+    bool IsExpression (Scope scope);
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (Scope scope);
@@ -63,17 +63,17 @@ namespace s1
     Expression ParseExprConstBool ();
     
     // Types
-    bool IsType (int& peekAfterType);
+    bool IsType (Scope scope, int& peekAfterType);
     typedef parser::SemanticsHandler::TypePtr Type;
-    Type ParseTypeBase ();
-    Type ParseType ();
+    Type ParseTypeBase (Scope scope);
+    Type ParseType (Scope scope);
     Type ParseTypeBool ();
     Type ParseTypeNumeric (bool isUnsigned);
     Type ParseTypeVector (bool isUnsigned);
     Type ParseTypeMatrix (bool isUnsigned);
     Type ParseTypeSampler ();
     Type ParseTypeArray (Type baseType);
-    void ParseTypedef ();
+    void ParseTypedef (Scope scope);
     
     // Attributes
     void ParseAttrVector ();
