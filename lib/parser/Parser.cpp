@@ -87,6 +87,7 @@ namespace s1
 	}
 	else
 	  break;
+	/* TODO: could improve behaviour in case unexpected tokens are encountered */
       }
       catch (const Exception&)
       {
