@@ -14,6 +14,13 @@ namespace s1
    : inputLexer (inputLexer), semanticsHandler (semanticsHandler)
   {
     NextToken ();
+    
+    builtinScope = semanticsHandler.CreateScope (Scope (), SemanticsHandler::Builtin);
+  }
+
+  void Parser::Parse ()
+  {
+    ParseProgram();
   }
   
   void Parser::NextToken ()
@@ -51,6 +58,51 @@ namespace s1
     throw Exception (parser::UnexpectedToken, currentToken);
   }
 
+  void Parser::ParseProgram ()
+  {
+    Scope globalScope (semanticsHandler.CreateScope (builtinScope, SemanticsHandler::Global));
+    ParseProgramStatements (globalScope);
+    Expect (Lexer::EndOfFile);
+  }
+  
+  void Parser::ParseProgramStatements (Scope scope)
+  {
+    while (true)
+    {
+      int beyondType;
+      bool isType = IsType (scope, beyondType);
+      if (currentToken.typeOrID == Lexer::kwConst)
+      {
+	/* constant declaration */
+	ParseConstDeclare (scope);
+	Expect (Lexer::Semicolon);
+	NextToken();
+      }
+      else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
+      {
+	/* Variable declaration */
+	ParseVarDeclare (scope);
+	Expect (Lexer::Semicolon);
+	NextToken();
+      }
+      else if (currentToken.typeOrID == Lexer::kwTypedef)
+      {
+	/* Type definition */
+	ParseTypedef (scope);
+	Expect (Lexer::Semicolon);
+	NextToken();
+      }
+      else if ((isType && (Peek (beyondType).typeOrID == Lexer::ParenL))
+	|| (currentToken.typeOrID == Lexer::kwVoid))
+      {
+	/* Function declaration */
+	ParseFuncDeclare (scope);
+      }
+      else
+	break;
+    }
+  }
+  
   void Parser::ParseBlock (Block block)
   {
     while (true)
@@ -747,6 +799,13 @@ namespace s1
     NextToken();
     while (true)
     {
+      if (currentToken.typeOrID == Lexer::ParenR)
+      {
+	// End of list
+	NextToken ();
+	break;
+      }
+
       // TODO: In case of error, skip to next param
       int paramDirection = 0;
       if (currentToken.typeOrID == Lexer::kwIn)
@@ -776,20 +835,11 @@ namespace s1
 	newParam.defaultValue = ParseExpression (scope);
       }
       params.push_back (newParam);
-      if (currentToken.typeOrID == Lexer::ParenR)
+      if ((currentToken.typeOrID != Lexer::Separator)
+	&& (currentToken.typeOrID != Lexer::ParenL))
       {
-	// End of list
-	NextToken ();
-	break;
-      }
-      else if (currentToken.typeOrID == Lexer::Separator)
-      {
-	// Another parameter
-	NextToken ();
-	continue;
-      }
-      else
 	UnexpectedToken ();
+      }
     }
   }
   

@@ -24,6 +24,8 @@ namespace s1
   protected:
     Lexer& inputLexer;
     parser::SemanticsHandler& semanticsHandler;
+    /// Scope with builtin definitions
+    parser::SemanticsHandler::ScopePtr builtinScope;
     
     Lexer::Token currentToken;
     void NextToken ();
@@ -39,7 +41,7 @@ namespace s1
     typedef parser::SemanticsHandler::BlockPtr Block;
     typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();
-    void ParseProgramStatements ();
+    void ParseProgramStatements (Scope scope);
     void ParseBlock (Block block);
     bool IsCommand (Scope scope);
     void ParseCommand (Block block);
