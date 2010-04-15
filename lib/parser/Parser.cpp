@@ -701,6 +701,7 @@ namespace s1
     NextToken();
     Type aliasedType = ParseType (scope);
     // Add to scope
+    Expect (Lexer::Identifier);
     scope->AddTypeAlias (aliasedType, currentToken.tokenString);
     NextToken();
   }
