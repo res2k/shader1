@@ -46,18 +46,17 @@ public:
     SemanticsHandler::ScopePtr scope (
       semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
 				    SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varAdded;
+    SemanticsHandler::Scope::FunctionFormalParameters params;
     TS_ASSERT_THROWS_NOTHING(
-      varAdded =
-	scope->AddFunction (semanticsHandler.CreateType (SemanticsHandler::Int),
-			    UnicodeString ("a"))
+      scope->AddFunction (semanticsHandler.CreateType (SemanticsHandler::Int),
+			  UnicodeString ("a"), params)
     );
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
 	scope->ResolveIdentifier (UnicodeString ("a"))
     );
-    TS_ASSERT_EQUALS (varAdded, varRequested);
+    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Function);
   }  
   

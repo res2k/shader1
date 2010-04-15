@@ -298,7 +298,8 @@ public:
   class TestScope : public CommonScope
   {
   public:
-    TestScope (TestScope* parent, ScopeLevel level) : CommonScope (parent, level) {}
+    TestScope (TestSemanticsHandlerTemplated* owner, TestScope* parent, ScopeLevel level)
+     : CommonScope (owner, parent, level) {}
     
     NamePtr ResolveIdentifier (const UnicodeString& identifier)
     {
@@ -310,7 +311,7 @@ public:
   
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
   {
-    return ScopePtr (new TestScope (static_cast<TestScope*> (parentScope.get()),
+    return ScopePtr (new TestScope (this, static_cast<TestScope*> (parentScope.get()),
       scopeLevel));
   }
   

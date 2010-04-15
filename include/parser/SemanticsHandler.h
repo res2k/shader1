@@ -4,6 +4,8 @@
 #include <boost/shared_ptr.hpp>
 #include <unicode/unistr.h>
 
+#include <vector>
+
 namespace s1
 {
   namespace parser
@@ -23,6 +25,9 @@ namespace s1
     struct SemanticsHandler
     {
       virtual ~SemanticsHandler() {}
+      
+      struct Block;
+      typedef boost::shared_ptr<Block> BlockPtr;
       
       /**\name Types
        * @{ */
@@ -151,14 +156,33 @@ namespace s1
 	virtual NamePtr AddTypeAlias (TypePtr aliasedType,
 	  const UnicodeString& identifier) = 0;
 	  
+	enum FormalParameterDirection
+	{
+	  dirDefault = 0,
+	  dirIn = 1,
+	  dirOut = 2,
+	  dirInOut = 3
+	};
+	struct FunctionFormalParameter
+	{
+	  TypePtr type;
+	  UnicodeString identifier;
+	  ExpressionPtr defaultValue;
+	  FormalParameterDirection dir;
+	};
+	typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
+	  
 	/**
 	 * Add a function.
 	 * \param returnType Return type of function.
-	 * \param identifier Identifier of type alias.
+	 * \param identifier Identifier of function.
+	 * \param params Formal parameters.
+	 * \returns Function block to add commands to.
 	 */
-	virtual NamePtr AddFunction (TypePtr returnType,
-	  const UnicodeString& identifier) = 0;
-      
+	virtual BlockPtr AddFunction (TypePtr returnType,
+	  const UnicodeString& identifier,
+	  const FunctionFormalParameters& params) = 0;
+	  
 	/// Resolve an identifier to a name
 	virtual NamePtr ResolveIdentifier (const UnicodeString& identifier) = 0;
       };
@@ -186,8 +210,6 @@ namespace s1
       virtual ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel) = 0;
       /** @} */
       
-      struct Block;
-      typedef boost::shared_ptr<Block> BlockPtr;
       struct Block
       {
 	virtual ScopePtr GetInnerScope() = 0;

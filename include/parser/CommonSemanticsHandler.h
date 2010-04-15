@@ -1,6 +1,8 @@
 #ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
+#include <boost/weak_ptr.hpp>
+
 #include "base/unordered_map"
 #include "SemanticsHandler.h"
 
@@ -113,15 +115,19 @@ namespace s1
 
       class CommonScope : public Scope
       {
+	friend class CommonSemanticsHandler;
+	
 	typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
 	IdentifierMap identifiers;
 	
 	void CheckIdentifierUnique (const UnicodeString& identifier);
 	
+	CommonSemanticsHandler* handler;
 	CommonScope* parent;
 	ScopeLevel level;
+	boost::weak_ptr<CommonScope> selfPtr;
       public:
-	CommonScope (CommonScope* parent, ScopeLevel level);
+	CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, ScopeLevel level);
 	
 	NamePtr AddVariable (TypePtr type,
 	  const UnicodeString& identifier,
@@ -131,8 +137,9 @@ namespace s1
 	NamePtr AddTypeAlias (TypePtr aliasedType,
 	  const UnicodeString& identifier);
 	  
-	NamePtr AddFunction (TypePtr returnType,
-	  const UnicodeString& identifier);
+	BlockPtr AddFunction (TypePtr returnType,
+	  const UnicodeString& identifier,
+	  const FunctionFormalParameters& params);
       
 	NamePtr ResolveIdentifier (const UnicodeString& identifier);
       };

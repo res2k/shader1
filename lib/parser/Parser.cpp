@@ -705,6 +705,96 @@ namespace s1
     NextToken();
   }
   
+  void Parser::ParseFuncDeclare (Scope scope)
+  {
+    Type returnType = ParseFuncType (scope);
+    Expect (Lexer::Identifier);
+    UnicodeString functionIdentifier (currentToken.tokenString);
+    NextToken ();
+    Expect (Lexer::ParenL);
+    // Create a scope for the function
+    SemanticsHandler::Scope::FunctionFormalParameters params;
+    ParseFuncParamFormal (scope, params);
+    // Add function to scope, get block
+    Block inFunctionBlock = scope->AddFunction (returnType, functionIdentifier, params);
+    Expect (Lexer::BraceL);
+    NextToken();
+    ParseBlock (inFunctionBlock);
+    Expect (Lexer::BraceR);
+    NextToken();
+  }
+  
+  Parser::Type Parser::ParseFuncType (Scope scope)
+  {
+    if (currentToken.typeOrID == Lexer::kwVoid)
+    {
+      Parser::Type type = semanticsHandler.CreateType (SemanticsHandler::Void);
+      NextToken ();
+      return type;
+    }
+    else if (IsType (scope))
+    {
+      return ParseType (scope);
+    }
+    else
+      UnexpectedToken();
+  }
+  
+  void Parser::ParseFuncParamFormal (Scope scope, SemanticsHandler::Scope::FunctionFormalParameters& params)
+  {
+    // Skip '('
+    NextToken();
+    while (true)
+    {
+      // TODO: In case of error, skip to next param
+      int paramDirection = 0;
+      if (currentToken.typeOrID == Lexer::kwIn)
+      {
+	// 'in' parameter
+	NextToken();
+	paramDirection |= SemanticsHandler::Scope::dirIn;
+      }
+      if (currentToken.typeOrID == Lexer::kwOut)
+      {
+	// 'in' parameter
+	NextToken();
+	paramDirection |= SemanticsHandler::Scope::dirOut;
+      }
+      // If no explicit direction is given, use 'in'
+      if (paramDirection == 0) paramDirection = SemanticsHandler::Scope::dirIn;
+      SemanticsHandler::Scope::FunctionFormalParameter newParam;
+      newParam.dir = (SemanticsHandler::Scope::FormalParameterDirection)paramDirection;
+      newParam.type = ParseType (scope);
+      Expect (Lexer::Identifier);
+      newParam.identifier = currentToken.tokenString;
+      NextToken ();
+      if (currentToken.typeOrID == Lexer::Assign)
+      {
+	// Handle default value
+	NextToken ();
+	newParam.defaultValue = ParseExpression (scope);
+      }
+      params.push_back (newParam);
+      if (currentToken.typeOrID == Lexer::ParenR)
+      {
+	// End of list
+	NextToken ();
+	break;
+      }
+      else if (currentToken.typeOrID == Lexer::Separator)
+      {
+	// Another parameter
+	NextToken ();
+	continue;
+      }
+      else
+	UnexpectedToken ();
+    }
+  }
+  
+  //void ParseFuncCall ();
+  //void ParseFuncParamActual ();
+  
   void Parser::ParseVarDeclare (Scope scope)
   {
     Type type = ParseType (scope);

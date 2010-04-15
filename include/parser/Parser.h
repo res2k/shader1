@@ -64,6 +64,7 @@ namespace s1
     
     // Types
     bool IsType (Scope scope, int& peekAfterType);
+    bool IsType (Scope scope) { int dummy; return IsType (scope, dummy); }
     typedef parser::SemanticsHandler::TypePtr Type;
     Type ParseTypeBase (Scope scope);
     Type ParseType (Scope scope);
@@ -81,9 +82,10 @@ namespace s1
     void ParseAttrArray ();
 	
     // Functions
-    void ParseFuncDeclare ();
-    void ParseFuncType ();
-    void ParseFuncParamFormal ();
+    void ParseFuncDeclare (Scope scope);
+    Parser::Type ParseFuncType (Scope scope);
+    void ParseFuncParamFormal (Scope scope,
+			       parser::SemanticsHandler::Scope::FunctionFormalParameters& params);
     void ParseFuncCall ();
     void ParseFuncParamActual ();
     
