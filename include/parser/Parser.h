@@ -78,17 +78,11 @@ namespace s1
     Type ParseTypeArray (Type baseType);
     void ParseTypedef (Scope scope);
     
-    // Attributes
-    void ParseAttrVector ();
-    void ParseAttrMatrix ();
-    void ParseAttrArray ();
-	
     // Functions
     void ParseFuncDeclare (Scope scope);
     Parser::Type ParseFuncType (Scope scope);
     void ParseFuncParamFormal (Scope scope,
 			       parser::SemanticsHandler::Scope::FunctionFormalParameters& params);
-    void ParseFuncCall ();
     void ParseFuncParamActual (Scope scope, parser::SemanticsHandler::ExpressionVector& params);
     
     // Variables
