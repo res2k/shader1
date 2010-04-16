@@ -126,6 +126,13 @@ namespace s1
       virtual ExpressionPtr CreateLogicExpression (LogicOp op,
 						   ExpressionPtr operand1,
 						   ExpressionPtr operand2) = 0;
+						   
+      typedef std::vector<ExpressionPtr> ExpressionVector;
+      virtual ExpressionPtr CreateFunctionCallExpression (NamePtr functionName,
+							  const ExpressionVector& params) = 0;
+      
+      virtual ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
+							  const ExpressionVector& params) = 0;
       /** @} */
       
       /**\name Scope

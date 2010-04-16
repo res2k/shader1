@@ -78,12 +78,22 @@ namespace s1
 	Expect (Lexer::Semicolon);
 	NextToken();
       }
-      else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
+      else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier)
+	|| (currentToken.typeOrID == Lexer::kwVoid))
       {
-	/* Variable declaration */
-	ParseVarDeclare (scope);
-	Expect (Lexer::Semicolon);
-	NextToken();
+	if ((currentToken.typeOrID == Lexer::kwVoid)
+	    || (Peek (beyondType+1).typeOrID == Lexer::ParenL))
+	{
+	  /* Function declaration */
+	  ParseFuncDeclare (scope);
+	}
+	else
+	{
+	  /* Variable declaration */
+	  ParseVarDeclare (scope);
+	  Expect (Lexer::Semicolon);
+	  NextToken();
+	}
       }
       else if (currentToken.typeOrID == Lexer::kwTypedef)
       {
@@ -91,12 +101,6 @@ namespace s1
 	ParseTypedef (scope);
 	Expect (Lexer::Semicolon);
 	NextToken();
-      }
-      else if ((isType && (Peek (beyondType).typeOrID == Lexer::ParenL))
-	|| (currentToken.typeOrID == Lexer::kwVoid))
-      {
-	/* Function declaration */
-	ParseFuncDeclare (scope);
       }
       else
 	break;
@@ -271,23 +275,36 @@ namespace s1
   Parser::Expression Parser::ParseExprBase (Scope scope)
   {
     Expression expr;
-    if (currentToken.typeOrID == Lexer::Identifier)
+    int beyondType = 0;
+    bool isType;
+    if ((currentToken.typeOrID == Lexer::Identifier)
+	|| ((isType = IsType (scope, beyondType))
+	  && (Peek (beyondType).typeOrID == Lexer::ParenL)))
     {
       /* Expression could be: 
          * a variable/attribute value,
-	 * function call 
+	 * function call,
+	 * type constructor
        */
-      Name idName = scope->ResolveIdentifier (currentToken.tokenString);
-      NextToken();
+      Type type;
+      Name idName;
+      if (isType)
+	type = ParseType (scope);
+      else
+      {
+	idName = scope->ResolveIdentifier (currentToken.tokenString);
+	NextToken();
+      }
       /* if identifier is function name ... */
-      if (idName->GetType() == SemanticsHandler::Name::Function)
+      if (isType || (idName->GetType() == SemanticsHandler::Name::Function))
       {
 	// ... parse function call
-	Expect (Lexer::ParenL);
-	NextToken ();
-	// TODO: Parse actual parameters list, query function call expression from semanticsHandler
-	Expect (Lexer::ParenR);
-	NextToken ();
+	SemanticsHandler::ExpressionVector params;
+	ParseFuncParamActual (scope, params);
+	if (isType)
+	  expr = semanticsHandler.CreateTypeConstructorExpression (type, params);
+	else
+	  expr = semanticsHandler.CreateFunctionCallExpression (idName, params);
       }
       else
       {
@@ -835,17 +852,38 @@ namespace s1
 	newParam.defaultValue = ParseExpression (scope);
       }
       params.push_back (newParam);
-      if ((currentToken.typeOrID != Lexer::Separator)
-	&& (currentToken.typeOrID != Lexer::ParenL))
-      {
+      if (currentToken.typeOrID == Lexer::Separator)
+	NextToken ();
+      else if (currentToken.typeOrID != Lexer::ParenR)
 	UnexpectedToken ();
-      }
     }
   }
   
   //void ParseFuncCall ();
-  //void ParseFuncParamActual ();
-  
+
+  void Parser::ParseFuncParamActual (Scope scope, parser::SemanticsHandler::ExpressionVector& params)
+  {
+    // Skip '('
+    NextToken();
+    while (true)
+    {
+      if (currentToken.typeOrID == Lexer::ParenR)
+      {
+	// End of list
+	NextToken ();
+	break;
+      }
+      
+      Expression expr = ParseExpression (scope);
+      params.push_back (expr);
+
+      if (currentToken.typeOrID == Lexer::Separator)
+	NextToken ();
+      else if (currentToken.typeOrID != Lexer::ParenR)
+	UnexpectedToken ();
+    }
+  }
+
   void Parser::ParseVarDeclare (Scope scope)
   {
     Type type = ParseType (scope);

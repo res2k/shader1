@@ -479,4 +479,83 @@ public:
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b)[1] + 0)");
   }
   
+  void testFunctionCall (void)
+  {
+    std::istringstream in ("x = Foo ()");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global)); 
+    s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    scope->AddFunction (TestSemanticsHandler::TypePtr (), UnicodeString ("Foo"), params);
+    
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TestSemanticsHandler::TestExpressionBase* testExpr = 
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ())");
+  }
+  
+  void testFunctionCall2 (void)
+  {
+    std::istringstream in ("x = Foo (1 + 2, 3.0)");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global)); 
+    s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    scope->AddFunction (TestSemanticsHandler::TypePtr (), UnicodeString ("Foo"), params);
+    
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TestSemanticsHandler::TestExpressionBase* testExpr = 
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ((1 + 2), 3.0))");
+  }
+  
+  void testTypeCtor (void)
+  {
+    std::istringstream in ("x = int ()");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global)); 
+    
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TestSemanticsHandler::TestExpressionBase* testExpr = 
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = int ())");
+  }
+  
+  void testTypeCtor2 (void)
+  {
+    std::istringstream in ("x = int2 (1, 2)");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global)); 
+    
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TestSemanticsHandler::TestExpressionBase* testExpr = 
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = int2 (1, 2))");
+  }
 };

@@ -185,6 +185,60 @@ public:
     TypePtr GetValueType() { return valueType; }
   };
   
+  struct TestExpressionFunction : public TestExpressionBase
+  {
+    std::string str;
+    TypePtr valueType;
+    
+    void ParamsToStr (const ExpressionVector& params)
+    {
+      bool first = true;
+      for (ExpressionVector::const_iterator exprIt = params.begin(); exprIt != params.end(); ++exprIt)
+      {
+	if (!first)
+	  str.append (", ");
+	else
+	  first = false;
+	
+	str.append (
+	  boost::shared_static_cast<TestExpressionBase> (*exprIt)->GetExprString());
+      }
+    }
+    
+    TestExpressionFunction (const boost::shared_ptr<TestName>& name,
+			    const ExpressionVector& params)
+    {
+      {
+	StringByteSink<std::string> utfSink (&str);
+	name->identifier.toUTF8 (utfSink);
+      }
+      
+      str.append (" (");
+      ParamsToStr (params);
+      str.append (")");
+      
+      valueType = name->valueType;
+    }
+    
+    TestExpressionFunction (const boost::shared_ptr<TestType>& type,
+			    const ExpressionVector& params)
+    {
+      {
+	StringByteSink<std::string> utfSink (&str);
+	type->ToString().toUTF8 (utfSink);
+      }
+      
+      str.append (" (");
+      ParamsToStr (params);
+      str.append (")");
+      
+      valueType = type;
+    }
+    
+    const std::string& GetExprString() { return str; }
+    TypePtr GetValueType() { return valueType; }
+  };
+  
   ExpressionPtr CreateConstBoolExpression (bool value)
   {
     return ExpressionPtr (new TestExpressionConst (value ? "true" : "false",
@@ -295,6 +349,20 @@ public:
       operand1, operand2));
   }
   
+  ExpressionPtr CreateFunctionCallExpression (NamePtr funcName,
+					      const ExpressionVector& params)
+  {
+    return ExpressionPtr (new TestExpressionFunction (
+      boost::shared_static_cast<TestName> (funcName), params));
+  }
+  
+  ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
+						 const ExpressionVector& params)
+  {
+    return ExpressionPtr (new TestExpressionFunction (
+      boost::shared_static_cast<TestType> (type), params));
+  }
+  
   class TestScope : public CommonScope
   {
   public:
@@ -305,9 +373,17 @@ public:
     
     NamePtr ResolveIdentifier (const UnicodeString& identifier)
     {
-      if (Options & testoptIdentifiersSloppy)
-	return NamePtr (new CommonName (identifier, TypePtr (), ExpressionPtr (), false));
-      return CommonScope::ResolveIdentifier (identifier);
+      try
+      {
+	return CommonScope::ResolveIdentifier (identifier);
+      }
+      catch(...)
+      {
+	if (Options & testoptIdentifiersSloppy)
+	  return NamePtr (new CommonName (identifier, TypePtr (), ExpressionPtr (), false));
+	else
+	  throw;
+      }
     }
   };
   

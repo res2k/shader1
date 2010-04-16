@@ -89,7 +89,7 @@ namespace s1
     void ParseFuncParamFormal (Scope scope,
 			       parser::SemanticsHandler::Scope::FunctionFormalParameters& params);
     void ParseFuncCall ();
-    void ParseFuncParamActual ();
+    void ParseFuncParamActual (Scope scope, parser::SemanticsHandler::ExpressionVector& params);
     
     // Variables
     void ParseVarDeclare (Scope scope);
