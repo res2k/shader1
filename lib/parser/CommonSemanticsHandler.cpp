@@ -134,6 +134,53 @@ namespace s1
       assert (false);
       return false;
     }
+
+    UnicodeString CommonSemanticsHandler::CommonType::ToString() const
+    {
+      switch (typeClass)
+      {
+      case Base:
+	{
+	  switch (base)
+	  {
+	    case Void: return UnicodeString ("void");
+	    case Int: return UnicodeString ("int");
+	    case UInt: return UnicodeString ("unsigned int");
+	    case Float: return UnicodeString ("float");
+	  }
+	}
+	break;
+      case Sampler:
+	{
+	  switch (sampler)
+	  {
+	    case _1D: return UnicodeString ("sampler1D");
+	    case _2D: return UnicodeString ("sampler2D");
+	    case _3D: return UnicodeString ("sampler3D");
+	    case CUBE: return UnicodeString ("samplerCUBE");
+	  }
+	}
+	break;
+      case Array:
+	{
+	  return static_cast<CommonType*> (avmBase.get())->ToString() + UnicodeString ("[]");
+	}
+      case Vector:
+	{
+	  char nStr[2];
+	  snprintf (nStr, sizeof (nStr), "%d", vectorDim);
+	  return static_cast<CommonType*> (avmBase.get())->ToString() + UnicodeString (nStr);
+	}
+      case Matrix:
+	{
+	  char nStr[4];
+	  snprintf (nStr, sizeof (nStr), "%dx%d", matrixCols, matrixRows);
+	  return static_cast<CommonType*> (avmBase.get())->ToString() + UnicodeString (nStr);
+	}
+      }
+      assert (false);
+      return UnicodeString();
+    }
     
     boost::shared_ptr<CommonSemanticsHandler::CommonType>
     CommonSemanticsHandler::GetHigherPrecisionType (

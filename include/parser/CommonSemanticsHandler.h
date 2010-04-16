@@ -44,6 +44,8 @@ namespace s1
 	bool CompatibleLossy (const s1::parser::CommonSemanticsHandler::CommonType& to) const;
 	bool IsEqual (const CommonType& other) const;
 	bool IsPrecisionHigherEqual (const CommonType& other) const;
+	
+	UnicodeString ToString() const;
       };
       
       /**\name Type utilities
