@@ -326,10 +326,11 @@ namespace s1
     }
       
     CommonSemanticsHandler::CommonScope::CommonScope (CommonSemanticsHandler* handler,
-						      CommonScope* parent, ScopeLevel level)
+						      const boost::shared_ptr<CommonScope>& parent,
+						      ScopeLevel level)
      : handler (handler), parent (parent), level (level)
     {}
-      
+
     CommonSemanticsHandler::NamePtr
     CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const UnicodeString& identifier,
 						      ExpressionPtr initialValue, bool constant)
@@ -359,8 +360,11 @@ namespace s1
       CheckIdentifierUnique (identifier);
       NamePtr newName (new CommonName (identifier, Name::Function, returnType));
       identifiers[identifier] = newName;
-      ScopePtr funcScope = handler->CreateScope (selfPtr.lock(), Function);
-      return handler->CreateBlock (funcScope);
+      ScopePtr funcScope;
+      funcScope = handler->CreateScope (shared_from_this(), Function);
+      BlockPtr newBlock (handler->CreateBlock (funcScope));
+      funcScope = ScopePtr();
+      return newBlock;
     }
 
     CommonSemanticsHandler::NamePtr
@@ -379,11 +383,9 @@ namespace s1
     CommonSemanticsHandler::ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,
 									  ScopeLevel scopeLevel)
     {
-      CommonScope* newScope = new CommonScope (this, static_cast<CommonScope*> (parentScope.get()),
-	scopeLevel);
-      ScopePtr scope (newScope);
-      newScope->selfPtr = boost::shared_static_cast<CommonScope> (scope);
-      return scope;
+      return ScopePtr (new CommonScope (this,
+	boost::shared_static_cast<CommonScope> (parentScope),
+	scopeLevel));
     }
     
   } // namespace parser

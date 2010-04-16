@@ -298,7 +298,9 @@ public:
   class TestScope : public CommonScope
   {
   public:
-    TestScope (TestSemanticsHandlerTemplated* owner, TestScope* parent, ScopeLevel level)
+    TestScope (TestSemanticsHandlerTemplated* owner,
+	       const boost::shared_ptr<TestScope>& parent,
+	       ScopeLevel level)
      : CommonScope (owner, parent, level) {}
     
     NamePtr ResolveIdentifier (const UnicodeString& identifier)
@@ -311,7 +313,8 @@ public:
   
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
   {
-    return ScopePtr (new TestScope (this, static_cast<TestScope*> (parentScope.get()),
+    return ScopePtr (new TestScope (this,
+      boost::shared_static_cast<TestScope> (parentScope),
       scopeLevel));
   }
   

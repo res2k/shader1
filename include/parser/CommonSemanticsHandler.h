@@ -1,7 +1,7 @@
 #ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
-#include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "base/unordered_map"
 #include "SemanticsHandler.h"
@@ -113,7 +113,8 @@ namespace s1
 	{ return type == TypeAlias ? valueType : TypePtr (); }
       };
 
-      class CommonScope : public Scope
+      class CommonScope : public Scope,
+			  public boost::enable_shared_from_this<CommonScope>
       {
 	friend class CommonSemanticsHandler;
 	
@@ -123,11 +124,11 @@ namespace s1
 	void CheckIdentifierUnique (const UnicodeString& identifier);
 	
 	CommonSemanticsHandler* handler;
-	CommonScope* parent;
+	boost::shared_ptr<CommonScope> parent;
 	ScopeLevel level;
-	boost::weak_ptr<CommonScope> selfPtr;
       public:
-	CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, ScopeLevel level);
+	CommonScope (CommonSemanticsHandler* handler,
+		     const boost::shared_ptr<CommonScope>& parent, ScopeLevel level);
 	
 	NamePtr AddVariable (TypePtr type,
 	  const UnicodeString& identifier,
