@@ -1,3 +1,5 @@
 add_subdirectory(base)
 add_subdirectory(lexer)
 add_subdirectory(parser)
+add_subdirectory(intermediate)
+add_subdirectory(codegen)
