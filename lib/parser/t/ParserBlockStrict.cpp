@@ -20,8 +20,6 @@ class ParserBlockStrictTestSuite : public CxxTest::TestSuite
     
     using s1::Parser::ParseBlock;
   };
-  
-  typedef TestSemanticsHandlerTemplated<0> TestSemanticsHandler;
 public:
   void testBlockVarDecl (void)
   {

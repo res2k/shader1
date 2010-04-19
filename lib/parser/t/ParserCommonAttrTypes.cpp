@@ -21,10 +21,10 @@ class ParserCommonAttrTypesTestSuite : public CxxTest::TestSuite
     using s1::Parser::ParseBlock;
   };
   
-  class TestSemanticsHandler : public TestSemanticsHandlerTemplated<0>
+  class TestSemanticsHandler : public ::TestSemanticsHandler
   {
   public:
-    typedef TestSemanticsHandlerTemplated<0> Superclass;
+    typedef ::TestSemanticsHandler Superclass;
     typedef Superclass::Attribute Attribute;
     
     using Superclass::IdentifyAttribute;

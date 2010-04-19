@@ -12,7 +12,6 @@
 
 class ParserScopeTestSuite : public CxxTest::TestSuite 
 {
-  typedef TestSemanticsHandlerTemplated<0> TestSemanticsHandler;
 public:
   void testIdentifierAddVar (void)
   {

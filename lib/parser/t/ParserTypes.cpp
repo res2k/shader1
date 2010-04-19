@@ -20,8 +20,6 @@ class ParserTypesTestSuite : public CxxTest::TestSuite
     using s1::Parser::Type;
     Type ParseType() { return s1::Parser::ParseType (TestSemanticsHandler::ScopePtr()); }
   };
-  
-  typedef TestSemanticsHandlerTemplated<0> TestSemanticsHandler;
 public:
   void testTypeBool (void)
   {

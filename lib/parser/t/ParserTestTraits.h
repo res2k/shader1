@@ -3,12 +3,12 @@
 
 #include <cxxtest/ValueTraits.h>
 
-CXXTEST_ENUM_TRAITS (TestSemanticsHandlerTemplated<0>::TestType::Class,
-		     CXXTEST_ENUM_MEMBER (TestSemanticsHandlerTemplated<0>::TestType::Base)
-		     CXXTEST_ENUM_MEMBER (TestSemanticsHandlerTemplated<0>::TestType::Sampler)
-		     CXXTEST_ENUM_MEMBER (TestSemanticsHandlerTemplated<0>::TestType::Array)
-		     CXXTEST_ENUM_MEMBER (TestSemanticsHandlerTemplated<0>::TestType::Vector)
-		     CXXTEST_ENUM_MEMBER (TestSemanticsHandlerTemplated<0>::TestType::Matrix)
+CXXTEST_ENUM_TRAITS (TestSemanticsHandler::TestType::Class,
+		     CXXTEST_ENUM_MEMBER (TestSemanticsHandler::TestType::Base)
+		     CXXTEST_ENUM_MEMBER (TestSemanticsHandler::TestType::Sampler)
+		     CXXTEST_ENUM_MEMBER (TestSemanticsHandler::TestType::Array)
+		     CXXTEST_ENUM_MEMBER (TestSemanticsHandler::TestType::Vector)
+		     CXXTEST_ENUM_MEMBER (TestSemanticsHandler::TestType::Matrix)
 );
 
 CXXTEST_ENUM_TRAITS (s1::parser::SemanticsHandler::Name::NameType,

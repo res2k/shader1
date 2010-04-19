@@ -21,10 +21,10 @@ class ParserCommonTypeCompatTestSuite : public CxxTest::TestSuite
     using s1::Parser::ParseBlock;
   };
   
-  class TestSemanticsHandler : public TestSemanticsHandlerTemplated<0>
+  class TestSemanticsHandler : public ::TestSemanticsHandler
   {
   public:
-    typedef TestSemanticsHandlerTemplated<0> SuperClass;
+    typedef ::TestSemanticsHandler SuperClass;
     
     using SuperClass::GetHigherPrecisionType;
   };

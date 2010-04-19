@@ -5,21 +5,48 @@
 
 #include <vector>
 
-enum
-{
-  /**
-   * Resolve undeclared identifiers without throwing
-   * (for expression tests)
-   */
-  testoptIdentifiersSloppy = 1,
-  /// Compute expression types
-  testoptExprType = 2
-};
-
-template<int Options>
-class TestSemanticsHandlerTemplated : public s1::parser::CommonSemanticsHandler
+class TestSemanticsHandler : public s1::parser::CommonSemanticsHandler
 {
 public:
+  class TestScope : public Scope,
+		    public boost::enable_shared_from_this<TestScope>
+  {
+    friend class TestSemanticsHandler;
+    
+    typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+    IdentifierMap identifiers;
+    
+    void CheckIdentifierUnique (const UnicodeString& identifier);
+    
+    TestSemanticsHandler* handler;
+    boost::shared_ptr<TestScope> parent;
+    ScopeLevel level;
+  public:
+    TestScope (TestSemanticsHandler* handler,
+	       const boost::shared_ptr<TestScope>& parent, ScopeLevel level);
+    
+    NamePtr AddVariable (TypePtr type,
+      const UnicodeString& identifier,
+      ExpressionPtr initialValue,
+      bool constant);
+      
+    NamePtr AddTypeAlias (TypePtr aliasedType,
+      const UnicodeString& identifier);
+      
+    BlockPtr AddFunction (TypePtr returnType,
+      const UnicodeString& identifier,
+      const FunctionFormalParameters& params);
+  
+    NamePtr ResolveIdentifier (const UnicodeString& identifier);
+  };
+  
+  ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
+  {
+    return ScopePtr (new TestScope (this,
+      boost::shared_static_cast<TestScope> (parentScope),
+      scopeLevel));
+  }
+  
   typedef CommonType TestType;
   typedef CommonName TestName;
   
@@ -72,14 +99,7 @@ public:
       str.append (static_cast<TestExpressionBase*> (right.get())->GetExprString());
       str.append (")");
       
-      if (Options & testoptExprType)
-      {
-	valueType = GetHigherPrecisionType (
-	  boost::static_pointer_cast<CommonType> (
-	    static_cast<TestExpressionBase*> (left.get())->GetValueType()),
-	  boost::static_pointer_cast<CommonType> (
-	    static_cast<TestExpressionBase*> (right.get())->GetValueType()));
-      }
+      valueType = static_cast<TestExpressionBase*> (left.get())->GetValueType();
     }
     
     const std::string& GetExprString() { return str; }
@@ -117,14 +137,7 @@ public:
       str.append (static_cast<TestExpressionBase*> (thenExpr.get())->GetExprString());
       str.append (")");
       
-      if (Options & testoptExprType)
-      {
-	valueType = GetHigherPrecisionType (
-	  boost::static_pointer_cast<CommonType> (
-	    static_cast<TestExpressionBase*> (ifExpr.get())->GetValueType()),
-	  boost::static_pointer_cast<CommonType> (
-	    static_cast<TestExpressionBase*> (thenExpr.get())->GetValueType()));
-      }
+      valueType = static_cast<TestExpressionBase*> (ifExpr.get())->GetValueType();
     }
     
     const std::string& GetExprString() { return str; }
@@ -137,7 +150,7 @@ public:
     TypePtr valueType;
     
     TestExpressionAttr (ExpressionPtr base, const UnicodeString& attr,
-			TestSemanticsHandlerTemplated& handler)
+			TestSemanticsHandler& handler)
     {
       std::string attrStr;
       StringByteSink<std::string> utfSink (&attrStr);
@@ -147,13 +160,11 @@ public:
       str.append (".");
       str.append (attrStr);
       
-      if (Options & testoptExprType)
-      {
-	Attribute attrInfo = IdentifyAttribute (attr);
-	TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+      Attribute attrInfo = IdentifyAttribute (attr);
+      TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+      if (baseType)
 	valueType = boost::static_pointer_cast<CommonType> (handler.GetAttributeType (
 	  boost::static_pointer_cast<TestType> (baseType), attrInfo));
-      }
     }
     
     const std::string& GetExprString() { return str; }
@@ -172,9 +183,9 @@ public:
       str.append (static_cast<TestExpressionBase*> (index.get())->GetExprString());
       str.append ("]");
       
-      if (Options & testoptExprType)
+      TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+      if (baseType)
       {
-	TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
 	TestType* testBaseType = static_cast<TestType*> (baseType.get());
 	if (testBaseType->typeClass == TestType::Array)
 	  valueType = testBaseType->avmBase;
@@ -362,38 +373,7 @@ public:
     return ExpressionPtr (new TestExpressionFunction (
       boost::shared_static_cast<TestType> (type), params));
   }
-  
-  class TestScope : public CommonScope
-  {
-  public:
-    TestScope (TestSemanticsHandlerTemplated* owner,
-	       const boost::shared_ptr<TestScope>& parent,
-	       ScopeLevel level)
-     : CommonScope (owner, parent, level) {}
     
-    NamePtr ResolveIdentifier (const UnicodeString& identifier)
-    {
-      try
-      {
-	return CommonScope::ResolveIdentifier (identifier);
-      }
-      catch(...)
-      {
-	if (Options & testoptIdentifiersSloppy)
-	  return NamePtr (new CommonName (identifier, TypePtr (), ExpressionPtr (), false));
-	else
-	  throw;
-      }
-    }
-  };
-  
-  ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
-  {
-    return ScopePtr (new TestScope (this,
-      boost::shared_static_cast<TestScope> (parentScope),
-      scopeLevel));
-  }
-  
   class TestBlock : public Block
   {
     typedef std::vector<std::string> StrVector;

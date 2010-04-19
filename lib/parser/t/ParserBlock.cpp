@@ -6,7 +6,7 @@
 #include "parser/Exception.h"
 #include "parser/Parser.h"
 
-#include "TestSemanticsHandler.h"
+#include "TestSemanticsHandlerSloppyIdentifiers.h"
 
 #include "ParserTestTraits.h"
 
@@ -21,7 +21,7 @@ class ParserBlockTestSuite : public CxxTest::TestSuite
     using s1::Parser::ParseBlock;
   };
   
-  typedef TestSemanticsHandlerTemplated<testoptIdentifiersSloppy> TestSemanticsHandler;
+  typedef TestSemanticsHandlerSloppyIdentifiers TestSemanticsHandler;
 public:
   void testBlockExpr (void)
   {

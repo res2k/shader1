@@ -5,7 +5,7 @@
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 
-#include "TestSemanticsHandler.h"
+#include "TestSemanticsHandlerSloppyIdentifiers.h"
 
 #include "ParserTestTraits.h"
 
@@ -21,7 +21,7 @@ class ParserExprTestSuite : public CxxTest::TestSuite
     using s1::Parser::ParseExpression;
   };
   
-  typedef TestSemanticsHandlerTemplated<testoptIdentifiersSloppy> TestSemanticsHandler;
+  typedef TestSemanticsHandlerSloppyIdentifiers TestSemanticsHandler;
 public:
   void testIdentifier (void)
   {
@@ -462,7 +462,7 @@ public:
   
   void testIdentifierArray3 (void)
   {
-    std::istringstream in ("(a+b)[1]+0");
+    std::istringstream in ("(a+b)[1]+c");
     s1::UnicodeStream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -476,11 +476,14 @@ public:
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
-    TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b)[1] + 0)");
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b)[1] + c)");
   }
   
   void testFunctionCall (void)
   {
+    // Need a 'strict' semantics handler for this test
+    typedef ::TestSemanticsHandler TestSemanticsHandler;
+  
     std::istringstream in ("x = Foo ()");
     s1::UnicodeStream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
@@ -491,6 +494,8 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("x"),
+			TestSemanticsHandler::ExpressionPtr (), false);
     scope->AddFunction (TestSemanticsHandler::TypePtr (), UnicodeString ("Foo"), params);
     
     TestSemanticsHandler::ExpressionPtr expr;
@@ -502,7 +507,10 @@ public:
   
   void testFunctionCall2 (void)
   {
-    std::istringstream in ("x = Foo (1 + 2, 3.0)");
+    // Need a 'strict' semantics handler for this test
+    typedef ::TestSemanticsHandler TestSemanticsHandler;
+  
+    std::istringstream in ("x = Foo (a + b, 3.0)");
     s1::UnicodeStream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -512,13 +520,19 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("a"),
+			TestSemanticsHandler::ExpressionPtr (), false);
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("b"),
+			TestSemanticsHandler::ExpressionPtr (), false);
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("x"),
+			TestSemanticsHandler::ExpressionPtr (), false);
     scope->AddFunction (TestSemanticsHandler::TypePtr (), UnicodeString ("Foo"), params);
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
-    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ((1 + 2), 3.0))");
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ((a + b), 3.0))");
   }
   
   void testTypeCtor (void)

@@ -18,8 +18,6 @@ class ParserPorgramTestSuite : public CxxTest::TestSuite
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler)
      : Parser (inputLexer, semanticsHandler) {}
   };
-  
-  typedef TestSemanticsHandlerTemplated<0> TestSemanticsHandler;
 public:
   void testProgramSimple (void)
   {
