@@ -50,6 +50,7 @@ namespace s1
 	  switch (type->base)
 	  {
 	    case Void: return "V";
+	    case Bool: return "B";
 	    case Int: return "I";
 	    case UInt: return "U";
 	    case Float: return "F";
@@ -252,6 +253,9 @@ namespace s1
 	{
 	  return ExpressionPtr (new VariableExpressionImpl (this, nameImpl));
 	}
+	break;
+      default:
+	// TODO: Throw or so
 	break;
       }
       return ExpressionPtr();

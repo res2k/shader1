@@ -76,17 +76,11 @@ namespace s1
       else
       {
 	// Parse decimal number
-	//ICUError icuError;
-	//Formattable number;
-	//handler->GetIcuNumberFormat()->parse (valueStr, number, icuError);
-	
 	switch (numberType)
 	{
 	case Int:
 	  {
 	    // Create actual sequence operation
-	    //assert (number.getType() == Formattable::kLong);
-	    //seqOp = SequenceOpPtr (new SequenceOpConst (destination, int (number.getLong())));
 	    int n;
 	    char dummy;
 	    if (u_sscanf (valueStr.getBuffer(), "%d%c", &n, &dummy) != 1)
@@ -97,8 +91,6 @@ namespace s1
 	case UInt:
 	  {
 	    // Create actual sequence operation
-	    //assert (number.getType() == Formattable::kLong);
-	    //seqOp = SequenceOpPtr (new SequenceOpConst (destination, (unsigned int)(number.getLong())));
 	    unsigned int n;
 	    char dummy;
 	    if (u_sscanf (valueStr.getBuffer(), "%u%c", &n, &dummy) != 1)
@@ -109,14 +101,15 @@ namespace s1
 	case Float:
 	  {
 	    // Create actual sequence operation
-	    //assert (number.getType() == Formattable::kDouble);
-	    //seqOp = SequenceOpPtr (new SequenceOpConst (destination, float (number.getDouble())));
 	    float n;
 	    char dummy;
 	    if (u_sscanf (valueStr.getBuffer(), "%f%c", &n, &dummy) != 1)
 	      throw Exception (NumberParseError);
 	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
 	  }
+	  break;
+	case Void:
+	case Bool:
 	  break;
 	}
       }

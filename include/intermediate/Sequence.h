@@ -59,7 +59,7 @@ namespace s1
 	RegisterID (unsigned int bank, unsigned int num) : bank (bank), num (num) {}
 	
 	bool IsValid() const
-	{ return (bank != ~0) && (num != ~0); }
+	{ return (bank != (unsigned int)~0) && (num != (unsigned int)~0); }
 	
 	bool operator== (const RegisterID& other) const
 	{ return (bank == other.bank) && (num == other.num); }

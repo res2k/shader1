@@ -59,6 +59,8 @@ namespace s1
 	    && ((to.base == Int) || (to.base == UInt)))
 	  // assignment from float to int or unsigned int possible with precision loss
 	  return true;
+      default:
+	break;
       }
       return false;
     }
