@@ -291,8 +291,7 @@ public:
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_ASSERT(
-      varRequested =
-	testScope->ResolveIdentifier (UnicodeString ("a")),
+      testScope->ResolveIdentifier (UnicodeString ("a")),
       const s1::parser::Exception& e,
       e.GetCode() == s1::parser::IdentifierUndeclared
     );

@@ -78,7 +78,7 @@ namespace s1
 	Expect (Lexer::Semicolon);
 	NextToken();
       }
-      else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier)
+      else if ((isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
 	|| (currentToken.typeOrID == Lexer::kwVoid))
       {
 	if ((currentToken.typeOrID == Lexer::kwVoid)
@@ -383,6 +383,8 @@ namespace s1
       case Lexer::Mod:
 	op = SemanticsHandler::Mod;
 	break;
+      default:
+	assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprMultiplication (scope);
@@ -406,6 +408,8 @@ namespace s1
       case Lexer::Minus:
 	op = SemanticsHandler::Sub;
 	break;
+      default:
+	assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprAddition (scope);
@@ -433,6 +437,8 @@ namespace s1
       case Lexer::Minus:
 	op = SemanticsHandler::Neg;
 	break;
+      default:
+	assert (false);
       }
       NextToken();
       expr = ParseExprBase (scope);
@@ -473,6 +479,8 @@ namespace s1
       case Lexer::NotEquals:
 	op = SemanticsHandler::NotEquals;
 	break;
+      default:
+	assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprCompareEqual (scope);
@@ -504,6 +512,8 @@ namespace s1
       case Lexer::SmallerEqual:
 	op = SemanticsHandler::SmallerEqual;
 	break;
+      default:
+	assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprComparison (scope);
@@ -627,8 +637,8 @@ namespace s1
       break;
     default:
       UnexpectedToken ();
-      return Type ();
     }
+    return Type ();
   }
   
   Parser::Type Parser::ParseType (Scope scope)
@@ -808,6 +818,7 @@ namespace s1
     }
     else
       UnexpectedToken();
+    return Parser::Type ();
   }
   
   void Parser::ParseFuncParamFormal (Scope scope, SemanticsHandler::Scope::FunctionFormalParameters& params)

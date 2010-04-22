@@ -62,6 +62,8 @@ namespace s1
 	    && ((to.base == Int) || (to.base == UInt)))
 	  // assignment from float to int or unsigned int possible with precision loss
 	  return true;
+      default:
+	break;
       }
       return false;
     }
@@ -144,6 +146,7 @@ namespace s1
 	  switch (base)
 	  {
 	    case Void: return UnicodeString ("void");
+	    case Bool: return UnicodeString ("bool");
 	    case Int: return UnicodeString ("int");
 	    case UInt: return UnicodeString ("unsigned int");
 	    case Float: return UnicodeString ("float");
@@ -326,6 +329,8 @@ namespace s1
 	  else
 	    attrType = CreateVectorType (expressionType->avmBase, attr.swizzleCompNum);
 	}
+	break;
+      case Attribute::Unknown:
 	break;
       }
       return attrType;
