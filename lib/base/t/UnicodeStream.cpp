@@ -228,7 +228,6 @@ public:
     std::string str ("\xED\xA0\xB5\xED\xB4\xBD");
     std::istringstream in (str);
     s1::UnicodeStream ustream (in, "utf-8");
-    UChar32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test that a surrogate, encoded separately in UTF-8, are invalid

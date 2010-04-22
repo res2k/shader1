@@ -17,8 +17,8 @@ namespace s1
   
   UnicodeStream::UnicodeStream (std::istream& inStream, const char* encoding)
    : inStream (inStream), ucBufferRemaining (0),
-     ucBufferEndError (U_ZERO_ERROR), currentChar (noCharacter),
-     streamInBufferRemaining (0)
+     ucBufferEndError (U_ZERO_ERROR), streamInBufferRemaining (0),
+     currentChar (noCharacter)
   {
     ICUError err;
     uconv = ucnv_open (encoding, err);
