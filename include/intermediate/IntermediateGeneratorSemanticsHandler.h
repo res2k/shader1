@@ -3,17 +3,88 @@
 
 #include "parser/CommonSemanticsHandler.h"
 
+#include "Sequence.h"
+
 namespace s1
 {
   namespace intermediate
   {
     class IntermediateGeneratorSemanticsHandler : public s1::parser::SemanticsHandler
     {
+    protected:
       struct TypeImpl;
       struct NameImpl;
       class ScopeImpl;
       class BlockImpl;
+      
+      class CommandImpl;
+      class ExpressionImpl;
+      class ArithmeticExpressionImpl;
+      class AssignmentExpressionImpl;
+      class NumericExpressionImpl;
+      class VariableExpressionImpl;
+      
+      typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
+      TypeImplPtr voidType;
+      TypeImplPtr boolType;
+      TypeImplPtr intType;
+      TypeImplPtr uintType;
+      TypeImplPtr floatType;
+      
+      struct SequenceOriginalTypeImpl : public Sequence::OriginalType
+      {
+	TypeImplPtr type;
+	
+	SequenceOriginalTypeImpl (const TypeImplPtr& type) : type (type) {}
+      };
+      
+      std::string GetTypeString (const TypeImplPtr& type);
     public:
+      /**\name Type utilities
+       * @{ */
+      static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
+      static BaseType DetectNumericType (const UnicodeString& numericStr);
+      /**@}*/
+      
+      IntermediateGeneratorSemanticsHandler ();
+      ~IntermediateGeneratorSemanticsHandler ();
+      
+      /**\name Basic types
+       * @{ */
+      TypeImplPtr GetVoidType() const { return voidType; }
+      TypeImplPtr GetBoolType() const { return boolType; }
+      TypeImplPtr GetIntType() const { return intType; }
+      TypeImplPtr GetUintType() const { return uintType; }
+      TypeImplPtr GetFloatType() const { return floatType; }
+      /** @} */
+      
+      /**\name Register handling
+       * @{ */
+      enum RegisterClassification
+      {
+	Variable = 'v',
+	Intermediate = 'i',
+	Dummy = 'd'
+      };
+      /**
+       * Allocate a new register.
+       * If name is empty generates a dummy name.
+       */
+      Sequence::RegisterID AllocateRegister (Sequence& seq, const TypeImplPtr& type,
+					     RegisterClassification classify,
+					     const UnicodeString& name = UnicodeString ());
+      /// Create a new generation of a register
+      Sequence::RegisterID AllocateRegister (Sequence& seq, const Sequence::RegisterID& oldReg);
+      /** @} */
+      
+      void GenerateCast (Sequence& seq,
+			 const Sequence::RegisterID& castDestination,
+			 const TypeImplPtr& typeDestination,
+			 const Sequence::RegisterID& castSource,
+			 const TypeImplPtr& typeSource);
+      
+      /**\name s1::parser::SemanticsHandler implementation
+       * @{ */
       TypePtr CreateType (BaseType type);
       TypePtr CreateSamplerType (SamplerType dim);
       TypePtr CreateArrayType (TypePtr baseType);
@@ -23,54 +94,41 @@ namespace s1
 				unsigned int columns,
 				unsigned int rows);
       
-      ExpressionPtr CreateConstBoolExpression (bool value)
-      { return ExpressionPtr(); }
-      ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr)
-      { return ExpressionPtr(); }
-      ExpressionPtr CreateVariableExpression (NamePtr name)
-      { return ExpressionPtr(); }
+      ExpressionPtr CreateConstBoolExpression (bool value);
+      ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr);
+      ExpressionPtr CreateVariableExpression (NamePtr name);
       ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-					   const UnicodeString& attr)
-      { return ExpressionPtr(); }
+					   const UnicodeString& attr);
       ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
-					      ExpressionPtr elementIndexExpr)
-      { return ExpressionPtr(); }
+					      ExpressionPtr elementIndexExpr);
       ExpressionPtr CreateAssignExpression (ExpressionPtr target,
-					    ExpressionPtr value)
-
-      { return ExpressionPtr(); }
+					    ExpressionPtr value);
+					    
       ExpressionPtr CreateArithmeticExpression (ArithmeticOp op,
 						ExpressionPtr operand1,
-						ExpressionPtr operand2)
-      { return ExpressionPtr(); }
+						ExpressionPtr operand2);
       ExpressionPtr CreateUnaryExpression (UnaryOp op,
-					   ExpressionPtr operand)
-						   
-      { return ExpressionPtr(); }
+					   ExpressionPtr operand);
       ExpressionPtr CreateTernaryExpression (ExpressionPtr condition,
 					     ExpressionPtr ifExpr,
-					     ExpressionPtr thenExpr)
-      { return ExpressionPtr(); }
+					     ExpressionPtr thenExpr);
       ExpressionPtr CreateComparisonExpression (CompareOp op,
 						ExpressionPtr operand1,
-						ExpressionPtr operand2)
-      { return ExpressionPtr(); }
+						ExpressionPtr operand2);
       ExpressionPtr CreateLogicExpression (LogicOp op,
 					   ExpressionPtr operand1,
-					   ExpressionPtr operand2)
-      { return ExpressionPtr(); }
+					   ExpressionPtr operand2);
 
       ExpressionPtr CreateFunctionCallExpression (NamePtr functionName,
-						  const ExpressionVector& params)
-      { return ExpressionPtr(); }
+						  const ExpressionVector& params);
       
       ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
-						     const ExpressionVector& params)
-      { return ExpressionPtr(); }
+						     const ExpressionVector& params);
       
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel);
       
       BlockPtr CreateBlock (ScopePtr parentScope);
+      /** @} */
     };
     
   } // namespace intermediate

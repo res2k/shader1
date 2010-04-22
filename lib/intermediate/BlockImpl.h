@@ -2,6 +2,7 @@
 #define __INTERMEDIATE_BLOCKIMPL_H__
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/Sequence.h"
 
 namespace s1
 {
@@ -9,13 +10,17 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::BlockImpl : public Block
     {
+    protected:
+      IntermediateGeneratorSemanticsHandler* handler;
       ScopePtr innerScope;
+      
+      SequencePtr sequence;
     public:
-      BlockImpl (ScopePtr innerScope) : innerScope (innerScope) {}
+      BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
       ScopePtr GetInnerScope() { return innerScope; }
       
-      void AddExpressionCommand (ExpressionPtr expr) {}
+      void AddExpressionCommand (ExpressionPtr expr);
       void AddReturnCommand (ExpressionPtr returnValue) {}
       void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
 			 BlockPtr elseBlock) {}

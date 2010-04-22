@@ -34,7 +34,8 @@ namespace s1
 									   ExpressionPtr initialValue, bool constant)
     {
       CheckIdentifierUnique (identifier);
-      NamePtr newName (new NameImpl (identifier, type, initialValue, constant));
+      NamePtr newName (new NameImpl (shared_from_this(), identifier, 
+				     boost::shared_static_cast<TypeImpl> (type), initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -42,7 +43,8 @@ namespace s1
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (TypePtr aliasedType, const UnicodeString& identifier)
     {
       CheckIdentifierUnique (identifier);
-      NamePtr newName (new NameImpl (identifier, Name::TypeAlias, aliasedType));
+      NamePtr newName (new NameImpl (shared_from_this(), identifier, Name::TypeAlias, 
+				     boost::shared_static_cast<TypeImpl> (aliasedType)));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -54,7 +56,8 @@ namespace s1
       if (level >= Function)
 	throw parser::Exception (parser::DeclarationNotAllowedInScope);
       CheckIdentifierUnique (identifier);
-      NamePtr newName (new NameImpl (identifier, Name::Function, returnType));
+      NamePtr newName (new NameImpl (shared_from_this(), identifier, Name::Function,
+				     boost::shared_static_cast<TypeImpl> (returnType)));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
       funcScope = handler->CreateScope (shared_from_this(), Function);

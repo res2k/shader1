@@ -3,12 +3,15 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
+#include "TypeImpl.h"
+
 namespace s1
 {
   namespace intermediate
   {
     struct IntermediateGeneratorSemanticsHandler::NameImpl : public Name
     {
+      boost::weak_ptr<ScopeImpl> ownerScope;
       UnicodeString identifier;
       NameType type;
       
@@ -16,22 +19,47 @@ namespace s1
 	* Functions: type of return value
 	* Type aliases: aliased type
 	*/
-      TypePtr valueType;
+      boost::shared_ptr<TypeImpl> valueType;
       // Variables/Constants: value
       ExpressionPtr varValue;
       // Distinguish between variable/constant
       bool varConstant;
+      // Register for variable/constant
+      Sequence::RegisterID varReg;
       
-      NameImpl (const UnicodeString& identifier, NameType type, TypePtr typeOfName)
-	: identifier (identifier), type (type), valueType (typeOfName) {}
-      NameImpl (const UnicodeString& identifier, TypePtr typeOfName,
+      NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
+		const UnicodeString& identifier, NameType type,
+		const boost::shared_ptr<TypeImpl>& typeOfName)
+	: ownerScope (ownerScope), identifier (identifier), type (type), valueType (typeOfName) {}
+      NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
+		const UnicodeString& identifier,
+		const boost::shared_ptr<TypeImpl>& typeOfName,
 		ExpressionPtr value, bool constant)
-	: identifier (identifier), type (Variable), valueType (typeOfName),
+	: ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),
 	  varValue (value), varConstant (constant) {}
       
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
-      { return type == TypeAlias ? valueType : TypePtr (); }
+      { return type == TypeAlias ? boost::shared_static_cast<Type> (valueType) : TypePtr (); }
+      
+      Sequence::RegisterID GetRegister (IntermediateGeneratorSemanticsHandler* handler,
+					Sequence& seq, bool writeable)
+      {
+	/* Note: asking for a register for a constant value is only an error for the second time and
+	   after; the first request is satisfied as the constant may have to be loaded somewhere */
+	if (!varReg.IsValid())
+	  varReg = handler->AllocateRegister (seq, valueType,
+					      IntermediateGeneratorSemanticsHandler::Variable, identifier);
+	else if (writeable)
+	{
+	  if (varConstant)
+	    // Throw?
+	    return Sequence::RegisterID ();
+	  // Query a new generation
+	  varReg = handler->AllocateRegister (seq, varReg);
+	}
+	return varReg;
+      }
     };
   } // namespace intermediate
 } // namespace s1
