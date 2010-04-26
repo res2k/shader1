@@ -63,6 +63,7 @@ namespace s1
       {
 	bank = registerBanks.size();
 	registerBanks.push_back (RegisterBankPtr (new RegisterBank (originalType)));
+	typeToRegBank[typeStr] = bank;
       }
       RegisterBankPtr bankPtr = registerBanks[bank];
       
