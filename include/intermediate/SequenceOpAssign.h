@@ -12,6 +12,8 @@ namespace s1
     public:
       SequenceOpAssign (Sequence::RegisterID destination,
 			Sequence::RegisterID source);
+
+      void Visit (SequenceVisitor& visitor);
     };
     
   } // namespace intermediate

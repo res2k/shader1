@@ -9,6 +9,7 @@ namespace s1
   {
     class SequenceOpUnary : public SequenceOpWithResult
     {
+    protected:
       Sequence::RegisterID source;
     public:
       SequenceOpUnary (Sequence::RegisterID destination,

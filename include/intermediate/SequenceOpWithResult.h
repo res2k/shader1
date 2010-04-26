@@ -10,6 +10,7 @@ namespace s1
   {
     class SequenceOpWithResult : public SequenceOp
     {
+    protected:
       Sequence::RegisterID destination;
     public:
       SequenceOpWithResult (Sequence::RegisterID destination);

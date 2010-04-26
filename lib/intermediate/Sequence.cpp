@@ -80,6 +80,14 @@ namespace s1
       unsigned int regNum = bankPtr->AddRegister (regPtr);
       return RegisterID (oldReg.bank, regNum);
     }
+      
+    void Sequence::Visit (SequenceVisitor& visitor)
+    {
+      for (OpsVector::iterator op = ops.begin(); op != ops.end(); ++op)
+      {
+	(*op)->Visit (visitor);
+      }
+    }
   } // namespace intermediate
 } // namespace s1
 

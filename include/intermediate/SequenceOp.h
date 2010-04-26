@@ -7,10 +7,14 @@ namespace s1
 {
   namespace intermediate
   {
+    struct SequenceVisitor;
+    
     class SequenceOp
     {
     public:
       virtual ~SequenceOp() {}
+      
+      virtual void Visit (SequenceVisitor& visitor) = 0;
     };
     typedef boost::shared_ptr<SequenceOp> SequenceOpPtr;
     

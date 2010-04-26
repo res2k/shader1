@@ -27,6 +27,8 @@ namespace s1
        : SequenceOpWithResult (destination), type (UInt), uintVal (val) {}
       SequenceOpConst (Sequence::RegisterID destination, float val)
        : SequenceOpWithResult (destination), type (Float), floatVal (val) {}
+
+      void Visit (SequenceVisitor& visitor);
     };
     
   } // namespace intermediate

@@ -15,6 +15,8 @@ namespace s1
       SequenceOpCast (Sequence::RegisterID destination,
 		      BasicType castTo,
 		      Sequence::RegisterID source);
+
+      void Visit (SequenceVisitor& visitor);
     };
     
   } // namespace intermediate

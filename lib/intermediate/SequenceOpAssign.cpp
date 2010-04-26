@@ -1,4 +1,5 @@
 #include "intermediate/SequenceOpAssign.h"
+#include "intermediate/SequenceVisitor.h"
 
 namespace s1
 {
@@ -10,5 +11,9 @@ namespace s1
     {
     }
     
+    void SequenceOpAssign::Visit (SequenceVisitor& visitor)
+    {
+      visitor.OpAssign (destination, source);
+    }
   } // namespace intermediate
 } // namespace s1

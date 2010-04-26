@@ -11,9 +11,12 @@ namespace s1
 {
   namespace intermediate
   {
+    struct SequenceVisitor;
+    
     class Sequence
     {
-      std::vector<SequenceOpPtr> ops;
+      typedef std::vector<SequenceOpPtr> OpsVector;
+      OpsVector ops;
     public:
       
       struct OriginalType
@@ -75,6 +78,8 @@ namespace s1
 				   const OriginalTypePtr& originalType,
 				   const UnicodeString& name);
       RegisterID AllocateRegister (const RegisterID& oldReg);
+      
+      void Visit (SequenceVisitor& visitor);
     protected:
       std::vector<RegisterBankPtr> registerBanks;
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
