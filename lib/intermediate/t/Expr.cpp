@@ -2,6 +2,9 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "../BlockImpl.h"
+#include "TestSequenceVisitor.h"
+
+#include "IntermediateTestTraits.h"
 
 using namespace s1::intermediate;
 
@@ -43,8 +46,11 @@ public:
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    TS_ASSERT_EQUALS(testBlockImpl->sequence->GetNumOps(), 1);
-
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequence->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
+    TS_ASSERT_EQUALS(visitor.entries[0].floatConst, 1.0f);
   }
   
   void testExprArith (void)
