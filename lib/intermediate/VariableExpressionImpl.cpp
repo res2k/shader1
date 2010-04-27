@@ -1,7 +1,7 @@
 #include "VariableExpressionImpl.h"
 
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOpAssign.h"
+#include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "NameImpl.h"
 
 #include <boost/make_shared.hpp>

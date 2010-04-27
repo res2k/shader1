@@ -1,20 +1,20 @@
-#include "intermediate/SequenceOpCompareLE.h"
+#include "intermediate/SequenceOp/SequenceOpCompareLT.h"
 #include "intermediate/SequenceVisitor.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    SequenceOpCompareLE::SequenceOpCompareLE (Sequence::RegisterID destination,
+    SequenceOpCompareLT::SequenceOpCompareLT (Sequence::RegisterID destination,
 					      Sequence::RegisterID source1,
 					      Sequence::RegisterID source2)
      : SequenceOpBinary (destination, source1, source2)
     {
     }
     
-    void SequenceOpCompareLE::Visit (SequenceVisitor& visitor)
+    void SequenceOpCompareLT::Visit (SequenceVisitor& visitor)
     {
-      visitor.OpCompareLE (destination, source1, source2);
+      visitor.OpCompareLT (destination, source1, source2);
     }
   } // namespace intermediate
 } // namespace s1

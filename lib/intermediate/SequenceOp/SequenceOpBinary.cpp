@@ -1,4 +1,4 @@
-#include "intermediate/SequenceOpBinary.h"
+#include "intermediate/SequenceOp/SequenceOpBinary.h"
 
 namespace s1
 {

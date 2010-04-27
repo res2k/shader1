@@ -2,7 +2,7 @@
 #include "base/hash_UnicodeString.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
-#include "intermediate/SequenceOpCast.h"
+#include "intermediate/SequenceOp/SequenceOpCast.h"
 
 #include "parser/Exception.h"
 

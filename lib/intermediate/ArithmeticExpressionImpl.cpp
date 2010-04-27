@@ -1,11 +1,11 @@
 #include "ArithmeticExpressionImpl.h"
 
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOpArithAdd.h"
-#include "intermediate/SequenceOpArithDiv.h"
-#include "intermediate/SequenceOpArithMod.h"
-#include "intermediate/SequenceOpArithMul.h"
-#include "intermediate/SequenceOpArithSub.h"
+#include "intermediate/SequenceOp/SequenceOpArithAdd.h"
+#include "intermediate/SequenceOp/SequenceOpArithDiv.h"
+#include "intermediate/SequenceOp/SequenceOpArithMod.h"
+#include "intermediate/SequenceOp/SequenceOpArithMul.h"
+#include "intermediate/SequenceOp/SequenceOpArithSub.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>

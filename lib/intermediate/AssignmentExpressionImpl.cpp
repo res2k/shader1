@@ -1,7 +1,7 @@
 #include "AssignmentExpressionImpl.h"
 
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOpAssign.h"
+#include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "TypeImpl.h"
 
 namespace s1

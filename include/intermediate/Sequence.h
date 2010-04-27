@@ -1,7 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCE_H__
 #define __INTERMEDIATE_SEQUENCE_H__
 
-#include "SequenceOp.h"
+#include "SequenceOp/SequenceOp.h"
 
 #include <base/unordered_map>
 #include <unicode/unistr.h>

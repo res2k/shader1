@@ -1,4 +1,4 @@
-#include "intermediate/SequenceOpCast.h"
+#include "intermediate/SequenceOp/SequenceOpCast.h"
 #include "intermediate/SequenceVisitor.h"
 
 namespace s1

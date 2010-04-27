@@ -1,7 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCEOPCONST_H__
 #define __INTERMEDIATE_SEQUENCEOPCONST_H__
 
-#include "BasicType.h"
+#include "../BasicType.h"
 #include "SequenceOpWithResult.h"
 
 namespace s1

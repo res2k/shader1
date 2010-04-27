@@ -1,4 +1,4 @@
-#include "intermediate/SequenceOpWithResult.h"
+#include "intermediate/SequenceOp/SequenceOpWithResult.h"
 
 namespace s1
 {

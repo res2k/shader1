@@ -1,7 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCEOPCAST_H__
 #define __INTERMEDIATE_SEQUENCEOPCAST_H__
 
-#include "BasicType.h"
+#include "../BasicType.h"
 #include "SequenceOpUnary.h"
 
 namespace s1

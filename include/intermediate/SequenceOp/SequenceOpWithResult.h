@@ -1,7 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCEOPWITHRESULT_H__
 #define __INTERMEDIATE_SEQUENCEOPWITHRESULT_H__
 
-#include "Sequence.h"
+#include "../Sequence.h"
 #include "SequenceOp.h"
 
 namespace s1

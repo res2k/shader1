@@ -1,4 +1,4 @@
-#include "intermediate/SequenceOpConst.h"
+#include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "intermediate/SequenceVisitor.h"
 
 namespace s1

@@ -1,12 +1,12 @@
 #include "ComparisonExpressionImpl.h"
 
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOpCompareEq.h"
-#include "intermediate/SequenceOpCompareNE.h"
-#include "intermediate/SequenceOpCompareGE.h"
-#include "intermediate/SequenceOpCompareGT.h"
-#include "intermediate/SequenceOpCompareLE.h"
-#include "intermediate/SequenceOpCompareLT.h"
+#include "intermediate/SequenceOp/SequenceOpCompareEq.h"
+#include "intermediate/SequenceOp/SequenceOpCompareNE.h"
+#include "intermediate/SequenceOp/SequenceOpCompareGE.h"
+#include "intermediate/SequenceOp/SequenceOpCompareGT.h"
+#include "intermediate/SequenceOp/SequenceOpCompareLE.h"
+#include "intermediate/SequenceOp/SequenceOpCompareLT.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>

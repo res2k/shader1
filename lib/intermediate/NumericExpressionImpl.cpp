@@ -1,7 +1,7 @@
 #include "NumericExpressionImpl.h"
 
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOpConst.h"
+#include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "TypeImpl.h"
 
 #include <unicode/ustdio.h>
