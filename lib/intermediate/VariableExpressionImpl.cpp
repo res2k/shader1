@@ -1,7 +1,10 @@
 #include "VariableExpressionImpl.h"
 
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceOpAssign.h"
 #include "NameImpl.h"
+
+#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -31,8 +34,18 @@ namespace s1
 										       Sequence& seq,
 										       Sequence::RegisterID destination)
     {
-      /* Don't need anything here... other ops will either write to, or
-         read from, the register for this var. */
+      if (destination.IsValid())
+      {
+	// Evaluating to a destination -> assignment
+	SequenceOpPtr seqOp;
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpAssign> (destination, GetRegister (seq, false)));
+	seq.AddOp (seqOp);
+      }
+      else
+      {
+	/* Don't need anything here... other ops will either write to, or
+	  read from, the register for this var. */
+      }
     }
   } // namespace intermediate
 } // namespace s1
