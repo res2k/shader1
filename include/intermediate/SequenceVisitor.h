@@ -47,7 +47,26 @@ namespace s1
       virtual void OpArithMod (const Sequence::RegisterID& destination,
 			       const Sequence::RegisterID& source1,
 			       const Sequence::RegisterID& source2) = 0;
-};
+
+      virtual void OpCompareEq (const Sequence::RegisterID& destination,
+				const Sequence::RegisterID& source1,
+				const Sequence::RegisterID& source2) = 0;
+      virtual void OpCompareNE (const Sequence::RegisterID& destination,
+				const Sequence::RegisterID& source1,
+				const Sequence::RegisterID& source2) = 0;
+      virtual void OpCompareLT (const Sequence::RegisterID& destination,
+				const Sequence::RegisterID& source1,
+				const Sequence::RegisterID& source2) = 0;
+      virtual void OpCompareLE (const Sequence::RegisterID& destination,
+				const Sequence::RegisterID& source1,
+				const Sequence::RegisterID& source2) = 0;
+      virtual void OpCompareGT (const Sequence::RegisterID& destination,
+				const Sequence::RegisterID& source1,
+				const Sequence::RegisterID& source2) = 0;
+      virtual void OpCompareGE (const Sequence::RegisterID& destination,
+				const Sequence::RegisterID& source1,
+				const Sequence::RegisterID& source2) = 0;
+    };
   } // namespace intermediate
 } // namespace s1
 

@@ -22,6 +22,12 @@ public:
     opArithMul,
     opArithDiv,
     opArithMod,
+    opCompareEq,
+    opCompareNE,
+    opCompareLE,
+    opCompareLT,
+    opCompareGE,
+    opCompareGT,
   };
   typedef s1::intermediate::Sequence Sequence;
   struct SequenceEntry
@@ -189,6 +195,79 @@ public:
   {
     SequenceEntry entry;
     entry.op = opArithMod;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+
+  void OpCompareEq (const Sequence::RegisterID& destination,
+		    const Sequence::RegisterID& source1,
+		    const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opCompareEq;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpCompareNE (const Sequence::RegisterID& destination,
+		    const Sequence::RegisterID& source1,
+		    const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opCompareNE;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpCompareLE (const Sequence::RegisterID& destination,
+		    const Sequence::RegisterID& source1,
+		    const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opCompareLE;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpCompareLT (const Sequence::RegisterID& destination,
+		    const Sequence::RegisterID& source1,
+		    const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opCompareLT;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpCompareGE (const Sequence::RegisterID& destination,
+		    const Sequence::RegisterID& source1,
+		    const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opCompareGE;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpCompareGT (const Sequence::RegisterID& destination,
+		    const Sequence::RegisterID& source1,
+		    const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opCompareGT;
     entry.destReg = destination;
     entry.sourceReg[0] = source1;
     entry.sourceReg[1] = source2;

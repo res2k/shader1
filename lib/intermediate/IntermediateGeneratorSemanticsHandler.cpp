@@ -13,9 +13,11 @@
 
 #include "ArithmeticExpressionImpl.h"
 #include "AssignmentExpressionImpl.h"
+#include "ComparisonExpressionImpl.h"
 #include "NumericExpressionImpl.h"
 #include "VariableExpressionImpl.h"
 
+#include <boost/make_shared.hpp>
 #include <unicode/ustdio.h>
 
 namespace s1
@@ -300,7 +302,13 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateComparisonExpression (CompareOp op,
 					      ExpressionPtr operand1,
 					      ExpressionPtr operand2)
-    { return ExpressionPtr(); }
+    {
+      return ExpressionPtr (
+	boost::make_shared<ComparisonExpressionImpl> (this,
+						      op,
+						      boost::static_pointer_cast<ExpressionImpl> (operand1),
+						      boost::static_pointer_cast<ExpressionImpl> (operand2)));
+    }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateLogicExpression (LogicOp op,
 					  ExpressionPtr operand1,
