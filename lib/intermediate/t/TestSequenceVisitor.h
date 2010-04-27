@@ -17,6 +17,11 @@ public:
     opCastToInt,
     opCastToUInt,
     opCastToFloat,
+    opArithAdd,
+    opArithSub,
+    opArithMul,
+    opArithDiv,
+    opArithMod,
   };
   typedef s1::intermediate::Sequence Sequence;
   struct SequenceEntry
@@ -32,7 +37,7 @@ public:
     };
       
     Sequence::RegisterID destReg;
-    Sequence::RegisterID sourceReg[1];
+    Sequence::RegisterID sourceReg[2];
   };
   
   std::vector<SequenceEntry> entries;
@@ -129,6 +134,66 @@ public:
     entries.push_back (entry);
   }
   
+
+  void OpArithAdd (const Sequence::RegisterID& destination,
+		   const Sequence::RegisterID& source1,
+		   const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opArithAdd;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpArithSub (const Sequence::RegisterID& destination,
+		   const Sequence::RegisterID& source1,
+		   const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opArithSub;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpArithMul (const Sequence::RegisterID& destination,
+		   const Sequence::RegisterID& source1,
+		   const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opArithMul;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpArithDiv (const Sequence::RegisterID& destination,
+		   const Sequence::RegisterID& source1,
+		   const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opArithDiv;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpArithMod (const Sequence::RegisterID& destination,
+		   const Sequence::RegisterID& source1,
+		   const Sequence::RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opArithMod;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
 };
 
 #endif // __TESTSEQUENCEVISITOR_H__

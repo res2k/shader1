@@ -121,9 +121,8 @@ public:
     TS_ASSERT_EQUALS(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
   }
   
-  void testExprArith (void)
+  void testExprArithVar (void)
   {
-    /*
     TestSemanticsHandler semanticsHandler;
     
     // Create a scope
@@ -150,6 +149,88 @@ public:
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
-    */
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequence->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opArithAdd);
+  }
+  
+  void testExprArithConst (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    // Create a simple expression "c = a + b"
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("1.0"));
+    TestSemanticsHandler::ExpressionPtr expr2 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("2.0"));
+    TestSemanticsHandler::ExpressionPtr addExpr = semanticsHandler.CreateArithmeticExpression (TestSemanticsHandler::Add,
+											       expr1, expr2);
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, addExpr);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequence->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 3);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
+    TS_ASSERT_EQUALS(visitor.entries[0].floatConst, 1.0f);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opConstFloat);
+    TS_ASSERT_EQUALS(visitor.entries[1].floatConst, 2.0f);
+    TS_ASSERT_EQUALS(visitor.entries[2].op, TestSequenceVisitor::opArithAdd);
+    TS_ASSERT_EQUALS(visitor.entries[2].sourceReg[0], visitor.entries[0].destReg);
+    TS_ASSERT_EQUALS(visitor.entries[2].sourceReg[1], visitor.entries[1].destReg);
+  }
+  
+  void testExprArithConst2 (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    // Create a simple expression "c = a + b"
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("1"));
+    TestSemanticsHandler::ExpressionPtr expr2 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("2.0"));
+    TestSemanticsHandler::ExpressionPtr addExpr = semanticsHandler.CreateArithmeticExpression (TestSemanticsHandler::Add,
+											       expr1, expr2);
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, addExpr);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequence->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 4);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToFloat);
+    TS_ASSERT_EQUALS(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
+    TS_ASSERT_EQUALS(visitor.entries[2].op, TestSequenceVisitor::opConstFloat);
+    TS_ASSERT_EQUALS(visitor.entries[2].floatConst, 2.0f);
+    TS_ASSERT_EQUALS(visitor.entries[3].op, TestSequenceVisitor::opArithAdd);
+    TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[0], visitor.entries[1].destReg);
+    TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[1], visitor.entries[2].destReg);
   }
 };

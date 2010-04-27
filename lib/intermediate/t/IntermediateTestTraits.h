@@ -15,6 +15,11 @@ CXXTEST_ENUM_TRAITS (TestSequenceVisitor::Operation,
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opCastToInt)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opCastToUInt)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opCastToFloat)
+		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opArithAdd)
+		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opArithSub)
+		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opArithMul)
+		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opArithDiv)
+		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opArithMod)
 );
 
 #endif // __INTERMEDIATETESTTRAITS_H__

@@ -31,7 +31,23 @@ namespace s1
 			         const Sequence::RegisterID& source) = 0;
       virtual void OpCastToFloat (const Sequence::RegisterID& destination,
 			          const Sequence::RegisterID& source) = 0;
-    };
+
+      virtual void OpArithAdd (const Sequence::RegisterID& destination,
+			       const Sequence::RegisterID& source1,
+			       const Sequence::RegisterID& source2) = 0;
+      virtual void OpArithSub (const Sequence::RegisterID& destination,
+			       const Sequence::RegisterID& source1,
+			       const Sequence::RegisterID& source2) = 0;
+      virtual void OpArithMul (const Sequence::RegisterID& destination,
+			       const Sequence::RegisterID& source1,
+			       const Sequence::RegisterID& source2) = 0;
+      virtual void OpArithDiv (const Sequence::RegisterID& destination,
+			       const Sequence::RegisterID& source1,
+			       const Sequence::RegisterID& source2) = 0;
+      virtual void OpArithMod (const Sequence::RegisterID& destination,
+			       const Sequence::RegisterID& source1,
+			       const Sequence::RegisterID& source2) = 0;
+};
   } // namespace intermediate
 } // namespace s1
 

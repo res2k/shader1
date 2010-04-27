@@ -1,7 +1,14 @@
 #include "ArithmeticExpressionImpl.h"
 
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceOpArithAdd.h"
+#include "intermediate/SequenceOpArithDiv.h"
+#include "intermediate/SequenceOpArithMod.h"
+#include "intermediate/SequenceOpArithMul.h"
+#include "intermediate/SequenceOpArithSub.h"
 #include "TypeImpl.h"
+
+#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -54,29 +61,55 @@ namespace s1
       reg1 = operand1->GetRegister (seq, false);
       if (!reg1.IsValid())
       {
-	reg1 = handler->AllocateRegister (seq, valueType, Intermediate);
+	reg1 = handler->AllocateRegister (seq, type1, Intermediate);
 	operand1->AddToSequence (block, seq, reg1);
       }
       if (!valueType->IsEqual (*(type1.get())))
       {
 	// Insert cast op
+	Sequence::RegisterID newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
+	handler->GenerateCast (seq, newReg1, valueType,
+			       reg1, type1);
+	reg1 = newReg1;
       }
       Sequence::RegisterID reg2;
       reg2 = operand1->GetRegister (seq, false);
       if (!reg2.IsValid())
       {
-	reg2 = handler->AllocateRegister (seq, valueType, Intermediate);
+	reg2 = handler->AllocateRegister (seq, type2, Intermediate);
 	operand2->AddToSequence (block, seq, reg2);
       }
       if (!valueType->IsEqual (*(type2.get())))
       {
 	// Insert cast op
+	Sequence::RegisterID newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
+	handler->GenerateCast (seq, newReg2, valueType,
+			       reg2, type2);
+	reg2 = newReg2;
       }
       
       // Create actual sequence operation
-      // SequenceOpArithmetic seqOp (op, reg1, reg2);
-      // seqOp.SetDestination (destination);
-      // seq.AddOp (seq);
+      SequenceOpPtr seqOp;
+      switch (op)
+      {
+      case Add:
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithAdd> (destination, reg1, reg2));
+	break;
+      case Sub:
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithSub> (destination, reg1, reg2));
+	break;
+      case Mul:
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithMul> (destination, reg1, reg2));
+	break;
+      case Div:
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithDiv> (destination, reg1, reg2));
+	break;
+      case Mod:
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithMod> (destination, reg1, reg2));
+	break;
+      }
+      assert (seqOp);
+      seq.AddOp (seqOp);
     }
   } // namespace intermediate
 } // namespace s1
