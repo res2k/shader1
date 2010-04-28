@@ -82,9 +82,9 @@ namespace s1
       return RegisterID (oldReg.bank, regNum);
     }
       
-    void Sequence::Visit (SequenceVisitor& visitor)
+    void Sequence::Visit (SequenceVisitor& visitor) const
     {
-      for (OpsVector::iterator op = ops.begin(); op != ops.end(); ++op)
+      for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
 	(*op)->Visit (visitor);
       }

@@ -79,7 +79,7 @@ namespace s1
 				   const UnicodeString& name);
       RegisterID AllocateRegister (const RegisterID& oldReg);
       
-      void Visit (SequenceVisitor& visitor);
+      void Visit (SequenceVisitor& visitor) const;
     protected:
       std::vector<RegisterBankPtr> registerBanks;
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
