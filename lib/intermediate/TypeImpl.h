@@ -9,10 +9,6 @@ namespace s1
   {
     struct IntermediateGeneratorSemanticsHandler::TypeImpl : public Type
     {
-      enum Class
-      {
-	Base, Sampler, Array, Vector, Matrix
-      };
       Class typeClass;
       parser::SemanticsHandler::BaseType base;
       parser::SemanticsHandler::SamplerType sampler;
@@ -28,6 +24,17 @@ namespace s1
 	: typeClass (Vector), avmBase (vBase), vectorDim (d) {}
       TypeImpl (parser::SemanticsHandler::TypePtr mBase, unsigned int c, unsigned int r)
 	: typeClass (Matrix), avmBase (mBase), matrixCols (c), matrixRows (r) {}
+      
+      Class GetTypeClass() const { return typeClass; }
+      BaseType GetBaseType() const { return base; }
+      SamplerType GetSamplerType() const { return sampler; }
+      
+      TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
+      
+      unsigned int GetVectorTypeComponents() const { return vectorDim; }
+      
+      unsigned int GetMatrixTypeCols() const { return matrixCols; }
+      unsigned int GetMatrixTypeRows() const { return matrixRows; }
       
       /// Returns whether this type is losslessly assignable to \a to.
       bool CompatibleLossless (const TypeImpl& to) const;

@@ -31,18 +31,37 @@ namespace s1
       
       /**\name Types
        * @{ */
+      /// Base types
+      enum BaseType { Void, Bool, Int, UInt, Float };
+      /// Sampler dimensions
+      enum SamplerType { _1D, _2D, _3D, CUBE };
+      
+      struct Type;
+      typedef boost::shared_ptr<Type> TypePtr;
       /// Representation of a type
       struct Type
       {
+	enum Class
+	{
+	  Base, Sampler, Array, Vector, Matrix
+	};
+	
+	virtual ~Type() {}
+	
+	virtual Class GetTypeClass() const = 0;
+	virtual BaseType GetBaseType() const = 0;
+	virtual SamplerType GetSamplerType() const = 0;
+	
+	virtual TypePtr GetArrayVectorMatrixBaseType() const = 0;
+	
+	virtual unsigned int GetVectorTypeComponents() const = 0;
+	
+	virtual unsigned int GetMatrixTypeCols() const = 0;
+	virtual unsigned int GetMatrixTypeRows() const = 0;
       };
-      typedef boost::shared_ptr<Type> TypePtr;
       
-      /// Base types
-      enum BaseType { Void, Bool, Int, UInt, Float };
       /// Create a base type
       virtual TypePtr CreateType (BaseType type) = 0;
-      /// Sampler dimensions
-      enum SamplerType { _1D, _2D, _3D, CUBE };
       /// Create a sampler type
       virtual TypePtr CreateSamplerType (SamplerType dim) = 0;
       /// Create an array type
