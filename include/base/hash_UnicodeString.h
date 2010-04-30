@@ -18,4 +18,10 @@ namespace std
   }
 }
 
+// Boost hash function
+inline std::size_t hash_value (const UnicodeString& s)
+{
+  return s.hashCode();
+}
+
 #endif // __HASH_UNICODESTRING_H__
