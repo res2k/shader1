@@ -32,13 +32,6 @@ namespace s1
       TypeImplPtr uintType;
       TypeImplPtr floatType;
       
-      struct SequenceOriginalTypeImpl : public Sequence::OriginalType
-      {
-	TypeImplPtr type;
-	
-	SequenceOriginalTypeImpl (const TypeImplPtr& type) : type (type) {}
-      };
-      
       std::string GetTypeString (const TypeImplPtr& type);
     public:
       /**\name Type utilities

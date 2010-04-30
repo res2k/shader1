@@ -7,6 +7,8 @@ namespace s1
   {
     class CgGenerator
     {
+    protected:
+      class SequenceCodeGenerator;
     };
   } // namespace codegen
 } // namespace s1

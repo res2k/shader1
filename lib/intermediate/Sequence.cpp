@@ -1,3 +1,5 @@
+#include <boost/functional/hash.hpp>
+
 #include "intermediate/Sequence.h"
 
 #include <unicode/ustdio.h>
@@ -27,7 +29,7 @@ namespace s1
     
     // ----------------------------------------------------------------------
 
-    Sequence::RegisterBank::RegisterBank (OriginalTypePtr originalType)
+    Sequence::RegisterBank::RegisterBank (const TypePtr& originalType)
      : originalType (originalType) {}
 
     unsigned int Sequence::RegisterBank::AddRegister (const UnicodeString& name)
@@ -52,7 +54,7 @@ namespace s1
     }
       
     Sequence::RegisterID Sequence::AllocateRegister (const std::string& typeStr,
-						     const OriginalTypePtr& originalType,
+						     const TypePtr& originalType,
 						     const UnicodeString& name)
     {
       unsigned int bank;
@@ -81,6 +83,16 @@ namespace s1
       unsigned int regNum = bankPtr->AddRegister (regPtr);
       return RegisterID (oldReg.bank, regNum);
     }
+
+    Sequence::RegisterPtr Sequence::QueryRegisterFromID (const RegisterID& id, RegisterBankPtr& bank) const
+    {
+      if (!id.IsValid()) return RegisterPtr ();
+      
+      bank = registerBanks[id.bank];
+      RegisterPtr regPtr = bank->registers[id.num];
+      
+      return regPtr;
+    }
       
     void Sequence::Visit (SequenceVisitor& visitor) const
     {
@@ -88,6 +100,14 @@ namespace s1
       {
 	(*op)->Visit (visitor);
       }
+    }
+    
+    std::size_t hash_value(const Sequence::RegisterID& id)
+    {
+      size_t seed = 0;
+      boost::hash_combine (seed, id.bank);
+      boost::hash_combine (seed, id.num);
+      return seed;
     }
   } // namespace intermediate
 } // namespace s1

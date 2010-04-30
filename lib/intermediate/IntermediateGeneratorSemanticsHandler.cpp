@@ -140,9 +140,7 @@ namespace s1
       }
       
       std::string typeStr (GetTypeString (type));
-      return seq.AllocateRegister (typeStr,
-				   Sequence::OriginalTypePtr (new SequenceOriginalTypeImpl (type)),
-				   regName);
+      return seq.AllocateRegister (typeStr, type, regName);
     }
 
     Sequence::RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,

@@ -2,6 +2,7 @@
 #define __INTERMEDIATE_SEQUENCE_H__
 
 #include "SequenceOp/SequenceOp.h"
+#include "parser/SemanticsHandler.h"
 
 #include <base/unordered_map>
 #include <unicode/unistr.h>
@@ -18,15 +19,11 @@ namespace s1
       typedef std::vector<SequenceOpPtr> OpsVector;
       OpsVector ops;
     public:
-      
-      struct OriginalType
-      {
-	virtual ~OriginalType() {}
-      };
-      typedef boost::shared_ptr<OriginalType> OriginalTypePtr;
+      typedef parser::SemanticsHandler::TypePtr TypePtr;
       
       class Register
       {
+      protected:
 	friend class Sequence;
 	
 	UnicodeString originalName;
@@ -35,6 +32,8 @@ namespace s1
 	
 	Register (const UnicodeString& name);
 	Register (const Register& other);
+      public:
+	const UnicodeString& GetName() const { return name; }
       };
       typedef boost::shared_ptr<Register> RegisterPtr;
       
@@ -42,14 +41,16 @@ namespace s1
       {
 	friend class Sequence;
 	
-	OriginalTypePtr originalType;
+	TypePtr originalType;
 	
 	std::vector<RegisterPtr> registers;
 	
 	unsigned int AddRegister (const UnicodeString& name);
 	unsigned int AddRegister (const RegisterPtr& oldReg);
       public:
-	RegisterBank (OriginalTypePtr originalType);
+	RegisterBank (const TypePtr& originalType);
+	
+	const TypePtr& GetOriginalType () const { return originalType; }
       };
       typedef boost::shared_ptr<RegisterBank> RegisterBankPtr;
       
@@ -75,9 +76,11 @@ namespace s1
       size_t GetNumOps() const { return ops.size(); }
       
       RegisterID AllocateRegister (const std::string& typeStr,
-				   const OriginalTypePtr& originalType,
+				   const TypePtr& originalType,
 				   const UnicodeString& name);
       RegisterID AllocateRegister (const RegisterID& oldReg);
+      
+      RegisterPtr QueryRegisterFromID (const RegisterID& id, RegisterBankPtr& bank) const;
       
       void Visit (SequenceVisitor& visitor) const;
     protected:
@@ -86,6 +89,8 @@ namespace s1
       TypeToRegBankType typeToRegBank;
     };
     typedef boost::shared_ptr<Sequence> SequencePtr;
+    
+    std::size_t hash_value(const Sequence::RegisterID& id);
     
   } // namespace intermediate
 } // namespace s1
