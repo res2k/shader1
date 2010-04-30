@@ -19,7 +19,7 @@ namespace s1
 				const boost::shared_ptr<ExpressionImpl>& operand2);
       
       boost::shared_ptr<TypeImpl> GetValueType();
-      void AddToSequence (BlockImpl& block, Sequence& seq, Sequence::RegisterID destination);
+      void AddToSequence (BlockImpl& block, Sequence& seq, RegisterID destination);
     };
   } // namespace intermediate
 } // namespace s1

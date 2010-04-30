@@ -10,12 +10,12 @@ namespace s1
     class SequenceOpBinary : public SequenceOpWithResult
     {
     protected:
-      Sequence::RegisterID source1;
-      Sequence::RegisterID source2;
+      RegisterID source1;
+      RegisterID source2;
     public:
-      SequenceOpBinary (Sequence::RegisterID destination,
-			Sequence::RegisterID source1,
-			Sequence::RegisterID source2);
+      SequenceOpBinary (RegisterID destination,
+			RegisterID source1,
+			RegisterID source2);
     };
     
   } // namespace intermediate

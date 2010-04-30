@@ -19,11 +19,11 @@ namespace s1
        * Can be an 'invalid' register if the expression doesn't represent an
        * atomic value.
        */
-      virtual Sequence::RegisterID GetRegister (Sequence& seq, bool writeable)
-      { return Sequence::RegisterID (); }
+      virtual RegisterID GetRegister (Sequence& seq, bool writeable)
+      { return RegisterID (); }
       
       virtual boost::shared_ptr<TypeImpl> GetValueType() = 0;
-      virtual void AddToSequence (BlockImpl& block, Sequence& seq, Sequence::RegisterID destination) = 0;
+      virtual void AddToSequence (BlockImpl& block, Sequence& seq, RegisterID destination) = 0;
     };
   } // namespace intermediate
 } // namespace s1

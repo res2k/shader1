@@ -1,6 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCE_H__
 #define __INTERMEDIATE_SEQUENCE_H__
 
+#include "RegisterID.h"
 #include "SequenceOp/SequenceOp.h"
 #include "parser/SemanticsHandler.h"
 
@@ -54,23 +55,6 @@ namespace s1
       };
       typedef boost::shared_ptr<RegisterBank> RegisterBankPtr;
       
-      struct RegisterID
-      {
-	unsigned int bank;
-	unsigned int num;
-	
-	RegisterID () : bank (~0), num (~0) {}
-	RegisterID (unsigned int bank, unsigned int num) : bank (bank), num (num) {}
-	
-	bool IsValid() const
-	{ return (bank != (unsigned int)~0) && (num != (unsigned int)~0); }
-	
-	bool operator== (const RegisterID& other) const
-	{ return (bank == other.bank) && (num == other.num); }
-	bool operator!= (const RegisterID& other) const
-	{ return (bank != other.bank) || (num != other.num); }
-      };
-      
       void AddOp (SequenceOpPtr op);
       
       size_t GetNumOps() const { return ops.size(); }
@@ -89,8 +73,6 @@ namespace s1
       TypeToRegBankType typeToRegBank;
     };
     typedef boost::shared_ptr<Sequence> SequencePtr;
-    
-    std::size_t hash_value(const Sequence::RegisterID& id);
     
   } // namespace intermediate
 } // namespace s1

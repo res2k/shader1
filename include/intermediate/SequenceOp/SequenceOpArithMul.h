@@ -10,9 +10,9 @@ namespace s1
     class SequenceOpArithMul : public SequenceOpBinary
     {
     public:
-      SequenceOpArithMul (Sequence::RegisterID destination,
-			  Sequence::RegisterID source1,
-			  Sequence::RegisterID source2);
+      SequenceOpArithMul (RegisterID destination,
+			  RegisterID source1,
+			  RegisterID source2);
       
       void Visit (SequenceVisitor& visitor);
     };

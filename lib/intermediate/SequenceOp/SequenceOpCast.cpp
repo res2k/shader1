@@ -5,9 +5,9 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpCast::SequenceOpCast (Sequence::RegisterID destination,
+    SequenceOpCast::SequenceOpCast (RegisterID destination,
 				    BasicType castTo,
-				    Sequence::RegisterID source)
+				    RegisterID source)
      : SequenceOpUnary (destination, source), castTo (castTo)
     {
     }

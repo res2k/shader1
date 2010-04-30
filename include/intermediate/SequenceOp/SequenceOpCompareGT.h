@@ -10,9 +10,9 @@ namespace s1
     class SequenceOpCompareGT : public SequenceOpBinary
     {
     public:
-      SequenceOpCompareGT (Sequence::RegisterID destination,
-			   Sequence::RegisterID source1,
-			   Sequence::RegisterID source2);
+      SequenceOpCompareGT (RegisterID destination,
+			   RegisterID source1,
+			   RegisterID source2);
       
       void Visit (SequenceVisitor& visitor);
     };

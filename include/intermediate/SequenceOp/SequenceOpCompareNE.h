@@ -10,9 +10,9 @@ namespace s1
     class SequenceOpCompareNE : public SequenceOpBinary
     {
     public:
-      SequenceOpCompareNE (Sequence::RegisterID destination,
-			   Sequence::RegisterID source1,
-			   Sequence::RegisterID source2);
+      SequenceOpCompareNE (RegisterID destination,
+			   RegisterID source1,
+			   RegisterID source2);
       
       void Visit (SequenceVisitor& visitor);
     };

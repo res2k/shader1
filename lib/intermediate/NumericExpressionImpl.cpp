@@ -41,7 +41,7 @@ namespace s1
     
     void IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
 										      Sequence& seq,
-										      Sequence::RegisterID destination)
+										      RegisterID destination)
     {
       U_NAMESPACE_USE
       

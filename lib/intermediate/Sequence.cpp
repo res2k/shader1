@@ -53,9 +53,9 @@ namespace s1
       ops.push_back (op);
     }
       
-    Sequence::RegisterID Sequence::AllocateRegister (const std::string& typeStr,
-						     const TypePtr& originalType,
-						     const UnicodeString& name)
+    RegisterID Sequence::AllocateRegister (const std::string& typeStr,
+					   const TypePtr& originalType,
+					   const UnicodeString& name)
     {
       unsigned int bank;
       TypeToRegBankType::iterator bankIt = typeToRegBank.find (typeStr);
@@ -73,7 +73,7 @@ namespace s1
       return RegisterID (bank, regNum);
     }
     
-    Sequence::RegisterID Sequence::AllocateRegister (const RegisterID& oldReg)
+    RegisterID Sequence::AllocateRegister (const RegisterID& oldReg)
     {
       if (!oldReg.IsValid()) return RegisterID ();
       
@@ -100,14 +100,6 @@ namespace s1
       {
 	(*op)->Visit (visitor);
       }
-    }
-    
-    std::size_t hash_value(const Sequence::RegisterID& id)
-    {
-      size_t seed = 0;
-      boost::hash_combine (seed, id.bank);
-      boost::hash_combine (seed, id.num);
-      return seed;
     }
   } // namespace intermediate
 } // namespace s1

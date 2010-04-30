@@ -64,17 +64,17 @@ namespace s1
        * Allocate a new register.
        * If name is empty generates a dummy name.
        */
-      Sequence::RegisterID AllocateRegister (Sequence& seq, const TypeImplPtr& type,
-					     RegisterClassification classify,
-					     const UnicodeString& name = UnicodeString ());
+      RegisterID AllocateRegister (Sequence& seq, const TypeImplPtr& type,
+				   RegisterClassification classify,
+				   const UnicodeString& name = UnicodeString ());
       /// Create a new generation of a register
-      Sequence::RegisterID AllocateRegister (Sequence& seq, const Sequence::RegisterID& oldReg);
+      RegisterID AllocateRegister (Sequence& seq, const RegisterID& oldReg);
       /** @} */
       
       void GenerateCast (Sequence& seq,
-			 const Sequence::RegisterID& castDestination,
+			 const RegisterID& castDestination,
 			 const TypeImplPtr& typeDestination,
-			 const Sequence::RegisterID& castSource,
+			 const RegisterID& castSource,
 			 const TypeImplPtr& typeSource);
       
       /**\name s1::parser::SemanticsHandler implementation

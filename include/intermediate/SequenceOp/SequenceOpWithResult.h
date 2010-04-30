@@ -1,7 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCEOPWITHRESULT_H__
 #define __INTERMEDIATE_SEQUENCEOPWITHRESULT_H__
 
-#include "../Sequence.h"
+#include "../RegisterID.h"
 #include "SequenceOp.h"
 
 namespace s1
@@ -11,9 +11,9 @@ namespace s1
     class SequenceOpWithResult : public SequenceOp
     {
     protected:
-      Sequence::RegisterID destination;
+      RegisterID destination;
     public:
-      SequenceOpWithResult (Sequence::RegisterID destination);
+      SequenceOpWithResult (RegisterID destination);
     };
     
   } // namespace intermediate

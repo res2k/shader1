@@ -19,13 +19,13 @@ namespace s1
 	float floatVal;
       };
     public:
-      SequenceOpConst (Sequence::RegisterID destination, bool val)
+      SequenceOpConst (RegisterID destination, bool val)
        : SequenceOpWithResult (destination), type (Bool), boolVal (val) {}
-      SequenceOpConst (Sequence::RegisterID destination, int val)
+      SequenceOpConst (RegisterID destination, int val)
        : SequenceOpWithResult (destination), type (Int), intVal (val) {}
-      SequenceOpConst (Sequence::RegisterID destination, unsigned int val)
+      SequenceOpConst (RegisterID destination, unsigned int val)
        : SequenceOpWithResult (destination), type (UInt), uintVal (val) {}
-      SequenceOpConst (Sequence::RegisterID destination, float val)
+      SequenceOpConst (RegisterID destination, float val)
        : SequenceOpWithResult (destination), type (Float), floatVal (val) {}
 
       void Visit (SequenceVisitor& visitor);

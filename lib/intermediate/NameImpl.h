@@ -25,7 +25,7 @@ namespace s1
       // Distinguish between variable/constant
       bool varConstant;
       // Register for variable/constant
-      Sequence::RegisterID varReg;
+      RegisterID varReg;
       
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
 		const UnicodeString& identifier, NameType type,
@@ -42,8 +42,8 @@ namespace s1
       TypePtr GetAliasedType()
       { return type == TypeAlias ? boost::shared_static_cast<Type> (valueType) : TypePtr (); }
       
-      Sequence::RegisterID GetRegister (IntermediateGeneratorSemanticsHandler* handler,
-					Sequence& seq, bool writeable)
+      RegisterID GetRegister (IntermediateGeneratorSemanticsHandler* handler,
+			      Sequence& seq, bool writeable)
       {
 	/* Note: asking for a register for a constant value is only an error for the second time and
 	   after; the first request is satisfied as the constant may have to be loaded somewhere */
@@ -54,7 +54,7 @@ namespace s1
 	{
 	  if (varConstant)
 	    // Throw?
-	    return Sequence::RegisterID ();
+	    return RegisterID ();
 	  // Query a new generation
 	  varReg = handler->AllocateRegister (seq, varReg);
 	}

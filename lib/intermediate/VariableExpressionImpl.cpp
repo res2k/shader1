@@ -17,7 +17,7 @@ namespace s1
     {
     }
       
-    Sequence::RegisterID
+    RegisterID
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetRegister (Sequence& seq, bool writeable)
     {
       // TODO: Need to handle vars from outer scopes differently
@@ -32,7 +32,7 @@ namespace s1
     
     void IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
 										       Sequence& seq,
-										       Sequence::RegisterID destination)
+										       RegisterID destination)
     {
       if (destination.IsValid())
       {

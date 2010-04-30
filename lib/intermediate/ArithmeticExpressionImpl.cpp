@@ -49,7 +49,7 @@ namespace s1
     
     void IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::AddToSequence (BlockImpl& block,
 											 Sequence& seq,
-											 Sequence::RegisterID destination)
+											 RegisterID destination)
     {
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
@@ -57,7 +57,7 @@ namespace s1
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
 	
       // Set up registers for operand values
-      Sequence::RegisterID reg1;
+      RegisterID reg1;
       reg1 = operand1->GetRegister (seq, false);
       if (!reg1.IsValid())
       {
@@ -67,12 +67,12 @@ namespace s1
       if (!valueType->IsEqual (*(type1.get())))
       {
 	// Insert cast op
-	Sequence::RegisterID newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
+	RegisterID newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
 	handler->GenerateCast (seq, newReg1, valueType,
 			       reg1, type1);
 	reg1 = newReg1;
       }
-      Sequence::RegisterID reg2;
+      RegisterID reg2;
       reg2 = operand1->GetRegister (seq, false);
       if (!reg2.IsValid())
       {
@@ -82,7 +82,7 @@ namespace s1
       if (!valueType->IsEqual (*(type2.get())))
       {
 	// Insert cast op
-	Sequence::RegisterID newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
+	RegisterID newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
 	handler->GenerateCast (seq, newReg2, valueType,
 			       reg2, type2);
 	reg2 = newReg2;

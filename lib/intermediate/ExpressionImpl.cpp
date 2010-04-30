@@ -13,7 +13,7 @@ namespace s1
     {
       boost::shared_ptr<TypeImpl> exprValueType = GetValueType ();
       // Create a dummy destination
-      Sequence::RegisterID dummyDest = handler->AllocateRegister (seq, exprValueType, Dummy);
+      RegisterID dummyDest = handler->AllocateRegister (seq, exprValueType, Dummy);
       // Add expression, write to dummy destination
       AddToSequence (block, seq, dummyDest);
       /* Need to generate operations even if the result isn't used, due

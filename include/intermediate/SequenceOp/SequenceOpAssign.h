@@ -10,8 +10,8 @@ namespace s1
     class SequenceOpAssign : public SequenceOpUnary
     {
     public:
-      SequenceOpAssign (Sequence::RegisterID destination,
-			Sequence::RegisterID source);
+      SequenceOpAssign (RegisterID destination,
+			RegisterID source);
 
       void Visit (SequenceVisitor& visitor);
     };

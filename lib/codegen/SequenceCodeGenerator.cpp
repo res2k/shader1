@@ -16,7 +16,7 @@ namespace s1
     {
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const Sequence::RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const RegisterID& destination,
 									 const char* value)
     {
       std::string targetName (owner->GetOutputRegisterName (destination));
@@ -27,7 +27,7 @@ namespace s1
       target->AddString (line);
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const Sequence::RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterID& destination,
 									       const char* function,
 									       const char* paramsStr)
     {
@@ -39,9 +39,9 @@ namespace s1
       EmitAssign (destination, rside.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitBinary (const Sequence::RegisterID& destination,
-									 const Sequence::RegisterID& source1,
-									 const Sequence::RegisterID& source2,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitBinary (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2,
 									 const char* op)
     {
       std::string source1Name (owner->GetOutputRegisterName (source1));
@@ -54,13 +54,13 @@ namespace s1
       EmitAssign (destination, rside.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const Sequence::RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterID& destination,
 									  bool value)
     {
       EmitAssign (destination, value ? "true" : "false");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstInt (const Sequence::RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstInt (const RegisterID& destination,
 									 int value)
     {
       std::stringstream valueStrStream;
@@ -68,7 +68,7 @@ namespace s1
       EmitAssign (destination, valueStrStream.str().c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstUInt (const Sequence::RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstUInt (const RegisterID& destination,
 									  unsigned int value)
     {
       std::stringstream valueStrStream;
@@ -76,7 +76,7 @@ namespace s1
       EmitAssign (destination, valueStrStream.str().c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstFloat (const Sequence::RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstFloat (const RegisterID& destination,
 									   float value)
     {
       std::stringstream valueStrStream;
@@ -84,117 +84,117 @@ namespace s1
       EmitAssign (destination, valueStrStream.str().c_str());
     }
 			      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpAssign (const Sequence::RegisterID& destination,
-								       const Sequence::RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpAssign (const RegisterID& destination,
+								       const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitAssign (destination, sourceName.c_str());
     }
 			      
 			      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToBool (const Sequence::RegisterID& destination,
-									   const Sequence::RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToBool (const RegisterID& destination,
+									   const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitFunctionCall (destination, "bool", sourceName.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToInt (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToInt (const RegisterID& destination,
+									  const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitFunctionCall (destination, "int", sourceName.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToUInt (const Sequence::RegisterID& destination,
-									   const Sequence::RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToUInt (const RegisterID& destination,
+									   const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitFunctionCall (destination, "unsigned", sourceName.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToFloat (const Sequence::RegisterID& destination,
-									    const Sequence::RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToFloat (const RegisterID& destination,
+									    const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitFunctionCall (destination, "float", sourceName.c_str());
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const Sequence::RegisterID& destination,
-									 const Sequence::RegisterID& source1,
-									 const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "+");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithSub (const Sequence::RegisterID& destination,
-									 const Sequence::RegisterID& source1,
-									 const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithSub (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "-");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMul (const Sequence::RegisterID& destination,
-									 const Sequence::RegisterID& source1,
-									 const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMul (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "*");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithDiv (const Sequence::RegisterID& destination,
-									 const Sequence::RegisterID& source1,
-									 const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithDiv (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "/");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMod (const Sequence::RegisterID& destination,
-									 const Sequence::RegisterID& source1,
-									 const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMod (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "%");
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareEq (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source1,
-									  const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareEq (const RegisterID& destination,
+									  const RegisterID& source1,
+									  const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "==");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareNE (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source1,
-									  const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareNE (const RegisterID& destination,
+									  const RegisterID& source1,
+									  const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "!=");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLT (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source1,
-									  const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLT (const RegisterID& destination,
+									  const RegisterID& source1,
+									  const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "<");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLE (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source1,
-									  const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLE (const RegisterID& destination,
+									  const RegisterID& source1,
+									  const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, "<=");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGT (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source1,
-									  const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGT (const RegisterID& destination,
+									  const RegisterID& source1,
+									  const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, ">");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGE (const Sequence::RegisterID& destination,
-									  const Sequence::RegisterID& source1,
-									  const Sequence::RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGE (const RegisterID& destination,
+									  const RegisterID& source1,
+									  const RegisterID& source2)
     {
       EmitBinary (destination, source1, source2, ">=");
     }
@@ -418,7 +418,7 @@ namespace s1
       return outStr;
     }
     
-    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const Sequence::RegisterID& reg,
+    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterID& reg,
 									   bool autoAllocate)
     {
       RegistersToIDMap::iterator regIt = seenRegisters.find (reg);

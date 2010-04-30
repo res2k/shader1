@@ -33,25 +33,25 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
 											 Sequence& seq)
     {
-      AddToSequence (block, seq, Sequence::RegisterID ());
+      AddToSequence (block, seq, RegisterID ());
     }
     
     void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
 											 Sequence& seq,
-											 Sequence::RegisterID destination)
+											 RegisterID destination)
     {
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
 	
       // Set up registers for left-side value
-      Sequence::RegisterID targetReg;
+      RegisterID targetReg;
       targetReg = target->GetRegister (seq, true);
       if (!targetReg.IsValid())
       {
 	// GetRegister() should only work on L-values
 	throw Exception (AssignmentTargetIsNotAnLValue);
       }
-      Sequence::RegisterID exprDestinationReg;
+      RegisterID exprDestinationReg;
       if (!valueType->IsEqual (*(targetType.get())))
       {
 	// Let right-side evaluate to a (temp) register, for cast

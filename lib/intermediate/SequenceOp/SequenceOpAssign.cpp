@@ -5,8 +5,8 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpAssign::SequenceOpAssign (Sequence::RegisterID destination,
-				        Sequence::RegisterID source)
+    SequenceOpAssign::SequenceOpAssign (RegisterID destination,
+				        RegisterID source)
      : SequenceOpUnary (destination, source)
     {
     }

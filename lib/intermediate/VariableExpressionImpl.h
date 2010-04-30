@@ -14,10 +14,10 @@ namespace s1
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 			      const boost::shared_ptr<NameImpl>& name);
       
-      Sequence::RegisterID GetRegister (Sequence& seq, bool writeable);
+      RegisterID GetRegister (Sequence& seq, bool writeable);
       
       boost::shared_ptr<TypeImpl> GetValueType();
-      void AddToSequence (BlockImpl& block, Sequence& seq, Sequence::RegisterID destination);
+      void AddToSequence (BlockImpl& block, Sequence& seq, RegisterID destination);
     };
   } // namespace intermediate
 } // namespace s1

@@ -29,6 +29,7 @@ public:
     opCompareGE,
     opCompareGT,
   };
+  typedef s1::intermediate::RegisterID RegisterID;
   typedef s1::intermediate::Sequence Sequence;
   struct SequenceEntry
   {
@@ -42,13 +43,13 @@ public:
       float floatConst;
     };
       
-    Sequence::RegisterID destReg;
-    Sequence::RegisterID sourceReg[2];
+    RegisterID destReg;
+    RegisterID sourceReg[2];
   };
   
   std::vector<SequenceEntry> entries;
   
-  void OpConstBool (const Sequence::RegisterID& destination,
+  void OpConstBool (const RegisterID& destination,
 		    bool value)
   {
     SequenceEntry entry;
@@ -58,7 +59,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpConstInt (const Sequence::RegisterID& destination,
+  void OpConstInt (const RegisterID& destination,
 		   int value)
   {
     SequenceEntry entry;
@@ -68,7 +69,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpConstUInt (const Sequence::RegisterID& destination,
+  void OpConstUInt (const RegisterID& destination,
 		    unsigned int value)
   {
     SequenceEntry entry;
@@ -78,7 +79,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpConstFloat (const Sequence::RegisterID& destination,
+  void OpConstFloat (const RegisterID& destination,
 		     float value)
   {
     SequenceEntry entry;
@@ -89,8 +90,8 @@ public:
   }
   
 			      
-  void OpAssign (const Sequence::RegisterID& destination,
-		 const Sequence::RegisterID& source)
+  void OpAssign (const RegisterID& destination,
+		 const RegisterID& source)
   {
     SequenceEntry entry;
     entry.op = opAssignment;
@@ -100,8 +101,8 @@ public:
   }
   
 			      
-  void OpCastToBool (const Sequence::RegisterID& destination,
-			      const Sequence::RegisterID& source)
+  void OpCastToBool (const RegisterID& destination,
+			      const RegisterID& source)
   {
     SequenceEntry entry;
     entry.op = opCastToBool;
@@ -110,8 +111,8 @@ public:
     entries.push_back (entry);
   }
   
-  void OpCastToInt (const Sequence::RegisterID& destination,
-			    const Sequence::RegisterID& source)
+  void OpCastToInt (const RegisterID& destination,
+			    const RegisterID& source)
   {
     SequenceEntry entry;
     entry.op = opCastToInt;
@@ -120,8 +121,8 @@ public:
     entries.push_back (entry);
   }
   
-  void OpCastToUInt (const Sequence::RegisterID& destination,
-			      const Sequence::RegisterID& source)
+  void OpCastToUInt (const RegisterID& destination,
+			      const RegisterID& source)
   {
     SequenceEntry entry;
     entry.op = opCastToUInt;
@@ -130,8 +131,8 @@ public:
     entries.push_back (entry);
   }
   
-  void OpCastToFloat (const Sequence::RegisterID& destination,
-		      const Sequence::RegisterID& source)
+  void OpCastToFloat (const RegisterID& destination,
+		      const RegisterID& source)
   {
     SequenceEntry entry;
     entry.op = opCastToFloat;
@@ -141,9 +142,9 @@ public:
   }
   
 
-  void OpArithAdd (const Sequence::RegisterID& destination,
-		   const Sequence::RegisterID& source1,
-		   const Sequence::RegisterID& source2)
+  void OpArithAdd (const RegisterID& destination,
+		   const RegisterID& source1,
+		   const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opArithAdd;
@@ -153,9 +154,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpArithSub (const Sequence::RegisterID& destination,
-		   const Sequence::RegisterID& source1,
-		   const Sequence::RegisterID& source2)
+  void OpArithSub (const RegisterID& destination,
+		   const RegisterID& source1,
+		   const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opArithSub;
@@ -165,9 +166,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpArithMul (const Sequence::RegisterID& destination,
-		   const Sequence::RegisterID& source1,
-		   const Sequence::RegisterID& source2)
+  void OpArithMul (const RegisterID& destination,
+		   const RegisterID& source1,
+		   const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opArithMul;
@@ -177,9 +178,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpArithDiv (const Sequence::RegisterID& destination,
-		   const Sequence::RegisterID& source1,
-		   const Sequence::RegisterID& source2)
+  void OpArithDiv (const RegisterID& destination,
+		   const RegisterID& source1,
+		   const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opArithDiv;
@@ -189,9 +190,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpArithMod (const Sequence::RegisterID& destination,
-		   const Sequence::RegisterID& source1,
-		   const Sequence::RegisterID& source2)
+  void OpArithMod (const RegisterID& destination,
+		   const RegisterID& source1,
+		   const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opArithMod;
@@ -202,9 +203,9 @@ public:
   }
 
 
-  void OpCompareEq (const Sequence::RegisterID& destination,
-		    const Sequence::RegisterID& source1,
-		    const Sequence::RegisterID& source2)
+  void OpCompareEq (const RegisterID& destination,
+		    const RegisterID& source1,
+		    const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opCompareEq;
@@ -214,9 +215,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpCompareNE (const Sequence::RegisterID& destination,
-		    const Sequence::RegisterID& source1,
-		    const Sequence::RegisterID& source2)
+  void OpCompareNE (const RegisterID& destination,
+		    const RegisterID& source1,
+		    const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opCompareNE;
@@ -226,9 +227,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpCompareLE (const Sequence::RegisterID& destination,
-		    const Sequence::RegisterID& source1,
-		    const Sequence::RegisterID& source2)
+  void OpCompareLE (const RegisterID& destination,
+		    const RegisterID& source1,
+		    const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opCompareLE;
@@ -238,9 +239,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpCompareLT (const Sequence::RegisterID& destination,
-		    const Sequence::RegisterID& source1,
-		    const Sequence::RegisterID& source2)
+  void OpCompareLT (const RegisterID& destination,
+		    const RegisterID& source1,
+		    const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opCompareLT;
@@ -250,9 +251,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpCompareGE (const Sequence::RegisterID& destination,
-		    const Sequence::RegisterID& source1,
-		    const Sequence::RegisterID& source2)
+  void OpCompareGE (const RegisterID& destination,
+		    const RegisterID& source1,
+		    const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opCompareGE;
@@ -262,9 +263,9 @@ public:
     entries.push_back (entry);
   }
 
-  void OpCompareGT (const Sequence::RegisterID& destination,
-		    const Sequence::RegisterID& source1,
-		    const Sequence::RegisterID& source2)
+  void OpCompareGT (const RegisterID& destination,
+		    const RegisterID& source1,
+		    const RegisterID& source2)
   {
     SequenceEntry entry;
     entry.op = opCompareGT;

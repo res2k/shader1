@@ -5,9 +5,9 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpCompareLE::SequenceOpCompareLE (Sequence::RegisterID destination,
-					      Sequence::RegisterID source1,
-					      Sequence::RegisterID source2)
+    SequenceOpCompareLE::SequenceOpCompareLE (RegisterID destination,
+					      RegisterID source1,
+					      RegisterID source2)
      : SequenceOpBinary (destination, source1, source2)
     {
     }

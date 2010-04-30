@@ -10,10 +10,10 @@ namespace s1
     class SequenceOpUnary : public SequenceOpWithResult
     {
     protected:
-      Sequence::RegisterID source;
+      RegisterID source;
     public:
-      SequenceOpUnary (Sequence::RegisterID destination,
-		       Sequence::RegisterID source);
+      SequenceOpUnary (RegisterID destination,
+		       RegisterID source);
     };
     
   } // namespace intermediate

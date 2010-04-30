@@ -121,10 +121,10 @@ namespace s1
       return numericStr.startsWith (UnicodeString ("-")) ? Int : UInt;
     }
     
-    Sequence::RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
-										  const TypeImplPtr& type,
-										  RegisterClassification classify,
-										  const UnicodeString& name)
+    RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
+									const TypeImplPtr& type,
+									RegisterClassification classify,
+									const UnicodeString& name)
     {
       static const UChar prefix[3] = { UChar (classify), '_', 0};
       UnicodeString regName (prefix);
@@ -143,16 +143,16 @@ namespace s1
       return seq.AllocateRegister (typeStr, type, regName);
     }
 
-    Sequence::RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
-										  const Sequence::RegisterID& oldReg)
+    RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
+									const RegisterID& oldReg)
     {
       return seq.AllocateRegister (oldReg);
     }
       
     void IntermediateGeneratorSemanticsHandler::GenerateCast (Sequence& seq,
-							      const Sequence::RegisterID& castDestination,
+							      const RegisterID& castDestination,
 							      const TypeImplPtr& typeDestination,
-							      const Sequence::RegisterID& castSource,
+							      const RegisterID& castSource,
 							      const TypeImplPtr& typeSource)
     {
       assert (typeDestination->typeClass == typeSource->typeClass);

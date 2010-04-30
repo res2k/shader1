@@ -4,7 +4,7 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpWithResult::SequenceOpWithResult (Sequence::RegisterID destination)
+    SequenceOpWithResult::SequenceOpWithResult (RegisterID destination)
      : destination (destination)
     {
     }
