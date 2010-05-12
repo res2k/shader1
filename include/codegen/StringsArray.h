@@ -12,9 +12,12 @@ namespace s1
     class StringsArray
     {
     protected:
-      std::vector<std::string> strings;
+      typedef std::vector<std::string> StrVector;
+      StrVector strings;
     public:
       void AddString (const std::string& str);
+      void AddStrings (const StringsArray& other);
+      void AddStrings (const StringsArray& other, unsigned int indent);
       
       const std::string& Get (size_t index) const;
       size_t Size() const;

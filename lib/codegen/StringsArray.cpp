@@ -10,6 +10,32 @@ namespace s1
     {
       strings.push_back (str);
     }
+    
+    void StringsArray::AddStrings (const StringsArray& other)
+    {
+      for (StrVector::const_iterator it = other.strings.begin();
+	   it != other.strings.end();
+	   ++it)
+      {
+	strings.push_back (*it);
+      }
+    }
+    
+    void StringsArray::AddStrings (const StringsArray& other, unsigned int indent)
+    {
+      std::string indentStr;
+      for (unsigned int i = 0; i < indent; i++)
+	indentStr.append (" ");
+      
+      for (StrVector::const_iterator it = other.strings.begin();
+	   it != other.strings.end();
+	   ++it)
+      {
+	std::string newStr (indentStr);
+	newStr.append (*it);
+	strings.push_back (newStr);
+      }
+    }
       
     const std::string& StringsArray::Get (size_t index) const
     {
