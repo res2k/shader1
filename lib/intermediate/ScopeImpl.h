@@ -15,7 +15,18 @@ namespace s1
       typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       
+      struct FunctionInfoInternal
+      {
+	TypePtr returnType;
+	FunctionFormalParameters params;
+	BlockPtr block;
+      };
+      typedef std::vector<FunctionInfoInternal> FunctionInfoInternalVector;
+      typedef std::tr1::unordered_map<UnicodeString, FunctionInfoInternalVector> FunctionsMap;
+      FunctionsMap functions;
+      
       void CheckIdentifierUnique (const UnicodeString& identifier);
+      NamePtr CheckIdentifierIsFunction (const UnicodeString& identifier);
       
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
@@ -37,6 +48,16 @@ namespace s1
 	const FunctionFormalParameters& params);
     
       NamePtr ResolveIdentifier (const UnicodeString& identifier);
+      
+      struct FunctionInfo
+      {
+	UnicodeString identifier;
+	TypePtr returnType;
+	FunctionFormalParameters params;
+	BlockPtr block;
+      };
+      typedef std::vector<FunctionInfo> FunctionInfoVector;
+      FunctionInfoVector GetFunctions () const;
     };
   } // namespace intermediate
 } // namespace s1
