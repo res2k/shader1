@@ -22,7 +22,15 @@ namespace s1
 
   void Parser::Parse ()
   {
-    ParseProgram();
+    try
+    {
+      ParseProgram();
+    }
+    catch (const Exception& e)
+    {
+      /* emit error */
+      errorHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
+    }
   }
   
   void Parser::NextToken ()
