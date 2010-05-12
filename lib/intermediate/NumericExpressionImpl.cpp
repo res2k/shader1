@@ -83,7 +83,7 @@ namespace s1
 	    // Create actual sequence operation
 	    int n;
 	    char dummy;
-	    if (u_sscanf (valueStr.getBuffer(), "%d%c", &n, &dummy) != 1)
+	    if (u_sscanf (valueStr.getTerminatedBuffer(), "%d%c", &n, &dummy) != 1)
 	      throw Exception (NumberParseError);
 	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
 	  }
@@ -93,7 +93,7 @@ namespace s1
 	    // Create actual sequence operation
 	    unsigned int n;
 	    char dummy;
-	    if (u_sscanf (valueStr.getBuffer(), "%u%c", &n, &dummy) != 1)
+	    if (u_sscanf (valueStr.getTerminatedBuffer(), "%u%c", &n, &dummy) != 1)
 	      throw Exception (NumberParseError);
 	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
 	  }
@@ -103,7 +103,7 @@ namespace s1
 	    // Create actual sequence operation
 	    float n;
 	    char dummy;
-	    if (u_sscanf (valueStr.getBuffer(), "%f%c", &n, &dummy) != 1)
+	    if (u_sscanf (valueStr.getTerminatedBuffer(), "%f%c", &n, &dummy) != 1)
 	      throw Exception (NumberParseError);
 	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
 	  }
