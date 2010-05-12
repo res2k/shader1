@@ -3,6 +3,7 @@
 
 #include "lexer/Lexer.h"
 
+#include "ErrorHandler.h"
 #include "SemanticsHandler.h"
 
 #include <vector>
@@ -17,13 +18,16 @@ namespace s1
      * Construct parser.
      * \param inputLexer Input token stream
      * \param semanticsHandler Handler for semantics
+     * \param semanticsHandler Handler for errors
      */
-    Parser (Lexer& inputLexer, parser::SemanticsHandler& semanticsHandler);
+    Parser (Lexer& inputLexer, parser::SemanticsHandler& semanticsHandler,
+	    parser::ErrorHandler& errorHandler);
     
     void Parse ();
   protected:
     Lexer& inputLexer;
     parser::SemanticsHandler& semanticsHandler;
+    parser::ErrorHandler& errorHandler;
     /// Scope with builtin definitions
     parser::SemanticsHandler::ScopePtr builtinScope;
     

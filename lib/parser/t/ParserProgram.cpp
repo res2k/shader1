@@ -10,13 +10,14 @@
 
 #include "ParserTestTraits.h"
 
-class ParserPorgramTestSuite : public CxxTest::TestSuite 
+class ParserProgramTestSuite : public CxxTest::TestSuite 
 {
   class TestParser : public s1::Parser
   {
   public:
-    TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler)
-     : Parser (inputLexer, semanticsHandler) {}
+    TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
+		s1::parser::ErrorHandler& errorHandler)
+     : Parser (inputLexer, semanticsHandler, errorHandler) {}
   };
 public:
   void testProgramSimple (void)
@@ -28,7 +29,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -42,7 +44,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -56,7 +59,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -70,7 +74,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -84,7 +89,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -98,7 +104,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -112,7 +119,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -126,7 +134,8 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
@@ -140,9 +149,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestParser parser (lexer, semanticsHandler);
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.Parse ());
   }
   
 };
+// 

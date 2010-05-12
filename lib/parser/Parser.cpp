@@ -10,8 +10,10 @@ namespace s1
 {
   using namespace parser;
   
-  Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler)
-   : inputLexer (inputLexer), semanticsHandler (semanticsHandler)
+  Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler,
+		  ErrorHandler& errorHandler)
+   : inputLexer (inputLexer), semanticsHandler (semanticsHandler),
+     errorHandler (errorHandler)
   {
     NextToken ();
     
@@ -145,9 +147,10 @@ namespace s1
 	  break;
 	/* TODO: could improve behaviour in case unexpected tokens are encountered */
       }
-      catch (const Exception&)
+      catch (const Exception& e)
       {
-	/* TODO: emit error */
+	/* emit error */
+	errorHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
 	// Seek next ';' (end of statement) or '}' (end of block)
 	while ((currentToken.typeOrID != Lexer::Semicolon)
 	  && (currentToken.typeOrID != Lexer::BraceR)

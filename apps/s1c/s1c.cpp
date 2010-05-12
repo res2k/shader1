@@ -26,7 +26,7 @@ int main (const int argc, const char* const argv[])
   Lexer lexer (uniStream, errorHandler);
   
   intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
-  Parser parser (lexer, intermediateHandler);
+  Parser parser (lexer, intermediateHandler, errorHandler);
   parser.Parse ();
   
   codegen::CgGenerator codegen;
