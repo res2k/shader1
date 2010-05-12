@@ -15,6 +15,7 @@ namespace s1
     {
       boost::shared_ptr<IntermediateGeneratorSemanticsHandler::BlockImpl> blockImpl (
 	boost::static_pointer_cast<IntermediateGeneratorSemanticsHandler::BlockImpl> (block));
+      blockImpl->FinishBlock();
       body = blockImpl->GetSequence ();
     }
 

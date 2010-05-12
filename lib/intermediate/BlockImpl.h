@@ -15,6 +15,12 @@ namespace s1
       ScopePtr innerScope;
       
       SequencePtr sequence;
+      
+      /**
+       * Checks for new variables since last command and synthesizes initializations,
+       * if necessary
+       */
+      void FlushVariableInitializers();
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
@@ -33,6 +39,8 @@ namespace s1
       /** @} */
       
       const SequencePtr& GetSequence() const { return sequence; }
+      
+      void FinishBlock() { FlushVariableInitializers(); }
     };
   } // namespace intermediate
 } // namespace s1
