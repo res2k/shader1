@@ -188,6 +188,12 @@ namespace s1
     
     /// Return current token
     Token operator* () const throw() { return currentToken; }
+
+    //@{
+    /// Return token string
+    static const char* GetTokenStr (TokenType token);
+    static std::string GetTokenStr (const Token& token);
+    //@}
   protected:
     UnicodeStream& inputChars;
     LexerErrorHandler& errorHandler;

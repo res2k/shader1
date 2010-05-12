@@ -14,30 +14,36 @@ namespace s1
 {
   U_NAMESPACE_USE
   
+#define KEYWORDS				\
+  KEYWORD ("return",		kwReturn)	\
+  KEYWORD ("true",		kwTrue)		\
+  KEYWORD ("false",		kwFalse)	\
+  KEYWORD ("bool",		kwBool)		\
+  KEYWORD ("unsigned",		kwUnsigned)	\
+  KEYWORD ("int",		kwInt)		\
+  KEYWORD ("float",		kwFloat)	\
+  KEYWORD ("sampler1D",		kwSampler1D)	\
+  KEYWORD ("sampler2D",		kwSampler2D)	\
+  KEYWORD ("sampler3D",		kwSampler3D)	\
+  KEYWORD ("samplerCUBE",	kwSamplerCUBE)	\
+  KEYWORD ("typedef",		kwTypedef)	\
+  KEYWORD ("void",		kwVoid)		\
+  KEYWORD ("in",		kwIn)		\
+  KEYWORD ("out",		kwOut)		\
+  KEYWORD ("const",		kwConst)	\
+  KEYWORD ("if",		kwIf)		\
+  KEYWORD ("else",		kwElse)		\
+  KEYWORD ("while",		kwWhile)	\
+  KEYWORD ("for",		kwFor)
+  
   Lexer::Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler)
    : inputChars (inputChars), errorHandler (errorHandler),
      currentToken (EndOfFile)
   {
-    keywords[UnicodeString ("return")] 		= kwReturn;
-    keywords[UnicodeString ("true")] 		= kwTrue;
-    keywords[UnicodeString ("false")] 		= kwFalse;
-    keywords[UnicodeString ("bool")] 		= kwBool;
-    keywords[UnicodeString ("unsigned")] 	= kwUnsigned;
-    keywords[UnicodeString ("int")] 		= kwInt;
-    keywords[UnicodeString ("float")] 		= kwFloat;
-    keywords[UnicodeString ("sampler1D")] 	= kwSampler1D;
-    keywords[UnicodeString ("sampler2D")] 	= kwSampler2D;
-    keywords[UnicodeString ("sampler3D")] 	= kwSampler3D;
-    keywords[UnicodeString ("samplerCUBE")] 	= kwSamplerCUBE;
-    keywords[UnicodeString ("typedef")] 	= kwTypedef;
-    keywords[UnicodeString ("void")] 		= kwVoid;
-    keywords[UnicodeString ("in")] 		= kwIn;
-    keywords[UnicodeString ("out")] 		= kwOut;
-    keywords[UnicodeString ("const")] 		= kwConst;
-    keywords[UnicodeString ("if")] 		= kwIf;
-    keywords[UnicodeString ("else")] 		= kwElse;
-    keywords[UnicodeString ("while")] 		= kwWhile;
-    keywords[UnicodeString ("for")] 		= kwFor;
+#define KEYWORD(Str, Symbol)	\
+    keywords[UnicodeString (Str)] 		= Symbol;
+KEYWORDS
+#undef KEYWORD
     
     // Fill lookahead characters
     for (int i = 0; i < LookAhead; i++)
@@ -448,4 +454,67 @@ namespace s1
     }
   }
 
+  const char* Lexer::GetTokenStr (TokenType token)
+  {
+    switch (token)
+    {
+#define KEYWORD(Str, Symbol)	\
+    case Symbol: return Str;
+KEYWORDS
+#undef KEYWORD
+
+    case Invalid:		return "<Invalid>";
+    case EOF:			return "<EOF>";
+    case Unknown:		return "<Unknown>";
+    case Identifier:		return "<Identifier>";
+    case Numeric:		return "<Numeric>";
+    
+    case Semicolon:		return ";";
+    case ParenL:		return "(";
+    case ParenR:		return ")";
+    case BracketL:		return "[";
+    case BracketR:		return "]";
+    case BraceL:		return "{";
+    case BraceR:		return "}";
+    case Member:		return ".";
+    case Separator:		return ",";
+    case Equals:		return "==";
+    case NotEquals:		return "!=";
+    case Larger:		return ">";
+    case LargerEqual:		return ">=";
+    case Smaller:		return "<";
+    case SmallerEqual:		return "<=";
+    case Assign:		return "=";
+    case Plus:			return "+";
+    case Minus:			return "-";
+    case Mult:			return "*";
+    case Div:			return "/";
+    case Mod:			return "%";
+    case BitwiseInvert:		return "~";
+    case LogicInvert:		return "!";
+    case TernaryIf:		return "?";
+    case TernaryElse:		return ":";
+    case LogicOr:		return "||";
+    case LogicAnd:		return "&&";
+    }
+    return 0;
+  }
+  
+  std::string Lexer::GetTokenStr (const Token& token)
+  {
+    std::string tokenStr (GetTokenStr (token.typeOrID));
+    if (token.typeClass == Vector)
+    {
+      char nStr[2];
+      snprintf (nStr, sizeof (nStr), "%d", token.dimension1);
+      tokenStr.append (nStr);
+    }
+    else if (token.typeClass == Matrix)
+    {
+      char nStr[4];
+      snprintf (nStr, sizeof (nStr), "%dx%d", token.dimension1, token.dimension2);
+      tokenStr.append (nStr);
+    }
+    return tokenStr;
+  }
 } // namespace s1
