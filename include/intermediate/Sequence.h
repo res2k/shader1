@@ -72,7 +72,6 @@ namespace s1
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
       TypeToRegBankType typeToRegBank;
     };
-    typedef boost::shared_ptr<Sequence> SequencePtr;
     
   } // namespace intermediate
 } // namespace s1

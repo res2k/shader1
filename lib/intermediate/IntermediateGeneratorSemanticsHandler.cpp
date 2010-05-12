@@ -2,6 +2,8 @@
 #include "base/hash_UnicodeString.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/Program.h"
+#include "intermediate/ProgramFunction.h"
 #include "intermediate/SequenceOp/SequenceOpCast.h"
 
 #include "parser/Exception.h"
@@ -199,6 +201,26 @@ namespace s1
       }
       assert (false);
     }
+
+    ProgramPtr IntermediateGeneratorSemanticsHandler::GetProgram ()
+    {
+      ProgramPtr newProg (boost::make_shared <Program> ());
+      if (globalScope)
+      {
+	ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions());
+	for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
+	     funcIt != functions.end();
+	     ++funcIt)
+	{
+	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> (funcIt->identifier,
+									    funcIt->returnType,
+									    funcIt->params,
+									    funcIt->block));
+	  newProg->AddFunction (newFunc);
+	}
+      }
+      return newProg;
+    }
     
     TypePtr IntermediateGeneratorSemanticsHandler::CreateType (BaseType type)
     {
@@ -324,9 +346,21 @@ namespace s1
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
 								 ScopeLevel scopeLevel)
     {
-      return ScopePtr (new ScopeImpl (this,
-	boost::shared_static_cast<ScopeImpl> (parentScope),
-	scopeLevel));
+      ScopeImplPtr newScope (boost::make_shared<ScopeImpl> (this,
+							    boost::shared_static_cast<ScopeImpl> (parentScope),
+							    scopeLevel));
+      switch (scopeLevel)
+      {
+      case Builtin:
+	builtinScope = newScope;
+	break;
+      case Global:
+	globalScope = newScope;
+	break;
+      default:
+	break;
+      }
+      return newScope;
     }
       
     BlockPtr IntermediateGeneratorSemanticsHandler::CreateBlock (ScopePtr parentScope)

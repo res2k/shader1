@@ -3,6 +3,7 @@
 
 #include "parser/CommonSemanticsHandler.h"
 
+#include "forwarddecl.h"
 #include "Sequence.h"
 
 namespace s1
@@ -12,6 +13,8 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler : public s1::parser::SemanticsHandler
     {
     protected:
+      friend class ProgramFunction;
+      
       struct TypeImpl;
       struct NameImpl;
       class ScopeImpl;
@@ -33,6 +36,10 @@ namespace s1
       TypeImplPtr floatType;
       
       std::string GetTypeString (const TypeImplPtr& type);
+      
+      typedef boost::shared_ptr<ScopeImpl> ScopeImplPtr;
+      ScopeImplPtr builtinScope;
+      ScopeImplPtr globalScope;
     public:
       /**\name Type utilities
        * @{ */
@@ -76,6 +83,8 @@ namespace s1
 			 const TypeImplPtr& typeDestination,
 			 const RegisterID& castSource,
 			 const TypeImplPtr& typeSource);
+			 
+      ProgramPtr GetProgram ();
       
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */
