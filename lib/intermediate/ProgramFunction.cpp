@@ -11,9 +11,11 @@ namespace s1
 				      const parser::SemanticsHandler::TypePtr& returnType,
 				      const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
 				      const parser::SemanticsHandler::BlockPtr& block)
-     : identifier (identifier), returnType (returnType), params (params),
-       body (boost::static_pointer_cast<IntermediateGeneratorSemanticsHandler::BlockImpl> (block)->GetSequence ())
+     : identifier (identifier), returnType (returnType), params (params)
     {
+      boost::shared_ptr<IntermediateGeneratorSemanticsHandler::BlockImpl> blockImpl (
+	boost::static_pointer_cast<IntermediateGeneratorSemanticsHandler::BlockImpl> (block));
+      body = blockImpl->GetSequence ();
     }
 
   } // namespace intermediate

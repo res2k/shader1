@@ -14,6 +14,7 @@ namespace s1
       
       typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
+      std::vector<NamePtr> newVars;
       
       struct FunctionInfoInternal
       {
@@ -58,6 +59,8 @@ namespace s1
       };
       typedef std::vector<FunctionInfo> FunctionInfoVector;
       FunctionInfoVector GetFunctions () const;
+      
+      std::vector<NamePtr> FlushNewVars ();
     };
   } // namespace intermediate
 } // namespace s1

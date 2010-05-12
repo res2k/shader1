@@ -12,18 +12,18 @@ namespace s1
     public:
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler);
       
-      void AddToSequence (BlockImpl& block, Sequence& seq);
+      void AddToSequence (BlockImpl& block);
       
       /**
        * Get register with value of this expression.
        * Can be an 'invalid' register if the expression doesn't represent an
        * atomic value.
        */
-      virtual RegisterID GetRegister (Sequence& seq, bool writeable)
+      virtual RegisterID GetRegister (BlockImpl& block, bool writeable)
       { return RegisterID (); }
       
       virtual boost::shared_ptr<TypeImpl> GetValueType() = 0;
-      virtual void AddToSequence (BlockImpl& block, Sequence& seq, RegisterID destination) = 0;
+      virtual void AddToSequence (BlockImpl& block, RegisterID destination) = 0;
     };
   } // namespace intermediate
 } // namespace s1

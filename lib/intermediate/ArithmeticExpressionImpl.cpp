@@ -1,5 +1,6 @@
 #include "ArithmeticExpressionImpl.h"
 
+#include "BlockImpl.h"
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpArithAdd.h"
 #include "intermediate/SequenceOp/SequenceOpArithDiv.h"
@@ -48,9 +49,9 @@ namespace s1
     }
     
     void IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::AddToSequence (BlockImpl& block,
-											 Sequence& seq,
 											 RegisterID destination)
     {
+      Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
       
@@ -58,11 +59,11 @@ namespace s1
 	
       // Set up registers for operand values
       RegisterID reg1;
-      reg1 = operand1->GetRegister (seq, false);
+      reg1 = operand1->GetRegister (block, false);
       if (!reg1.IsValid())
       {
 	reg1 = handler->AllocateRegister (seq, type1, Intermediate);
-	operand1->AddToSequence (block, seq, reg1);
+	operand1->AddToSequence (block, reg1);
       }
       if (!valueType->IsEqual (*(type1.get())))
       {
@@ -73,11 +74,11 @@ namespace s1
 	reg1 = newReg1;
       }
       RegisterID reg2;
-      reg2 = operand2->GetRegister (seq, false);
+      reg2 = operand2->GetRegister (block, false);
       if (!reg2.IsValid())
       {
 	reg2 = handler->AllocateRegister (seq, type2, Intermediate);
-	operand2->AddToSequence (block, seq, reg2);
+	operand2->AddToSequence (block, reg2);
       }
       if (!valueType->IsEqual (*(type2.get())))
       {

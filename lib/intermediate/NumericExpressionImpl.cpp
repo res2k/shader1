@@ -1,5 +1,6 @@
 #include "NumericExpressionImpl.h"
 
+#include "BlockImpl.h"
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "TypeImpl.h"
@@ -40,7 +41,6 @@ namespace s1
     }
     
     void IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
-										      Sequence& seq,
 										      RegisterID destination)
     {
       U_NAMESPACE_USE
@@ -114,7 +114,7 @@ namespace s1
 	}
       }
       assert (seqOp);
-      seq.AddOp (seqOp);
+      block.GetSequence()->AddOp (seqOp);
     }
   } // namespace intermediate
 } // namespace s1

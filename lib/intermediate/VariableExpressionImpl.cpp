@@ -1,5 +1,6 @@
 #include "VariableExpressionImpl.h"
 
+#include "BlockImpl.h"
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "NameImpl.h"
@@ -18,10 +19,10 @@ namespace s1
     }
       
     RegisterID
-    IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetRegister (Sequence& seq, bool writeable)
+    IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetRegister (BlockImpl& block, bool writeable)
     {
       // TODO: Need to handle vars from outer scopes differently
-      return name->GetRegister (handler, seq, writeable);
+      return name->GetRegister (handler, block, writeable);
     }
       
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
@@ -31,15 +32,14 @@ namespace s1
     }
     
     void IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
-										       Sequence& seq,
 										       RegisterID destination)
     {
       if (destination.IsValid())
       {
 	// Evaluating to a destination -> assignment
 	SequenceOpPtr seqOp;
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpAssign> (destination, GetRegister (seq, false)));
-	seq.AddOp (seqOp);
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpAssign> (destination, GetRegister (block, false)));
+	block.GetSequence()->AddOp (seqOp);
       }
       else
       {

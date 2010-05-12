@@ -52,6 +52,7 @@ namespace s1
       NamePtr newName (new NameImpl (shared_from_this(), identifier, 
 				     boost::shared_static_cast<TypeImpl> (type), initialValue, constant));
       identifiers[identifier] = newName;
+      newVars.push_back (newName);
       return newName;
     }
       
@@ -126,6 +127,13 @@ namespace s1
 	}
       }
       return vec;
+    }
+    
+    std::vector<NamePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::FlushNewVars ()
+    {
+      std::vector<NamePtr> ret (newVars);
+      newVars.erase (newVars.begin(), newVars.end());
+      return ret;
     }
   } // namespace intermediate
 } // namespace s1

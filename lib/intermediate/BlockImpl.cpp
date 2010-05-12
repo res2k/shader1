@@ -17,7 +17,7 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddExpressionCommand (ExpressionPtr expr)
     {
       CommandImpl* impl = static_cast<CommandImpl*> (expr.get());
-      impl->AddToSequence (*this, *(sequence.get()));
+      impl->AddToSequence (*this);
     }
   } // namespace intermediate
 } // namespace s1

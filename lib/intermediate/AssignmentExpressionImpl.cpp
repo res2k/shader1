@@ -1,5 +1,6 @@
 #include "AssignmentExpressionImpl.h"
 
+#include "BlockImpl.h"
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "TypeImpl.h"
@@ -30,22 +31,21 @@ namespace s1
       return targetType;
     }
     
-    void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
-											 Sequence& seq)
+    void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block)
     {
-      AddToSequence (block, seq, RegisterID ());
+      AddToSequence (block, RegisterID ());
     }
     
     void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
-											 Sequence& seq,
 											 RegisterID destination)
     {
+      Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
 	
       // Set up registers for left-side value
       RegisterID targetReg;
-      targetReg = target->GetRegister (seq, true);
+      targetReg = target->GetRegister (block, true);
       if (!targetReg.IsValid())
       {
 	// GetRegister() should only work on L-values
@@ -60,7 +60,7 @@ namespace s1
       else
 	exprDestinationReg = targetReg;
       // Instruct 'value' to write to exprDestinationReg
-      value->AddToSequence (block, seq, exprDestinationReg);
+      value->AddToSequence (block, exprDestinationReg);
       if (targetReg != exprDestinationReg)
       {
 	// Insert cast op from exprDestinationReg to targetReg

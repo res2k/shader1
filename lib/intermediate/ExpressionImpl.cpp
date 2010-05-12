@@ -1,3 +1,4 @@
+#include "BlockImpl.h"
 #include "ExpressionImpl.h"
 
 namespace s1
@@ -9,13 +10,13 @@ namespace s1
     {
     }
      
-    void IntermediateGeneratorSemanticsHandler::ExpressionImpl::AddToSequence (BlockImpl& block, Sequence& seq)
+    void IntermediateGeneratorSemanticsHandler::ExpressionImpl::AddToSequence (BlockImpl& block)
     {
       boost::shared_ptr<TypeImpl> exprValueType = GetValueType ();
       // Create a dummy destination
-      RegisterID dummyDest = handler->AllocateRegister (seq, exprValueType, Dummy);
+      RegisterID dummyDest = handler->AllocateRegister (*(block.GetSequence()), exprValueType, Dummy);
       // Add expression, write to dummy destination
-      AddToSequence (block, seq, dummyDest);
+      AddToSequence (block, dummyDest);
       /* Need to generate operations even if the result isn't used, due
          to possible side effects.
          Eventually, dead code elimination should take care of removing the

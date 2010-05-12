@@ -43,23 +43,7 @@ namespace s1
       { return type == TypeAlias ? boost::shared_static_cast<Type> (valueType) : TypePtr (); }
       
       RegisterID GetRegister (IntermediateGeneratorSemanticsHandler* handler,
-			      Sequence& seq, bool writeable)
-      {
-	/* Note: asking for a register for a constant value is only an error for the second time and
-	   after; the first request is satisfied as the constant may have to be loaded somewhere */
-	if (!varReg.IsValid())
-	  varReg = handler->AllocateRegister (seq, valueType,
-					      IntermediateGeneratorSemanticsHandler::Variable, identifier);
-	else if (writeable)
-	{
-	  if (varConstant)
-	    // Throw?
-	    return RegisterID ();
-	  // Query a new generation
-	  varReg = handler->AllocateRegister (seq, varReg);
-	}
-	return varReg;
-      }
+			      BlockImpl& block, bool writeable);
     };
   } // namespace intermediate
 } // namespace s1

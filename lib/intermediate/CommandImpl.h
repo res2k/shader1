@@ -15,7 +15,7 @@ namespace s1
     public:
       CommandImpl (IntermediateGeneratorSemanticsHandler* handler) : handler (handler) {}
       
-      virtual void AddToSequence (BlockImpl& block, Sequence& seq) = 0;
+      virtual void AddToSequence (BlockImpl& block) = 0;
     };
   } // namespace intermediate
 } // namespace s1
