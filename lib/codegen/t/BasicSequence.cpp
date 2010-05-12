@@ -90,4 +90,64 @@ public:
 		     StringSubstitute ("$R0 = 1;", substMap));
   }
   
+  void testExprArithVar (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, UnicodeString ("b"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    TestSemanticsHandler::NamePtr varC = testScope->AddVariable (floatType, UnicodeString ("c"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    // Create a simple expression "c = a + b"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB);
+    TestSemanticsHandler::ExpressionPtr addExpr = semanticsHandler.CreateArithmeticExpression (TestSemanticsHandler::Add,
+											       exprA, exprB);
+    TestSemanticsHandler::ExpressionPtr exprC = semanticsHandler.CreateVariableExpression (varC);
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprC, addExpr);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSemanticsHandler::TestNameImpl* testVarA =
+      static_cast<TestSemanticsHandler::TestNameImpl*> (varA.get());
+    TestSemanticsHandler::TestNameImpl* testVarB =
+      static_cast<TestSemanticsHandler::TestNameImpl*> (varB.get());
+    TestSemanticsHandler::TestNameImpl* testVarC =
+      static_cast<TestSemanticsHandler::TestNameImpl*> (varC.get());
+      
+    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence));
+    StringsArrayPtr generateResult (seqGen.Generate ());
+    
+    std::string varARegName (seqGen.GetOutputRegisterName (testVarA->varReg, false));
+    std::string varBRegName (seqGen.GetOutputRegisterName (testVarB->varReg, false));
+    std::string varCRegName (seqGen.GetOutputRegisterName (testVarC->varReg, false));
+    StringStringMap substMap;
+    substMap["A"] = varARegName;
+    substMap["B"] = varBRegName;
+    substMap["C"] = varCRegName;
+    int l = 0;
+    TS_ASSERT_EQUALS(generateResult->Size(), 4);
+    TS_ASSERT_EQUALS(generateResult->Get (l++),
+		     StringSubstitute ("float $A;", substMap));
+    TS_ASSERT_EQUALS(generateResult->Get (l++),
+		     StringSubstitute ("float $B;", substMap));
+    TS_ASSERT_EQUALS(generateResult->Get (l++),
+		     StringSubstitute ("float $C;", substMap));
+    TS_ASSERT_EQUALS(generateResult->Get (l++),
+		     StringSubstitute ("$C = $A + $B;", substMap));
+  }
+  
 };
