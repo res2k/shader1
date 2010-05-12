@@ -43,6 +43,4 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 include_directories(include)
 
 add_subdirectory(lib)
-
-ADD_EXECUTABLE(s1 main.cpp)
-
+add_subdirectory(apps)
