@@ -18,6 +18,8 @@ namespace s1
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
+      /**\name SemanticsHandler::Block implementation
+       * @{ */
       ScopePtr GetInnerScope() { return innerScope; }
       
       void AddExpressionCommand (ExpressionPtr expr);
@@ -28,6 +30,9 @@ namespace s1
       void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
 		       BlockPtr loopBlock) {}
       void AddNestedBlock (BlockPtr block) {}
+      /** @} */
+      
+      const SequencePtr& GetSequence() const { return sequence; }
     };
   } // namespace intermediate
 } // namespace s1
