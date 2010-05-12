@@ -340,7 +340,7 @@ namespace s1
     std::string CgGenerator::SequenceCodeGenerator::RegisterNameToCgIdentifier (const UnicodeString& str)
     {
       std::string basic_str;
-      UChar32 minNonBasicCP = (UChar32)~0;
+      UChar32 minNonBasicCP = (UChar32)INT32_MAX;
       // An implementation of the punycode algorithm, see RFC 3492
       StringCharacterIterator idIt (str);
       while (idIt.hasNext())
