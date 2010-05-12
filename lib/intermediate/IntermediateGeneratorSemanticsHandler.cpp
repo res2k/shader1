@@ -128,7 +128,7 @@ namespace s1
 									RegisterClassification classify,
 									const UnicodeString& name)
     {
-      static const UChar prefix[3] = { UChar (classify), '_', 0};
+      const UChar prefix[3] = { UChar (classify), '_', 0};
       UnicodeString regName (prefix);
       if (!name.isEmpty())
 	regName.append (name);
