@@ -27,6 +27,8 @@ namespace s1
       ErrorCode GetCode() const { return code; }
       Lexer::Token GetEncounteredToken() const { return encounteredToken; }
       Lexer::TokenType GetExpectedToken() const { return expectedToken; }
+      
+      const char* what() const throw() { return "parser::Exception"; }
     };
   } // namespace parser
 } // namespace s1

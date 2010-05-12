@@ -18,6 +18,8 @@ namespace s1
       
       Exception (ErrorCode code) : code (code) {}
       
+      const char* what() const throw() { return "intermediate::Exception"; }
+      
       ErrorCode GetCode() const { return code; }
     };
   } // namespace intermediate
