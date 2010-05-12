@@ -17,6 +17,8 @@ namespace s1
       ~Exception() throw () {}
       
       Exception (ErrorCode code) : code (code) {}
+      
+      ErrorCode GetCode() const { return code; }
     };
   } // namespace intermediate
 } // namespace s1
