@@ -17,6 +17,7 @@ void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encou
   ERRORCODE(IdentifierUndeclared);
   ERRORCODE(DeclarationNotAllowedInScope);
   ERRORCODE(ExpectedTypeName);
+#undef ERRORCODE
   }
   
   std::cerr << errorStr;
@@ -33,5 +34,24 @@ void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encou
     std::cerr << Lexer::GetTokenStr (expectedToken);
     std::cerr << "'; ";
   }
+  std::cerr << std::endl;
+}
+
+void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
+{
+  const char* errorStr = "???";
+  switch (code)
+  {
+#define ERRORCODE(X)	\
+  case intermediate::X: errorStr = #X; break
+  ERRORCODE(OperandTypesIncompatible);
+  ERRORCODE(OperandTypesInvalid);
+  ERRORCODE(AssignmentTypesIncompatible);
+  ERRORCODE(AssignmentTargetIsNotAnLValue);
+  ERRORCODE(NumberParseError);
+#undef ERRORCODE
+  }
+  
+  std::cerr << errorStr;
   std::cerr << std::endl;
 }

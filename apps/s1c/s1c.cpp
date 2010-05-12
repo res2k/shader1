@@ -3,6 +3,7 @@
 
 #include "base/UnicodeStream.h"
 #include "codegen/CgGenerator.h"
+#include "intermediate/Exception.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
@@ -27,7 +28,14 @@ int main (const int argc, const char* const argv[])
   
   intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
   Parser parser (lexer, intermediateHandler, errorHandler);
-  parser.Parse ();
+  try
+  {
+    parser.Parse ();
+  }
+  catch (intermediate::Exception& e)
+  {
+    errorHandler.IntermediateError (e.GetCode());
+  }
   
   codegen::CgGenerator codegen;
   codegen::StringsArrayPtr progOutput (codegen.Generate (intermediateHandler.GetProgram()));
