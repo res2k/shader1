@@ -30,7 +30,7 @@ void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encou
   }
   if (expectedToken != Lexer::Invalid)
   {
-    std::cerr << "encountered: '";
+    std::cerr << "expected: '";
     std::cerr << Lexer::GetTokenStr (expectedToken);
     std::cerr << "'; ";
   }
