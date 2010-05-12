@@ -239,6 +239,44 @@ namespace s1
     }
   }
   
+  bool Parser::IsBinaryOperationToken (Lexer::TokenType tokenType)
+  {
+    switch (tokenType)
+    {
+    case Lexer::Equals:
+    case Lexer::NotEquals:
+    case Lexer::Larger:
+    case Lexer::LargerEqual:
+    case Lexer::Smaller:
+    case Lexer::SmallerEqual:
+    case Lexer::Plus:
+    case Lexer::Minus:
+    case Lexer::Mult:
+    case Lexer::Div:
+    case Lexer::Mod:
+    case Lexer::LogicOr:
+    case Lexer::LogicAnd:
+      return true;
+    default:
+      break;
+    }
+    return false;
+  }
+  
+  bool Parser::IsUnaryOperationToken (Lexer::TokenType tokenType)
+  {
+    switch (tokenType)
+    {
+    case Lexer::Minus:
+    case Lexer::BitwiseInvert:
+    case Lexer::LogicInvert:
+      return true;
+    default:
+      break;
+    }
+    return false;
+  }
+  
   bool Parser::IsExpression (Scope scope)
   {
     if ((currentToken.typeOrID == Lexer::ParenL)
@@ -249,6 +287,12 @@ namespace s1
     // Check if assignment
     if ((currentToken.typeOrID == Lexer::Identifier)
 	  && (Peek ().typeOrID == Lexer::Assign))
+      return true;
+    // Check if 'stand-alone' expression
+    if (((currentToken.typeOrID == Lexer::Identifier)
+	    && (IsBinaryOperationToken (Peek ().typeOrID) 	// X op Y
+	      || (Peek ().typeOrID == Lexer::TernaryIf)))	// X ? ...
+	  || IsUnaryOperationToken (currentToken.typeOrID))	// !X, ~X ...
       return true;
     /* Check if function call - can be <Identifier> '('
        or <type> '(', where <type> can take up multiple tokens,

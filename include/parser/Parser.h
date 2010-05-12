@@ -51,6 +51,8 @@ namespace s1
     void ParseCommand (Block block);
 
     // Expressions
+    bool IsBinaryOperationToken (Lexer::TokenType tokenType);
+    bool IsUnaryOperationToken (Lexer::TokenType tokenType);
     /// Returns whether the current token is the start of an expression.
     bool IsExpression (Scope scope);
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
