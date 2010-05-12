@@ -17,6 +17,7 @@ namespace s1
       void AddString (const std::string& str);
       
       const std::string& Get (size_t index) const;
+      size_t Size() const;
     };
     typedef boost::shared_ptr<StringsArray> StringsArrayPtr;
   } // namespace codegen

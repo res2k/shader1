@@ -15,5 +15,10 @@ namespace s1
     {
       return strings[index];
     }
+      
+    size_t StringsArray::Size () const
+    {
+      return strings.size();
+    }
   } // namespace codegen
 } // namespace s1
