@@ -54,8 +54,11 @@ namespace s1
       RegisterID exprDestinationReg;
       if (!valueType->IsEqual (*(targetType.get())))
       {
+	Sequence::RegisterBankPtr bank;
+	Sequence::RegisterPtr targetRegPtr (seq.QueryRegisterFromID (targetReg, bank));
 	// Let right-side evaluate to a (temp) register, for cast
-	exprDestinationReg = handler->AllocateRegister (seq, valueType, Intermediate);
+	exprDestinationReg = handler->AllocateRegister (seq, valueType, Intermediate,
+							targetRegPtr->GetName());
       }
       else
 	exprDestinationReg = targetReg;
