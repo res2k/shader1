@@ -274,6 +274,10 @@ public:
     entry.sourceReg[1] = source2;
     entries.push_back (entry);
   }
+  
+  void OpBlock (const boost::shared_ptr<Sequence>& seq)
+  {
+  }
 };
 
 #endif // __TESTSEQUENCEVISITOR_H__

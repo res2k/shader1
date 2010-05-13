@@ -1,7 +1,8 @@
 #ifndef __INTERMEDIATE_SEQUENCEVISITOR_H__
 #define __INTERMEDIATE_SEQUENCEVISITOR_H__
 
-#include "Sequence.h"
+#include "forwarddecl.h"
+#include "RegisterID.h"
 
 namespace s1
 {
@@ -66,6 +67,8 @@ namespace s1
       virtual void OpCompareGE (const RegisterID& destination,
 				const RegisterID& source1,
 				const RegisterID& source2) = 0;
+				
+      virtual void OpBlock (const SequencePtr& subSequence) = 0;
     };
   } // namespace intermediate
 } // namespace s1

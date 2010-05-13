@@ -1,5 +1,6 @@
 #include "BlockImpl.h"
 
+#include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
 #include "NameImpl.h"
@@ -23,6 +24,15 @@ namespace s1
       FlushVariableInitializers();
       CommandImpl* impl = static_cast<CommandImpl*> (expr.get());
       impl->AddToSequence (*this);
+    }
+
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (BlockPtr block)
+    {
+      FlushVariableInitializers();
+      boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
+      blockImpl->FinishBlock();
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence()));
+      sequence->AddOp (seqOp);
     }
     
     void IntermediateGeneratorSemanticsHandler::BlockImpl::FlushVariableInitializers()

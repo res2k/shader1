@@ -199,6 +199,14 @@ namespace s1
       EmitBinary (destination, source1, source2, ">=");
     }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq)
+    {
+      SequenceCodeGenerator codegen (*seq);
+      StringsArrayPtr blockStrings (codegen.Generate());
+      target->AddString ("{");
+      target->AddStrings (*blockStrings, 2);
+      target->AddString ("}");
+    }
 		      
     //-----------------------------------------------------------------------
 		      

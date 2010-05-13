@@ -35,7 +35,7 @@ namespace s1
       void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock) {}
       void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
 		       BlockPtr loopBlock) {}
-      void AddNestedBlock (BlockPtr block) {}
+      void AddNestedBlock (BlockPtr block);
       /** @} */
       
       const SequencePtr& GetSequence() const { return sequence; }

@@ -90,6 +90,8 @@ namespace s1
 	void OpCompareGE (const RegisterID& destination,
 			  const RegisterID& source1,
 			  const RegisterID& source2);
+			  
+	void OpBlock (const intermediate::SequencePtr& seq);
       };
       
       const intermediate::Sequence& seq;
