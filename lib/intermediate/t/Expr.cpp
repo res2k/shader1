@@ -233,4 +233,40 @@ public:
     TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[0], visitor.entries[1].destReg);
     TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[1], visitor.entries[2].destReg);
   }
+  
+  void testExprArithVarAssignSelf (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, UnicodeString ("b"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
+    // Create a simple expression "a = a + b"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB);
+    TestSemanticsHandler::ExpressionPtr addExpr = semanticsHandler.CreateArithmeticExpression (TestSemanticsHandler::Add,
+											       exprA, exprB);
+    TestSemanticsHandler::ExpressionPtr exprA2 = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA2, addExpr);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequence->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_DIFFERS(visitor.entries[0].destReg, visitor.entries[0].sourceReg[0]);
+    TS_ASSERT_DIFFERS(visitor.entries[0].destReg, visitor.entries[0].sourceReg[1]);
+  }
+  
 };

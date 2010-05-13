@@ -10,6 +10,8 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::VariableExpressionImpl : public ExpressionImpl
     {
       boost::shared_ptr<NameImpl> name;
+      
+      RegisterID myReg;
     public:
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 			      const boost::shared_ptr<NameImpl>& name);

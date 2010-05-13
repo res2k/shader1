@@ -22,7 +22,9 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetRegister (BlockImpl& block, bool writeable)
     {
       // TODO: Need to handle vars from outer scopes differently
-      return name->GetRegister (handler, block, writeable);
+      if (!myReg.IsValid())
+	myReg = name->GetRegister (handler, block, writeable);
+      return myReg;
     }
       
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>

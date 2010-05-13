@@ -42,7 +42,11 @@ namespace s1
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
-	
+
+      /* 'Prefetch' right-side registers
+         (to make cases like 'a = a OP b' work, right side 'a' needs to be 'older'
+         than left-side 'a') */
+      value->GetRegister (block, false);
       // Set up registers for left-side value
       RegisterID targetReg;
       targetReg = target->GetRegister (block, true);

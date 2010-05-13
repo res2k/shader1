@@ -23,6 +23,15 @@ namespace s1
        : ExpressionImpl (handler), op (op), operand1 (operand1), operand2 (operand2)
     {
     }
+
+    RegisterID IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetRegister (BlockImpl& block,
+											     bool writeable)
+    {
+      // Let operands grab registers ...
+      operand1->GetRegister (block, false);
+      operand2->GetRegister (block, false);
+      return RegisterID ();
+    }
       
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetValueType()
