@@ -82,6 +82,10 @@ namespace s1
       const RegisterImpMappings& GetImports () const { return imports; }
       void AddImport (const UnicodeString& parentRegName,
 		      const RegisterID& localID);
+      typedef std::tr1::unordered_map<UnicodeString, RegisterID> RegisterExpMappings;
+      const RegisterExpMappings& GetExports () const { return exports; }
+      void SetExport (const UnicodeString& parentRegName,
+		      const RegisterID& localID);
     protected:
       std::vector<RegisterBankPtr> registerBanks;
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
@@ -89,6 +93,7 @@ namespace s1
       IdentifierToRegIDMap identToRegID;
       
       RegisterImpMappings imports;
+      RegisterExpMappings exports;
     };
     
   } // namespace intermediate

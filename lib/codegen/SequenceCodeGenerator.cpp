@@ -23,6 +23,15 @@ namespace s1
       return std::string ();
     }
 	
+    std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const UnicodeString& name)
+    {
+      /*Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (name);
+      if (regIt != identToRegID.end())
+	owner->GetOutputRegisterName (regIt->second);
+      return std::string ();*/
+      return owner->GetOutputRegisterName (owner->seq.GetIdentifierRegisterID (name));
+    }
+	
     //-----------------------------------------------------------------------
 		      
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
@@ -38,6 +47,17 @@ namespace s1
       std::string line (targetName);
       line.append (" = ");
       line.append (value);
+      line.append (";");
+      target->AddString (line);
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const char* destination,
+									 const RegisterID& value)
+    {
+      std::string valueName (owner->GetOutputRegisterName (value));
+      std::string line (destination);
+      line.append (" = ");
+      line.append (valueName);
       line.append (";");
       target->AddString (line);
     }
@@ -215,8 +235,17 @@ namespace s1
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
-								      const Sequence::IdentifierToRegIDMap& identToRegID)
+								      const Sequence::IdentifierToRegIDMap& identToRegID,
+								      const std::vector<RegisterID>& writtenRegisters)
     {
+      // Generate registers for 'exported' variables
+      for (std::vector<RegisterID>::const_iterator writtenReg = writtenRegisters.begin();
+	   writtenReg != writtenRegisters.end();
+	   ++writtenReg)
+      {
+	owner->GetOutputRegisterName (*writtenReg);
+      }
+      
       SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID);
       SequenceCodeGenerator codegen (*seq, &nameRes);
       StringsArrayPtr blockStrings (codegen.Generate());
@@ -241,19 +270,35 @@ namespace s1
       CodegenVisitor visitor (this, strings);
       
       // 'Import' variables from parent generator
-      const intermediate::Sequence::RegisterImpMappings& imports = seq.GetImports();
-      for (intermediate::Sequence::RegisterImpMappings::const_iterator import = imports.begin();
-	    import != imports.end();
-	    ++import)
       {
-	std::string parentID = nameRes->GetImportedNameIdentifier (import->first);
-	if (parentID.size() > 0)
-	  visitor.EmitAssign (import->second, parentID.c_str());
-	/* else: no ID, value is undefined; leave undefined in this block, too */
+	const intermediate::Sequence::RegisterImpMappings& imports = seq.GetImports();
+	for (intermediate::Sequence::RegisterImpMappings::const_iterator import = imports.begin();
+	      import != imports.end();
+	      ++import)
+	{
+	  std::string parentID = nameRes->GetImportedNameIdentifier (import->first);
+	  if (parentID.size() > 0)
+	    visitor.EmitAssign (import->second, parentID.c_str());
+	  /* else: no ID, value is undefined; leave undefined in this block, too */
+	}
       }
       
       // Generate code for actual operations
       seq.Visit (visitor);
+      
+      // 'Export' variables to outer scope
+      {
+	const intermediate::Sequence::RegisterExpMappings& exports = seq.GetExports();
+	for (intermediate::Sequence::RegisterExpMappings::const_iterator exportVar = exports.begin();
+	      exportVar != exports.end();
+	      ++exportVar)
+	{
+	  std::string parentID = nameRes->GetExportedNameIdentifier (exportVar->first);
+	  if (parentID.size() > 0)
+	    visitor.EmitAssign (parentID.c_str(), exportVar->second);
+	  /* else: no ID, value is undefined; no assign */
+	}
+      }
       return strings;
     }
     

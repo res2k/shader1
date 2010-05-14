@@ -13,9 +13,11 @@ namespace s1
     {
       SequencePtr subSequence;
       Sequence::IdentifierToRegIDMap identToRegIDs;
+      std::vector<RegisterID> writtenRegisters;
     public:
       SequenceOpBlock (const SequencePtr& subSequence,
-		       const Sequence::IdentifierToRegIDMap& identToRegIDs);
+		       const Sequence::IdentifierToRegIDMap& identToRegIDs,
+		       const std::vector<RegisterID>& writtenRegisters);
       
       void Visit (SequenceVisitor& visitor);
     };

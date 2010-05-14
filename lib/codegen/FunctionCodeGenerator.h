@@ -20,6 +20,11 @@ namespace s1
 	  /* TODO: Resolve function params */
 	  return std::string();
 	}
+	std::string GetExportedNameIdentifier (const UnicodeString& name)
+	{ 
+	  /* TODO: Resolve function params */
+	  return std::string();
+	}
       };
     public:
       StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func);

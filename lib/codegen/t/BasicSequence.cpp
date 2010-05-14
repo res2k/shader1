@@ -41,6 +41,8 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
   public:
     std::string GetImportedNameIdentifier (const UnicodeString& name)
     { return std::string(); }	
+    std::string GetExportedNameIdentifier (const UnicodeString& name)
+    { return std::string(); }	
   };
   
   class TestCodeGenerator : public CgGenerator

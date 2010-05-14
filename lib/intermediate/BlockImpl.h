@@ -1,6 +1,8 @@
 #ifndef __INTERMEDIATE_BLOCKIMPL_H__
 #define __INTERMEDIATE_BLOCKIMPL_H__
 
+#include "base/unordered_set"
+
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
 
@@ -44,6 +46,8 @@ namespace s1
       };
       typedef std::tr1::unordered_map<NamePtr, ImportedName> ImportedNamesMap;
       ImportedNamesMap importedNames;
+      typedef std::tr1::unordered_set<boost::shared_ptr<NameImpl> > ExportedNamesSet;
+      ExportedNamesSet exportedNames;
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       

@@ -122,6 +122,12 @@ namespace s1
     {
       imports.push_back (std::make_pair (parentRegName, localID));
     }
+    
+    void Sequence::SetExport (const UnicodeString& parentRegName,
+			      const RegisterID& localID)
+    {
+      exports[parentRegName] = localID;
+    }
   } // namespace intermediate
 } // namespace s1
 

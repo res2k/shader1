@@ -32,11 +32,26 @@ namespace s1
       FlushVariableInitializers();
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
+      // Generate register IDs for all values the nested block exports
+      std::vector<RegisterID> writtenRegisters;
+      {
+	for (ExportedNamesSet::const_iterator exportedName = blockImpl->exportedNames.begin();
+	     exportedName != blockImpl->exportedNames.end();
+	     exportedName++)
+	{
+	  boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
+	  {
+	    writtenRegisters.push_back ((*exportedName)->GetRegister (handler, *this, true));
+	  }
+	}
+      }
       /* Pass 'snapshot' of identifiers-to-register-ID map
          When resolving imports, the registers for variables _at the time of the block
          insertion_ is needed, hence the snapshot */
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
-								sequence->GetIdentifierToRegisterIDMap ()));
+								sequence->GetIdentifierToRegisterIDMap (),
+								writtenRegisters));
       sequence->AddOp (seqOp);
     }
     
@@ -84,6 +99,11 @@ namespace s1
 	if (writeable)
 	  impName.currentRegister = handler->AllocateRegister (*sequence, impName.currentRegister);
 	reg = impName.currentRegister;
+      }
+      if (writeable)
+      {
+	sequence->SetExport (nameImpl->identifier, reg);
+	exportedNames.insert (nameImpl);
       }
       return reg;
     }
