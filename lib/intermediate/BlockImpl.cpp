@@ -1,5 +1,6 @@
 #include "BlockImpl.h"
 
+#include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
@@ -63,11 +64,16 @@ namespace s1
 
     RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::ImportName (NamePtr name, bool writeable)
     {
+      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
+      if (writeable && nameImpl->varConstant)
+      {
+	throw Exception (AssignmentTargetIsNotAnLValue);
+      }
+      
       RegisterID reg;
       ImportedName& impName = importedNames[name];
       if (!impName.currentRegister.IsValid())
       {
-	boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
 	reg = impName.currentRegister = impName.initialRegister =
 	  handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
 				     nameImpl->identifier);
