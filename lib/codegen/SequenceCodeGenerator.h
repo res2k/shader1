@@ -12,13 +12,34 @@ namespace s1
 {
   namespace codegen
   {
+    struct ImportedNameResolver
+    {
+      virtual ~ImportedNameResolver() {}
+      
+      virtual std::string GetImportedNameIdentifier (const UnicodeString& name) = 0;
+    };
+    
     class CgGenerator::SequenceCodeGenerator
     {
     protected:
       typedef intermediate::RegisterID RegisterID;
       typedef intermediate::Sequence Sequence;
+      
+      class SequenceIdentifiersToRegIDsNameResolver : public ImportedNameResolver
+      {
+	SequenceCodeGenerator* owner;
+	const Sequence::IdentifierToRegIDMap& identToRegID;
+      public:
+	SequenceIdentifiersToRegIDsNameResolver (SequenceCodeGenerator* owner,
+						 const Sequence::IdentifierToRegIDMap& identToRegID);
+					 
+	std::string GetImportedNameIdentifier (const UnicodeString& name);
+      };
+      
       class CodegenVisitor : public intermediate::SequenceVisitor
       {
+	friend class SequenceCodeGenerator;
+	
 	SequenceCodeGenerator* owner;
 	StringsArrayPtr target;
 	
@@ -91,10 +112,12 @@ namespace s1
 			  const RegisterID& source1,
 			  const RegisterID& source2);
 			  
-	void OpBlock (const intermediate::SequencePtr& seq);
+	void OpBlock (const intermediate::SequencePtr& seq,
+		      const Sequence::IdentifierToRegIDMap& identToRegID);
       };
       
       const intermediate::Sequence& seq;
+      ImportedNameResolver* nameRes;
       StringsArrayPtr strings;
       
       typedef boost::unordered_map<RegisterID, std::string> RegistersToIDMap;
@@ -105,7 +128,8 @@ namespace s1
       std::string GetOutputRegisterName (const RegisterID& reg,
 					 bool autoAllocate = true);
     public:
-      SequenceCodeGenerator (const intermediate::Sequence& seq);
+      SequenceCodeGenerator (const intermediate::Sequence& seq,
+			     ImportedNameResolver* nameRes);
       
       StringsArrayPtr Generate ();
     };

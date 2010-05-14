@@ -18,7 +18,8 @@ namespace s1
       resultStrings->AddString (std::string ("// TODO: proper function declaration"));
       resultStrings->AddString (std::string ("{"));
       
-      SequenceCodeGenerator seqGen (*(func->GetBody()));
+      BlockNameResolver nameRes;
+      SequenceCodeGenerator seqGen (*(func->GetBody()), &nameRes);
       resultStrings->AddStrings (*(seqGen.Generate()), 2);
       
       resultStrings->AddString (std::string ("}"));

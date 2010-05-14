@@ -4,6 +4,21 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
 
+namespace std
+{
+  namespace tr1
+  {
+    template<typename T>
+    struct hash<boost::shared_ptr<T> >
+    {
+      size_t operator() (const boost::shared_ptr<T>& ptr) const
+      {
+	return uintptr_t (ptr.get());
+      }
+    };
+  } // namespace tr1
+} // namespace std
+
 namespace s1
 {
   namespace intermediate
@@ -21,6 +36,14 @@ namespace s1
        * if necessary
        */
       void FlushVariableInitializers();
+      
+      struct ImportedName
+      {
+	RegisterID initialRegister;
+	RegisterID currentRegister;
+      };
+      typedef std::tr1::unordered_map<NamePtr, ImportedName> ImportedNamesMap;
+      ImportedNamesMap importedNames;
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
@@ -41,6 +64,8 @@ namespace s1
       const SequencePtr& GetSequence() const { return sequence; }
       
       void FinishBlock() { FlushVariableInitializers(); }
+      
+      RegisterID ImportName (NamePtr name, bool writeable);
     };
   } // namespace intermediate
 } // namespace s1

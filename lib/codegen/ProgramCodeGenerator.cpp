@@ -1,3 +1,5 @@
+#include <boost/cstdint.hpp>
+
 #include "ProgramCodeGenerator.h"
 
 #include "intermediate/Program.h"

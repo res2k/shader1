@@ -4,6 +4,7 @@
 #include "codegen/CgGenerator.h"
 #include "codegen/StringsArray.h"
 #include "intermediate/forwarddecl.h"
+#include "SequenceCodeGenerator.h"
 
 namespace s1
 {
@@ -11,6 +12,15 @@ namespace s1
   {
     class CgGenerator::FunctionCodeGenerator
     {
+      class BlockNameResolver : public ImportedNameResolver
+      {
+      public:
+	std::string GetImportedNameIdentifier (const UnicodeString& name)
+	{ 
+	  /* TODO: Resolve function params */
+	  return std::string();
+	}
+      };
     public:
       StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func);
     };

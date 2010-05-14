@@ -4,6 +4,7 @@
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "NameImpl.h"
+#include "ScopeImpl.h"
 
 #include <boost/make_shared.hpp>
 
@@ -21,9 +22,18 @@ namespace s1
     RegisterID
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetRegister (BlockImpl& block, bool writeable)
     {
-      // TODO: Need to handle vars from outer scopes differently
       if (!myReg.IsValid())
-	myReg = name->GetRegister (handler, block, writeable);
+      {
+	boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (block.GetInnerScope()));
+	if (boost::shared_ptr<ScopeImpl> (name->ownerScope) != blockScopeImpl)
+	{
+	  myReg = block.ImportName (name, writeable);
+	}
+	else
+	{
+	  myReg = name->GetRegister (handler, block, writeable);
+	}
+      }
       return myReg;
     }
       

@@ -3,6 +3,7 @@
 
 #include "SequenceOp.h"
 #include "../forwarddecl.h"
+#include "../Sequence.h"
 
 namespace s1
 {
@@ -11,8 +12,10 @@ namespace s1
     class SequenceOpBlock : public SequenceOp
     {
       SequencePtr subSequence;
+      Sequence::IdentifierToRegIDMap identToRegIDs;
     public:
-      SequenceOpBlock (const SequencePtr& subSequence);
+      SequenceOpBlock (const SequencePtr& subSequence,
+		       const Sequence::IdentifierToRegIDMap& identToRegIDs);
       
       void Visit (SequenceVisitor& visitor);
     };

@@ -5,7 +5,7 @@
 #include "SequenceOp/SequenceOp.h"
 #include "parser/SemanticsHandler.h"
 
-#include <base/unordered_map>
+#include "base/unordered_map"
 #include <unicode/unistr.h>
 #include <vector>
 
@@ -30,10 +30,10 @@ namespace s1
 	UnicodeString originalName;
 	unsigned int generation;
 	UnicodeString name;
-	
+      public:
 	Register (const UnicodeString& name);
 	Register (const Register& other);
-      public:
+	
 	const UnicodeString& GetName() const { return name; }
       };
       typedef boost::shared_ptr<Register> RegisterPtr;
@@ -64,13 +64,31 @@ namespace s1
 				   const UnicodeString& name);
       RegisterID AllocateRegister (const RegisterID& oldReg);
       
-      RegisterPtr QueryRegisterFromID (const RegisterID& id, RegisterBankPtr& bank) const;
+      RegisterPtr QueryRegisterPtrFromID (const RegisterID& id, RegisterBankPtr& bank) const;
+      RegisterPtr QueryRegisterPtrFromID (const RegisterID& id) const
+      { RegisterBankPtr dummyBank; return QueryRegisterPtrFromID (id, dummyBank); }
+      
+      void SetIdentifierRegisterID (const UnicodeString& identifier, RegisterID regID);
+      RegisterID GetIdentifierRegisterID (const UnicodeString& identifier) const;
+      
+      typedef std::tr1::unordered_map<UnicodeString, RegisterID> IdentifierToRegIDMap;
+      /// Get current identifiers-to-register-ID map
+      const IdentifierToRegIDMap& GetIdentifierToRegisterIDMap () const
+      { return identToRegID; }
       
       void Visit (SequenceVisitor& visitor) const;
+      
+      typedef std::vector<std::pair<UnicodeString, RegisterID> > RegisterImpMappings;
+      const RegisterImpMappings& GetImports () const { return imports; }
+      void AddImport (const UnicodeString& parentRegName,
+		      const RegisterID& localID);
     protected:
       std::vector<RegisterBankPtr> registerBanks;
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
       TypeToRegBankType typeToRegBank;
+      IdentifierToRegIDMap identToRegID;
+      
+      RegisterImpMappings imports;
     };
     
   } // namespace intermediate

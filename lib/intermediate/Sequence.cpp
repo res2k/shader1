@@ -1,5 +1,7 @@
 #include <boost/functional/hash.hpp>
+#include <boost/make_shared.hpp>
 
+#include "base/hash_UnicodeString.h"
 #include "intermediate/Sequence.h"
 
 #include <unicode/ustdio.h>
@@ -35,14 +37,14 @@ namespace s1
     unsigned int Sequence::RegisterBank::AddRegister (const UnicodeString& name)
     {
       unsigned int num = registers.size();
-      registers.push_back (RegisterPtr (new Register (name)));
+      registers.push_back (boost::make_shared<Register> (name));
       return num;
     }
     
     unsigned int Sequence::RegisterBank::AddRegister (const RegisterPtr& oldReg)
     {
       unsigned int num = registers.size();
-      registers.push_back (RegisterPtr (new Register (*oldReg)));
+      registers.push_back (boost::make_shared<Register> (*oldReg));
       return num;
     }
     
@@ -84,7 +86,7 @@ namespace s1
       return RegisterID (oldReg.bank, regNum);
     }
 
-    Sequence::RegisterPtr Sequence::QueryRegisterFromID (const RegisterID& id, RegisterBankPtr& bank) const
+    Sequence::RegisterPtr Sequence::QueryRegisterPtrFromID (const RegisterID& id, RegisterBankPtr& bank) const
     {
       if (!id.IsValid()) return RegisterPtr ();
       
@@ -94,12 +96,31 @@ namespace s1
       return regPtr;
     }
       
+    void Sequence::SetIdentifierRegisterID (const UnicodeString& identifier, RegisterID regID)
+    {
+      identToRegID[identifier] = regID;
+    }
+    
+    RegisterID Sequence::GetIdentifierRegisterID (const UnicodeString& identifier) const
+    {
+      IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (identifier);
+      if (regIt != identToRegID.end())
+	return regIt->second;
+      return RegisterID ();
+    }
+      
     void Sequence::Visit (SequenceVisitor& visitor) const
     {
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
 	(*op)->Visit (visitor);
       }
+    }
+    
+    void Sequence::AddImport (const UnicodeString& parentRegName,
+			      const RegisterID& localID)
+    {
+      imports.push_back (std::make_pair (parentRegName, localID));
     }
   } // namespace intermediate
 } // namespace s1

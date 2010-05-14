@@ -1,6 +1,7 @@
 #ifndef __TESTSEQUENCEVISITOR_H__
 #define __TESTSEQUENCEVISITOR_H__
 
+#include "intermediate/Sequence.h"
 #include "intermediate/SequenceVisitor.h"
 
 class TestSequenceVisitor : public s1::intermediate::SequenceVisitor
@@ -275,7 +276,8 @@ public:
     entries.push_back (entry);
   }
   
-  void OpBlock (const boost::shared_ptr<Sequence>& seq)
+  void OpBlock (const boost::shared_ptr<Sequence>& seq,
+		const Sequence::IdentifierToRegIDMap&)
   {
   }
 };

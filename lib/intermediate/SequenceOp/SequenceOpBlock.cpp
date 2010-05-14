@@ -5,14 +5,15 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpBlock::SequenceOpBlock (const SequencePtr& subSequence)
-     : subSequence (subSequence)
+    SequenceOpBlock::SequenceOpBlock (const SequencePtr& subSequence,
+				      const Sequence::IdentifierToRegIDMap& identToRegIDs)
+     : subSequence (subSequence), identToRegIDs (identToRegIDs)
     {
     }
     
     void SequenceOpBlock::Visit (SequenceVisitor& visitor)
     {
-      visitor.OpBlock (subSequence);
+      visitor.OpBlock (subSequence, identToRegIDs);
     }
   } // namespace intermediate
 } // namespace s1

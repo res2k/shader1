@@ -31,7 +31,11 @@ namespace s1
       FlushVariableInitializers();
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence()));
+      /* Pass 'snapshot' of identifiers-to-register-ID map
+         When resolving imports, the registers for variables _at the time of the block
+         insertion_ is needed, hence the snapshot */
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
+								sequence->GetIdentifierToRegisterIDMap ()));
       sequence->AddOp (seqOp);
     }
     
@@ -55,6 +59,27 @@ namespace s1
 	  AddExpressionCommand (expr);
 	}
       }
+    }
+
+    RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::ImportName (NamePtr name, bool writeable)
+    {
+      RegisterID reg;
+      ImportedName& impName = importedNames[name];
+      if (!impName.currentRegister.IsValid())
+      {
+	boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
+	reg = impName.currentRegister = impName.initialRegister =
+	  handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
+				     nameImpl->identifier);
+	sequence->AddImport (nameImpl->identifier, reg);
+      }
+      else
+      {
+	if (writeable)
+	  impName.currentRegister = handler->AllocateRegister (*sequence, impName.currentRegister);
+	reg = impName.currentRegister;
+      }
+      return reg;
     }
   } // namespace intermediate
 } // namespace s1

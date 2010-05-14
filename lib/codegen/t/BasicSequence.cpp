@@ -36,6 +36,13 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
     };
   };
   
+  class TestImportedNameResolver : public ImportedNameResolver
+  {
+  public:
+    std::string GetImportedNameIdentifier (const UnicodeString& name)
+    { return std::string(); }	
+  };
+  
   class TestCodeGenerator : public CgGenerator
   {
   public:
@@ -46,8 +53,8 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
     public:
       typedef SequenceCodeGenerator Superclass;
     
-      TestSequenceCodeGenerator (const Sequence& seq)
-       : SequenceCodeGenerator (seq) {}
+      TestSequenceCodeGenerator (const Sequence& seq, ImportedNameResolver* nameRes)
+       : SequenceCodeGenerator (seq, nameRes) {}
        
       using Superclass::GetOutputRegisterName;
     };
@@ -78,7 +85,8 @@ public:
     TestSemanticsHandler::TestNameImpl* testVarA =
       static_cast<TestSemanticsHandler::TestNameImpl*> (varA.get());
       
-    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence));
+    TestImportedNameResolver nameRes;
+    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
     std::string resultRegName (seqGen.GetOutputRegisterName (testVarA->varReg, false));
@@ -128,7 +136,8 @@ public:
     TestSemanticsHandler::TestNameImpl* testVarC =
       static_cast<TestSemanticsHandler::TestNameImpl*> (varC.get());
       
-    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence));
+    TestImportedNameResolver nameRes;
+    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
     std::string varARegName (seqGen.GetOutputRegisterName (testVarA->varReg, false));

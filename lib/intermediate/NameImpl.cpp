@@ -15,6 +15,7 @@ namespace s1
       {
 	varReg = handler->AllocateRegister (*(block.GetSequence()), valueType,
 					    IntermediateGeneratorSemanticsHandler::Variable, identifier);
+	block.GetSequence()->SetIdentifierRegisterID (identifier, varReg);
       }
       else if (writeable)
       {
@@ -23,6 +24,7 @@ namespace s1
 	  return RegisterID ();
 	// Query a new generation
 	varReg = handler->AllocateRegister (*(block.GetSequence()), varReg);
+	block.GetSequence()->SetIdentifierRegisterID (identifier, varReg);
       }
       return varReg;
     }

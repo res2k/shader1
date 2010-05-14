@@ -3,6 +3,7 @@
 
 #include "forwarddecl.h"
 #include "RegisterID.h"
+#include "Sequence.h"
 
 namespace s1
 {
@@ -68,7 +69,8 @@ namespace s1
 				const RegisterID& source1,
 				const RegisterID& source2) = 0;
 				
-      virtual void OpBlock (const SequencePtr& subSequence) = 0;
+      virtual void OpBlock (const SequencePtr& subSequence,
+			    const Sequence::IdentifierToRegIDMap& identToRegIDs) = 0;
     };
   } // namespace intermediate
 } // namespace s1

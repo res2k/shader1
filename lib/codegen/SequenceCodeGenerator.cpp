@@ -1,5 +1,6 @@
 #include <boost/cstdint.hpp>
 
+#include "base/hash_UnicodeString.h"
 #include "SequenceCodeGenerator.h"
 
 #include <boost/make_shared.hpp>
@@ -10,6 +11,20 @@ namespace s1
 {
   namespace codegen
   {
+    CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::SequenceIdentifiersToRegIDsNameResolver (
+      SequenceCodeGenerator* owner, const Sequence::IdentifierToRegIDMap& identToRegID)
+      : owner (owner), identToRegID (identToRegID) {}
+
+    std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const UnicodeString& name)
+    {
+      Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (name);
+      if (regIt != identToRegID.end())
+	owner->GetOutputRegisterName (regIt->second);
+      return std::string ();
+    }
+	
+    //-----------------------------------------------------------------------
+		      
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
      : owner (owner), target (target)
@@ -199,9 +214,11 @@ namespace s1
       EmitBinary (destination, source1, source2, ">=");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
+								      const Sequence::IdentifierToRegIDMap& identToRegID)
     {
-      SequenceCodeGenerator codegen (*seq);
+      SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID);
+      SequenceCodeGenerator codegen (*seq, &nameRes);
       StringsArrayPtr blockStrings (codegen.Generate());
       target->AddString ("{");
       target->AddStrings (*blockStrings, 2);
@@ -210,8 +227,9 @@ namespace s1
 		      
     //-----------------------------------------------------------------------
 		      
-    CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq)
-     : seq (seq)
+    CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,
+							       ImportedNameResolver* nameRes)
+     : seq (seq), nameRes (nameRes)
     {
     }
     
@@ -221,6 +239,20 @@ namespace s1
       seenRegisters.clear();
       
       CodegenVisitor visitor (this, strings);
+      
+      // 'Import' variables from parent generator
+      const intermediate::Sequence::RegisterImpMappings& imports = seq.GetImports();
+      for (intermediate::Sequence::RegisterImpMappings::const_iterator import = imports.begin();
+	    import != imports.end();
+	    ++import)
+      {
+	std::string parentID = nameRes->GetImportedNameIdentifier (import->first);
+	if (parentID.size() > 0)
+	  visitor.EmitAssign (import->second, parentID.c_str());
+	/* else: no ID, value is undefined; leave undefined in this block, too */
+      }
+      
+      // Generate code for actual operations
       seq.Visit (visitor);
       return strings;
     }
@@ -436,7 +468,7 @@ namespace s1
       if (!autoAllocate) return std::string ();
       
       Sequence::RegisterBankPtr bankPtr;
-      Sequence::RegisterPtr regPtr (seq.QueryRegisterFromID (reg, bankPtr));
+      Sequence::RegisterPtr regPtr (seq.QueryRegisterPtrFromID (reg, bankPtr));
       
       std::string cgName (RegisterNameToCgIdentifier (regPtr->GetName()));
       seenRegisters[reg] = cgName;
@@ -450,6 +482,5 @@ namespace s1
       
       return cgName;
     }
-    
   } // namespace codegen
 } // namespace s1
