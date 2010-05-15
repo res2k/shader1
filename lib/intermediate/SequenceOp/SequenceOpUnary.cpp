@@ -10,5 +10,12 @@ namespace s1
     {
     }
     
+    RegisterIDSet SequenceOpUnary::GetReadRegisters () const
+    {
+      RegisterIDSet regs;
+      regs.insert (source);
+      return regs;
+    }
+        
   } // namespace intermediate
 } // namespace s1

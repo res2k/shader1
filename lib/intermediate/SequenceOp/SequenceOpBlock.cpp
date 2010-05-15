@@ -14,6 +14,20 @@ namespace s1
     {
     }
     
+    RegisterIDSet SequenceOpBlock::GetReadRegisters () const
+    {
+      RegisterIDSet regs;
+      /* FIXME: Probably have to record the 'read' registers in the sequence op as well */
+      return regs;
+    }
+    
+    RegisterIDSet SequenceOpBlock::GetWrittenRegisters () const
+    {
+      RegisterIDSet regs;
+      regs.insert (writtenRegisters.begin(), writtenRegisters.end());
+      return regs;
+    }
+    
     void SequenceOpBlock::Visit (SequenceVisitor& visitor)
     {
       visitor.OpBlock (subSequence, identToRegIDs_imp, identToRegIDs_exp, writtenRegisters);

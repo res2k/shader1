@@ -21,6 +21,9 @@ namespace s1
 		       const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
 		       const std::vector<RegisterID>& writtenRegisters);
       
+      RegisterIDSet GetReadRegisters () const;
+      RegisterIDSet GetWrittenRegisters () const;
+      
       void Visit (SequenceVisitor& visitor);
     };
     

@@ -2,6 +2,7 @@
 #define __INTERMEDIATE_REGISTERID_H__
 
 #include <stdlib.h>
+#include <boost/unordered_set.hpp>
 
 namespace s1
 {
@@ -34,6 +35,8 @@ namespace s1
     
     inline size_t hash_value (const RegisterID& id)
     { return id.hash_value(); }
+    
+    typedef boost::unordered_set<RegisterID> RegisterIDSet;
     
   } // namespace intermediate
 } // namespace s1

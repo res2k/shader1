@@ -14,6 +14,8 @@ namespace s1
     public:
       SequenceOpUnary (RegisterID destination,
 		       RegisterID source);
+		       
+      RegisterIDSet GetReadRegisters () const;
     };
     
   } // namespace intermediate

@@ -16,6 +16,8 @@ namespace s1
       SequenceOpBinary (RegisterID destination,
 			RegisterID source1,
 			RegisterID source2);
+			
+      RegisterIDSet GetReadRegisters () const;
     };
     
   } // namespace intermediate

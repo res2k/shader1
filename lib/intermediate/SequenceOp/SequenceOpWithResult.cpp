@@ -9,5 +9,12 @@ namespace s1
     {
     }
     
+    RegisterIDSet SequenceOpWithResult::GetWrittenRegisters () const
+    {
+      RegisterIDSet regs;
+      regs.insert (destination);
+      return regs;
+    }
+    
   } // namespace intermediate
 } // namespace s1

@@ -1,7 +1,6 @@
 #ifndef __INTERMEDIATE_SEQUENCEOPWITHRESULT_H__
 #define __INTERMEDIATE_SEQUENCEOPWITHRESULT_H__
 
-#include "../RegisterID.h"
 #include "SequenceOp.h"
 
 namespace s1
@@ -14,6 +13,8 @@ namespace s1
       RegisterID destination;
     public:
       SequenceOpWithResult (RegisterID destination);
+      
+      RegisterIDSet GetWrittenRegisters () const;
     };
     
   } // namespace intermediate

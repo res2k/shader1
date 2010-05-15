@@ -28,6 +28,8 @@ namespace s1
       SequenceOpConst (RegisterID destination, float val)
        : SequenceOpWithResult (destination), type (Float), floatVal (val) {}
 
+      RegisterIDSet GetReadRegisters () const { return RegisterIDSet(); }
+      
       void Visit (SequenceVisitor& visitor);
     };
     
