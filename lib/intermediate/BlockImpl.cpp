@@ -67,6 +67,12 @@ namespace s1
 	  {
 	    writtenRegisters.push_back ((*exportedName)->GetRegister (handler, *this, true));
 	  }
+	  else
+	  {
+	    RegisterID reg (ImportName ((*exportedName), true));
+	    writtenRegisters.push_back (reg);
+	    sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
+	  }
 	}
       }
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
