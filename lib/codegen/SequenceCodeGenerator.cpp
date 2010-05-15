@@ -426,7 +426,6 @@ namespace s1
     std::string CgGenerator::SequenceCodeGenerator::RegisterNameToCgIdentifier (const UnicodeString& str)
     {
       std::string basic_str;
-      UChar32 minNonBasicCP = (UChar32)INT32_MAX;
       // An implementation of the punycode algorithm, see RFC 3492
       StringCharacterIterator idIt (str);
       while (idIt.hasNext())
@@ -438,8 +437,6 @@ namespace s1
 	  char s[2] = {ch, 0};
 	  basic_str.append (s);
 	}
-	else if (ch < minNonBasicCP)
-	  minNonBasicCP = ch;
       }
       // Actual encoding, see RFC 3492 sect. 6.3
       const size_t initial_bias = 72;
@@ -456,8 +453,14 @@ namespace s1
       while (h < size_t (str.length()))
       {
 	// let m = the minimum {non-basic} code point >= n in the input
-	size_t m = minNonBasicCP;
-	if (m - n > ((size_t)~0 - delta) / (h + 1))
+	size_t m = INT32_MAX;
+	for(idIt.setToStart(); idIt.hasNext();)
+	{
+	  UChar32 c = idIt.next32PostInc();;
+	  if (!IsCgIdentifierChar (c) && (size_t (c) >= n) && (size_t (c) < m))
+	    m = c;
+	}
+	if (m - n > (std::numeric_limits<size_t>::max() - delta) / (h + 1))
 	  return FallbackUCEncode (str);
 	delta = delta + (m - n) * (h + 1);
 	n = m;
