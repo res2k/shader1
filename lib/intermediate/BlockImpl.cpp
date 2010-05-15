@@ -32,6 +32,13 @@ namespace s1
       FlushVariableInitializers();
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
+      
+      /* Pass 'snapshot' of identifiers-to-register-ID map
+         When resolving imports, the registers for variables _at the time of the block
+         insertion_ is needed, hence the snapshot.
+         Also, do it before allocating new registers for the 'written registers',
+         as we want the ID before that */
+      Sequence::IdentifierToRegIDMap identifierToRegIDMap (sequence->GetIdentifierToRegisterIDMap ());
       // Generate register IDs for all values the nested block exports
       std::vector<RegisterID> writtenRegisters;
       {
@@ -46,11 +53,8 @@ namespace s1
 	  }
 	}
       }
-      /* Pass 'snapshot' of identifiers-to-register-ID map
-         When resolving imports, the registers for variables _at the time of the block
-         insertion_ is needed, hence the snapshot */
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
-								sequence->GetIdentifierToRegisterIDMap (),
+								identifierToRegIDMap,
 								writtenRegisters));
       sequence->AddOp (seqOp);
     }
