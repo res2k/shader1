@@ -75,7 +75,7 @@ namespace s1
     Expect (Lexer::EndOfFile);
   }
   
-  void Parser::ParseProgramStatements (Scope scope)
+  void Parser::ParseProgramStatements (const Scope& scope)
   {
     while (true)
     {
@@ -178,7 +178,7 @@ namespace s1
     }
   }
   
-  bool Parser::IsCommand (Scope scope)
+  bool Parser::IsCommand (const Scope& scope)
   {
     return IsExpression (scope)
       || (currentToken.typeOrID == Lexer::kwReturn)
@@ -277,7 +277,7 @@ namespace s1
     return false;
   }
   
-  bool Parser::IsExpression (Scope scope)
+  bool Parser::IsExpression (const Scope& scope)
   {
     if ((currentToken.typeOrID == Lexer::ParenL)
 	|| (currentToken.typeOrID == Lexer::kwTrue)
@@ -314,7 +314,7 @@ namespace s1
     return false;
   }
   
-  Parser::Expression Parser::ParseExpression (Scope scope)
+  Parser::Expression Parser::ParseExpression (const Scope& scope)
   {
     Expression expr = ParseExprTernary (scope);
     if (currentToken.typeOrID == Lexer::Assign)
@@ -327,7 +327,7 @@ namespace s1
     return expr;
   }
 
-  Parser::Expression Parser::ParseExprBase (Scope scope)
+  Parser::Expression Parser::ParseExprBase (const Scope& scope)
   {
     Expression expr;
     int beyondType = 0;
@@ -392,7 +392,7 @@ namespace s1
     return ParseAttributeOrArrayAccess (scope, expr);
   }
   
-  Parser::Expression Parser::ParseAttributeOrArrayAccess (Scope scope,
+  Parser::Expression Parser::ParseAttributeOrArrayAccess (const Scope& scope,
 							  Expression baseExpr)
   {
     Parser::Expression expr = baseExpr;
@@ -419,7 +419,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprMultiplication (Scope scope)
+  Parser::Expression Parser::ParseExprMultiplication (const Scope& scope)
   {
     Expression expr = ParseExprUnary (scope);
     if ((currentToken.typeOrID == Lexer::Mult)
@@ -448,7 +448,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprAddition (Scope scope)
+  Parser::Expression Parser::ParseExprAddition (const Scope& scope)
   {
     Expression expr = ParseExprMultiplication (scope);
     if ((currentToken.typeOrID == Lexer::Plus)
@@ -473,7 +473,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprUnary (Scope scope)
+  Parser::Expression Parser::ParseExprUnary (const Scope& scope)
   {
     Expression expr;
     if ((currentToken.typeOrID == Lexer::BitwiseInvert)
@@ -504,7 +504,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprTernary (Scope scope)
+  Parser::Expression Parser::ParseExprTernary (const Scope& scope)
   {
     Expression expr = ParseExprLogicOr (scope);
     if (currentToken.typeOrID == Lexer::TernaryIf)
@@ -519,7 +519,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprCompareEqual (Scope scope)
+  Parser::Expression Parser::ParseExprCompareEqual (const Scope& scope)
   {
     Expression expr = ParseExprComparison (scope);
     if ((currentToken.typeOrID == Lexer::Equals)
@@ -544,7 +544,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprComparison (Scope scope)
+  Parser::Expression Parser::ParseExprComparison (const Scope& scope)
   {
     Expression expr = ParseExprAddition (scope);
     if ((currentToken.typeOrID == Lexer::Larger)
@@ -577,7 +577,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprLogicOr (Scope scope)
+  Parser::Expression Parser::ParseExprLogicOr (const Scope& scope)
   {
     Expression expr = ParseExprLogicAnd (scope);
     if (currentToken.typeOrID == Lexer::LogicOr)
@@ -589,7 +589,7 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprLogicAnd (Scope scope)
+  Parser::Expression Parser::ParseExprLogicAnd (const Scope& scope)
   {
     Expression expr = ParseExprCompareEqual (scope);
     if (currentToken.typeOrID == Lexer::LogicAnd)
@@ -609,7 +609,7 @@ namespace s1
     return expr;
   }
   
-  bool Parser::IsType (Scope scope, int& peekAfterType)
+  bool Parser::IsType (const Scope& scope, int& peekAfterType)
   {
     Lexer::TokenType tokenID = currentToken.typeOrID;
     peekAfterType = 0;
@@ -641,7 +641,7 @@ namespace s1
     return false;
   }
   
-  Parser::Type Parser::ParseTypeBase (Scope scope)
+  Parser::Type Parser::ParseTypeBase (const Scope& scope)
   {
     bool isUnsigned = false;
     if (currentToken.typeOrID == Lexer::kwUnsigned)
@@ -696,7 +696,7 @@ namespace s1
     return Type ();
   }
   
-  Parser::Type Parser::ParseType (Scope scope)
+  Parser::Type Parser::ParseType (const Scope& scope)
   {
     Type type = ParseTypeBase (scope);
     if (currentToken.typeOrID == Lexer::BracketL)
@@ -829,7 +829,7 @@ namespace s1
     return type;
   }
   
-  void Parser::ParseTypedef (Scope scope)
+  void Parser::ParseTypedef (const Scope& scope)
   {
     // Skip typedef
     NextToken();
@@ -840,7 +840,7 @@ namespace s1
     NextToken();
   }
   
-  void Parser::ParseFuncDeclare (Scope scope)
+  void Parser::ParseFuncDeclare (const Scope& scope)
   {
     Type returnType = ParseFuncType (scope);
     Expect (Lexer::Identifier);
@@ -859,7 +859,7 @@ namespace s1
     NextToken();
   }
   
-  Parser::Type Parser::ParseFuncType (Scope scope)
+  Parser::Type Parser::ParseFuncType (const Scope& scope)
   {
     if (currentToken.typeOrID == Lexer::kwVoid)
     {
@@ -876,7 +876,7 @@ namespace s1
     return Parser::Type ();
   }
   
-  void Parser::ParseFuncParamFormal (Scope scope, SemanticsHandler::Scope::FunctionFormalParameters& params)
+  void Parser::ParseFuncParamFormal (const Scope& scope, SemanticsHandler::Scope::FunctionFormalParameters& params)
   {
     // Skip '('
     NextToken();
@@ -927,7 +927,7 @@ namespace s1
   
   //void ParseFuncCall ();
 
-  void Parser::ParseFuncParamActual (Scope scope, parser::SemanticsHandler::ExpressionVector& params)
+  void Parser::ParseFuncParamActual (const Scope& scope, parser::SemanticsHandler::ExpressionVector& params)
   {
     // Skip '('
     NextToken();
@@ -950,13 +950,13 @@ namespace s1
     }
   }
 
-  void Parser::ParseVarDeclare (Scope scope)
+  void Parser::ParseVarDeclare (const Scope& scope)
   {
     Type type = ParseType (scope);
     ParseVarIdentifierAndInitializerList (scope, type);
   }
   
-  void Parser::ParseVarIdentifierAndInitializerList (Scope scope, Type type)
+  void Parser::ParseVarIdentifierAndInitializerList (const Scope& scope, Type type)
   {
     while (true)
     {
@@ -971,7 +971,7 @@ namespace s1
     }
   }
   
-  void Parser::ParseVarIdentifierAndInitializer (Scope scope, Type type)
+  void Parser::ParseVarIdentifierAndInitializer (const Scope& scope, Type type)
   {
     Expect (Lexer::Identifier);
     UnicodeString varIdentifier = currentToken.tokenString;
@@ -986,14 +986,14 @@ namespace s1
     scope->AddVariable (type, varIdentifier, initExpr, false);
   }
       
-  void Parser::ParseConstDeclare (Scope scope)
+  void Parser::ParseConstDeclare (const Scope& scope)
   {
     NextToken(); // skip 'const'
     Type type = ParseType (scope);
     ParseConstIdentifierAndInitializerList (scope, type);
   }
   
-  void Parser::ParseConstIdentifierAndInitializerList (Scope scope, Type type)
+  void Parser::ParseConstIdentifierAndInitializerList (const Scope& scope, Type type)
   {
     do
     {
@@ -1008,7 +1008,7 @@ namespace s1
     while (false);
   }
   
-  void Parser::ParseConstIdentifierAndInitializer (Scope scope, Type type)
+  void Parser::ParseConstIdentifierAndInitializer (const Scope& scope, Type type)
   {
     Expect (Lexer::Identifier);
     UnicodeString varIdentifier = currentToken.tokenString;

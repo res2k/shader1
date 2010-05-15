@@ -45,61 +45,61 @@ namespace s1
     typedef parser::SemanticsHandler::BlockPtr Block;
     typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();
-    void ParseProgramStatements (Scope scope);
+    void ParseProgramStatements (const Scope& scope);
     void ParseBlock (Block block);
-    bool IsCommand (Scope scope);
+    bool IsCommand (const Scope& scope);
     void ParseCommand (Block block);
 
     // Expressions
     bool IsBinaryOperationToken (Lexer::TokenType tokenType);
     bool IsUnaryOperationToken (Lexer::TokenType tokenType);
     /// Returns whether the current token is the start of an expression.
-    bool IsExpression (Scope scope);
+    bool IsExpression (const Scope& scope);
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
-    Expression ParseExpression (Scope scope);
-    Expression ParseExprBase (Scope scope);
-    Expression ParseAttributeOrArrayAccess (Scope scope, Expression baseExpr);
-    Expression ParseExprMultiplication (Scope scope);
-    Expression ParseExprAddition (Scope scope);
-    Expression ParseExprUnary (Scope scope);
-    Expression ParseExprTernary (Scope scope);
-    Expression ParseExprCompareEqual (Scope scope);
-    Expression ParseExprComparison (Scope scope);
-    Expression ParseExprLogicOr (Scope scope);
-    Expression ParseExprLogicAnd (Scope scope);
+    Expression ParseExpression (const Scope& scope);
+    Expression ParseExprBase (const Scope& scope);
+    Expression ParseAttributeOrArrayAccess (const Scope& scope, Expression baseExpr);
+    Expression ParseExprMultiplication (const Scope& scope);
+    Expression ParseExprAddition (const Scope& scope);
+    Expression ParseExprUnary (const Scope& scope);
+    Expression ParseExprTernary (const Scope& scope);
+    Expression ParseExprCompareEqual (const Scope& scope);
+    Expression ParseExprComparison (const Scope& scope);
+    Expression ParseExprLogicOr (const Scope& scope);
+    Expression ParseExprLogicAnd (const Scope& scope);
     Expression ParseExprConstBool ();
     
     // Types
-    bool IsType (Scope scope, int& peekAfterType);
-    bool IsType (Scope scope) { int dummy; return IsType (scope, dummy); }
+    bool IsType (const Scope& scope, int& peekAfterType);
+    bool IsType (const Scope& scope) { int dummy; return IsType (scope, dummy); }
     typedef parser::SemanticsHandler::TypePtr Type;
-    Type ParseTypeBase (Scope scope);
-    Type ParseType (Scope scope);
+    Type ParseTypeBase (const Scope& scope);
+    Type ParseType (const Scope& scope);
     Type ParseTypeBool ();
     Type ParseTypeNumeric (bool isUnsigned);
     Type ParseTypeVector (bool isUnsigned);
     Type ParseTypeMatrix (bool isUnsigned);
     Type ParseTypeSampler ();
     Type ParseTypeArray (Type baseType);
-    void ParseTypedef (Scope scope);
+    void ParseTypedef (const Scope& scope);
     
     // Functions
-    void ParseFuncDeclare (Scope scope);
-    Parser::Type ParseFuncType (Scope scope);
-    void ParseFuncParamFormal (Scope scope,
+    void ParseFuncDeclare (const Scope& scope);
+    Parser::Type ParseFuncType (const Scope& scope);
+    void ParseFuncParamFormal (const Scope& scope,
 			       parser::SemanticsHandler::Scope::FunctionFormalParameters& params);
-    void ParseFuncParamActual (Scope scope, parser::SemanticsHandler::ExpressionVector& params);
+    void ParseFuncParamActual (const Scope& scope, parser::SemanticsHandler::ExpressionVector& params);
     
     // Variables
-    void ParseVarDeclare (Scope scope);
-    void ParseVarIdentifierAndInitializerList (Scope scope, Type type);
-    void ParseVarIdentifierAndInitializer (Scope scope, Type type);
+    void ParseVarDeclare (const Scope& scope);
+    void ParseVarIdentifierAndInitializerList (const Scope& scope, Type type);
+    void ParseVarIdentifierAndInitializer (const Scope& scope, Type type);
 	
     // Constants
-    void ParseConstDeclare (Scope scope);
-    void ParseConstIdentifierAndInitializerList (Scope scope, Type type);
-    void ParseConstIdentifierAndInitializer (Scope scope, Type type);
+    void ParseConstDeclare (const Scope& scope);
+    void ParseConstIdentifierAndInitializerList (const Scope& scope, Type type);
+    void ParseConstIdentifierAndInitializer (const Scope& scope, Type type);
 
     // Branches, Loops
     void ParseIf (Block block);
