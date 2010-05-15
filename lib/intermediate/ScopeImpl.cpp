@@ -7,6 +7,7 @@
 #include "NameImpl.h"
 
 #include <boost/make_shared.hpp>
+#include <limits.h>
 
 namespace s1
 {
@@ -135,5 +136,21 @@ namespace s1
       newVars.erase (newVars.begin(), newVars.end());
       return ret;
     }
+    
+    int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope)
+    {
+      if (!scope) return INT_MAX;
+      
+      boost::shared_ptr<ScopeImpl> parentScope (this->parent);
+      int n = 0;
+      while (parentScope)
+      {
+	if (parentScope == scope) return n;
+	parentScope = parentScope->parent;
+	n++;
+      }
+      return -1;
+    }
+    
   } // namespace intermediate
 } // namespace s1

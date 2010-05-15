@@ -50,6 +50,8 @@ namespace s1
     
       NamePtr ResolveIdentifier (const UnicodeString& identifier);
       
+      int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
+      
       struct FunctionInfo
       {
 	UnicodeString identifier;
