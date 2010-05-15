@@ -39,7 +39,7 @@ namespace s1
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
       
-      boost::shared_ptr<TypeImpl> valueType = GetValueType ();
+      boost::shared_ptr<TypeImpl> comparisonType = handler->GetHigherPrecisionType (type1, type2);
 	
       // Set up registers for operand values
       RegisterID reg1;
@@ -49,11 +49,11 @@ namespace s1
 	reg1 = handler->AllocateRegister (seq, type1, Intermediate);
 	operand1->AddToSequence (block, reg1);
       }
-      if (!valueType->IsEqual (*(type1.get())))
+      if (!comparisonType->IsEqual (*(type1.get())))
       {
 	// Insert cast op
-	RegisterID newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
-	handler->GenerateCast (seq, newReg1, valueType,
+	RegisterID newReg1 (handler->AllocateRegister (seq, comparisonType, Intermediate));
+	handler->GenerateCast (seq, newReg1, comparisonType,
 			       reg1, type1);
 	reg1 = newReg1;
       }
@@ -64,11 +64,11 @@ namespace s1
 	reg2 = handler->AllocateRegister (seq, type2, Intermediate);
 	operand2->AddToSequence (block, reg2);
       }
-      if (!valueType->IsEqual (*(type2.get())))
+      if (!comparisonType->IsEqual (*(type2.get())))
       {
 	// Insert cast op
-	RegisterID newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
-	handler->GenerateCast (seq, newReg2, valueType,
+	RegisterID newReg2 (handler->AllocateRegister (seq, comparisonType, Intermediate));
+	handler->GenerateCast (seq, newReg2, comparisonType,
 			       reg2, type2);
 	reg2 = newReg2;
       }
