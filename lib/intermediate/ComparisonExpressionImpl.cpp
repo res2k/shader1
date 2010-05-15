@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include "ComparisonExpressionImpl.h"
 
 #include "BlockImpl.h"

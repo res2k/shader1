@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include "TypeImpl.h"
 
 namespace s1

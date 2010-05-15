@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include "NumericExpressionImpl.h"
 
 #include "BlockImpl.h"

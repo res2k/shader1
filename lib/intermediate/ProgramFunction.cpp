@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/ProgramFunction.h"
 

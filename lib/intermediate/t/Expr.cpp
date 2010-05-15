@@ -1,5 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
+#include "base/common.h"
+
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "../BlockImpl.h"
 #include "TestSequenceVisitor.h"

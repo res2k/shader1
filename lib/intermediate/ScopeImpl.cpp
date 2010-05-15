@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 // Must be first; otherwise, link errors may occur
 #include "base/hash_UnicodeString.h"
 
