@@ -55,6 +55,7 @@ namespace s1
       }
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
 								identifierToRegIDMap,
+								sequence->GetIdentifierToRegisterIDMap (),
 								writtenRegisters));
       sequence->AddOp (seqOp);
     }

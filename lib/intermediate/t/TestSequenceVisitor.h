@@ -278,6 +278,7 @@ public:
   
   void OpBlock (const boost::shared_ptr<Sequence>& seq,
 		const Sequence::IdentifierToRegIDMap&,
+		const Sequence::IdentifierToRegIDMap&,
 		const std::vector<RegisterID>& writtenRegisters)
   {
   }

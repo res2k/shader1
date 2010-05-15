@@ -70,7 +70,8 @@ namespace s1
 				const RegisterID& source2) = 0;
 				
       virtual void OpBlock (const SequencePtr& subSequence,
-			    const Sequence::IdentifierToRegIDMap& identToRegIDs,
+			    const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
+			    const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
 			    const std::vector<RegisterID>& writtenRegisters) = 0;
     };
   } // namespace intermediate

@@ -29,10 +29,12 @@ namespace s1
       class SequenceIdentifiersToRegIDsNameResolver : public ImportedNameResolver
       {
 	SequenceCodeGenerator* owner;
-	const Sequence::IdentifierToRegIDMap& identToRegID;
+	const Sequence::IdentifierToRegIDMap& identToRegID_imp;
+	const Sequence::IdentifierToRegIDMap& identToRegID_exp;
       public:
 	SequenceIdentifiersToRegIDsNameResolver (SequenceCodeGenerator* owner,
-						 const Sequence::IdentifierToRegIDMap& identToRegID);
+						 const Sequence::IdentifierToRegIDMap& identToRegID_imp,
+						 const Sequence::IdentifierToRegIDMap& identToRegID_exp);
 					 
 	std::string GetImportedNameIdentifier (const UnicodeString& name);
 	std::string GetExportedNameIdentifier (const UnicodeString& name);
@@ -117,7 +119,8 @@ namespace s1
 			  const RegisterID& source2);
 			  
 	void OpBlock (const intermediate::SequencePtr& seq,
-		      const Sequence::IdentifierToRegIDMap& identToRegID,
+		      const Sequence::IdentifierToRegIDMap& identToRegID_imp,
+		      const Sequence::IdentifierToRegIDMap& identToRegID_exp,
 		      const std::vector<RegisterID>& writtenRegisters);
       };
       

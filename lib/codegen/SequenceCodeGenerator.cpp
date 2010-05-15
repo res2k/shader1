@@ -12,24 +12,24 @@ namespace s1
   namespace codegen
   {
     CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::SequenceIdentifiersToRegIDsNameResolver (
-      SequenceCodeGenerator* owner, const Sequence::IdentifierToRegIDMap& identToRegID)
-      : owner (owner), identToRegID (identToRegID) {}
+      SequenceCodeGenerator* owner, const Sequence::IdentifierToRegIDMap& identToRegID_imp,
+      const Sequence::IdentifierToRegIDMap& identToRegID_exp)
+      : owner (owner), identToRegID_imp (identToRegID_imp), identToRegID_exp (identToRegID_exp) {}
 
     std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const UnicodeString& name)
     {
-      Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (name);
-      if (regIt != identToRegID.end())
+      Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID_imp.find (name);
+      if (regIt != identToRegID_imp.end())
 	return owner->GetOutputRegisterName (regIt->second);
       return std::string ();
     }
 	
     std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const UnicodeString& name)
     {
-      /*Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (name);
-      if (regIt != identToRegID.end())
-	owner->GetOutputRegisterName (regIt->second);
-      return std::string ();*/
-      return owner->GetOutputRegisterName (owner->seq.GetIdentifierRegisterID (name));
+      Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID_exp.find (name);
+      if (regIt != identToRegID_exp.end())
+	return owner->GetOutputRegisterName (regIt->second);
+      return std::string ();
     }
 	
     //-----------------------------------------------------------------------
@@ -235,7 +235,8 @@ namespace s1
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
-								      const Sequence::IdentifierToRegIDMap& identToRegID,
+								      const Sequence::IdentifierToRegIDMap& identToRegID_imp,
+								      const Sequence::IdentifierToRegIDMap& identToRegID_exp,
 								      const std::vector<RegisterID>& writtenRegisters)
     {
       // Generate registers for 'exported' variables
@@ -246,7 +247,7 @@ namespace s1
 	owner->GetOutputRegisterName (*writtenReg);
       }
       
-      SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID);
+      SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID_imp, identToRegID_exp);
       SequenceCodeGenerator codegen (*seq, &nameRes);
       StringsArrayPtr blockStrings (codegen.Generate());
       target->AddString ("{");
