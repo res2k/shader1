@@ -66,7 +66,8 @@ namespace s1
 	Variable = 'v',
 	Intermediate = 'i',
 	Dummy = 'd',
-	Imported = 'm'
+	Imported = 'm',
+	Condition = 'c'
       };
       /**
        * Allocate a new register.

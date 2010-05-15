@@ -73,6 +73,10 @@ namespace s1
 			    const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 			    const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
 			    const std::vector<RegisterID>& writtenRegisters) = 0;
+			    
+      virtual void OpBranch (const RegisterID& conditionReg,
+			     const SequenceOpPtr& seqOpIf,
+			     const SequenceOpPtr& seqOpElse) = 0;
     };
   } // namespace intermediate
 } // namespace s1

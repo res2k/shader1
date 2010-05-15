@@ -48,6 +48,8 @@ namespace s1
       ImportedNamesMap importedNames;
       typedef std::tr1::unordered_set<boost::shared_ptr<NameImpl> > ExportedNamesSet;
       ExportedNamesSet exportedNames;
+      
+      SequenceOpPtr CreateBlockSeqOp (BlockPtr block);
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
@@ -58,7 +60,7 @@ namespace s1
       void AddExpressionCommand (ExpressionPtr expr);
       void AddReturnCommand (ExpressionPtr returnValue) {}
       void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
-			 BlockPtr elseBlock) {}
+			 BlockPtr elseBlock);
       void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock) {}
       void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
 		       BlockPtr loopBlock) {}

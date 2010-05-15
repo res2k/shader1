@@ -2,6 +2,7 @@
 
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
+#include "intermediate/SequenceOp/SequenceOpBranch.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
 #include "NameImpl.h"
@@ -28,9 +29,53 @@ namespace s1
       impl->AddToSequence (*this);
     }
 
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddBranching (ExpressionPtr branchCondition,
+									 BlockPtr ifBlock,
+									 BlockPtr elseBlock)
+    {
+      FlushVariableInitializers();
+      ExpressionImpl* impl = static_cast<ExpressionImpl*> (branchCondition.get());
+      RegisterID condReg (handler->AllocateRegister (*sequence, handler->GetBoolType(),
+						     Condition));
+      impl->AddToSequence (*this, condReg);
+      
+      SequenceOpPtr seqOpIf (CreateBlockSeqOp (ifBlock));
+      SequenceOpPtr seqOpElse (CreateBlockSeqOp (elseBlock));
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBranch> (condReg, seqOpIf, seqOpElse));
+      sequence->AddOp (seqOp);
+    }
+    
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (BlockPtr block)
     {
       FlushVariableInitializers();
+      SequenceOpPtr seqOp (CreateBlockSeqOp (block));
+      sequence->AddOp (seqOp);
+    }
+    
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::FlushVariableInitializers()
+    {
+      // Get new variables ...
+      std::vector<NamePtr> newVars (boost::shared_static_cast<ScopeImpl>(innerScope)->FlushNewVars());
+      for (std::vector<NamePtr>::const_iterator varIt = newVars.begin();
+	   varIt != newVars.end();
+	   ++varIt)
+      {
+	boost::shared_ptr<NameImpl> name (boost::shared_static_cast<NameImpl> (*varIt));
+	// ... check if it has initialization value ...
+	if (name->varValue)
+	{
+	  // ... if so, synthesize assignment
+	  boost::shared_ptr<ExpressionImpl> exprTarget (boost::make_shared<VariableExpressionImpl> (handler, name));
+	  ExpressionPtr expr (boost::make_shared<AssignmentExpressionImpl> (handler, exprTarget,
+									    boost::static_pointer_cast<ExpressionImpl> (name->varValue)));
+	  // Note recursion is okay as FlushNewVars() will return an empty array
+	  AddExpressionCommand (expr);
+	}
+      }
+    }
+
+    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (BlockPtr block)
+    {
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
       
@@ -75,33 +120,10 @@ namespace s1
 	  }
 	}
       }
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
-								identifierToRegIDMap,
-								sequence->GetIdentifierToRegisterIDMap (),
-								writtenRegisters));
-      sequence->AddOp (seqOp);
-    }
-    
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::FlushVariableInitializers()
-    {
-      // Get new variables ...
-      std::vector<NamePtr> newVars (boost::shared_static_cast<ScopeImpl>(innerScope)->FlushNewVars());
-      for (std::vector<NamePtr>::const_iterator varIt = newVars.begin();
-	   varIt != newVars.end();
-	   ++varIt)
-      {
-	boost::shared_ptr<NameImpl> name (boost::shared_static_cast<NameImpl> (*varIt));
-	// ... check if it has initialization value ...
-	if (name->varValue)
-	{
-	  // ... if so, synthesize assignment
-	  boost::shared_ptr<ExpressionImpl> exprTarget (boost::make_shared<VariableExpressionImpl> (handler, name));
-	  ExpressionPtr expr (boost::make_shared<AssignmentExpressionImpl> (handler, exprTarget,
-									    boost::static_pointer_cast<ExpressionImpl> (name->varValue)));
-	  // Note recursion is okay as FlushNewVars() will return an empty array
-	  AddExpressionCommand (expr);
-	}
-      }
+      return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
+						  identifierToRegIDMap,
+						  sequence->GetIdentifierToRegisterIDMap (),
+						  writtenRegisters);
     }
 
     RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::ImportName (NamePtr name, bool writeable)

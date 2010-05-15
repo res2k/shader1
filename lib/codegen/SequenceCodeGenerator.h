@@ -122,6 +122,10 @@ namespace s1
 		      const Sequence::IdentifierToRegIDMap& identToRegID_imp,
 		      const Sequence::IdentifierToRegIDMap& identToRegID_exp,
 		      const std::vector<RegisterID>& writtenRegisters);
+		      
+	void OpBranch (const RegisterID& conditionReg,
+		       const intermediate::SequenceOpPtr& seqOpIf,
+		       const intermediate::SequenceOpPtr& seqOpElse);
       };
       
       const intermediate::Sequence& seq;

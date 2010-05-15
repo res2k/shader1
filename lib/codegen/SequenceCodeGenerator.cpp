@@ -255,6 +255,39 @@ namespace s1
       target->AddString ("}");
     }
 		      
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBranch (const RegisterID& conditionReg,
+								       const intermediate::SequenceOpPtr& seqOpIf,
+								       const intermediate::SequenceOpPtr& seqOpElse)
+    {
+      // Generate registers for variables 'exported' by either branch
+      {
+	intermediate::RegisterIDSet ifRegs (seqOpIf->GetWrittenRegisters());
+	for (intermediate::RegisterIDSet::const_iterator writtenReg = ifRegs.begin();
+	    writtenReg != ifRegs.end();
+	    ++writtenReg)
+	{
+	  owner->GetOutputRegisterName (*writtenReg);
+	}
+      }
+      {
+	intermediate::RegisterIDSet elseRegs (seqOpElse->GetWrittenRegisters());
+	for (intermediate::RegisterIDSet::const_iterator writtenReg = elseRegs.begin();
+	    writtenReg != elseRegs.end();
+	    ++writtenReg)
+	{
+	  owner->GetOutputRegisterName (*writtenReg);
+	}
+      }
+      
+      std::string ifLine ("if (");
+      ifLine.append (owner->GetOutputRegisterName (conditionReg));
+      ifLine.append (")");
+      target->AddString (ifLine);
+      seqOpIf->Visit (*this);
+      target->AddString ("else");
+      seqOpElse->Visit (*this);
+    }
+    
     //-----------------------------------------------------------------------
 		      
     CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,

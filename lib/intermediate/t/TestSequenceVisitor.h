@@ -282,6 +282,12 @@ public:
 		const std::vector<RegisterID>& writtenRegisters)
   {
   }
+  
+  void OpBranch (const RegisterID& conditionReg,
+		 const s1::intermediate::SequenceOpPtr& seqOpIf,
+		 const s1::intermediate::SequenceOpPtr& seqOpElse)
+  {
+  }
 };
 
 #endif // __TESTSEQUENCEVISITOR_H__
