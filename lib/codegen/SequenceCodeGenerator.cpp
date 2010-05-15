@@ -19,7 +19,7 @@ namespace s1
     {
       Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (name);
       if (regIt != identToRegID.end())
-	owner->GetOutputRegisterName (regIt->second);
+	return owner->GetOutputRegisterName (regIt->second);
       return std::string ();
     }
 	
