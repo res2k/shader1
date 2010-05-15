@@ -41,10 +41,10 @@ namespace s1
       
       struct ImportedName
       {
-	RegisterID initialRegister;
-	RegisterID currentRegister;
+	RegisterID reg;
+	bool initiallyWriteable;
       };
-      typedef std::tr1::unordered_map<NamePtr, ImportedName> ImportedNamesMap;
+      typedef std::tr1::unordered_map<boost::shared_ptr<NameImpl>, ImportedName> ImportedNamesMap;
       ImportedNamesMap importedNames;
       typedef std::tr1::unordered_set<boost::shared_ptr<NameImpl> > ExportedNamesSet;
       ExportedNamesSet exportedNames;

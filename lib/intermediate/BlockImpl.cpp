@@ -9,6 +9,7 @@
 #include "VariableExpressionImpl.h"
 
 #include <boost/make_shared.hpp>
+#include <unicode/ustdio.h>
 
 namespace s1
 {
@@ -33,6 +34,22 @@ namespace s1
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
       
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      
+      {
+	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
+	     import != blockImpl->importedNames.end();
+	     ++import)
+	{
+	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+	      && !import->second.initiallyWriteable)
+	  {
+	    RegisterID reg (ImportName (import->first, false));
+	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	  }
+	}
+      }
+      
       /* Pass 'snapshot' of identifiers-to-register-ID map
          When resolving imports, the registers for variables _at the time of the block
          insertion_ is needed, hence the snapshot.
@@ -46,7 +63,6 @@ namespace s1
 	     exportedName != blockImpl->exportedNames.end();
 	     exportedName++)
 	{
-	  boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
 	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
 	  {
 	    writtenRegisters.push_back ((*exportedName)->GetRegister (handler, *this, true));
@@ -90,20 +106,31 @@ namespace s1
 	throw Exception (AssignmentTargetIsNotAnLValue);
       }
       
-      RegisterID reg;
-      ImportedName& impName = importedNames[name];
-      if (!impName.currentRegister.IsValid())
+      ImportedName& impName = importedNames[nameImpl];
+      RegisterID& reg = impName.reg;
+      if (!reg.IsValid())
       {
-	reg = impName.currentRegister = impName.initialRegister =
-	  handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
-				     nameImpl->identifier);
+	UnicodeString importName (nameImpl->identifier);
+	/* Add a suffix derived from the "distance" of this block's scope to the scope
+	   that defines 'name' in order to make local register name unique */
+	int d = boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (
+	  boost::shared_ptr<ScopeImpl> (nameImpl->ownerScope));
+	if (d >= 0)
+	{
+	  UChar distSuffix[(sizeof(int) * 25) / 10 + 3];
+	  u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (UChar),
+		      "_B%d", d);
+	  importName.append (distSuffix);
+	}
+	impName.initiallyWriteable = writeable;
+	reg = handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
+					 importName);
 	sequence->AddImport (nameImpl->identifier, reg);
       }
       else
       {
 	if (writeable)
-	  impName.currentRegister = handler->AllocateRegister (*sequence, impName.currentRegister);
-	reg = impName.currentRegister;
+	  reg = handler->AllocateRegister (*sequence, reg);
       }
       if (writeable)
       {
