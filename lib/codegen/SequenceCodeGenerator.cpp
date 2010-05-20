@@ -192,6 +192,21 @@ namespace s1
     }
     
 
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogicAnd (const RegisterID& destination,
+									 const RegisterID& source1,
+									 const RegisterID& source2)
+    {
+      EmitBinary (destination, source1, source2, "&&");
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogicOr (const RegisterID& destination,
+									const RegisterID& source1,
+									const RegisterID& source2)
+    {
+      EmitBinary (destination, source1, source2, "||");
+    }
+    
+    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareEq (const RegisterID& destination,
 									  const RegisterID& source1,
 									  const RegisterID& source2)

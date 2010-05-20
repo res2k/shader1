@@ -25,6 +25,7 @@ namespace s1
       class ArithmeticExpressionImpl;
       class AssignmentExpressionImpl;
       class ComparisonExpressionImpl;
+      class LogicExpressionImpl;
       class NumericExpressionImpl;
       class VariableExpressionImpl;
       

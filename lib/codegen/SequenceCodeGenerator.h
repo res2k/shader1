@@ -99,6 +99,13 @@ namespace s1
 			 const RegisterID& source1,
 			 const RegisterID& source2);
 
+	void OpLogicAnd (const RegisterID& destination,
+			 const RegisterID& source1,
+			 const RegisterID& source2);
+	void OpLogicOr (const RegisterID& destination,
+			const RegisterID& source1,
+			const RegisterID& source2);
+
 	void OpCompareEq (const RegisterID& destination,
 			  const RegisterID& source1,
 			  const RegisterID& source2);

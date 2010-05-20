@@ -69,6 +69,13 @@ namespace s1
 				const RegisterID& source1,
 				const RegisterID& source2) = 0;
 				
+      virtual void OpLogicAnd (const RegisterID& destination,
+			       const RegisterID& source1,
+			       const RegisterID& source2) = 0;
+      virtual void OpLogicOr (const RegisterID& destination,
+			      const RegisterID& source1,
+			      const RegisterID& source2) = 0;
+
       virtual void OpBlock (const SequencePtr& subSequence,
 			    const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 			    const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,

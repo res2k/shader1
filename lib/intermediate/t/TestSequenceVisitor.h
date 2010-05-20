@@ -23,6 +23,8 @@ public:
     opArithMul,
     opArithDiv,
     opArithMod,
+    opLogicAnd,
+    opLogicOr,
     opCompareEq,
     opCompareNE,
     opCompareLE,
@@ -204,6 +206,31 @@ public:
   }
 
 
+  void OpLogicAnd (const RegisterID& destination,
+		   const RegisterID& source1,
+		   const RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opLogicAnd;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  void OpLogicOr (const RegisterID& destination,
+		  const RegisterID& source1,
+		  const RegisterID& source2)
+  {
+    SequenceEntry entry;
+    entry.op = opLogicOr;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+  
   void OpCompareEq (const RegisterID& destination,
 		    const RegisterID& source1,
 		    const RegisterID& source2)
