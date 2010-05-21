@@ -54,7 +54,7 @@ namespace s1
 	operand1->AddToSequence (block, reg1);
       }
       RegisterID reg2;
-      reg2 = operand1->GetRegister (block, false);
+      reg2 = operand2->GetRegister (block, false);
       if (!reg2.IsValid())
       {
 	reg2 = handler->AllocateRegister (seq, handler->GetBoolType(), Intermediate);

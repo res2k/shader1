@@ -60,7 +60,7 @@ namespace s1
 	reg1 = newReg1;
       }
       RegisterID reg2;
-      reg2 = operand1->GetRegister (block, false);
+      reg2 = operand2->GetRegister (block, false);
       if (!reg2.IsValid())
       {
 	reg2 = handler->AllocateRegister (seq, type2, Intermediate);
