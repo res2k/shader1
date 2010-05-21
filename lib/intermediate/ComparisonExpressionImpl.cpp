@@ -35,6 +35,12 @@ namespace s1
       operand2->GetRegister (block, false);
       return RegisterID ();
     }
+
+    void IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::InvalidateRegister ()
+    {
+      operand1->InvalidateRegister ();
+      operand2->InvalidateRegister ();
+    }
       
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::GetValueType()

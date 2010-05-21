@@ -19,6 +19,7 @@ namespace s1
 				const boost::shared_ptr<ExpressionImpl>& operand2);
       
       RegisterID GetRegister (BlockImpl& block, bool writeable);
+      void InvalidateRegister ();
       
       boost::shared_ptr<TypeImpl> GetValueType();
       void AddToSequence (BlockImpl& block, RegisterID destination);

@@ -32,6 +32,12 @@ namespace s1
       return RegisterID ();
     }
       
+    void IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::InvalidateRegister ()
+    {
+      operand1->InvalidateRegister ();
+      operand2->InvalidateRegister ();
+    }
+      
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::GetValueType()
     {
