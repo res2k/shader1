@@ -23,6 +23,15 @@ namespace s1
     {
     }
       
+    RegisterID IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::GetRegister (BlockImpl& block,
+											bool writeable)
+    {
+      // Let operands grab registers ...
+      operand1->GetRegister (block, false);
+      operand2->GetRegister (block, false);
+      return RegisterID ();
+    }
+      
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::GetValueType()
     {
