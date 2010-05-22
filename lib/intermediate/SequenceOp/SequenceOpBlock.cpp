@@ -8,16 +8,18 @@ namespace s1
     SequenceOpBlock::SequenceOpBlock (const SequencePtr& subSequence,
 				      const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 				      const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
+				      const std::vector<RegisterID>& readRegisters,
 				      const std::vector<RegisterID>& writtenRegisters)
      : subSequence (subSequence), identToRegIDs_imp (identToRegIDs_imp),
-       identToRegIDs_exp (identToRegIDs_exp), writtenRegisters (writtenRegisters)
+       identToRegIDs_exp (identToRegIDs_exp), readRegisters (readRegisters),
+       writtenRegisters (writtenRegisters)
     {
     }
     
     RegisterIDSet SequenceOpBlock::GetReadRegisters () const
     {
       RegisterIDSet regs;
-      /* FIXME: Probably have to record the 'read' registers in the sequence op as well */
+      regs.insert (readRegisters.begin(), readRegisters.end());
       return regs;
     }
     

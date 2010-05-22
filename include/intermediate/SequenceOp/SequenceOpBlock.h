@@ -14,11 +14,13 @@ namespace s1
       SequencePtr subSequence;
       Sequence::IdentifierToRegIDMap identToRegIDs_imp;
       Sequence::IdentifierToRegIDMap identToRegIDs_exp;
+      std::vector<RegisterID> readRegisters;
       std::vector<RegisterID> writtenRegisters;
     public:
       SequenceOpBlock (const SequencePtr& subSequence,
 		       const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 		       const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
+		       const std::vector<RegisterID>& readRegisters,
 		       const std::vector<RegisterID>& writtenRegisters);
       
       RegisterIDSet GetReadRegisters () const;

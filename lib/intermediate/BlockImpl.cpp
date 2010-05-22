@@ -83,6 +83,7 @@ namespace s1
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
+      std::vector<RegisterID> readRegisters;
       {
 	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
 	     import != blockImpl->importedNames.end();
@@ -93,6 +94,7 @@ namespace s1
 	  {
 	    RegisterID reg (ImportName (import->first, false));
 	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	    readRegisters.push_back (reg);
 	  }
 	}
       }
@@ -125,6 +127,7 @@ namespace s1
       return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
 						  identifierToRegIDMap,
 						  sequence->GetIdentifierToRegisterIDMap (),
+						  readRegisters,
 						  writtenRegisters);
     }
 
