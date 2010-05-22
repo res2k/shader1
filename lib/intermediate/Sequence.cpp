@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include <boost/functional/hash.hpp>
 #include <boost/make_shared.hpp>
 
@@ -18,12 +20,7 @@ namespace s1
      : originalName (other.originalName), generation (other.generation+1),
        name (other.originalName)
     {
-      /* (sizeof(x)*25)/10+1 is an approximation of the number of characters
-       * needed to display x in decimal system. (x can be at most 256^sizeof(x).
-       * You need log10(256^sizeof(x)) characters, becoming
-       * sizeof(x)*log10(256). 25/10 is an (over-)approximation of log10(256).)
-       * Add 1 for null terminator, add 1 for dot */
-      UChar generationSuffix[(sizeof(unsigned int) * 25) / 10 + 2];
+      UChar generationSuffix[charsToFormatUint + 2];
       u_snprintf (generationSuffix, sizeof (generationSuffix)/sizeof (UChar),
 		  ".%u", generation);
       name.append (generationSuffix);

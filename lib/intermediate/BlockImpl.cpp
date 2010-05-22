@@ -147,7 +147,7 @@ namespace s1
 	  boost::shared_ptr<ScopeImpl> (nameImpl->ownerScope));
 	if (d >= 0)
 	{
-	  UChar distSuffix[(sizeof(int) * 25) / 10 + 3];
+	  UChar distSuffix[charsToFormatInt + 3];
 	  u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (UChar),
 		      "_B%d", d);
 	  importName.append (distSuffix);
