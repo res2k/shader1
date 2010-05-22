@@ -133,6 +133,9 @@ namespace s1
 	void OpBranch (const RegisterID& conditionReg,
 		       const intermediate::SequenceOpPtr& seqOpIf,
 		       const intermediate::SequenceOpPtr& seqOpElse);
+	void OpWhile (const RegisterID& conditionReg,
+		      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+		      const intermediate::SequenceOpPtr& seqOpBody);
       };
       
       const intermediate::Sequence& seq;

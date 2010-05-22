@@ -302,6 +302,24 @@ namespace s1
       target->AddString ("else");
       seqOpElse->Visit (*this);
     }
+
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpWhile (const RegisterID& conditionReg,
+								      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+								      const intermediate::SequenceOpPtr& seqOpBody)
+    {
+      for (size_t i = 0; i < loopedRegs.size(); i++)
+      {
+	// Before entering, copy original registers to their writeable counterparts
+	EmitAssign (loopedRegs[i].second,
+		    owner->GetOutputRegisterName (loopedRegs[i].first).c_str());
+      }
+      
+      std::string whileLine ("while (");
+      whileLine.append (owner->GetOutputRegisterName (conditionReg));
+      whileLine.append (")");
+      target->AddString (whileLine);
+      seqOpBody->Visit (*this);
+    }
     
     //-----------------------------------------------------------------------
 		      

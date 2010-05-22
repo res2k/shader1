@@ -33,6 +33,9 @@ namespace s1
       
       SequencePtr sequence;
       
+      // Special, internal names
+      boost::shared_ptr<NameImpl> varCondition;
+      
       /**
        * Checks for new variables since last command and synthesizes initializations,
        * if necessary
@@ -46,10 +49,10 @@ namespace s1
       };
       typedef std::tr1::unordered_map<boost::shared_ptr<NameImpl>, ImportedName> ImportedNamesMap;
       ImportedNamesMap importedNames;
-      typedef std::tr1::unordered_set<boost::shared_ptr<NameImpl> > ExportedNamesSet;
-      ExportedNamesSet exportedNames;
+      typedef std::tr1::unordered_set<boost::shared_ptr<NameImpl> > NameImplSet;
+      NameImplSet exportedNames;
       
-      SequenceOpPtr CreateBlockSeqOp (BlockPtr block);
+      SequenceOpPtr CreateBlockSeqOp (BlockPtr block, const NameImplSet& loopNames = NameImplSet());
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
@@ -61,7 +64,7 @@ namespace s1
       void AddReturnCommand (ExpressionPtr returnValue) {}
       void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
 			 BlockPtr elseBlock);
-      void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock) {}
+      void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock);
       void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
 		       BlockPtr loopBlock) {}
       void AddNestedBlock (BlockPtr block);

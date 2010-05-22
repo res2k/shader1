@@ -84,6 +84,9 @@ namespace s1
       virtual void OpBranch (const RegisterID& conditionReg,
 			     const SequenceOpPtr& seqOpIf,
 			     const SequenceOpPtr& seqOpElse) = 0;
+      virtual void OpWhile (const RegisterID& conditionReg,
+			    const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+			    const SequenceOpPtr& seqOpBody) = 0;
     };
   } // namespace intermediate
 } // namespace s1

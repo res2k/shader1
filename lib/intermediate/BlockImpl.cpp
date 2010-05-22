@@ -5,6 +5,7 @@
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "intermediate/SequenceOp/SequenceOpBranch.h"
+#include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
 #include "NameImpl.h"
@@ -18,11 +19,20 @@ namespace s1
 {
   namespace intermediate
   {
+    static const char varConditionName[] = "$cond";
+    
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 ScopePtr innerScope)
      : handler (handler), innerScope (innerScope),
        sequence (boost::make_shared<Sequence> ())
-    {}
+    {
+      char newCondName[sizeof (varConditionName) + charsToFormatInt + 1];
+      snprintf (newCondName, sizeof (newCondName), "%s%d", varConditionName, 
+		boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+      varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
+										    UnicodeString (newCondName),
+										    ExpressionPtr(), false));
+    }
      
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddExpressionCommand (ExpressionPtr expr)
     {
@@ -44,6 +54,84 @@ namespace s1
       SequenceOpPtr seqOpIf (CreateBlockSeqOp (ifBlock));
       SequenceOpPtr seqOpElse (CreateBlockSeqOp (elseBlock));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBranch> (condReg, seqOpIf, seqOpElse));
+      sequence->AddOp (seqOp);
+    }
+
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock)
+    {
+      FlushVariableInitializers();
+      
+      /*
+	The while loop looks like:
+	  while (<cond>)
+	  {
+	    <body>
+	  }
+	We rewrite that to:
+	  bool c = <cond>;	Op #1
+	  while (c)		Op #2
+	    <block>
+	with <block>:
+	  {
+	    <body>
+	    c = <cond>;
+	  }
+       */
+      
+      ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
+      RegisterID condReg (varCondition->GetRegister (handler, *this, true));
+      condImpl->AddToSequence (*this, condReg);
+      
+      boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (loopBlock));
+      blockImpl->FinishBlock();
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      
+      NameImplSet loopVars;
+      // Condition var is implicitly read (condition check) and written (end of body)
+      loopVars.insert (varCondition);
+      // Look for variables that are both read+written in the body
+      {
+	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
+	     import != blockImpl->importedNames.end();
+	     ++import)
+	{
+	  if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
+	  {
+	    loopVars.insert (import->first);
+	  }
+	}
+      }
+      
+      // For those variable, allocate new 'writeable' registers
+      std::vector<std::pair<RegisterID, RegisterID> > loopedRegs;
+      for (NameImplSet::const_iterator loopVar = loopVars.begin();
+	   loopVar != loopVars.end();
+	   ++loopVar)
+      {
+	if (boost::shared_ptr<ScopeImpl> ((*loopVar)->ownerScope) == blockScopeImpl)
+	{
+	  RegisterID regIn ((*loopVar)->GetRegister (handler, *this, false));
+	  RegisterID regOut ((*loopVar)->GetRegister (handler, *this, true));
+	  loopedRegs.push_back (std::make_pair (regIn, regOut));
+	  // Small kludge: change the condition register to the one that's written to
+	  if (condReg == regIn) condReg = regOut;
+	}
+	else
+	{
+	  RegisterID regIn (ImportName (*loopVar, false));
+	  RegisterID regOut (ImportName (*loopVar, true));
+	  loopedRegs.push_back (std::make_pair (regIn, regOut));
+	}
+      }
+      
+      /* Add condition expression again at the bottom of the block
+         as the "condition" in the sequence op is just a simple reg */
+      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
+      condImpl->InvalidateRegister();
+      condImpl->AddToSequence (*newBlock, newBlock->ImportName (varCondition, true));
+      
+      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
       sequence->AddOp (seqOp);
     }
     
@@ -76,7 +164,8 @@ namespace s1
       }
     }
 
-    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (BlockPtr block)
+    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
+										      const NameImplSet& loopNames)
     {
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
@@ -108,17 +197,20 @@ namespace s1
       // Generate register IDs for all values the nested block exports
       std::vector<RegisterID> writtenRegisters;
       {
-	for (ExportedNamesSet::const_iterator exportedName = blockImpl->exportedNames.begin();
+	for (NameImplSet::const_iterator exportedName = blockImpl->exportedNames.begin();
 	     exportedName != blockImpl->exportedNames.end();
 	     exportedName++)
 	{
+	  /* "Loop names" are treated somewhat special as the caller will have taken care of
+	     allocating writeable regs for these names. */
+	  bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
 	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
 	  {
-	    writtenRegisters.push_back ((*exportedName)->GetRegister (handler, *this, true));
+	    writtenRegisters.push_back ((*exportedName)->GetRegister (handler, *this, !isLoopName));
 	  }
 	  else
 	  {
-	    RegisterID reg (ImportName ((*exportedName), true));
+	    RegisterID reg (ImportName ((*exportedName), !isLoopName));
 	    writtenRegisters.push_back (reg);
 	    sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
 	  }

@@ -315,6 +315,12 @@ public:
 		 const s1::intermediate::SequenceOpPtr& seqOpElse)
   {
   }
+  
+  void OpWhile (const RegisterID& conditionReg,
+		const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+		const s1::intermediate::SequenceOpPtr& seqOpBody)
+  {
+  }
 };
 
 #endif // __TESTSEQUENCEVISITOR_H__
