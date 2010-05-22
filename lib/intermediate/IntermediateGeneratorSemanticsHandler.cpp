@@ -17,6 +17,7 @@
 
 #include "ArithmeticExpressionImpl.h"
 #include "AssignmentExpressionImpl.h"
+#include "BoolExpressionImpl.h"
 #include "ComparisonExpressionImpl.h"
 #include "LogicExpressionImpl.h"
 #include "NumericExpressionImpl.h"
@@ -262,7 +263,9 @@ namespace s1
     }
   
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstBoolExpression (bool value)
-    { return ExpressionPtr(); }
+    {
+      return ExpressionPtr (new BoolExpressionImpl (this, value));
+    }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstNumericExpression (const UnicodeString& valueStr)
     {
