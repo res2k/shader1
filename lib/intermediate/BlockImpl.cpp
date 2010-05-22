@@ -250,7 +250,7 @@ namespace s1
 	impName.initiallyWriteable = writeable;
 	reg = handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
 					 importName);
-	sequence->AddImport (nameImpl->identifier, reg);
+	if (!writeable) sequence->AddImport (nameImpl->identifier, reg);
       }
       else
       {
