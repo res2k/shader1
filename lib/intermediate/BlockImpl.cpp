@@ -134,6 +134,100 @@ namespace s1
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
       sequence->AddOp (seqOp);
     }
+
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond,
+								       ExpressionPtr tailExpr, BlockPtr loopBlock)
+    {
+      FlushVariableInitializers();
+      
+      /*
+	The for loop looks like:
+	  for (<init>; <cond>; <tail>)
+	  {
+	    <body>
+	  }
+	We rewrite that to:
+	  <init>;		Op #1
+	  bool c = <cond>;	Op #2
+	  while (c)		Op #3
+	    <block>
+	with <block>:
+	  {
+	    <body>
+	    <tail>;
+	    c = <cond>;
+	  }
+       */
+      
+      ExpressionImpl* initImpl = static_cast<ExpressionImpl*> (initExpr.get());
+      initImpl->AddToSequence (*this);
+      
+      ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
+      RegisterID condReg (varCondition->GetRegister (handler, *this, true));
+      condImpl->AddToSequence (*this, condReg);
+      
+      ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
+      
+      boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (loopBlock));
+      blockImpl->FinishBlock();
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      
+      NameImplSet loopVars;
+      // Condition var is implicitly read (condition check) and written (end of body)
+      loopVars.insert (varCondition);
+      // Include all variables changed in the tail expression
+      {
+	NameImplSet tailVars (tailImpl->QueryWrittenNames (false));
+	loopVars.insert (tailVars.begin(), tailVars.end());
+      }
+      // Look for variables that are both read+written in the body
+      {
+	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
+	     import != blockImpl->importedNames.end();
+	     ++import)
+	{
+	  if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
+	  {
+	    loopVars.insert (import->first);
+	  }
+	}
+      }
+      
+      // For those variable, allocate new 'writeable' registers
+      std::vector<std::pair<RegisterID, RegisterID> > loopedRegs;
+      for (NameImplSet::const_iterator loopVar = loopVars.begin();
+	   loopVar != loopVars.end();
+	   ++loopVar)
+      {
+	if (boost::shared_ptr<ScopeImpl> ((*loopVar)->ownerScope) == blockScopeImpl)
+	{
+	  RegisterID regIn ((*loopVar)->GetRegister (handler, *this, false));
+	  RegisterID regOut ((*loopVar)->GetRegister (handler, *this, true));
+	  loopedRegs.push_back (std::make_pair (regIn, regOut));
+	  // Small kludge: change the condition register to the one that's written to
+	  if (condReg == regIn) condReg = regOut;
+	}
+	else
+	{
+	  RegisterID regIn (ImportName (*loopVar, false));
+	  RegisterID regOut (ImportName (*loopVar, true));
+	  loopedRegs.push_back (std::make_pair (regIn, regOut));
+	}
+      }
+      
+      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
+      // Add "tail" expression to end of block
+      tailImpl->AddToSequence (*newBlock);
+      
+      /* Add condition expression again at the bottom of the block
+         as the "condition" in the sequence op is just a simple reg */
+      condImpl->InvalidateRegister();
+      condImpl->AddToSequence (*newBlock, newBlock->ImportName (varCondition, true));
+      
+      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
+      sequence->AddOp (seqOp);
+    }
     
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (BlockPtr block)
     {
