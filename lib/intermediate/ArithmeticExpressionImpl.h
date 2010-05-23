@@ -21,6 +21,8 @@ namespace s1
       RegisterID GetRegister (BlockImpl& block, bool writeable);
       void InvalidateRegister ();
       
+      NameImplSet QueryWrittenNames (bool asLvalue);
+      
       boost::shared_ptr<TypeImpl> GetValueType();
       void AddToSequence (BlockImpl& block, RegisterID destination);
     };

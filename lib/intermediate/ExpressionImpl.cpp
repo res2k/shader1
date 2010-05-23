@@ -11,6 +11,12 @@ namespace s1
      : CommandImpl (handler)
     {
     }
+
+    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::ExpressionImpl::QueryWrittenNames (bool asLvalue)
+    {
+      return NameImplSet ();
+    }
      
     void IntermediateGeneratorSemanticsHandler::ExpressionImpl::AddToSequence (BlockImpl& block)
     {

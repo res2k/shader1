@@ -25,6 +25,8 @@ namespace s1
       /// Force next GetRegister() call to fetch a new register.
       virtual void InvalidateRegister () {}
       
+      virtual NameImplSet QueryWrittenNames (bool asLvalue);
+      
       virtual boost::shared_ptr<TypeImpl> GetValueType() = 0;
       virtual void AddToSequence (BlockImpl& block, RegisterID destination) = 0;
     };

@@ -39,6 +39,14 @@ namespace s1
       return myReg;
     }
       
+    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::QueryWrittenNames (bool asLvalue)
+    {
+      NameImplSet set;
+      if (asLvalue) set.insert (name);
+      return set;
+    }
+      
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetValueType()
     {

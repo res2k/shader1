@@ -16,6 +16,8 @@ namespace s1
 				const boost::shared_ptr<ExpressionImpl>& target,
 				const boost::shared_ptr<ExpressionImpl>& value);
       
+      NameImplSet QueryWrittenNames (bool asLvalue);
+      
       boost::shared_ptr<TypeImpl> GetValueType();
       
       void AddToSequence (BlockImpl& block);

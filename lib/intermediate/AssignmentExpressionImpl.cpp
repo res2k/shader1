@@ -19,6 +19,17 @@ namespace s1
     {
     }
       
+    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::QueryWrittenNames (bool asLvalue)
+    {
+      NameImplSet set;
+      NameImplSet targetSet (target->QueryWrittenNames (true));
+      set.insert (targetSet.begin(), targetSet.end());
+      NameImplSet valueSet (value->QueryWrittenNames (false));
+      set.insert (valueSet.begin(), valueSet.end());
+      return set;
+    }
+      
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::GetValueType()
     {

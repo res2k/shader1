@@ -38,6 +38,21 @@ namespace s1
       operand2->InvalidateRegister ();
     }
       
+    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::QueryWrittenNames (bool asLvalue)
+    {
+      NameImplSet set;
+      {
+	NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
+	set.insert (op1Set.begin(), op1Set.end());
+      }
+      {
+	NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
+	set.insert (op2Set.begin(), op2Set.end());
+      }
+      return set;
+    }
+      
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::GetValueType()
     {
