@@ -321,6 +321,18 @@ namespace s1
       seqOpBody->Visit (*this);
     }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const RegisterID& retValReg)
+    {
+      std::string retLine ("return");
+      if (retValReg.IsValid())
+      {
+	retLine.append (" ");
+	retLine.append (owner->GetOutputRegisterName (retValReg));
+      }
+      retLine.append (";");
+      target->AddString (retLine);
+    }
+    
     //-----------------------------------------------------------------------
 		      
     CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,

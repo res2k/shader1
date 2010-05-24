@@ -60,7 +60,7 @@ namespace s1
       ScopePtr GetInnerScope() { return innerScope; }
       
       void AddExpressionCommand (ExpressionPtr expr);
-      void AddReturnCommand (ExpressionPtr returnValue) {}
+      void AddReturnCommand (ExpressionPtr returnValue);
       void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
 			 BlockPtr elseBlock);
       void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock);

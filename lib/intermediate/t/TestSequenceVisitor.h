@@ -31,6 +31,7 @@ public:
     opCompareLT,
     opCompareGE,
     opCompareGT,
+    opReturn
   };
   typedef s1::intermediate::RegisterID RegisterID;
   typedef s1::intermediate::Sequence Sequence;
@@ -320,6 +321,14 @@ public:
 		const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
 		const s1::intermediate::SequenceOpPtr& seqOpBody)
   {
+  }
+
+  void OpReturn (const RegisterID& retValReg)
+  {
+    SequenceEntry entry;
+    entry.op = opReturn;
+    entry.sourceReg[0] = retValReg;
+    entries.push_back (entry);
   }
 };
 

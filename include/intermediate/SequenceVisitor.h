@@ -87,6 +87,8 @@ namespace s1
       virtual void OpWhile (const RegisterID& conditionReg,
 			    const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
 			    const SequenceOpPtr& seqOpBody) = 0;
+			    
+      virtual void OpReturn (const RegisterID& retValReg) = 0;
     };
   } // namespace intermediate
 } // namespace s1

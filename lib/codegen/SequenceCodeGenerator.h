@@ -136,6 +136,8 @@ namespace s1
 	void OpWhile (const RegisterID& conditionReg,
 		      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
 		      const intermediate::SequenceOpPtr& seqOpBody);
+		      
+	void OpReturn (const RegisterID& retValReg);
       };
       
       const intermediate::Sequence& seq;

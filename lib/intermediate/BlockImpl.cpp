@@ -5,6 +5,7 @@
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "intermediate/SequenceOp/SequenceOpBranch.h"
+#include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
@@ -39,6 +40,21 @@ namespace s1
       FlushVariableInitializers();
       CommandImpl* impl = static_cast<CommandImpl*> (expr.get());
       impl->AddToSequence (*this);
+    }
+
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddReturnCommand (ExpressionPtr returnValue)
+    {
+      FlushVariableInitializers();
+      
+      RegisterID retValReg;
+      if (returnValue)
+      {
+	ExpressionImpl* impl = static_cast<ExpressionImpl*> (returnValue.get());
+	retValReg = handler->AllocateRegister (*sequence, impl->GetValueType(), Intermediate);
+	impl->AddToSequence (*this, retValReg);
+      }
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValReg));
+      sequence->AddOp (seqOp);
     }
 
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddBranching (ExpressionPtr branchCondition,
