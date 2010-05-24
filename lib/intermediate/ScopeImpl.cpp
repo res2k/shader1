@@ -49,6 +49,18 @@ namespace s1
      : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
     {}
 
+    void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
+    {
+      // TODO: Keep? Or allow params shadow global vars?
+      CheckIdentifierUnique (param.identifier);
+      NamePtr newName (new NameImpl (shared_from_this(), param.identifier, 
+				     boost::shared_static_cast<TypeImpl> (param.type),
+				     param.defaultValue,
+				     param.dir == dirIn));
+      identifiers[param.identifier] = newName;
+      newVars.push_back (newName);
+    }
+
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const UnicodeString& identifier,
 									   ExpressionPtr initialValue, bool constant)
     {
@@ -85,6 +97,13 @@ namespace s1
       
       ScopePtr funcScope;
       funcScope = handler->CreateScope (shared_from_this(), Function, returnType);
+      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::shared_static_cast<ScopeImpl> (funcScope));
+      for (FunctionFormalParameters::const_iterator param (params.begin());
+	   param != params.end();
+	   ++param)
+      {
+	funcScopeImpl->AddParameter (*param);
+      }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
       funcScope = ScopePtr();
       

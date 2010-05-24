@@ -1,6 +1,8 @@
 #ifndef __CODEGEN_FUNCTIONCODEGENERATOR_H__
 #define __CODEGEN_FUNCTIONCODEGENERATOR_H__
 
+#include "base/hash_UnicodeString.h"
+
 #include "codegen/CgGenerator.h"
 #include "codegen/StringsArray.h"
 #include "intermediate/forwarddecl.h"
@@ -14,16 +16,18 @@ namespace s1
     {
       class BlockNameResolver : public ImportedNameResolver
       {
+	friend class FunctionCodeGenerator;
+	
+	typedef std::tr1::unordered_map<UnicodeString, std::string> FunctionParamsToIdentifier;
+	FunctionParamsToIdentifier paramMap;
       public:
 	std::string GetImportedNameIdentifier (const UnicodeString& name)
 	{ 
-	  /* TODO: Resolve function params */
-	  return std::string();
+	  return paramMap[name];
 	}
 	std::string GetExportedNameIdentifier (const UnicodeString& name)
 	{ 
-	  /* TODO: Resolve function params */
-	  return std::string();
+	  return paramMap[name];
 	}
       };
     public:

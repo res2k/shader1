@@ -33,6 +33,8 @@ namespace s1
       boost::shared_ptr<ScopeImpl> parent;
       ScopeLevel level;
       TypePtr funcReturnType;
+      
+      void AddParameter (const FunctionFormalParameter& param);
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
 		 const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
