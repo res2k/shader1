@@ -3,6 +3,7 @@
 // Must be first; otherwise, link errors may occur
 #include "base/hash_UnicodeString.h"
 
+#include "intermediate/Exception.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
@@ -183,9 +184,12 @@ namespace s1
 	      // Void, Bool can't be casted
 	      break;
 	  }
-	  assert (seqOp);
-	  seq.AddOp (seqOp);
-	  return;
+	  if (seqOp)
+	  {
+	    seq.AddOp (seqOp);
+	    return;
+	  }
+	  break;
 	}
       case TypeImpl::Sampler:
 	// Cannot cast samplers
@@ -203,7 +207,8 @@ namespace s1
 	// TODO: Cast individual components
 	break;
       }
-      assert (false);
+      
+      throw Exception (InvalidTypeCast);
     }
 
     ProgramPtr IntermediateGeneratorSemanticsHandler::GetProgram ()

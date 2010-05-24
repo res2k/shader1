@@ -19,6 +19,8 @@ namespace s1
       AssignmentTypesIncompatible,
       /// Assignment target is not an L-value
       AssignmentTargetIsNotAnLValue,
+      /// Invalid type cast
+      InvalidTypeCast,
       
       // Below: definitely internal
       /// Error parsing number string

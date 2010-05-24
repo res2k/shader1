@@ -48,6 +48,7 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(OperandTypesInvalid);
   ERRORCODE(AssignmentTypesIncompatible);
   ERRORCODE(AssignmentTargetIsNotAnLValue);
+  ERRORCODE(InvalidTypeCast);
   ERRORCODE(NumberParseError);
 #undef ERRORCODE
   }
