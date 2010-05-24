@@ -50,8 +50,21 @@ namespace s1
       if (returnValue)
       {
 	ExpressionImpl* impl = static_cast<ExpressionImpl*> (returnValue.get());
-	retValReg = handler->AllocateRegister (*sequence, impl->GetValueType(), Intermediate);
-	impl->AddToSequence (*this, retValReg);
+	TypeImplPtr retType (boost::shared_static_cast<TypeImpl> (
+	  boost::shared_static_cast<ScopeImpl> (innerScope)->GetFunctionReturnType()));
+	  
+	RegisterID exprTargetReg (handler->AllocateRegister (*sequence, impl->GetValueType(), Intermediate));
+	impl->AddToSequence (*this, exprTargetReg);
+	if (retType->IsEqual (*(impl->GetValueType())))
+	{
+	  retValReg = exprTargetReg;
+	}
+	else
+	{
+	  retValReg = handler->AllocateRegister (*sequence, retType, Intermediate);
+	  handler->GenerateCast (*sequence, retValReg, retType,
+				 exprTargetReg, impl->GetValueType());
+	}
       }
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValReg));
       sequence->AddOp (seqOp);

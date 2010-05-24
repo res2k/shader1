@@ -136,7 +136,10 @@ namespace s1
       ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
 						     const ExpressionVector& params);
       
-      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel);
+      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel,
+			    const TypePtr& returnType);
+      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
+      { return CreateScope (parentScope, scopeLevel, TypePtr ()); }
       
       BlockPtr CreateBlock (ScopePtr parentScope);
       /** @} */

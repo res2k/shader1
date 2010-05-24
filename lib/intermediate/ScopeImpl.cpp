@@ -44,8 +44,9 @@ namespace s1
       
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 const boost::shared_ptr<ScopeImpl>& parent,
-								 ScopeLevel level)
-     : handler (handler), parent (parent), level (level)
+								 ScopeLevel level,
+								 const TypePtr& funcReturnType)
+     : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
     {}
 
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const UnicodeString& identifier,
@@ -83,7 +84,7 @@ namespace s1
       }
       
       ScopePtr funcScope;
-      funcScope = handler->CreateScope (shared_from_this(), Function);
+      funcScope = handler->CreateScope (shared_from_this(), Function, returnType);
       BlockPtr newBlock (handler->CreateBlock (funcScope));
       funcScope = ScopePtr();
       

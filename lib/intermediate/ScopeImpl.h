@@ -32,9 +32,11 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
       ScopeLevel level;
+      TypePtr funcReturnType;
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
-		  const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level);
+		 const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
+		 const TypePtr& funcReturnType);
       
       NamePtr AddVariable (TypePtr type,
 	const UnicodeString& identifier,
@@ -50,6 +52,12 @@ namespace s1
     
       NamePtr ResolveIdentifier (const UnicodeString& identifier);
       
+      TypePtr GetFunctionReturnType() const
+      {
+	if (funcReturnType) return funcReturnType;
+	if (parent) return parent->GetFunctionReturnType();
+	return TypePtr ();
+      }
       int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
       
       struct FunctionInfo

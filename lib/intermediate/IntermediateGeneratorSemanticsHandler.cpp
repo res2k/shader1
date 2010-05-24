@@ -356,11 +356,13 @@ namespace s1
     { return ExpressionPtr(); }
     
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
-								 ScopeLevel scopeLevel)
+								 ScopeLevel scopeLevel,
+								 const TypePtr& funcReturnType)
     {
       ScopeImplPtr newScope (boost::make_shared<ScopeImpl> (this,
 							    boost::shared_static_cast<ScopeImpl> (parentScope),
-							    scopeLevel));
+							    scopeLevel,
+							    funcReturnType));
       switch (scopeLevel)
       {
       case Builtin:
