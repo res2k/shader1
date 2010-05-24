@@ -353,8 +353,11 @@ namespace s1
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateFunctionCallExpression (NamePtr functionName,
-						const ExpressionVector& params)
-    { return ExpressionPtr(); }
+										       const ExpressionVector& params)
+    { 
+      assert (functionName->GetType() == SemanticsHandler::Name::Function);
+      return ExpressionPtr();
+    }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,
 						    const ExpressionVector& params)

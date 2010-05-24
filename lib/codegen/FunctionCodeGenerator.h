@@ -19,15 +19,16 @@ namespace s1
 	friend class FunctionCodeGenerator;
 	
 	typedef std::tr1::unordered_map<UnicodeString, std::string> FunctionParamsToIdentifier;
-	FunctionParamsToIdentifier paramMap;
+	FunctionParamsToIdentifier inParamMap;
+	FunctionParamsToIdentifier outParamMap;
       public:
 	std::string GetImportedNameIdentifier (const UnicodeString& name)
 	{ 
-	  return paramMap[name];
+	  return inParamMap[name];
 	}
 	std::string GetExportedNameIdentifier (const UnicodeString& name)
 	{ 
-	  return paramMap[name];
+	  return outParamMap[name];
 	}
       };
     public:

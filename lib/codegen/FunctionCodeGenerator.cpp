@@ -26,32 +26,67 @@ namespace s1
 	funcDecl.append (" ");
 	funcDecl.append (identifier);
 	funcDecl.append (" (");
-	bool firstParam = true;
+	
+	std::vector<std::string> inParams;
+	std::vector<std::string> outParams;
 	const FunctionFormalParameters& params (func->GetParams());
 	for (FunctionFormalParameters::const_iterator param = params.begin();
 	     param != params.end();
 	     ++param)
 	{
-	  std::string paramIdent (NameToCgIdentifier (param->identifier));
-	  std::string paramStr;
+	  std::string paramStrBase;
+	  paramStrBase.append (TypeToCgType (param->type));
+	  paramStrBase.append (" ");
+
+	  if (param->dir & parser::SemanticsHandler::Scope::dirIn)
+	  {
+	    UnicodeString paramIdentDecorated ("i");
+	    paramIdentDecorated.append (param->identifier);
+	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	    std::string paramStr (paramStrBase);
+	    paramStr.append (paramIdent);
+	    inParams.push_back (paramStr);
+	    
+	    nameRes.inParamMap[param->identifier] = paramIdent;
+	  }
+	  
+	  if (param->dir & parser::SemanticsHandler::Scope::dirOut)
+	  {
+	    UnicodeString paramIdentDecorated ("o");
+	    paramIdentDecorated.append (param->identifier);
+	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	    std::string paramStr (paramStrBase);
+	    paramStr.append (paramIdent);
+	    outParams.push_back (paramStr);
+	    
+	    nameRes.outParamMap[param->identifier] = paramIdent;
+	  }
+	}
+	
+	bool firstParam = true;
+	for (std::vector<std::string>::const_iterator inParam (inParams.begin());
+	     inParam != inParams.end();
+	     ++inParam)
+	{
 	  if (!firstParam)
-	    paramStr = ", ";
+	    funcDecl.append (", ");
 	  else
 	    firstParam = false;
-	  switch (param->dir)
-	  {
-	  case parser::SemanticsHandler::Scope::dirDefault:
-	  case parser::SemanticsHandler::Scope::dirIn: paramStr.append ("in ");		break;
-	  case parser::SemanticsHandler::Scope::dirOut: paramStr.append ("out ");	break;
-	  case parser::SemanticsHandler::Scope::dirInOut: paramStr.append ("in out ");	break;
-	  }
-	  paramStr.append (TypeToCgType (param->type));
-	  paramStr.append (" ");
-	  paramStr.append (paramIdent);
-	  funcDecl.append (paramStr);
-	  
-	  nameRes.paramMap[param->identifier] = paramIdent;
+	  funcDecl.append ("in ");
+	  funcDecl.append (*inParam);
 	}
+	for (std::vector<std::string>::const_iterator outParam (outParams.begin());
+	     outParam != outParams.end();
+	     ++outParam)
+	{
+	  if (!firstParam)
+	    funcDecl.append (", ");
+	  else
+	    firstParam = false;
+	  funcDecl.append ("out ");
+	  funcDecl.append (*outParam);
+	}
+	
 	funcDecl.append (")");
 	resultStrings->AddString (funcDecl);
       }
