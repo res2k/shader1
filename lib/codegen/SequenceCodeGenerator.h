@@ -147,8 +147,6 @@ namespace s1
       typedef boost::unordered_map<RegisterID, std::string> RegistersToIDMap;
       RegistersToIDMap seenRegisters;
       
-      std::string TypeToCgType (const parser::SemanticsHandler::TypePtr& type);
-      std::string RegisterNameToCgIdentifier (const UnicodeString& str);
       std::string GetOutputRegisterName (const RegisterID& reg,
 					 bool autoAllocate = true);
     public:
