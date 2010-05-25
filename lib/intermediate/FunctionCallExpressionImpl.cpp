@@ -129,14 +129,20 @@ namespace s1
 	const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
 	if (param.dir & ScopeImpl::dirIn)
 	{
+	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
+	  boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
 	  RegisterID inReg (fetchedRegs[i].first);
 	  if (!inReg.IsValid())
 	  {
-	    inReg = handler->AllocateRegister (*(block.GetSequence()), 
-					       boost::shared_static_cast<TypeImpl> (param.type),
-					       Intermediate);
-	    boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
+	    inReg = handler->AllocateRegister (*(block.GetSequence()), paramExprType, Intermediate);
 	    paramExprImpl->AddToSequence (block, inReg);
+	  }
+	  boost::shared_ptr<TypeImpl> formalParamType (boost::shared_static_cast<TypeImpl> (param.type));
+	  if (!paramExprType->IsEqual (*formalParamType))
+	  {
+	    RegisterID targetReg (handler->AllocateRegister (*(block.GetSequence()), formalParamType, Intermediate));
+	    handler->GenerateCast (*(block.GetSequence()), targetReg, formalParamType, inReg, paramExprType);
+	    inReg = targetReg;
 	  }
 	  inParams.push_back (inReg);
 	}
