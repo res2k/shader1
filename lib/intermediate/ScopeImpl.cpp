@@ -209,8 +209,15 @@ namespace s1
 	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
 	      TypeImplPtr paramType (exprImpl->GetValueType ());
 	      TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
-	      // No lossless type match? Skip
-	      if (!paramType->CompatibleLossless (*formalParamType))
+	      bool match;
+	      if ((*vecIt)->params[i].dir & dirOut)
+		// Output parameters must _always_ match exactly
+		match = paramType->IsEqual (*formalParamType);
+	      else
+		// Input parameters can match losslessy
+		match = paramType->CompatibleLossless (*formalParamType);
+	      // No type match? Skip
+	      if (!match)
 	      {
 		abort = true;
 		break;
