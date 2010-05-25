@@ -231,45 +231,6 @@ namespace s1
 	    vec.push_back (*vecIt);
 	  }
 	}
-	
-	// Third, look for a lossy parameters type match
-	if (vec.size() == 0)
-	{
-	  for (FunctionInfoVector::const_iterator vecIt = funcIt->second.begin();
-	      vecIt != funcIt->second.end();
-	      ++vecIt)
-	  {
-	    if (params.size() > (*vecIt)->params.size()) continue;
-	    
-	    bool abort = false;
-	    size_t i = 0;
-	    for (; i < params.size(); i++)
-	    {
-	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
-	      TypeImplPtr paramType (exprImpl->GetValueType ());
-	      TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
-	      // No lossy type match? Skip
-	      if (!paramType->CompatibleLossy (*formalParamType))
-	      {
-		abort = true;
-		break;
-	      }
-	    }
-	    if (abort) continue;
-	    for (; i < (*vecIt)->params.size(); i++)
-	    {
-	      // Leftover parameter + no default value? Skip
-	      if (!(*vecIt)->params[i].defaultValue)
-	      {
-		abort = true;
-		break;
-	      }
-	    }
-	    if (abort) continue;
-	    
-	    vec.push_back (*vecIt);
-	  }
-	}
       }
       return vec;
     }
