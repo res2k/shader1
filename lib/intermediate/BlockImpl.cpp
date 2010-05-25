@@ -53,9 +53,9 @@ namespace s1
 	TypeImplPtr retType (boost::shared_static_cast<TypeImpl> (
 	  boost::shared_static_cast<ScopeImpl> (innerScope)->GetFunctionReturnType()));
 	  
-	RegisterID exprTargetReg (handler->AllocateRegister (*sequence, impl->GetValueType(), Intermediate));
+	RegisterID exprTargetReg (handler->AllocateRegister (*sequence, impl->GetValueType (), Intermediate));
 	impl->AddToSequence (*this, exprTargetReg);
-	if (retType->IsEqual (*(impl->GetValueType())))
+	if (retType->IsEqual (*(impl->GetValueType ())))
 	{
 	  retValReg = exprTargetReg;
 	}
@@ -63,7 +63,7 @@ namespace s1
 	{
 	  retValReg = handler->AllocateRegister (*sequence, retType, Intermediate);
 	  handler->GenerateCast (*sequence, retValReg, retType,
-				 exprTargetReg, impl->GetValueType());
+				 exprTargetReg, impl->GetValueType ());
 	}
       }
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValReg));

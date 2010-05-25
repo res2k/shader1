@@ -10,21 +10,26 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::ScopeImpl : public Scope,
       public boost::enable_shared_from_this<ScopeImpl>
     {
+    public:
+      struct FunctionInfo
+      {
+	UnicodeString identifier;
+	TypePtr returnType;
+	FunctionFormalParameters params;
+	BlockPtr block;
+      };
+      typedef boost::shared_ptr<FunctionInfo> FunctionInfoPtr;
+      typedef std::vector<FunctionInfoPtr> FunctionInfoVector;
+    private:
       friend class IntermediateGeneratorSemanticsHandler;
       
       typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
       
-      struct FunctionInfoInternal
-      {
-	TypePtr returnType;
-	FunctionFormalParameters params;
-	BlockPtr block;
-      };
-      typedef std::vector<FunctionInfoInternal> FunctionInfoInternalVector;
-      typedef std::tr1::unordered_map<UnicodeString, FunctionInfoInternalVector> FunctionsMap;
+      typedef std::tr1::unordered_map<UnicodeString, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
+      std::vector<FunctionInfoPtr> functionsInDeclOrder;
       
       void CheckIdentifierUnique (const UnicodeString& identifier);
       NamePtr CheckIdentifierIsFunction (const UnicodeString& identifier);
@@ -62,15 +67,8 @@ namespace s1
       }
       int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
       
-      struct FunctionInfo
-      {
-	UnicodeString identifier;
-	TypePtr returnType;
-	FunctionFormalParameters params;
-	BlockPtr block;
-      };
-      typedef std::vector<FunctionInfo> FunctionInfoVector;
       FunctionInfoVector GetFunctions () const;
+      FunctionInfoVector CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const;
       
       std::vector<NamePtr> FlushNewVars ();
     };

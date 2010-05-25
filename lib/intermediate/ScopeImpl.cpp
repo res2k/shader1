@@ -6,6 +6,7 @@
 #include "ScopeImpl.h"
 
 #include "parser/Exception.h"
+#include "ExpressionImpl.h"
 #include "NameImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -91,7 +92,7 @@ namespace s1
       if (funcName == NamePtr ())
       {
 	NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(), identifier, Name::Function,
-				      boost::shared_static_cast<TypeImpl> (returnType)));
+				      boost::shared_ptr<TypeImpl> ()));
 	identifiers[identifier] = newName;
       }
       
@@ -107,12 +108,24 @@ namespace s1
       BlockPtr newBlock (handler->CreateBlock (funcScope));
       funcScope = ScopePtr();
       
-      FunctionInfoInternalVector& functions = this->functions[identifier];
-      FunctionInfoInternal funcInfo;
-      funcInfo.returnType = returnType;
-      funcInfo.params = params;
-      funcInfo.block = newBlock;
+      FunctionInfoVector& functions = this->functions[identifier];
+      FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
+      // Decorate identifier with type info (so each overload gets a unique name)
+      UnicodeString identifierDecorated (identifier);
+      identifierDecorated.append ("$");
+      for (FunctionFormalParameters::const_iterator param (params.begin());
+	   param != params.end();
+	   ++param)
+      {
+	identifierDecorated.append (handler->GetTypeString (boost::shared_static_cast<TypeImpl> (param->type)).c_str());
+      }
+      funcInfo->identifier = identifierDecorated;
+      funcInfo->returnType = returnType;
+      funcInfo->params = params;
+      funcInfo->block = newBlock;
       functions.push_back (funcInfo);
+      
+      functionsInDeclOrder.push_back (funcInfo);
       
       return newBlock;
     }
@@ -132,21 +145,130 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
     IntermediateGeneratorSemanticsHandler::ScopeImpl::GetFunctions () const
     {
+      return functionsInDeclOrder;
+    }
+
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const
+    {
+      boost::shared_ptr<NameImpl> nameImpl (boost::shared_static_cast<NameImpl> (functionName));
+      
       FunctionInfoVector vec;
-      for (FunctionsMap::const_iterator funcIt = functions.begin();
-	   funcIt != functions.end();
-	   ++funcIt)
+      FunctionsMap::const_iterator funcIt = functions.find (nameImpl->identifier);
+      if (funcIt != functions.end())
       {
-	for (FunctionInfoInternalVector::const_iterator vecIt = funcIt->second.begin();
+	// First, look for an exact parameters type match
+	for (FunctionInfoVector::const_iterator vecIt = funcIt->second.begin();
 	     vecIt != funcIt->second.end();
 	     ++vecIt)
 	{
-	  FunctionInfo func;
-	  func.identifier = funcIt->first;
-	  func.block = vecIt->block;
-	  func.params = vecIt->params;
-	  func.returnType = vecIt->returnType;
-	  vec.push_back (func);
+	  if (params.size() > (*vecIt)->params.size()) continue;
+	  
+	  bool abort = false;
+	  size_t i = 0;
+	  for (; i < params.size(); i++)
+	  {
+	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
+	    TypeImplPtr paramType (exprImpl->GetValueType ());
+	    TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
+	    // No exact type match? Skip
+	    if (!paramType->IsEqual (*formalParamType))
+	    {
+	      abort = true;
+	      break;
+	    }
+	  }
+	  if (abort) continue;
+	  for (; i < (*vecIt)->params.size(); i++)
+	  {
+	    // Leftover parameter + no default value? Skip
+	    if (!(*vecIt)->params[i].defaultValue)
+	    {
+	      abort = true;
+	      break;
+	    }
+	  }
+	  if (abort) continue;
+	  
+	  vec.push_back (*vecIt);
+	}
+	
+	// Second, look for a lossless parameters type match
+	if (vec.size() == 0)
+	{
+	  for (FunctionInfoVector::const_iterator vecIt = funcIt->second.begin();
+	      vecIt != funcIt->second.end();
+	      ++vecIt)
+	  {
+	    if (params.size() > (*vecIt)->params.size()) continue;
+	    
+	    bool abort = false;
+	    size_t i = 0;
+	    for (; i < params.size(); i++)
+	    {
+	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
+	      TypeImplPtr paramType (exprImpl->GetValueType ());
+	      TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
+	      // No lossless type match? Skip
+	      if (!paramType->CompatibleLossless (*formalParamType))
+	      {
+		abort = true;
+		break;
+	      }
+	    }
+	    if (abort) continue;
+	    for (; i < (*vecIt)->params.size(); i++)
+	    {
+	      // Leftover parameter + no default value? Skip
+	      if (!(*vecIt)->params[i].defaultValue)
+	      {
+		abort = true;
+		break;
+	      }
+	    }
+	    if (abort) continue;
+	    
+	    vec.push_back (*vecIt);
+	  }
+	}
+	
+	// Third, look for a lossy parameters type match
+	if (vec.size() == 0)
+	{
+	  for (FunctionInfoVector::const_iterator vecIt = funcIt->second.begin();
+	      vecIt != funcIt->second.end();
+	      ++vecIt)
+	  {
+	    if (params.size() > (*vecIt)->params.size()) continue;
+	    
+	    bool abort = false;
+	    size_t i = 0;
+	    for (; i < params.size(); i++)
+	    {
+	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
+	      TypeImplPtr paramType (exprImpl->GetValueType ());
+	      TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
+	      // No lossy type match? Skip
+	      if (!paramType->CompatibleLossy (*formalParamType))
+	      {
+		abort = true;
+		break;
+	      }
+	    }
+	    if (abort) continue;
+	    for (; i < (*vecIt)->params.size(); i++)
+	    {
+	      // Leftover parameter + no default value? Skip
+	      if (!(*vecIt)->params[i].defaultValue)
+	      {
+		abort = true;
+		break;
+	      }
+	    }
+	    if (abort) continue;
+	    
+	    vec.push_back (*vecIt);
+	  }
 	}
       }
       return vec;

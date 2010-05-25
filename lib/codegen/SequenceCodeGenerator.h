@@ -138,6 +138,10 @@ namespace s1
 		      const intermediate::SequenceOpPtr& seqOpBody);
 		      
 	void OpReturn (const RegisterID& retValReg);
+	void OpFunctionCall (const RegisterID& destination,
+			     const UnicodeString& funcIdent,
+			     const std::vector<RegisterID>& inParams,
+			     const std::vector<RegisterID>& outParams);
       };
       
       const intermediate::Sequence& seq;

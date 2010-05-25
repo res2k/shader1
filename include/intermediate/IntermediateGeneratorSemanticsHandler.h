@@ -27,6 +27,7 @@ namespace s1
       class AssignmentExpressionImpl;
       class BoolExpressionImpl;
       class ComparisonExpressionImpl;
+      class FunctionCallExpressionImpl;
       class LogicExpressionImpl;
       class NumericExpressionImpl;
       class VariableExpressionImpl;

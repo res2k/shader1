@@ -11,7 +11,8 @@ namespace s1
       IdentifierAlreadyDeclared,
       IdentifierUndeclared,
       DeclarationNotAllowedInScope,
-      ExpectedTypeName
+      ExpectedTypeName,
+      OutParameterWithDefault
     };
   } // namespace parser
 } // namespace s1

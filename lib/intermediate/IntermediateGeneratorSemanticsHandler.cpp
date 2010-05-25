@@ -4,6 +4,7 @@
 #include "base/hash_UnicodeString.h"
 
 #include "intermediate/Exception.h"
+#include "FunctionCallExpressionImpl.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
@@ -221,10 +222,10 @@ namespace s1
 	     funcIt != functions.end();
 	     ++funcIt)
 	{
-	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> (funcIt->identifier,
-									    funcIt->returnType,
-									    funcIt->params,
-									    funcIt->block));
+	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->identifier,
+									    (*funcIt)->returnType,
+									    (*funcIt)->params,
+									    (*funcIt)->block));
 	  newProg->AddFunction (newFunc);
 	}
       }
@@ -356,7 +357,11 @@ namespace s1
 										       const ExpressionVector& params)
     { 
       assert (functionName->GetType() == SemanticsHandler::Name::Function);
-      return ExpressionPtr();
+      
+      return ExpressionPtr (
+	boost::make_shared<FunctionCallExpressionImpl> (this,
+							functionName,
+							params));
     }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,

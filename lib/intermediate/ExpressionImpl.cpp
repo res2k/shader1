@@ -2,6 +2,7 @@
 
 #include "BlockImpl.h"
 #include "ExpressionImpl.h"
+#include "TypeImpl.h"
 
 namespace s1
 {
@@ -22,7 +23,9 @@ namespace s1
     {
       boost::shared_ptr<TypeImpl> exprValueType = GetValueType ();
       // Create a dummy destination
-      RegisterID dummyDest = handler->AllocateRegister (*(block.GetSequence()), exprValueType, Dummy);
+      RegisterID dummyDest;
+      if (!handler->GetVoidType()->IsEqual (*exprValueType))
+	dummyDest = handler->AllocateRegister (*(block.GetSequence()), exprValueType, Dummy);
       // Add expression, write to dummy destination
       AddToSequence (block, dummyDest);
       /* Need to generate operations even if the result isn't used, due

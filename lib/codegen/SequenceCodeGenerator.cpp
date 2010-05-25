@@ -332,6 +332,44 @@ namespace s1
       target->AddString (retLine);
     }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const RegisterID& destination,
+									     const UnicodeString& funcIdent,
+									     const std::vector<RegisterID>& inParams,
+									     const std::vector<RegisterID>& outParams)
+    {
+      std::string line;
+      if (destination.IsValid())
+      {
+	line.append (owner->GetOutputRegisterName (destination));
+	line.append (" = ");
+      }
+      line.append (NameToCgIdentifier (funcIdent));
+      line.append (" (");
+      bool firstParam = true;
+      for (std::vector<RegisterID>::const_iterator inParam (inParams.begin());
+	   inParam != inParams.end();
+	   ++inParam)
+      {
+	if (!firstParam)
+	  line.append (", ");
+	else
+	  firstParam = false;
+	line.append (owner->GetOutputRegisterName (*inParam));
+      }
+      for (std::vector<RegisterID>::const_iterator outParam (outParams.begin());
+	   outParam != outParams.end();
+	   ++outParam)
+      {
+	if (!firstParam)
+	  line.append (", ");
+	else
+	  firstParam = false;
+	line.append (owner->GetOutputRegisterName (*outParam));
+      }
+      line.append (");");
+      target->AddString (line);
+    }
+    
     //-----------------------------------------------------------------------
 		      
     CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,

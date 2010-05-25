@@ -21,6 +21,12 @@ namespace s1
       AssignmentTargetIsNotAnLValue,
       /// Invalid type cast
       InvalidTypeCast,
+      /// No matching function overload
+      NoMatchingFunctionOverload,
+      /// Ambiguous function overload
+      AmbiguousFunctionOverload,
+      /// Actual parameter is not an L-value
+      ActualParameterNotAnLValue,
       
       // Below: definitely internal
       /// Error parsing number string

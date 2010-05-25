@@ -89,6 +89,10 @@ namespace s1
 			    const SequenceOpPtr& seqOpBody) = 0;
 			    
       virtual void OpReturn (const RegisterID& retValReg) = 0;
+      virtual void OpFunctionCall (const RegisterID& destination,
+				   const UnicodeString& funcIdent,
+				   const std::vector<RegisterID>& inParams,
+				   const std::vector<RegisterID>& outParams) = 0;
     };
   } // namespace intermediate
 } // namespace s1

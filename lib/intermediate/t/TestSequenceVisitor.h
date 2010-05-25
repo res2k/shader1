@@ -31,7 +31,8 @@ public:
     opCompareLT,
     opCompareGE,
     opCompareGT,
-    opReturn
+    opReturn,
+    opFunctionCall
   };
   typedef s1::intermediate::RegisterID RegisterID;
   typedef s1::intermediate::Sequence Sequence;
@@ -49,6 +50,10 @@ public:
       
     RegisterID destReg;
     RegisterID sourceReg[2];
+    
+    UnicodeString functionIdentifier;
+    std::vector<RegisterID> inParams;
+    std::vector<RegisterID> outParams;
   };
   
   std::vector<SequenceEntry> entries;
@@ -328,6 +333,20 @@ public:
     SequenceEntry entry;
     entry.op = opReturn;
     entry.sourceReg[0] = retValReg;
+    entries.push_back (entry);
+  }
+  
+  void OpFunctionCall (const RegisterID& destination,
+		       const UnicodeString& funcIdent,
+		       const std::vector<RegisterID>& inParams,
+		       const std::vector<RegisterID>& outParams)
+  {
+    SequenceEntry entry;
+    entry.op = opFunctionCall;
+    entry.destReg = destination;
+    entry.functionIdentifier = funcIdent;
+    entry.inParams = inParams;
+    entry.outParams = outParams;
     entries.push_back (entry);
   }
 };

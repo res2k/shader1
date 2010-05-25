@@ -915,6 +915,8 @@ namespace s1
       {
 	// Handle default value
 	NextToken ();
+	if (paramDirection == SemanticsHandler::Scope::dirOut)
+	  throw Exception (OutParameterWithDefault);
 	newParam.defaultValue = ParseExpression (scope);
       }
       params.push_back (newParam);

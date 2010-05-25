@@ -17,6 +17,7 @@ void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encou
   ERRORCODE(IdentifierUndeclared);
   ERRORCODE(DeclarationNotAllowedInScope);
   ERRORCODE(ExpectedTypeName);
+  ERRORCODE(OutParameterWithDefault);
 #undef ERRORCODE
   }
   
@@ -49,6 +50,9 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(AssignmentTypesIncompatible);
   ERRORCODE(AssignmentTargetIsNotAnLValue);
   ERRORCODE(InvalidTypeCast);
+  ERRORCODE(NoMatchingFunctionOverload);
+  ERRORCODE(AmbiguousFunctionOverload);
+  ERRORCODE(ActualParameterNotAnLValue);
   ERRORCODE(NumberParseError);
 #undef ERRORCODE
   }
