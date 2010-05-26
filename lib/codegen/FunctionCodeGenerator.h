@@ -31,6 +31,15 @@ namespace s1
 	  return outParamMap[name];
 	}
       };
+	
+      struct ParamAdder
+      {
+	bool firstParam;
+	std::string paramStr;
+	
+	ParamAdder () : firstParam (true) { }
+	void Add (const char* attr, const std::string& attrStr);
+      };
     public:
       StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func);
     };

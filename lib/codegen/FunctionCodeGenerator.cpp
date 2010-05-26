@@ -2,6 +2,7 @@
 
 #include "FunctionCodeGenerator.h"
 
+#include "base/unordered_set"
 #include "intermediate/ProgramFunction.h"
 #include "SequenceCodeGenerator.h"
 
@@ -12,6 +13,16 @@ namespace s1
 {
   namespace codegen
   {
+    void CgGenerator::FunctionCodeGenerator::ParamAdder::Add (const char* attr, const std::string& attrStr)
+    {
+      if (!firstParam)
+	paramStr.append (", ");
+      else
+	firstParam = false;
+      paramStr.append (attr);
+      paramStr.append (attrStr);
+    }
+	  
     StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func)
     {
       typedef parser::SemanticsHandler::Scope::FunctionFormalParameters FunctionFormalParameters;
@@ -27,6 +38,7 @@ namespace s1
 	funcDecl.append (identifier);
 	funcDecl.append (" (");
 	
+	std::tr1::unordered_set<UnicodeString> paramImports;
 	std::vector<std::string> inParams;
 	std::vector<std::string> outParams;
 	const FunctionFormalParameters& params (func->GetParams());
@@ -34,6 +46,8 @@ namespace s1
 	     param != params.end();
 	     ++param)
 	{
+	  paramImports.insert (param->identifier);
+	  
 	  std::string paramStrBase;
 	  paramStrBase.append (TypeToCgType (param->type));
 	  paramStrBase.append (" ");
@@ -63,30 +77,65 @@ namespace s1
 	  }
 	}
 	
-	bool firstParam = true;
+	// Generate parameters for sequence imports (ie globals)
+	intermediate::Sequence::RegisterImpMappings imports (func->GetBody()->GetImports());
+	for (intermediate::Sequence::RegisterImpMappings::const_iterator import (imports.begin());
+	     import != imports.end();
+	     ++import)
+	{
+	  // Only look at globals
+	  if (paramImports.find (import->first) != paramImports.end()) continue;
+	  
+	  UnicodeString paramIdentDecorated ("I");
+	  paramIdentDecorated.append (import->first);
+	  std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	  intermediate::Sequence::RegisterBankPtr bank;
+	  func->GetBody()->QueryRegisterPtrFromID (import->second, bank);
+	  std::string paramStr (TypeToCgType (bank->GetOriginalType()));
+	  paramStr.append (" ");
+	  paramStr.append (paramIdent);
+	  inParams.push_back (paramStr);
+	  
+	  nameRes.inParamMap[import->first] = paramIdent;
+	}
+	
+	// Generate parameters for sequence exports
+	intermediate::Sequence::RegisterExpMappings exports (func->GetBody()->GetExports());
+	for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
+	     exported != exports.end();
+	     ++exported)
+	{
+	  // Only look at globals
+	  if (paramImports.find (exported->first) != paramImports.end()) continue;
+	  
+	  UnicodeString paramIdentDecorated ("O");
+	  paramIdentDecorated.append (exported->first);
+	  std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	  intermediate::Sequence::RegisterBankPtr bank;
+	  func->GetBody()->QueryRegisterPtrFromID (exported->second, bank);
+	  std::string paramStr (TypeToCgType (bank->GetOriginalType()));
+	  paramStr.append (" ");
+	  paramStr.append (paramIdent);
+	  outParams.push_back (paramStr);
+	  
+	  nameRes.outParamMap[exported->first] = paramIdent;
+	}
+	
+	ParamAdder paramAdder;
 	for (std::vector<std::string>::const_iterator inParam (inParams.begin());
 	     inParam != inParams.end();
 	     ++inParam)
 	{
-	  if (!firstParam)
-	    funcDecl.append (", ");
-	  else
-	    firstParam = false;
-	  funcDecl.append ("in ");
-	  funcDecl.append (*inParam);
+	  paramAdder.Add ("in ", *inParam);
 	}
 	for (std::vector<std::string>::const_iterator outParam (outParams.begin());
 	     outParam != outParams.end();
 	     ++outParam)
 	{
-	  if (!firstParam)
-	    funcDecl.append (", ");
-	  else
-	    firstParam = false;
-	  funcDecl.append ("out ");
-	  funcDecl.append (*outParam);
+	  paramAdder.Add ("out ", *outParam);
 	}
 	
+	funcDecl.append (paramAdder.paramStr);
 	funcDecl.append (")");
 	resultStrings->AddString (funcDecl);
       }

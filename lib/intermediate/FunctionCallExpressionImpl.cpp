@@ -156,6 +156,34 @@ namespace s1
 	}
       }
       
+      // Look for globals imported into function, add as parameters
+      boost::shared_ptr<BlockImpl> funcBlockImpl (boost::shared_static_cast<BlockImpl> (overload->block));
+      Sequence::RegisterImpMappings imports (funcBlockImpl->GetSequence()->GetImports());
+      for (Sequence::RegisterImpMappings::const_iterator imported (imports.begin());
+	   imported != imports.end();
+	   ++imported)
+      {
+	NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (imported->first));
+	if (global)
+	{
+	  RegisterID globLocal (block.ImportName (global, false));
+	  inParams.push_back (globLocal);
+	}
+      }
+      
+      intermediate::Sequence::RegisterExpMappings exports (funcBlockImpl->GetSequence()->GetExports());
+      for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
+	    exported != exports.end();
+	    ++exported)
+      {
+	NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (exported->first));
+	if (global)
+	{
+	  RegisterID globLocal (block.ImportName (global, true));
+	  outParams.push_back (globLocal);
+	}
+      }
+      
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
 								       inParams, outParams));
       block.GetSequence()->AddOp (seqOp);

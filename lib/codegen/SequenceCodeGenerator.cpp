@@ -332,6 +332,25 @@ namespace s1
       target->AddString (retLine);
     }
     
+    namespace
+    {
+      struct ParamHelper
+      {
+	std::string& str;
+	bool firstParam;
+	
+	ParamHelper (std::string& str) : str (str), firstParam (true) {}
+	void Add (const std::string& s)
+	{
+	  if (!firstParam)
+	    str.append (", ");
+	  else
+	    firstParam = false;
+	  str.append (s);
+	}
+      };
+    }
+    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const RegisterID& destination,
 									     const UnicodeString& funcIdent,
 									     const std::vector<RegisterID>& inParams,
@@ -345,26 +364,18 @@ namespace s1
       }
       line.append (NameToCgIdentifier (funcIdent));
       line.append (" (");
-      bool firstParam = true;
+      ParamHelper params (line);
       for (std::vector<RegisterID>::const_iterator inParam (inParams.begin());
 	   inParam != inParams.end();
 	   ++inParam)
       {
-	if (!firstParam)
-	  line.append (", ");
-	else
-	  firstParam = false;
-	line.append (owner->GetOutputRegisterName (*inParam));
+	params.Add (owner->GetOutputRegisterName (*inParam));
       }
       for (std::vector<RegisterID>::const_iterator outParam (outParams.begin());
 	   outParam != outParams.end();
 	   ++outParam)
       {
-	if (!firstParam)
-	  line.append (", ");
-	else
-	  firstParam = false;
-	line.append (owner->GetOutputRegisterName (*outParam));
+	params.Add (owner->GetOutputRegisterName (*outParam));
       }
       line.append (");");
       target->AddString (line);
