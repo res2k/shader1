@@ -47,7 +47,7 @@ namespace s1
 	RegisterID reg;
 	bool initiallyWriteable;
       };
-      typedef std::tr1::unordered_map<boost::shared_ptr<NameImpl>, ImportedName> ImportedNamesMap;
+      typedef std::tr1::unordered_map<NameImplPtr, ImportedName> ImportedNamesMap;
       ImportedNamesMap importedNames;
       NameImplSet exportedNames;
       
