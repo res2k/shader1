@@ -132,14 +132,23 @@ namespace s1
 
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const UnicodeString& identifier)
     {
+      NameImplPtr name (ResolveIdentifierInternal (identifier));
+      if (!name)
+	throw parser::Exception (parser::IdentifierUndeclared);
+      return name;
+    }
+    
+    IntermediateGeneratorSemanticsHandler::NameImplPtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifierInternal (const UnicodeString& identifier)
+    {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-	return ident->second;
+	return boost::shared_static_cast<NameImpl> (ident->second);
       }
       if (parent)
-	return parent->ResolveIdentifier (identifier);
-      throw parser::Exception (parser::IdentifierUndeclared);
+	return parent->ResolveIdentifierInternal (identifier);
+      return NameImplPtr ();
     }
     
     IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector

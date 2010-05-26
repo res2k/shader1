@@ -58,6 +58,7 @@ namespace s1
 	const FunctionFormalParameters& params);
     
       NamePtr ResolveIdentifier (const UnicodeString& identifier);
+      NameImplPtr ResolveIdentifierInternal (const UnicodeString& identifier);
       
       TypePtr GetFunctionReturnType() const
       {
