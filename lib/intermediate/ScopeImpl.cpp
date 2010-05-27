@@ -11,6 +11,7 @@
 
 #include <boost/make_shared.hpp>
 #include <limits.h>
+#include "BlockImpl.h"
 
 namespace s1
 {
@@ -110,6 +111,7 @@ namespace s1
       
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
+      funcInfo->originalIdentifier = identifier;
       // Decorate identifier with type info (so each overload gets a unique name)
       UnicodeString identifierDecorated (identifier);
       identifierDecorated.append ("$");
@@ -126,6 +128,12 @@ namespace s1
       functions.push_back (funcInfo);
       
       functionsInDeclOrder.push_back (funcInfo);
+      
+      if (handler->IsEntryFunction (identifier))
+      {
+	boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (newBlock));
+	blockImpl->GenerateGlobalVarInitialization();
+      }	
       
       return newBlock;
     }
@@ -255,6 +263,18 @@ namespace s1
     {
       std::vector<NamePtr> ret (newVars);
       newVars.erase (newVars.begin(), newVars.end());
+      return ret;
+    }
+
+    std::vector<NamePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
+    {
+      std::vector<NamePtr> ret (newVars);
+      for (IdentifierMap::const_iterator ident (identifiers.begin());
+	   ident != identifiers.end();
+	   ++ident)
+      {
+	if (ident->second->GetType() == Name::Variable) ret.push_back (ident->second);
+      }
       return ret;
     }
     

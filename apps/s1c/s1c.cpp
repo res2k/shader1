@@ -31,6 +31,7 @@ int main (const int argc, const char* const argv[])
   Lexer lexer (uniStream, errorHandler);
   
   intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
+  intermediateHandler.SetEntryFunction ("main");
   Parser parser (lexer, intermediateHandler, errorHandler);
   try
   {
@@ -42,7 +43,7 @@ int main (const int argc, const char* const argv[])
   }
   
   codegen::CgGenerator codegen;
-  codegen::StringsArrayPtr progOutput (codegen.Generate (intermediateHandler.GetProgram()));
+  codegen::StringsArrayPtr progOutput (codegen.Generate (intermediateHandler.GetProgram ()));
   
   for (size_t i = 0; i < progOutput->Size(); i++)
   {

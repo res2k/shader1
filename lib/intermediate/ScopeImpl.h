@@ -13,6 +13,7 @@ namespace s1
     public:
       struct FunctionInfo
       {
+	UnicodeString originalIdentifier;
 	UnicodeString identifier;
 	TypePtr returnType;
 	FunctionFormalParameters params;
@@ -72,6 +73,7 @@ namespace s1
       FunctionInfoVector CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const;
       
       std::vector<NamePtr> FlushNewVars ();
+      std::vector<NamePtr> GetAllVars ();
     };
   } // namespace intermediate
 } // namespace s1

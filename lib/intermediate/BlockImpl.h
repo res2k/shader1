@@ -45,6 +45,7 @@ namespace s1
       struct ImportedName
       {
 	RegisterID reg;
+	RegisterID initialReg;
 	bool initiallyWriteable;
       };
       typedef std::tr1::unordered_map<NameImplPtr, ImportedName> ImportedNamesMap;
@@ -72,6 +73,7 @@ namespace s1
       const SequencePtr& GetSequence() const { return sequence; }
       
       void FinishBlock() { FlushVariableInitializers(); }
+      void GenerateGlobalVarInitialization ();
       
       RegisterID ImportName (NamePtr name, bool writeable);
     };

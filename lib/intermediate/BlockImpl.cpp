@@ -286,6 +286,30 @@ namespace s1
 	}
       }
     }
+    
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::GenerateGlobalVarInitialization ()
+    {
+      // Create a block with all assignments
+      BlockPtr globalsInitBlock (handler->CreateBlock (innerScope));
+      
+      std::vector<NamePtr> globalVars (handler->globalScope->GetAllVars());
+      for (std::vector<NamePtr>::const_iterator global (globalVars.begin());
+	   global != globalVars.end();
+	   ++global)
+      {
+	boost::shared_ptr<NameImpl> nameImpl (boost::shared_static_cast<NameImpl> (*global));
+	if (nameImpl->varValue)
+	{
+	  // Synthesize an expression to assign the global with the default value
+	  ExpressionPtr nameExpr (handler->CreateVariableExpression (nameImpl));
+	  ExpressionPtr assignExpr (handler->CreateAssignExpression (nameExpr, nameImpl->varValue));
+	  globalsInitBlock->AddExpressionCommand (assignExpr);
+	}
+      }
+      
+      SequenceOpPtr seqOp (CreateBlockSeqOp (globalsInitBlock, NameImplSet()));
+      sequence->AddOp (seqOp);
+    }
 
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
 										      const NameImplSet& loopNames)
@@ -327,18 +351,20 @@ namespace s1
 	  /* "Loop names" are treated somewhat special as the caller will have taken care of
 	     allocating writeable regs for these names. */
 	  bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
+	  RegisterID reg;
 	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
 	  {
-	    writtenRegisters.push_back ((*exportedName)->GetRegister (handler, *this, !isLoopName));
+	    reg = (*exportedName)->GetRegister (handler, *this, !isLoopName);
 	  }
 	  else
 	  {
-	    RegisterID reg (ImportName ((*exportedName), !isLoopName));
-	    writtenRegisters.push_back (reg);
+	    reg = ImportName ((*exportedName), !isLoopName);
 	    sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
 	  }
+	  writtenRegisters.push_back (reg);
 	}
       }
+      // Apply overrides for register IDs of exported identifiers
       return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
 						  identifierToRegIDMap,
 						  sequence->GetIdentifierToRegisterIDMap (),
@@ -373,6 +399,7 @@ namespace s1
 	impName.initiallyWriteable = writeable;
 	reg = handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
 					 importName);
+	impName.initialReg = reg;
 	if (!writeable) sequence->AddImport (nameImpl->identifier, reg);
       }
       else

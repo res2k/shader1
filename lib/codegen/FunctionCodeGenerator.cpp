@@ -77,48 +77,51 @@ namespace s1
 	  }
 	}
 	
-	// Generate parameters for sequence imports (ie globals)
-	intermediate::Sequence::RegisterImpMappings imports (func->GetBody()->GetImports());
-	for (intermediate::Sequence::RegisterImpMappings::const_iterator import (imports.begin());
-	     import != imports.end();
-	     ++import)
+	if (!func->IsEntryFunction ()) // In entry functions, global vars are actually local
 	{
-	  // Only look at globals
-	  if (paramImports.find (import->first) != paramImports.end()) continue;
+	  // Generate parameters for sequence imports (ie globals)
+	  intermediate::Sequence::RegisterImpMappings imports (func->GetBody()->GetImports());
+	  for (intermediate::Sequence::RegisterImpMappings::const_iterator import (imports.begin());
+	      import != imports.end();
+	      ++import)
+	  {
+	    // Only look at globals
+	    if (paramImports.find (import->first) != paramImports.end()) continue;
+	    
+	    UnicodeString paramIdentDecorated ("I");
+	    paramIdentDecorated.append (import->first);
+	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	    intermediate::Sequence::RegisterBankPtr bank;
+	    func->GetBody()->QueryRegisterPtrFromID (import->second, bank);
+	    std::string paramStr (TypeToCgType (bank->GetOriginalType()));
+	    paramStr.append (" ");
+	    paramStr.append (paramIdent);
+	    inParams.push_back (paramStr);
+	    
+	    nameRes.inParamMap[import->first] = paramIdent;
+	  }
 	  
-	  UnicodeString paramIdentDecorated ("I");
-	  paramIdentDecorated.append (import->first);
-	  std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
-	  intermediate::Sequence::RegisterBankPtr bank;
-	  func->GetBody()->QueryRegisterPtrFromID (import->second, bank);
-	  std::string paramStr (TypeToCgType (bank->GetOriginalType()));
-	  paramStr.append (" ");
-	  paramStr.append (paramIdent);
-	  inParams.push_back (paramStr);
-	  
-	  nameRes.inParamMap[import->first] = paramIdent;
-	}
-	
-	// Generate parameters for sequence exports
-	intermediate::Sequence::RegisterExpMappings exports (func->GetBody()->GetExports());
-	for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
-	     exported != exports.end();
-	     ++exported)
-	{
-	  // Only look at globals
-	  if (paramImports.find (exported->first) != paramImports.end()) continue;
-	  
-	  UnicodeString paramIdentDecorated ("O");
-	  paramIdentDecorated.append (exported->first);
-	  std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
-	  intermediate::Sequence::RegisterBankPtr bank;
-	  func->GetBody()->QueryRegisterPtrFromID (exported->second, bank);
-	  std::string paramStr (TypeToCgType (bank->GetOriginalType()));
-	  paramStr.append (" ");
-	  paramStr.append (paramIdent);
-	  outParams.push_back (paramStr);
-	  
-	  nameRes.outParamMap[exported->first] = paramIdent;
+	  // Generate parameters for sequence exports
+	  intermediate::Sequence::RegisterExpMappings exports (func->GetBody()->GetExports());
+	  for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
+	      exported != exports.end();
+	      ++exported)
+	  {
+	    // Only look at globals
+	    if (paramImports.find (exported->first) != paramImports.end()) continue;
+	    
+	    UnicodeString paramIdentDecorated ("O");
+	    paramIdentDecorated.append (exported->first);
+	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	    intermediate::Sequence::RegisterBankPtr bank;
+	    func->GetBody()->QueryRegisterPtrFromID (exported->second, bank);
+	    std::string paramStr (TypeToCgType (bank->GetOriginalType()));
+	    paramStr.append (" ");
+	    paramStr.append (paramIdent);
+	    outParams.push_back (paramStr);
+	    
+	    nameRes.outParamMap[exported->first] = paramIdent;
+	  }
 	}
 	
 	ParamAdder paramAdder;

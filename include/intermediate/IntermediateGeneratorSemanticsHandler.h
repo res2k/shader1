@@ -47,6 +47,8 @@ namespace s1
       typedef boost::shared_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
       ScopeImplPtr globalScope;
+      
+      UnicodeString entryFunction;
     public:
       /**\name Type utilities
        * @{ */
@@ -94,6 +96,9 @@ namespace s1
 			 const TypeImplPtr& typeSource);
 			 
       ProgramPtr GetProgram ();
+      
+      void SetEntryFunction (const UnicodeString& entryFunction) { this->entryFunction = entryFunction; }
+      bool IsEntryFunction (const UnicodeString& entryFunction) const { return this->entryFunction == entryFunction; }
       
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */

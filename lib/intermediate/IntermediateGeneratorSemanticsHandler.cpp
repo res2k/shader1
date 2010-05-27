@@ -225,7 +225,8 @@ namespace s1
 	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->identifier,
 									    (*funcIt)->returnType,
 									    (*funcIt)->params,
-									    (*funcIt)->block));
+									    (*funcIt)->block,
+									    IsEntryFunction ((*funcIt)->originalIdentifier)));
 	  newProg->AddFunction (newFunc);
 	}
       }
