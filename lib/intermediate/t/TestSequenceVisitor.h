@@ -25,6 +25,9 @@ public:
     opArithMod,
     opLogicAnd,
     opLogicOr,
+    opUnaryInv,
+    opUnaryNeg,
+    opUnaryNot,
     opCompareEq,
     opCompareNE,
     opCompareLE,
@@ -233,6 +236,37 @@ public:
     entry.destReg = destination;
     entry.sourceReg[0] = source1;
     entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+
+
+  void OpUnaryInv (const RegisterID& destination,
+		   const RegisterID& source)
+  {
+    SequenceEntry entry;
+    entry.op = opUnaryInv;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entries.push_back (entry);
+  }
+
+  void OpUnaryNeg (const RegisterID& destination,
+		   const RegisterID& source)
+  {
+    SequenceEntry entry;
+    entry.op = opUnaryNeg;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entries.push_back (entry);
+  }
+
+  void OpUnaryNot (const RegisterID& destination,
+		   const RegisterID& source)
+  {
+    SequenceEntry entry;
+    entry.op = opUnaryNot;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
     entries.push_back (entry);
   }
 

@@ -30,6 +30,7 @@ namespace s1
       class FunctionCallExpressionImpl;
       class LogicExpressionImpl;
       class NumericExpressionImpl;
+      class UnaryExpressionImpl;
       class VariableExpressionImpl;
       
       typedef boost::shared_ptr<NameImpl> NameImplPtr;

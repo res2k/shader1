@@ -88,6 +88,16 @@ namespace s1
       EmitAssign (destination, rside.c_str());
     }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitUnary (const RegisterID& destination,
+									const RegisterID& source,
+									const char* op)
+    {
+      std::string sourceName (owner->GetOutputRegisterName (source));
+      std::string rside (op);
+      rside.append (sourceName);
+      EmitAssign (destination, rside.c_str());
+    }
+    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterID& destination,
 									  bool value)
     {
@@ -204,8 +214,28 @@ namespace s1
     {
       EmitBinary (destination, source1, source2, "||");
     }
+
+
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryInv (const RegisterID& destination,
+									 const RegisterID& source)
+    {
+      EmitUnary (destination, source, "~");
+    }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryNeg (const RegisterID& destination,
+									 const RegisterID& source)
+    {
+      EmitUnary (destination, source, "-");
+    }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryNot (const RegisterID& destination,
+									 const RegisterID& source)
+    {
+      EmitUnary (destination, source, "!");
+    }
+    
+
+		      
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareEq (const RegisterID& destination,
 									  const RegisterID& source1,
 									  const RegisterID& source2)

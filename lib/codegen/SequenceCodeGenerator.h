@@ -58,6 +58,9 @@ namespace s1
 			 const RegisterID& source1,
 			 const RegisterID& source2,
 			 const char* op);
+	void EmitUnary (const RegisterID& destination,
+			const RegisterID& source,
+			const char* op);
       public:
 	CodegenVisitor (SequenceCodeGenerator* owner,
 			const StringsArrayPtr& target);
@@ -106,6 +109,13 @@ namespace s1
 			const RegisterID& source1,
 			const RegisterID& source2);
 
+	void OpUnaryInv (const RegisterID& destination,
+			 const RegisterID& source);
+	void OpUnaryNeg (const RegisterID& destination,
+			 const RegisterID& source);
+	void OpUnaryNot (const RegisterID& destination,
+			 const RegisterID& source);
+			       
 	void OpCompareEq (const RegisterID& destination,
 			  const RegisterID& source1,
 			  const RegisterID& source2);

@@ -23,6 +23,7 @@
 #include "ComparisonExpressionImpl.h"
 #include "LogicExpressionImpl.h"
 #include "NumericExpressionImpl.h"
+#include "UnaryExpressionImpl.h"
 #include "VariableExpressionImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -325,7 +326,10 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateUnaryExpression (UnaryOp op,
 					  ExpressionPtr operand)
 						  
-    { return ExpressionPtr(); }
+    {
+      return boost::make_shared<UnaryExpressionImpl> (this, op,
+						      boost::static_pointer_cast<ExpressionImpl> (operand));
+    }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTernaryExpression (ExpressionPtr condition,
 					    ExpressionPtr ifExpr,
