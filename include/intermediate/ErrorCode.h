@@ -27,6 +27,8 @@ namespace s1
       AmbiguousFunctionOverload,
       /// Actual parameter is not an L-value
       ActualParameterNotAnLValue,
+      /// The types of the 'if' and 'else' expression of a ternary expression are incompatible
+      TernaryExpressionTypesIncompatible,
       
       // Below: definitely internal
       /// Error parsing number string

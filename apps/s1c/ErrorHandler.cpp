@@ -53,6 +53,7 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(NoMatchingFunctionOverload);
   ERRORCODE(AmbiguousFunctionOverload);
   ERRORCODE(ActualParameterNotAnLValue);
+  ERRORCODE(TernaryExpressionTypesIncompatible);
   ERRORCODE(NumberParseError);
 #undef ERRORCODE
   }

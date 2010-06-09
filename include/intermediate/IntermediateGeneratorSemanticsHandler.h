@@ -30,6 +30,7 @@ namespace s1
       class FunctionCallExpressionImpl;
       class LogicExpressionImpl;
       class NumericExpressionImpl;
+      class TernaryExpressionImpl;
       class UnaryExpressionImpl;
       class VariableExpressionImpl;
       
