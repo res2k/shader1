@@ -125,6 +125,31 @@ namespace s1
          as we want the ID before that */
       Sequence::IdentifierToRegIDMap identifierToRegIDMap (sequence->GetIdentifierToRegisterIDMap ());
       
+      NameImplSet allExportedNames (ifBlockImpl->exportedNames);
+      allExportedNames.insert (elseBlockImpl->exportedNames.begin(), elseBlockImpl->exportedNames.end());
+      
+      /* Check for names that are exported from one block but not the other.
+	 In this case, the original value has to be copied inside the block from which it's not exported. */
+      for (NameImplSet::const_iterator exportedName = allExportedNames.begin();
+	    exportedName != allExportedNames.end();
+	    exportedName++)
+      {
+	if (ifBlockImpl->exportedNames.find (*exportedName) == ifBlockImpl->exportedNames.end())
+	{
+	  ExpressionPtr targetExpr (handler->CreateVariableExpression (*exportedName));
+	  ExpressionPtr valueExpr (handler->CreateVariableExpression (*exportedName));
+	  ExpressionPtr assignExpr (handler->CreateAssignExpression (targetExpr, valueExpr));
+	  ifBlockImpl->AddExpressionCommand (assignExpr); // FIXME: should prolly not change original block...
+	}
+	if (elseBlockImpl->exportedNames.find (*exportedName) == elseBlockImpl->exportedNames.end())
+	{
+	  ExpressionPtr targetExpr (handler->CreateVariableExpression (*exportedName));
+	  ExpressionPtr valueExpr (handler->CreateVariableExpression (*exportedName));
+	  ExpressionPtr assignExpr (handler->CreateAssignExpression (targetExpr, valueExpr));
+	  elseBlockImpl->AddExpressionCommand (assignExpr); // FIXME: should prolly not change original block...
+	}
+      }
+      
       // Generate register IDs for all values the nested blocks export
       typedef std::tr1::unordered_map<NameImplPtr, RegisterID> ExportedNamesMap;
       ExportedNamesMap seenExportedNames;
@@ -177,6 +202,7 @@ namespace s1
 	  writtenRegistersElse.push_back (reg);
 	}
       }
+      
       SequenceOpPtr seqOpIf (boost::make_shared<SequenceOpBlock> (ifBlockImpl->GetSequence(),
 								  identifierToRegIDMap,
 								  sequence->GetIdentifierToRegisterIDMap (),
