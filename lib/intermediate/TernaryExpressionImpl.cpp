@@ -29,10 +29,14 @@ namespace s1
     RegisterID IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::GetRegister (BlockImpl& block,
 											  bool writeable)
     {
+      // @@@ Somewhat fragile, relying on GetRegister() and AddToSequence() being called with the same block
+      if (!ifBlock) ifBlock = handler->CreateBlock (block.GetInnerScope());
+      if (!elseBlock) elseBlock = handler->CreateBlock (block.GetInnerScope());
+      
       // Let operands grab registers ...
       condition->GetRegister (block, false);
-      ifExpr->GetRegister (block, false);
-      elseExpr->GetRegister (block, false);
+      ifExpr->GetRegister (*(boost::shared_static_cast<BlockImpl> (ifBlock)), false);
+      elseExpr->GetRegister (*(boost::shared_static_cast<BlockImpl> (elseBlock)), false);
       return RegisterID ();
     }
       
@@ -87,16 +91,15 @@ namespace s1
       UnicodeString destNameStr (destRegPtr->GetName());
       destNameStr.append ("$tr");
       NamePtr destName (block.GetInnerScope()->AddVariable (destRegBank->GetOriginalType(), destNameStr, ExpressionPtr(), false));
-      
+
+      // NOTE: ifBlock and elseBlock are created in GetRegister()
       // Synthesize assignment for 'true' case
-      BlockPtr ifBlock (handler->CreateBlock (block.GetInnerScope()));
       {
 	ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
 	ExpressionPtr ifAssignExpr (handler->CreateAssignExpression (destNameExpr, ifExpr));
 	ifBlock->AddExpressionCommand (ifAssignExpr);
       }
       // Synthesize assignment for 'false' case
-      BlockPtr elseBlock (handler->CreateBlock (block.GetInnerScope()));
       {
 	ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
 	ExpressionPtr elseAssignExpr (handler->CreateAssignExpression (destNameExpr, elseExpr));
