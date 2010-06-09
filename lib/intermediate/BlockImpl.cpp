@@ -80,8 +80,114 @@ namespace s1
 						     Condition));
       impl->AddToSequence (*this, condReg);
       
-      SequenceOpPtr seqOpIf (CreateBlockSeqOp (ifBlock));
-      SequenceOpPtr seqOpElse (CreateBlockSeqOp (elseBlock));
+      boost::shared_ptr<BlockImpl> ifBlockImpl (boost::shared_static_cast<BlockImpl> (ifBlock));
+      boost::shared_ptr<BlockImpl> elseBlockImpl (boost::shared_static_cast<BlockImpl> (elseBlock));
+      
+      ifBlockImpl->FinishBlock();
+      elseBlockImpl->FinishBlock();
+      
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      
+      // Collect registers read by the blocks
+      std::vector<RegisterID> readRegistersIf;
+      std::vector<RegisterID> readRegistersElse;
+      {
+	for (ImportedNamesMap::const_iterator import = ifBlockImpl->importedNames.begin();
+	     import != ifBlockImpl->importedNames.end();
+	     ++import)
+	{
+	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+	      && !import->second.initiallyWriteable)
+	  {
+	    RegisterID reg (ImportName (import->first, false));
+	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	    readRegistersIf.push_back (reg);
+	  }
+	}
+	for (ImportedNamesMap::const_iterator import = elseBlockImpl->importedNames.begin();
+	     import != elseBlockImpl->importedNames.end();
+	     ++import)
+	{
+	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+	      && !import->second.initiallyWriteable)
+	  {
+	    RegisterID reg (ImportName (import->first, false));
+	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	    readRegistersElse.push_back (reg);
+	  }
+	}
+      }
+      
+      /* Pass 'snapshot' of identifiers-to-register-ID map
+         When resolving imports, the registers for variables _at the time of the block
+         insertion_ is needed, hence the snapshot.
+         Also, do it before allocating new registers for the 'written registers',
+         as we want the ID before that */
+      Sequence::IdentifierToRegIDMap identifierToRegIDMap (sequence->GetIdentifierToRegisterIDMap ());
+      
+      // Generate register IDs for all values the nested blocks export
+      typedef std::tr1::unordered_map<NameImplPtr, RegisterID> ExportedNamesMap;
+      ExportedNamesMap seenExportedNames;
+      std::vector<RegisterID> writtenRegistersIf;
+      std::vector<RegisterID> writtenRegistersElse;
+      {
+	for (NameImplSet::const_iterator exportedName = ifBlockImpl->exportedNames.begin();
+	     exportedName != ifBlockImpl->exportedNames.end();
+	     exportedName++)
+	{
+	  RegisterID reg;
+	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
+	  {
+	    reg = (*exportedName)->GetRegister (handler, *this, true);
+	  }
+	  else
+	  {
+	    reg = ImportName ((*exportedName), true);
+	    sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
+	  }
+	  writtenRegistersIf.push_back (reg);
+	  seenExportedNames.insert (std::make_pair (*exportedName, reg));
+	}
+      }
+      {
+	for (NameImplSet::const_iterator exportedName = elseBlockImpl->exportedNames.begin();
+	     exportedName != elseBlockImpl->exportedNames.end();
+	     exportedName++)
+	{
+	  RegisterID reg;
+	  
+	  ExportedNamesMap::const_iterator prevName (seenExportedNames.find (*exportedName));
+	  
+	  if (prevName != seenExportedNames.end())
+	  {
+	    reg = prevName->second;
+	  }
+	  else
+	  {
+	    if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
+	    {
+	      reg = (*exportedName)->GetRegister (handler, *this, true);
+	    }
+	    else
+	    {
+	      reg = ImportName ((*exportedName), true);
+	      sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
+	    }
+	  }
+	  writtenRegistersElse.push_back (reg);
+	}
+      }
+      SequenceOpPtr seqOpIf (boost::make_shared<SequenceOpBlock> (ifBlockImpl->GetSequence(),
+								  identifierToRegIDMap,
+								  sequence->GetIdentifierToRegisterIDMap (),
+								  readRegistersIf,
+								  writtenRegistersIf));
+      SequenceOpPtr seqOpElse (boost::make_shared<SequenceOpBlock> (elseBlockImpl->GetSequence(),
+								    identifierToRegIDMap,
+								    sequence->GetIdentifierToRegisterIDMap (),
+								    readRegistersElse,
+								    writtenRegistersElse));
+      
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBranch> (condReg, seqOpIf, seqOpElse));
       sequence->AddOp (seqOp);
     }
