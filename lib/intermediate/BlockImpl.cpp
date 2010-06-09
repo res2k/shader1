@@ -80,6 +80,11 @@ namespace s1
 						     Condition));
       impl->AddToSequence (*this, condReg);
       
+      if (!elseBlock)
+      {
+	elseBlock = handler->CreateBlock (GetInnerScope());
+      }
+      
       boost::shared_ptr<BlockImpl> ifBlockImpl (boost::shared_static_cast<BlockImpl> (ifBlock));
       boost::shared_ptr<BlockImpl> elseBlockImpl (boost::shared_static_cast<BlockImpl> (elseBlock));
       
