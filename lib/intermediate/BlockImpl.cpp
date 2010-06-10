@@ -241,8 +241,12 @@ namespace s1
 	  }
        */
       
-      ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
-      RegisterID condReg (condImpl->AddToSequence (*this, Condition));
+      // Emit initial assignment to loop condition var
+      {
+	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+	AddExpressionCommand (condAssign);
+      }
       
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (loopBlock));
       blockImpl->FinishBlock();
@@ -275,8 +279,6 @@ namespace s1
 	  RegisterID regIn ((*loopVar)->GetRegister (handler, *this, false));
 	  RegisterID regOut ((*loopVar)->GetRegister (handler, *this, true));
 	  loopedRegs.push_back (std::make_pair (regIn, regOut));
-	  // Small kludge: change the condition register to the one that's written to
-	  if (condReg == regIn) condReg = regOut;
 	}
 	else
 	{
@@ -289,9 +291,14 @@ namespace s1
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
-      ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
-      ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
-      newBlock->AddExpressionCommand (condAssign);
+      {
+	ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
+	condImpl->InvalidateRegister();
+	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+	newBlock->AddExpressionCommand (condAssign);
+      }
+      RegisterID condReg (varCondition->GetRegister (handler, *this, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
@@ -325,8 +332,12 @@ namespace s1
       ExpressionImpl* initImpl = static_cast<ExpressionImpl*> (initExpr.get());
       initImpl->AddToSequence (*this);
       
-      ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
-      RegisterID condReg (condImpl->AddToSequence (*this, Condition));
+      // Emit initial assignment to loop condition var
+      {
+	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+	AddExpressionCommand (condAssign);
+      }
       
       ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
       
@@ -366,8 +377,6 @@ namespace s1
 	  RegisterID regIn ((*loopVar)->GetRegister (handler, *this, false));
 	  RegisterID regOut ((*loopVar)->GetRegister (handler, *this, true));
 	  loopedRegs.push_back (std::make_pair (regIn, regOut));
-	  // Small kludge: change the condition register to the one that's written to
-	  if (condReg == regIn) condReg = regOut;
 	}
 	else
 	{
@@ -383,10 +392,14 @@ namespace s1
       
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
-      condImpl->InvalidateRegister();
-      ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
-      ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
-      newBlock->AddExpressionCommand (condAssign);
+      {
+	ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
+	condImpl->InvalidateRegister();
+	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+	newBlock->AddExpressionCommand (condAssign);
+      }
+      RegisterID condReg (varCondition->GetRegister (handler, *this, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
