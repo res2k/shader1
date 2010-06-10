@@ -187,7 +187,10 @@ namespace s1
 	}
       }
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
+      RegisterID destination;
+      boost::shared_ptr<TypeImpl> retType (GetValueType());
+      if (!retType->IsEqual (*(handler->GetVoidType())))
+	destination = handler->AllocateRegister (*(block.GetSequence()), retType, classify, name);
       
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
 								       inParams, outParams));
