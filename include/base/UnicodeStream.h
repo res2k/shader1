@@ -20,6 +20,10 @@ namespace s1
     {
     public:
       virtual void handleFailure() const;
+    #if (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM) < 404
+      // Source compatibility w/ ICU 4.2
+      inline void assertSuccess() const { check(); }
+    #endif
     };
     
     std::istream& inStream;

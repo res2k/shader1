@@ -22,9 +22,9 @@ namespace s1
   {
     ICUError err;
     uconv = ucnv_open (encoding, err);
-    err.check();
+    err.assertSuccess();
     ucnv_setToUCallBack (uconv, UCNV_TO_U_CALLBACK_STOP, 0, 0, 0, err);
-    err.check();
+    err.assertSuccess();
     
     // Go to first character
     if (*this) ++(*this);
