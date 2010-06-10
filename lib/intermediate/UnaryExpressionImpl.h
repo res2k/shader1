@@ -17,7 +17,6 @@ namespace s1
 			   const boost::shared_ptr<ExpressionImpl>& operand);
       
       RegisterID GetRegister (BlockImpl& block, bool writeable);
-      void InvalidateRegister ();
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       

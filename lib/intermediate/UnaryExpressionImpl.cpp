@@ -31,11 +31,6 @@ namespace s1
       return RegisterID ();
     }
       
-    void IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::InvalidateRegister ()
-    {
-      operand->InvalidateRegister ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {

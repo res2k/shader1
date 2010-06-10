@@ -32,12 +32,6 @@ namespace s1
       return RegisterID ();
     }
       
-    void IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::InvalidateRegister ()
-    {
-      operand1->InvalidateRegister ();
-      operand2->InvalidateRegister ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::QueryWrittenNames (bool asLvalue)
     {

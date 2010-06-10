@@ -17,18 +17,17 @@ namespace s1
       ScopeImpl::FunctionInfoPtr overload;
       
       ExpressionVector actualParams;
-      bool haveRegisters;
-      std::vector<std::pair<RegisterID, RegisterID> > fetchedRegs;
       
       void SelectOverload ();
-      void FetchRegisters (s1::intermediate::IntermediateGeneratorSemanticsHandler::BlockImpl & block);
+      typedef std::vector<std::pair<RegisterID, RegisterID> > FetchedRegs;
+      void FetchRegisters (s1::intermediate::IntermediateGeneratorSemanticsHandler::BlockImpl & block,
+			   FetchedRegs& fetchedRegs);
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 				  const NamePtr& functionName,
 				  const ExpressionVector& params);
       
       RegisterID GetRegister (BlockImpl& block, bool writeable);
-      void InvalidateRegister ();
       
       boost::shared_ptr<TypeImpl> GetValueType ();
       RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,

@@ -35,12 +35,6 @@ namespace s1
       return RegisterID ();
     }
       
-    void IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::InvalidateRegister ()
-    {
-      operand1->InvalidateRegister ();
-      operand2->InvalidateRegister ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::QueryWrittenNames (bool asLvalue)
     {

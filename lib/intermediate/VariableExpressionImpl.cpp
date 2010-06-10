@@ -24,19 +24,15 @@ namespace s1
     RegisterID
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetRegister (BlockImpl& block, bool writeable)
     {
-      if (!myReg.IsValid())
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (block.GetInnerScope()));
+      if (boost::shared_ptr<ScopeImpl> (name->ownerScope) != blockScopeImpl)
       {
-	boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (block.GetInnerScope()));
-	if (boost::shared_ptr<ScopeImpl> (name->ownerScope) != blockScopeImpl)
-	{
-	  myReg = block.ImportName (name, writeable);
-	}
-	else
-	{
-	  myReg = name->GetRegister (handler, block, writeable);
-	}
+	return block.ImportName (name, writeable);
       }
-      return myReg;
+      else
+      {
+	return name->GetRegister (handler, block, writeable);
+      }
     }
       
     IntermediateGeneratorSemanticsHandler::NameImplSet

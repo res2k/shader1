@@ -18,8 +18,7 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler,
       const NamePtr& functionName,
       const ExpressionVector& params)
-       : ExpressionImpl (handler), functionName (functionName), params (params), overloadSelected (false),
-         haveRegisters (false)
+       : ExpressionImpl (handler), functionName (functionName), params (params), overloadSelected (false)
     {
     }
 
@@ -60,19 +59,15 @@ namespace s1
       }
     }
 
-    void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FetchRegisters (BlockImpl& block)
+    void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FetchRegisters (BlockImpl& block,
+											    FetchedRegs& fetchedRegs)
     {
-      if (haveRegisters) return;
-      haveRegisters = true;
-      
       for (size_t i = 0; i < actualParams.size(); i++)
       {
 	RegisterID reg1, reg2;
 	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	if (overload->params[i].dir & ScopeImpl::dirIn)
 	  reg1 = paramExprImpl->GetRegister (block, false);
-	if (overload->params[i].dir & ScopeImpl::dirInOut)
-	  paramExprImpl->InvalidateRegister();
 	if (overload->params[i].dir & ScopeImpl::dirOut)
 	  reg2 = paramExprImpl->GetRegister (block, true);
 	fetchedRegs.push_back (std::make_pair (reg1, reg2));
@@ -84,25 +79,7 @@ namespace s1
     {
       SelectOverload ();
 	
-      if (!overload->identifier.isEmpty())
-      {
-	// Let params grab registers ...
-	FetchRegisters (block);
-      }
       return RegisterID ();
-    }
-      
-    void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::InvalidateRegister ()
-    {
-      SelectOverload ();
-	
-      // Let params grab registers ...
-      for (size_t i = 0; i < actualParams.size(); i++)
-      {
-	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
-	paramExprImpl->InvalidateRegister ();
-      }
-      haveRegisters = false;
     }
       
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
@@ -124,7 +101,8 @@ namespace s1
       
       if (overload->identifier.isEmpty()) return RegisterID();
       
-      FetchRegisters (block);
+      FetchedRegs fetchedRegs;
+      FetchRegisters (block, fetchedRegs);
       
       std::vector<RegisterID> inParams;
       std::vector<RegisterID> outParams;

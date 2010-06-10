@@ -22,8 +22,6 @@ namespace s1
        */
       virtual RegisterID GetRegister (BlockImpl& block, bool writeable)
       { return RegisterID (); }
-      /// Force next GetRegister() call to fetch a new register.
-      virtual void InvalidateRegister () {}
       
       virtual NameImplSet QueryWrittenNames (bool asLvalue);
       

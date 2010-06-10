@@ -292,8 +292,6 @@ namespace s1
          as the "condition" in the sequence op is just a simple reg */
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
       {
-	ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
-	condImpl->InvalidateRegister();
 	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
 	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
 	newBlock->AddExpressionCommand (condAssign);
@@ -393,8 +391,6 @@ namespace s1
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
       {
-	ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
-	condImpl->InvalidateRegister();
 	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
 	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
 	newBlock->AddExpressionCommand (condAssign);

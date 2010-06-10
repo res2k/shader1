@@ -36,13 +36,6 @@ namespace s1
       return RegisterID ();
     }
       
-    void IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::InvalidateRegister ()
-    {
-      condition->InvalidateRegister ();
-      ifExpr->InvalidateRegister ();
-      elseExpr->InvalidateRegister ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
@@ -108,7 +101,6 @@ namespace s1
 	elseBlock->AddExpressionCommand (elseAssignExpr);
       }
       // Add branch operation to sequence
-      condition->InvalidateRegister();
       block.AddBranching (condition, ifBlock, elseBlock);
       // Assign ternary result to destination
       {
