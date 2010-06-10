@@ -21,13 +21,7 @@ namespace s1
      
     void IntermediateGeneratorSemanticsHandler::ExpressionImpl::AddToSequence (BlockImpl& block)
     {
-      boost::shared_ptr<TypeImpl> exprValueType = GetValueType ();
-      // Create a dummy destination
-      RegisterID dummyDest;
-      if (!handler->GetVoidType()->IsEqual (*exprValueType))
-	dummyDest = handler->AllocateRegister (*(block.GetSequence()), exprValueType, Dummy);
-      // Add expression, write to dummy destination
-      AddToSequence (block, dummyDest);
+      AddToSequence (block, Dummy);
       /* Need to generate operations even if the result isn't used, due
          to possible side effects.
          Eventually, dead code elimination should take care of removing the

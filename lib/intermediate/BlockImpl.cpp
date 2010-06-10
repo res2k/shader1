@@ -53,8 +53,7 @@ namespace s1
 	TypeImplPtr retType (boost::shared_static_cast<TypeImpl> (
 	  boost::shared_static_cast<ScopeImpl> (innerScope)->GetFunctionReturnType()));
 	  
-	RegisterID exprTargetReg (handler->AllocateRegister (*sequence, impl->GetValueType (), Intermediate));
-	impl->AddToSequence (*this, exprTargetReg);
+	RegisterID exprTargetReg (impl->AddToSequence (*this, Intermediate));
 	if (retType->IsEqual (*(impl->GetValueType ())))
 	{
 	  retValReg = exprTargetReg;
@@ -76,9 +75,7 @@ namespace s1
     {
       FlushVariableInitializers();
       ExpressionImpl* impl = static_cast<ExpressionImpl*> (branchCondition.get());
-      RegisterID condReg (handler->AllocateRegister (*sequence, handler->GetBoolType(),
-						     Condition));
-      impl->AddToSequence (*this, condReg);
+      RegisterID condReg (impl->AddToSequence (*this, Condition));
       
       if (!elseBlock)
       {
@@ -245,8 +242,7 @@ namespace s1
        */
       
       ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
-      RegisterID condReg (varCondition->GetRegister (handler, *this, true));
-      condImpl->AddToSequence (*this, condReg);
+      RegisterID condReg (condImpl->AddToSequence (*this, Condition));
       
       boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (loopBlock));
       blockImpl->FinishBlock();
@@ -293,8 +289,9 @@ namespace s1
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
-      condImpl->InvalidateRegister();
-      condImpl->AddToSequence (*newBlock, newBlock->ImportName (varCondition, true));
+      ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+      ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+      newBlock->AddExpressionCommand (condAssign);
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
@@ -329,8 +326,7 @@ namespace s1
       initImpl->AddToSequence (*this);
       
       ExpressionImpl* condImpl = static_cast<ExpressionImpl*> (loopCond.get());
-      RegisterID condReg (varCondition->GetRegister (handler, *this, true));
-      condImpl->AddToSequence (*this, condReg);
+      RegisterID condReg (condImpl->AddToSequence (*this, Condition));
       
       ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
       
@@ -388,7 +384,9 @@ namespace s1
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
       condImpl->InvalidateRegister();
-      condImpl->AddToSequence (*newBlock, newBlock->ImportName (varCondition, true));
+      ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+      ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+      newBlock->AddExpressionCommand (condAssign);
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));

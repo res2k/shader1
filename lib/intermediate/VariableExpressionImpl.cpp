@@ -53,21 +53,12 @@ namespace s1
       return name->valueType;
     }
     
-    void IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
-										       RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
+											     RegisterClassification classify,
+											     const UnicodeString& name,
+											     bool asLvalue)
     {
-      if (destination.IsValid())
-      {
-	// Evaluating to a destination -> assignment
-	SequenceOpPtr seqOp;
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpAssign> (destination, GetRegister (block, false)));
-	block.GetSequence()->AddOp (seqOp);
-      }
-      else
-      {
-	/* Don't need anything here... other ops will either write to, or
-	  read from, the register for this var. */
-      }
+      return GetRegister (block, asLvalue);
     }
   } // namespace intermediate
 } // namespace s1

@@ -64,9 +64,13 @@ namespace s1
       return handler->GetBoolType();
     }
     
-    void IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::AddToSequence (BlockImpl& block,
-											 RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::AddToSequence (BlockImpl& block,
+											       RegisterClassification classify,
+											       const UnicodeString& name,
+											       bool asLvalue)
     {
+      if (asLvalue) return RegisterID();
+      
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
@@ -78,8 +82,7 @@ namespace s1
       reg1 = operand1->GetRegister (block, false);
       if (!reg1.IsValid())
       {
-	reg1 = handler->AllocateRegister (seq, type1, Intermediate);
-	operand1->AddToSequence (block, reg1);
+	reg1 = operand1->AddToSequence (block, Intermediate);
       }
       if (!comparisonType->IsEqual (*(type1.get())))
       {
@@ -93,8 +96,7 @@ namespace s1
       reg2 = operand2->GetRegister (block, false);
       if (!reg2.IsValid())
       {
-	reg2 = handler->AllocateRegister (seq, type2, Intermediate);
-	operand2->AddToSequence (block, reg2);
+	reg2 = operand2->AddToSequence (block, Intermediate);
       }
       if (!comparisonType->IsEqual (*(type2.get())))
       {
@@ -104,6 +106,8 @@ namespace s1
 			       reg2, type2);
 	reg2 = newReg2;
       }
+      
+      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;
@@ -130,6 +134,8 @@ namespace s1
       }
       assert (seqOp);
       seq.AddOp (seqOp);
+      
+      return destination;
     }
   } // namespace intermediate
 } // namespace s1

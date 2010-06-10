@@ -42,10 +42,16 @@ namespace s1
       };
     }
     
-    void IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
-										      RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
+											    RegisterClassification classify,
+											    const UnicodeString& name,
+											    bool asLvalue)
     {
+      if (asLvalue) return RegisterID();
+      
       U_NAMESPACE_USE
+      
+      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
       
       // Mark 'destination' as constant or something?
       
@@ -117,6 +123,8 @@ namespace s1
       }
       assert (seqOp);
       block.GetSequence()->AddOp (seqOp);
+      
+      return destination;
     }
   } // namespace intermediate
 } // namespace s1

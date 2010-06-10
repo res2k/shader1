@@ -77,20 +77,22 @@ namespace s1
       return valueType;
     }
     
-    void IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::AddToSequence (BlockImpl& block,
-										      RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::AddToSequence (BlockImpl& block,
+											    RegisterClassification classify,
+											    const UnicodeString& name,
+											    bool asLvalue)
     {
+      if (asLvalue) return RegisterID();
+      
       /* Spec says: if condition is true, evaluate 'if' expression;
 	 if condition is false, evaluate 'else' expression.
 	 Between the lines, don't evaluate the _other_ expression in either case.
 	 To get that effect, synthesize a branching op. */
       
       // Set up a Name object for the ternary op result
-      Sequence::RegisterBankPtr destRegBank;
-      Sequence::RegisterPtr destRegPtr (block.GetSequence()->QueryRegisterPtrFromID (destination, destRegBank));
-      UnicodeString destNameStr (destRegPtr->GetName());
+      UnicodeString destNameStr (name);
       destNameStr.append ("$tr");
-      NamePtr destName (block.GetInnerScope()->AddVariable (destRegBank->GetOriginalType(), destNameStr, ExpressionPtr(), false));
+      NamePtr destName (block.GetInnerScope()->AddVariable (GetValueType(), destNameStr, ExpressionPtr(), false));
 
       // NOTE: ifBlock and elseBlock are created in GetRegister()
       // Synthesize assignment for 'true' case
@@ -111,7 +113,7 @@ namespace s1
       {
 	ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
 	boost::shared_ptr<ExpressionImpl> destNameExprImpl (boost::shared_static_cast<ExpressionImpl> (destNameExpr));
-	destNameExprImpl->AddToSequence (block, destination);
+	return destNameExprImpl->AddToSequence (block, Intermediate);
       }
     }
   } // namespace intermediate

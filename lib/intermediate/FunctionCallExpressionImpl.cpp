@@ -113,12 +113,16 @@ namespace s1
       return boost::shared_static_cast<TypeImpl> (overload->returnType);
     }
     
-    void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
-											   RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
+												 RegisterClassification classify,
+												 const UnicodeString& name,
+												 bool asLvalue)
     {
+      if (asLvalue) return RegisterID();
+      
       SelectOverload ();
       
-      if (overload->identifier.isEmpty()) return;
+      if (overload->identifier.isEmpty()) return RegisterID();
       
       FetchRegisters (block);
       
@@ -134,8 +138,7 @@ namespace s1
 	  RegisterID inReg (fetchedRegs[i].first);
 	  if (!inReg.IsValid())
 	  {
-	    inReg = handler->AllocateRegister (*(block.GetSequence()), paramExprType, Intermediate);
-	    paramExprImpl->AddToSequence (block, inReg);
+	    inReg = paramExprImpl->AddToSequence (block, Intermediate);
 	  }
 	  boost::shared_ptr<TypeImpl> formalParamType (boost::shared_static_cast<TypeImpl> (param.type));
 	  if (!paramExprType->IsEqual (*formalParamType))
@@ -184,9 +187,13 @@ namespace s1
 	}
       }
       
+      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
+      
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
 								       inParams, outParams));
       block.GetSequence()->AddOp (seqOp);
+      
+      return destination;
     }
   } // namespace intermediate
 } // namespace s1

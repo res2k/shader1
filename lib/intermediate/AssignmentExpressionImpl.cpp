@@ -46,54 +46,46 @@ namespace s1
     
     void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block)
     {
-      AddToSequence (block, RegisterID ());
+      AddToSequence (block, Dummy);
     }
     
-    void IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
-											 RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
+											       RegisterClassification classify,
+											       const UnicodeString& name,
+											       bool asLvalue)
     {
+      if (asLvalue) return RegisterID ();
+      
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
 
-      /* 'Prefetch' right-side registers
-         (to make cases like 'a = a OP b' work, right side 'a' needs to be 'older'
-         than left-side 'a') */
-      value->GetRegister (block, false);
+      RegisterID exprDestinationReg;
+      // Evaluate 'value'
+      exprDestinationReg = value->AddToSequence (block, Intermediate);
       // Set up registers for left-side value
       RegisterID targetReg;
-      targetReg = target->GetRegister (block, true);
+      targetReg = target->AddToSequence (block, Intermediate, UnicodeString(), true);
       if (!targetReg.IsValid())
       {
-	// GetRegister() should only work on L-values
+	// Can only assign an L value
 	throw Exception (AssignmentTargetIsNotAnLValue);
       }
-      RegisterID exprDestinationReg;
       if (!valueType->IsEqual (*(targetType.get())))
       {
-	Sequence::RegisterPtr targetRegPtr (seq.QueryRegisterPtrFromID (targetReg));
-	// Let right-side evaluate to a (temp) register, for cast
-	exprDestinationReg = handler->AllocateRegister (seq, valueType, Intermediate,
-							targetRegPtr->GetName());
-      }
-      else
-	exprDestinationReg = targetReg;
-      // Instruct 'value' to write to exprDestinationReg
-      value->AddToSequence (block, exprDestinationReg);
-      if (targetReg != exprDestinationReg)
-      {
-	// Insert cast op from exprDestinationReg to targetReg
+	// Generate cast to targetReg
 	handler->GenerateCast (seq, targetReg, targetType,
 			       exprDestinationReg, valueType);
       }
-      
-      if (destination.IsValid())
+      else
       {
-	// Generate another assignment from targetReg to destination
+	// Generate another assignment from exprDestinationReg to targetReg
 	SequenceOpPtr seqOp;
-	seqOp = SequenceOpPtr (new SequenceOpAssign (destination, targetReg));
+	seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));
 	seq.AddOp (seqOp);
       }
+      
+      return targetReg;
     }
   } // namespace intermediate
 } // namespace s1

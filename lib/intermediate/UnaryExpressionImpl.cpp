@@ -77,9 +77,13 @@ namespace s1
       return valueType;
     }
     
-    void IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::AddToSequence (BlockImpl& block,
-										    RegisterID destination)
+    RegisterID IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::AddToSequence (BlockImpl& block,
+											  RegisterClassification classify,
+											  const UnicodeString& name,
+											  bool asLvalue)
     {
+      if (asLvalue) return RegisterID();
+      
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
       
@@ -90,8 +94,7 @@ namespace s1
       reg = operand->GetRegister (block, false);
       if (!reg.IsValid())
       {
-	reg = handler->AllocateRegister (seq, operandType, Intermediate);
-	operand->AddToSequence (block, reg);
+	reg = operand->AddToSequence (block, Intermediate);
       }
       if (!valueType->IsEqual (*(operandType.get())))
       {
@@ -101,6 +104,8 @@ namespace s1
 			       reg, operandType);
 	reg = newReg;
       }
+      
+      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;
@@ -118,6 +123,8 @@ namespace s1
       }
       assert (seqOp);
       seq.AddOp (seqOp);
+      
+      return destination;
     }
   } // namespace intermediate
 } // namespace s1
