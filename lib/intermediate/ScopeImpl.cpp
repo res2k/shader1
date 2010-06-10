@@ -268,7 +268,7 @@ namespace s1
 
     std::vector<NamePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
     {
-      std::vector<NamePtr> ret (newVars);
+      std::vector<NamePtr> ret;
       for (IdentifierMap::const_iterator ident (identifiers.begin());
 	   ident != identifiers.end();
 	   ++ident)
