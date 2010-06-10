@@ -26,15 +26,6 @@ namespace s1
     {
     }
 
-    RegisterID IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetRegister (BlockImpl& block,
-											     bool writeable)
-    {
-      // Let operands grab registers ...
-      operand1->GetRegister (block, false);
-      operand2->GetRegister (block, false);
-      return RegisterID ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
@@ -89,11 +80,7 @@ namespace s1
 	
       // Set up registers for operand values
       RegisterID reg1;
-      reg1 = operand1->GetRegister (block, false);
-      if (!reg1.IsValid())
-      {
-	reg1 = operand1->AddToSequence (block, Intermediate);
-      }
+      reg1 = operand1->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(type1.get())))
       {
 	// Insert cast op
@@ -103,11 +90,7 @@ namespace s1
 	reg1 = newReg1;
       }
       RegisterID reg2;
-      reg2 = operand2->GetRegister (block, false);
-      if (!reg2.IsValid())
-      {
-	reg2 = operand2->AddToSequence (block, Intermediate);
-      }
+      reg2 = operand2->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(type2.get())))
       {
 	// Insert cast op

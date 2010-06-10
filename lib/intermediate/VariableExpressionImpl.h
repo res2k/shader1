@@ -14,8 +14,6 @@ namespace s1
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 			      const boost::shared_ptr<NameImpl>& name);
       
-      RegisterID GetRegister (BlockImpl& block, bool writeable);
-      
       NameImplSet QueryWrittenNames (bool asLvalue);
       
       boost::shared_ptr<TypeImpl> GetValueType();

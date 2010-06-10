@@ -22,20 +22,6 @@ namespace s1
     {
     }
 
-    RegisterID IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::GetRegister (BlockImpl& block,
-											  bool writeable)
-    {
-      // @@@ Somewhat fragile, relying on GetRegister() and AddToSequence() being called with the same block
-      if (!ifBlock) ifBlock = handler->CreateBlock (block.GetInnerScope());
-      if (!elseBlock) elseBlock = handler->CreateBlock (block.GetInnerScope());
-      
-      // Let operands grab registers ...
-      condition->GetRegister (block, false);
-      ifExpr->GetRegister (*(boost::shared_static_cast<BlockImpl> (ifBlock)), false);
-      elseExpr->GetRegister (*(boost::shared_static_cast<BlockImpl> (elseBlock)), false);
-      return RegisterID ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {

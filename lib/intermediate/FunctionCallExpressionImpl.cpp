@@ -67,19 +67,11 @@ namespace s1
 	RegisterID reg1, reg2;
 	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	if (overload->params[i].dir & ScopeImpl::dirIn)
-	  reg1 = paramExprImpl->GetRegister (block, false);
+	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, UnicodeString(), false);
 	if (overload->params[i].dir & ScopeImpl::dirOut)
-	  reg2 = paramExprImpl->GetRegister (block, true);
+	  reg2 = paramExprImpl->AddToSequence (block, Intermediate, UnicodeString(), true);
 	fetchedRegs.push_back (std::make_pair (reg1, reg2));
       }
-    }
-      
-    RegisterID IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetRegister (BlockImpl& block,
-											       bool writeable)
-    {
-      SelectOverload ();
-	
-      return RegisterID ();
     }
       
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>

@@ -16,8 +16,6 @@ namespace s1
 			   UnaryOp op,
 			   const boost::shared_ptr<ExpressionImpl>& operand);
       
-      RegisterID GetRegister (BlockImpl& block, bool writeable);
-      
       NameImplSet QueryWrittenNames (bool asLvalue);
       
       boost::shared_ptr<TypeImpl> GetValueType();

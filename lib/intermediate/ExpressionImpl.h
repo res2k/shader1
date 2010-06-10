@@ -14,15 +14,6 @@ namespace s1
       
       void AddToSequence (BlockImpl& block);
       
-      /**
-       * Get register with value of this expression.
-       * Can be an 'invalid' register if the expression doesn't represent an
-       * atomic value.
-       * Subsequent calls should always return the same register.
-       */
-      virtual RegisterID GetRegister (BlockImpl& block, bool writeable)
-      { return RegisterID (); }
-      
       virtual NameImplSet QueryWrittenNames (bool asLvalue);
       
       virtual boost::shared_ptr<TypeImpl> GetValueType() = 0;

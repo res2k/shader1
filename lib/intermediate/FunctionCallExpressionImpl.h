@@ -27,8 +27,6 @@ namespace s1
 				  const NamePtr& functionName,
 				  const ExpressionVector& params);
       
-      RegisterID GetRegister (BlockImpl& block, bool writeable);
-      
       boost::shared_ptr<TypeImpl> GetValueType ();
       RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
 				const UnicodeString& name = UnicodeString (),

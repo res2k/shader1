@@ -23,14 +23,6 @@ namespace s1
     {
     }
 
-    RegisterID IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::GetRegister (BlockImpl& block,
-											bool writeable)
-    {
-      // Let operand grab registers ...
-      operand->GetRegister (block, false);
-      return RegisterID ();
-    }
-      
     IntermediateGeneratorSemanticsHandler::NameImplSet
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
@@ -86,11 +78,7 @@ namespace s1
 
       // Set up register for operand value
       RegisterID reg;
-      reg = operand->GetRegister (block, false);
-      if (!reg.IsValid())
-      {
-	reg = operand->AddToSequence (block, Intermediate);
-      }
+      reg = operand->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(operandType.get())))
       {
 	// Insert cast op

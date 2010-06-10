@@ -12,16 +12,11 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> condition;
       boost::shared_ptr<ExpressionImpl> ifExpr;
       boost::shared_ptr<ExpressionImpl> elseExpr;
-      
-      BlockPtr ifBlock;
-      BlockPtr elseBlock;
     public:
       TernaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 			     const boost::shared_ptr<ExpressionImpl>& condition,
 			     const boost::shared_ptr<ExpressionImpl>& ifExpr,
 			     const boost::shared_ptr<ExpressionImpl>& elseExpr);
-      
-      RegisterID GetRegister (BlockImpl& block, bool writeable);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
