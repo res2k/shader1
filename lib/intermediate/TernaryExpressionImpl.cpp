@@ -4,14 +4,10 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Exception.h"
-/*#include "intermediate/SequenceOp/SequenceOpArithAdd.h"
-#include "intermediate/SequenceOp/SequenceOpArithDiv.h"
-#include "intermediate/SequenceOp/SequenceOpArithMod.h"
-#include "intermediate/SequenceOp/SequenceOpArithMul.h"
-#include "intermediate/SequenceOp/SequenceOpArithSub.h"*/
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
+#include <unicode/ustdio.h>
 
 namespace s1
 {
@@ -90,17 +86,21 @@ namespace s1
 	 To get that effect, synthesize a branching op. */
       
       // Set up a Name object for the ternary op result
-      UnicodeString destNameStr (name);
-      destNameStr.append ("$tr");
+      static unsigned int ternaryResultNum = 0;
+      UChar ternaryResultName[charsToFormatUint + 4];
+      u_snprintf (ternaryResultName, sizeof (ternaryResultName)/sizeof (UChar),
+		  "tr$%u", ternaryResultNum++); // FIXME: better name
+      UnicodeString destNameStr (ternaryResultName);
       NamePtr destName (block.GetInnerScope()->AddVariable (GetValueType(), destNameStr, ExpressionPtr(), false));
 
-      // NOTE: ifBlock and elseBlock are created in GetRegister()
+      BlockPtr ifBlock (handler->CreateBlock (block.GetInnerScope()));
       // Synthesize assignment for 'true' case
       {
 	ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
 	ExpressionPtr ifAssignExpr (handler->CreateAssignExpression (destNameExpr, ifExpr));
 	ifBlock->AddExpressionCommand (ifAssignExpr);
       }
+      BlockPtr elseBlock (handler->CreateBlock (block.GetInnerScope()));
       // Synthesize assignment for 'false' case
       {
 	ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
@@ -108,6 +108,7 @@ namespace s1
 	elseBlock->AddExpressionCommand (elseAssignExpr);
       }
       // Add branch operation to sequence
+      condition->InvalidateRegister();
       block.AddBranching (condition, ifBlock, elseBlock);
       // Assign ternary result to destination
       {
