@@ -21,6 +21,7 @@ namespace s1
   namespace intermediate
   {
     static const char varConditionName[] = "$cond";
+    static const char varTernaryResultName[] = "$tr";
     
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 ScopePtr innerScope)
@@ -514,6 +515,25 @@ namespace s1
 						  sequence->GetIdentifierToRegisterIDMap (),
 						  readRegisters,
 						  writtenRegisters);
+    }
+
+    IntermediateGeneratorSemanticsHandler::NameImplPtr
+    IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (const TypeImplPtr& resultType)
+    {
+      std::string typeStr (handler->GetTypeString (resultType));
+      TernaryResultVarsMap::const_iterator var (varsTernaryResult.find (typeStr));
+      if (var != varsTernaryResult.end()) return var->second;
+      
+      char newTernaryResultName[sizeof (varTernaryResultName) + charsToFormatInt + 1];
+      snprintf (newTernaryResultName, sizeof (newTernaryResultName), "%s%d", varTernaryResultName, 
+		boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+      UnicodeString newVarName (newTernaryResultName);
+      newVarName.append (typeStr.c_str());
+      NameImplPtr newVar (boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
+											 newVarName,
+											 ExpressionPtr(), false)));
+      varsTernaryResult[typeStr] = newVar;
+      return newVar;
     }
 
     RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::ImportName (NamePtr name, bool writeable)

@@ -34,7 +34,9 @@ namespace s1
       SequencePtr sequence;
       
       // Special, internal names
-      boost::shared_ptr<NameImpl> varCondition;
+      NameImplPtr varCondition;
+      typedef std::tr1::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
+      TernaryResultVarsMap varsTernaryResult;
       
       /**
        * Checks for new variables since last command and synthesizes initializations,
@@ -74,6 +76,7 @@ namespace s1
       
       void FinishBlock() { FlushVariableInitializers(); }
       void GenerateGlobalVarInitialization ();
+      NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
       
       RegisterID ImportName (NamePtr name, bool writeable);
     };

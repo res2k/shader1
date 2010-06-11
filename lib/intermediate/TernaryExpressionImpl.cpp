@@ -4,10 +4,10 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Exception.h"
+#include "NameImpl.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
-#include <unicode/ustdio.h>
 
 namespace s1
 {
@@ -64,13 +64,8 @@ namespace s1
 	 Between the lines, don't evaluate the _other_ expression in either case.
 	 To get that effect, synthesize a branching op. */
       
-      // Set up a Name object for the ternary op result
-      static unsigned int ternaryResultNum = 0;
-      UChar ternaryResultName[charsToFormatUint + 4];
-      u_snprintf (ternaryResultName, sizeof (ternaryResultName)/sizeof (UChar),
-		  "tr$%u", ternaryResultNum++); // FIXME: better name
-      UnicodeString destNameStr (ternaryResultName);
-      NamePtr destName (block.GetInnerScope()->AddVariable (GetValueType(), destNameStr, ExpressionPtr(), false));
+      // Get Name object for the ternary op result
+      NamePtr destName (block.GetTernaryResultName (GetValueType()));
 
       BlockPtr ifBlock (handler->CreateBlock (block.GetInnerScope()));
       // Synthesize assignment for 'true' case
