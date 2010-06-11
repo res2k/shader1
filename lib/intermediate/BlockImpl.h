@@ -44,6 +44,13 @@ namespace s1
        */
       void FlushVariableInitializers();
       
+      struct NameReg
+      {
+	RegisterID reg;
+      };
+      typedef std::tr1::unordered_map<NameImplPtr, NameReg> NameRegMap;
+      NameRegMap nameRegisters;
+      
       struct ImportedName
       {
 	RegisterID reg;
@@ -55,6 +62,8 @@ namespace s1
       NameImplSet exportedNames;
       
       SequenceOpPtr CreateBlockSeqOp (BlockPtr block, const NameImplSet& loopNames = NameImplSet());
+      
+      RegisterID ImportName (NamePtr name, bool writeable);
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
@@ -78,7 +87,7 @@ namespace s1
       void GenerateGlobalVarInitialization ();
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
       
-      RegisterID ImportName (NamePtr name, bool writeable);
+      RegisterID GetRegisterForName (const NameImplPtr& name, bool writeable);
     };
   } // namespace intermediate
 } // namespace s1

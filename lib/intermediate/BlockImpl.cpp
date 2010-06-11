@@ -166,7 +166,7 @@ namespace s1
 	  RegisterID reg;
 	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
 	  {
-	    reg = (*exportedName)->GetRegister (handler, *this, true);
+	    reg = GetRegisterForName (*exportedName, true);
 	  }
 	  else
 	  {
@@ -194,7 +194,7 @@ namespace s1
 	  {
 	    if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
 	    {
-	      reg = (*exportedName)->GetRegister (handler, *this, true);
+	      reg = GetRegisterForName (*exportedName, true);
 	    }
 	    else
 	    {
@@ -277,8 +277,8 @@ namespace s1
       {
 	if (boost::shared_ptr<ScopeImpl> ((*loopVar)->ownerScope) == blockScopeImpl)
 	{
-	  RegisterID regIn ((*loopVar)->GetRegister (handler, *this, false));
-	  RegisterID regOut ((*loopVar)->GetRegister (handler, *this, true));
+	  RegisterID regIn (GetRegisterForName (*loopVar, false));
+	  RegisterID regOut (GetRegisterForName (*loopVar, true));
 	  loopedRegs.push_back (std::make_pair (regIn, regOut));
 	}
 	else
@@ -297,7 +297,7 @@ namespace s1
 	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
 	newBlock->AddExpressionCommand (condAssign);
       }
-      RegisterID condReg (varCondition->GetRegister (handler, *this, false));
+      RegisterID condReg (GetRegisterForName (varCondition, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
@@ -373,8 +373,8 @@ namespace s1
       {
 	if (boost::shared_ptr<ScopeImpl> ((*loopVar)->ownerScope) == blockScopeImpl)
 	{
-	  RegisterID regIn ((*loopVar)->GetRegister (handler, *this, false));
-	  RegisterID regOut ((*loopVar)->GetRegister (handler, *this, true));
+	  RegisterID regIn (GetRegisterForName (*loopVar, false));
+	  RegisterID regOut (GetRegisterForName (*loopVar, true));
 	  loopedRegs.push_back (std::make_pair (regIn, regOut));
 	}
 	else
@@ -396,7 +396,7 @@ namespace s1
 	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
 	newBlock->AddExpressionCommand (condAssign);
       }
-      RegisterID condReg (varCondition->GetRegister (handler, *this, false));
+      RegisterID condReg (GetRegisterForName (varCondition, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
@@ -499,7 +499,7 @@ namespace s1
 	  RegisterID reg;
 	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
 	  {
-	    reg = (*exportedName)->GetRegister (handler, *this, !isLoopName);
+	    reg = GetRegisterForName (*exportedName, !isLoopName);
 	  }
 	  else
 	  {
@@ -578,5 +578,45 @@ namespace s1
       }
       return reg;
     }
+    
+    RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
+										     bool writeable)
+    {
+      if (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope)
+      {
+	return ImportName (name, writeable);
+      }
+      else
+      {
+	//return name->GetRegister (handler, *this, writeable);
+	NameRegMap::iterator prevReg (nameRegisters.find (name));
+	
+	RegisterID varReg;
+	/* Note: asking for a register for a constant value is only an error for the second time and
+	    after; the first request is satisfied as the constant may have to be loaded somewhere */
+	if (prevReg == nameRegisters.end())
+	{
+	  varReg = handler->AllocateRegister (*sequence, name->valueType,
+					      IntermediateGeneratorSemanticsHandler::Variable,
+					      name->identifier);
+	  sequence->SetIdentifierRegisterID (name->identifier, varReg);
+	  nameRegisters[name].reg = varReg;
+	}
+	else if (writeable)
+	{
+	  if (name->varConstant)
+	    // Throw?
+	    return RegisterID ();
+	  // Query a new generation
+	  varReg = handler->AllocateRegister (*sequence, prevReg->second.reg);
+	  sequence->SetIdentifierRegisterID (name->identifier, varReg);
+	  nameRegisters[name].reg = varReg;
+	}
+	else
+	  varReg = prevReg->second.reg;
+	return varReg;
+      }
+    }
+    
   } // namespace intermediate
 } // namespace s1

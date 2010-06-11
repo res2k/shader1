@@ -139,7 +139,7 @@ namespace s1
 	NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (imported->first));
 	if (global)
 	{
-	  RegisterID globLocal (block.ImportName (global, false));
+	  RegisterID globLocal (block.GetRegisterForName (global, false));
 	  inParams.push_back (globLocal);
 	}
       }
@@ -152,7 +152,7 @@ namespace s1
 	NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (exported->first));
 	if (global)
 	{
-	  RegisterID globLocal (block.ImportName (global, true));
+	  RegisterID globLocal (block.GetRegisterForName (global, true));
 	  outParams.push_back (globLocal);
 	}
       }

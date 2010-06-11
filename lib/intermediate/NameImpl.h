@@ -41,9 +41,6 @@ namespace s1
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
       { return type == TypeAlias ? boost::shared_static_cast<Type> (valueType) : TypePtr (); }
-      
-      RegisterID GetRegister (IntermediateGeneratorSemanticsHandler* handler,
-			      BlockImpl& block, bool writeable);
     };
   } // namespace intermediate
 } // namespace s1
