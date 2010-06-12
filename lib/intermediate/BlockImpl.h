@@ -46,24 +46,18 @@ namespace s1
       
       struct NameReg
       {
-	RegisterID reg;
-      };
-      typedef std::tr1::unordered_map<NameImplPtr, NameReg> NameRegMap;
-      NameRegMap nameRegisters;
-      
-      struct ImportedName
-      {
+	bool isImported;
 	RegisterID reg;
 	RegisterID initialReg;
 	bool initiallyWriteable;
+	
+	NameReg() : isImported (false) {}
       };
-      typedef std::tr1::unordered_map<NameImplPtr, ImportedName> ImportedNamesMap;
-      ImportedNamesMap importedNames;
+      typedef std::tr1::unordered_map<NameImplPtr, NameReg> NameRegMap;
+      NameRegMap nameRegisters;
       NameImplSet exportedNames;
       
       SequenceOpPtr CreateBlockSeqOp (BlockPtr block, const NameImplSet& loopNames = NameImplSet());
-      
-      RegisterID ImportName (NamePtr name, bool writeable);
     public:
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       

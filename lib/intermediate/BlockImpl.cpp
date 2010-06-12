@@ -95,27 +95,27 @@ namespace s1
       std::vector<RegisterID> readRegistersIf;
       std::vector<RegisterID> readRegistersElse;
       {
-	for (ImportedNamesMap::const_iterator import = ifBlockImpl->importedNames.begin();
-	     import != ifBlockImpl->importedNames.end();
+	for (NameRegMap::const_iterator import = ifBlockImpl->nameRegisters.begin();
+	     import != ifBlockImpl->nameRegisters.end();
 	     ++import)
 	{
+	  if (!import->second.isImported) continue;
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterID reg (ImportName (import->first, false));
-	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	    RegisterID reg (GetRegisterForName (import->first, false));
 	    readRegistersIf.push_back (reg);
 	  }
 	}
-	for (ImportedNamesMap::const_iterator import = elseBlockImpl->importedNames.begin();
-	     import != elseBlockImpl->importedNames.end();
+	for (NameRegMap::const_iterator import = elseBlockImpl->nameRegisters.begin();
+	     import != elseBlockImpl->nameRegisters.end();
 	     ++import)
 	{
+	  if (!import->second.isImported) continue;
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterID reg (ImportName (import->first, false));
-	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	    RegisterID reg (GetRegisterForName (import->first, false));
 	    readRegistersElse.push_back (reg);
 	  }
 	}
@@ -163,16 +163,7 @@ namespace s1
 	     exportedName != ifBlockImpl->exportedNames.end();
 	     exportedName++)
 	{
-	  RegisterID reg;
-	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
-	  {
-	    reg = GetRegisterForName (*exportedName, true);
-	  }
-	  else
-	  {
-	    reg = ImportName ((*exportedName), true);
-	    sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
-	  }
+	  RegisterID reg (GetRegisterForName (*exportedName, true));
 	  writtenRegistersIf.push_back (reg);
 	  seenExportedNames.insert (std::make_pair (*exportedName, reg));
 	}
@@ -192,15 +183,7 @@ namespace s1
 	  }
 	  else
 	  {
-	    if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
-	    {
-	      reg = GetRegisterForName (*exportedName, true);
-	    }
-	    else
-	    {
-	      reg = ImportName ((*exportedName), true);
-	      sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
-	    }
+	    reg = GetRegisterForName (*exportedName, true);
 	  }
 	  writtenRegistersElse.push_back (reg);
 	}
@@ -258,10 +241,11 @@ namespace s1
       loopVars.insert (varCondition);
       // Look for variables that are both read+written in the body
       {
-	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
-	     import != blockImpl->importedNames.end();
+	for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
+	     import != blockImpl->nameRegisters.end();
 	     ++import)
 	{
+	  if (!import->second.isImported) continue;
 	  if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
 	  {
 	    loopVars.insert (import->first);
@@ -275,18 +259,9 @@ namespace s1
 	   loopVar != loopVars.end();
 	   ++loopVar)
       {
-	if (boost::shared_ptr<ScopeImpl> ((*loopVar)->ownerScope) == blockScopeImpl)
-	{
-	  RegisterID regIn (GetRegisterForName (*loopVar, false));
-	  RegisterID regOut (GetRegisterForName (*loopVar, true));
-	  loopedRegs.push_back (std::make_pair (regIn, regOut));
-	}
-	else
-	{
-	  RegisterID regIn (ImportName (*loopVar, false));
-	  RegisterID regOut (ImportName (*loopVar, true));
-	  loopedRegs.push_back (std::make_pair (regIn, regOut));
-	}
+	RegisterID regIn (GetRegisterForName (*loopVar, false));
+	RegisterID regOut (GetRegisterForName (*loopVar, true));
+	loopedRegs.push_back (std::make_pair (regIn, regOut));
       }
       
       /* Add condition expression again at the bottom of the block
@@ -354,10 +329,11 @@ namespace s1
       }
       // Look for variables that are both read+written in the body
       {
-	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
-	     import != blockImpl->importedNames.end();
+	for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
+	     import != blockImpl->nameRegisters.end();
 	     ++import)
 	{
+	  if (!import->second.isImported) continue;
 	  if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
 	  {
 	    loopVars.insert (import->first);
@@ -371,18 +347,9 @@ namespace s1
 	   loopVar != loopVars.end();
 	   ++loopVar)
       {
-	if (boost::shared_ptr<ScopeImpl> ((*loopVar)->ownerScope) == blockScopeImpl)
-	{
-	  RegisterID regIn (GetRegisterForName (*loopVar, false));
-	  RegisterID regOut (GetRegisterForName (*loopVar, true));
-	  loopedRegs.push_back (std::make_pair (regIn, regOut));
-	}
-	else
-	{
-	  RegisterID regIn (ImportName (*loopVar, false));
-	  RegisterID regOut (ImportName (*loopVar, true));
-	  loopedRegs.push_back (std::make_pair (regIn, regOut));
-	}
+	RegisterID regIn (GetRegisterForName (*loopVar, false));
+	RegisterID regOut (GetRegisterForName (*loopVar, true));
+	loopedRegs.push_back (std::make_pair (regIn, regOut));
       }
       
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
@@ -466,15 +433,15 @@ namespace s1
       
       std::vector<RegisterID> readRegisters;
       {
-	for (ImportedNamesMap::const_iterator import = blockImpl->importedNames.begin();
-	     import != blockImpl->importedNames.end();
+	for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
+	     import != blockImpl->nameRegisters.end();
 	     ++import)
 	{
+	  if (!import->second.isImported) continue;
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterID reg (ImportName (import->first, false));
-	    sequence->SetIdentifierRegisterID (import->first->identifier, reg);
+	    RegisterID reg (GetRegisterForName (import->first, false));
 	    readRegisters.push_back (reg);
 	  }
 	}
@@ -497,15 +464,7 @@ namespace s1
 	     allocating writeable regs for these names. */
 	  bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
 	  RegisterID reg;
-	  if (boost::shared_ptr<ScopeImpl> ((*exportedName)->ownerScope) == blockScopeImpl)
-	  {
-	    reg = GetRegisterForName (*exportedName, !isLoopName);
-	  }
-	  else
-	  {
-	    reg = ImportName ((*exportedName), !isLoopName);
-	    sequence->SetIdentifierRegisterID ((*exportedName)->identifier, reg);
-	  }
+	  reg = GetRegisterForName (*exportedName, !isLoopName);
 	  writtenRegisters.push_back (reg);
 	}
       }
@@ -536,86 +495,66 @@ namespace s1
       return newVar;
     }
 
-    RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::ImportName (NamePtr name, bool writeable)
+    RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
+										     bool writeable)
     {
-      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
-      if (writeable && nameImpl->varConstant)
+      bool doImport = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
+      
+      if (doImport && writeable && name->varConstant)
       {
 	throw Exception (AssignmentTargetIsNotAnLValue);
       }
       
-      ImportedName& impName = importedNames[nameImpl];
-      RegisterID& reg = impName.reg;
+      NameReg& nameReg = nameRegisters[name];
+      RegisterID& reg = nameReg.reg;
+      /* Note: asking for a register for a constant value is only an error for the second time and
+	  after; the first request is satisfied as the constant may have to be loaded somewhere */
       if (!reg.IsValid())
       {
-	UnicodeString importName (nameImpl->identifier);
-	/* Add a suffix derived from the "distance" of this block's scope to the scope
-	   that defines 'name' in order to make local register name unique */
-	int d = boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (
-	  boost::shared_ptr<ScopeImpl> (nameImpl->ownerScope));
-	if (d >= 0)
+	nameReg.isImported = doImport;
+	if (doImport)
 	{
-	  UChar distSuffix[charsToFormatInt + 3];
-	  u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (UChar),
-		      "_B%d", d);
-	  importName.append (distSuffix);
+	  UnicodeString importName (name->identifier);
+	  /* Add a suffix derived from the "distance" of this block's scope to the scope
+	    that defines 'name' in order to make local register name unique */
+	  int d = boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (
+	    boost::shared_ptr<ScopeImpl> (name->ownerScope));
+	  if (d >= 0)
+	  {
+	    UChar distSuffix[charsToFormatInt + 3];
+	    u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (UChar),
+			"_B%d", d);
+	    importName.append (distSuffix);
+	  }
+	  reg = handler->AllocateRegister (*sequence, name->valueType, Imported,
+					  importName);
+	  if (!writeable) sequence->AddImport (name->identifier, reg);
 	}
-	impName.initiallyWriteable = writeable;
-	reg = handler->AllocateRegister (*sequence, nameImpl->valueType, Imported,
-					 importName);
-	impName.initialReg = reg;
-	if (!writeable) sequence->AddImport (nameImpl->identifier, reg);
+	else
+	{
+	  reg = handler->AllocateRegister (*sequence, name->valueType, Variable,
+					    name->identifier);
+	}
+	nameReg.initiallyWriteable = writeable;
+	nameReg.initialReg = reg;
+	sequence->SetIdentifierRegisterID (name->identifier, reg);
       }
       else
       {
 	if (writeable)
-	  reg = handler->AllocateRegister (*sequence, reg);
-      }
-      if (writeable)
-      {
-	sequence->SetExport (nameImpl->identifier, reg);
-	exportedNames.insert (nameImpl);
-      }
-      return reg;
-    }
-    
-    RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
-										     bool writeable)
-    {
-      if (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope)
-      {
-	return ImportName (name, writeable);
-      }
-      else
-      {
-	//return name->GetRegister (handler, *this, writeable);
-	NameRegMap::iterator prevReg (nameRegisters.find (name));
-	
-	RegisterID varReg;
-	/* Note: asking for a register for a constant value is only an error for the second time and
-	    after; the first request is satisfied as the constant may have to be loaded somewhere */
-	if (prevReg == nameRegisters.end())
-	{
-	  varReg = handler->AllocateRegister (*sequence, name->valueType,
-					      IntermediateGeneratorSemanticsHandler::Variable,
-					      name->identifier);
-	  sequence->SetIdentifierRegisterID (name->identifier, varReg);
-	  nameRegisters[name].reg = varReg;
-	}
-	else if (writeable)
 	{
 	  if (name->varConstant)
-	    // Throw?
-	    return RegisterID ();
-	  // Query a new generation
-	  varReg = handler->AllocateRegister (*sequence, prevReg->second.reg);
-	  sequence->SetIdentifierRegisterID (name->identifier, varReg);
-	  nameRegisters[name].reg = varReg;
+	    throw Exception (AssignmentTargetIsNotAnLValue);
+	  reg = handler->AllocateRegister (*sequence, reg);
+	  sequence->SetIdentifierRegisterID (name->identifier, reg);
 	}
-	else
-	  varReg = prevReg->second.reg;
-	return varReg;
       }
+      if (doImport && writeable)
+      {
+	sequence->SetExport (name->identifier, reg);
+	exportedNames.insert (name);
+      }
+      return reg;
     }
     
   } // namespace intermediate
