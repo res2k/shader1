@@ -67,9 +67,9 @@ namespace s1
 	RegisterID reg1, reg2;
 	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	if (overload->params[i].dir & ScopeImpl::dirIn)
-	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, UnicodeString(), false);
+	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
 	if (overload->params[i].dir & ScopeImpl::dirOut)
-	  reg2 = paramExprImpl->AddToSequence (block, Intermediate, UnicodeString(), true);
+	  reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
 	fetchedRegs.push_back (std::make_pair (reg1, reg2));
       }
     }
@@ -84,7 +84,6 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
 												 RegisterClassification classify,
-												 const UnicodeString& name,
 												 bool asLvalue)
     {
       if (asLvalue) return RegisterID();
@@ -160,7 +159,7 @@ namespace s1
       RegisterID destination;
       boost::shared_ptr<TypeImpl> retType (GetValueType());
       if (!retType->IsEqual (*(handler->GetVoidType())))
-	destination = handler->AllocateRegister (*(block.GetSequence()), retType, classify, name);
+	destination = handler->AllocateRegister (*(block.GetSequence()), retType, classify);
       
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
 								       inParams, outParams));

@@ -37,7 +37,6 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
 											     RegisterClassification classify,
-											     const UnicodeString& name,
 											     bool asLvalue)
     {
       return block.GetRegisterForName (this->name, asLvalue);

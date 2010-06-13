@@ -22,7 +22,6 @@ namespace s1
       
       void AddToSequence (BlockImpl& block);
       RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				const UnicodeString& name = UnicodeString (),
 				bool asLvalue = false);
     };
   } // namespace intermediate

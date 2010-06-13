@@ -51,7 +51,6 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
 											       RegisterClassification classify,
-											       const UnicodeString& name,
 											       bool asLvalue)
     {
       if (asLvalue) return RegisterID ();
@@ -68,7 +67,7 @@ namespace s1
       if (!valueType->IsEqual (*(targetType.get())))
       {
 	// Set up register for left-side value
-	RegisterID targetReg (target->AddToSequence (block, Intermediate, UnicodeString(), true));
+	RegisterID targetReg (target->AddToSequence (block, Intermediate, true));
 	// Generate cast to targetReg
 	handler->GenerateCast (seq, targetReg, targetType,
 			       exprDestinationReg, valueType);
@@ -83,7 +82,7 @@ namespace s1
 	    return exprDestinationReg;
 	}
 	// Set up register for left-side value
-	RegisterID targetReg (target->AddToSequence (block, Intermediate, UnicodeString(), true));
+	RegisterID targetReg (target->AddToSequence (block, Intermediate, true));
 	// Generate another assignment from exprDestinationReg to targetReg
 	SequenceOpPtr seqOp;
 	seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));

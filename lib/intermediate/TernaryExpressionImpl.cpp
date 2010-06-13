@@ -54,7 +54,6 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::AddToSequence (BlockImpl& block,
 											    RegisterClassification classify,
-											    const UnicodeString& name,
 											    bool asLvalue)
     {
       if (asLvalue) return RegisterID();

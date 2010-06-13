@@ -26,7 +26,6 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::AddToSequence (BlockImpl& block,
 											 RegisterClassification classify,
-											 const UnicodeString& name,
 											 bool asLvalue)
     {
       if (asLvalue) return RegisterID();

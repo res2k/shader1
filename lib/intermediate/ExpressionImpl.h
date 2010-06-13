@@ -19,8 +19,8 @@ namespace s1
       virtual NameImplSet QueryWrittenNames (bool asLvalue);
       
       virtual boost::shared_ptr<TypeImpl> GetValueType() = 0;
-      virtual RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-					const UnicodeString& name = UnicodeString (),
+      virtual RegisterID AddToSequence (BlockImpl& block,
+					RegisterClassification targetClassify,
 					bool asLvalue = false) = 0;
     };
   } // namespace intermediate

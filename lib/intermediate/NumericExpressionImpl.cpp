@@ -44,14 +44,13 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
 											    RegisterClassification classify,
-											    const UnicodeString& name,
 											    bool asLvalue)
     {
       if (asLvalue) return RegisterID();
       
       U_NAMESPACE_USE
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
+      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
       // Mark 'destination' as constant or something?
       

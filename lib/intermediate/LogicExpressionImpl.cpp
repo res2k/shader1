@@ -57,7 +57,6 @@ namespace s1
     
     RegisterID IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::AddToSequence (BlockImpl& block,
 											  RegisterClassification classify,
-											  const UnicodeString& name,
 											  bool asLvalue)
     {
       if (asLvalue) return RegisterID();
@@ -70,7 +69,7 @@ namespace s1
       RegisterID reg2;
       reg2 = operand2->AddToSequence (block, Intermediate);
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify, name));
+      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;
