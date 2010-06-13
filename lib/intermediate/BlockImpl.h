@@ -82,6 +82,7 @@ namespace s1
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
       
       RegisterID GetRegisterForName (const NameImplPtr& name, bool writeable);
+      bool OverrideNameRegister (const NameImplPtr& name, const RegisterID& reg);
     };
   } // namespace intermediate
 } // namespace s1

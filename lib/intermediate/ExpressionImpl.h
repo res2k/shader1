@@ -12,6 +12,8 @@ namespace s1
     public:
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler);
       
+      virtual NameImplPtr GetExpressionName() { return NameImplPtr (); }
+      
       void AddToSequence (BlockImpl& block);
       
       virtual NameImplSet QueryWrittenNames (bool asLvalue);

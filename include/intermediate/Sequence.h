@@ -35,6 +35,7 @@ namespace s1
 	Register (const Register& other);
 	
 	const UnicodeString& GetName() const { return name; }
+	void StealName (Register& other);
       };
       typedef boost::shared_ptr<Register> RegisterPtr;
       

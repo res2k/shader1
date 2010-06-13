@@ -557,5 +557,19 @@ namespace s1
       return reg;
     }
     
+    bool IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (const NameImplPtr& name,
+										 const RegisterID& reg)
+    {
+      RegisterID origReg (GetRegisterForName (name, true));
+      Sequence::RegisterPtr origRegPtr (sequence->QueryRegisterPtrFromID (origReg));
+      Sequence::RegisterPtr newRegPtr (sequence->QueryRegisterPtrFromID (reg));
+      newRegPtr->StealName (*origRegPtr);
+      NameReg& nameReg = nameRegisters[name];
+      nameReg.reg = reg;
+      sequence->SetIdentifierRegisterID (name->identifier, reg);
+      if (nameReg.isImported)
+	sequence->SetExport (name->identifier, reg);
+      return true;
+    }
   } // namespace intermediate
 } // namespace s1

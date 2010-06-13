@@ -63,29 +63,33 @@ namespace s1
       RegisterID exprDestinationReg;
       // Evaluate 'value'
       exprDestinationReg = value->AddToSequence (block, Intermediate);
-      // Set up registers for left-side value
-      RegisterID targetReg;
-      targetReg = target->AddToSequence (block, Intermediate, UnicodeString(), true);
-      if (!targetReg.IsValid())
-      {
-	// Can only assign an L value
-	throw Exception (AssignmentTargetIsNotAnLValue);
-      }
+      NameImplPtr targetName (target->GetExpressionName());
+      NameImplPtr valueName (value->GetExpressionName());
       if (!valueType->IsEqual (*(targetType.get())))
       {
+	// Set up register for left-side value
+	RegisterID targetReg (target->AddToSequence (block, Intermediate, UnicodeString(), true));
 	// Generate cast to targetReg
 	handler->GenerateCast (seq, targetReg, targetType,
 			       exprDestinationReg, valueType);
+	return targetReg;
       }
       else
       {
+	if (targetName && !valueName)
+	{
+	  // See if we can 'force' the target register for the name's register
+	  if (block.OverrideNameRegister (targetName, exprDestinationReg))
+	    return exprDestinationReg;
+	}
+	// Set up register for left-side value
+	RegisterID targetReg (target->AddToSequence (block, Intermediate, UnicodeString(), true));
 	// Generate another assignment from exprDestinationReg to targetReg
 	SequenceOpPtr seqOp;
 	seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));
 	seq.AddOp (seqOp);
-      }
-      
-      return targetReg;
+	return targetReg;
+      }      
     }
   } // namespace intermediate
 } // namespace s1

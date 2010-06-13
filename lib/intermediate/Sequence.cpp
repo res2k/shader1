@@ -26,6 +26,15 @@ namespace s1
       name.append (generationSuffix);
     }
     
+    void Sequence::Register::StealName (Register& other)
+    {
+      originalName = other.originalName;
+      name = other.name;
+      generation = other.generation;
+      other.originalName.insert (0, "STOLEN!");
+      other.name.insert (0, "STOLEN!");
+    }
+    
     // ----------------------------------------------------------------------
 
     Sequence::RegisterBank::RegisterBank (const TypePtr& originalType)

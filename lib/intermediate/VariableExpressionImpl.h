@@ -9,10 +9,12 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::VariableExpressionImpl : public ExpressionImpl
     {
-      boost::shared_ptr<NameImpl> name;
+      NameImplPtr name;
     public:
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			      const boost::shared_ptr<NameImpl>& name);
+			      const NameImplPtr& name);
+			      
+      NameImplPtr GetExpressionName() { return name; }
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
