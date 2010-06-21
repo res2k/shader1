@@ -2,6 +2,7 @@
 
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
+#include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
 #include "intermediate/SequenceOp/SequenceOpMakeMatrix.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
@@ -22,25 +23,59 @@ namespace s1
     {
     }
 
-    void IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::ExtractBaseExpressions (ExpressionVector& baseExpr)
+    void IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::ExtractBaseExpressionRegs (BlockImpl& block,
+													  std::vector<RegisterID>& regs)
     {
+      Sequence& seq (*(block.GetSequence()));
+      
+      TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
+	  
       for (ExpressionVector::const_iterator expr (params.begin());
 	   expr != params.end();
 	   ++expr)
       {
 	boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (*expr));
 	TypeImplPtr exprType (exprImpl->GetValueType());
+	RegisterID srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
 	
 	switch (exprType->typeClass)
 	{
 	default:
 	  {
 	    // Add expression as-is
-	    baseExpr.push_back (*expr);
+	    if (targetBaseType->IsEqual (*exprType))
+	    {
+	      regs.push_back (srcExprReg);
+	    }
+	    else
+	    {
+	      RegisterID srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
+	      handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+	      regs.push_back (srcReg);
+	    }
 	  }
 	  break;
 	case TypeImpl::Vector:
-	  // ... extract components
+	  {
+	    // extract components
+	    TypeImplPtr exprCompType (boost::shared_static_cast<TypeImpl> (exprType->avmBase));
+	    for (unsigned int c = 0; c < exprType->vectorDim; c++)
+	    {
+	      RegisterID compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
+	      SequenceOpPtr extractOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg, srcExprReg, c));
+	      seq.AddOp (extractOp);
+	      if (targetBaseType->IsEqual (*exprCompType))
+	      {
+		regs.push_back (compReg);
+	      }
+	      else
+	      {
+		RegisterID srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
+		handler->GenerateCast (seq, srcReg, targetBaseType, compReg, exprCompType);
+		regs.push_back (srcReg);
+	      }
+	    }
+	  }
 	  break;
 	}
       }
@@ -87,8 +122,8 @@ namespace s1
       case TypeImpl::Vector:
 	{
 	  // Extract operands of base type from params (extract vector comps etc.)
-	  ExpressionVector baseExpr;
-	  ExtractBaseExpressions (baseExpr);
+	  std::vector<RegisterID> srcRegs;
+	  ExtractBaseExpressionRegs (block, srcRegs);
 	  
 	  unsigned int desiredDim;
 	  if (type->typeClass == TypeImpl::Vector)
@@ -96,31 +131,12 @@ namespace s1
 	  else
 	    desiredDim = type->matrixCols * type->matrixRows;
 	  
-	  if (params.size() > desiredDim)
+	  if (srcRegs.size() > desiredDim)
 	    throw Exception (TooManyTypeCtorArgs);
-	  if (params.size() < desiredDim)
+	  if (srcRegs.size() < desiredDim)
 	    throw Exception (TooFewTypeCtorArgs);
 	  
 	  TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
-	  std::vector<RegisterID> srcRegs;
-	  for (ExpressionVector::const_iterator srcExpr (baseExpr.begin());
-	       srcExpr != baseExpr.end();
-	       ++srcExpr)
-	  {
-	    boost::shared_ptr<ExpressionImpl> srcExprImpl (boost::shared_static_cast<ExpressionImpl> (*srcExpr));
-	    TypeImplPtr srcExprType (srcExprImpl->GetValueType());
-	    RegisterID srcExprReg (srcExprImpl->AddToSequence (block, Intermediate, false));
-	    if (targetBaseType->IsEqual (*srcExprType))
-	    {
-	      srcRegs.push_back (srcExprReg);
-	    }
-	    else
-	    {
-	      RegisterID srcReg (handler->AllocateRegister (seq, type, Intermediate));
-	      handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, srcExprType);
-	      srcRegs.push_back (srcReg);
-	    }
-	  }
 	  
 	  RegisterID targetReg (handler->AllocateRegister (seq, type, classify));
 	  BasicType vecType;

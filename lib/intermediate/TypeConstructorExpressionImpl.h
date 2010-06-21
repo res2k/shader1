@@ -12,7 +12,7 @@ namespace s1
       TypeImplPtr type;
       ExpressionVector params;
       
-      void ExtractBaseExpressions (ExpressionVector& baseExpr);
+      void ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterID>& reg);
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 				     const TypeImplPtr& type,
