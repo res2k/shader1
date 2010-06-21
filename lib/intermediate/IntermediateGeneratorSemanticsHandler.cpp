@@ -25,6 +25,7 @@
 #include "LogicExpressionImpl.h"
 #include "NumericExpressionImpl.h"
 #include "TernaryExpressionImpl.h"
+#include "TypeConstructorExpressionImpl.h"
 #include "UnaryExpressionImpl.h"
 #include "VariableExpressionImpl.h"
 
@@ -425,7 +426,12 @@ namespace s1
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,
 											  const ExpressionVector& params)
-    { return ExpressionPtr(); }
+    {
+      return ExpressionPtr (
+	boost::make_shared<TypeConstructorExpressionImpl> (this,
+							   boost::shared_static_cast<TypeImpl> (type),
+							   params));
+    }
     
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
 								 ScopeLevel scopeLevel,

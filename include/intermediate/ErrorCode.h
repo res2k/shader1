@@ -29,6 +29,10 @@ namespace s1
       ActualParameterNotAnLValue,
       /// The types of the 'if' and 'else' expression of a ternary expression are incompatible
       TernaryExpressionTypesIncompatible,
+      /// Too many arguments to type constructor
+      TooManyTypeCtorArgs,
+      /// Too few arguments to type constructor
+      TooFewTypeCtorArgs,
       
       // Below: definitely internal
       /// Error parsing number string

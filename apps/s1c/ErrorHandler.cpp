@@ -55,6 +55,8 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(ActualParameterNotAnLValue);
   ERRORCODE(TernaryExpressionTypesIncompatible);
   ERRORCODE(NumberParseError);
+  ERRORCODE(TooManyTypeCtorArgs);
+  ERRORCODE(TooFewTypeCtorArgs);
 #undef ERRORCODE
   }
   

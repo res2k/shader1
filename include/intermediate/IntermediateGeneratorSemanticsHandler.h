@@ -31,6 +31,7 @@ namespace s1
       class LogicExpressionImpl;
       class NumericExpressionImpl;
       class TernaryExpressionImpl;
+      class TypeConstructorExpressionImpl;
       class UnaryExpressionImpl;
       class VariableExpressionImpl;
       
