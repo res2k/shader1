@@ -259,7 +259,88 @@ namespace s1
     }
     
 				
-				
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixBool (const RegisterID& destination,
+									       unsigned int matrixRows,
+									       unsigned int matrixCols,
+									       const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("bool");
+      char compNumStr[4];
+      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixInt (const RegisterID& destination,
+									      unsigned int matrixRows,
+									      unsigned int matrixCols,
+									      const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("int");
+      char compNumStr[4];
+      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixUInt (const RegisterID& destination,
+									       unsigned int matrixRows,
+									       unsigned int matrixCols,
+									       const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("unsigned");
+      char compNumStr[4];
+      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixFloat (const RegisterID& destination,
+										unsigned int matrixRows,
+										unsigned int matrixCols,
+										const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("float");
+      char compNumStr[4];
+      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+
+
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const RegisterID& destination,
 									 const RegisterID& source1,
 									 const RegisterID& source2)

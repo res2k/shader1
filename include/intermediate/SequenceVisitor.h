@@ -43,6 +43,19 @@ namespace s1
       virtual void OpMakeVectorFloat (const RegisterID& destination,
 				     const std::vector<RegisterID>& sources) = 0;
 
+      virtual void OpMakeMatrixBool (const RegisterID& destination,
+				     unsigned int matrixRows, unsigned int matrixCols,
+				     const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeMatrixInt (const RegisterID& destination,
+				    unsigned int matrixRows, unsigned int matrixCols,
+				    const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeMatrixUInt (const RegisterID& destination,
+				     unsigned int matrixRows, unsigned int matrixCols,
+				     const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeMatrixFloat (const RegisterID& destination,
+				      unsigned int matrixRows, unsigned int matrixCols,
+				      const std::vector<RegisterID>& sources) = 0;
+
       virtual void OpArithAdd (const RegisterID& destination,
 			       const RegisterID& source1,
 			       const RegisterID& source2) = 0;

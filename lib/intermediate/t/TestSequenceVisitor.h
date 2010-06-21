@@ -22,6 +22,10 @@ public:
     opMakeVectorInt,
     opMakeVectorUInt,
     opMakeVectorFloat,
+    opMakeMatrixBool,
+    opMakeMatrixInt,
+    opMakeMatrixUInt,
+    opMakeMatrixFloat,
     opArithAdd,
     opArithSub,
     opArithMul,
@@ -58,6 +62,9 @@ public:
     RegisterID destReg;
     RegisterID sourceReg[2];
     std::vector<RegisterID> sourceRegs;
+    
+    unsigned int matrixRows;
+    unsigned int matrixCols;
     
     UnicodeString functionIdentifier;
     std::vector<RegisterID> inParams;
@@ -199,7 +206,59 @@ public:
     entries.push_back (entry);
   }
 
-				
+
+  void OpMakeMatrixBool (const RegisterID& destination,
+			 unsigned int matrixRows, unsigned int matrixCols,
+			 const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeMatrixBool;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entry.matrixRows = matrixRows;
+    entry.matrixCols = matrixCols;
+    entries.push_back (entry);
+  }
+
+  void OpMakeMatrixInt (const RegisterID& destination,
+			unsigned int matrixRows, unsigned int matrixCols,
+			const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeMatrixInt;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entry.matrixRows = matrixRows;
+    entry.matrixCols = matrixCols;
+    entries.push_back (entry);
+  }
+
+  void OpMakeMatrixUInt (const RegisterID& destination,
+			 unsigned int matrixRows, unsigned int matrixCols,
+			 const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeMatrixUInt;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entry.matrixRows = matrixRows;
+    entry.matrixCols = matrixCols;
+    entries.push_back (entry);
+  }
+
+  void OpMakeMatrixFloat (const RegisterID& destination,
+			  unsigned int matrixRows, unsigned int matrixCols,
+			  const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeMatrixFloat;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entry.matrixRows = matrixRows;
+    entry.matrixCols = matrixCols;
+    entries.push_back (entry);
+  }
+
 
   void OpArithAdd (const RegisterID& destination,
 		   const RegisterID& source1,
