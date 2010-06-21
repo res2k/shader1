@@ -9,6 +9,7 @@
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
 #include "intermediate/SequenceOp/SequenceOpCast.h"
+#include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
 #include "parser/Exception.h"
 
@@ -165,8 +166,6 @@ namespace s1
 							      const RegisterID& castSource,
 							      const TypeImplPtr& typeSource)
     {
-      assert (typeDestination->typeClass == typeSource->typeClass);
-      
       switch (typeDestination->typeClass)
       {
 	case TypeImpl::Base:
@@ -201,6 +200,55 @@ namespace s1
 	// TODO: Cast individual elements, if lengths match
 	break;
       case TypeImpl::Vector:
+	// Special case: allow casting from a base type to a 1 component vector
+	if ((typeDestination->vectorDim == 1) && (typeSource->typeClass == TypeImpl::Base))
+	{
+	  std::vector<RegisterID> srcVec;
+	  TypeImplPtr destBaseType (boost::shared_static_cast<TypeImpl> (typeDestination->avmBase));
+	  if (!destBaseType->IsEqual (*(typeSource)))
+	  {
+	    // Generate cast
+	    RegisterID srcVecReg (AllocateRegister (seq, destBaseType, Intermediate));
+	    GenerateCast (seq, srcVecReg, destBaseType, castSource, typeSource);
+	    srcVec.push_back (srcVecReg);
+	  }
+	  else
+	    srcVec.push_back (castSource);
+	  // Generate "make vector" op
+	  SequenceOpPtr seqOp;
+	  switch (destBaseType->base)
+	  {
+	    case Bool:
+	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
+								intermediate::Bool,
+								srcVec);
+	      break;
+	    case Int:
+	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
+								intermediate::Int,
+								srcVec);
+	      break;
+	    case UInt:
+	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
+								intermediate::UInt,
+								srcVec);
+	      break;
+	    case Float:
+	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
+								intermediate::Float,
+								srcVec);
+	      break;
+	    default:
+	      // Void can't be casted
+	      break;
+	  }
+	  if (seqOp)
+	  {
+	    seq.AddOp (seqOp);
+	    return;
+	  }
+	  break;
+	}
 	assert (typeDestination->vectorDim == typeSource->vectorDim);
 	// TODO: Cast individual components
 	break;
@@ -376,7 +424,7 @@ namespace s1
     }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,
-						    const ExpressionVector& params)
+											  const ExpressionVector& params)
     { return ExpressionPtr(); }
     
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
