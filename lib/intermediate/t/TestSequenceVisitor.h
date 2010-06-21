@@ -18,6 +18,10 @@ public:
     opCastToInt,
     opCastToUInt,
     opCastToFloat,
+    opMakeVectorBool,
+    opMakeVectorInt,
+    opMakeVectorUInt,
+    opMakeVectorFloat,
     opArithAdd,
     opArithSub,
     opArithMul,
@@ -53,6 +57,7 @@ public:
       
     RegisterID destReg;
     RegisterID sourceReg[2];
+    std::vector<RegisterID> sourceRegs;
     
     UnicodeString functionIdentifier;
     std::vector<RegisterID> inParams;
@@ -153,6 +158,48 @@ public:
     entries.push_back (entry);
   }
   
+  
+  void OpMakeVectorBool (const RegisterID& destination,
+			  const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeVectorBool;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entries.push_back (entry);
+  }
+
+  void OpMakeVectorInt (const RegisterID& destination,
+			const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeVectorInt;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entries.push_back (entry);
+  }
+
+  void OpMakeVectorUInt (const RegisterID& destination,
+			 const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeVectorUInt;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entries.push_back (entry);
+  }
+
+  void OpMakeVectorFloat (const RegisterID& destination,
+			  const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeVectorFloat;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entries.push_back (entry);
+  }
+
+				
 
   void OpArithAdd (const RegisterID& destination,
 		   const RegisterID& source1,

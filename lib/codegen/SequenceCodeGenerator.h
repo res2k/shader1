@@ -86,6 +86,15 @@ namespace s1
 	void OpCastToFloat (const RegisterID& destination,
 			    const RegisterID& source);
 
+	void OpMakeVectorBool (const RegisterID& destination,
+			       const std::vector<RegisterID>& sources);
+	void OpMakeVectorInt (const RegisterID& destination,
+			      const std::vector<RegisterID>& sources);
+	void OpMakeVectorUInt (const RegisterID& destination,
+			       const std::vector<RegisterID>& sources);
+	void OpMakeVectorFloat (const RegisterID& destination,
+				const std::vector<RegisterID>& sources);
+				     
 	void OpArithAdd (const RegisterID& destination,
 			 const RegisterID& source1,
 			 const RegisterID& source2);

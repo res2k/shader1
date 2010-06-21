@@ -33,6 +33,27 @@ namespace s1
 	
     //-----------------------------------------------------------------------
 		      
+    namespace
+    {
+      struct ParamHelper
+      {
+	std::string& str;
+	bool firstParam;
+	
+	ParamHelper (std::string& str) : str (str), firstParam (true) {}
+	void Add (const std::string& s)
+	{
+	  if (!firstParam)
+	    str.append (", ");
+	  else
+	    firstParam = false;
+	  str.append (s);
+	}
+      };
+    }
+    
+    //-----------------------------------------------------------------------
+		      
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
      : owner (owner), target (target)
@@ -165,6 +186,80 @@ namespace s1
     }
     
 
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorBool (const RegisterID& destination,
+									       const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("bool");
+      char compNumStr[2];
+      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorInt (const RegisterID& destination,
+									      const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("int");
+      char compNumStr[2];
+      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorUInt (const RegisterID& destination,
+									       const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("unsigned");
+      char compNumStr[2];
+      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorFloat (const RegisterID& destination,
+										const std::vector<RegisterID>& sources)
+    {
+      std::string paramsStr;
+      ParamHelper params (paramsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	params.Add (owner->GetOutputRegisterName (*source));
+      }
+      std::string typeStr ("float");
+      char compNumStr[2];
+      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
+      typeStr.append (compNumStr);
+      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
+    }
+    
+				
+				
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const RegisterID& destination,
 									 const RegisterID& source1,
 									 const RegisterID& source2)
@@ -360,25 +455,6 @@ namespace s1
       }
       retLine.append (";");
       target->AddString (retLine);
-    }
-    
-    namespace
-    {
-      struct ParamHelper
-      {
-	std::string& str;
-	bool firstParam;
-	
-	ParamHelper (std::string& str) : str (str), firstParam (true) {}
-	void Add (const std::string& s)
-	{
-	  if (!firstParam)
-	    str.append (", ");
-	  else
-	    firstParam = false;
-	  str.append (s);
-	}
-      };
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const RegisterID& destination,

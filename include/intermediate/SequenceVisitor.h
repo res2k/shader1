@@ -33,6 +33,15 @@ namespace s1
 			         const RegisterID& source) = 0;
       virtual void OpCastToFloat (const RegisterID& destination,
 			          const RegisterID& source) = 0;
+				  
+      virtual void OpMakeVectorBool (const RegisterID& destination,
+				     const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeVectorInt (const RegisterID& destination,
+				     const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeVectorUInt (const RegisterID& destination,
+				     const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeVectorFloat (const RegisterID& destination,
+				     const std::vector<RegisterID>& sources) = 0;
 
       virtual void OpArithAdd (const RegisterID& destination,
 			       const RegisterID& source1,
