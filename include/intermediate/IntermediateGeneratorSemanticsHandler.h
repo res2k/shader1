@@ -25,6 +25,7 @@ namespace s1
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
       class AssignmentExpressionImpl;
+      class AttributeExpressionImpl;
       class BoolExpressionImpl;
       class ComparisonExpressionImpl;
       class FunctionCallExpressionImpl;
@@ -58,6 +59,42 @@ namespace s1
       static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
       static BaseType DetectNumericType (const UnicodeString& numericStr);
       /**@}*/
+      
+      /**\name Attribute utilities
+       * @{ */
+      struct Attribute
+      {
+	enum AttrClass
+	{
+	  Unknown,
+	  
+	  arrayLength,
+	  
+	  matrixRow,
+	  matrixCol,
+	  matrixTranspose,
+	  matrixInvert,
+	  
+	  vectorSwizzle
+	};
+	AttrClass attrClass;
+	unsigned char swizzleCompNum;
+	unsigned char swizzleComps;
+	
+	Attribute (AttrClass ac) : attrClass (ac), swizzleCompNum (0), swizzleComps (0) {}
+	Attribute (unsigned char swizNum, unsigned char comp1 = 0, unsigned char comp2 = 0,
+		   unsigned char comp3 = 0, unsigned char comp4 = 0)
+	 : attrClass (vectorSwizzle), swizzleCompNum (swizNum),
+	   swizzleComps ((comp1 & 3) | ((comp2 & 3) << 2) | ((comp3 & 3) << 4) | ((comp4 & 3) << 6))
+	{}
+	
+	unsigned char GetSwizzleComp (unsigned char num) const
+	{ return (swizzleComps >> (num*2)) & 3; }
+      };
+      static Attribute IdentifyAttribute (const UnicodeString& attributeStr);
+      TypeImplPtr GetAttributeType (const TypeImplPtr& expressionType,
+				    const Attribute& attr);
+      /** @} */
       
       IntermediateGeneratorSemanticsHandler ();
       ~IntermediateGeneratorSemanticsHandler ();

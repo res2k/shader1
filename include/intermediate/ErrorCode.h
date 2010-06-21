@@ -33,6 +33,8 @@ namespace s1
       TooManyTypeCtorArgs,
       /// Too few arguments to type constructor
       TooFewTypeCtorArgs,
+      /// Invalid attribute
+      InvalidAttribute,
       
       // Below: definitely internal
       /// Error parsing number string

@@ -26,6 +26,7 @@ public:
     opMakeMatrixInt,
     opMakeMatrixUInt,
     opMakeMatrixFloat,
+    opExtractVectorComponent,
     opArithAdd,
     opArithSub,
     opArithMul,
@@ -65,6 +66,8 @@ public:
     
     unsigned int matrixRows;
     unsigned int matrixCols;
+    
+    unsigned int extractComp;
     
     UnicodeString functionIdentifier;
     std::vector<RegisterID> inParams;
@@ -260,6 +263,19 @@ public:
   }
 
 
+  void OpExtractVectorComponent (const RegisterID& destination,
+				 const RegisterID& source,
+				 unsigned int comp)
+  {
+    SequenceEntry entry;
+    entry.op = opExtractVectorComponent ;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entry.extractComp = comp;
+    entries.push_back (entry);
+  }
+					     
+					     
   void OpArithAdd (const RegisterID& destination,
 		   const RegisterID& source1,
 		   const RegisterID& source2)

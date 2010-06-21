@@ -57,6 +57,7 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(NumberParseError);
   ERRORCODE(TooManyTypeCtorArgs);
   ERRORCODE(TooFewTypeCtorArgs);
+  ERRORCODE(InvalidAttribute);
 #undef ERRORCODE
   }
   

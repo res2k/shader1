@@ -340,6 +340,18 @@ namespace s1
     }
     
 
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterID& destination,
+										       const RegisterID& source,
+										       unsigned int comp)
+    {
+      static const char* const compStr[] = { "x", "y", "z", "w" };
+      
+      std::string sourceName (owner->GetOutputRegisterName (source));
+      sourceName.append (".");
+      sourceName.append (compStr[comp]);
+      EmitAssign (destination, sourceName.c_str());
+    }
+    
 
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const RegisterID& destination,
 									 const RegisterID& source1,

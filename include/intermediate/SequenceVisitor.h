@@ -56,6 +56,10 @@ namespace s1
 				      unsigned int matrixRows, unsigned int matrixCols,
 				      const std::vector<RegisterID>& sources) = 0;
 
+      virtual void OpExtractVectorComponent (const RegisterID& destination,
+					     const RegisterID& source,
+					     unsigned int comp) = 0;
+				 
       virtual void OpArithAdd (const RegisterID& destination,
 			       const RegisterID& source1,
 			       const RegisterID& source2) = 0;
