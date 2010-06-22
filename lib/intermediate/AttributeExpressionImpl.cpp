@@ -2,6 +2,7 @@
 
 #include "AttributeExpressionImpl.h"
 
+#include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
@@ -54,7 +55,8 @@ namespace s1
 	{
 	  if (asLvalue)
 	  {
-	    // TODO: assignment to vector components
+	    RegisterID targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
+	    return targetReg;
 	  }
 	  else
 	  {
@@ -62,7 +64,7 @@ namespace s1
 	    RegisterID exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
 	    
 	    TypeImplPtr valueType (GetValueType());
-	    RegisterID targetReg;;
+	    RegisterID targetReg;
 	    if (attr.swizzleCompNum > 1)
 	    {
 	      // multi-component swizzle
@@ -106,5 +108,80 @@ namespace s1
       }
     }
 
+    void IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequencePostAction (BlockImpl& block,
+												  const RegisterID& target,
+												  bool wasLvalue)
+    {
+      if (!wasLvalue) return;
+      
+      Sequence& seq (*(block.GetSequence()));
+      
+      // Generate assignment from register to actual target
+      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (baseExpr));
+      
+      RegisterID originalTarget (exprImpl->AddToSequence (block, Intermediate, false));
+      exprImpl->AddToSequencePostAction (block, originalTarget, false);
+      
+      RegisterID actualTarget (exprImpl->AddToSequence (block, Intermediate, true));
+      if (!actualTarget.IsValid())
+	throw Exception (SwizzledExpressionNotAnLValue);
+      
+      TypeImplPtr originalValueType (exprImpl->GetValueType());
+      TypeImplPtr originalValueCompType (boost::shared_static_cast<TypeImpl> (originalValueType->avmBase));
+      TypeImplPtr valueType (GetValueType());
+      
+      unsigned int compDefined = 0;
+      std::vector<RegisterID> compRegs;
+      compRegs.insert (compRegs.begin(), originalValueType->vectorDim, RegisterID ());
+      
+      for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
+      {
+	unsigned int comp = attr.GetSwizzleComp (c);
+	if (compDefined & (1 << comp))
+	  throw Exception (MultipleUseOfComponentInLValueSwizzle);
+
+	if (valueType->typeClass == TypeImpl::Vector)
+	{
+	  RegisterID compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
+	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg,
+										     target,
+										     c));
+	  seq.AddOp (seqOp);
+	  compRegs[comp] = compReg;
+	}
+	else
+	{
+	  compRegs[comp] = target;
+	}
+	
+	compDefined |= 1 << comp;
+      }
+      
+      for (unsigned int c = 0; c < originalValueType->vectorDim; c++)
+      {
+	if (!(compDefined & (1 << c)))
+	{
+	  RegisterID compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
+	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg,
+										     originalTarget,
+										     c));
+	  seq.AddOp (seqOp);
+	  compRegs[c] = compReg;
+	}
+      }
+      BasicType vecType;
+      switch (originalValueCompType->base)
+      {
+      case Bool: 	vecType = intermediate::Bool; break;
+      case Int: 	vecType = intermediate::Int; break;
+      case UInt: 	vecType = intermediate::UInt; break;
+      case Float: 	vecType = intermediate::Float; break;
+      default:		return;
+      }
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpMakeVector> (actualTarget, vecType, compRegs));
+      seq.AddOp (seqOp);
+      
+      exprImpl->AddToSequencePostAction (block, actualTarget, true);
+    }
   } // namespace intermediate
 } // namespace s1

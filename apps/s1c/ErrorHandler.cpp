@@ -60,6 +60,8 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(InvalidAttribute);
   ERRORCODE(NotAnArray);
   ERRORCODE(IndexNotAnInteger);
+  ERRORCODE(SwizzledExpressionNotAnLValue);
+  ERRORCODE(MultipleUseOfComponentInLValueSwizzle);
 #undef ERRORCODE
   }
   

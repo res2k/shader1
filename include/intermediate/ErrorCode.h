@@ -39,6 +39,10 @@ namespace s1
       NotAnArray,
       /// Index type not an integer type
       IndexNotAnInteger,
+      /// Swizzled expression is not an L-value
+      SwizzledExpressionNotAnLValue,
+      /// A component was used multiple times in an L-value swizzle
+      MultipleUseOfComponentInLValueSwizzle,
       
       // Below: definitely internal
       /// Error parsing number string
