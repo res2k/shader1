@@ -76,8 +76,8 @@ namespace s1
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
 
       // Set up register for operand value
-      RegisterID reg;
-      reg = operand->AddToSequence (block, Intermediate);
+      RegisterID orgReg, reg;
+      orgReg = reg = operand->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(operandType.get())))
       {
 	// Insert cast op
@@ -105,6 +105,8 @@ namespace s1
       }
       assert (seqOp);
       seq.AddOp (seqOp);
+      
+      operand->AddToSequencePostAction (block, orgReg, false);
       
       return destination;
     }

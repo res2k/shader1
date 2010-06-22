@@ -60,16 +60,23 @@ namespace s1
     }
 
     void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FetchRegisters (BlockImpl& block,
-											    FetchedRegs& fetchedRegs)
+											    FetchedRegs& fetchedRegs,
+											    PostActions& postActions)
     {
       for (size_t i = 0; i < actualParams.size(); i++)
       {
 	RegisterID reg1, reg2;
 	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	if (overload->params[i].dir & ScopeImpl::dirIn)
+	{
 	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
+	  postActions.push_back (PostActionInfo (paramExprImpl, reg1, false));
+	}
 	if (overload->params[i].dir & ScopeImpl::dirOut)
+	{
 	  reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
+	  postActions.push_back (PostActionInfo (paramExprImpl, reg2, false));
+	}
 	fetchedRegs.push_back (std::make_pair (reg1, reg2));
       }
     }
@@ -93,7 +100,8 @@ namespace s1
       if (overload->identifier.isEmpty()) return RegisterID();
       
       FetchedRegs fetchedRegs;
-      FetchRegisters (block, fetchedRegs);
+      PostActions postActions;
+      FetchRegisters (block, fetchedRegs, postActions);
       
       std::vector<RegisterID> inParams;
       std::vector<RegisterID> outParams;
@@ -105,10 +113,7 @@ namespace s1
 	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	  boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
 	  RegisterID inReg (fetchedRegs[i].first);
-	  if (!inReg.IsValid())
-	  {
-	    inReg = paramExprImpl->AddToSequence (block, Intermediate);
-	  }
+	  assert (inReg.IsValid());
 	  boost::shared_ptr<TypeImpl> formalParamType (boost::shared_static_cast<TypeImpl> (param.type));
 	  if (!paramExprType->IsEqual (*formalParamType))
 	  {
@@ -164,6 +169,13 @@ namespace s1
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
 								       inParams, outParams));
       block.GetSequence()->AddOp (seqOp);
+      
+      for (PostActions::const_iterator postAction (postActions.begin());
+	   postAction != postActions.end();
+	   ++postAction)
+      {
+	postAction->expr->AddToSequencePostAction (block, postAction->reg, postAction->lValue);
+      }
       
       return destination;
     }

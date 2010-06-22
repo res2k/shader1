@@ -25,7 +25,8 @@ namespace s1
     }
 
     void IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::ExtractBaseExpressionRegs (BlockImpl& block,
-													  std::vector<RegisterID>& regs)
+													  std::vector<RegisterID>& regs,
+													  PostActionList& postActions)
     {
       Sequence& seq (*(block.GetSequence()));
       
@@ -38,6 +39,7 @@ namespace s1
 	boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (*expr));
 	TypeImplPtr exprType (exprImpl->GetValueType());
 	RegisterID srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
+	postActions.push_back(std::make_pair<> (exprImpl, srcExprReg));
 	
 	switch (exprType->typeClass)
 	{
@@ -116,6 +118,7 @@ namespace s1
 	    // otherwise, generate cast
 	    handler->GenerateCast (seq, targetReg, type, srcReg, srcType);
 	  }
+	  srcExprImpl->AddToSequencePostAction (block, srcReg, false);
 	  return targetReg;
 	}
 	break;
@@ -124,7 +127,8 @@ namespace s1
 	{
 	  // Extract operands of base type from params (extract vector comps etc.)
 	  std::vector<RegisterID> srcRegs;
-	  ExtractBaseExpressionRegs (block, srcRegs);
+	  PostActionList postActions;
+	  ExtractBaseExpressionRegs (block, srcRegs, postActions);
 	  
 	  unsigned int desiredDim;
 	  if (type->typeClass == TypeImpl::Vector)
@@ -157,6 +161,14 @@ namespace s1
 	    seqOp = boost::make_shared<SequenceOpMakeMatrix> (targetReg, vecType, 
 							      type->matrixRows, type->matrixCols, srcRegs);
 	  seq.AddOp (seqOp);
+	  
+	  for (PostActionList::const_iterator postAction (postActions.begin());
+	       postAction != postActions.end();
+	       ++postAction)
+	  {
+	    postAction->first->AddToSequencePostAction (block, postAction->second, false);
+	  }
+	  
 	  return targetReg;
 	}
 	break;

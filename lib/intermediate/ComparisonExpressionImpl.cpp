@@ -62,8 +62,8 @@ namespace s1
       boost::shared_ptr<TypeImpl> comparisonType = handler->GetHigherPrecisionType (type1, type2);
 	
       // Set up registers for operand values
-      RegisterID reg1;
-      reg1 = operand1->AddToSequence (block, Intermediate);
+      RegisterID orgReg1, reg1;
+      orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
       if (!comparisonType->IsEqual (*(type1.get())))
       {
 	// Insert cast op
@@ -72,8 +72,8 @@ namespace s1
 			       reg1, type1);
 	reg1 = newReg1;
       }
-      RegisterID reg2;
-      reg2 = operand2->AddToSequence (block, Intermediate);
+      RegisterID orgReg2, reg2;
+      orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       if (!comparisonType->IsEqual (*(type2.get())))
       {
 	// Insert cast op
@@ -110,6 +110,9 @@ namespace s1
       }
       assert (seqOp);
       seq.AddOp (seqOp);
+      
+      operand1->AddToSequencePostAction (block, orgReg1, false);
+      operand2->AddToSequencePostAction (block, orgReg2, false);
       
       return destination;
     }

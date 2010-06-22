@@ -64,10 +64,10 @@ namespace s1
       Sequence& seq (*(block.GetSequence()));
 	
       // Set up registers for operand values
-      RegisterID reg1;
-      reg1 = operand1->AddToSequence (block, Intermediate);
-      RegisterID reg2;
-      reg2 = operand2->AddToSequence (block, Intermediate);
+      RegisterID orgReg1, reg1;
+      orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
+      RegisterID orgReg2, reg2;
+      orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       
       RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
@@ -84,6 +84,9 @@ namespace s1
       }
       assert (seqOp);
       seq.AddOp (seqOp);
+      
+      operand1->AddToSequencePostAction (block, orgReg1, false);
+      operand2->AddToSequencePostAction (block, orgReg2, false);
       
       return destination;
     }

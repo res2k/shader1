@@ -22,6 +22,9 @@ namespace s1
       virtual RegisterID AddToSequence (BlockImpl& block,
 					RegisterClassification targetClassify,
 					bool asLvalue = false) = 0;
+      virtual void AddToSequencePostAction (BlockImpl& block,
+					    const RegisterID& target,
+					    bool wasLvalue) {}
     };
   } // namespace intermediate
 } // namespace s1

@@ -20,8 +20,18 @@ namespace s1
       
       void SelectOverload ();
       typedef std::vector<std::pair<RegisterID, RegisterID> > FetchedRegs;
+      struct PostActionInfo
+      {
+	boost::shared_ptr<ExpressionImpl> expr;
+	RegisterID reg;
+	bool lValue;
+	
+	PostActionInfo (const boost::shared_ptr<ExpressionImpl>& expr, RegisterID reg, bool lValue)
+	 : expr (expr), reg (reg), lValue (lValue) {}
+      };
+      typedef std::vector<PostActionInfo> PostActions;
       void FetchRegisters (s1::intermediate::IntermediateGeneratorSemanticsHandler::BlockImpl & block,
-			   FetchedRegs& fetchedRegs);
+			   FetchedRegs& fetchedRegs, PostActions& postActions);
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 				  const NamePtr& functionName,

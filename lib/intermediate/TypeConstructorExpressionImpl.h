@@ -12,7 +12,9 @@ namespace s1
       TypeImplPtr type;
       ExpressionVector params;
       
-      void ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterID>& reg);
+      typedef std::vector<std::pair<boost::shared_ptr<ExpressionImpl>, RegisterID> > PostActionList;
+      void ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterID>& reg,
+				      PostActionList& postActions);
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
 				     const TypeImplPtr& type,

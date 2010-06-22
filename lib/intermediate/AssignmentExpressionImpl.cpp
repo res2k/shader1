@@ -71,6 +71,10 @@ namespace s1
 	// Generate cast to targetReg
 	handler->GenerateCast (seq, targetReg, targetType,
 			       exprDestinationReg, valueType);
+			       
+	value->AddToSequencePostAction (block, exprDestinationReg, false);
+	target->AddToSequencePostAction (block, targetReg, true);
+			       
 	return targetReg;
       }
       else
@@ -79,7 +83,10 @@ namespace s1
 	{
 	  // See if we can 'force' the target register for the name's register
 	  if (block.OverrideNameRegister (targetName, exprDestinationReg))
+	  {
+	    value->AddToSequencePostAction (block, exprDestinationReg, false);
 	    return exprDestinationReg;
+	  }
 	}
 	// Set up register for left-side value
 	RegisterID targetReg (target->AddToSequence (block, Intermediate, true));
@@ -87,6 +94,10 @@ namespace s1
 	SequenceOpPtr seqOp;
 	seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));
 	seq.AddOp (seqOp);
+	
+	value->AddToSequencePostAction (block, exprDestinationReg, false);
+	target->AddToSequencePostAction (block, targetReg, true);
+	
 	return targetReg;
       }      
     }
