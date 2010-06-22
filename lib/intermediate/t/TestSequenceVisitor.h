@@ -27,6 +27,7 @@ public:
     opMakeMatrixUInt,
     opMakeMatrixFloat,
     opMakeArray,
+    opExtractArrayElement,
     opExtractVectorComponent,
     opArithAdd,
     opArithSub,
@@ -274,7 +275,19 @@ public:
     entries.push_back (entry);
   }
 				
+  void OpExtractArrayElement (const RegisterID& destination,
+			      const RegisterID& source,
+			      const RegisterID& index)
+  {
+    SequenceEntry entry;
+    entry.op = opExtractArrayElement;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entry.sourceReg[1] = index;
+    entries.push_back (entry);
+  }
 
+					  
   void OpExtractVectorComponent (const RegisterID& destination,
 				 const RegisterID& source,
 				 unsigned int comp)

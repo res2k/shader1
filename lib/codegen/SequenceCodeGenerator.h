@@ -110,6 +110,9 @@ namespace s1
 				     
 	void OpMakeArray (const RegisterID& destination,
 			  const std::vector<RegisterID>& sources);
+	void OpExtractArrayElement (const RegisterID& destination,
+				    const RegisterID& source,
+				    const RegisterID& index);
 
 	void OpExtractVectorComponent (const RegisterID& destination,
 				       const RegisterID& source,

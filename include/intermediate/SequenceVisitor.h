@@ -58,6 +58,9 @@ namespace s1
 
       virtual void OpMakeArray (const RegisterID& destination,
 				const std::vector<RegisterID>& sources) = 0;
+      virtual void OpExtractArrayElement (const RegisterID& destination,
+					  const RegisterID& source,
+					  const RegisterID& index) = 0;
 
       virtual void OpExtractVectorComponent (const RegisterID& destination,
 					     const RegisterID& source,

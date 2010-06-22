@@ -360,7 +360,18 @@ namespace s1
       EmitAssign (destination, elementsStr.c_str());
     }
 			  
-			  
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractArrayElement (const RegisterID& destination,
+										    const RegisterID& source,
+										    const RegisterID& index)
+    {
+      std::string sourceName (owner->GetOutputRegisterName (source));
+      sourceName.append ("[");
+      sourceName.append (owner->GetOutputRegisterName (index));
+      sourceName.append ("]");
+      EmitAssign (destination, sourceName.c_str());
+    }
+
+				    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterID& destination,
 										       const RegisterID& source,
 										       unsigned int comp)
