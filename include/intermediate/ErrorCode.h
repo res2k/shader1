@@ -35,6 +35,10 @@ namespace s1
       TooFewTypeCtorArgs,
       /// Invalid attribute
       InvalidAttribute,
+      /// Value is not of an array type
+      NotAnArray,
+      /// Index type not an integer type
+      IndexNotAnInteger,
       
       // Below: definitely internal
       /// Error parsing number string

@@ -24,6 +24,7 @@ namespace s1
       class CommandImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
+      class ArrayElementExpressionImpl;
       class AssignmentExpressionImpl;
       class AttributeExpressionImpl;
       class BoolExpressionImpl;
@@ -116,7 +117,8 @@ namespace s1
 	Intermediate = 'i',
 	Dummy = 'd',
 	Imported = 'm',
-	Condition = 'c'
+	Condition = 'c',
+	Index = 'x'
       };
       /**
        * Allocate a new register.

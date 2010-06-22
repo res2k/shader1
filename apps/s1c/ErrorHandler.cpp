@@ -58,6 +58,8 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(TooManyTypeCtorArgs);
   ERRORCODE(TooFewTypeCtorArgs);
   ERRORCODE(InvalidAttribute);
+  ERRORCODE(NotAnArray);
+  ERRORCODE(IndexNotAnInteger);
 #undef ERRORCODE
   }
   

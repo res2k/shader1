@@ -19,6 +19,7 @@
 #include "TypeImpl.h"
 
 #include "ArithmeticExpressionImpl.h"
+#include "ArrayElementExpressionImpl.h"
 #include "AssignmentExpressionImpl.h"
 #include "AttributeExpressionImpl.h"
 #include "BoolExpressionImpl.h"
@@ -483,8 +484,10 @@ namespace s1
     }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArrayElementAccess (ExpressionPtr arrayExpr,
-					    ExpressionPtr elementIndexExpr)
-    { return ExpressionPtr(); }
+										   ExpressionPtr elementIndexExpr)
+    {
+      return boost::make_shared<ArrayElementExpressionImpl> (this, arrayExpr, elementIndexExpr);
+    }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAssignExpression (ExpressionPtr target,
 					  ExpressionPtr value)
