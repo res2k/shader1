@@ -377,6 +377,7 @@ namespace s1
 	  }
 	  break;
 	}
+	assert (typeSource->typeClass == TypeImpl::Vector);
 	assert (typeDestination->vectorDim == typeSource->vectorDim);
 	// TODO: Cast individual components
 	break;
