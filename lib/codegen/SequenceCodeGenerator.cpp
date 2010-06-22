@@ -53,6 +53,11 @@ namespace s1
     }
     
     //-----------------------------------------------------------------------
+    
+    static const char cgTypeBool[]	= "bool";
+    static const char cgTypeInt[]	= "int";
+    static const char cgTypeUInt[]	= "unsigned int";
+    static const char cgTypeFloat[]	= "float";
 		      
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
@@ -161,28 +166,28 @@ namespace s1
 									   const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, "bool", sourceName.c_str());
+      EmitFunctionCall (destination, cgTypeBool, sourceName.c_str());
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToInt (const RegisterID& destination,
 									  const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, "int", sourceName.c_str());
+      EmitFunctionCall (destination, cgTypeInt, sourceName.c_str());
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToUInt (const RegisterID& destination,
 									   const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, "unsigned", sourceName.c_str());
+      EmitFunctionCall (destination, cgTypeUInt, sourceName.c_str());
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToFloat (const RegisterID& destination,
 									    const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, "float", sourceName.c_str());
+      EmitFunctionCall (destination, cgTypeFloat, sourceName.c_str());
     }
     
 
@@ -197,7 +202,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("bool");
+      std::string typeStr (cgTypeBool);
       char compNumStr[2];
       snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
       typeStr.append (compNumStr);
@@ -215,7 +220,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("int");
+      std::string typeStr (cgTypeInt);
       char compNumStr[2];
       snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
       typeStr.append (compNumStr);
@@ -233,7 +238,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("unsigned");
+      std::string typeStr (cgTypeUInt);
       char compNumStr[2];
       snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
       typeStr.append (compNumStr);
@@ -251,7 +256,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("float");
+      std::string typeStr (cgTypeFloat);
       char compNumStr[2];
       snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
       typeStr.append (compNumStr);
@@ -272,7 +277,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("bool");
+      std::string typeStr (cgTypeBool);
       char compNumStr[4];
       snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
       typeStr.append (compNumStr);
@@ -292,7 +297,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("int");
+      std::string typeStr (cgTypeInt);
       char compNumStr[4];
       snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
       typeStr.append (compNumStr);
@@ -312,7 +317,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("unsigned");
+      std::string typeStr (cgTypeUInt);
       char compNumStr[4];
       snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
       typeStr.append (compNumStr);
@@ -332,7 +337,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr ("float");
+      std::string typeStr (cgTypeFloat);
       char compNumStr[4];
       snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
       typeStr.append (compNumStr);
