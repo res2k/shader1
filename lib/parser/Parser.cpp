@@ -288,6 +288,10 @@ namespace s1
     if ((currentToken.typeOrID == Lexer::Identifier)
 	  && (Peek ().typeOrID == Lexer::Assign))
       return true;
+    // Check if attribute
+    if ((currentToken.typeOrID == Lexer::Identifier)
+	  && (Peek ().typeOrID == Lexer::Member))
+      return true;
     // Check if 'stand-alone' expression
     if (((currentToken.typeOrID == Lexer::Identifier)
 	    && (IsBinaryOperationToken (Peek ().typeOrID) 	// X op Y
