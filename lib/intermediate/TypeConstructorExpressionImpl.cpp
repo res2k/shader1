@@ -162,6 +162,7 @@ namespace s1
 	break;
       case TypeImpl::Sampler:
 	// ...
+	return RegisterID();
       case TypeImpl::Array:
 	{
 	  RegisterID targetReg (handler->AllocateRegister (seq, type, classify));
