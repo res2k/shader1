@@ -498,9 +498,12 @@ namespace s1
       SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID_imp, identToRegID_exp);
       SequenceCodeGenerator codegen (*seq, &nameRes);
       StringsArrayPtr blockStrings (codegen.Generate());
-      target->AddString ("{");
-      target->AddStrings (*blockStrings, 2);
-      target->AddString ("}");
+      if (blockStrings->Size() > 0)
+      {
+	target->AddString ("{");
+	target->AddStrings (*blockStrings, 2);
+	target->AddString ("}");
+      }
     }
 		      
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBranch (const RegisterID& conditionReg,
