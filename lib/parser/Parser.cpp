@@ -618,6 +618,7 @@ namespace s1
       peekAfterType++;
       tokenID = Peek().typeOrID;
     }
+    bool isType = false;
     switch (tokenID)
     {
     case Lexer::kwBool:
@@ -627,18 +628,27 @@ namespace s1
     case Lexer::kwSampler2D:
     case Lexer::kwSampler3D:
     case Lexer::kwSamplerCUBE:
-      return true;
+      isType = true;
+      break;
     case Lexer::Identifier:
       /* Might be a type alias */
       {
 	Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
-	return (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
+	isType = (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
       }
       break;
     default:
       break;
     }
-    return false;
+    if (isType)
+    {
+      if ((Peek (peekAfterType).typeOrID == Lexer::BracketL)
+	  && (Peek (peekAfterType+1).typeOrID == Lexer::BracketR))
+      {
+	peekAfterType += 2;
+      }
+    }
+    return isType;
   }
   
   Parser::Type Parser::ParseTypeBase (const Scope& scope)
