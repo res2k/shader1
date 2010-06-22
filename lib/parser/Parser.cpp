@@ -307,11 +307,6 @@ namespace s1
     int checkForParens = 0;
     if (IsType (scope, checkForParens))
     {
-      while ((Peek (checkForParens).typeOrID == Lexer::BracketL)
-	&& (Peek (checkForParens).typeOrID == Lexer::BracketR))
-      {
-	checkForParens += 2;
-      }
       if (Peek (checkForParens).typeOrID == Lexer::ParenL)
 	return true;
     }
@@ -646,8 +641,8 @@ namespace s1
     }
     if (isType)
     {
-      if ((Peek (peekAfterType).typeOrID == Lexer::BracketL)
-	  && (Peek (peekAfterType+1).typeOrID == Lexer::BracketR))
+      while ((Peek (peekAfterType).typeOrID == Lexer::BracketL)
+	&& (Peek (peekAfterType+1).typeOrID == Lexer::BracketR))
       {
 	peekAfterType += 2;
       }
