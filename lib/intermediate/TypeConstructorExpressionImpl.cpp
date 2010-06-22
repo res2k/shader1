@@ -3,6 +3,7 @@
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
+#include "intermediate/SequenceOp/SequenceOpMakeArray.h"
 #include "intermediate/SequenceOp/SequenceOpMakeMatrix.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
@@ -162,7 +163,38 @@ namespace s1
       case TypeImpl::Sampler:
 	// ...
       case TypeImpl::Array:
-	// ...
+	{
+	  RegisterID targetReg (handler->AllocateRegister (seq, type, classify));
+	  std::vector<RegisterID> srcRegs;
+	  
+	  TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
+	  
+	  for (ExpressionVector::const_iterator expr (params.begin());
+	      expr != params.end();
+	      ++expr)
+	  {
+	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (*expr));
+	    TypeImplPtr exprType (exprImpl->GetValueType());
+	    RegisterID srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
+	    
+	    // Add expression as-is
+	    if (targetBaseType->IsEqual (*exprType))
+	    {
+	      srcRegs.push_back (srcExprReg);
+	    }
+	    else
+	    {
+	      RegisterID srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
+	      handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+	      srcRegs.push_back (srcReg);
+	    }
+	  }
+	  
+	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpMakeArray> (targetReg, srcRegs));
+	  seq.AddOp (seqOp);
+	  return targetReg;
+	}
+	break;
       default:
 	return RegisterID();
       }
