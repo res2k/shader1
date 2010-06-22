@@ -56,6 +56,9 @@ namespace s1
 				      unsigned int matrixRows, unsigned int matrixCols,
 				      const std::vector<RegisterID>& sources) = 0;
 
+      virtual void OpMakeArray (const RegisterID& destination,
+				const std::vector<RegisterID>& sources) = 0;
+
       virtual void OpExtractVectorComponent (const RegisterID& destination,
 					     const RegisterID& source,
 					     unsigned int comp) = 0;

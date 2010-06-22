@@ -108,11 +108,12 @@ namespace s1
 				unsigned int matrixRows, unsigned int matrixCols,
 				const std::vector<RegisterID>& sources);
 				     
+	void OpMakeArray (const RegisterID& destination,
+			  const std::vector<RegisterID>& sources);
 
 	void OpExtractVectorComponent (const RegisterID& destination,
 				       const RegisterID& source,
 				       unsigned int comp);
-				      
 				      
 	void OpArithAdd (const RegisterID& destination,
 			 const RegisterID& source1,

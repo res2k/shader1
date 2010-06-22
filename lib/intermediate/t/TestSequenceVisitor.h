@@ -26,6 +26,7 @@ public:
     opMakeMatrixInt,
     opMakeMatrixUInt,
     opMakeMatrixFloat,
+    opMakeArray,
     opExtractVectorComponent,
     opArithAdd,
     opArithSub,
@@ -262,6 +263,17 @@ public:
     entries.push_back (entry);
   }
 
+
+  void OpMakeArray (const RegisterID& destination,
+		    const std::vector<RegisterID>& sources)
+  {
+    SequenceEntry entry;
+    entry.op = opMakeArray;
+    entry.destReg = destination;
+    entry.sourceRegs = sources;
+    entries.push_back (entry);
+  }
+				
 
   void OpExtractVectorComponent (const RegisterID& destination,
 				 const RegisterID& source,

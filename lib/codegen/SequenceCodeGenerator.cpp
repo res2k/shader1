@@ -340,6 +340,22 @@ namespace s1
     }
     
 
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeArray (const RegisterID& destination,
+									  const std::vector<RegisterID>& sources)
+    {
+      std::string elementsStr ("{ ");
+      ParamHelper elements (elementsStr);
+      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+	   source != sources.end();
+	   ++source)
+      {
+	elements.Add (owner->GetOutputRegisterName (*source));
+      }
+      elementsStr.append (" }");
+      EmitAssign (destination, elementsStr.c_str());
+    }
+			  
+			  
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterID& destination,
 										       const RegisterID& source,
 										       unsigned int comp)
