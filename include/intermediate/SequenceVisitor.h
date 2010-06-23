@@ -2,6 +2,7 @@
 #define __INTERMEDIATE_SEQUENCEVISITOR_H__
 
 #include "forwarddecl.h"
+#include "BuiltinFunction.h"
 #include "RegisterID.h"
 #include "Sequence.h"
 
@@ -138,6 +139,9 @@ namespace s1
 				   const UnicodeString& funcIdent,
 				   const std::vector<RegisterID>& inParams,
 				   const std::vector<RegisterID>& outParams) = 0;
+      virtual void OpBuiltinCall (const RegisterID& destination,
+				  BuiltinFunction what,
+				  const std::vector<RegisterID>& inParams) = 0;
     };
   } // namespace intermediate
 } // namespace s1

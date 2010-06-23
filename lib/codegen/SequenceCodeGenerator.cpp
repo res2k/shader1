@@ -631,6 +631,43 @@ namespace s1
       target->AddString (line);
     }
     
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBuiltinCall (const RegisterID& destination,
+									    intermediate:: BuiltinFunction what,
+									    const std::vector<RegisterID>& inParams)
+    {
+      std::string line;
+      if (destination.IsValid())
+      {
+	line.append (owner->GetOutputRegisterName (destination));
+	line.append (" = ");
+      }
+      switch (what)
+      {
+      case intermediate::dot:		line.append ("dot");		break;
+      case intermediate::cross:		line.append ("cross");		break;
+      case intermediate::normalize:	line.append ("normalize");	break;
+      case intermediate::length:	line.append ("length");		break;
+      case intermediate::mul:		line.append ("mul");		break;
+      case intermediate::tex1D:		line.append ("tex1D");		break;
+      case intermediate::tex2D:		line.append ("tex2D");		break;
+      case intermediate::tex3D:		line.append ("tex3D");		break;
+      case intermediate::texCUBE:	line.append ("texCUBE");	break;
+      case intermediate::min:		line.append ("min");		break;
+      case intermediate::max:		line.append ("max");		break;
+      case intermediate::pow:		line.append ("pow");		break;
+      }
+      line.append (" (");
+      ParamHelper params (line);
+      for (std::vector<RegisterID>::const_iterator inParam (inParams.begin());
+	   inParam != inParams.end();
+	   ++inParam)
+      {
+	params.Add (owner->GetOutputRegisterName (*inParam));
+      }
+      line.append (");");
+      target->AddString (line);
+    }
+    
     //-----------------------------------------------------------------------
 		      
     CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,

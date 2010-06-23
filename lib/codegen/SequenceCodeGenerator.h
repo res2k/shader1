@@ -190,6 +190,9 @@ namespace s1
 			     const UnicodeString& funcIdent,
 			     const std::vector<RegisterID>& inParams,
 			     const std::vector<RegisterID>& outParams);
+	void OpBuiltinCall (const RegisterID& destination,
+			    intermediate::BuiltinFunction what,
+			    const std::vector<RegisterID>& inParams);
       };
       
       const intermediate::Sequence& seq;

@@ -48,7 +48,8 @@ public:
     opCompareGE,
     opCompareGT,
     opReturn,
-    opFunctionCall
+    opFunctionCall,
+    opBuiltinCall
   };
   typedef s1::intermediate::RegisterID RegisterID;
   typedef s1::intermediate::Sequence Sequence;
@@ -74,6 +75,7 @@ public:
     unsigned int extractComp;
     
     UnicodeString functionIdentifier;
+    s1::intermediate::BuiltinFunction whatBuiltin;
     std::vector<RegisterID> inParams;
     std::vector<RegisterID> outParams;
   };
@@ -554,6 +556,18 @@ public:
     entry.functionIdentifier = funcIdent;
     entry.inParams = inParams;
     entry.outParams = outParams;
+    entries.push_back (entry);
+  }
+  
+  void OpBuiltinCall (const RegisterID& destination,
+		      s1::intermediate::BuiltinFunction what,
+		      const std::vector<RegisterID>& inParams)
+  {
+    SequenceEntry entry;
+    entry.op = opBuiltinCall;
+    entry.destReg = destination;
+    entry.whatBuiltin = what;
+    entry.inParams = inParams;
     entries.push_back (entry);
   }
 };
