@@ -3,6 +3,7 @@
 #include "ArrayElementExpressionImpl.h"
 
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceOp/SequenceOpChangeArrayElement.h"
 #include "intermediate/SequenceOp/SequenceOpExtractArrayElement.h"
 
 #include "BlockImpl.h"
@@ -43,7 +44,55 @@ namespace s1
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
 	throw Exception (IndexNotAnInteger);
       
+      RegisterID targetReg (handler->AllocateRegister (seq, GetValueType(), classify));
+      
+      if (asLvalue)
+      {
+	return targetReg;
+      }
+      else
+      {
+	RegisterID arrayReg (arrayExprImpl->AddToSequence (block, Intermediate));
+	
+	RegisterID indexReg (indexExprImpl->AddToSequence (block, Index));
+	RegisterID orgIndexReg (indexReg);
+	if (!indexType->IsEqual (*(handler->GetUintType())))
+	{
+	  RegisterID newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
+	  handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+	  indexReg = newIndexReg;
+	}
+	
+      	SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractArrayElement> (targetReg, arrayReg, indexReg));
+	seq.AddOp (seqOp);
+	
+	arrayExprImpl->AddToSequencePostAction (block, arrayReg, false);
+	indexExprImpl->AddToSequencePostAction (block, orgIndexReg, false);
+	
+	return targetReg;
+      }
+      
+    }
+
+    void IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequencePostAction (BlockImpl& block,
+												     const RegisterID& target,
+												     bool wasLvalue)
+    {
+      if (!wasLvalue) return;
+      
+      Sequence& seq (*(block.GetSequence()));
+      
+      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::shared_static_cast<ExpressionImpl> (arrayExpr));
+      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::shared_static_cast<ExpressionImpl> (indexExpr));
+      TypeImplPtr indexType (indexExprImpl->GetValueType());
+      
+      RegisterID arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));
+      RegisterID arrayRegDst (arrayExprImpl->AddToSequence (block, Intermediate, true));
+      if (!arrayRegDst.IsValid())
+	throw Exception (ArrayNotAnLValue);
+      
       RegisterID indexReg (indexExprImpl->AddToSequence (block, Index));
+      RegisterID orgIndexReg (indexReg);
       if (!indexType->IsEqual (*(handler->GetUintType())))
       {
 	RegisterID newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
@@ -51,24 +100,12 @@ namespace s1
 	indexReg = newIndexReg;
       }
       
-      RegisterID targetReg (handler->AllocateRegister (seq, GetValueType(), classify));
-      RegisterID arrayReg (arrayExprImpl->AddToSequence (block, Intermediate, asLvalue));
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpChangeArrayElement> (arrayRegDst, arrayRegSrc, indexReg, target));
+      seq.AddOp (seqOp);
       
-      // May happen if array value is not an L-value
-      if (!arrayReg.IsValid()) return RegisterID ();
-      
-      if (asLvalue)
-      {
-	// TODO: assignment to array element
-	return RegisterID ();
-      }
-      else
-      {
-	SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractArrayElement> (targetReg, arrayReg, indexReg));
-	seq.AddOp (seqOp);
-	return targetReg;
-      }
-      
+      arrayExprImpl->AddToSequencePostAction (block, arrayRegSrc, false);
+      arrayExprImpl->AddToSequencePostAction (block, arrayRegDst, true);
+      indexExprImpl->AddToSequencePostAction (block, orgIndexReg, false);
     }
 
   } // namespace intermediate

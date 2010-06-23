@@ -43,6 +43,8 @@ namespace s1
       SwizzledExpressionNotAnLValue,
       /// A component was used multiple times in an L-value swizzle
       MultipleUseOfComponentInLValueSwizzle,
+      /// Array is not an L-value
+      ArrayNotAnLValue,
       
       // Below: definitely internal
       /// Error parsing number string

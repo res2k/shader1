@@ -19,6 +19,8 @@ namespace s1
       TypeImplPtr GetValueType ();
       RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
 				bool asLvalue = false);
+      void AddToSequencePostAction (BlockImpl& block, const RegisterID& target,
+				    bool wasLvalue);
     };
   } // namespace intermediate
 } // namespace s1
