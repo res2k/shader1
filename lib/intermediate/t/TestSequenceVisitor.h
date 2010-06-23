@@ -29,6 +29,7 @@ public:
     opMakeArray,
     opExtractArrayElement,
     opExtractVectorComponent,
+    opChangeArrayElement,
     opArithAdd,
     opArithSub,
     opArithMul,
@@ -63,7 +64,7 @@ public:
     };
       
     RegisterID destReg;
-    RegisterID sourceReg[2];
+    RegisterID sourceReg[3];
     std::vector<RegisterID> sourceRegs;
     
     unsigned int matrixRows;
@@ -287,7 +288,21 @@ public:
     entries.push_back (entry);
   }
 
-					  
+  void OpChangeArrayElement (const RegisterID& destination,
+			     const RegisterID& source,
+			     const RegisterID& index,
+			     const RegisterID& newValue)
+  {
+    SequenceEntry entry;
+    entry.op = opChangeArrayElement;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entry.sourceReg[1] = index;
+    entry.sourceReg[2] = newValue;
+    entries.push_back (entry);
+  }
+
+					 
   void OpExtractVectorComponent (const RegisterID& destination,
 				 const RegisterID& source,
 				 unsigned int comp)

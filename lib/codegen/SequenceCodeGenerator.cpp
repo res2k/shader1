@@ -370,6 +370,19 @@ namespace s1
       sourceName.append ("]");
       EmitAssign (destination, sourceName.c_str());
     }
+    
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpChangeArrayElement (const RegisterID& destination,
+										   const RegisterID& source,
+										   const RegisterID& index,
+										   const RegisterID& newValue)
+    {
+      EmitAssign (destination, owner->GetOutputRegisterName (source).c_str());
+      std::string changeDest (owner->GetOutputRegisterName (destination));
+      changeDest.append ("[");
+      changeDest.append (owner->GetOutputRegisterName (index));
+      changeDest.append ("]");
+      EmitAssign (changeDest.c_str(), newValue);
+    }
 
 				    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterID& destination,

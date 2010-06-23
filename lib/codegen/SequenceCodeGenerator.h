@@ -113,6 +113,10 @@ namespace s1
 	void OpExtractArrayElement (const RegisterID& destination,
 				    const RegisterID& source,
 				    const RegisterID& index);
+	void OpChangeArrayElement (const RegisterID& destination,
+				   const RegisterID& source,
+				   const RegisterID& index,
+				   const RegisterID& newValue);
 
 	void OpExtractVectorComponent (const RegisterID& destination,
 				       const RegisterID& source,

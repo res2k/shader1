@@ -61,6 +61,10 @@ namespace s1
       virtual void OpExtractArrayElement (const RegisterID& destination,
 					  const RegisterID& source,
 					  const RegisterID& index) = 0;
+      virtual void OpChangeArrayElement (const RegisterID& destination,
+					 const RegisterID& source,
+					 const RegisterID& index,
+					 const RegisterID& newValue) = 0;
 
       virtual void OpExtractVectorComponent (const RegisterID& destination,
 					     const RegisterID& source,
