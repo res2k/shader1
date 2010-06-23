@@ -101,6 +101,9 @@ namespace s1
 	      seq.AddOp (seqOp);
 	      targetReg = compReg;
 	    }
+	    
+	    exprImpl->AddToSequencePostAction (block, exprValueReg, false);
+	    
 	    return targetReg;
 	  }
 	}
