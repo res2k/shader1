@@ -9,6 +9,11 @@ namespace s1
 {
   namespace codegen
   {
+    const char CgGenerator::cgTypeBool[]	= "bool";
+    const char CgGenerator::cgTypeInt[]		= "int";
+    const char CgGenerator::cgTypeUInt[]	= "unsigned int";
+    const char CgGenerator::cgTypeFloat[]	= "float";
+    
     CgGenerator::CgGenerator ()
     {
     }
@@ -19,8 +24,10 @@ namespace s1
       return progGen.Generate (program);
     }
     
-    std::string CgGenerator::TypeToCgType (const parser::SemanticsHandler::TypePtr& type)
+    std::string CgGenerator::TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
+					   std::string& identifierSuffix)
     {
+      identifierSuffix = "";
       std::string typeStr;
       switch (type->GetTypeClass())
       {
@@ -29,10 +36,10 @@ namespace s1
 	  switch (type->GetBaseType())
 	  {
 	  case parser::SemanticsHandler::Void:	typeStr = "void"; break;
-	  case parser::SemanticsHandler::Bool:	typeStr = "bool"; break;
-	  case parser::SemanticsHandler::Int:	typeStr = "int"; break;
-	  case parser::SemanticsHandler::UInt:	typeStr = "unsigned"; break;
-	  case parser::SemanticsHandler::Float:	typeStr = "float"; break;
+	  case parser::SemanticsHandler::Bool:	typeStr = cgTypeBool; break;
+	  case parser::SemanticsHandler::Int:	typeStr = cgTypeInt; break;
+	  case parser::SemanticsHandler::UInt:	typeStr = cgTypeUInt; break;
+	  case parser::SemanticsHandler::Float:	typeStr = cgTypeFloat; break;
 	  }
 	}
 	break;
@@ -49,13 +56,16 @@ namespace s1
 	break;
       case parser::SemanticsHandler::Type::Array:
 	{
-	  // FIXME: In Cg, array dimensions come after var name
-	  return TypeToCgType (type->GetArrayVectorMatrixBaseType());
+	  std::string newSuffix;
+	  std::string typeStr (TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix));
+	  identifierSuffix = newSuffix + "[]";
+	  return typeStr;
 	}
 	break;
       case parser::SemanticsHandler::Type::Vector:
 	{
-	  typeStr = TypeToCgType (type->GetArrayVectorMatrixBaseType());
+	  std::string newSuffix;
+	  typeStr = TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix);
 	  char compStr[2];
 	  snprintf (compStr, sizeof (compStr), "%u", type->GetVectorTypeComponents());
 	  typeStr.append (compStr);
@@ -63,7 +73,8 @@ namespace s1
 	break;
       case parser::SemanticsHandler::Type::Matrix:
 	{
-	  typeStr = TypeToCgType (type->GetArrayVectorMatrixBaseType());
+	  std::string newSuffix;
+	  typeStr = TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix);
 	  char compStr[4];
 	  snprintf (compStr, sizeof (compStr), "%ux%u", type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
 	  typeStr.append (compStr);

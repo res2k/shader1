@@ -19,13 +19,19 @@ namespace s1
       
       /**\name Code generation helper functions
        * @{ */
-      static std::string TypeToCgType (const parser::SemanticsHandler::TypePtr& type);
+      static std::string TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
+				       std::string& identifierSuffix);
       static std::string NameToCgIdentifier (const UnicodeString& str);
       /** @} */
     protected:
       class ProgramCodeGenerator;
       class FunctionCodeGenerator;
       class SequenceCodeGenerator;
+      
+      static const char cgTypeBool[];
+      static const char cgTypeInt[];
+      static const char cgTypeUInt[];
+      static const char cgTypeFloat[];
     };
   } // namespace codegen
 } // namespace s1

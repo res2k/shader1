@@ -54,11 +54,6 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    static const char cgTypeBool[]	= "bool";
-    static const char cgTypeInt[]	= "int";
-    static const char cgTypeUInt[]	= "unsigned int";
-    static const char cgTypeFloat[]	= "float";
-		      
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
      : owner (owner), target (target)
@@ -691,10 +686,12 @@ namespace s1
       std::string cgName (NameToCgIdentifier (regPtr->GetName()));
       seenRegisters[reg] = cgName;
       
-      std::string cgType (TypeToCgType (bankPtr->GetOriginalType()));
+      std::string typeSuffix;
+      std::string cgType (TypeToCgType (bankPtr->GetOriginalType(), typeSuffix));
       std::string declLine (cgType);
       declLine.append (" ");
       declLine.append (cgName);
+      declLine.append (typeSuffix);
       declLine.append (";");
       strings->AddString (declLine);
       

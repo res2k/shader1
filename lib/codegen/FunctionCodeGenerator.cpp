@@ -30,7 +30,8 @@ namespace s1
       BlockNameResolver nameRes;
       StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
       {
-	std::string typeStr (TypeToCgType (func->GetReturnType()));
+	std::string typeSuffix;
+	std::string typeStr (TypeToCgType (func->GetReturnType(), typeSuffix));
 	std::string identifier (NameToCgIdentifier (func->GetIdentifier()));
 	
 	std::string funcDecl (typeStr);
@@ -48,8 +49,9 @@ namespace s1
 	{
 	  paramImports.insert (param->identifier);
 	  
+	  std::string typeSuffix;
 	  std::string paramStrBase;
-	  paramStrBase.append (TypeToCgType (param->type));
+	  paramStrBase.append (TypeToCgType (param->type, typeSuffix));
 	  paramStrBase.append (" ");
 
 	  if (param->dir & parser::SemanticsHandler::Scope::dirIn)
@@ -59,6 +61,7 @@ namespace s1
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
+	    paramStr.append (typeSuffix);
 	    inParams.push_back (paramStr);
 	    
 	    nameRes.inParamMap[param->identifier] = paramIdent;
@@ -71,6 +74,7 @@ namespace s1
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
+	    paramStr.append (typeSuffix);
 	    outParams.push_back (paramStr);
 	    
 	    nameRes.outParamMap[param->identifier] = paramIdent;
@@ -93,9 +97,11 @@ namespace s1
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    intermediate::Sequence::RegisterBankPtr bank;
 	    func->GetBody()->QueryRegisterPtrFromID (import->second, bank);
-	    std::string paramStr (TypeToCgType (bank->GetOriginalType()));
+	    std::string typeSuffix;
+	    std::string paramStr (TypeToCgType (bank->GetOriginalType(), typeSuffix));
 	    paramStr.append (" ");
 	    paramStr.append (paramIdent);
+	    paramStr.append (typeSuffix);
 	    inParams.push_back (paramStr);
 	    
 	    nameRes.inParamMap[import->first] = paramIdent;
@@ -115,9 +121,11 @@ namespace s1
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    intermediate::Sequence::RegisterBankPtr bank;
 	    func->GetBody()->QueryRegisterPtrFromID (exported->second, bank);
-	    std::string paramStr (TypeToCgType (bank->GetOriginalType()));
+	    std::string typeSuffix;
+	    std::string paramStr (TypeToCgType (bank->GetOriginalType(), typeSuffix));
 	    paramStr.append (" ");
 	    paramStr.append (paramIdent);
+	    paramStr.append (typeSuffix);
 	    outParams.push_back (paramStr);
 	    
 	    nameRes.outParamMap[exported->first] = paramIdent;
@@ -140,6 +148,7 @@ namespace s1
 	
 	funcDecl.append (paramAdder.paramStr);
 	funcDecl.append (")");
+	funcDecl.append (typeSuffix); // FIXME: Right?
 	resultStrings->AddString (funcDecl);
       }
       resultStrings->AddString (std::string ("{"));
