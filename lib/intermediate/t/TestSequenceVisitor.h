@@ -30,6 +30,7 @@ public:
     opExtractArrayElement,
     opExtractVectorComponent,
     opChangeArrayElement,
+    opGetArrayLength,
     opArithAdd,
     opArithSub,
     opArithMul,
@@ -299,6 +300,16 @@ public:
     entry.sourceReg[0] = source;
     entry.sourceReg[1] = index;
     entry.sourceReg[2] = newValue;
+    entries.push_back (entry);
+  }
+      
+  void OpGetArrayLength (const RegisterID& destination,
+			 const RegisterID& array)
+  {
+    SequenceEntry entry;
+    entry.op = opGetArrayLength;
+    entry.destReg = destination;
+    entry.sourceReg[0] = array;
     entries.push_back (entry);
   }
 

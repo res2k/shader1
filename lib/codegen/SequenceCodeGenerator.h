@@ -117,6 +117,8 @@ namespace s1
 				   const RegisterID& source,
 				   const RegisterID& index,
 				   const RegisterID& newValue);
+	void OpGetArrayLength (const RegisterID& destination,
+			       const RegisterID& array);
 
 	void OpExtractVectorComponent (const RegisterID& destination,
 				       const RegisterID& source,

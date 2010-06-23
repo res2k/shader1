@@ -65,6 +65,8 @@ namespace s1
 					 const RegisterID& source,
 					 const RegisterID& index,
 					 const RegisterID& newValue) = 0;
+      virtual void OpGetArrayLength (const RegisterID& destination,
+				     const RegisterID& array) = 0;
 
       virtual void OpExtractVectorComponent (const RegisterID& destination,
 					     const RegisterID& source,

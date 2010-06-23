@@ -379,6 +379,14 @@ namespace s1
       EmitAssign (changeDest.c_str(), newValue);
     }
 
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpGetArrayLength (const RegisterID& destination,
+									       const RegisterID& array)
+    {
+      std::string sourceName (owner->GetOutputRegisterName (array));
+      sourceName.append (".length");
+      EmitAssign (destination, sourceName.c_str());
+    }
+			 
 				    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterID& destination,
 										       const RegisterID& source,
