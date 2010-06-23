@@ -352,7 +352,7 @@ namespace s1
 	elements.Add (owner->GetOutputRegisterName (*source));
       }
       elementsStr.append (" }");
-      EmitAssign (destination, elementsStr.c_str());
+      owner->GetOutputRegisterName (destination, elementsStr);
     }
 			  
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractArrayElement (const RegisterID& destination,
@@ -672,13 +672,11 @@ namespace s1
     }
     
     std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterID& reg,
-									   bool autoAllocate)
+									   const std::string& initializer)
     {
       RegistersToIDMap::iterator regIt = seenRegisters.find (reg);
       if (regIt != seenRegisters.end())
 	return regIt->second;
-      
-      if (!autoAllocate) return std::string ();
       
       Sequence::RegisterBankPtr bankPtr;
       Sequence::RegisterPtr regPtr (seq.QueryRegisterPtrFromID (reg, bankPtr));
@@ -692,6 +690,11 @@ namespace s1
       declLine.append (" ");
       declLine.append (cgName);
       declLine.append (typeSuffix);
+      if (!initializer.empty())
+      {
+	declLine.append (" = ");
+	declLine.append (initializer);
+      }
       declLine.append (";");
       strings->AddString (declLine);
       

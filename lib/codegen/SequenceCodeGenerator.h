@@ -198,7 +198,7 @@ namespace s1
       RegistersToIDMap seenRegisters;
       
       std::string GetOutputRegisterName (const RegisterID& reg,
-					 bool autoAllocate = true);
+					 const std::string& initializer = std::string());
     public:
       SequenceCodeGenerator (const intermediate::Sequence& seq,
 			     ImportedNameResolver* nameRes);
