@@ -21,6 +21,9 @@ namespace s1
       class ScopeImpl;
       class BlockImpl;
       
+      class Builtin;
+      typedef boost::shared_ptr<Builtin> BuiltinPtr;
+      
       class CommandImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
@@ -52,6 +55,12 @@ namespace s1
       typedef boost::shared_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
       ScopeImplPtr globalScope;
+      
+      // Helper functions for SetupBuiltins
+      Scope::FunctionFormalParameters MakeFormalParameters1 (const TypePtr& type);
+      Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& type);
+      Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& typeA, const TypePtr& typeB);
+      void SetupBuiltins (const ScopeImplPtr& scope);
       
       UnicodeString entryFunction;
     public:

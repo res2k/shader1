@@ -3,7 +3,9 @@
 #include "FunctionCallExpressionImpl.h"
 
 #include "BlockImpl.h"
+#include "Builtin.h"
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "NameImpl.h"
 #include "ScopeImpl.h"
@@ -133,31 +135,34 @@ namespace s1
 	}
       }
       
-      // Look for globals imported into function, add as parameters
-      boost::shared_ptr<BlockImpl> funcBlockImpl (boost::shared_static_cast<BlockImpl> (overload->block));
-      Sequence::RegisterImpMappings imports (funcBlockImpl->GetSequence()->GetImports());
-      for (Sequence::RegisterImpMappings::const_iterator imported (imports.begin());
-	   imported != imports.end();
-	   ++imported)
+      if (overload->block)
       {
-	NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (imported->first));
-	if (global)
+	// Look for globals imported into function, add as parameters
+	boost::shared_ptr<BlockImpl> funcBlockImpl (boost::shared_static_cast<BlockImpl> (overload->block));
+	Sequence::RegisterImpMappings imports (funcBlockImpl->GetSequence()->GetImports());
+	for (Sequence::RegisterImpMappings::const_iterator imported (imports.begin());
+	    imported != imports.end();
+	    ++imported)
 	{
-	  RegisterID globLocal (block.GetRegisterForName (global, false));
-	  inParams.push_back (globLocal);
+	  NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (imported->first));
+	  if (global)
+	  {
+	    RegisterID globLocal (block.GetRegisterForName (global, false));
+	    inParams.push_back (globLocal);
+	  }
 	}
-      }
-      
-      intermediate::Sequence::RegisterExpMappings exports (funcBlockImpl->GetSequence()->GetExports());
-      for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
-	    exported != exports.end();
-	    ++exported)
-      {
-	NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (exported->first));
-	if (global)
+	
+	intermediate::Sequence::RegisterExpMappings exports (funcBlockImpl->GetSequence()->GetExports());
+	for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
+	      exported != exports.end();
+	      ++exported)
 	{
-	  RegisterID globLocal (block.GetRegisterForName (global, true));
-	  outParams.push_back (globLocal);
+	  NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (exported->first));
+	  if (global)
+	  {
+	    RegisterID globLocal (block.GetRegisterForName (global, true));
+	    outParams.push_back (globLocal);
+	  }
 	}
       }
       
@@ -166,8 +171,13 @@ namespace s1
       if (!retType->IsEqual (*(handler->GetVoidType())))
 	destination = handler->AllocateRegister (*(block.GetSequence()), retType, classify);
       
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
-								       inParams, outParams));
+      SequenceOpPtr seqOp;
+      if (overload->builtin)
+	seqOp = boost::make_shared<SequenceOpBuiltinCall> (destination, overload->builtin->GetBuiltinFunction(),
+							   inParams);
+      else
+	seqOp = boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
+							    inParams, outParams);
       block.GetSequence()->AddOp (seqOp);
       
       for (PostActions::const_iterator postAction (postActions.begin());

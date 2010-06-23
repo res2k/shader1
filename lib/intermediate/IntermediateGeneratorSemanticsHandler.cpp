@@ -401,6 +401,7 @@ namespace s1
 	     funcIt != functions.end();
 	     ++funcIt)
 	{
+	  if ((*funcIt)->builtin) continue;
 	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->identifier,
 									    (*funcIt)->returnType,
 									    (*funcIt)->params,
@@ -578,8 +579,9 @@ namespace s1
 							    funcReturnType));
       switch (scopeLevel)
       {
-      case Builtin:
+      case SemanticsHandler::Builtin:
 	builtinScope = newScope;
+	SetupBuiltins (builtinScope);
 	break;
       case Global:
 	globalScope = newScope;

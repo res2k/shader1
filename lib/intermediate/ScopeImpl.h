@@ -17,7 +17,10 @@ namespace s1
 	UnicodeString identifier;
 	TypePtr returnType;
 	FunctionFormalParameters params;
+	/// Function body (for user-defined functions)
 	BlockPtr block;
+	/// Builtin function information
+	BuiltinPtr builtin;
       };
       typedef boost::shared_ptr<FunctionInfo> FunctionInfoPtr;
       typedef std::vector<FunctionInfoPtr> FunctionInfoVector;
@@ -69,6 +72,7 @@ namespace s1
       }
       int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
       
+      void AddBuiltinFunction (const BuiltinPtr& builtin);
       FunctionInfoVector GetFunctions () const;
       FunctionInfoVector CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const;
       

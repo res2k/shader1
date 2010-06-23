@@ -3,6 +3,8 @@
 // Must be first; otherwise, link errors may occur
 #include "base/hash_UnicodeString.h"
 
+#include "BlockImpl.h"
+#include "Builtin.h"
 #include "ScopeImpl.h"
 
 #include "parser/Exception.h"
@@ -11,7 +13,6 @@
 
 #include <boost/make_shared.hpp>
 #include <limits.h>
-#include "BlockImpl.h"
 
 namespace s1
 {
@@ -157,6 +158,43 @@ namespace s1
       if (parent)
 	return parent->ResolveIdentifierInternal (identifier);
       return NameImplPtr ();
+    }
+    
+    void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
+    {
+      if (level >= Function)
+	throw parser::Exception (parser::DeclarationNotAllowedInScope);
+      
+      const UnicodeString& identifier = builtin->GetIdentifier();
+      const FunctionFormalParameters& params = builtin->GetFormalParameters();
+      NamePtr funcName (CheckIdentifierIsFunction (identifier));
+      if (funcName == NamePtr ())
+      {
+	NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(),
+						       identifier, Name::Function,
+						       TypeImplPtr ()));
+	identifiers[identifier] = newName;
+      }
+      
+      FunctionInfoVector& functions = this->functions[identifier];
+      FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
+      funcInfo->originalIdentifier = identifier;
+      // Decorate identifier with type info (so each overload gets a unique name)
+      UnicodeString identifierDecorated (identifier);
+      identifierDecorated.append ("$");
+      for (FunctionFormalParameters::const_iterator param (params.begin());
+	   param != params.end();
+	   ++param)
+      {
+	identifierDecorated.append (handler->GetTypeString (boost::shared_static_cast<TypeImpl> (param->type)).c_str());
+      }
+      funcInfo->identifier = identifierDecorated;
+      funcInfo->returnType = builtin->GetReturnType();
+      funcInfo->params = params;
+      funcInfo->builtin = builtin;
+      functions.push_back (funcInfo);
+      
+      functionsInDeclOrder.push_back (funcInfo);
     }
     
     IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
