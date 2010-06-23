@@ -4,6 +4,7 @@
 
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
+#include "intermediate/SequenceOp/SequenceOpGetArrayLength.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
 #include "BlockImpl.h"
@@ -41,6 +42,21 @@ namespace s1
 	assert (false);
 	return RegisterID ();
       case IntermediateGeneratorSemanticsHandler::Attribute::arrayLength:
+	{
+	  if (asLvalue) return RegisterID ();
+	  
+	  RegisterID targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
+	  boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (baseExpr));
+	  RegisterID exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
+	  
+	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpGetArrayLength> (targetReg, exprValueReg));
+	  seq.AddOp (seqOp);
+	  
+	  exprImpl->AddToSequencePostAction (block, exprValueReg, false);
+	  
+	  return targetReg;
+	}
+	break;
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixRow:
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixCol:
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixTranspose:
