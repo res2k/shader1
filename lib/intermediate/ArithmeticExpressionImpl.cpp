@@ -41,21 +41,61 @@ namespace s1
       return set;
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetValueType()
     {
-      boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
-      boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      TypeImplPtr type1 = operand1->GetValueType();
+      TypeImplPtr type2 = operand2->GetValueType();
       
-      if (!type1->CompatibleLossy (*(handler->GetFloatType().get()))
-	|| !type2->CompatibleLossy (*(handler->GetFloatType().get())))
+      TypeImplPtr baseType1, baseType2;
+      unsigned int vectorDim1 = 0, vectorDim2 = 0;
+      
+      if (type1->typeClass == TypeImpl::Vector)
+      {
+	baseType1 = boost::shared_static_cast<TypeImpl> (type1->avmBase);
+	vectorDim1 = type1->vectorDim;
+      }
+      else
+	baseType1 = type1;
+      if (type2->typeClass == TypeImpl::Vector)
+      {
+	baseType2 = boost::shared_static_cast<TypeImpl> (type2->avmBase);
+	vectorDim2 = type2->vectorDim;
+      }
+      else
+	baseType2 = type2;
+      
+      if (!baseType1->CompatibleLossy (*(handler->GetFloatType().get()))
+	|| !baseType2->CompatibleLossy (*(handler->GetFloatType().get())))
       {
 	throw Exception (OperandTypesInvalid);
       }
       
+      if ((vectorDim1 != 0) && (vectorDim2 != 0) && (vectorDim1 != vectorDim2))
+      {
+	throw Exception (OperandTypesIncompatible);
+      }
+      
       // Determine type in which to perform computation
-      boost::shared_ptr<TypeImpl> valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-	operand1->GetValueType(), operand2->GetValueType());
+      TypeImplPtr valueType;
+      
+      if ((vectorDim1 != 0) && (vectorDim2 == 0))
+      {
+	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+	  type1,
+	  boost::shared_static_cast<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
+      }
+      else if ((vectorDim2 != 0) && (vectorDim1 == 0))
+      {
+	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+	  boost::shared_static_cast<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
+	  type2);
+      }
+      else // (((vectorDim1 != 0) && (vectorDim2 != 0)) || ((vectorDim1 == 0) && (vectorDim2 == 0)))
+      {
+	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+	  operand1->GetValueType(), operand2->GetValueType());
+      }
 	
       if (!valueType)
       {
