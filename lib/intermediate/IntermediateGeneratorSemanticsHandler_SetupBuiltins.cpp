@@ -85,15 +85,15 @@ namespace s1
       for (unsigned int c = 1; c < 5; c++)
       {
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::dot,
-								vecTypeInt[c],
+								intType,
 								UnicodeString ("dot"),
 								MakeFormalParameters2 (vecTypeInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::dot,
-								vecTypeUInt[c],
+								uintType,
 								UnicodeString ("dot"),
 								MakeFormalParameters2 (vecTypeUInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::dot,
-								vecTypeFloat[c],
+								floatType,
 								UnicodeString ("dot"),
 								MakeFormalParameters2 (vecTypeFloat[c])));
       }
