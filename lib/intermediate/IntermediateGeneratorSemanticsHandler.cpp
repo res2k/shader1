@@ -328,20 +328,22 @@ namespace s1
 	// TODO: Cast individual elements, if lengths match
 	break;
       case TypeImpl::Vector:
-	// Special case: allow casting from a base type to a 1 component vector
-	if ((typeDestination->vectorDim == 1) && (typeSource->typeClass == TypeImpl::Base))
+	// Special case: allow casting from a base type to a vector, replicate value across all components
+	if (typeSource->typeClass == TypeImpl::Base)
 	{
 	  std::vector<RegisterID> srcVec;
 	  TypeImplPtr destBaseType (boost::shared_static_cast<TypeImpl> (typeDestination->avmBase));
+	  RegisterID srcReg;
 	  if (!destBaseType->IsEqual (*(typeSource)))
 	  {
 	    // Generate cast
 	    RegisterID srcVecReg (AllocateRegister (seq, destBaseType, Intermediate));
 	    GenerateCast (seq, srcVecReg, destBaseType, castSource, typeSource);
-	    srcVec.push_back (srcVecReg);
+	    srcReg = srcVecReg;
 	  }
 	  else
-	    srcVec.push_back (castSource);
+	    srcReg = castSource;
+	  srcVec.insert (srcVec.begin(), typeDestination->vectorDim, srcReg);
 	  // Generate "make vector" op
 	  SequenceOpPtr seqOp;
 	  switch (destBaseType->base)
@@ -377,7 +379,6 @@ namespace s1
 	  }
 	  break;
 	}
-	assert (typeSource->typeClass == TypeImpl::Vector);
 	assert (typeDestination->vectorDim == typeSource->vectorDim);
 	// TODO: Cast individual components
 	break;
