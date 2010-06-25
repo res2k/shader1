@@ -34,21 +34,23 @@ Die Werte dieser Parameter entstammen der Programmumgebung.
 
 \subsection{Blöcke}\label{Bloecke}
 \Gnt{block}:\label{block}\\
-\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}  \glq\Gt{;}\grq \\
-\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gnt{block}{\scriptsize (\ref{block})} \\
 \hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})}  \glq\Gt{;}\grq \\
 \hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
 \hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})}  \glq\Gt{;}\grq \\
 \hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
-\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})}  \glq\Gt{;}\grq \\
-\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})}  \glq\Gt{;}\grq \Gnt{block}{\scriptsize (\ref{block})} \\
+\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})} \\
+\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})} \Gnt{block}{\scriptsize (\ref{block})} \\
 \Gnt{kommando}:\label{kommando}\\
-\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\hspace*{1cm}\glq\Gt{return}\grq \\
-\hspace*{1cm}\glq\Gt{return}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq \\
+\hspace*{1cm}\glq\Gt{return}\grq  \glq\Gt{;}\grq \\
+\hspace*{1cm}\glq\Gt{return}\grq \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{;}\grq \\
 \hspace*{1cm}\Gnt{verzweigung}{\scriptsize (\ref{verzweigung})} \\
 \hspace*{1cm}\Gnt{schleife\_for}{\scriptsize (\ref{schleife_for})} \\
 \hspace*{1cm}\Gnt{schleife\_while}{\scriptsize (\ref{schleife_while})} \\
+\hspace*{1cm}\glq\Gt{\{}\grq  \glq\Gt{\}}\grq \\
+\hspace*{1cm}\glq\Gt{\{}\grq \Gnt{block}{\scriptsize (\ref{block})}  \glq\Gt{\}}\grq \\
 
 Ein \emph{Block} besteht aus Typdefinitionen, Variablen- und Konstantendeklarationen sowie keinem bis mehreren Kommandos.
 Der Gültigkeitsbereich dieser Deklarationen endet mit dem Ende des Blockes. Kommandos werden zur Laufzeit in Reihenfolge ihres
@@ -59,50 +61,50 @@ Bei Funktionen mit einem anderen Rückgabetyp als \kw{void} muss ein \emph{Ausdr
 werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt wird.
 
 \subsection{Ausdrücke}\label{Ausdruecke}
-\subsubsection{Wertebezeichner}\label{Wertebezeichner}
-\Gnt{bezeichner\_wert}:\label{bezeichner_wert}\\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
-\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \\
-\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
-\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
-\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
+\Gnt{ausdruck}:\label{ausdruck}\\
+\hspace*{1cm}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \\
 
-Wertebezeichner bezeichnen Werte und können syntaktisch sowohl auf der \emph{linken} Seite
-einer Zuweisung erscheinen (d.h. Ersetzen des bezeichneten Wertes) als auch auf der
-\emph{rechten} Seite einer Zuweisung erscheinen (d.h. Auslesen des bezeichneten Wertes).
-
-Weiterhin sind \emph{Attributbezeichner} (siehe \ref{Attribute}) keine reservierten
-Schlüsselwörter, d.h. sie können auch als Variablenbezeichner, Funktionsbezeichner etc.
-verwendet werden.
+Der Ausdruck höchster Präzedenz ist eine Zuweisung, auf welche einfach in der Regel für
+allgemeine Ausdrücke verwiesen wird.
 
 
 \subsubsection{Zuweisung}\label{Zuweisung}
 \Gnt{asdr\_zuweisung}:\label{asdr_zuweisung}\\
-\hspace*{1cm}\Gnt{bezeichner\_wert}{\scriptsize (\ref{bezeichner_wert})}  \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\Gnt{ausdruck}:\label{ausdruck}\\
-\hspace*{1cm}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \\
-\hspace*{1cm}\Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
-\Gnt{asdr\_wert}:\label{asdr_wert}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
-\Gnt{asdr\_basis}:\label{asdr_basis}\\
-\hspace*{1cm}\glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq \\
-\hspace*{1cm}\Gnt{bezeichner\_wert}{\scriptsize (\ref{bezeichner_wert})} \\
-\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \\
-\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \\
-\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
-\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \\
-\Gnt{attribut\_liste}:\label{attribut_liste}\\
-\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{attribut}{\scriptsize (\ref{attribut})} \\
-\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste}{\scriptsize (\ref{attribut_liste})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
-Ein Zuweisungsausdruck \Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} weist der durch \glq\Gnt{bezeichner\_wert}\grq bezeichneten Variable den Wert des Ausdrucks
-auf der rechten Seite zu. Der Typ des Ausdrucks muss zuweisungskompatibel zum bezeichneten Wert
+Ein Zuweisungsausdruck \Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} weist dem Ausdruck der linken Seite den Wert des Ausdrucks
+auf der rechten Seite zu. Sofern eine Zuweisung tatsächlich gegeben ist muss
+der Ausdruck auf der linken Seite eine Variable oder ein Arrayelement
+bzw. von diesen ein Swizzle-Attribut (siehe \ref{Vektorattribute}) bezeichnen.
+
+Der Typ des Ausdrucks muss zuweisungskompatibel zum bezeichneten Wert
 sein.
 
 Ein Zuweisungsausdruck selbst hat den Wert des zugewiesenen bezeichneten Wertes nach der Zuweisung.
+
+\subsubsection{Basisausdruck}\label{Basisausdruck}
+\Gnt{asdr\_basis}:\label{asdr_basis}\\
+\hspace*{1cm}\glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq \\
+\hspace*{1cm}\glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \\
+\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \\
+\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \\
+\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\Gnt{attribut\_liste\_oder\_array\_element}:\label{attribut_liste_oder_array_element}\\
+\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{attribut}{\scriptsize (\ref{attribut})} \\
+\hspace*{1cm}\glq\Gt{.}\grq  \Gnt{attribut}{\scriptsize (\ref{attribut})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \\
+\hspace*{1cm}\glq\Gt{[}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{]}\grq \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+
+\emph{Basisausdrücke} sind die Ausdrücke niedrigster Präzedenz. Dies sind neben Bezeichnern
+für Variablen, Konstanten, und Funktionsaufrufe auch Funktionsaufrufe und geschachtelte Ausdrücke.
+Weiterhin können Zugriffe auf Attribute (siehe \Gnt{attribut}{\scriptsize (\ref{attribut})}) bzw. Arrayelemente spezifiziert werden.
+
 
 \paragraph{Zuweisungskompatibilität}\label{Zuweisungskompatibilitaet}
 
@@ -186,8 +188,8 @@ Ist der Operand von einem Fließkommatyp, so ist der Typ des unären Ausdrucks v
 
 \subsubsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
 \Gnt{asdr\_ternaer}:\label{asdr_ternaer}\\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{?}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})}  \glq\Gt{:}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \glq\Gt{?}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{:}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
 Die \emph{Bedingung} ist ein boole'scher Ausdruck. Ergibt sich dieser Ausdruck zu \kw{true},
 so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
@@ -205,11 +207,11 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 \hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \glq\Gt{!=}\grq  \Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
 \hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \glq\Gt{==}\grq  \Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
 \Gnt{asdr\_vergleich\_ungleich}:\label{asdr_vergleich_ungleich}\\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{>}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{>=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{<}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{<=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{>}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{>=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{<}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{<=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
 
 \op{>} gibt an ob der linke Operand größer als der rechte Operand ist.
 
@@ -264,9 +266,7 @@ Beide Operanden müssen vom Typ \kw{bool} sein.
 
 \subsubsection{Attribute}\label{Attribute}
 \Gnt{attribut}:\label{attribut}\\
-\hspace*{1cm}\Gnt{attr\_vektor}{\scriptsize (\ref{attr_vektor})} \\
-\hspace*{1cm}\Gnt{attr\_matrix}{\scriptsize (\ref{attr_matrix})} \\
-\hspace*{1cm}\Gnt{attr\_array}{\scriptsize (\ref{attr_array})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
 
 % TODO 'Attr-Vektor', das Swizzle, Komp. ist
 % TODO kein Bzch-Attribut sondern Attribute ausschreiben
@@ -274,9 +274,13 @@ Beide Operanden müssen vom Typ \kw{bool} sein.
 Einige Variablen (und Konstanten) besitzen über den Wert hinaus weitere Eigenschaften, die
 über Attribute abgefragt werden können.
 
-Vektorattribute (\Gnt{attr\_vektor}{\scriptsize (\ref{attr_vektor})}) werden in \ref{Vektorattribute} beschrieben.\\
-Matrixattribute (\Gnt{attr\_matrix}{\scriptsize (\ref{attr_matrix})}) werden in \ref{Matrixattribute} beschrieben.\\
-Arrayattribute (\Gnt{attr\_array}{\scriptsize (\ref{attr_array})}) werden in \ref{Arrayattribute} beschrieben.\\
+\emph{Attributbezeichner} sind dabei keine reservierten
+Schlüsselwörter, d.h. sie können auch als Variablenbezeichner, Funktionsbezeichner etc.
+verwendet werden.
+
+Vektorattribute werden in \ref{Vektorattribute} beschrieben.\\
+Matrixattribute werden in \ref{Matrixattribute} beschrieben.\\
+Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
 
 
 \subsection{Typen}\label{Typen}
@@ -366,10 +370,6 @@ des Basistyps.
 % Besserer Platz?
 
 \paragraph{Vektorattribute}\label{Vektorattribute}
-~\\
-\Gnt{attr\_vektor}:\label{attr_vektor}\\
-\hspace*{1cm}\Gnt{SWIZZLE\_RGBA}{\scriptsize (\ref{SWIZZLE_RGBA})} \\
-\hspace*{1cm}\Gnt{SWIZZLE\_XYZW}{\scriptsize (\ref{SWIZZLE_XYZW})} \\
 Einzelne Komponenten können entweder mit Array-Syntax oder den Attributen \attr{x},
 \attr{y}, \attr{z}, \attr{w}, \attr{r}, \attr{g}, \attr{b}, \attr{a} angesprochen
 werden. \attr{x}/\attr{r} spezifiert die erste Komponente,
@@ -381,7 +381,6 @@ Weitere Attribute sind die "`Swizzle"'-Attribute (\Gnt{SWIZZLE\_RGBA}{\scriptsiz
 Das Ergebnis eines Swizzles ist vom Typ eines Vektors des Basistyps, mit der Anzahl der Komponenten
 entsprechend der Anzahl der Komponenten im "`Swizzle"'. Die erste Komponente des Wertes entspricht
 der Komponente des Ursprungsvektors, die an erster Stelle des Swizzles identifiziert wird, usw.
-Beispiele für Swizzle-Operationen finden sich in Abschnitt~\ref{BeispieleSwizzle}.
 
 \paragraph{Vektorkonstruktoren}\label{Vektorkonstruktoren}
 
@@ -479,12 +478,6 @@ und geben die Spalten- und Zeilenzahl
 der Matrix an. Ein Matrixtyp spezifiziert eine  $N \times M$-Matrix von Werten des Basistyps.
 
 \paragraph{Matrixattribute}\label{Matrixattribute}
-~\\
-\Gnt{attr\_matrix}:\label{attr_matrix}\\
-\hspace*{1cm}\glq\Gt{row}\grq \\
-\hspace*{1cm}\glq\Gt{col}\grq \\
-\hspace*{1cm}\glq\Gt{transposed}\grq \\
-\hspace*{1cm}\glq\Gt{inverted}\grq \\
 
 Einzelne Zeilen können über das Attribute \attr{row} angesprochen werden. Dieses
 verhält sich wie ein Array mit $M$ Elementen des Vektortyps \emph{Basistyp}$N$.
@@ -545,14 +538,10 @@ ergibt sich aus der Anzahl der Element des zugewiesenen Array-Wertes.
 Elemente einer Array-Variable oder -Konstante können mit \ident{Bezeichner[}$\mathit{Index}$\ident{]} angesprochen
 werden. Das erste Element wird mit dem Wert $0$ für $\mathit{Index}$ angesprochen.
 Liegt $\mathit{Index}$ ausserhalb des gültigen Bereiches ($0\dots{}N-1$) so ist der ausgelesene Wert
-undefiniert\footnote{Dies ist bedingt durch die stark beschränkte bis nicht vorhandene Unterstützung von Ausnahmen
-auf Grafik-Hardware, siehe~\ref{hwlimits}}.
+undefiniert.
 
 
 \paragraph{Arrayattribute}\label{Arrayattribute}
-~\\
-\Gnt{attr\_array}:\label{attr_array}\\
-\hspace*{1cm}\glq\Gt{length}\grq \\
 
 Arrays besitzen ein Attribut \attr{length} vom Typ \kw{unsigned int} dessen Wert
 die Anzahl der Elemente im Array ist.
@@ -617,25 +606,23 @@ Ein Ausdruck einer expliziten Typumwandlung hat den Typ in den explizit umgewand
 \Gnt{funktion\_param\_formal}:\label{funktion_param_formal}\\
 \hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
 \hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
-\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm} \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
 \hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
 \hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
-\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
 \hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
 \hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
-\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\glq\Gt{in}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
 \hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
 \hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
-\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\glq\Gt{in}\grq \glq\Gt{out}\grq  \Gnt{typ}{\scriptsize (\ref{typ})}  \Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
 \Gnt{funktion\_aufruf}:\label{funktion_aufruf}\\
 \hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})}  \glq\Gt{(}\grq  \glq\Gt{)}\grq \\
 \hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})}  \glq\Gt{(}\grq \Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})}  \glq\Gt{)}\grq \\
-\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})}  \glq\Gt{(}\grq  \glq\Gt{)}\grq \\
-\hspace*{1cm}\Gnt{attribut}{\scriptsize (\ref{attribut})}  \glq\Gt{(}\grq \Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})}  \glq\Gt{)}\grq \\
 \Gnt{funktion\_param\_tatsaechl}:\label{funktion_param_tatsaechl}\\
 \hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 \hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \glq\Gt{,}\grq  \Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})} \\
@@ -711,7 +698,7 @@ ungültig.
 \hspace*{1cm}\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \glq\Gt{,}\grq  \Gnt{dekl\_var\_bzch\_init\_liste}{\scriptsize (\ref{dekl_var_bzch_init_liste})} \\
 \Gnt{dekl\_var\_bzch\_init}:\label{dekl_var_bzch_init}\\
 \hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
 \Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} deklariert eine oder mehrere neue Variablen des gegebenen Typs und den gegebenen Bezeichnern.
 
@@ -733,7 +720,7 @@ Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Variable s
 \hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \\
 \hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \glq\Gt{,}\grq  \Gnt{dekl\_konst\_bzch\_init\_liste}{\scriptsize (\ref{dekl_konst_bzch_init_liste})} \\
 \Gnt{dekl\_konst\_bzch\_init}:\label{dekl_konst_bzch_init}\\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}  \glq\Gt{=}\grq  \Gnt{asdr\_wert}{\scriptsize (\ref{asdr_wert})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}  \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
 \Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} deklariert eine oder mehrere neue Konstanten des gegebenen Typs und den gegebenen Bezeichnern.
 
