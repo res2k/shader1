@@ -1068,13 +1068,19 @@ namespace s1
     NextToken();
     Expect (Lexer::ParenL);
     NextToken();
-    Expression initExpr = ParseExpression (block->GetInnerScope());
+    Expression initExpr;
+    if (currentToken.typeOrID != Lexer::Semicolon)
+      initExpr = ParseExpression (block->GetInnerScope());
     Expect (Lexer::Semicolon);
     NextToken();
-    Expression loopTestExpr = ParseExpression (block->GetInnerScope());
+    Expression loopTestExpr;
+    if (currentToken.typeOrID != Lexer::Semicolon)
+      loopTestExpr = ParseExpression (block->GetInnerScope());
     Expect (Lexer::Semicolon);
     NextToken();
-    Expression loopFootExpr = ParseExpression (block->GetInnerScope());
+    Expression loopFootExpr;
+    if (currentToken.typeOrID != Lexer::Semicolon)
+      loopFootExpr = ParseExpression (block->GetInnerScope());
     Expect (Lexer::ParenR);
     NextToken();
     Expect (Lexer::BraceL);

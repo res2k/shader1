@@ -304,12 +304,16 @@ namespace s1
        */
       
       ExpressionImpl* initImpl = static_cast<ExpressionImpl*> (initExpr.get());
-      initImpl->AddToSequence (*this);
+      if (initImpl) initImpl->AddToSequence (*this);
       
       // Emit initial assignment to loop condition var
       {
 	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
-	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+	ExpressionPtr condAssign;
+	if (loopCond)
+	  condAssign = handler->CreateAssignExpression (condVarExpr, loopCond);
+	else
+	  condAssign = handler->CreateConstBoolExpression (true);
 	AddExpressionCommand (condAssign);
       }
       
@@ -354,13 +358,17 @@ namespace s1
       
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
       // Add "tail" expression to end of block
-      tailImpl->AddToSequence (*newBlock);
+      if (tailImpl) tailImpl->AddToSequence (*newBlock);
       
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
       {
 	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
-	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
+	ExpressionPtr condAssign;
+	if (loopCond)
+	  condAssign = handler->CreateAssignExpression (condVarExpr, loopCond);
+	else
+	  condAssign = handler->CreateConstBoolExpression (true);
 	newBlock->AddExpressionCommand (condAssign);
       }
       RegisterID condReg (GetRegisterForName (varCondition, false));
