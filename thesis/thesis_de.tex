@@ -1,21 +1,24 @@
 \documentclass[twoside,a4paper,fleqn,12pt]{article}
 \usepackage{fancyhdr,a4wide,graphicx}
 \usepackage[paper=a4paper,left=20mm,right=20mm,top=25mm,bottom=25mm]{geometry}
-\usepackage{ngerman}
 \pagestyle{fancy}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[]{amsfonts}
 \usepackage{amsmath}
 \usepackage{color}
 \usepackage{colortbl}
-\usepackage{mathptmx}
-\usepackage[scaled=.90]{helvet}
+%\usepackage{mathptmx}
+\usepackage[bitstream-charter]{mathdesign}
+\usepackage{charter}
+\usepackage{helvet}
 \usepackage{courier}
 \usepackage{verbatim}
 \usepackage{sectsty}
 \usepackage{listings}
 \usepackage{scalefnt}
 \usepackage{setspace}
+\usepackage{ngerman}
 
 \definecolor{darkred}{rgb}{.5,0,0}
 \definecolor{darkblue}{rgb}{0,0,.5}
@@ -43,7 +46,7 @@
 % Zeilenabstand 1.5
 \renewcommand{\baselinestretch}{1.50}\normalsize
 
-% Helvetoca für Section-Titel
+% Helvetica für Section-Titel
 \allsectionsfont{\usefont{OT1}{phv}{b}{n}\selectfont}
 
 % Different font in captions
