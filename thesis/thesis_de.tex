@@ -212,6 +212,74 @@ anderen Bezeichnern -- ein Attribut kann \emph{nur} rechts eines \op{.} auftauch
 Weiterhin schreibt die Spezifikation vor, dass zwei Bezeicher als identisch betrachtet werden, wenn sie kanonisch äquivalent im Sinne von Unicode sind.
 Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
 
+\subsection{Parser}
+
+Der \emph{Parser} (oder auch "`Scanner"') untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen:
+einerseits wird überprüft, ob der Token-Strom einem Wort der in der Sprachspezifikation gegebenen Sprache entspricht.
+Andererseits werden wären der Überprüfung bereits syntaktische Elemente extrahiert um diese bei der semantischen Verarbeitung zu
+verwenden.
+
+Beispiel: Soll aus dem Token-Strom ein "`Ausdruck"'~(\ref{ausdruck}) gelesen werden, prüft der Parser, ob die Tokens der Regel eines gültigen
+Ausdrucks folgen -- ist dies nicht der Fall, handelt es sich um einen \emph{Syntaxfehler}.
+Gleichzeitig werden aber auch Informationen wie numerische Werte oder Bezeichner gespeichert, da diese für eine später folgende
+\emph{semantische} Verarbeitung notwendig sind.
+
+%- Lookahead: unendl.
+%- Grammatik: kontextfrei, rechtsrekursiv
+
+\subsubsection{Eigenschaften der Grammatik}
+
+Die Grammatik ist kontextfrei. Die Regeln sind rechtsrekursiv.
+
+\subsubsection{Aufbau des Parsers}
+%- SemanticHandler
+
+Der Parser ist handprogrammiert nach der Methode des rekursiven Abstiegs. % Ref Wirth?
+
+Die semantische Verarbeitung wird an ein Interface vom Typ \verb+SemanticHandler+ übergeben.
+Dieses Interface übernimmt die verschiedenen Aspekte der semantischen Verarbeitung, von der Verwaltung der
+Symboltabellen bis zu einer geeigneten internen Repräsentation von Ausdrücken.
+
+\verb+SemanticHandler+ besitzt Methoden, um syntaktische Elemente - wie Bezeichner und numerische Literale - in Objekte 
+einzukapseln. Diese Objekte wiederum werden in der semantischen Verarbeitung anderer syntaktischer Elemente
+zurück an das Interface übergeben.
+
+Beispiel: Bei einem Ausdruck \verb+a * 2+ werden von \verb+SemanticHandler+ zunächst Repräsentationen für
+\verb+a+ und \verb+2+ erfragt. Zurückgegeben werden Repräsentationen von "`Ausdrücken"'. Diese wiederum
+dienen als Argumente, um eine Repräsentation einer Multiplikation zu erhalten. Diese letzte Repräsentation kann
+dann überall dort verwendet werden, wo Ausdrücke erwartet werden: Zuweisungen, Funktionsparameter etc.
+
+Vom \verb+SemanticHandler+ zum Parser gibt es auch einen "`Rückkanal"'. Dies ist nötig, da bei einigen
+Konstrukten bekannt sein muss, ob ein Bezeichner eine Variable, eine Funktion oder einen Typ identifiziert.
+(Beispiel: \verb+foo (1)+ - ist \verb+foo+ eine Funktion, so ist dies ein Funktionsaufruf; ist es ein Typ-Alias, so ist es
+der Aufruf eines Typ-Konstruktors; ist \verb+foo+ eine Variable, so ist dies ein ungültiger Ausdruck.)
+
+Die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}
+realisiert. Der Parser selbst fängt dabei Ausnahmen ab, um zu gewährleisten, dass möglichst viel eines
+Programms verarbeitet wird, um möglichst viele potentielle Fehler aufzudecken: % Wirth
+tritt z.B. eine Ausnahme während der Verarbeitung eines Block-Kommandos auf, setzt der Parser die
+Verarbeitung nach dem nächsten Semikolon -- also mit dem nächsten Kommando -- fort (sofern kein Ende
+des Blockes festgestellt wird).
+Die abgefangen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt zur Fehlerbehandlung
+übergeben (um z.B. eine Ausgabe auf der Konsole vorzunehmen).
+
+Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Trennung zwischen syntaktischer
+und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine (annähernde)
+AST-Repräsentation generieren (nur "`annähernd"' da der Parser einige semantische Informationen über
+Bezeichner benötigt). In der tatsächlichen Implementierung wird vom \verb+SemanticHandler+ allerdings 
+gleich eine Umsetzung in die Zwischenrepräsentation vorgenommen (Beschreibung siehe Unten):
+die Generierung eines ASTs wurde als Zwischenschritt wurde als unnötigen angesehen, da die Zwischenrepräsentation
+wichtige semantische Eigenschaften (wie Typinformationen) erhält und sich die Verarbeitungsschritte "`Auftrennung"'
+und "`Optimierung"' auf dieser besser vornehmen lassen.
+
+\subsection{Zwischenrepräsentation}
+
+- SSA
+
+\subsection{Generator}
+
+
+
 \section{Ausblick}
 
 \cleardoublepage
