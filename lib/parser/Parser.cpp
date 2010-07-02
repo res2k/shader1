@@ -425,7 +425,7 @@ namespace s1
   Parser::Expression Parser::ParseExprMultiplication (const Scope& scope)
   {
     Expression expr = ParseExprUnary (scope);
-    if ((currentToken.typeOrID == Lexer::Mult)
+    while ((currentToken.typeOrID == Lexer::Mult)
       || (currentToken.typeOrID == Lexer::Div)
       || (currentToken.typeOrID == Lexer::Mod))
     {
@@ -445,7 +445,7 @@ namespace s1
 	assert (false);
       }
       NextToken();
-      Expression expr2 = ParseExprMultiplication (scope);
+      Expression expr2 = ParseExprUnary (scope);
       expr = semanticsHandler.CreateArithmeticExpression (op, expr, expr2);
     }
     return expr;
@@ -454,7 +454,7 @@ namespace s1
   Parser::Expression Parser::ParseExprAddition (const Scope& scope)
   {
     Expression expr = ParseExprMultiplication (scope);
-    if ((currentToken.typeOrID == Lexer::Plus)
+    while ((currentToken.typeOrID == Lexer::Plus)
       || (currentToken.typeOrID == Lexer::Minus))
     {
       SemanticsHandler::ArithmeticOp op;
@@ -470,7 +470,7 @@ namespace s1
 	assert (false);
       }
       NextToken();
-      Expression expr2 = ParseExprAddition (scope);
+      Expression expr2 = ParseExprMultiplication (scope);
       expr = semanticsHandler.CreateArithmeticExpression (op, expr, expr2);
     }
     return expr;
@@ -525,7 +525,7 @@ namespace s1
   Parser::Expression Parser::ParseExprCompareEqual (const Scope& scope)
   {
     Expression expr = ParseExprComparison (scope);
-    if ((currentToken.typeOrID == Lexer::Equals)
+    while ((currentToken.typeOrID == Lexer::Equals)
       || (currentToken.typeOrID == Lexer::NotEquals))
     {
       SemanticsHandler::CompareOp op;
@@ -541,7 +541,7 @@ namespace s1
 	assert (false);
       }
       NextToken();
-      Expression expr2 = ParseExprCompareEqual (scope);
+      Expression expr2 = ParseExprComparison (scope);
       expr = semanticsHandler.CreateComparisonExpression (op, expr, expr2);
     }
     return expr;
@@ -550,7 +550,7 @@ namespace s1
   Parser::Expression Parser::ParseExprComparison (const Scope& scope)
   {
     Expression expr = ParseExprAddition (scope);
-    if ((currentToken.typeOrID == Lexer::Larger)
+    while ((currentToken.typeOrID == Lexer::Larger)
       || (currentToken.typeOrID == Lexer::LargerEqual)
       || (currentToken.typeOrID == Lexer::Smaller)
       || (currentToken.typeOrID == Lexer::SmallerEqual))
@@ -574,7 +574,7 @@ namespace s1
 	assert (false);
       }
       NextToken();
-      Expression expr2 = ParseExprComparison (scope);
+      Expression expr2 = ParseExprAddition (scope);
       expr = semanticsHandler.CreateComparisonExpression (op, expr, expr2);
     }
     return expr;
@@ -583,10 +583,10 @@ namespace s1
   Parser::Expression Parser::ParseExprLogicOr (const Scope& scope)
   {
     Expression expr = ParseExprLogicAnd (scope);
-    if (currentToken.typeOrID == Lexer::LogicOr)
+    while (currentToken.typeOrID == Lexer::LogicOr)
     {
       NextToken();
-      Expression expr2 = ParseExprLogicOr (scope);
+      Expression expr2 = ParseExprLogicAnd (scope);
       expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::Or, expr, expr2);
     }
     return expr;
@@ -595,10 +595,10 @@ namespace s1
   Parser::Expression Parser::ParseExprLogicAnd (const Scope& scope)
   {
     Expression expr = ParseExprCompareEqual (scope);
-    if (currentToken.typeOrID == Lexer::LogicAnd)
+    while (currentToken.typeOrID == Lexer::LogicAnd)
     {
       NextToken();
-      Expression expr2 = ParseExprLogicAnd (scope);
+      Expression expr2 = ParseExprCompareEqual (scope);
       expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::And, expr, expr2);
     }
     return expr;

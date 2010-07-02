@@ -124,6 +124,26 @@ public:
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + b.x)");
   }
   
+  void testEvaluationOrder (void)
+  {
+    std::istringstream in ("a-b-c");
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+				    TestSemanticsHandler::Global));
+    
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TestSemanticsHandler::TestExpressionBase* testExpr = 
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a - b) - c)");
+  }
+  
   void testPrecedence1 (void)
   {
     std::istringstream in ("a+b*c");
@@ -241,7 +261,7 @@ public:
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
-    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a || (b && (c && d)))");
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a || ((b && c) && d))");
   }
   
   void testPrecedence7 (void)
