@@ -185,7 +185,7 @@ Leerzeichen (``Whitespace'') und Kommentare werden bereits vom Lexer ignoriert (
 Der Lexer folgt einer typischen Implementierung wie sie z.B. in \cite{wirth_compiler} beschrieben ist. Auf einige beachtenswerte Aspekte
 wird im folgenden eingegangen.
 
-\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht arbeitet, der Lexer entsprechend auf der Basis von Unicode-kodierten Zeichen.
+\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht, arbeitet der Lexer entsprechend auf der Basis von Unicode-kodierten Zeichen.
 Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Lexer in einen "`Unicode-Strom"' umkodiert\footnote{Verwendet wird dazu die Bibliothek ICU,
 \url{http://site.icu-project.org/}}.
 
