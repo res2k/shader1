@@ -84,14 +84,15 @@ public:
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    TestSemanticsHandler::TestNameImpl* testVarA =
-      static_cast<TestSemanticsHandler::TestNameImpl*> (varA.get());
+    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarA =
+      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varA);
       
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
-    std::string resultRegName (seqGen.GetOutputRegisterName (testVarA->varReg, false));
+    std::string resultRegName (seqGen.GetOutputRegisterName (
+      testBlockImpl->GetRegisterForName (testVarA, false)));
     StringStringMap substMap;
     substMap["R0"] = resultRegName;
     TS_ASSERT_EQUALS(generateResult->Get (0),
@@ -131,20 +132,23 @@ public:
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    TestSemanticsHandler::TestNameImpl* testVarA =
-      static_cast<TestSemanticsHandler::TestNameImpl*> (varA.get());
-    TestSemanticsHandler::TestNameImpl* testVarB =
-      static_cast<TestSemanticsHandler::TestNameImpl*> (varB.get());
-    TestSemanticsHandler::TestNameImpl* testVarC =
-      static_cast<TestSemanticsHandler::TestNameImpl*> (varC.get());
+    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarA =
+      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varA);
+    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarB =
+      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varB);
+    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarC =
+      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varC);
       
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
-    std::string varARegName (seqGen.GetOutputRegisterName (testVarA->varReg, false));
-    std::string varBRegName (seqGen.GetOutputRegisterName (testVarB->varReg, false));
-    std::string varCRegName (seqGen.GetOutputRegisterName (testVarC->varReg, false));
+    std::string varARegName (seqGen.GetOutputRegisterName (
+      testBlockImpl->GetRegisterForName (testVarA, false)));
+    std::string varBRegName (seqGen.GetOutputRegisterName (
+      testBlockImpl->GetRegisterForName (testVarB, false)));
+    std::string varCRegName (seqGen.GetOutputRegisterName (
+      testBlockImpl->GetRegisterForName (testVarC, false)));
     StringStringMap substMap;
     substMap["A"] = varARegName;
     substMap["B"] = varBRegName;
