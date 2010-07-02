@@ -134,13 +134,22 @@ Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet
 ~\\
 \Gnt{asdr\_mult}:\label{asdr_mult}\\
 \hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
-\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \glq\Gt{*}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
-\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \glq\Gt{/}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
-\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \glq\Gt{\%}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
+\Gnt{asdr\_mult\_operanden}:\label{asdr_mult_operanden}\\
+\hspace*{1cm}\glq\Gt{*}\grq  \Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
+\hspace*{1cm}\glq\Gt{*}\grq  \Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
+\hspace*{1cm}\glq\Gt{/}\grq  \Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
+\hspace*{1cm}\glq\Gt{/}\grq  \Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
+\hspace*{1cm}\glq\Gt{\%}\grq  \Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
+\hspace*{1cm}\glq\Gt{\%}\grq  \Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
 \Gnt{asdr\_add}:\label{asdr_add}\\
 \hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
-\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \glq\Gt{+}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \glq\Gt{-}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} \\
+\Gnt{asdr\_add\_operanden}:\label{asdr_add_operanden}\\
+\hspace*{1cm}\glq\Gt{+}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\hspace*{1cm}\glq\Gt{+}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} \\
+\hspace*{1cm}\glq\Gt{-}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
+\hspace*{1cm}\glq\Gt{-}\grq  \Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} \\
 
 \op{\plus} addiert rechten und linken Operanden.
 
@@ -202,16 +211,26 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 
 \subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
-\Gnt{asdr\_vergleich\_gleich}:\label{asdr_vergleich_gleich}\\
-\hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \glq\Gt{!=}\grq  \Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
-\hspace*{1cm}\Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \glq\Gt{==}\grq  \Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
-\Gnt{asdr\_vergleich\_ungleich}:\label{asdr_vergleich_ungleich}\\
+\Gnt{asdr\_gleichheit}:\label{asdr_gleichheit}\\
+\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \\
+\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} \\
+\Gnt{asdr\_gleichheit\_operanden}:\label{asdr_gleichheit_operanden}\\
+\hspace*{1cm}\glq\Gt{!=}\grq  \Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \\
+\hspace*{1cm}\glq\Gt{!=}\grq  \Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} \\
+\hspace*{1cm}\glq\Gt{==}\grq  \Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \\
+\hspace*{1cm}\glq\Gt{==}\grq  \Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} \\
+\Gnt{asdr\_vergleich}:\label{asdr_vergleich}\\
 \hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{>}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{>=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{<}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \glq\Gt{<=}\grq  \Gnt{asdr\_vergleich\_ungleich}{\scriptsize (\ref{asdr_vergleich_ungleich})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
+\Gnt{asdr\_vergleich\_operanden}:\label{asdr_vergleich_operanden}\\
+\hspace*{1cm}\glq\Gt{>}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\glq\Gt{>}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
+\hspace*{1cm}\glq\Gt{>=}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\glq\Gt{>=}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
+\hspace*{1cm}\glq\Gt{<}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\glq\Gt{<}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
+\hspace*{1cm}\glq\Gt{<=}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
+\hspace*{1cm}\glq\Gt{<=}\grq  \Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
 
 \op{>} gibt an ob der linke Operand größer als der rechte Operand ist.
 
@@ -242,10 +261,16 @@ so findet ein Vergleich von Fließkommawerten statt.
 \subsubsection{Logische Operatoren}\label{Logische Operatoren}
 \Gnt{asdr\_logisch\_oder}:\label{asdr_logisch_oder}\\
 \hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
-\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \glq\Gt{||}\grq  \Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gnt{asdr\_logisch\_oder\_operanden}{\scriptsize (\ref{asdr_logisch_oder_operanden})} \\
+\Gnt{asdr\_logisch\_oder\_operanden}:\label{asdr_logisch_oder_operanden}\\
+\hspace*{1cm}\glq\Gt{||}\grq  \Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
+\hspace*{1cm}\glq\Gt{||}\grq  \Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gnt{asdr\_logisch\_oder\_operanden}{\scriptsize (\ref{asdr_logisch_oder_operanden})} \\
 \Gnt{asdr\_logisch\_und}:\label{asdr_logisch_und}\\
-\hspace*{1cm}\Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \\
-\hspace*{1cm}\Gnt{asdr\_vergleich\_gleich}{\scriptsize (\ref{asdr_vergleich_gleich})} \glq\Gt{\&\&}\grq  \Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
+\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \\
+\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
+\Gnt{asdr\_logisch\_und\_operanden}:\label{asdr_logisch_und_operanden}\\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
 
 %  "!" - unäres NOT
 
