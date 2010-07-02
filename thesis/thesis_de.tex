@@ -4,7 +4,7 @@
 \pagestyle{fancy}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[]{amsfonts}
+%\usepackage[]{amsfonts}
 \usepackage{amsmath}
 \usepackage{color}
 \usepackage{colortbl}
@@ -277,11 +277,164 @@ und "`Optimierung"' auf dieser besser vornehmen lassen.
 
 \subsection{Zwischenrepräsentation}
 
-- SSA
+% Abstrakte(s) Beispiel(e): Quellcode + resultierende Zw.rep.
 
-\subsection{Generator}
+Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA(Single Static Assignment)-Form.
+% "Inspirationen": LLVM, Amme's SSA, GIMPLE/SIMPLE
 
+Die Zwischenrepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
+die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt einen Registersatz für jeden verwendeten Typ.
+Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
+Der wesentliche SSA-Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf.
 
+Register sind "`Sequenz-Lokal"', d.h. nur in \emph{einer} Sequenz sichtbar. Insbesondere können auf diese nicht implizit
+aus verschachtelten Blöcke (wie sie auch bei Bedingungen oder Schleifen vorkommen) zugegriffen werden. 
+
+Stattdessen werden zu eingeschachtelten Blöcken eine Zuordnung zwischen "`externen"' Registern und
+lokalen Registern gespeichert. Semantisch findet am Anfang des Blockes ein Kopieren von externen Eingaberegistern
+in lokale Register statt sowie am Ende ein zurückkopieren von lokalen Registern in die externen Ausgaberegister.
+(Wie genau dies geschieht ist ein Implementierungsdetail, dass dem Generator obliegt.)
+
+\paragraph{Funktionen:}
+Eine Funktion der Zwischenrepräsentation besteht aus einem eindeutigem Bezeichner, einer Liste von Eingabeparametern,
+einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen.
+
+Jede Überladung muss einen eindeutigen Bezeichner erhalten; dieser wird aus dem ursprünglichen Bezeichner
+sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
+
+Parameter werden mit einem Mechanismus, der der Behandlung "`externer"' Register in einem eingeschachteltem
+Block ähnelt, übergeben. Die Parameterlisten enthalten zu jedem Parameter ein lokales Register, in dem die
+Sequenz den Wert des Parameters "`erwartet"' bzw. den Wert eines Ausgabeparameters ablegt.
+(Wie Parameter genau übergeben werden ist ein Implementierungsdetail, dass dem Generator obliegt.)
+
+Ein Parameter, der gleichzeitig Ein- wie auch Ausgabeparameter ist, wird "`verdoppelt"', d.h. es wird daraus
+ein nur-Eingabe- sowie auch ein nur-Ausgabe-Parameter generiert. Bei Funktionsaufrufen werden den beiden
+Parametern auch entsprechend verschiedene Register zugeordnet.
+
+\paragraph{Globale Variablen:}
+Sequenzen sehen keine globalen Variablen vor. Diese werden nachgebildet, in dem in einer Funktion gelesene globale Variable
+auf einen speziellen, "`versteckten"' Eingabeparameter abgebildet wird. Eine geschriebene globale Variable wird
+auf einen speziellen Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden globalen Variablen tatsächlich
+"`eigene"' Register zugewiesen.
+
+%Stattdessen werden zu eingeschachtelten Blöcken gespeichert, welche Register von dem Block gelesen oder
+%beschrieben werden sollen
+
+%Soll ein Register in einem eingeschachteltem Block gelesen oder beschrieben werden, 
+
+\paragraph{Behandlung von Arrays:}
+Arrays werden als "`ein"' Wert behandelt. D.h. eine Zuweisungsoperation kopiert immer ein ganzes Array.
+Das Lesen einzelner Elemente geschieht mit Hilfe der Operation "`Extraktion eines Arrayelements"'.
+Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelements"'; diese kopiert alle Elemente
+eines Arrays in das Zielarray \emph{außer} das Element eines gegebenen Indexes; im Zielarray wird dort der zu
+schreibende Wert abgelegt.
+
+\subsubsection{Sequenz-Operationen}
+
+\paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
+
+\paragraph{Konstantenoperationen:} Diese weisen einem Register eine Bool'sche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
+Fließkommakonstante zu.
+
+\paragraph{Typumwandlungsoperation:} Liest ein Register eines Typs und schreibt dessen Inhalt in ein Register eines anderen Typs, mit Umwandlung der Daten.
+Kann zwischen Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerten umwandeln.
+
+\paragraph{Arithmetische Operation:} Zwei Register des gleichen Typs -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte --
+werden durch eine arithmetische Operation verknüpft und das Ergebnis in ein weiteres Register geschrieben.
+
+\paragraph{Vergleichsoperation:} Zwei Register des gleichen Typs -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte --
+werden miteinander verglichen (gleich, ungleich, größer, größer gleich, kleiner oder kleiner gleich) und das Ergebnis in ein Register vom Typ Boolean geschrieben.
+
+\paragraph{Logische Operation:} Zwei Register des Typs Boolean werden durch logisch UND oder logisch ODER verknüpft und das Ergebnis in ein Register vom Typ Boolean geschrieben.
+
+\paragraph{Unäre Operation:} Unäre Operationen sind Negation, Logisches NICHT und bitweise Invertierung.
+Negation negiert den Wert eines Integer- (vorzeichenlos oder vorzeichenbehaftet) oder Fließkommaregisters und schreibt das Ergebnis in ein Register des selben Typs.
+Logisches NICHT invertiert den Wert eines Registers vom Typ Boolean und schreibt das Ergebnis in ein Register des selben Typs.
+Bitweise Invertiertung wird auf ein eines Integer- (vorzeichenlos oder vorzeichenbehaftet) Register angewendet und schreibt das Ergebnis in ein Register des selben Typs.
+
+\paragraph{Vektor-Erstellung:} Nimmt als Eingabe ein bis vier Register, je nach der Komponentenanzahl des Ausgaberegisters; die Eingaberegister müssen alle
+den Basistyp des Ausgaberegisters besitzen. Die Eingabe-Register werden der Reihe nach den Vektorkomponenten im Zielregister zugeordnet.
+
+\paragraph{Extraktion von Vektorkomponente:} Nimmt als Eingabe ein Vektor-Register sowie eine Integer-Konstante $N$ im Bereich $0 \dots 3$ entgegen.
+Aus dem übergebenen Vektor wird die Komponente Nummer $N$ extrahiert und in das Zielregister geschrieben.
+
+\paragraph{Matrix-Erstellung:} Nimmt als Eingabe ein bis sechzehn Register, je nach den Dimensionen des Ausgaberegisters; die Eingaberegister müssen alle
+den Basistyp des Ausgaberegisters besitzen. Die Eingabe-Register werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
+als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
+
+\paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays; die Eingaberegister müssen alle
+den Basistyp des Ausgaberegisters besitzen. Die Eingabe-Register werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
+
+\paragraph{Extraktion eines Arrayelements:} Nimmt als Eingabe ein Array-Register sowie ein Register mit einem vorzeichenlosen Integer. Aus dem Array wird das Register mit
+Index des Integers extrahiert und in das Zielregister geschrieben, welches den Basistyp des Array-Registers besitzen muss.
+
+\paragraph{Änderung eines Arrayelements:} Nimmt als Eingabe ein Array-Register, ein Register mit einem vorzeichenlosen Integer sowie ein Register
+des Basistyps des Arrays entgegen. Aus dem Eingabearray werden alle Elemente \emph{außer} das Element eines gegebenen Indexes in das Array des Zielregisters kopiert;
+dort wird stattdessen der Wert des dritten Registers abgelegt. Das Zielregister muss den Typ des Array-Registers besitzen.
+
+\paragraph{Arraylänge:} Nimmt als Eingabe ein Array-Register entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
+die Anzahl der Elemente des Arrays.
+
+\paragraph{Blockschachtelung:} Eine Operation, die auf eine weitere, eingeschachtelte Sequenz verweist, die beim Ausführen der Operation abgearbeitet wird.
+Der eingeschachtelte "`Block"' enthält neben der Sequenz auch Listen von "`importierten"' und "`exportierten"' Namen.
+Jedem Namen ist weiterhin ein Register in der eingeschaltelten Sequenz zugeordnet.
+Beim Einfügen der Operation in eine Sequenz wird von dieser (die "`umgebende"' Sequenz) eine Zuordnung von "`importierten"' und "`exportierten"' Namen der
+eingeschaltelten Sequenz zu Registern der umgebenden Sequenz vorgenommen. 
+Diese Zuordnung wird benutzt, um vor der Abarbeitung der eingeschaltelten Sequenz Registerwerte von der umgebenden in die eingeschaltelte Sequenz zu kopieren;
+nach der Abarbeitung erfolgt ein Kopieren in die umgekehrte Richtung.
+Eine Blockschachtelung gilt als \emph{eine} Operation in der Sequenz. Solange die Zuordnung von "`exportierten"' Namen der
+eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wird kein Register verwendet, das bereits beschrieben wurde), bleiben die SSA-Bedingungen erfüllt.
+
+\paragraph{Verzweigung:} Eine auf der Blockschachtelung basierende Operation. Parameter sind zwei Blöcke (ein ``if''- und ein ``else''-Block) sowie ein Register vom
+Typ Boolean mit dem Wert der Bedingung. Ist der Wert dieses Registers "`wahr"', wird der ``if''-Block ausgeführt, sonst der ``else''-Block. Es müssen immer beide Blöcke
+gegeben werden, ein Block kann aber leer sein.
+%Soll ein Register in einer Verzweigung beschrieben werden, so muss dies immer in \emph{beiden} Blöcken geschehen, da ansonsten je nach Ausführungspfad ein
+%Register undefinierte Wert
+Ein Register kann in beiden Blöcken beschrieben werden (z.B. wenn im Quellcode eine Variable von einer Bedingung abhängig unterschiedliche Werte zugewiesen wurden).
+Eine Verzweigung gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch wenn ein Register in beiden Blöcken beschrieben wird wird es,
+von der umgebenden Sequenz aus gesehen, bloss von einer Operation beschrieben (eben der Verzweigung). Damit bleiben die SSA-Bedingungen erfüllt,
+ohne dass ein Einsatz der $\phi$-Funktion nötig ist.
+
+%Um die SSA-Bedingungen zu erfüllen, aber
+
+\paragraph{While-Schleife:} Eine auf der Blockschachtelung basierende Operation. Parameter sind ein Block sowie zwei Register vom
+Typ Boolean, jeweils mit dem Wert der Bedingung: das erste Register enthält die Bedingung \emph{vor} der ersten Ausführung des Blockes,
+das zweite Register die Bedingung \emph{nach} einer Ausführung des Blockes.
+
+Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf \texttt{while}-Schleifen abgebildet.
+
+\paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register, eine Liste Ausgabe-Register
+und eventuell ein Zielregister für den Rückgabewert entgegen. Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
+
+Der "`Bezeichner"' ist eine prinzipiell arbiträre Zeichenkette, die die Funktion bezeichnet. Es wird davon ausgegangen, dass dem Code-Generator
+vorher eine Funktionsbeschreibung übergeben wurde, die durch den Bezeichner identifiziert wird.
+
+\paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Hat die Funktion einen Rückgabewert, so wird als Parameter ein Register
+erwartet, welches den Rückgabewert der Funktion enthält.
+
+\paragraph{Eingebaute Funktion:} Diese Operation sammelt den Zugriff auf eigebaute Funktionen (siehe~\ref{builtins})
+und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
+und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
+
+%$\phi$-Funktion: diese konkrete Zwischenrepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
+
+\subsection{Code-Generator}
+
+Der \emph{Code-Generator} erhält eine Liste von Funktionsbeschreibungen; diese besteht aus dem eindeutigen Bezeichner,
+einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern), und einer Sequenz mit den eigentlichen Operationen.
+
+Für jede Funktion wird nun eine entsprechende Deklaration generiert und jede Sequenzoperation die entsprechenden Anweisung(en) in der Zielsprache übersetzt.
+Weiterhin müssen den -- in der Anzahl unbegrenzten -- Registern der Zwischenrepräsentation tatsächliche "`Ressourcen"' zugewiesen werden
+(Bsp.: ein Generator für eine Assemblersprache würde eine Registerallokation vornehmen).
+
+In der vorliegenden Implementierung wurde als Zielsprache Cg gewählt.
+Jedem Register der Zwischenrepräsentation wird eine Variable zugeordnet (eine Registerallokation ist unnötig da diese später vom Cg-Compiler vorgenommen wird).
+"`Einfache"' Sequenzoperation (arithmetische Operationen u.ä.) lassen sich trivialerweise auf ein einzelnes Statement in Cg übertragen. 
+Weiterhin werden die meisten eingebauten Funktionen direkt von Cg unterstützt. % Ausnahmen?
+Kompliziertere Operationen -- Verzweigungen, Schleifen, Funktionsaufrufe -- resultieren in mehreren Statements, obwohl es sich bei dem
+zusätzlichen "`Aufwand"' meist nur um Zuweisungen zwischen Variablen handelt (z.B. zur Auswahl des Bedingungsregisters).
+
+% Spezialitäten bei einzelnen Sequenz-Op.?
 
 \section{Ausblick}
 
