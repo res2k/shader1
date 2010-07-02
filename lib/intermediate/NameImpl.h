@@ -24,8 +24,6 @@ namespace s1
       ExpressionPtr varValue;
       // Distinguish between variable/constant
       bool varConstant;
-      // Register for variable/constant
-      RegisterID varReg;
       
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
 		const UnicodeString& identifier, NameType type,
