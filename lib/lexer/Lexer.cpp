@@ -152,25 +152,7 @@ KEYWORDS
 	}
 	return *this;
       case '+': currentToken = Token (Plus, currentChar); 	NextChar(); return *this;
-      case '-':
-	{
-	  UChar32 next = PeekChar();
-	  UChar32 next2 = PeekChar(1);
-	  if (((next >= '0') && (next <= '9'))
-	      || ((next == '.')
-		&& ((next2 >= '0') && (next2 <= '9'))))
-	  {
-	    // '-' is start of a number
-	    break;
-	  }
-	  else
-	  {
-	    // '-' is minus operator
-	    currentToken = Token (Minus, '-'); 
-	    NextChar();
-	    return *this;
-	  }
-	}
+      case '-': currentToken = Token (Minus, currentChar); 	NextChar(); return *this;
       case '*': currentToken = Token (Mult, currentChar); 	NextChar(); return *this;
       case '/':
 	{
@@ -256,8 +238,7 @@ KEYWORDS
 	// Identifier
 	ParseIdentifier ();
       }
-      else if ((currentChar == '-') || (currentChar == '.')
-	  || ((currentChar >= '0') && (currentChar <= '9')))
+      else if ((currentChar == '.') || ((currentChar >= '0') && (currentChar <= '9')))
       {
 	// Number
 	ParseNumeric ();
