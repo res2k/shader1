@@ -62,18 +62,19 @@ werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt 
 
 \subsection{Ausdrücke}\label{Ausdruecke}
 \Gnt{ausdruck}:\label{ausdruck}\\
-\hspace*{1cm}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gnt{asdr\_ternaer\_suffix}{\scriptsize (\ref{asdr_ternaer_suffix})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gnt{asdr\_zuweisung\_suffix}{\scriptsize (\ref{asdr_zuweisung_suffix})} \\
 
 Der Ausdruck höchster Präzedenz ist eine Zuweisung, auf welche einfach in der Regel für
 allgemeine Ausdrücke verwiesen wird.
 
 
 \subsubsection{Zuweisung}\label{Zuweisung}
-\Gnt{asdr\_zuweisung}:\label{asdr_zuweisung}\\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \\
-\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\Gnt{asdr\_zuweisung\_suffix}:\label{asdr_zuweisung_suffix}\\
+\hspace*{1cm}\glq\Gt{=}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
-Ein Zuweisungsausdruck \Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} weist dem Ausdruck der linken Seite den Wert des Ausdrucks
+Ein Zuweisungsausdruck \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gnt{asdr\_zuweisung\_suffix}{\scriptsize (\ref{asdr_zuweisung_suffix})} weist dem Ausdruck der linken Seite den Wert des Ausdrucks
 auf der rechten Seite zu. Sofern eine Zuweisung tatsächlich gegeben ist muss
 der Ausdruck auf der linken Seite eine Variable oder ein Arrayelement
 bzw. von diesen ein Swizzle-Attribut (siehe \ref{Vektorattribute}) bezeichnen.
@@ -83,16 +84,18 @@ sein.
 
 Ein Zuweisungsausdruck selbst hat den Wert des zugewiesenen bezeichneten Wertes nach der Zuweisung.
 
+\emph{Anfang des Zuweisungsausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
+
 \subsubsection{Basisausdruck}\label{Basisausdruck}
 \Gnt{asdr\_basis}:\label{asdr_basis}\\
 \hspace*{1cm}\glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq \\
 \hspace*{1cm}\glq\Gt{(}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{)}\grq \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
 \hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \\
 \hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
 \hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \\
 \hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
 \hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \\
 \hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
 \Gnt{attribut\_liste\_oder\_array\_element}:\label{attribut_liste_oder_array_element}\\
@@ -196,9 +199,8 @@ Ist der Operand von einem Fließkommatyp, so ist der Typ des unären Ausdrucks v
 \op{!} logisch invertiert den Operanden. Der Operand muss vom Typ \kw{bool} sein. Der Typ des unären Ausdrucks ist vom Typ \kw{bool}.
 
 \subsubsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
-\Gnt{asdr\_ternaer}:\label{asdr_ternaer}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \glq\Gt{?}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{:}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\Gnt{asdr\_ternaer\_suffix}:\label{asdr_ternaer_suffix}\\
+\hspace*{1cm}\glq\Gt{?}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}  \glq\Gt{:}\grq  \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
 Die \emph{Bedingung} ist ein boole'scher Ausdruck. Ergibt sich dieser Ausdruck zu \kw{true},
 so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
@@ -208,6 +210,8 @@ ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 \emph{Wahr-} und \emph{Falsch-Ausdruck} müssen vom gleichen Typ sein.
+
+\emph{Anfang des ternären Ausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
 
 
 \subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
@@ -269,8 +273,8 @@ so findet ein Vergleich von Fließkommawerten statt.
 \hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \\
 \hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
 \Gnt{asdr\_logisch\_und\_operanden}:\label{asdr_logisch_und_operanden}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
-\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
+\hspace*{1cm}\glq\Gt{\&\&}\grq  \Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \\
+\hspace*{1cm}\glq\Gt{\&\&}\grq  \Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
 
 %  "!" - unäres NOT
 
