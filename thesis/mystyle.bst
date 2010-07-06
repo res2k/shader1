@@ -43,6 +43,7 @@ ENTRY
     author
     booktitle
     chapter
+    customlabel
     doi
     edition
     editor
@@ -1370,7 +1371,8 @@ FUNCTION {editor.key.organization.label}
 }
 
 FUNCTION {calc.label}
-{ type$ "book" =
+{ customlabel empty$
+  { type$ "book" =
   type$ "inbook" =
   or
     'author.editor.key.label
@@ -1391,6 +1393,15 @@ FUNCTION {calc.label}
   year field.or.null purify$ #-1 #4 substring$
   *
   sortify 'sort.label :=
+   }
+  { 
+    customlabel
+    duplicate$
+    'label :=
+    sortify 'sort.label :=
+  }
+  
+  if$
 }
 FUNCTION {sort.format.names}
 { 's :=
