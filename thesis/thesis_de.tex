@@ -16,6 +16,7 @@
 \usepackage{verbatim}
 \usepackage{sectsty}
 \usepackage{listings}
+\usepackage{listingsutf8}
 \usepackage{scalefnt}
 \usepackage{setspace}
 \usepackage{ngerman}
@@ -25,7 +26,7 @@
 \usepackage[plainpages=false,pdfpagelabels,colorlinks=true,urlcolor=darkblue,pagecolor=darkred,citecolor=darkred,linkcolor=darkred]{hyperref}
 %\newcommand\url[1]{\texttt{#1}}
 
-\lstset{basicstyle=\ttfamily\small,lineskip=-0.5em}
+\lstset{basicstyle=\ttfamily\small,lineskip=-0.5em,inputencoding=utf8/latin1}
 
 % define the title
 \author{Frank Richter 68278\\frank.richter@gmail.com}
@@ -33,6 +34,8 @@
 \date{\today}
 
 \begin{document}
+
+\sloppy
 
 \newcommand\btxandlong{und}
 \newcommand\btxandshort{u}
@@ -217,46 +220,78 @@ Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegeb
 
 \subsection{Parser}
 
-Der \emph{Parser} (oder auch "`Scanner"') untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen:
-einerseits wird überprüft, ob der Token-Strom einem Wort der in der Sprachspezifikation gegebenen Sprache entspricht.
-Andererseits werden wären der Überprüfung bereits syntaktische Elemente extrahiert um diese bei der semantischen Verarbeitung zu
-verwenden.
+Der \emph{Parser} (oder auch "`Scanner"') untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen.
+Es wird überprüft, ob der Token-Strom gültig im Sinne der in der Sprachspezifikation gegebenen Sprache ist --
+sonst liegt ein \emph{Syntaxfehler} vor.
 
-Beispiel: Soll aus dem Token-Strom ein "`Ausdruck"'~(\ref{ausdruck}) gelesen werden, prüft der Parser, ob die Tokens der Regel eines gültigen
-Ausdrucks folgen -- ist dies nicht der Fall, handelt es sich um einen \emph{Syntaxfehler}.
-Gleichzeitig werden aber auch Informationen wie numerische Werte oder Bezeichner gespeichert, da diese für eine später folgende
-\emph{semantische} Verarbeitung notwendig sind.
+Während der Überprüfung werden auch syntaktische Elemente -- grundsätzlich Terminale wie Bezeichner oder numerische Werte -- extrahiert.
+Diese werden bei der \emph{semantischen} Verarbeitung benötigt.
 
 %- Lookahead: unendl.
 %- Grammatik: kontextfrei, rechtsrekursiv
 
-\subsubsection{Eigenschaften der Grammatik}
+%\subsubsection{Eigenschaften der Grammatik}
 
-Die Grammatik ist kontextfrei. Die Regeln sind rechtsrekursiv.
+%Die Grammatik ist kontextfrei. Die Regeln sind rechtsrekursiv.
 
 \subsubsection{Aufbau des Parsers}
 %- SemanticHandler
 
-Der Parser ist handprogrammiert nach der Methode des rekursiven Abstiegs. % Ref Wirth?
+\newcommand\rulelink[1]{\glq\texttt{\detokenize{#1}}\grq~(\ref{#1})}
 
+Der Parser ist handprogrammiert nach der Methode des rekursiven Abstiegs (beschrieben in \cite{wirth_compiler}).
+Der Aufbau spiegelt im Wesentlichen die Struktur der Regeln wieder -- viele haben ein direktes Gegenstück in einer Methode des Parsers.
+
+\paragraph{Umgang mit Mehrdeutigkeiten:}
+An einigen Stellen der Grammatik gibt es Mehrdeutigkeiten.
+Wird beim parsen eines \rulelink{programm_statements} die Tokens \glq\texttt{typ BEZEICHNER}\grq~(\ref{typ}, \ref{BEZEICHNER})  erkannt,
+so kann es sich entweder um die Regel \rulelink{dekl_funktion} oder um \rulelink{dekl_var} handeln.
+Andere Fälle von Mehrdeutigkeiten sind \rulelink{dekl_var} oder \rulelink{kommando} in \rulelink{block},
+\rulelink{funktion_aufruf} oder \rulelink{BEZEICHNER} in \rulelink{asdr_basis}.
+
+Solche Mehrdeutigkeiten lassen sich entweder in der Implementierung des Parsers oder durch Abändern der Grammatik lösen.
+
+Bei der Parser-Lösung werden einfach weitere Tokens betrachtet. Im Falle eines  \rulelink{programm_statements}
+wird auch das nächste Token nach \glq\texttt{typ}\grq{} und \glq\texttt{BEZEICHNER}\grq{} überprüft:
+handelt es sich um \glq\texttt{(}\grq, ist die anzuwendende Regel \rulelink{dekl_funktion};
+handelt es sich um \glq\texttt{=}\grq, \glq\texttt{,}\grq{} oder \glq\texttt{;}\grq{} ist die anzuwendende Regel \rulelink{dekl_var};
+andere Tokens sind ein Syntaxfehler.
+
+In den Implementierungen der Regeln \rulelink{block} und \rulelink{asdr_basis} wurde analog verfahren.
+
+Bei der Lösung von Mehrdeutigkeiten durch Abändern der Grammatik muss eine Regel erstellt werden,
+die mit der mehrdeutigen Token-Sequenz beginnt. Dahinter werden als Alternativen neue Regeln angefügt,
+die aus den "`Resttokens"' der ursprünglich mehrdeutigen Regeln bestehen müssen. % Hier ne Ref wäre vllt gut
+
+Allerdings wird damit die Lesbarkeit der Grammatik eingeschränkt; nur für die Regel \rulelink{ausdruck} wurde dieser Ansatz verfolgt.
+Für die anderen Regeln wurde das "`Vorausbetrachten"' im Parser gewählt, da es in diesen Fällen einfach zu implementieren war
+und die Grammatik besser lesbar bleibt.
+
+\paragraph{Semantische Verarbeitung:}
 Die semantische Verarbeitung wird an ein Interface vom Typ \verb+SemanticHandler+ übergeben.
 Dieses Interface übernimmt die verschiedenen Aspekte der semantischen Verarbeitung, von der Verwaltung der
-Symboltabellen bis zu einer geeigneten internen Repräsentation von Ausdrücken.
+Symboltabelle bis zu einer geeigneten internen Repräsentation von Ausdrücken.
 
-\verb+SemanticHandler+ besitzt Methoden, um syntaktische Elemente - wie Bezeichner und numerische Literale - in Objekte 
-einzukapseln. Diese Objekte wiederum werden in der semantischen Verarbeitung anderer syntaktischer Elemente
-zurück an das Interface übergeben.
+\verb+SemanticHandler+ besitzt Methoden, um syntaktische Elemente -- wie Bezeichner und numerische Literale -- in Objekte 
+einzukapseln. Diese Objekte wiederum werden bei der Verarbeitung anderer syntaktischer Elemente
+zurück an das Interface übergeben. % Wenn Code-Schnipsel dann hier verweisen
 
-Beispiel: Bei einem Ausdruck \verb+a * 2+ werden von \verb+SemanticHandler+ zunächst Repräsentationen für
-\verb+a+ und \verb+2+ erfragt. Zurückgegeben werden Repräsentationen von "`Ausdrücken"'. Diese wiederum
-dienen als Argumente, um eine Repräsentation einer Multiplikation zu erhalten. Diese letzte Repräsentation kann
-dann überall dort verwendet werden, wo Ausdrücke erwartet werden: Zuweisungen, Funktionsparameter etc.
+%Beispiel: Bei einem Ausdruck \verb+a * 2+ werden von \verb+SemanticHandler+ zunächst Repräsentationen für
+%\verb+a+ und \verb+2+ erfragt. Zurückgegeben werden Repräsentationen von "`Ausdrücken"'. Diese wiederum
+%dienen als Argumente, um eine Repräsentation einer Multiplikation zu erhalten. Diese letzte Repräsentation kann
+%dann überall dort verwendet werden, wo Ausdrücke erwartet werden: Zuweisungen, Funktionsparameter etc.
 
-Vom \verb+SemanticHandler+ zum Parser gibt es auch einen "`Rückkanal"'. Dies ist nötig, da bei einigen
-Konstrukten bekannt sein muss, ob ein Bezeichner eine Variable, eine Funktion oder einen Typ identifiziert.
-(Beispiel: \verb+foo (1)+ - ist \verb+foo+ eine Funktion, so ist dies ein Funktionsaufruf; ist es ein Typ-Alias, so ist es
-der Aufruf eines Typ-Konstruktors; ist \verb+foo+ eine Variable, so ist dies ein ungültiger Ausdruck.)
+Vom der \verb+SemanticHandler+-Implementierung zum Parser gibt es auch einen "`Rückkanal"'. Dies ist nötig, da bei einigen
+Konstrukten bekannt sein muss, ob ein Bezeichner eine Variable, eine Funktion oder einen Typ identifiziert:
+Das Ausdruck \verb+foo (1)+ ist, je nachdem ob \verb+foo+ eine Funktion, ein Typ-Alias oder eine Variable bezeichnet,
+entsprechend ein ein Funktionsaufruf, der Aufruf eines Typ-Konstruktors, oder ein ungültiger Ausdruck.
 
+Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Trennung zwischen syntaktischer
+und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine
+AST-Repräsentation generieren (allerdings benötigt der Parser trotzdem auch einige semantische Informationen über
+Bezeichner).
+
+\paragraph{Fehlerbehandlung:}
 Die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}
 realisiert. Der Parser selbst fängt dabei Ausnahmen ab, um zu gewährleisten, dass möglichst viel eines
 Programms verarbeitet wird, um möglichst viele potentielle Fehler aufzudecken: % Wirth
@@ -275,47 +310,82 @@ die Generierung eines ASTs wurde als Zwischenschritt wurde als unnötigen angese
 wichtige semantische Eigenschaften (wie Typinformationen) erhält und sich die Verarbeitungsschritte "`Auftrennung"'
 und "`Optimierung"' auf dieser besser vornehmen lassen.
 
+\paragraph{Implementierung \texttt{SemanticHandler}:}
+In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine Umsetzung in die Zwischenrepräsentation vorgenommen
+(Beschreibung siehe Unten). Die Generierung eines ASTs als Zwischenschritt wurde als unnötig angesehen.
+Die Zwischenrepräsentation erhält auch wichtige semantische Eigenschaften (wie Typinformationen) und
+die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf der Zwischenrepräsentation besser vornehmen.
+
 \subsection{Zwischenrepräsentation}
 
 % Abstrakte(s) Beispiel(e): Quellcode + resultierende Zw.rep.
 
-Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA(Single Static Assignment)-Form.
+Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA-Form (Single Static Assignment).
 % "Inspirationen": LLVM, Amme's SSA, GIMPLE/SIMPLE
 
 Die Zwischenrepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
 die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt einen Registersatz für jeden verwendeten Typ.
-Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
-Der wesentliche SSA-Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf.
+%Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
+Der wesentliche, von der SSA-Form entliehene, Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf.
 
-Register sind "`Sequenz-Lokal"', d.h. nur in \emph{einer} Sequenz sichtbar. Insbesondere können auf diese nicht implizit
-aus verschachtelten Blöcke (wie sie auch bei Bedingungen oder Schleifen vorkommen) zugegriffen werden. 
+\begin{figure}[h]
+   \centering
+  \includegraphics{ir_sequence}
+  \caption{Teile einer Sequenz}
+  \label{fig:ir_sequence}
+\end{figure}
 
-Stattdessen werden zu eingeschachtelten Blöcken eine Zuordnung zwischen "`externen"' Registern und
-lokalen Registern gespeichert. Semantisch findet am Anfang des Blockes ein Kopieren von externen Eingaberegistern
-in lokale Register statt sowie am Ende ein zurückkopieren von lokalen Registern in die externen Ausgaberegister.
-(Wie genau dies geschieht ist ein Implementierungsdetail, dass dem Generator obliegt.)
+Die Sichtbarkeit von Registern ist auf die Sequenz, in der sie deklariert wurden, beschränkt.
+%Insbesondere können auf diese nicht implizit
+%aus verschachtelten Blöcke (wie sie auch bei Bedingungen oder Schleifen vorkommen) zugegriffen werden. 
+Insbesondere gibt es Sequenzoperationen, die andere Sequenzen einschachteln (Verzweigungen, Schleifen, Sequenzschachtelung).
+Aus solch eingeschachtelten Blöcken kann \emph{nicht} implizit auf die Register aus dem umgebenden Block
+zugegriffen werden.
+
+Stattdessen werden zu eingeschachtelten Blöcken eine Zuordnung zwischen Registern aus dem umgebenden Block
+("`extern"') und
+Registern des eingeschachtelten Blockes ("`lokal"') gespeichert.
+Semantisch findet am Anfang des Blockes ein Kopieren von externen Eingaberegistern
+in lokale Register statt. Analog findet am Ende ein zurückkopieren von lokalen Registern in die externen Ausgaberegister.
+(Die genaue Umsetzung dieses Verhaltens ist ein Implementierungsdetail, dass dem Generator obliegt.)
+
+\begin{figure}[h]
+   \centering
+  \includegraphics{ir_seq_block_nest}
+  \caption{Schema einer Sequenzschachtelung}
+  \label{fig:ir_seq_block_nest}
+\end{figure}
 
 \paragraph{Funktionen:}
 Eine Funktion der Zwischenrepräsentation besteht aus einem eindeutigem Bezeichner, einer Liste von Eingabeparametern,
 einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen.
 
-Jede Überladung muss einen eindeutigen Bezeichner erhalten; dieser wird aus dem ursprünglichen Bezeichner
-sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
+Jede Überladung einer Funktion wird in der Zwischenrepräsentation durch einen eindeutigen Bezeichner identifiziert.
+Dieser wird aus dem ursprünglichen Bezeichner sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
 
 Parameter werden mit einem Mechanismus, der der Behandlung "`externer"' Register in einem eingeschachteltem
-Block ähnelt, übergeben. Die Parameterlisten enthalten zu jedem Parameter ein lokales Register, in dem die
-Sequenz den Wert des Parameters "`erwartet"' bzw. den Wert eines Ausgabeparameters ablegt.
-(Wie Parameter genau übergeben werden ist ein Implementierungsdetail, dass dem Generator obliegt.)
+Block ähnelt, übergeben. Die Parameterlisten enthalten zu jedem Eingabeparameter ein lokales Register, in dem die
+Sequenz den Wert des Parameters "`erwartet"'. Analog wird jedem Ausgabeparameter ein Register zugeordnet,
+in dem bei Verlassen der Funktion der zurückzugebende Wert liegt.
+(Die genaue Umsetzung dieses Verhaltens ist ein Implementierungsdetail, dass dem Generator obliegt.)
 
 Ein Parameter, der gleichzeitig Ein- wie auch Ausgabeparameter ist, wird "`verdoppelt"', d.h. es wird daraus
 ein nur-Eingabe- sowie auch ein nur-Ausgabe-Parameter generiert. Bei Funktionsaufrufen werden den beiden
 Parametern auch entsprechend verschiedene Register zugeordnet.
 
+\begin{figure}[h]
+   \centering
+  \includegraphics{ir_function}
+  \caption{Schema einer Funktionsbeschreibung}
+  \label{fig:ir_function}
+\end{figure}
+
 \paragraph{Globale Variablen:}
-Sequenzen sehen keine globalen Variablen vor. Diese werden nachgebildet, in dem in einer Funktion gelesene globale Variable
+Echte globale Variablen sind nicht vorgesehen. Sie werden nachgebildet, in dem in einer Funktion gelesene globale Variable
 auf einen speziellen, "`versteckten"' Eingabeparameter abgebildet wird. Eine geschriebene globale Variable wird
 auf einen speziellen Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden globalen Variablen tatsächlich
-"`eigene"' Register zugewiesen.
+"`eigene"' Register zugewiesen. Im Prinzip sind "`globale"' Variablen bloss "`versteckte"' lokale Variablen in
+der Eintrittsfunktion.
 
 %Stattdessen werden zu eingeschachtelten Blöcken gespeichert, welche Register von dem Block gelesen oder
 %beschrieben werden sollen
@@ -329,112 +399,233 @@ Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelemen
 eines Arrays in das Zielarray \emph{außer} das Element eines gegebenen Indexes; im Zielarray wird dort der zu
 schreibende Wert abgelegt.
 
+Dieser Ansatz wurde gewählt, weil er sehr gut in das "`SSA-Prinzip"' passt.
+Bei der direkten Umsetzung eines Zugriffs auf Array-Elemente ("`$a[i] = x$"') ist es schwierig, sicherzustellen, dass
+jedes Element von $a$ wie verlangt nur einmal beschrieben wird (insbesondere bei Schleifen); es
+müsste für jedes Array-Element individuell "`verfolgt' werden, ob es beschrieben wurde.
+Ein solches Verfolgen wird weiterhin schwieriger, sobald die Array-Größe nicht bekannt ist
+-- die spezifizierte Sprache sieht dies vor. Das betrachten eines Arrays als "`einen"' Wert macht es hingegen einfach,
+die Bedingung "`nur eine Zuweisung"' einzuhalten und zu überprüfen.
+% Andere Alternativen? Wie in LLVM, SafeTSA? Wer hat sich noch über Arrays Gedanken gemacht?
+
+Für manche Optimierungen ist es trotzdem von Vorteil, die einzelnen Element eines Arrays zu verfolgen -- sind diese
+z.B. Konstanten können die Werte an einer Konstantenfaltung teilnehmen. Solche Möglichkeiten der Optimierungen
+bleiben bestehen: sind Größe und Elementwerte eines Arrays bekannt, kann ein Optimierer diese wie individuelle
+Register durch die Arrayoperationen hindurch verfolgen, oder sogar ein Array auf individuelle Register "`aufteilen"'.
+
 \subsubsection{Sequenz-Operationen}
 
+Dieser Abschnitt zählt alle Möglichen Operationen in einer Sequenz auf. Eine Operation greift für die Eingabe auf kein, ein oder mehrere
+\emph{Quellregister} zu. Hat die Operation ein Ergebnis, wird dieses in ein \emph{Zielregister} geschrieben. 
+
+Unter vielen Operationen ist Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
+Die Quellregister werden durch $s$, $t$, \dots bezeichnet. 
+
 \paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
+\\\hspace*{1cm}$d = s$
 
-\paragraph{Konstantenoperationen:} Diese weisen einem Register eine Bool'sche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
+\paragraph{Konstantenoperation:} Diese weist dem Zielregister eine Bool'sche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
 Fließkommakonstante zu.
+\\\hspace*{1cm}$d = \mathrm{Konstante}$
 
-\paragraph{Typumwandlungsoperation:} Liest ein Register eines Typs und schreibt dessen Inhalt in ein Register eines anderen Typs, mit Umwandlung der Daten.
+\paragraph{Typumwandlungsoperation:} Liest das Eingaberegister, wandelt dessen Wert in den Ziel-Typ und schreibt den umgewandelten Wert in das Zielregister.
 Kann zwischen Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerten umwandeln.
+\\\hspace*{1cm}$d = s\ \mathrm{als}\ \mathrm{"`Ziel-Typ``}$
 
-\paragraph{Arithmetische Operation:} Zwei Register des gleichen Typs -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte --
-werden durch eine arithmetische Operation verknüpft und das Ergebnis in ein weiteres Register geschrieben.
+% Eventuell Tabelle (Operation|Verknüpfung|Eing-Typ|Ausg-Typ) statt Prosa?
+\paragraph{Arithmetische Operation:} Zwei Eingaberegister 
+werden durch eine arithmetische Operation verknüpft und das Ergebnis in das Zielregister geschrieben.
+Die Eingaberegister und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
+\\\hspace*{1cm}$d \gets s + t$
+\\\hspace*{1cm}$d \gets s - t$
+\\\hspace*{1cm}$d \gets s * t$
+\\\hspace*{1cm}$d \gets s / t$
 
-\paragraph{Vergleichsoperation:} Zwei Register des gleichen Typs -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte --
-werden miteinander verglichen (gleich, ungleich, größer, größer gleich, kleiner oder kleiner gleich) und das Ergebnis in ein Register vom Typ Boolean geschrieben.
+\paragraph{Vergleichsoperation:} Zwei Eingaberegister 
+werden miteinander verglichen (gleich, ungleich, größer, größer gleich, kleiner oder kleiner gleich) und das Ergebnis in das Zielregister geschrieben.
+Die Eingaberegister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
+Das Zielregister muss vom Typ Boolean sein.
+\\\hspace*{1cm}$d \gets s = t$
+\\\hspace*{1cm}$d \gets s < t$
+\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
-\paragraph{Logische Operation:} Zwei Register des Typs Boolean werden durch logisch UND oder logisch ODER verknüpft und das Ergebnis in ein Register vom Typ Boolean geschrieben.
+\paragraph{Logische Operation:} Zwei Eingaberegister durch logisch UND oder logisch ODER verknüpft und das Ergebnis in das Zielregister geschrieben.
+Die Eingaberegister und das Zielregister müssen vom Typ Boolean sein.
+\\\hspace*{1cm}$d \gets s \land t$
+\\\hspace*{1cm}$d \gets s \lor t$
 
 \paragraph{Unäre Operation:} Unäre Operationen sind Negation, Logisches NICHT und bitweise Invertierung.
-Negation negiert den Wert eines Integer- (vorzeichenlos oder vorzeichenbehaftet) oder Fließkommaregisters und schreibt das Ergebnis in ein Register des selben Typs.
-Logisches NICHT invertiert den Wert eines Registers vom Typ Boolean und schreibt das Ergebnis in ein Register des selben Typs.
-Bitweise Invertiertung wird auf ein eines Integer- (vorzeichenlos oder vorzeichenbehaftet) Register angewendet und schreibt das Ergebnis in ein Register des selben Typs.
+Negation negiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
+Die Eingabe- und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.\\
+Logisches NICHT invertiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
+Die Eingabe- und das Zielregister müssen vom gleichen Typ Boolean sein.\\
+Bitweise Invertiertung wird auf das Eingaberegister angewendet und schreibt das Ergebnis in das Zielregister.
+Die Eingabe- und das Zielregister müssen von einem Integer-Typ (vorzeichenlos oder vorzeichenbehaftet) sein.
+\\\hspace*{1cm}$d \gets \neg s$
+\\\hspace*{1cm}$d \gets -s$
+\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
-\paragraph{Vektor-Erstellung:} Nimmt als Eingabe ein bis vier Register, je nach der Komponentenanzahl des Ausgaberegisters; die Eingaberegister müssen alle
-den Basistyp des Ausgaberegisters besitzen. Die Eingabe-Register werden der Reihe nach den Vektorkomponenten im Zielregister zugeordnet.
+\paragraph{Vektor-Erstellung:} Nimmt als Eingabe ein bis vier Register, je nach der Komponentenanzahl des Zielregisters. Die Eingaberegister müssen alle
+den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Vektorkomponenten im Zielregister zugeordnet.
+\\\hspace*{1cm}$d \gets (s)$
+\\\hspace*{1cm}$d \gets (s, t)$
+\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
-\paragraph{Extraktion von Vektorkomponente:} Nimmt als Eingabe ein Vektor-Register sowie eine Integer-Konstante $N$ im Bereich $0 \dots 3$ entgegen.
-Aus dem übergebenen Vektor wird die Komponente Nummer $N$ extrahiert und in das Zielregister geschrieben.
+\paragraph{Extraktion einer Vektorkomponente:} Nimmt neben einem Eingaberegister auch eine Integer-Konstante $N$ im Bereich $0 \dots 3$ entgegen.
+Das Eingaberegister muss von einem Vektortyp sein. Das Zielregister muss vom Basistyp des Vektors sein.
+Aus dem Eingabevektor wird die Komponente Nummer $N$ extrahiert und in das Zielregister geschrieben.
+\\\hspace*{1cm}$d \gets s_N$
 
-\paragraph{Matrix-Erstellung:} Nimmt als Eingabe ein bis sechzehn Register, je nach den Dimensionen des Ausgaberegisters; die Eingaberegister müssen alle
-den Basistyp des Ausgaberegisters besitzen. Die Eingabe-Register werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
+\paragraph{Matrix-Erstellung:} Nimmt als Eingabe ein bis sechzehn Register, je nach den Dimensionen des Zielregisters. Die Eingaberegister müssen alle
+den Basistyp des Zielregisters besitzen. Siew werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
 als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
+\\\hspace*{1cm}$d \gets \left(s\right)$
+\\\hspace*{1cm}$d \gets \left(\begin{array}{cc}s&t\\u&v\end{array}\right)$
+\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
-\paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays; die Eingaberegister müssen alle
-den Basistyp des Ausgaberegisters besitzen. Die Eingabe-Register werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
+\paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays.
+Die Eingaberegister müssen alle den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
+\\\hspace*{1cm}$d \gets (s, t, \dots)$
 
-\paragraph{Extraktion eines Arrayelements:} Nimmt als Eingabe ein Array-Register sowie ein Register mit einem vorzeichenlosen Integer. Aus dem Array wird das Register mit
-Index des Integers extrahiert und in das Zielregister geschrieben, welches den Basistyp des Array-Registers besitzen muss.
+\paragraph{Extraktion eines Arrayelements:} Verwendet zwei Eingaberegister: ein Arrayregister sowie als Index ein Register mit einem vorzeichenlosen Integer.
+Aus dem Array wird das Element mit dem gegebenen Index extrahiert und in das Zielregister geschrieben.
+Das Zielregister muss den Basistyp des Array-Registers besitzen.
+\\\hspace*{1cm}$d \gets s[t]$
 
-\paragraph{Änderung eines Arrayelements:} Nimmt als Eingabe ein Array-Register, ein Register mit einem vorzeichenlosen Integer sowie ein Register
-des Basistyps des Arrays entgegen. Aus dem Eingabearray werden alle Elemente \emph{außer} das Element eines gegebenen Indexes in das Array des Zielregisters kopiert;
-dort wird stattdessen der Wert des dritten Registers abgelegt. Das Zielregister muss den Typ des Array-Registers besitzen.
+\paragraph{Änderung eines Arrayelements:} Verwendet drei EIngaberegister: neben einem Arrayregister und dem Indexregister (vorzeichenloser Integer)
+weiterhin ein Register mit vom Basistyps des Arrays (der "`neue Wert"').
+Aus dem Eingabearray werden alle Elemente \emph{außer} das Element des gegebenen Indexes in das Zielarray kopiert;
+dort wird stattdessen der "`neue Wert"' abgelegt. Das Zielregister muss den Typ des Arrayregisters besitzen.
+\\\hspace*{1cm}$d \gets (x | x = s[i]\ \mathrm{f"ur\ alle}\ i \neq t, u\ \mathrm{sonst})$
 
-\paragraph{Arraylänge:} Nimmt als Eingabe ein Array-Register entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
+\paragraph{Arraylänge:} Nimmt im Eingaberegister ein Array entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
 die Anzahl der Elemente des Arrays.
+\\\hspace*{1cm}$d \gets |s|$
 
-\paragraph{Blockschachtelung:} Eine Operation, die auf eine weitere, eingeschachtelte Sequenz verweist, die beim Ausführen der Operation abgearbeitet wird.
-Der eingeschachtelte "`Block"' enthält neben der Sequenz auch Listen von "`importierten"' und "`exportierten"' Namen.
-Jedem Namen ist weiterhin ein Register in der eingeschaltelten Sequenz zugeordnet.
-Beim Einfügen der Operation in eine Sequenz wird von dieser (die "`umgebende"' Sequenz) eine Zuordnung von "`importierten"' und "`exportierten"' Namen der
-eingeschaltelten Sequenz zu Registern der umgebenden Sequenz vorgenommen. 
-Diese Zuordnung wird benutzt, um vor der Abarbeitung der eingeschaltelten Sequenz Registerwerte von der umgebenden in die eingeschaltelte Sequenz zu kopieren;
-nach der Abarbeitung erfolgt ein Kopieren in die umgekehrte Richtung.
-Eine Blockschachtelung gilt als \emph{eine} Operation in der Sequenz. Solange die Zuordnung von "`exportierten"' Namen der
+\paragraph{Sequenzschachtelung:} Eine Operation, die auf eine weitere, eingeschachtelte Sequenz verweist, welche beim Ausführen der Operation abgearbeitet wird.
+Neben dem Verweis auf eine Sequenz werden auch Listen von "`importierten"' und "`exportierten"' Namen zu der Operation gespeichert.
+Jedem Namen ist weiterhin ein Register in der eingeschachtelten Sequenz zugeordnet.
+
+Beim Einfügen der Operation in eine "`umgebende"' Sequenz wird von dieser eine Zuordnung von "`importierten"' und "`exportierten"' Namen der
+eingeschachtelten Sequenz zu Registern der umgebenden Sequenz vorgenommen. 
+Diese Zuordnung wird benutzt, um vor der Abarbeitung der eingeschachtelten Sequenz Registerwerte von der umgebenden in die eingeschachtelte Sequenz zu kopieren.
+Nach der Abarbeitung erfolgt ein Kopieren in die umgekehrte Richtung.
+
+Eine Sequenzschachtelung gilt als \emph{eine} Operation in der umgebenden Sequenz. Solange die Zuordnung von "`exportierten"' Namen der
 eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wird kein Register verwendet, das bereits beschrieben wurde), bleiben die SSA-Bedingungen erfüllt.
 
-\paragraph{Verzweigung:} Eine auf der Blockschachtelung basierende Operation. Parameter sind zwei Blöcke (ein ``if''- und ein ``else''-Block) sowie ein Register vom
-Typ Boolean mit dem Wert der Bedingung. Ist der Wert dieses Registers "`wahr"', wird der ``if''-Block ausgeführt, sonst der ``else''-Block. Es müssen immer beide Blöcke
-gegeben werden, ein Block kann aber leer sein.
+\paragraph{Verzweigung:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind zwei Blöcke (ein ``if''- und ein ``else''-Block) sowie ein Register vom
+Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird der ``if''-Block ausgeführt, sonst der ``else''-Block. Es müssen immer beide Blöcke
+gegeben werden, Blöcke können aber leer sein.
 %Soll ein Register in einer Verzweigung beschrieben werden, so muss dies immer in \emph{beiden} Blöcken geschehen, da ansonsten je nach Ausführungspfad ein
 %Register undefinierte Wert
+
 Ein Register kann in beiden Blöcken beschrieben werden (z.B. wenn im Quellcode eine Variable von einer Bedingung abhängig unterschiedliche Werte zugewiesen wurden).
 Eine Verzweigung gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch wenn ein Register in beiden Blöcken beschrieben wird wird es,
-von der umgebenden Sequenz aus gesehen, bloss von einer Operation beschrieben (eben der Verzweigung). Damit bleiben die SSA-Bedingungen erfüllt,
+von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleiben die SSA-Bedingungen erfüllt,
 ohne dass ein Einsatz der $\phi$-Funktion nötig ist.
+\\\hspace*{1cm}$\mathrm{if}\ s\ \mathrm{then}\ \mathit{Block}\ \mathrm{else}\ \mathit{Block}$
 
 %Um die SSA-Bedingungen zu erfüllen, aber
 
-\paragraph{While-Schleife:} Eine auf der Blockschachtelung basierende Operation. Parameter sind ein Block sowie zwei Register vom
-Typ Boolean, jeweils mit dem Wert der Bedingung: das erste Register enthält die Bedingung \emph{vor} der ersten Ausführung des Blockes,
+\begin{figure}[h]
+   \centering
+  \includegraphics{ir_seq_branch}
+  \caption{Schema einer Verzweigungsoperation.}
+  \small\includegraphics[height=10pt]{ir_seq_torquoise_arrow} symbolisiert die Registerzuordnungen aus Abb.~\ref{fig:ir_seq_block_nest}.
+  \label{fig:ir_seq_branch}
+\end{figure}
+
+\paragraph{While-Schleife:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind ein Block sowie zwei Register vom
+Typ Boolean, jeweils mit einem Wert der Bedingung: das erste Register enthält die Bedingung \emph{vor} der ersten Ausführung des Blockes,
 das zweite Register die Bedingung \emph{nach} einer Ausführung des Blockes.
 
+Werte, die sich von Schleifendurchlauf zu Schleifendurchlauf ändern, werden ähnlich behandelt: es muss jedem solchen Wert ein lokales
+Register im Schleifenkörper zugeordnet werden. Die Schleifenoperation selber erhält eine Abbildung von einem Paar "`externer"' Register
+(Wert vor dem ersten Durchlauf sowie Wert nach dem ersten Durchlauf) zu den lokalen Registern als weitere Eingabe. Durch die Verwendung eines
+Paares von Eingaben wird die Verwendung der $\phi$-Funktion vermieden.
+
+Ein Register kann in mehreren Schleifendurchläufen beschrieben werden.
+Eine Schleife gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch ein mehrmals beschriebenes Register wird,
+von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Schleife).
+Damit bleiben die SSA-Bedingungen erfüllt, und ein Einsatz der $\phi$-Funktion ist weiterhin nicht nötig.
+
 Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf \texttt{while}-Schleifen abgebildet.
+\\\hspace*{1cm}$\mathrm{while}\ s\ \mathrm{do}\ \mathit{Block}$
 
 \paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register, eine Liste Ausgabe-Register
 und eventuell ein Zielregister für den Rückgabewert entgegen. Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
 
-Der "`Bezeichner"' ist eine prinzipiell arbiträre Zeichenkette, die die Funktion bezeichnet. Es wird davon ausgegangen, dass dem Code-Generator
-vorher eine Funktionsbeschreibung übergeben wurde, die durch den Bezeichner identifiziert wird.
+Der "`Bezeichner"' ist eine prinzipiell arbiträre Zeichenkette, die die Funktion bezeichnet. Dem Code-Generator muss
+vorher eine Funktionsbeschreibung übergeben worden sein, die durch den Bezeichner identifiziert werden kann.
+\\\hspace*{1cm}$d \gets \mathrm{Funktion}\ (s, \dots)$
+\\\hspace*{1cm}$\mathrm{Funktion}\ (s, \dots)$
 
 \paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Hat die Funktion einen Rückgabewert, so wird als Parameter ein Register
 erwartet, welches den Rückgabewert der Funktion enthält.
+\\\hspace*{1cm}$\mathrm{return}\ s$
+\\\hspace*{1cm}$\mathrm{return}$
 
 \paragraph{Eingebaute Funktion:} Diese Operation sammelt den Zugriff auf eigebaute Funktionen (siehe~\ref{builtins})
 und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
 und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
+\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
+\\\hspace*{1cm}$d \gets s \cdot t$
+\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 %$\phi$-Funktion: diese konkrete Zwischenrepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
 
 \subsection{Code-Generator}
 
-Der \emph{Code-Generator} erhält eine Liste von Funktionsbeschreibungen; diese besteht aus dem eindeutigen Bezeichner,
-einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern), und einer Sequenz mit den eigentlichen Operationen.
+Der \emph{Code-Generator} übersetzt ein in der Zwischenrepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
+Diese "`Darstellung"' kann wieder eine Hochsprache sein, prinzipiell kann ein Code-Generator aber auch Assembler-Quelltext oder eine
+Binärcodierung ausgeben.
 
-Für jede Funktion wird nun eine entsprechende Deklaration generiert und jede Sequenzoperation die entsprechenden Anweisung(en) in der Zielsprache übersetzt.
-Weiterhin müssen den -- in der Anzahl unbegrenzten -- Registern der Zwischenrepräsentation tatsächliche "`Ressourcen"' zugewiesen werden
-(Bsp.: ein Generator für eine Assemblersprache würde eine Registerallokation vornehmen).
+\subsubsection{Eingaben und Aufgaben}
 
-In der vorliegenden Implementierung wurde als Zielsprache Cg gewählt.
-Jedem Register der Zwischenrepräsentation wird eine Variable zugeordnet (eine Registerallokation ist unnötig da diese später vom Cg-Compiler vorgenommen wird).
+Der \emph{Code-Generator} erhält als Eingabe eine Liste von Funktionsbeschreibungen.
+Eine Funktionsbeschreibung besteht aus dem eindeutigen Bezeichner, einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern)
+und einer Sequenz mit den eigentlichen Operationen. Eine Funktion ist als "`Eintrittsfunktion"' markiert.
+
+\begin{figure}[h]
+   \centering
+  \includegraphics{ir_program}
+  \caption{Zusammensetzung eines Programms in der Zwischenrepräsentation}
+  \label{fig:ir_program}
+\end{figure}
+
+Die Aufgaben des Code-Generators bestehen aus:
+\begin{itemize}
+\item Nötige Umformungen für die Zieldarstellung -- z.B. Schleifen ausrollen oder ``inlining'' von Funktionen.
+\item Übertragung der Funktionsbeschreibungen in eine entsprechende Deklaration in der Zieldarstellung.
+\item Übersetzung der Sequenzoperationen in die Zieldarstellung. 
+\item Dabei Ressourcenallokation, wenn nötig (z.B. begrenzte Registerzahl in der Zieldarstellung).
+\item Generierung von "`Schnittstellen-Anweisungen"' wie z.B. bei der Übergabe von Parametern an Funktionen
+oder die Behandlung von Werten "`vor dem ersten Durchlauf, nach dem ersten Durchlauf"' wie sie bei Schleifen
+auftreten.
+\end{itemize}
+
+\subsubsection{Generator für Cg}
+
+In der vorliegenden Implementierung wurde als Zieldarstellung die Sprache Cg~(\cite{cgpaper}, \cite{cg_home}) gewählt.
+
+Cg als Hochsprache kennt selbst Konstrukte wie Funktionen und Schleifen. Umformungen durch den Codegenerator
+sind also nicht nötig.
+
+Jede Funktion wird also direkt auf eine Cg-Funktion abgebildet.
+
+Jedem Register der Zwischenrepräsentation wird eine Variable zugeordnet -- eine Registerallokation ist unnötig, diese wird später vom Cg-Compiler selbst vorgenommen.
 "`Einfache"' Sequenzoperation (arithmetische Operationen u.ä.) lassen sich trivialerweise auf ein einzelnes Statement in Cg übertragen. 
-Weiterhin werden die meisten eingebauten Funktionen direkt von Cg unterstützt. % Ausnahmen?
-Kompliziertere Operationen -- Verzweigungen, Schleifen, Funktionsaufrufe -- resultieren in mehreren Statements, obwohl es sich bei dem
-zusätzlichen "`Aufwand"' meist nur um Zuweisungen zwischen Variablen handelt (z.B. zur Auswahl des Bedingungsregisters).
+Weiterhin werden die meisten eingebauten Funktionen und Attribute direkt von Cg unterstützt (Ausnahme ist das Matrix-Attribut \texttt{inverted}).
 
-% Spezialitäten bei einzelnen Sequenz-Op.?
+Kompliziertere Operationen -- Verzweigungen, Schleifen, Funktionsaufrufe -- resultieren in mehreren Statements, obwohl es sich bei dem
+zusätzlichen "`Aufwand"' meist nur um Zuweisungen zwischen Variablen handelt, wie z.B. die Auswahl des Bedingungsregisters basierend zwischen
+den Wert vor und nach dem ersten Schleifendurchlauf.
+
+Die spezifizierte Sprache unterstützt Zeichenketten aus Unicode-Buchstaben und -Ziffern als Bezeichner;
+Cg nur eine Untermenge von ASCII. Für die Ausgabe als Cg-Code werden Zeichen ausserhalb von ASCII in eine Darstellung in der von Cg akzeptieren
+Zeichenmenge umgewandelt\footnote{Als Kodierung wurde Punycode~(\cite{rfc3492}) gewählt da dies die aus ASCII bestehenden Teile eines Bezeichners
+gut lesbar lässt.}.
 
 \section{Ausblick}
 
