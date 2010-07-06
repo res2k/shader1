@@ -1,14 +1,14 @@
-    /// Token object
+    // Token-Objekt
     struct Token
     {
-      /// Type/symbol/keyword ID of this token
+      // Typ/Symbol/Schlüsselwort-ID dieses Tokens
       TokenType typeOrID;
-      /// Original string for this token
+      // Originale Zeichenkette des Tokens
       UnicodeString tokenString;
-      /// Classification (normal, vector or matrix) for type keywords
+      // Art (Normal, Vektor oder Matrix) von Typ-Schlüsselwörtern
       TypeClassification typeClass;
-      /// For vectors: vector dimension; For matrices: number of columns
+      // Für Vektoren: Komponentanzahl; Für Matrizen: Anzahl Spalten
       int dimension1;
-      /// For matrices: number of rows
+      // Für Matrizen: Anzahl Zeilen
       int dimension2;
     };
