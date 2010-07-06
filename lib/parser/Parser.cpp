@@ -319,13 +319,17 @@ namespace s1
   
   Parser::Expression Parser::ParseExpression (const Scope& scope)
   {
-    Expression expr = ParseExprTernary (scope);
+    Expression expr = ParseExprLogicOr (scope);
     if (currentToken.typeOrID == Lexer::Assign)
     {
       // Assignment expression
       NextToken();
       Expression assignedExpr = ParseExpression (scope);
       expr = semanticsHandler.CreateAssignExpression (expr, assignedExpr);
+    }
+    else if (currentToken.typeOrID == Lexer::TernaryIf)
+    {
+      expr = ParseExprTernary (expr, scope);
     }
     return expr;
   }
@@ -507,19 +511,15 @@ namespace s1
     return expr;
   }
   
-  Parser::Expression Parser::ParseExprTernary (const Scope& scope)
+  Parser::Expression Parser::ParseExprTernary (const Expression& prefix, const Scope& scope)
   {
-    Expression expr = ParseExprLogicOr (scope);
-    if (currentToken.typeOrID == Lexer::TernaryIf)
-    {
-      NextToken();
-      Expression expr2 = ParseExpression (scope);
-      Expect (Lexer::TernaryElse);
-      NextToken();
-      Expression expr3 = ParseExpression (scope);
-      expr = semanticsHandler.CreateTernaryExpression (expr, expr2, expr3);
-    }
-    return expr;
+    Expression expr (prefix);
+    NextToken();
+    Expression expr2 = ParseExpression (scope);
+    Expect (Lexer::TernaryElse);
+    NextToken();
+    Expression expr3 = ParseExpression (scope);
+    return semanticsHandler.CreateTernaryExpression (expr, expr2, expr3);
   }
   
   Parser::Expression Parser::ParseExprCompareEqual (const Scope& scope)

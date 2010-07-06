@@ -63,7 +63,7 @@ namespace s1
     Expression ParseExprMultiplication (const Scope& scope);
     Expression ParseExprAddition (const Scope& scope);
     Expression ParseExprUnary (const Scope& scope);
-    Expression ParseExprTernary (const Scope& scope);
+    Expression ParseExprTernary (const Expression& prefix, const Scope& scope);
     Expression ParseExprCompareEqual (const Scope& scope);
     Expression ParseExprComparison (const Scope& scope);
     Expression ParseExprLogicOr (const Scope& scope);
