@@ -267,6 +267,13 @@ Allerdings wird damit die Lesbarkeit der Grammatik eingeschränkt; nur für die 
 Für die anderen Regeln wurde das "`Vorausbetrachten"' im Parser gewählt, da es in diesen Fällen einfach zu implementieren war
 und die Grammatik besser lesbar bleibt.
 
+\begin{figure}[h]
+   \centering
+  \lstinputlisting[language=C++]{snips/ParseProgramStatements.txt}
+  \caption{Beispiel einer Parsing-Methode mit Auflösung von Mehrdeutigkeiten}
+  \label{fig:ParseProgramStatements}
+\end{figure}
+
 \paragraph{Semantische Verarbeitung:}
 Die semantische Verarbeitung wird an ein Interface vom Typ \verb+SemanticHandler+ übergeben.
 Dieses Interface übernimmt die verschiedenen Aspekte der semantischen Verarbeitung, von der Verwaltung der
@@ -290,6 +297,13 @@ Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Tre
 und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine
 AST-Repräsentation generieren (allerdings benötigt der Parser trotzdem auch einige semantische Informationen über
 Bezeichner).
+
+\begin{figure}[h]
+   \centering
+  \lstinputlisting[language=C++]{snips/ParseIf.txt}
+  \caption{Zusammenspiel Parser und \texttt{SemanticHandler}: Parsen einer Verzweigung}
+  \label{fig:ParseIf}
+\end{figure}
 
 \paragraph{Fehlerbehandlung:}
 Die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}

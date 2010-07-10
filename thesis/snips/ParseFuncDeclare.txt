@@ -1,0 +1,21 @@
+  void Parser::ParseFuncDeclare (const Scope& scope)
+  {
+    // Rückgabetyp parsen
+    Type returnType = ParseFuncType (scope);
+    // Funktionsbezeichner parsen
+    Expect (Lexer::Identifier);
+    UnicodeString functionIdentifier (currentToken.tokenString);
+    NextToken ();
+    // Formale Parameter parsen
+    Expect (Lexer::ParenL);
+    SemanticsHandler::Scope::FunctionFormalParameters params;
+    ParseFuncParamFormal (scope, params);
+    // Funktion zu 'Scope' hinzufügen, Anweisungsblock speichern
+    Block inFunctionBlock = scope->AddFunction (returnType, functionIdentifier, params);
+    Expect (Lexer::BraceL);
+    NextToken();
+    // Anweisungen in Block verarbeiten
+    ParseBlock (inFunctionBlock);
+    Expect (Lexer::BraceR);
+    NextToken();
+  }

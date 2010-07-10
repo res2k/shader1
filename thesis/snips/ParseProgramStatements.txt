@@ -1,0 +1,44 @@
+  void Parser::ParseProgramStatements (const Scope& scope)
+  {
+    while (true)
+    {
+      int beyondType;
+      bool isType = IsType (scope, beyondType);
+      if (currentToken.typeOrID == Lexer::kwConst)
+      {
+	/* Konstantendeklaration */
+	ParseConstDeclare (scope);
+	Expect (Lexer::Semicolon);
+	NextToken();
+      }
+      else if ((isType
+	  && (Peek (beyondType).typeOrID == Lexer::Identifier))
+	|| (currentToken.typeOrID == Lexer::kwVoid))
+      {
+	if ((currentToken.typeOrID == Lexer::kwVoid)
+	    || (Peek (beyondType+1).typeOrID == Lexer::ParenL))
+	{
+	  /* Funktionsdeklaration */
+	  ParseFuncDeclare (scope);
+	}
+	else
+	{
+	  /* Variablendeklaration */
+	  ParseVarDeclare (scope);
+	  Expect (Lexer::Semicolon);
+	  NextToken();
+	}
+      }
+      else if (currentToken.typeOrID == Lexer::kwTypedef)
+      {
+	/* Typdefinition */
+	ParseTypedef (scope);
+	Expect (Lexer::Semicolon);
+	NextToken();
+      }
+      else
+	/* Unbekanntes Token - aufrufende Methode wird Fehler
+	   auslösen (erwartet "end of file"-Token) */
+	break;
+    }
+  }
