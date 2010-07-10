@@ -1,6 +1,6 @@
 #include "codegen/CgGenerator.h"
 
-#include "ProgramCodeGenerator.h"
+#include "cg/ProgramCodeGenerator.h"
 
 #include <limits>
 #include <unicode/schriter.h>

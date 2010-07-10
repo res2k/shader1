@@ -1,4 +1,4 @@
-file(GLOB codegen_sources *.h *.cpp ../include/codegen/*.h)
+file(GLOB codegen_sources *.h *.cpp ../include/codegen/*.h cg/*.h cg/*.cpp)
 add_library(codegen ${codegen_sources})
 target_link_libraries(codegen intermediate)
 

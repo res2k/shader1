@@ -1,7 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "codegen/CgGenerator.h"
-#include "../SequenceCodeGenerator.h"
+#include "../cg/SequenceCodeGenerator.h"
 
 using namespace s1::codegen;
 

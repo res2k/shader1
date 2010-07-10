@@ -7,7 +7,7 @@
 #include "../../intermediate/NameImpl.h"
 
 #include "codegen/CgGenerator.h"
-#include "../SequenceCodeGenerator.h"
+#include "../cg/SequenceCodeGenerator.h"
 
 #include "StringSubstitute.h"
 
