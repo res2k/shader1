@@ -276,6 +276,9 @@ FUNCTION {bbl.mthesis}
 FUNCTION {bbl.phdthesis}
 { "Doktorarbeit" }
 
+FUNCTION {bbl.habilitation}
+{ "Habilitationsschrift" }
+
 MACRO {jan} {"Januar"}
 
 MACRO {feb} {"Februar"}
@@ -1178,6 +1181,22 @@ FUNCTION {phdthesis}
   "title" output.check
   new.block
   bbl.phdthesis format.thesis.type output.nonnull
+  school "school" bibinfo.warn output
+  address "address" bibinfo.check output
+  format.date "year" output.check
+  format.doi output
+  new.block
+  format.note output
+  fin.entry
+}
+FUNCTION {habilitation}
+{ output.bibitem
+  format.authors "author" output.check
+  new.block
+  format.btitle
+  "title" output.check
+  new.block
+  bbl.habilitation format.thesis.type output.nonnull
   school "school" bibinfo.warn output
   address "address" bibinfo.check output
   format.date "year" output.check
