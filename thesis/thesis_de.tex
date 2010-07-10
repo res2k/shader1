@@ -316,15 +316,106 @@ In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine U
 Die Zwischenrepräsentation erhält auch wichtige semantische Eigenschaften (wie Typinformationen) und
 die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf der Zwischenrepräsentation besser vornehmen.
 
+% Zuordnung Variable <-> akt. Register in Symboltabelle
+
 \subsection{Zwischenrepräsentation}
 
 % Abstrakte(s) Beispiel(e): Quellcode + resultierende Zw.rep.
 
-Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA-Form (Single Static Assignment).
+\subsubsection{Vorlagen der Zwischenrepräsentation}
+
+Als Vorlagen für die hier vorgestellte Zwischenrepräsentation dienten das ``LLVM Instruction Set''~(\cite{LLVM:CGO04}),
+SafeTSA~(\cite{SafeTSA}) und ``SIMPLE'' des McCAT Compiler-Projektes~(\cite{SIMPLE}).
+
 % "Inspirationen": LLVM, Amme's SSA, GIMPLE/SIMPLE
+
+%Das \emph{LLVM Instruction Set} (hier kurz ``LLVM'') 
+\paragraph{LLVM}: LLVM ist ein \emph{Framework} für Compiler. Insbesondere will es ermöglichen, Optimierungen
+eines Programms über dessen ganzen "`Lebenszyklus"' (inklusive Link- und Laufzeit) zu ermöglichen.
+
+Das \emph{LLVM Instruction Set} ist der ausgegebene "`Objektcode"'. Das Programm wird -- ähnlich Maschinen-
+oder Bytecode -- als eine Folge von einfachen Instruktionen auf Registern repräsentiert. 
+Allerdings gibt es eine unendliche Anzahl von typisierten Registern und Typumwandlungen sind immer explizit.
+Die Instruktionen sind in SSA-Form.
+
+% LLVM:
+% - nicht gedacht als allg. Compiler-IR
+% - keine Typsicherheit (nicht mehr als Maschinencode)
+% - 
+% - LLVM provides an inﬁnite set of typed virtual
+% registers which can hold values of primitive types (Boolean,
+% integer, ﬂoating point, and pointer). The virtual registers
+% are in Static Single Assignment (SSA) form [15]. LLVM
+% is a load/store architecture: programs transfer values be-
+% tween registers and memory solely via load and store op-
+% erations using typed pointers. The LLVM memory model is
+% described in Section 2.3.
+% - Opcodes: 3-Adress-Form
+% - Ich->Mehr Opcodes als LLVM (unäre Op., Vektor-Op.)
+% - Expliziter Kontrollflussgraph
+% - abgeleitete Typen: Zeiger, Arrays, Structs, Funktionen
+% - Typumwandlungen: explizit
+
+% expliziter Kontrollfluss == keine GOTOs, sondern "Verweise" auf Blöcke/nächsten Schritt
+
+\paragraph{SafeTSA:} Eine Art Objektcode, hauptsächlich zur Benutzung
+als "`mobiler"' Code, d.h. zur Übertragung von Programmcode über Netzwerke wie das Internet.
+Das Design von SafeTSA ist inhärent sicher. Bösartige Manipulationen von Programmen, die zu
+problematischem Verhalten wie die Benutzung von undefinierten Werten oder Aliasing von Werten
+eines anderen Typs führen, sind nicht möglich bzw. durch eine einfache Verifizierung feststellbar.
+
+Die Instruktionen basieren auf der SSA-Form. Entsprechend gibt es eine unendliche Zahl von Registern.
+Register sind in mehrere Sätze organisiert, ein Satz pro Typ. Instruktionen können nur auf einen
+spezifischen Registersatz zugreifen. Verschiedene Instruktionsblöcke besitzen eigene Registersätze.
+
+% SafeTSA:
+% - erweiterte SSA
+% - Zugriff auf Werte über Abstand in Dominatorbaum
+% - Typtrennung: mehrere Registersätze; implizite Auswahl des Registersatzes
+% - typisierter Konstantenpool
+% - Registersätze per Basisblock
+% - 
+
+\paragraph{SIMPLE:} Als "`echte"' Compiler-Zwischenrepräsentation für einen C-Compiler entwickelt
+stellt sie Programme auf sehr hoher Ebene dar. Ausdrücke sind nicht in der SSA-Form, allerdings
+"`vereinfacht"' auf zwei Operanden und einfache Strukturzugriffe. Symboltabelle und Typinformationen
+sind erhalten. Typumwandlung, und andere in C implizite Verhalten, müssen explizit ausgedrückt werden.
+
+% SIMPLE:
+% - expliziter Kontrollfluss/zusammengesetzte Flusskontrollstatements
+% - Typinformationen
+% - klare Semantik (keine impliziten Verhalten wie autom. casts)
+% - einfache Referenzen
+% - einfache Statements
+
+\paragraph{Zusammenfassung:}
+Die gewählte Zwischenrepräsentation ist größtenteils ein "`Querschnitt"' aus den obigen Repräsentationen
+(allerdings auch mit Aspekten aus keiner Vorlage, wie die Behandlung von Arrays). Am meisten Eigenschaften
+teilt die Zwischenrepräsentation mit dem LLVM Instruction Set; chronologisch wurde dieses jedoch als letzte
+Repräsentation betrachtet. Aus SafeTSA und SIMPLE stammen deshalb grundsätzliche Aspekte der Zwischenrepräsentation 
+-- einfache Statements, SSA-Form, separate Registersätze.
+
+Anzumerken ist, dass die Shadingsprache keine zufälligen Speicherzugriffe oder Zeiger/Referenzen erlaubt.
+Im Umfang ist sie teilweise beschränkt -- es gibt keine Strukturtypen --, besitzt aber als "`Eigenheit"' Vektortypen.
+LLVM, SafeTSA und SIMPLE wurden für "`Maschinen"' entwickelt, die die Verwendung von Zeigern erlauben. Entsprechend
+stellen sie Lösungen für Probleme, wie die Aliasing\footnote{Zugriff auf ein Datum über mehrere verschiedene Zeiger}-Analyse oder typsichere Speicherzugriffe, bereit, die mit
+der hier spezifizierten Shadingsprache nicht vorkommen. Insofern sind diese Repräsentationen hier nicht
+mit ihren vollständigen Fähigkeiten beschrieben.
+
+\subsubsection{Aufbau}
+
+Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA-Form (Single Static Assignment).
+
+% SSA:  B. Alpern, M. N. Wegman, and F. K. Zadeck. Detecting equalities of
+%variables in programs. In 15th Annual ACM Symposium on Principles of
+%Programming Languages, pages 1–11, San Diego, California, Jan. 1988.
+% B. K. Rosen, M. N. Wegman, and F. K. Zadeck. Global value numbers and
+%redundant computations. In 15th Annual ACM Symposium on Principles of
+%Programming Languages, pages 12–27, San Diego, California, Jan. 1988.
 
 Die Zwischenrepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
 die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt einen Registersatz für jeden verwendeten Typ.
+% Satz teil von Register-ID
 %Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
 Der wesentliche, von der SSA-Form entliehene, Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf.
 
@@ -627,7 +718,11 @@ Cg nur eine Untermenge von ASCII. Für die Ausgabe als Cg-Code werden Zeichen au
 Zeichenmenge umgewandelt\footnote{Als Kodierung wurde Punycode~(\cite{rfc3492}) gewählt da dies die aus ASCII bestehenden Teile eines Bezeichners
 gut lesbar lässt.}.
 
+% Original-Schnipsel und Generator-Output
+
 \section{Ausblick}
+
+% AST: nützlich, wenn FEs für anderen Sprachen, oder komplexer (Strukturen)
 
 \cleardoublepage
 \appendix
