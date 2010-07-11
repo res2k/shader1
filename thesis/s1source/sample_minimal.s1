@@ -6,6 +6,6 @@ void main (in float4 inPosition,
 	outPosition = mul (ModelViewProj, inPosition);
 	
 	// Ausgabe: rot
-	outColor = float4 (1, 0, 0, 1);
+	outColor = float4 (1.0, 0.0, 0.0, 1.0);
 }
 
