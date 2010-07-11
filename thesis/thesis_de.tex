@@ -432,6 +432,7 @@ Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA-Form (Sin
 
 Die Zwischenrepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
 die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt einen Registersatz für jeden verwendeten Typ.
+Die in Operationen gespeicherte Registeridentifikation verweist auf den zugehörigen Registersatz, Typinformationen bleiben also erhalten.
 % Satz teil von Register-ID
 %Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
 Der wesentliche, von der SSA-Form entliehene, Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf.
