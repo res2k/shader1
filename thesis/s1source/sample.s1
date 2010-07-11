@@ -1,0 +1,31 @@
+void main (in float4 inPosition,
+	   in float4 inColor,
+ 	   in float2 TexCoord,
+	   in float4 Normal,
+	   in float4x4 ModelView,
+           in float4x4 ModelViewIT,
+     	   in float4x4 ModelViewProj,
+     	   in float4 LightPos,
+     	   in float4 Attenuation,
+     	   in float3 LightColor,
+     	   in sampler2D Texture,
+	   out float4 outPosition, out float4 outColor)
+{
+	// Transformierte Koordinaten
+	outPosition = mul (ModelViewProj, inPosition);
+	
+	// Beleuchtungsberechnung
+	float3 eyeNormal = normalize (mul (ModelViewIT, Normal).xyz);
+	float3 eyeVertex = mul (ModelView, inPosition).xyz;
+
+	float3 vertToLight = LightPos.xyz - eyeVertex;
+	float d = length (vertToLight);
+	vertToLight = normalize(vertToLight);
+        float att = 1.0 - (d/Attenuation.x);
+
+	// Diffuse Beleuchtung
+	float3 litColor = LightColor * max(dot (eyeNormal, vertToLight),0) * att;
+	
+	outColor = tex2D (Texture, TexCoord) * float4 (litColor, 1);
+}
+

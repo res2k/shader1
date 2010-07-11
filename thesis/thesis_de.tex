@@ -20,6 +20,7 @@
 \usepackage{scalefnt}
 \usepackage{setspace}
 \usepackage{ngerman}
+\usepackage{subfig}
 
 \definecolor{darkred}{rgb}{.5,0,0}
 \definecolor{darkblue}{rgb}{0,0,.5}
@@ -333,6 +334,8 @@ die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf de
 % Zuordnung Variable <-> akt. Register in Symboltabelle
 
 \subsection{Zwischenrepräsentation}
+
+\input{ir_commands}
 
 % Abstrakte(s) Beispiel(e): Quellcode + resultierende Zw.rep.
 
@@ -679,6 +682,23 @@ und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegiste
 \\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 %$\phi$-Funktion: diese konkrete Zwischenrepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
+
+\subsubsection{Beispiel}
+
+Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, Abbildung~\ref{fig:ir_sample_gen} die generierte Zwischenrepräsentation.
+
+\begin{figure}[h]
+   \centering
+  \lstinputlisting{s1source/sample_minimal.s1}
+  \caption{Quelltext eines Programms.}
+  \label{fig:ir_sample_src}
+\end{figure}
+\begin{figure}[h]
+   \centering
+  \input{s1latex/sample_minimal.tex}
+  \caption{Zu~\ref{fig:ir_sample_src} generierte Zwischrepräsentation.}
+  \label{fig:ir_sample_gen}
+\end{figure}
 
 \subsection{Code-Generator}
 

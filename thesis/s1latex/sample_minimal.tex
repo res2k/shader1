@@ -1,0 +1,22 @@
+\sOfunc{
+\sOfunchead{void}{main\$vF4mF4x4vF4vF4}
+\sOfuncinparams{\sOparamIn{float4}{inPosition}{\sOreg{m\_inPosition\_B0}}\sOparamIn{float4x4}{ModelViewProj}{\sOreg{m\_ModelViewProj\_B0}}}
+\sOfuncoutparams{\sOparamOut{float4}{outPosition}{\sOreg{m\_outPosition\_B0}}\sOparamOut{float4}{outColor}{\sOreg{m\_outColor\_B0}}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp2}\sOsetreg{i\_tmp4}\sOsetreg{i\_tmp6}\sOsetreg{i\_tmp8}}
+\sOfuncregset{float4}{\sOsetreg{m\_inPosition\_B0}\sOsetreg{m\_outColor\_B0}\sOsetreg{m\_outPosition\_B0}}
+\sOfuncregset{float4x4}{\sOsetreg{m\_ModelViewProj\_B0}}
+\sOfuncregset{unsigned\ int}{\sOsetreg{i\_tmp1}\sOsetreg{i\_tmp3}\sOsetreg{i\_tmp5}\sOsetreg{i\_tmp7}}
+\sOfuncbody{
+\sOstatement{\sOreg{m\_outPosition\_B0} &\gets \sObuiltinmul{\sOreg{m\_ModelViewProj\_B0}}{\sOreg{m\_inPosition\_B0}}}
+\sOstatement{\sOreg{i\_tmp1} &\gets \sOconst{1}}
+\sOstatement{\sOreg{i\_tmp2} &\gets \sOcast{\sOreg{i\_tmp1}}{float}}
+\sOstatement{\sOreg{i\_tmp3} &\gets \sOconst{0}}
+\sOstatement{\sOreg{i\_tmp4} &\gets \sOcast{\sOreg{i\_tmp3}}{float}}
+\sOstatement{\sOreg{i\_tmp5} &\gets \sOconst{0}}
+\sOstatement{\sOreg{i\_tmp6} &\gets \sOcast{\sOreg{i\_tmp5}}{float}}
+\sOstatement{\sOreg{i\_tmp7} &\gets \sOconst{1}}
+\sOstatement{\sOreg{i\_tmp8} &\gets \sOcast{\sOreg{i\_tmp7}}{float}}
+\sOstatement{\sOreg{m\_outColor\_B0} &\gets \sOmakevec{\sOreg{i\_tmp2}, \sOreg{i\_tmp4}, \sOreg{i\_tmp6}, \sOreg{i\_tmp8}}}
+}
+}
+

@@ -1,0 +1,26 @@
+\newcommand\sOident[1]{\mathtt{#1}}
+\newcommand\sOconst[1]{#1}
+\newcommand\sOreg[1]{\mathit{#1}}
+
+\newcommand\sOfunc[1]{\begin{displaymath}\begin{array}{rl}#1\end{array}\end{displaymath}}
+\newcommand\sOfunchead[2]{\mathrm{Funktion:} &\begin{array}[t]{l}\sOident{#2}\end{array}\\\mathrm{R"uckgabetyp:} &\begin{array}[t]{l}\sOident{#1}\end{array}\\}
+\newcommand\sOfuncregset[2]{\mathrm{Registersatz:} & \begin{array}[t]{l}\mathrm{Typ}\ \sOident{#1}\\\mbox{#2}\end{array}\\}
+\newcommand\sOsetreg[1]{$\sOreg{#1}$ }
+\newcommand\sOfuncbody[1]{\mathrm{Operationen:} &\begin{array}[t]{rl}#1\end{array}}
+\newcommand\sOfuncinparams[1]{\mathrm{Eingabeparameter:} &\begin{array}[t]{l}#1\end{array}\\}
+\newcommand\sOfuncoutparams[1]{\mathrm{Ausgabeparameter:} &\begin{array}[t]{l}#1\end{array}\\}
+\newcommand\sOparamIn[3]{\sOident{#1}\ \sOident{#2} \to #3\\}
+\newcommand\sOparamOut[3]{\sOident{#1}\ \sOident{#2} \gets #3\\}
+
+\newcommand\sOstatement[1]{#1\\}
+
+\newcommand\sObuiltindot[2]{#1 \dot #2}
+\newcommand\sObuiltinlength[1]{|#1|}
+\newcommand\sObuiltinmax[2]{\max\{#1, #2\}}
+\newcommand\sObuiltinmul[2]{#1 * #2}
+\newcommand\sObuiltinnormalize[1]{||#1||}
+\newcommand\sObuiltintexTwoD[2]{\mathrm{tex2D}(#1, #2)}
+\newcommand\sOcast[2]{#1\ \mathrm{als}\ \mathrm{"`#2``}}
+\newcommand\sOvecextract[2]{#1_{#2}}
+\newcommand\sOmakevec[1]{(#1)}
+
