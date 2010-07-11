@@ -21,11 +21,12 @@ namespace s1
       }
     }
     
-    void StringsArray::AddStrings (const StringsArray& other, unsigned int indent)
+    void StringsArray::AddStrings (const StringsArray& other, unsigned int indent,
+				   const char* indentStr_)
     {
       std::string indentStr;
       for (unsigned int i = 0; i < indent; i++)
-	indentStr.append (" ");
+	indentStr.append (indentStr_);
       
       for (StrVector::const_iterator it = other.strings.begin();
 	   it != other.strings.end();
