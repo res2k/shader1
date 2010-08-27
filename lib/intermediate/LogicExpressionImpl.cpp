@@ -4,8 +4,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOp/SequenceOpLogicAnd.h"
-#include "intermediate/SequenceOp/SequenceOpLogicOr.h"
+#include "intermediate/SequenceOp/SequenceOpLogic.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -76,10 +75,10 @@ namespace s1
       switch (op)
       {
       case And:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpLogicAnd> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpLogic> (destination, SequenceVisitor::And, reg1, reg2));
 	break;
       case Or:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpLogicOr> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpLogic> (destination, SequenceVisitor::Or, reg1, reg2));
 	break;
       }
       assert (seqOp);

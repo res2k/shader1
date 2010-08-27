@@ -403,10 +403,14 @@ namespace s1
 	     ++funcIt)
 	{
 	  if ((*funcIt)->builtin) continue;
+	  
+	  boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
+	  blockImpl->FinishBlock();
+	  
 	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->identifier,
 									    (*funcIt)->returnType,
 									    (*funcIt)->params,
-									    (*funcIt)->block,
+									    blockImpl->GetSequence (),
 									    IsEntryFunction ((*funcIt)->originalIdentifier)));
 	  newProg->AddFunction (newFunc);
 	}

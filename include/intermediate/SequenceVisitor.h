@@ -26,36 +26,19 @@ namespace s1
       virtual void OpAssign (const RegisterID& destination,
 			     const RegisterID& source) = 0;
 				 
-      virtual void OpCastToBool (const RegisterID& destination,
-			         const RegisterID& source) = 0;
-      virtual void OpCastToInt (const RegisterID& destination,
-			        const RegisterID& source) = 0;
-      virtual void OpCastToUInt (const RegisterID& destination,
-			         const RegisterID& source) = 0;
-      virtual void OpCastToFloat (const RegisterID& destination,
-			          const RegisterID& source) = 0;
+      enum BaseType { Bool, Int, UInt, Float };
+      virtual void OpCast (const RegisterID& destination,
+			   BaseType destType,
+			   const RegisterID& source) = 0;
 				  
-      virtual void OpMakeVectorBool (const RegisterID& destination,
-				     const std::vector<RegisterID>& sources) = 0;
-      virtual void OpMakeVectorInt (const RegisterID& destination,
-				     const std::vector<RegisterID>& sources) = 0;
-      virtual void OpMakeVectorUInt (const RegisterID& destination,
-				     const std::vector<RegisterID>& sources) = 0;
-      virtual void OpMakeVectorFloat (const RegisterID& destination,
-				     const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeVector (const RegisterID& destination,
+				 BaseType compType,
+				 const std::vector<RegisterID>& sources) = 0;
 
-      virtual void OpMakeMatrixBool (const RegisterID& destination,
-				     unsigned int matrixRows, unsigned int matrixCols,
-				     const std::vector<RegisterID>& sources) = 0;
-      virtual void OpMakeMatrixInt (const RegisterID& destination,
-				    unsigned int matrixRows, unsigned int matrixCols,
-				    const std::vector<RegisterID>& sources) = 0;
-      virtual void OpMakeMatrixUInt (const RegisterID& destination,
-				     unsigned int matrixRows, unsigned int matrixCols,
-				     const std::vector<RegisterID>& sources) = 0;
-      virtual void OpMakeMatrixFloat (const RegisterID& destination,
-				      unsigned int matrixRows, unsigned int matrixCols,
-				      const std::vector<RegisterID>& sources) = 0;
+      virtual void OpMakeMatrix (const RegisterID& destination,
+				 BaseType compType,
+				 unsigned int matrixRows, unsigned int matrixCols,
+				 const std::vector<RegisterID>& sources) = 0;
 
       virtual void OpMakeArray (const RegisterID& destination,
 				const std::vector<RegisterID>& sources) = 0;
@@ -73,54 +56,28 @@ namespace s1
 					     const RegisterID& source,
 					     unsigned int comp) = 0;
 				 
-      virtual void OpArithAdd (const RegisterID& destination,
-			       const RegisterID& source1,
-			       const RegisterID& source2) = 0;
-      virtual void OpArithSub (const RegisterID& destination,
-			       const RegisterID& source1,
-			       const RegisterID& source2) = 0;
-      virtual void OpArithMul (const RegisterID& destination,
-			       const RegisterID& source1,
-			       const RegisterID& source2) = 0;
-      virtual void OpArithDiv (const RegisterID& destination,
-			       const RegisterID& source1,
-			       const RegisterID& source2) = 0;
-      virtual void OpArithMod (const RegisterID& destination,
-			       const RegisterID& source1,
-			       const RegisterID& source2) = 0;
+      enum ArithmeticOp { Add, Sub, Mul, Div, Mod };
+      virtual void OpArith (const RegisterID& destination,
+			    ArithmeticOp op,
+			    const RegisterID& source1,
+			    const RegisterID& source2) = 0;
 
-      virtual void OpCompareEq (const RegisterID& destination,
-				const RegisterID& source1,
-				const RegisterID& source2) = 0;
-      virtual void OpCompareNE (const RegisterID& destination,
-				const RegisterID& source1,
-				const RegisterID& source2) = 0;
-      virtual void OpCompareLT (const RegisterID& destination,
-				const RegisterID& source1,
-				const RegisterID& source2) = 0;
-      virtual void OpCompareLE (const RegisterID& destination,
-				const RegisterID& source1,
-				const RegisterID& source2) = 0;
-      virtual void OpCompareGT (const RegisterID& destination,
-				const RegisterID& source1,
-				const RegisterID& source2) = 0;
-      virtual void OpCompareGE (const RegisterID& destination,
-				const RegisterID& source1,
-				const RegisterID& source2) = 0;
-				
-      virtual void OpLogicAnd (const RegisterID& destination,
-			       const RegisterID& source1,
-			       const RegisterID& source2) = 0;
-      virtual void OpLogicOr (const RegisterID& destination,
+      enum CompareOp { Eq, NE, LT, LE, GT, GE };
+      virtual void OpCompare (const RegisterID& destination,
+			      CompareOp op,
 			      const RegisterID& source1,
 			      const RegisterID& source2) = 0;
+				
+      enum LogicOp { And, Or };
+      virtual void OpLogic (const RegisterID& destination,
+			    LogicOp op,
+			    const RegisterID& source1,
+			    const RegisterID& source2) = 0;
 
-      virtual void OpUnaryInv (const RegisterID& destination,
-			       const RegisterID& source) = 0;
-      virtual void OpUnaryNeg (const RegisterID& destination,
-			       const RegisterID& source) = 0;
-      virtual void OpUnaryNot (const RegisterID& destination,
-			       const RegisterID& source) = 0;
+      enum UnaryOp { Neg, Inv, Not };
+      virtual void OpUnary (const RegisterID& destination,
+			    UnaryOp op,
+			    const RegisterID& source) = 0;
 			       
       virtual void OpBlock (const SequencePtr& subSequence,
 			    const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,

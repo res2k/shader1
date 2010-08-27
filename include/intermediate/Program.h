@@ -15,8 +15,9 @@ namespace s1
       friend class IntermediateGeneratorSemanticsHandler;
       
       std::vector<ProgramFunctionPtr> functions;
-      void AddFunction (const ProgramFunctionPtr& func);
     public:
+      void AddFunction (const ProgramFunctionPtr& func);
+      
       size_t GetNumFunctions () const;
       ProgramFunctionPtr GetFunction (size_t n) const;
     };

@@ -157,37 +157,32 @@ namespace s1
     }
 			      
 			      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToBool (const RegisterID& destination,
-									   const RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCast (const RegisterID& destination,
+								     BaseType destType,
+								     const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, cgTypeBool, sourceName.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToInt (const RegisterID& destination,
-									  const RegisterID& source)
-    {
-      std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, cgTypeInt, sourceName.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToUInt (const RegisterID& destination,
-									   const RegisterID& source)
-    {
-      std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, cgTypeUInt, sourceName.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToFloat (const RegisterID& destination,
-									    const RegisterID& source)
-    {
-      std::string sourceName (owner->GetOutputRegisterName (source));
-      EmitFunctionCall (destination, cgTypeFloat, sourceName.c_str());
+      switch (destType)
+      {
+      case Bool:
+	EmitFunctionCall (destination, cgTypeBool, sourceName.c_str());
+	break;
+      case Int:
+	EmitFunctionCall (destination, cgTypeInt, sourceName.c_str());
+	break;
+      case UInt:
+	EmitFunctionCall (destination, cgTypeUInt, sourceName.c_str());
+	break;
+      case Float:
+	EmitFunctionCall (destination, cgTypeFloat, sourceName.c_str());
+	break;
+      }
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorBool (const RegisterID& destination,
-									       const std::vector<RegisterID>& sources)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterID& destination,
+									   BaseType compType,
+									   const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
       ParamHelper params (paramsStr);
@@ -197,72 +192,35 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr (cgTypeBool);
+      std::string typeStr;
+      switch (compType)
+      {
+      case Bool:
+	typeStr = cgTypeBool;
+	break;
+      case Int:
+	typeStr = cgTypeInt;
+	break;
+      case UInt:
+	typeStr = cgTypeUInt;
+	break;
+      case Float:
+	typeStr = cgTypeFloat;
+	break;
+      }
       char compNumStr[2];
       snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
       typeStr.append (compNumStr);
       EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorInt (const RegisterID& destination,
-									      const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string typeStr (cgTypeInt);
-      char compNumStr[2];
-      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
-      typeStr.append (compNumStr);
-      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorUInt (const RegisterID& destination,
-									       const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string typeStr (cgTypeUInt);
-      char compNumStr[2];
-      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
-      typeStr.append (compNumStr);
-      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorFloat (const RegisterID& destination,
-										const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string typeStr (cgTypeFloat);
-      char compNumStr[2];
-      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
-      typeStr.append (compNumStr);
-      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
-    }
     
 				
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixBool (const RegisterID& destination,
-									       unsigned int matrixRows,
-									       unsigned int matrixCols,
-									       const std::vector<RegisterID>& sources)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterID& destination,
+									   BaseType compType,
+									   unsigned int matrixRows,
+									   unsigned int matrixCols,
+									   const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
       ParamHelper params (paramsStr);
@@ -272,67 +230,22 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr (cgTypeBool);
-      char compNumStr[4];
-      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
-      typeStr.append (compNumStr);
-      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixInt (const RegisterID& destination,
-									      unsigned int matrixRows,
-									      unsigned int matrixCols,
-									      const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
+      std::string typeStr;
+      switch (compType)
       {
-	params.Add (owner->GetOutputRegisterName (*source));
+      case Bool:
+	typeStr = cgTypeBool;
+	break;
+      case Int:
+	typeStr = cgTypeInt;
+	break;
+      case UInt:
+	typeStr = cgTypeUInt;
+	break;
+      case Float:
+	typeStr = cgTypeFloat;
+	break;
       }
-      std::string typeStr (cgTypeInt);
-      char compNumStr[4];
-      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
-      typeStr.append (compNumStr);
-      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixUInt (const RegisterID& destination,
-									       unsigned int matrixRows,
-									       unsigned int matrixCols,
-									       const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string typeStr (cgTypeUInt);
-      char compNumStr[4];
-      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
-      typeStr.append (compNumStr);
-      EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixFloat (const RegisterID& destination,
-										unsigned int matrixRows,
-										unsigned int matrixCols,
-										const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string typeStr (cgTypeFloat);
       char compNumStr[4];
       snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
       typeStr.append (compNumStr);
@@ -401,117 +314,94 @@ namespace s1
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArith (const RegisterID& destination,
+								      ArithmeticOp op,
+								      const RegisterID& source1,
+								      const RegisterID& source2)
     {
-      EmitBinary (destination, source1, source2, "+");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithSub (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "-");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMul (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "*");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithDiv (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "/");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMod (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "%");
+      switch (op)
+      {
+      case Add:
+	EmitBinary (destination, source1, source2, "+");
+	break;
+      case Sub:
+	EmitBinary (destination, source1, source2, "-");
+	break;
+      case Mul:
+	EmitBinary (destination, source1, source2, "*");
+	break;
+      case Div:
+	EmitBinary (destination, source1, source2, "/");
+	break;
+      case Mod:
+	EmitBinary (destination, source1, source2, "%");
+	break;
+      }
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogicAnd (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogic (const RegisterID& destination,
+								      LogicOp op,
+								      const RegisterID& source1,
+								      const RegisterID& source2)
     {
-      EmitBinary (destination, source1, source2, "&&");
+      switch (op)
+      {
+      case And:
+	EmitBinary (destination, source1, source2, "&&");
+	break;
+      case Or:
+	EmitBinary (destination, source1, source2, "||");
+	break;
+      }
     }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogicOr (const RegisterID& destination,
+
+
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnary (const RegisterID& destination,
+								      UnaryOp op,
+								      const RegisterID& source)
+    {
+      switch (op)
+      {
+      case Inv:
+	EmitUnary (destination, source, "~");
+	break;
+      case Neg:
+	EmitUnary (destination, source, "-");
+	break;
+      case Not:
+	EmitUnary (destination, source, "!");
+	break;
+      }
+    }
+
+		      
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompare (const RegisterID& destination,
+									CompareOp op,
 									const RegisterID& source1,
 									const RegisterID& source2)
     {
-      EmitBinary (destination, source1, source2, "||");
-    }
-
-
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryInv (const RegisterID& destination,
-									 const RegisterID& source)
-    {
-      EmitUnary (destination, source, "~");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryNeg (const RegisterID& destination,
-									 const RegisterID& source)
-    {
-      EmitUnary (destination, source, "-");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryNot (const RegisterID& destination,
-									 const RegisterID& source)
-    {
-      EmitUnary (destination, source, "!");
-    }
-    
-
-		      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareEq (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "==");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareNE (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "!=");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLT (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "<");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLE (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "<=");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGT (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, ">");
-    }
-    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGE (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, ">=");
+      switch (op)
+      {
+      case Eq:
+	EmitBinary (destination, source1, source2, "==");
+	break;
+      case NE:
+	EmitBinary (destination, source1, source2, "!=");
+	break;
+      case LT:
+	EmitBinary (destination, source1, source2, "<");
+	break;
+      case LE:
+	EmitBinary (destination, source1, source2, "<=");
+	break;
+      case GT:
+	EmitBinary (destination, source1, source2, ">=");
+	break;
+      case GE:
+	EmitBinary (destination, source1, source2, ">");
+	break;
+      }
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,

@@ -79,36 +79,18 @@ namespace s1
 	void OpAssign (const RegisterID& destination,
 		       const RegisterID& source);
 				  
-	void OpCastToBool (const RegisterID& destination,
-			   const RegisterID& source);
-	void OpCastToInt (const RegisterID& destination,
-			  const RegisterID& source);
-	void OpCastToUInt (const RegisterID& destination,
-			   const RegisterID& source);
-	void OpCastToFloat (const RegisterID& destination,
-			    const RegisterID& source);
+	void OpCast (const RegisterID& destination,
+		     BaseType destType,
+		     const RegisterID& source);
 
-	void OpMakeVectorBool (const RegisterID& destination,
-			       const std::vector<RegisterID>& sources);
-	void OpMakeVectorInt (const RegisterID& destination,
-			      const std::vector<RegisterID>& sources);
-	void OpMakeVectorUInt (const RegisterID& destination,
-			       const std::vector<RegisterID>& sources);
-	void OpMakeVectorFloat (const RegisterID& destination,
-				const std::vector<RegisterID>& sources);
+	void OpMakeVector (const RegisterID& destination,
+			   BaseType compType,
+			   const std::vector<RegisterID>& sources);
 				     
-	void OpMakeMatrixBool (const RegisterID& destination,
-			       unsigned int matrixRows, unsigned int matrixCols,
-			       const std::vector<RegisterID>& sources);
-	void OpMakeMatrixInt (const RegisterID& destination,
-			      unsigned int matrixRows, unsigned int matrixCols,
-			      const std::vector<RegisterID>& sources);
-	void OpMakeMatrixUInt (const RegisterID& destination,
-			       unsigned int matrixRows, unsigned int matrixCols,
-			       const std::vector<RegisterID>& sources);
-	void OpMakeMatrixFloat (const RegisterID& destination,
-				unsigned int matrixRows, unsigned int matrixCols,
-				const std::vector<RegisterID>& sources);
+	void OpMakeMatrix (const RegisterID& destination,
+			   BaseType compType,
+			   unsigned int matrixRows, unsigned int matrixCols,
+			   const std::vector<RegisterID>& sources);
 				     
 	void OpMakeArray (const RegisterID& destination,
 			  const std::vector<RegisterID>& sources);
@@ -126,54 +108,24 @@ namespace s1
 				       const RegisterID& source,
 				       unsigned int comp);
 				      
-	void OpArithAdd (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2);
-	void OpArithSub (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2);
-	void OpArithMul (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2);
-	void OpArithDiv (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2);
-	void OpArithMod (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2);
+	void OpArith (const RegisterID& destination,
+		      ArithmeticOp op,
+		      const RegisterID& source1,
+		      const RegisterID& source2);
 
-	void OpLogicAnd (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2);
-	void OpLogicOr (const RegisterID& destination,
+	void OpLogic (const RegisterID& destination,
+		      LogicOp op,
+		      const RegisterID& source1,
+		      const RegisterID& source2);
+
+	void OpUnary (const RegisterID& destination,
+		      UnaryOp op,
+		      const RegisterID& source);
+			       
+	void OpCompare (const RegisterID& destination,
+			CompareOp op,
 			const RegisterID& source1,
 			const RegisterID& source2);
-
-	void OpUnaryInv (const RegisterID& destination,
-			 const RegisterID& source);
-	void OpUnaryNeg (const RegisterID& destination,
-			 const RegisterID& source);
-	void OpUnaryNot (const RegisterID& destination,
-			 const RegisterID& source);
-			       
-	void OpCompareEq (const RegisterID& destination,
-			  const RegisterID& source1,
-			  const RegisterID& source2);
-	void OpCompareNE (const RegisterID& destination,
-			  const RegisterID& source1,
-			  const RegisterID& source2);
-	void OpCompareLT (const RegisterID& destination,
-			  const RegisterID& source1,
-			  const RegisterID& source2);
-	void OpCompareLE (const RegisterID& destination,
-			  const RegisterID& source1,
-			  const RegisterID& source2);
-	void OpCompareGT (const RegisterID& destination,
-			  const RegisterID& source1,
-			  const RegisterID& source2);
-	void OpCompareGE (const RegisterID& destination,
-			  const RegisterID& source1,
-			  const RegisterID& source2);
 			  
 	void OpBlock (const intermediate::SequencePtr& seq,
 		      const Sequence::IdentifierToRegIDMap& identToRegID_imp,

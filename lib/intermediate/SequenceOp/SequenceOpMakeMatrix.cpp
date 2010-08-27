@@ -25,16 +25,16 @@ namespace s1
       switch (matrixBaseType)
       {
       case Bool:
-	visitor.OpMakeMatrixBool (destination, matrixRows, matrixCols, sources);
+	visitor.OpMakeMatrix (destination, SequenceVisitor::Bool, matrixRows, matrixCols, sources);
 	break;
       case Int:
-	visitor.OpMakeMatrixInt (destination, matrixRows, matrixCols, sources);
+	visitor.OpMakeMatrix (destination, SequenceVisitor::Int, matrixRows, matrixCols, sources);
 	break;
       case UInt:
-	visitor.OpMakeMatrixUInt (destination, matrixRows, matrixCols, sources);
+	visitor.OpMakeMatrix (destination, SequenceVisitor::UInt, matrixRows, matrixCols, sources);
 	break;
       case Float:
-	visitor.OpMakeMatrixFloat (destination, matrixRows, matrixCols, sources);
+	visitor.OpMakeMatrix (destination, SequenceVisitor::Float, matrixRows, matrixCols, sources);
 	break;
       }
     }

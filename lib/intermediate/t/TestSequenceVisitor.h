@@ -134,133 +134,79 @@ public:
   }
   
 			      
-  void OpCastToBool (const RegisterID& destination,
-			      const RegisterID& source)
+  void OpCast (const RegisterID& destination,
+	       BaseType destType,
+	       const RegisterID& source)
   {
     SequenceEntry entry;
-    entry.op = opCastToBool;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source;
-    entries.push_back (entry);
-  }
-  
-  void OpCastToInt (const RegisterID& destination,
-			    const RegisterID& source)
-  {
-    SequenceEntry entry;
-    entry.op = opCastToInt;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source;
-    entries.push_back (entry);
-  }
-  
-  void OpCastToUInt (const RegisterID& destination,
-			      const RegisterID& source)
-  {
-    SequenceEntry entry;
-    entry.op = opCastToUInt;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source;
-    entries.push_back (entry);
-  }
-  
-  void OpCastToFloat (const RegisterID& destination,
-		      const RegisterID& source)
-  {
-    SequenceEntry entry;
-    entry.op = opCastToFloat;
+    switch (destType)
+    {
+    case Bool:
+      entry.op = opCastToBool;
+      break;
+    case Int:
+      entry.op = opCastToInt;
+      break;
+    case UInt:
+      entry.op = opCastToUInt;
+      break;
+    case Float:
+      entry.op = opCastToFloat;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceReg[0] = source;
     entries.push_back (entry);
   }
   
   
-  void OpMakeVectorBool (const RegisterID& destination,
-			  const std::vector<RegisterID>& sources)
+  void OpMakeVector (const RegisterID& destination,
+		     BaseType compType,
+		     const std::vector<RegisterID>& sources)
   {
     SequenceEntry entry;
-    entry.op = opMakeVectorBool;
-    entry.destReg = destination;
-    entry.sourceRegs = sources;
-    entries.push_back (entry);
-  }
-
-  void OpMakeVectorInt (const RegisterID& destination,
-			const std::vector<RegisterID>& sources)
-  {
-    SequenceEntry entry;
-    entry.op = opMakeVectorInt;
-    entry.destReg = destination;
-    entry.sourceRegs = sources;
-    entries.push_back (entry);
-  }
-
-  void OpMakeVectorUInt (const RegisterID& destination,
-			 const std::vector<RegisterID>& sources)
-  {
-    SequenceEntry entry;
-    entry.op = opMakeVectorUInt;
-    entry.destReg = destination;
-    entry.sourceRegs = sources;
-    entries.push_back (entry);
-  }
-
-  void OpMakeVectorFloat (const RegisterID& destination,
-			  const std::vector<RegisterID>& sources)
-  {
-    SequenceEntry entry;
-    entry.op = opMakeVectorFloat;
+    switch (compType)
+    {
+    case Bool:
+      entry.op = opMakeVectorBool;
+      break;
+    case Int:
+      entry.op = opMakeVectorInt;
+      break;
+    case UInt:
+      entry.op = opMakeVectorUInt;
+      break;
+    case Float:
+      entry.op = opMakeVectorFloat;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceRegs = sources;
     entries.push_back (entry);
   }
 
 
-  void OpMakeMatrixBool (const RegisterID& destination,
-			 unsigned int matrixRows, unsigned int matrixCols,
-			 const std::vector<RegisterID>& sources)
+  void OpMakeMatrix (const RegisterID& destination,
+		     BaseType compType,
+		     unsigned int matrixRows, unsigned int matrixCols,
+		     const std::vector<RegisterID>& sources)
   {
     SequenceEntry entry;
-    entry.op = opMakeMatrixBool;
-    entry.destReg = destination;
-    entry.sourceRegs = sources;
-    entry.matrixRows = matrixRows;
-    entry.matrixCols = matrixCols;
-    entries.push_back (entry);
-  }
-
-  void OpMakeMatrixInt (const RegisterID& destination,
-			unsigned int matrixRows, unsigned int matrixCols,
-			const std::vector<RegisterID>& sources)
-  {
-    SequenceEntry entry;
-    entry.op = opMakeMatrixInt;
-    entry.destReg = destination;
-    entry.sourceRegs = sources;
-    entry.matrixRows = matrixRows;
-    entry.matrixCols = matrixCols;
-    entries.push_back (entry);
-  }
-
-  void OpMakeMatrixUInt (const RegisterID& destination,
-			 unsigned int matrixRows, unsigned int matrixCols,
-			 const std::vector<RegisterID>& sources)
-  {
-    SequenceEntry entry;
-    entry.op = opMakeMatrixUInt;
-    entry.destReg = destination;
-    entry.sourceRegs = sources;
-    entry.matrixRows = matrixRows;
-    entry.matrixCols = matrixCols;
-    entries.push_back (entry);
-  }
-
-  void OpMakeMatrixFloat (const RegisterID& destination,
-			  unsigned int matrixRows, unsigned int matrixCols,
-			  const std::vector<RegisterID>& sources)
-  {
-    SequenceEntry entry;
-    entry.op = opMakeMatrixFloat;
+    switch (compType)
+    {
+    case Bool:
+      entry.op = opMakeMatrixBool;
+      break;
+    case Int:
+      entry.op = opMakeMatrixInt;
+      break;
+    case UInt:
+      entry.op = opMakeMatrixUInt;
+      break;
+    case Float:
+      entry.op = opMakeMatrixFloat;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceRegs = sources;
     entry.matrixRows = matrixRows;
@@ -329,60 +275,30 @@ public:
   }
 					     
 					     
-  void OpArithAdd (const RegisterID& destination,
-		   const RegisterID& source1,
-		   const RegisterID& source2)
+  void OpArith (const RegisterID& destination,
+		ArithmeticOp op,
+		const RegisterID& source1,
+		const RegisterID& source2)
   {
     SequenceEntry entry;
-    entry.op = opArithAdd;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpArithSub (const RegisterID& destination,
-		   const RegisterID& source1,
-		   const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opArithSub;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpArithMul (const RegisterID& destination,
-		   const RegisterID& source1,
-		   const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opArithMul;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpArithDiv (const RegisterID& destination,
-		   const RegisterID& source1,
-		   const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opArithDiv;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpArithMod (const RegisterID& destination,
-		   const RegisterID& source1,
-		   const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opArithMod;
+    switch (op)
+    {
+    case Add:
+      entry.op = opArithAdd;
+      break;
+    case Sub:
+      entry.op = opArithSub;
+      break;
+    case Mul:
+      entry.op = opArithMul;
+      break;
+    case Div:
+      entry.op = opArithDiv;
+      break;
+    case Mod:
+      entry.op = opArithMod;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceReg[0] = source1;
     entry.sourceReg[1] = source2;
@@ -390,128 +306,78 @@ public:
   }
 
 
-  void OpLogicAnd (const RegisterID& destination,
-		   const RegisterID& source1,
-		   const RegisterID& source2)
+  void OpLogic (const RegisterID& destination,
+		LogicOp op,
+		const RegisterID& source1,
+		const RegisterID& source2)
   {
     SequenceEntry entry;
-    entry.op = opLogicAnd;
+    switch (op)
+    {
+    case And:
+      entry.op = opLogicAnd;
+      break;
+    case Or:
+      entry.op = opLogicOr;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceReg[0] = source1;
     entry.sourceReg[1] = source2;
     entries.push_back (entry);
   }
 
-  void OpLogicOr (const RegisterID& destination,
-		  const RegisterID& source1,
-		  const RegisterID& source2)
+
+  void OpUnary (const RegisterID& destination,
+		UnaryOp op,
+		const RegisterID& source)
   {
     SequenceEntry entry;
-    entry.op = opLogicOr;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-
-  void OpUnaryInv (const RegisterID& destination,
-		   const RegisterID& source)
-  {
-    SequenceEntry entry;
-    entry.op = opUnaryInv;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source;
-    entries.push_back (entry);
-  }
-
-  void OpUnaryNeg (const RegisterID& destination,
-		   const RegisterID& source)
-  {
-    SequenceEntry entry;
-    entry.op = opUnaryNeg;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source;
-    entries.push_back (entry);
-  }
-
-  void OpUnaryNot (const RegisterID& destination,
-		   const RegisterID& source)
-  {
-    SequenceEntry entry;
-    entry.op = opUnaryNot;
+    switch (op)
+    {
+    case Inv:
+      entry.op = opUnaryInv;
+      break;
+    case Neg:
+      entry.op = opUnaryNeg;
+      break;
+    case Not:
+      entry.op = opUnaryNot;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceReg[0] = source;
     entries.push_back (entry);
   }
 
   
-  void OpCompareEq (const RegisterID& destination,
-		    const RegisterID& source1,
-		    const RegisterID& source2)
+  void OpCompare (const RegisterID& destination,
+		  CompareOp op,
+		  const RegisterID& source1,
+		  const RegisterID& source2)
   {
     SequenceEntry entry;
-    entry.op = opCompareEq;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpCompareNE (const RegisterID& destination,
-		    const RegisterID& source1,
-		    const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opCompareNE;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpCompareLE (const RegisterID& destination,
-		    const RegisterID& source1,
-		    const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opCompareLE;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpCompareLT (const RegisterID& destination,
-		    const RegisterID& source1,
-		    const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opCompareLT;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpCompareGE (const RegisterID& destination,
-		    const RegisterID& source1,
-		    const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opCompareGE;
-    entry.destReg = destination;
-    entry.sourceReg[0] = source1;
-    entry.sourceReg[1] = source2;
-    entries.push_back (entry);
-  }
-
-  void OpCompareGT (const RegisterID& destination,
-		    const RegisterID& source1,
-		    const RegisterID& source2)
-  {
-    SequenceEntry entry;
-    entry.op = opCompareGT;
+    switch (op)
+    {
+    case Eq:
+      entry.op = opCompareEq;
+      break;
+    case NE:
+      entry.op = opCompareNE;
+      break;
+    case LT:
+      entry.op = opCompareLT;
+      break;
+    case LE:
+      entry.op = opCompareLE;
+      break;
+    case GT:
+      entry.op = opCompareGT;
+      break;
+    case GE:
+      entry.op = opCompareGE;
+      break;
+    }
     entry.destReg = destination;
     entry.sourceReg[0] = source1;
     entry.sourceReg[1] = source2;

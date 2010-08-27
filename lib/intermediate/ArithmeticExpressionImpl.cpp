@@ -4,11 +4,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOp/SequenceOpArithAdd.h"
-#include "intermediate/SequenceOp/SequenceOpArithDiv.h"
-#include "intermediate/SequenceOp/SequenceOpArithMod.h"
-#include "intermediate/SequenceOp/SequenceOpArithMul.h"
-#include "intermediate/SequenceOp/SequenceOpArithSub.h"
+#include "intermediate/SequenceOp/SequenceOpArith.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -146,19 +142,19 @@ namespace s1
       switch (op)
       {
       case Add:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithAdd> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Add, reg1, reg2));
 	break;
       case Sub:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithSub> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Sub, reg1, reg2));
 	break;
       case Mul:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithMul> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Mul, reg1, reg2));
 	break;
       case Div:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithDiv> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Div, reg1, reg2));
 	break;
       case Mod:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArithMod> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Mod, reg1, reg2));
 	break;
       }
       assert (seqOp);

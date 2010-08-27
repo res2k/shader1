@@ -27,6 +27,12 @@ namespace s1
       RegisterIDSet GetWrittenRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
+      
+      const SequencePtr& GetSequence() const { return subSequence; }
+      const Sequence::IdentifierToRegIDMap& GetImportIdentToRegs() const
+      { return identToRegIDs_imp; }
+      const Sequence::IdentifierToRegIDMap& GetExportIdentToRegs() const
+      { return identToRegIDs_exp; }
     };
     
   } // namespace intermediate

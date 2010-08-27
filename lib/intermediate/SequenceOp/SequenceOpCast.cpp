@@ -17,16 +17,16 @@ namespace s1
       switch (castTo)
       {
       case Bool:
-	visitor.OpCastToBool (destination, source);
+	visitor.OpCast (destination, SequenceVisitor::Bool, source);
 	break;
       case Int:
-	visitor.OpCastToInt (destination, source);
+	visitor.OpCast (destination, SequenceVisitor::Int, source);
 	break;
       case UInt:
-	visitor.OpCastToUInt (destination, source);
+	visitor.OpCast (destination, SequenceVisitor::UInt, source);
 	break;
       case Float:
-	visitor.OpCastToFloat (destination, source);
+	visitor.OpCast (destination, SequenceVisitor::Float, source);
 	break;
       }
     }

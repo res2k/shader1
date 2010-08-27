@@ -22,7 +22,7 @@ namespace s1
       ProgramFunction (const UnicodeString& identifier,
 		       const parser::SemanticsHandler::TypePtr& returnType,
 		       const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
-		       const parser::SemanticsHandler::BlockPtr& block,
+		       const SequencePtr& body,
 		       bool isEntryFunction);
 
       const UnicodeString& GetIdentifier() const

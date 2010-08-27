@@ -4,9 +4,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOp/SequenceOpUnaryInv.h"
-#include "intermediate/SequenceOp/SequenceOpUnaryNeg.h"
-#include "intermediate/SequenceOp/SequenceOpUnaryNot.h"
+#include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -94,13 +92,13 @@ namespace s1
       switch (op)
       {
       case Neg:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryNeg> (destination, reg));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryOp> (destination, SequenceVisitor::Neg, reg));
 	break;
       case Inv:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryInv> (destination, reg));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryOp> (destination, SequenceVisitor::Inv, reg));
 	break;
       case Not:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryNot> (destination, reg));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryOp> (destination, SequenceVisitor::Not, reg));
 	break;
       }
       assert (seqOp);

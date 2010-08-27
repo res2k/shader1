@@ -172,57 +172,37 @@ namespace s1
     }
 			      
 			      
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToBool (const RegisterID& destination,
-									      const RegisterID& source)
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCast (const RegisterID& destination,
+									BaseType destType,
+									const RegisterID& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       std::string valueStr ("\\sOcast{");
       valueStr.append (sourceName.c_str());
       valueStr.append ("}{");
-      valueStr.append (typeBool);
+      switch (destType)
+      {
+      case Bool:
+	valueStr.append (typeBool);
+	break;
+      case Int:
+	valueStr.append (typeInt);
+	break;
+      case UInt:
+	valueStr.append (typeUInt);
+	break;
+      case Float:
+	valueStr.append (typeFloat);
+	break;
+      }
       valueStr.append ("}{");
       EmitAssign (destination, valueStr.c_str());
     }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToInt (const RegisterID& destination,
-									  const RegisterID& source)
-    {
-      std::string sourceName (owner->GetOutputRegisterName (source));
-      std::string valueStr ("\\sOcast{");
-      valueStr.append (sourceName.c_str());
-      valueStr.append ("}{");
-      valueStr.append (typeInt);
-      valueStr.append ("}{");
-      EmitAssign (destination, valueStr.c_str());
-    }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToUInt (const RegisterID& destination,
-									   const RegisterID& source)
-    {
-      std::string sourceName (owner->GetOutputRegisterName (source));
-      std::string valueStr ("\\sOcast{");
-      valueStr.append (sourceName.c_str());
-      valueStr.append ("}{");
-      valueStr.append (typeUInt);
-      valueStr.append ("}{");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCastToFloat (const RegisterID& destination,
-									    const RegisterID& source)
-    {
-      std::string sourceName (owner->GetOutputRegisterName (source));
-      std::string valueStr ("\\sOcast{");
-      valueStr.append (sourceName.c_str());
-      valueStr.append ("}{");
-      valueStr.append (typeFloat);
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorBool (const RegisterID& destination,
-										  const std::vector<RegisterID>& sources)
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterID& destination,
+									      BaseType compType,
+									      const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
       ParamHelper params (paramsStr, ", ");
@@ -238,155 +218,12 @@ namespace s1
       EmitAssign (destination, valueStr.c_str());
     }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorInt (const RegisterID& destination,
-										 const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr, ", ");
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string valueStr ("\\sOmakevec{");
-      valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorUInt (const RegisterID& destination,
-										  const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr, ", ");
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string valueStr ("\\sOmakevec{");
-      valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVectorFloat (const RegisterID& destination,
-										   const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      ParamHelper params (paramsStr, ", ");
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	params.Add (owner->GetOutputRegisterName (*source));
-      }
-      std::string valueStr ("\\sOmakevec{");
-      valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-				
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixBool (const RegisterID& destination,
-										  unsigned int matrixRows,
-										  unsigned int matrixCols,
-										  const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      std::string rowStr;
-      ParamHelper rows (rowStr, " & ");
-      unsigned int n = 0;
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	std::string colStr ("\\sOmatrixcol{");
-	colStr.append (owner->GetOutputRegisterName (*source));
-	colStr.append ("}");
-	rows.Add (colStr);
-	if (((++n) % matrixCols) == 0)
-	{
-	  paramsStr.append ("\\sOmatrixrow{");
-	  paramsStr.append (rowStr);
-	  paramsStr.append ("}");
-	  rows.Reset();
-	}
-      }
-      std::string valueStr ("\\sOmakematrix{");
-      valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixInt (const RegisterID& destination,
-										 unsigned int matrixRows,
-										 unsigned int matrixCols,
-										 const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      std::string rowStr;
-      ParamHelper rows (rowStr, " & ");
-      unsigned int n = 0;
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	std::string colStr ("\\sOmatrixcol{");
-	colStr.append (owner->GetOutputRegisterName (*source));
-	colStr.append ("}");
-	rows.Add (colStr);
-	if (((++n) % matrixCols) == 0)
-	{
-	  paramsStr.append ("\\sOmatrixrow{");
-	  paramsStr.append (rowStr);
-	  paramsStr.append ("}");
-	  rows.Reset();
-	}
-      }
-      std::string valueStr ("\\sOmakematrix{");
-      valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixUInt (const RegisterID& destination,
-										  unsigned int matrixRows,
-										  unsigned int matrixCols,
-										  const std::vector<RegisterID>& sources)
-    {
-      std::string paramsStr;
-      std::string rowStr;
-      ParamHelper rows (rowStr, " & ");
-      unsigned int n = 0;
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
-      {
-	std::string colStr ("\\sOmatrixcol{");
-	colStr.append (owner->GetOutputRegisterName (*source));
-	colStr.append ("}");
-	rows.Add (colStr);
-	if (((++n) % matrixCols) == 0)
-	{
-	  paramsStr.append ("\\sOmatrixrow{");
-	  paramsStr.append (rowStr);
-	  paramsStr.append ("}");
-	  rows.Reset();
-	}
-      }
-      std::string valueStr ("\\sOmakematrix{");
-      valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrixFloat (const RegisterID& destination,
-										   unsigned int matrixRows,
-										   unsigned int matrixCols,
-										   const std::vector<RegisterID>& sources)
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterID& destination,
+      									      BaseType compType,
+									      unsigned int matrixRows,
+									      unsigned int matrixCols,
+									      const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
       std::string rowStr;
@@ -484,118 +321,97 @@ namespace s1
     }
     
 
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithAdd (const RegisterID& destination,
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpArith (const RegisterID& destination,
+									 ArithmeticOp op,
 									 const RegisterID& source1,
 									 const RegisterID& source2)
     {
-      EmitBinary (destination, source1, source2, "+");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithSub (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "-");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMul (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "*");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithDiv (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "/");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpArithMod (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "%");
+      switch (op)
+      {
+      case Add:
+	EmitBinary (destination, source1, source2, "+");
+	break;
+      case Sub:
+	EmitBinary (destination, source1, source2, "-");
+	break;
+      case Mul:
+	EmitBinary (destination, source1, source2, "*");
+	break;
+      case Div:
+	EmitBinary (destination, source1, source2, "/");
+	break;
+      case Mod:
+	EmitBinary (destination, source1, source2, "%");
+	break;
+      }
     }
     
 
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogicAnd (const RegisterID& destination,
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogic (const RegisterID& destination,
+									 LogicOp op,
 									 const RegisterID& source1,
 									 const RegisterID& source2)
     {
-      EmitBinary (destination, source1, source2, "\\land");
+      switch (op)
+      {
+      case And:
+	EmitBinary (destination, source1, source2, "\\land");
+	break;
+      case Or:
+	EmitBinary (destination, source1, source2, "\\lor");
+	break;
+      }
     }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogicOr (const RegisterID& destination,
-									const RegisterID& source1,
-									const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "\\lor");
-    }
 
 
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryInv (const RegisterID& destination,
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnary (const RegisterID& destination,
+									 UnaryOp op,
 									 const RegisterID& source)
     {
-      EmitUnary (destination, source, "$sim$");
+      switch (op)
+      {
+      case Inv:
+	EmitUnary (destination, source, "$sim$");
+	break;
+      case Neg:
+	EmitUnary (destination, source, "-");
+	break;
+      case Not:
+	EmitUnary (destination, source, "\\neg ");
+	break;
+      }
     }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryNeg (const RegisterID& destination,
-									 const RegisterID& source)
-    {
-      EmitUnary (destination, source, "-");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnaryNot (const RegisterID& destination,
-									 const RegisterID& source)
-    {
-      EmitUnary (destination, source, "\\neg ");
-    }
-    
 
 		      
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareEq (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompare (const RegisterID& destination,
+									   CompareOp op,
+									   const RegisterID& source1,
+									   const RegisterID& source2)
     {
-      EmitBinary (destination, source1, source2, "=");
+      switch (op)
+      {
+      case Eq:
+	EmitBinary (destination, source1, source2, "=");
+	break;
+      case NE:
+	EmitBinary (destination, source1, source2, "\\neq");
+	break;
+      case LT:
+	EmitBinary (destination, source1, source2, "<");
+	break;
+      case LE:
+	EmitBinary (destination, source1, source2, "\\le");
+	break;
+      case GT:
+	EmitBinary (destination, source1, source2, ">");
+	break;
+      case GE:
+	EmitBinary (destination, source1, source2, "\\ge");
+	break;
+      }
     }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareNE (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "\\neq");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLT (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "<");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareLE (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "\\le");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGT (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, ">");
-    }
-    
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompareGE (const RegisterID& destination,
-									  const RegisterID& source1,
-									  const RegisterID& source2)
-    {
-      EmitBinary (destination, source1, source2, "\\gt");
-    }
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
 								      const Sequence::IdentifierToRegIDMap& identToRegID_imp,

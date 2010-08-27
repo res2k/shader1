@@ -26,6 +26,12 @@ namespace s1
       name.append (generationSuffix);
     }
     
+    Sequence::Register::Register (const Sequence::Register& other, int copyHack)
+     : originalName (other.originalName), generation (other.generation),
+       name (other.name)
+    {
+    }
+    
     void Sequence::Register::StealName (Register& other)
     {
       originalName = other.originalName;
@@ -39,6 +45,18 @@ namespace s1
 
     Sequence::RegisterBank::RegisterBank (const TypePtr& originalType)
      : originalType (originalType) {}
+     
+    Sequence::RegisterBank::RegisterBank (const RegisterBank& other)
+     : originalType (other.originalType)
+    {
+      for (std::vector<RegisterPtr>::const_iterator reg = other.registers.begin();
+	   reg != other.registers.end();
+	   ++reg)
+      {
+	RegisterPtr newReg (boost::make_shared<Register> (**reg, 1));
+	registers.push_back (newReg);
+      }
+    }
 
     unsigned int Sequence::RegisterBank::AddRegister (const UnicodeString& name)
     {
@@ -113,6 +131,18 @@ namespace s1
       if (regIt != identToRegID.end())
 	return regIt->second;
       return RegisterID ();
+    }
+      
+    void Sequence::CopyRegisterBanks (const SequencePtr& other)
+    {
+      registerBanks.clear();
+      for (std::vector<RegisterBankPtr>::const_iterator regBank = other->registerBanks.begin();
+	   regBank != other->registerBanks.end();
+	   ++regBank)
+      {
+	RegisterBankPtr newBank = boost::make_shared<RegisterBank> (**regBank);
+	registerBanks.push_back (newBank);
+      }
     }
       
     void Sequence::Visit (SequenceVisitor& visitor) const

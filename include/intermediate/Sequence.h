@@ -1,6 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCE_H__
 #define __INTERMEDIATE_SEQUENCE_H__
 
+#include "forwarddecl.h"
 #include "RegisterID.h"
 #include "SequenceOp/SequenceOp.h"
 #include "parser/SemanticsHandler.h"
@@ -33,6 +34,7 @@ namespace s1
       public:
 	Register (const UnicodeString& name);
 	Register (const Register& other);
+	Register (const Register& other, int copyHack);
 	
 	const UnicodeString& GetName() const { return name; }
 	void StealName (Register& other);
@@ -51,6 +53,7 @@ namespace s1
 	unsigned int AddRegister (const RegisterPtr& oldReg);
       public:
 	RegisterBank (const TypePtr& originalType);
+	RegisterBank (const RegisterBank& other);
 	
 	const TypePtr& GetOriginalType () const { return originalType; }
       };
@@ -76,6 +79,8 @@ namespace s1
       /// Get current identifiers-to-register-ID map
       const IdentifierToRegIDMap& GetIdentifierToRegisterIDMap () const
       { return identToRegID; }
+      
+      void CopyRegisterBanks (const SequencePtr& other);
       
       void Visit (SequenceVisitor& visitor) const;
       

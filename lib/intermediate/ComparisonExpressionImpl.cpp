@@ -4,12 +4,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Exception.h"
-#include "intermediate/SequenceOp/SequenceOpCompareEq.h"
-#include "intermediate/SequenceOp/SequenceOpCompareNE.h"
-#include "intermediate/SequenceOp/SequenceOpCompareGE.h"
-#include "intermediate/SequenceOp/SequenceOpCompareGT.h"
-#include "intermediate/SequenceOp/SequenceOpCompareLE.h"
-#include "intermediate/SequenceOp/SequenceOpCompareLT.h"
+#include "intermediate/SequenceOp/SequenceOpCompare.h"
 #include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -90,22 +85,22 @@ namespace s1
       switch (op)
       {
       case Equals:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompareEq> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::Eq, reg1, reg2));
 	break;
       case NotEquals:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompareNE> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::NE, reg1, reg2));
 	break;
       case Smaller:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompareLT> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::LT, reg1, reg2));
 	break;
       case SmallerEqual:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompareLE> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::LE, reg1, reg2));
 	break;
       case Larger:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompareGT> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::GT, reg1, reg2));
 	break;
       case LargerEqual:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompareGE> (destination, reg1, reg2));
+	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::GE, reg1, reg2));
 	break;
       }
       assert (seqOp);

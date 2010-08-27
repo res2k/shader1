@@ -23,16 +23,16 @@ namespace s1
       switch (vectorBaseType)
       {
       case Bool:
-	visitor.OpMakeVectorBool (destination, sources);
+	visitor.OpMakeVector (destination, SequenceVisitor::Bool, sources);
 	break;
       case Int:
-	visitor.OpMakeVectorInt (destination, sources);
+	visitor.OpMakeVector (destination, SequenceVisitor::Int, sources);
 	break;
       case UInt:
-	visitor.OpMakeVectorUInt (destination, sources);
+	visitor.OpMakeVector (destination, SequenceVisitor::UInt, sources);
 	break;
       case Float:
-	visitor.OpMakeVectorFloat (destination, sources);
+	visitor.OpMakeVector (destination, SequenceVisitor::Float, sources);
 	break;
       }
     }
