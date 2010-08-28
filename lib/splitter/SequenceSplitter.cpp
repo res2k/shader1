@@ -653,7 +653,27 @@ namespace s1
       {
 	outputSeq[f] = boost::make_shared<intermediate::Sequence> ();
 	outputSeq[f]->CopyRegisterBanks (inputSeq);
+	
       }
+      for (intermediate::Sequence::RegisterImpMappings::const_iterator impMap = inputSeq->GetImports().begin();
+	   impMap != inputSeq->GetImports().end();
+	   ++impMap)
+      {
+	for (int f = 0; f < freqNum; f++)
+	{
+	  outputSeq[f]->AddImport (impMap->first, impMap->second);
+	}
+      }
+      for (intermediate::Sequence::RegisterExpMappings::const_iterator expMap = inputSeq->GetExports().begin();
+	   expMap != inputSeq->GetExports().end();
+	   ++expMap)
+      {
+	for (int f = 0; f < freqNum; f++)
+	{
+	  outputSeq[f]->SetExport (expMap->first, expMap->second);
+	}
+      }
+	
       InputVisitor visitor (*this);
       
       inputSeq->Visit (visitor);
