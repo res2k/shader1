@@ -7,6 +7,8 @@
 #include "intermediate/RegisterID.h"
 #include "intermediate/SequenceVisitor.h"
 
+#include "Frequency.h"
+
 namespace s1
 {
   namespace splitter
@@ -137,20 +139,6 @@ namespace s1
 			    const std::vector<RegisterID>& inParams);
       };
     public:
-      enum Frequency
-      {
-	freqVertex,
-	freqFragment,
-	
-	freqNum,
-	freqHighest = freqNum - 1
-      };
-      enum
-      {
-	freqFlagV = 1 << freqVertex,
-	freqFlagF = 1 << freqFragment,
-      };
-      
       void SetInputSequence (const intermediate::SequencePtr& sequence)
       { inputSeq = sequence; }
       

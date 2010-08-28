@@ -10,7 +10,8 @@
 #include "intermediate/ProgramFunction.h" // @@@ Temp.
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
-#include "splitter/SequenceSplitter.h"
+#include "splitter/Frequency.h"
+#include "splitter/ProgramSplitter.h"
 
 #include "ErrorHandler.h"
 #include <boost/make_shared.hpp>
@@ -37,13 +38,13 @@ int main (const int argc, const char* const argv[])
     {
       argNum++;
       if (argNum < argc)
-	paramFlags[argv[argNum]] |= splitter::SequenceSplitter::freqFlagV;
+	paramFlags[argv[argNum]] |= splitter::freqFlagV;
     }
     else if (strcmp (arg, "--param-fragment") == 0)
     {
       argNum++;
       if (argNum < argc)
-	paramFlags[argv[argNum]] |= splitter::SequenceSplitter::freqFlagF;
+	paramFlags[argv[argNum]] |= splitter::freqFlagF;
     }
     else if (strcmp (arg, "--entry") == 0)
     {
@@ -89,6 +90,7 @@ int main (const int argc, const char* const argv[])
     errorHandler.IntermediateError (e.GetCode());
   }
   
+#if 0
   intermediate::ProgramPtr progV (boost::make_shared<intermediate::Program> ());
   intermediate::ProgramPtr progF (boost::make_shared<intermediate::Program> ());
   
@@ -119,15 +121,6 @@ int main (const int argc, const char* const argv[])
     }
   }
   
-  /*
-  codegen::CgGenerator codegen;
-  codegen::StringsArrayPtr progOutput (codegen.Generate (intermediateHandler.GetProgram ()));
-  
-  for (size_t i = 0; i < progOutput->Size(); i++)
-  {
-    std::cout << progOutput->Get (i) << std::endl;
-  }
-  */
   {
     codegen::CgGenerator codegen;
     codegen::StringsArrayPtr progOutput (codegen.Generate (progV));
@@ -146,6 +139,20 @@ int main (const int argc, const char* const argv[])
       std::cout << progOutput->Get (i) << std::endl;
     }
   }
+#else
+  splitter::ProgramSplitter splitter;
+
+  splitter.SetInputProgram (intermediateHandler.GetProgram ());
+  splitter.PerformSplit();
+
+  codegen::CgGenerator codegen;
+  codegen::StringsArrayPtr progOutput (codegen.Generate (splitter.GetOutputProgram()));
+  
+  for (size_t i = 0; i < progOutput->Size(); i++)
+  {
+    std::cout << progOutput->Get (i) << std::endl;
+  }
+#endif
   
   return 0;
 }
