@@ -14,14 +14,58 @@
 
 #include "ErrorHandler.h"
 #include <boost/make_shared.hpp>
+#include <string.h>
 
 using namespace s1;
 
+static void PrintSyntax (const char* execName)
+{
+  std::cerr << "Syntax: " << execName << " [input filename]" << std::endl;
+}
+
 int main (const int argc, const char* const argv[])
 {
-  if (argc < 2)
+  const char* inputFileName = 0;
+  const char* entryName = "main";
+  typedef std::tr1::unordered_map<std::string, unsigned int> ParamMap;
+  ParamMap paramFlags;
+  int argNum = 1;
+  while (argNum < argc)
   {
-    std::cout << "Syntax: " << argv[0] << " [input filename]" << std::endl;
+    const char* arg = argv[argNum];
+    if (strcmp (arg, "--param-vertex") == 0)
+    {
+      argNum++;
+      if (argNum < argc)
+	paramFlags[argv[argNum]] |= splitter::SequenceSplitter::freqFlagV;
+    }
+    else if (strcmp (arg, "--param-fragment") == 0)
+    {
+      argNum++;
+      if (argNum < argc)
+	paramFlags[argv[argNum]] |= splitter::SequenceSplitter::freqFlagF;
+    }
+    else if (strcmp (arg, "--entry") == 0)
+    {
+      argNum++;
+      if (argNum < argc)
+	entryName = argv[argNum];
+    }
+    else
+    {
+      if (inputFileName != 0)
+      {
+	PrintSyntax (argv[0]);
+	return 1;
+      }
+      inputFileName = arg;
+    }
+    argNum++;
+  }
+  
+  if (inputFileName == 0)
+  {
+    PrintSyntax (argv[0]);
     return 1;
   }
   
@@ -34,7 +78,7 @@ int main (const int argc, const char* const argv[])
   Lexer lexer (uniStream, errorHandler);
   
   intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
-  intermediateHandler.SetEntryFunction ("main");
+  intermediateHandler.SetEntryFunction (entryName);
   Parser parser (lexer, intermediateHandler, errorHandler);
   try
   {
@@ -47,6 +91,8 @@ int main (const int argc, const char* const argv[])
   
   intermediate::ProgramPtr progV (boost::make_shared<intermediate::Program> ());
   intermediate::ProgramPtr progF (boost::make_shared<intermediate::Program> ());
+  
+  // TODO: Handle param flags
   
   {
     intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
