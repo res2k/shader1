@@ -153,10 +153,10 @@ namespace s1
       
       void SetInputSequence (const intermediate::SequencePtr& sequence)
       { inputSeq = sequence; }
-      // TODO: methods to set input param frequencies
       
+      // set input param frequencies
       void SetLocalRegFreqFlags (const RegisterID& regID, unsigned int freqFlags)
-      { regAvailability[regID] = freqFlags; }
+      { SetRegAvailability (regID, freqFlags); }
       
       void PerformSplit ();
       
@@ -167,8 +167,14 @@ namespace s1
     protected:
       intermediate::SequencePtr outputSeq[freqNum];
       
-      boost::unordered_map<RegisterID, unsigned int> regAvailability;
       std::vector<RegisterID> transferRegs[freqNum-1];
+      
+      unsigned int GetRegAvailability (const RegisterID& reg);
+      void SetRegAvailability (const RegisterID& regID, unsigned int freqFlags)
+      { regAvailability[regID] = freqFlags; }
+    private:
+      typedef boost::unordered_map<RegisterID, unsigned int> AvailabilityMap;
+      AvailabilityMap regAvailability;
     };
   } // namespace splitter
 } // namespace s1

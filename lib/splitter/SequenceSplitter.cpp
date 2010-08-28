@@ -21,6 +21,7 @@
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 
 #include <boost/make_shared.hpp>
+#include <iostream>
 
 namespace s1
 {
@@ -48,7 +49,7 @@ namespace s1
 	availability |= (1 << f);
 	f++;
       }
-      parent.regAvailability[reg] = availability;
+      parent.SetRegAvailability (reg, availability);
     }
     
     void SequenceSplitter::InputVisitor::SplitBinaryOp (const RegisterID& destination,
@@ -56,8 +57,8 @@ namespace s1
 							const RegisterID& source1,
 							const RegisterID& source2)
     {
-      unsigned int src1Avail = parent.regAvailability[source1];
-      unsigned int src2Avail = parent.regAvailability[source2];
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
       
       // Determine highest computation frequency
       int highestFreq = freqNum;
@@ -84,20 +85,20 @@ namespace s1
 	parent.outputSeq[f]->AddOp (op);
 	destAvail |= 1 << f;
       }
-      parent.regAvailability[destination] = destAvail;
+      parent.SetRegAvailability (destination, destAvail);
     }
     
     int SequenceSplitter::InputVisitor::ComputeHighestFreq (const std::vector<RegisterID>& sources)
     {
       bool found = false;
       int highestFreq = freqNum;
-      while ((highestFreq-- > 0) && !found)
+      while (!found && (highestFreq-- > 0))
       {
 	for (std::vector<RegisterID>::const_iterator it (sources.begin());
 	     it != sources.end();
 	     ++it)
 	{
-	  unsigned int srcAvail = parent.regAvailability[*it];
+	  unsigned int srcAvail = parent.GetRegAvailability (*it);
 	  if ((srcAvail & (1 << highestFreq)) != 0)
 	  {
 	    found = true;
@@ -117,9 +118,9 @@ namespace s1
 	    it != sources.end();
 	    ++it)
       {
-	unsigned int srcAvail = parent.regAvailability[*it];
+	unsigned int srcAvail = parent.GetRegAvailability (*it);
 	PromoteRegister (*it, freq, srcAvail);
-	parent.regAvailability[*it] = srcAvail;
+	parent.SetRegAvailability (*it, srcAvail);
 	commonFreqs &= srcAvail;
       }
       
@@ -131,7 +132,7 @@ namespace s1
     void SequenceSplitter::InputVisitor::OpConstBool (const RegisterID& destination,
 						      bool value)
     {
-      parent.regAvailability[destination] = (1 << freqNum) - 1;
+      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
       for (int f = 0; f < freqNum; f++)
@@ -143,7 +144,7 @@ namespace s1
     void SequenceSplitter::InputVisitor::OpConstInt (const RegisterID& destination,
 						     int value)
     {
-      parent.regAvailability[destination] = (1 << freqNum) - 1;
+      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
       for (int f = 0; f < freqNum; f++)
@@ -155,7 +156,7 @@ namespace s1
     void SequenceSplitter::InputVisitor::OpConstUInt (const RegisterID& destination,
 						      unsigned int value)
     {
-      parent.regAvailability[destination] = (1 << freqNum) - 1;
+      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
       for (int f = 0; f < freqNum; f++)
@@ -167,7 +168,7 @@ namespace s1
     void SequenceSplitter::InputVisitor::OpConstFloat (const RegisterID& destination,
 						       float value)
     {
-      parent.regAvailability[destination] = (1 << freqNum) - 1;
+      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
       for (int f = 0; f < freqNum; f++)
@@ -179,8 +180,8 @@ namespace s1
     void SequenceSplitter::InputVisitor::OpAssign (const RegisterID& destination,
 						   const RegisterID& source)
     {
-      unsigned int srcAvail = parent.regAvailability[source];
-      parent.regAvailability[destination] = srcAvail;
+      unsigned int srcAvail = parent.GetRegAvailability (source);
+      parent.SetRegAvailability (destination, srcAvail);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpAssign> (destination, source));
       for (int f = 0; f < freqNum; f++)
@@ -207,8 +208,8 @@ namespace s1
 						 BaseType destType,
 						 const RegisterID& source)
     {
-      unsigned int srcAvail = parent.regAvailability[source];
-      parent.regAvailability[destination] = srcAvail;
+      unsigned int srcAvail = parent.GetRegAvailability (source);
+      parent.SetRegAvailability (destination, srcAvail);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCast> (destination,
 										ToBasicType (destType),
@@ -226,7 +227,7 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
-      parent.regAvailability[destination] = commonFreqs;
+      parent.SetRegAvailability (destination, commonFreqs);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeVector> (destination,
 										      ToBasicType (compType),
 										      sources));
@@ -244,7 +245,7 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
-      parent.regAvailability[destination] = commonFreqs;
+      parent.SetRegAvailability (destination, commonFreqs);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeMatrix> (destination,
 										      ToBasicType (compType), 
 										      matrixRows, matrixCols,
@@ -261,7 +262,7 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
-      parent.regAvailability[destination] = commonFreqs;
+      parent.SetRegAvailability (destination, commonFreqs);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeArray> (destination, sources));
       for (int f = 0; f < freqNum; f++)
       {
@@ -289,7 +290,7 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sourceRegs);
       unsigned int commonFreqs = PromoteAll (highestFreq, sourceRegs);
       
-      parent.regAvailability[destination] = commonFreqs;
+      parent.SetRegAvailability (destination, commonFreqs);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpChangeArrayElement> (destination, source,
 											      index, newValue));
       for (int f = 0; f < freqNum; f++)
@@ -303,14 +304,14 @@ namespace s1
     {
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpGetArrayLength> (destination, array));
       
-      unsigned int srcAvail = parent.regAvailability[array];
+      unsigned int srcAvail = parent.GetRegAvailability (array);
       for (int f = 0; f < freqNum; f++)
       {
 	if ((srcAvail & (1 << f)) == 0)
 	  continue;
 	parent.outputSeq[f]->AddOp (newSeqOp);
       }
-      parent.regAvailability[destination] = srcAvail;
+      parent.SetRegAvailability (destination, srcAvail);
     }
 
     void SequenceSplitter::InputVisitor::OpExtractVectorComponent (const RegisterID& destination,
@@ -319,14 +320,14 @@ namespace s1
     {
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpExtractVectorComponent> (destination, source, comp));
       
-      unsigned int srcAvail = parent.regAvailability[source];
+      unsigned int srcAvail = parent.GetRegAvailability (source);
       for (int f = 0; f < freqNum; f++)
       {
 	if ((srcAvail & (1 << f)) == 0)
 	  continue;
 	parent.outputSeq[f]->AddOp (newSeqOp);
       }
-      parent.regAvailability[destination] = srcAvail;
+      parent.SetRegAvailability (destination, srcAvail);
     }
     
     void SequenceSplitter::InputVisitor::OpArith (const RegisterID& destination,
@@ -362,14 +363,14 @@ namespace s1
     {
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpUnaryOp> (destination, op, source));
       
-      unsigned int srcAvail = parent.regAvailability[source];
+      unsigned int srcAvail = parent.GetRegAvailability (source);
       for (int f = 0; f < freqNum; f++)
       {
 	if ((srcAvail & (1 << f)) == 0)
 	  continue;
 	parent.outputSeq[f]->AddOp (newSeqOp);
       }
-      parent.regAvailability[destination] = srcAvail;
+      parent.SetRegAvailability (destination, srcAvail);
     }
     
     void SequenceSplitter::InputVisitor::SplitBlock (const SequencePtr& blockSequence,
@@ -390,7 +391,7 @@ namespace s1
 	RegisterID reg (parent.inputSeq->GetIdentifierRegisterID (imports->first));
 	RegisterID reg_subseq (imports->second);
 	
-	unsigned int reg_subseqAvail = parent.regAvailability[reg];
+	unsigned int reg_subseqAvail = parent.GetRegAvailability (reg);
 	blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
 	for (int f = 0; f < freqNum; f++)
 	{
@@ -410,13 +411,13 @@ namespace s1
 	RegisterID reg (parent.inputSeq->GetIdentifierRegisterID (exports->first));
 	RegisterID reg_subseq (exports->second);
 	
-	unsigned int reg_subseqAvail = blockSplitter.regAvailability[reg_subseq];
+	unsigned int reg_subseqAvail = blockSplitter.GetRegAvailability (reg_subseq);
 	for (int f = 0; f < freqNum; f++)
 	{
 	  if ((reg_subseqAvail & (1 << f)) == 0) continue;
 	  newWrittenRegisters[f].push_back (reg);
 	}
-	parent.regAvailability[reg] = reg_subseqAvail;
+	parent.SetRegAvailability (reg, reg_subseqAvail);
       }      
       
       for (int f = 0; f < freqNum; f++)
@@ -579,7 +580,7 @@ namespace s1
       
       unsigned int srcAvail;
       if (retValReg.IsValid())
-	srcAvail = parent.regAvailability[retValReg];
+	srcAvail = parent.GetRegAvailability (retValReg);
       else
 	srcAvail = (1 << freqNum) - 1;
       for (int f = 0; f < freqNum; f++)
@@ -629,7 +630,7 @@ namespace s1
 	  int highestFreq = ComputeHighestFreq (inParams);
 	  unsigned int commonFreqs = PromoteAll (highestFreq, inParams);
 	  
-	  parent.regAvailability[destination] = commonFreqs;
+	  parent.SetRegAvailability (destination, commonFreqs);
 	  SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBuiltinCall> (destination,
 											   what,
 											   inParams));
@@ -656,6 +657,24 @@ namespace s1
       InputVisitor visitor (*this);
       
       inputSeq->Visit (visitor);
+    }
+    
+    unsigned int SequenceSplitter::GetRegAvailability (const RegisterID& reg)
+    {
+      AvailabilityMap::const_iterator avail = regAvailability.find (reg);
+      if (avail == regAvailability.end())
+      {
+	unsigned int defaultAvail = 1 << freqVertex;
+	regAvailability[reg] = defaultAvail;
+	
+	const UnicodeString& regName = inputSeq->QueryRegisterPtrFromID (reg)->GetName();
+	std::string regNameStr;
+	regName.toUTF8String (regNameStr);
+	// FIXME: use a special 'warning' mechanism for this
+	std::cerr << "Register " << regNameStr << " has no associated availability, using 'vertex'" << std::endl;
+	return defaultAvail;
+      }
+      return avail->second;
     }
   } // namespace splitter
 } // namespace s1
