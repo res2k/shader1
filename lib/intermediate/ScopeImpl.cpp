@@ -120,7 +120,13 @@ namespace s1
 	   param != params.end();
 	   ++param)
       {
-	identifierDecorated.append (handler->GetTypeString (boost::shared_static_cast<TypeImpl> (param->type)).c_str());
+	std::string decorationString;
+	char dirStr[2] = { 0, 0 };
+	dirStr[0] = param->dir + '0';
+	decorationString.append (dirStr);
+	TypeImplPtr typeImpl (boost::shared_static_cast<TypeImpl> (param->type));
+	decorationString.append (handler->GetTypeString (typeImpl));
+	identifierDecorated.append (decorationString.c_str());
       }
       funcInfo->identifier = identifierDecorated;
       funcInfo->returnType = returnType;
