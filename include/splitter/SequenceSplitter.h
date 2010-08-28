@@ -39,6 +39,9 @@ namespace s1
       
       intermediate::SequencePtr inputSeq;
       
+      typedef std::tr1::unordered_map<UnicodeString, unsigned int> ParamMap;
+      ParamMap paramFlags;
+      
       class InputVisitor : public intermediate::SequenceVisitor
       {
 	SequenceSplitter& parent;
@@ -143,6 +146,7 @@ namespace s1
       { inputSeq = sequence; }
       
       // set input param frequencies
+      void SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags);
       void SetLocalRegFreqFlags (const RegisterID& regID, unsigned int freqFlags)
       { SetRegAvailability (regID, freqFlags); }
       

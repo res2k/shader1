@@ -1,3 +1,6 @@
+#include "base/common.h"
+#include "base/hash_UnicodeString.h"
+
 #include "splitter/SequenceSplitter.h"
 
 #include "intermediate/SequenceOp/SequenceOpArith.h"
@@ -645,6 +648,11 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
+    void SequenceSplitter::SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags)
+    {
+      paramFlags[input] = freqFlags;
+    }
+    
     void SequenceSplitter::PerformSplit ()
     {
       regAvailability.clear();
@@ -662,6 +670,17 @@ namespace s1
 	for (int f = 0; f < freqNum; f++)
 	{
 	  outputSeq[f]->AddImport (impMap->first, impMap->second);
+	}
+	
+	ParamMap::const_iterator inputFreq = paramFlags.find (impMap->first);
+	if (inputFreq != paramFlags.end())
+	{
+	  Sequence::IdentifierToRegIDMap::const_iterator toReg =
+	    inputSeq->GetIdentifierToRegisterIDMap().find (inputFreq->first);
+	  if (toReg != inputSeq->GetIdentifierToRegisterIDMap().end())
+	  {
+	    regAvailability[toReg->second] = inputFreq->second;
+	  }
 	}
       }
       for (intermediate::Sequence::RegisterExpMappings::const_iterator expMap = inputSeq->GetExports().begin();

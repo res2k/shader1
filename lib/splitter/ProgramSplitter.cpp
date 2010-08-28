@@ -1,4 +1,5 @@
 #include "base/common.h"
+#include "base/hash_UnicodeString.h"
 
 #include "splitter/ProgramSplitter.h"
 
@@ -16,6 +17,11 @@ namespace s1
     {
       inputProgram = program;
     }
+
+    void ProgramSplitter::SetInputFreqFlags (const UnicodeString& inpName, unsigned int flags)
+    {
+      paramFlags[inpName] = flags;
+    }
     
     void ProgramSplitter::PerformSplit ()
     {
@@ -28,9 +34,14 @@ namespace s1
 	intermediate::ProgramFunctionPtr func = inputProgram->GetFunction (i);
 	if (!func->IsEntryFunction()) continue;
 	
-	
 	splitter::SequenceSplitter splitter;
 	splitter.SetInputSequence (func->GetBody());
+	for (ParamMap::const_iterator paramFlag = paramFlags.begin();
+	     paramFlag != paramFlags.end();
+	     ++paramFlag)
+	{
+	  splitter.SetInputFreqFlags (paramFlag->first, paramFlag->second);
+	}
 	splitter.PerformSplit();
 	
 	UnicodeString funcVName ("vertex_");

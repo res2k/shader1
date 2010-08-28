@@ -143,6 +143,12 @@ int main (const int argc, const char* const argv[])
   splitter::ProgramSplitter splitter;
 
   splitter.SetInputProgram (intermediateHandler.GetProgram ());
+  for (ParamMap::const_iterator paramFlag = paramFlags.begin();
+	paramFlag != paramFlags.end();
+	++paramFlag)
+  {
+    splitter.SetInputFreqFlags (paramFlag->first.c_str(), paramFlag->second);
+  }
   splitter.PerformSplit();
 
   codegen::CgGenerator codegen;
