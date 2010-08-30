@@ -698,19 +698,43 @@ namespace s1
       inputSeq->Visit (visitor);
     }
     
+    static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type)
+    {
+      switch (type->GetTypeClass())
+      {
+      case parser::SemanticsHandler::Type::Base:
+	return freqVertex;
+      case parser::SemanticsHandler::Type::Sampler:
+	return freqFragment;
+      case parser::SemanticsHandler::Type::Array:
+      case parser::SemanticsHandler::Type::Vector:
+      case parser::SemanticsHandler::Type::Matrix:
+	return GetDefaultFrequencyForType (type->GetArrayVectorMatrixBaseType());
+      }
+      assert (false);
+      return 0;
+    }
+    
     unsigned int SequenceSplitter::GetRegAvailability (const RegisterID& reg)
     {
       AvailabilityMap::const_iterator avail = regAvailability.find (reg);
       if (avail == regAvailability.end())
       {
-	unsigned int defaultAvail = 1 << freqVertex;
+	intermediate::Sequence::RegisterBankPtr regBankPtr;
+	intermediate::Sequence::RegisterPtr regPtr = inputSeq->QueryRegisterPtrFromID (reg, regBankPtr);
+	
+	int defaultFreq = GetDefaultFrequencyForType (regBankPtr->GetOriginalType());
+	
+	unsigned int defaultAvail = 1 << defaultFreq;
 	regAvailability[reg] = defaultAvail;
 	
-	const UnicodeString& regName = inputSeq->QueryRegisterPtrFromID (reg)->GetName();
+	const char* const defFreqName[freqNum] = { "vertex", "fragment" };
+	const UnicodeString& regName = regPtr->GetName();
 	std::string regNameStr;
 	regName.toUTF8String (regNameStr);
 	// FIXME: use a special 'warning' mechanism for this
-	std::cerr << "Register " << regNameStr << " has no associated availability, using 'vertex'" << std::endl;
+	std::cerr << "Register " << regNameStr << " has no associated availability, using '"
+	  << defFreqName[defaultFreq] << "'" << std::endl;
 	return defaultAvail;
       }
       return avail->second;
