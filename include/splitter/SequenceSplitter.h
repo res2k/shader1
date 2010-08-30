@@ -159,6 +159,9 @@ namespace s1
     protected:
       intermediate::SequencePtr outputSeq[freqNum];
       
+      /** Registers to transfer to next frequency.
+          The registers in element 0 need to be transferred from frequency 0 to frequency 1,
+          the registers in element 1 from frequency 2 to frequency 2 and so on. */
       std::vector<RegisterID> transferRegs[freqNum-1];
       
       unsigned int GetRegAvailability (const RegisterID& reg);

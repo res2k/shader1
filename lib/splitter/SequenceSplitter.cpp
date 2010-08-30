@@ -49,8 +49,8 @@ namespace s1
       while (f < frequency)
       {
 	parent.transferRegs[f].push_back (reg);
-	availability |= (1 << f);
 	f++;
+	availability |= (1 << f);
       }
       parent.SetRegAvailability (reg, availability);
     }
