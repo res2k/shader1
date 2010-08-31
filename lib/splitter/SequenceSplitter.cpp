@@ -642,17 +642,13 @@ namespace s1
     {
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpReturn> (retValReg));
       
-      unsigned int srcAvail;
+      /* 'return': only execute on fragment frequency */
       if (retValReg.IsValid())
-	srcAvail = parent.GetRegAvailability (retValReg);
-      else
-	srcAvail = (1 << freqNum) - 1;
-      for (int f = 0; f < freqNum; f++)
       {
-	if ((srcAvail & (1 << f)) == 0)
-	  continue;
-	parent.outputSeq[f]->AddOp (newSeqOp);
+	unsigned int srcAvail = parent.GetRegAvailability (retValReg);
+	PromoteRegister (retValReg, freqFragment, srcAvail);
       }
+      parent.outputSeq[freqFragment]->AddOp (newSeqOp);
     }
     
     void SequenceSplitter::InputVisitor::OpFunctionCall (const RegisterID& destination,
