@@ -306,8 +306,64 @@ namespace s1
 						  const RegisterID& source1,
 						  const RegisterID& source2)
     {
+      /*
+	The criterium for whether we can run an op at vertex frequency, or have to run it
+	at fragment frequency, is 'interpolatibility'.
+	Consider: 'forwarding' a value from V to F program usually means it's linearly
+	interpolated. A operation can be safely executed at vertex freq when the
+	interpolated result of the operation would be the same as the result of the operation
+	with interpolated operands (lerp (op (x_1, y_1), op (x_2, y_2), f)
+	  == op (lerp (x_1, x_2, f), lerp (y_1, y_2, f)).
+       */
+      
+      bool lerpSafe;
+      
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
+      
+      switch (op)
+      {
+      case Add:
+      case Sub:
+	/* Addition, subtraction are interpolation-safe */
+	lerpSafe = true;	
+	break;
+      case Mul:
+      case Div:
+	{
+	  if (((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0))
+	  {
+	    /* Multiplication/Division with uniform is safe */
+	    lerpSafe = true;	
+	  }
+	  else
+	  {
+	    /* If both operands are of at least vertex freq, need to compute at fragment freq */
+	    lerpSafe = false;
+	  }
+	}
+	break;
+      case Mod:
+	/* Mod isn't interpolation safe at all */
+	lerpSafe = false;	
+	break;
+      }
+      
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpArith> (destination, op, source1, source2));
-      SplitBinaryOp (destination, newSeqOp, source1, source2);
+      if (lerpSafe)
+      {
+	SplitBinaryOp (destination, newSeqOp, source1, source2);
+      }
+      else
+      {
+	// Promote inputs to fragment freq
+	PromoteRegister (source1, freqFragment, src1Avail);
+	PromoteRegister (source2, freqFragment, src2Avail);
+	
+	// Add operation to fragment frequency
+	parent.outputSeq[freqFragment]->AddOp (newSeqOp);
+	parent.SetRegAvailability (destination, freqFlagF);
+      }
     }
     
     void SequenceSplitter::InputVisitor::OpCompare (const RegisterID& destination,
@@ -315,8 +371,16 @@ namespace s1
 						    const RegisterID& source1,
 						    const RegisterID& source2)
     {
+      // Interpolation safety: comparison ops really aren't
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCompare> (destination, op, source1, source2));
-      SplitBinaryOp (destination, newSeqOp, source1, source2);
+      PromoteRegister (source1, freqFragment, src1Avail);
+      PromoteRegister (source2, freqFragment, src2Avail);
+      
+      // Add operation to fragment frequency
+      parent.outputSeq[freqFragment]->AddOp (newSeqOp);
+      parent.SetRegAvailability (destination, freqFlagF);
     }
 			      
     void SequenceSplitter::InputVisitor::OpLogic (const RegisterID& destination,
@@ -324,19 +388,53 @@ namespace s1
 						  const RegisterID& source1,
 						  const RegisterID& source2)
     {
+      // Interpolation safety: logic ops really aren't
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpLogic> (destination, op, source1, source2));
-      SplitBinaryOp (destination, newSeqOp, source1, source2);
+      PromoteRegister (source1, freqFragment, src1Avail);
+      PromoteRegister (source2, freqFragment, src2Avail);
+      
+      // Add operation to fragment frequency
+      parent.outputSeq[freqFragment]->AddOp (newSeqOp);
+      parent.SetRegAvailability (destination, freqFlagF);
     }
     
     void SequenceSplitter::InputVisitor::OpUnary (const RegisterID& destination,
 						  UnaryOp op,
 						  const RegisterID& source)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpUnaryOp> (destination, op, source));
+      bool lerpSafe;
       
+      switch (op)
+      {
+      case Neg:
+      case Not:
+	/* Negation/logical NOT are interpolation-safe */
+	lerpSafe = true;	
+	break;
+      case Inv:
+	/* Bit-wise invert isn't */
+	lerpSafe = false;	
+	break;
+      }
+      
+      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpUnaryOp> (destination, op, source));
       unsigned int srcAvail = parent.GetRegAvailability (source);
-      AddOpToSequences (newSeqOp, srcAvail);
-      parent.SetRegAvailability (destination, srcAvail);
+      if (lerpSafe)
+      {
+	AddOpToSequences (newSeqOp, srcAvail);
+	parent.SetRegAvailability (destination, srcAvail);
+      }
+      else
+      {
+	// Promote inputs to fragment freq
+	PromoteRegister (source, freqFragment, srcAvail);
+	
+	// Add operation to fragment frequency
+	parent.outputSeq[freqFragment]->AddOp (newSeqOp);
+	parent.SetRegAvailability (destination, freqFlagF);
+      }
     }
     
     void SequenceSplitter::InputVisitor::SplitBlock (const SequencePtr& blockSequence,
@@ -578,13 +676,21 @@ namespace s1
 							intermediate::BuiltinFunction what,
 							const std::vector<RegisterID>& inParams)
     {
+      bool lerpSafe;
       switch (what)
       {
       case intermediate::dot:
       case intermediate::cross:
+      case intermediate::mul:
+	/* dot, cross, matrix mul: interpolation-safe if one operand is an uniform */
+	{
+	  unsigned int src1Avail = parent.GetRegAvailability (inParams[0]);
+	  unsigned int src2Avail = parent.GetRegAvailability (inParams[1]);
+	  lerpSafe = ((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0);
+	}
+	break;
       case intermediate::normalize:
       case intermediate::length:
-      case intermediate::mul:
       case intermediate::min:
       case intermediate::max:
       case intermediate::pow:
@@ -592,20 +698,30 @@ namespace s1
       case intermediate::tex2D:
       case intermediate::tex3D:
       case intermediate::texCUBE:
-	{
-	  int highestFreq = ComputeHighestFreq (inParams);
-	  unsigned int commonFreqs = PromoteAll (highestFreq, inParams);
-	  
-	  parent.SetRegAvailability (destination, commonFreqs);
-	  SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBuiltinCall> (destination,
-											   what,
-											   inParams));
-	  for (int f = 0; f < freqNum; f++)
-	  {
-	    if (commonFreqs & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-	  }
-	}
+	/* All others: not interpolation-safe */
 	break;
+      }
+      
+      if (lerpSafe)
+      {
+	int highestFreq = ComputeHighestFreq (inParams);
+	unsigned int commonFreqs = PromoteAll (highestFreq, inParams);
+	
+	parent.SetRegAvailability (destination, commonFreqs);
+	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBuiltinCall> (destination,
+											  what,
+											  inParams));
+	AddOpToSequences (newSeqOp, commonFreqs);
+      }
+      else
+      {
+	PromoteAll (freqFragment, inParams);
+	
+	parent.SetRegAvailability (destination, freqFlagF);
+	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBuiltinCall> (destination,
+											  what,
+											  inParams));
+	parent.outputSeq[freqFragment]->AddOp (newSeqOp);
       }
     }
     
@@ -695,7 +811,7 @@ namespace s1
 	unsigned int defaultAvail = 1 << defaultFreq;
 	regAvailability[reg] = defaultAvail;
 	
-	const char* const defFreqName[freqNum] = { "vertex", "fragment" };
+	const char* const defFreqName[freqNum] = { "uniform",  "vertex", "fragment" };
 	const UnicodeString& regName = regPtr->GetName();
 	std::string regNameStr;
 	regName.toUTF8String (regNameStr);
