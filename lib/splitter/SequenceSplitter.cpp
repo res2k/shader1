@@ -776,7 +776,13 @@ namespace s1
       
       inputSeq->Visit (visitor);
       
-      // TODO: Insert 'uniform' sequence at start of both V/F sequence!
+      // Insert 'uniform' sequence at start of both V/F sequences
+      for (size_t i = 0; i < outputSeq[freqUniform]->GetNumOps(); i++)
+      {
+	SequenceOpPtr uniOp (outputSeq[freqUniform]->GetOp (i));
+	outputSeq[freqVertex]->InsertOp (i, uniOp);
+	outputSeq[freqFragment]->InsertOp (i, uniOp);
+      }
     }
     
     static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type)
