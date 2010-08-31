@@ -136,7 +136,7 @@ namespace s1
     {
       for (int f = 0; f < freqNum; f++)
       {
-	if (freqMask & (1 << f)) parent.outputSeq[freqVertex]->AddOp (op);
+	if (freqMask & (1 << f)) parent.outputSeq[f]->AddOp (op);
       }
     }
     
