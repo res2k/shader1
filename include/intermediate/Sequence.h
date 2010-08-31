@@ -59,9 +59,17 @@ namespace s1
       };
       typedef boost::shared_ptr<RegisterBank> RegisterBankPtr;
       
+      /** \name Sequence manipulation
+       * @{ */
+      /// Add an operation
       void AddOp (SequenceOpPtr op);
-      
+      /// Insert an operation
+      void InsertOp (size_t before, SequenceOpPtr op);
+      /// Get number of operations
       size_t GetNumOps() const { return ops.size(); }
+      /// Get a specific op
+      SequenceOpPtr GetOp(size_t index) const { return ops[index]; }
+      /** @} */
       
       RegisterID AllocateRegister (const std::string& typeStr,
 				   const TypePtr& originalType,
@@ -80,6 +88,7 @@ namespace s1
       const IdentifierToRegIDMap& GetIdentifierToRegisterIDMap () const
       { return identToRegID; }
       
+      /// Deep copy register banks setup from another sequence
       void CopyRegisterBanks (const SequencePtr& other);
       
       void Visit (SequenceVisitor& visitor) const;

@@ -78,6 +78,11 @@ namespace s1
     {
       ops.push_back (op);
     }
+    
+    void Sequence::InsertOp (size_t before, SequenceOpPtr op)
+    {
+      ops.insert (ops.begin() + before, op);
+    }
       
     RegisterID Sequence::AllocateRegister (const std::string& typeStr,
 					   const TypePtr& originalType,
