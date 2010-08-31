@@ -46,6 +46,12 @@ int main (const int argc, const char* const argv[])
       if (argNum < argc)
 	paramFlags[argv[argNum]] |= splitter::freqFlagF;
     }
+    else if (strcmp (arg, "--param-uniform") == 0)
+    {
+      argNum++;
+      if (argNum < argc)
+	paramFlags[argv[argNum]] |= splitter::freqFlagU;
+    }
     else if (strcmp (arg, "--entry") == 0)
     {
       argNum++;

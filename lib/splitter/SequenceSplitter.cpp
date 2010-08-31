@@ -131,53 +131,49 @@ namespace s1
       
       return commonFreqs;
     }
+
+    void SequenceSplitter::InputVisitor::AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask)
+    {
+      for (int f = 0; f < freqNum; f++)
+      {
+	if (freqMask & (1 << f)) parent.outputSeq[freqVertex]->AddOp (op);
+      }
+    }
     
     void SequenceSplitter::InputVisitor::OpConstBool (const RegisterID& destination,
 						      bool value)
     {
-      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
+      parent.SetRegAvailability (destination, freqFlagU);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
-      for (int f = 0; f < freqNum; f++)
-      {
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, freqFlagU);
     }
 			  
     void SequenceSplitter::InputVisitor::OpConstInt (const RegisterID& destination,
 						     int value)
     {
-      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
+      parent.SetRegAvailability (destination, freqFlagU);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
-      for (int f = 0; f < freqNum; f++)
-      {
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, freqFlagU);
     }
 			  
     void SequenceSplitter::InputVisitor::OpConstUInt (const RegisterID& destination,
 						      unsigned int value)
     {
-      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
+      parent.SetRegAvailability (destination, freqFlagU);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
-      for (int f = 0; f < freqNum; f++)
-      {
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, freqFlagU);
     }
 			  
     void SequenceSplitter::InputVisitor::OpConstFloat (const RegisterID& destination,
 						       float value)
     {
-      parent.SetRegAvailability (destination, (1 << freqNum) - 1);
+      parent.SetRegAvailability (destination, freqFlagU);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
-      for (int f = 0; f < freqNum; f++)
-      {
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, freqFlagU);
     }
     
     void SequenceSplitter::InputVisitor::OpAssign (const RegisterID& destination,
@@ -187,10 +183,7 @@ namespace s1
       parent.SetRegAvailability (destination, srcAvail);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpAssign> (destination, source));
-      for (int f = 0; f < freqNum; f++)
-      {
-	if (srcAvail & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, srcAvail);
     }
     
     static inline intermediate::BasicType ToBasicType (intermediate::SequenceVisitor::BaseType t)
@@ -217,10 +210,7 @@ namespace s1
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCast> (destination,
 										ToBasicType (destType),
 										source));
-      for (int f = 0; f < freqNum; f++)
-      {
-	if (srcAvail & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, srcAvail);
     }
     
     void SequenceSplitter::InputVisitor::OpMakeVector (const RegisterID& destination,
@@ -234,10 +224,7 @@ namespace s1
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeVector> (destination,
 										      ToBasicType (compType),
 										      sources));
-      for (int f = 0; f < freqNum; f++)
-      {
-	if (commonFreqs & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, commonFreqs);
     }
     
     void SequenceSplitter::InputVisitor::OpMakeMatrix (const RegisterID& destination,
@@ -253,10 +240,7 @@ namespace s1
 										      ToBasicType (compType), 
 										      matrixRows, matrixCols,
 										      sources));
-      for (int f = 0; f < freqNum; f++)
-      {
-	if (commonFreqs & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, commonFreqs);
     }
     
     void SequenceSplitter::InputVisitor::OpMakeArray (const RegisterID& destination,
@@ -267,10 +251,7 @@ namespace s1
       
       parent.SetRegAvailability (destination, commonFreqs);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeArray> (destination, sources));
-      for (int f = 0; f < freqNum; f++)
-      {
-	if (commonFreqs & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, commonFreqs);
     }
 		      
     void SequenceSplitter::InputVisitor::OpExtractArrayElement (const RegisterID& destination,
@@ -296,10 +277,7 @@ namespace s1
       parent.SetRegAvailability (destination, commonFreqs);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpChangeArrayElement> (destination, source,
 											      index, newValue));
-      for (int f = 0; f < freqNum; f++)
-      {
-	if (commonFreqs & (1 << f)) parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, commonFreqs);
     }
     
     void SequenceSplitter::InputVisitor::OpGetArrayLength (const RegisterID& destination,
@@ -308,12 +286,7 @@ namespace s1
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpGetArrayLength> (destination, array));
       
       unsigned int srcAvail = parent.GetRegAvailability (array);
-      for (int f = 0; f < freqNum; f++)
-      {
-	if ((srcAvail & (1 << f)) == 0)
-	  continue;
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, srcAvail);
       parent.SetRegAvailability (destination, srcAvail);
     }
 
@@ -324,12 +297,7 @@ namespace s1
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpExtractVectorComponent> (destination, source, comp));
       
       unsigned int srcAvail = parent.GetRegAvailability (source);
-      for (int f = 0; f < freqNum; f++)
-      {
-	if ((srcAvail & (1 << f)) == 0)
-	  continue;
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, srcAvail);
       parent.SetRegAvailability (destination, srcAvail);
     }
     
@@ -367,12 +335,7 @@ namespace s1
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpUnaryOp> (destination, op, source));
       
       unsigned int srcAvail = parent.GetRegAvailability (source);
-      for (int f = 0; f < freqNum; f++)
-      {
-	if ((srcAvail & (1 << f)) == 0)
-	  continue;
-	parent.outputSeq[f]->AddOp (newSeqOp);
-      }
+      AddOpToSequences (newSeqOp, srcAvail);
       parent.SetRegAvailability (destination, srcAvail);
     }
     
@@ -696,6 +659,8 @@ namespace s1
       InputVisitor visitor (*this);
       
       inputSeq->Visit (visitor);
+      
+      // TODO: Insert 'uniform' sequence at start of both V/F sequence!
     }
     
     static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type)
@@ -707,9 +672,11 @@ namespace s1
       case parser::SemanticsHandler::Type::Sampler:
 	return freqFragment;
       case parser::SemanticsHandler::Type::Array:
-      case parser::SemanticsHandler::Type::Vector:
-      case parser::SemanticsHandler::Type::Matrix:
 	return GetDefaultFrequencyForType (type->GetArrayVectorMatrixBaseType());
+      case parser::SemanticsHandler::Type::Vector:
+	return freqVertex;
+      case parser::SemanticsHandler::Type::Matrix:
+	return freqUniform;
       }
       assert (false);
       return 0;

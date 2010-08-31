@@ -7,6 +7,7 @@ namespace s1
   {
     enum Frequency
     {
+      freqUniform,
       freqVertex,
       freqFragment,
       
@@ -15,6 +16,7 @@ namespace s1
     };
     enum
     {
+      freqFlagU = 1 << freqUniform,
       freqFlagV = 1 << freqVertex,
       freqFlagF = 1 << freqFragment,
     };

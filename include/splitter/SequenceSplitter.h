@@ -52,6 +52,8 @@ namespace s1
 	int ComputeHighestFreq (const std::vector<RegisterID>& sources);
 	unsigned int PromoteAll (int freq, const std::vector<RegisterID>& sources);
 	
+	void AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
+	
 	void SplitBlock (const SequencePtr& blockSequence,
 			 const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 			 const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
