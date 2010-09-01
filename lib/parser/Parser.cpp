@@ -320,7 +320,8 @@ namespace s1
     if (((currentToken.typeOrID == Lexer::Identifier)
 	    && (IsBinaryOperationToken (Peek ().typeOrID) 	// X op Y
 	      || (Peek ().typeOrID == Lexer::TernaryIf)))	// X ? ...
-	  || IsUnaryOperationToken (currentToken.typeOrID))	// !X, ~X ...
+	  || IsUnaryOperationToken (currentToken.typeOrID)	// !X, ~X ...
+	  || Peek ().typeOrID == Lexer::Semicolon)		// X; (expression is just identifier)
       return true;
     /* Check if function call - can be <Identifier> '('
        or <type> '(', where <type> can take up multiple tokens,
