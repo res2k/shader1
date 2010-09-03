@@ -50,7 +50,7 @@ namespace s1
       TypeImplPtr uintType;
       TypeImplPtr floatType;
       
-      std::string GetTypeString (const TypeImplPtr& type);
+      static std::string GetTypeString (const TypeImplPtr& type);
       
       typedef boost::shared_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
@@ -68,6 +68,7 @@ namespace s1
        * @{ */
       static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
       static BaseType DetectNumericType (const UnicodeString& numericStr);
+      static std::string GetTypeString (const TypePtr& type);
       /**@}*/
       
       /**\name Attribute utilities

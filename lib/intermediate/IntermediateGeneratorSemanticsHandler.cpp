@@ -106,7 +106,12 @@ namespace s1
       assert (false);
       return std::string ();
     }
-      
+    
+    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypePtr& type)
+    {
+      return GetTypeString (boost::shared_static_cast<TypeImpl> (type));
+    }
+ 
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
       const boost::shared_ptr<TypeImpl>& t1, const boost::shared_ptr<TypeImpl>& t2)
