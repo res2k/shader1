@@ -691,6 +691,7 @@ namespace s1
 	parent.SetRegAvailability (destination, returnFreq);
       }
       // Set availability of output values
+      assert (outputParamFreqs.size() == outParams.size());
       for (size_t i = 0; i < outParams.size(); i++)
       {
 	const RegisterID& reg = outParams[i];
@@ -725,6 +726,10 @@ namespace s1
       for (int f = 0; f < freqNum; f++)
       {
 	if (freqFuncIdents[f].isEmpty()) continue;
+	
+	// @@@ Somewhat crude: propagate all input vars to frequency of function split.
+	// (Needed for recursive funcs)
+	PromoteAll (f, inParams);
 	
 	// Add 'transfer' parameters to function call
 	std::vector<RegisterID> newOutParams (outParams);

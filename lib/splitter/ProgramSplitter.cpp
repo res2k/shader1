@@ -1,10 +1,12 @@
 #include "base/common.h"
 #include "base/hash_UnicodeString.h"
+#include "base/unordered_set"
 
 #include "splitter/ProgramSplitter.h"
 
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
+#include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "splitter/SequenceSplitter.h"
 
 #include <boost/foreach.hpp>
@@ -61,7 +63,15 @@ namespace s1
       }
       else
       {
-	bool isRecursive = false; // @@@ TODO: Check for recursion
+	SplitFunctionInfoPtr newFunc (boost::make_shared<SplitFunctionInfo> ());
+	splitFunctions[decoratedIdent] = newFunc;
+	
+	intermediate::ProgramFunctionPtr progFunc = FindProgramFunction (originalIdent);
+	  
+	SequenceSplitter seqSplit (*this);
+	seqSplit.SetInputSequence (progFunc->GetBody());
+	
+	bool isRecursive = CheckFuncRecursive (progFunc);
 	if (isRecursive)
 	{
 	  /* Recursion is tricky.
@@ -74,17 +84,44 @@ namespace s1
 	     -> Effectively, could give every variant of a func a distinctive
 	        arguments list...?
 	   */
+	  
+	  // Fake all inputs to fragment frequency
+	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
+	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
+	  {
+	    seqSplit.SetInputFreqFlags (funcParams[i].identifier,
+					(inputParamFreqFlags[i] & freqFlagU) | freqFlagF);
+	  }
+
+	  seqSplit.PerformSplit();
+	  
+	  // Extract output parameters, to return output value frequencies
+	  const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
+	  BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam, funcParams)
+	  {
+	    if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
+	    
+	    intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (funcParam.identifier);
+	    assert (exp != seqExports.end());
+	    
+	    intermediate::RegisterID seqRegID (exp->second);
+	    outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	  }
+	  newFunc->outputParamFreqs = outputParamFreqs;
+      
+	  // Generate 'split' functions
+	  if (seqSplit.GetOutputFragmentSequence()->GetNumOps() > 0)
+	  {
+	    UnicodeString funcFName ("fragment_");
+	    funcFName.append (decoratedIdent);
+	    parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
+	    AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence());
+	    freqFuncIdents[freqFragment] = funcFName;
+	    newFunc->funcFName = funcFName;
+	  }
 	}
 	else
 	{
-	  SplitFunctionInfoPtr newFunc (boost::make_shared<SplitFunctionInfo> ());
-	  splitFunctions[decoratedIdent] = newFunc;
-	  
-	  intermediate::ProgramFunctionPtr progFunc = FindProgramFunction (originalIdent);
-	  
-	  SequenceSplitter seqSplit (*this);
-	  seqSplit.SetInputSequence (progFunc->GetBody());
-	  
 	  // Connect the parameter frequencies to actual inputs
 	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
 	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
@@ -199,6 +236,116 @@ namespace s1
 												   sequence,
 												   false));
       outputProgram->AddFunction (newFunc);
+    }
+    
+    class ProgramSplitter::RecursionChecker : public intermediate::SequenceVisitor
+    {
+      ProgramSplitter& parent;
+      UnicodeString funcToCheck;
+      bool recursionFound;
+      
+      std::tr1::unordered_set<UnicodeString> seenFunctions;
+    public:
+      RecursionChecker (ProgramSplitter& parent, const UnicodeString& funcToCheck)
+       : parent (parent), funcToCheck (funcToCheck), recursionFound (false) {}
+      
+      bool WasRecursionFound() const { return recursionFound; }
+      
+      typedef intermediate::RegisterID RegisterID;
+      void OpConstBool (const RegisterID&, bool) {}
+      void OpConstInt (const RegisterID&, int) {}
+      void OpConstUInt (const RegisterID&, unsigned int) {}
+      void OpConstFloat (const RegisterID&, float) {}
+				
+      void OpAssign (const RegisterID&, const RegisterID&) {}
+				
+      void OpCast (const RegisterID&, BaseType, const RegisterID&) {}
+				  
+      void OpMakeVector (const RegisterID&, BaseType, const std::vector<RegisterID>&) {}
+
+      void OpMakeMatrix (const RegisterID&, BaseType, unsigned int, unsigned int,
+			 const std::vector<RegisterID>&) {}
+
+      void OpMakeArray (const RegisterID&, const std::vector<RegisterID>&) {}
+      void OpExtractArrayElement (const RegisterID&, const RegisterID&, const RegisterID&) {}
+      void OpChangeArrayElement (const RegisterID&, const RegisterID&, const RegisterID&, const RegisterID&) {}
+      void OpGetArrayLength (const RegisterID&, const RegisterID&) {}
+
+      void OpExtractVectorComponent (const RegisterID&, const RegisterID&, unsigned int) {}
+				
+      void OpArith (const RegisterID&, ArithmeticOp, const RegisterID&, const RegisterID&) {}
+      void OpCompare (const RegisterID&, CompareOp, const RegisterID&, const RegisterID&) {}
+      void OpLogic (const RegisterID&, LogicOp, const RegisterID&, const RegisterID&) {}
+      void OpUnary (const RegisterID&, UnaryOp, const RegisterID&) {}
+			      
+      void OpBlock (const intermediate::SequencePtr& subSequence,
+		    const intermediate::Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
+		    const intermediate::Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
+		    const std::vector<RegisterID>& writtenRegisters)
+      {
+	if (recursionFound) return;
+	subSequence->Visit (*this);
+      }
+			    
+      void OpBranch (const RegisterID& conditionReg,
+		      const intermediate::SequenceOpPtr& seqOpIf,
+		      const intermediate::SequenceOpPtr& seqOpElse)
+      {
+	if (recursionFound) return;
+	boost::shared_ptr<intermediate::SequenceOpBlock> ifBlock (
+	  boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpIf));
+	assert (ifBlock);
+	ifBlock->GetSequence()->Visit (*this);
+	
+	if (recursionFound) return;
+	boost::shared_ptr<intermediate::SequenceOpBlock> elseBlock (
+	  boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpElse));
+	assert (elseBlock);
+	elseBlock->GetSequence()->Visit (*this);
+      }
+      
+      void OpWhile (const RegisterID& conditionReg,
+		    const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+		    const intermediate::SequenceOpPtr& seqOpBody)
+      {
+	if (recursionFound) return;
+	boost::shared_ptr<intermediate::SequenceOpBlock> block (
+	  boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpBody));
+	assert (block);
+	block->GetSequence()->Visit (*this);
+      }
+			    
+      void OpReturn (const RegisterID&) {}
+      void OpFunctionCall (const RegisterID& destination,
+			   const UnicodeString& funcIdent,
+			   const std::vector<RegisterID>& inParams,
+			   const std::vector<RegisterID>& outParams)
+      {
+	if (recursionFound) return;
+	
+	if (funcIdent == funcToCheck)
+	{
+	  recursionFound = true;
+	  return;
+	}
+	
+	if (seenFunctions.find (funcIdent) == seenFunctions.end())
+	{
+	  seenFunctions.insert (funcIdent);
+	  
+	  intermediate::ProgramFunctionPtr func = parent.FindProgramFunction (funcIdent);
+	  func->GetBody()->Visit (*this);
+	}
+      }
+      
+      void OpBuiltinCall (const RegisterID&, intermediate::BuiltinFunction, const std::vector<RegisterID>&) {}
+    };
+    
+    bool ProgramSplitter::CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func)
+    {
+      RecursionChecker recCheck (*this, func->GetIdentifier());
+      func->GetBody()->Visit (recCheck);
+      return recCheck.WasRecursionFound();
     }
     
     void ProgramSplitter::SetInputProgram (const intermediate::ProgramPtr& program)

@@ -62,6 +62,9 @@ namespace s1
 			    const intermediate::ProgramFunctionPtr& originalFunc,
 			    const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
 			    const intermediate::SequencePtr& sequence);
+			    
+      class RecursionChecker;
+      bool CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func);
     public:
       void SetInputProgram (const intermediate::ProgramPtr& program);
       void SetInputFreqFlags (const UnicodeString& inpName, unsigned int flags);
