@@ -31,11 +31,10 @@ namespace s1
       };
       struct SplitFunctionInfo
       {
-	/*bool beingSetup;
-	
-	SplitFunctionInfo() : beingSetup (true) {}*/
 	UnicodeString funcVName;
 	UnicodeString funcFName;
+	std::vector<unsigned int> outputParamFreqs;
+	std::vector<FunctionTransferValues> transferValues[freqNum-1];
       };
       typedef boost::shared_ptr<SplitFunctionInfo> SplitFunctionInfoPtr;
       typedef std::tr1::unordered_map<UnicodeString, SplitFunctionInfoPtr> SplitFunctionInfoMap;

@@ -52,19 +52,12 @@ namespace s1
       SplitFunctionInfoMap::const_iterator splitFuncInfo = splitFunctions.find (decoratedIdent);
       if (splitFuncInfo != splitFunctions.end())
       {
-      #if 0
-	if (splitFuncInfo->second->beingSetup)
-	{
-	  /*
-	    Recursion:
-	    When coming upon an input frequency combination that is currently split,
-	    guess the frequencies of output parameters by choosing "all" frequencies...
-	  */
-	}
-	else
-	{
-	}
-      #endif
+	SplitFunctionInfoPtr funcInfo (splitFuncInfo->second);
+	freqFuncIdents[freqVertex] = funcInfo->funcVName;
+	freqFuncIdents[freqFragment] = funcInfo->funcFName;
+	outputParamFreqs = funcInfo->outputParamFreqs;
+	for (int f = 0; f < freqNum-1; f++)
+	  transferValues[f] = funcInfo->transferValues[f];
       }
       else
       {
@@ -144,6 +137,7 @@ namespace s1
 	    newTransferValue.valueType = regBank->GetOriginalType();
 	    transferValues[freqVertex].push_back (newTransferValue);
 	  }
+	  newFunc->transferValues[freqVertex] = transferValues[freqVertex];
 	  
 	  // Extract output parameters, to return output value frequencies
 	  const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
@@ -157,6 +151,7 @@ namespace s1
 	    intermediate::RegisterID seqRegID (exp->second);
 	    outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
 	  }
+	  newFunc->outputParamFreqs = outputParamFreqs;
       
 	  // Generate 'split' functions
 	  if ((seqSplit.GetOutputVertexSequence()->GetNumOps() > 0) || (extraParamsV.size() > 0))
