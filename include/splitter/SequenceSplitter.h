@@ -13,25 +13,10 @@ namespace s1
 {
   namespace splitter
   {
+    class ProgramSplitter;
+
     class SequenceSplitter
     {
-      /*
-      template<typename Extra>
-      class SequenceOpExtender
-      {
-	template<typename Base>
-	class Op : public Base, public Extra
-	{
-	public:
-	  Op() : Base () {}
-	  
-	  template<typename A1>
-	  Op (const A1& a1) : Base (a1) {}
-	};
-      };
-      
-      */
-      
       typedef intermediate::RegisterID RegisterID;
       typedef intermediate::Sequence Sequence;
       typedef intermediate::SequencePtr SequencePtr;
@@ -144,6 +129,8 @@ namespace s1
 			    const std::vector<RegisterID>& inParams);
       };
     public:
+      SequenceSplitter (ProgramSplitter& progSplit);
+      
       void SetInputSequence (const intermediate::SequencePtr& sequence)
       { inputSeq = sequence; }
       
@@ -151,14 +138,21 @@ namespace s1
       void SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags);
       void SetLocalRegFreqFlags (const RegisterID& regID, unsigned int freqFlags)
       { SetRegAvailability (regID, freqFlags); }
+      unsigned int GetLocalRegFreqFlags (const RegisterID& regID)
+      { return GetRegAvailability (regID); }
       
       void PerformSplit ();
+      
+      const std::vector<RegisterID>& GetTransferRegs (int srcFreq) const
+      { return transferRegs[srcFreq]; }
       
       intermediate::SequencePtr GetOutputVertexSequence ()
       { return outputSeq[freqVertex]; }
       intermediate::SequencePtr GetOutputFragmentSequence ()
       { return outputSeq[freqFragment]; }
     protected:
+      ProgramSplitter& progSplit;
+      
       intermediate::SequencePtr outputSeq[freqNum];
       
       /** Registers to transfer to next frequency.
@@ -169,9 +163,13 @@ namespace s1
       unsigned int GetRegAvailability (const RegisterID& reg);
       void SetRegAvailability (const RegisterID& regID, unsigned int freqFlags)
       { regAvailability[regID] = freqFlags; }
+      
+      UnicodeString GetTransferIdent ();
     private:
       typedef boost::unordered_map<RegisterID, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;
+      
+      unsigned int transferIdentNum;
     };
   } // namespace splitter
 } // namespace s1

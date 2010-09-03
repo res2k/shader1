@@ -3,6 +3,7 @@
 
 #include "splitter/SequenceSplitter.h"
 
+#include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceOp/SequenceOpArith.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
@@ -14,6 +15,7 @@
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "intermediate/SequenceOp/SequenceOpExtractArrayElement.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
+#include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "intermediate/SequenceOp/SequenceOpGetArrayLength.h"
 #include "intermediate/SequenceOp/SequenceOpLogic.h"
 #include "intermediate/SequenceOp/SequenceOpMakeArray.h"
@@ -22,9 +24,13 @@
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
+#include "splitter/ProgramSplitter.h"
 
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <iostream>
+
+#include <unicode/ustdio.h>
 
 namespace s1
 {
@@ -443,7 +449,7 @@ namespace s1
 						     const std::vector<RegisterID>& writtenRegisters,
 						     SequenceOpPtr* newSequences, bool keepEmpty)
     {
-      SequenceSplitter blockSplitter;
+      SequenceSplitter blockSplitter (parent.progSplit);
       blockSplitter.SetInputSequence (blockSequence);
       
       // Forward frequencies to subSeqSplitter
@@ -666,6 +672,72 @@ namespace s1
         When coming upon an input frequency combination that is currently split,
         guess the frequencies of output parameters by choosing "all" frequencies...
        */
+      
+      std::vector<unsigned int> inputParamFreqFlags;
+      BOOST_FOREACH(const RegisterID& reg, inParams)
+      {
+	inputParamFreqFlags.push_back (parent.GetRegAvailability (reg));
+      }
+      UnicodeString freqFuncIdents[freqNum];
+      unsigned int returnFreq = (1 << freqNum) - 1; // @@@ 'return' is just _so_ broken ...
+      std::vector<unsigned int> outputParamFreqs;
+      std::vector<ProgramSplitter::FunctionTransferValues> transferValues[freqNum-1];
+      parent.progSplit.GetSplitFunctions (funcIdent, inputParamFreqFlags, freqFuncIdents,
+					  returnFreq, outputParamFreqs,
+					  transferValues);
+	
+      if (destination.IsValid())
+      {
+	parent.SetRegAvailability (destination, returnFreq);
+      }
+      // Set availability of output values
+      for (size_t i = 0; i < outParams.size(); i++)
+      {
+	const RegisterID& reg = outParams[i];
+	parent.SetRegAvailability (reg, outputParamFreqs[i]);
+      }
+      
+      // Generate lists of registers used for 'transfer' between frequencies
+      std::vector<RegisterID> transferIn[freqNum];
+      std::vector<RegisterID> transferOut[freqNum];
+      for (int f = 0; f < freqNum-1; f++)
+      {
+	BOOST_FOREACH(const ProgramSplitter::FunctionTransferValues& tfv, transferValues[f])
+	{
+	  UnicodeString transferIdent (parent.GetTransferIdent ());
+	  
+	  std::string typeStr (
+	    intermediate::IntermediateGeneratorSemanticsHandler::GetTypeString (tfv.valueType));
+	  // Generate registers thrice so IDs are the same across all frequency program. (Makes life easier.)
+	  RegisterID regID (parent.outputSeq[freqUniform]->AllocateRegister (typeStr, tfv.valueType, transferIdent));
+	  RegisterID regID2 (parent.outputSeq[freqVertex]->AllocateRegister (typeStr, tfv.valueType, transferIdent));
+	  assert (regID == regID2);
+	  RegisterID regID3 (parent.outputSeq[freqFragment]->AllocateRegister (typeStr, tfv.valueType, transferIdent));
+	  assert (regID == regID3);
+	  
+	  transferOut[f].push_back (regID);
+	  transferIn[f+1].push_back (regID);
+	  parent.transferRegs[f].push_back (regID);
+	}
+      }
+      
+      
+      for (int f = 0; f < freqNum; f++)
+      {
+	if (freqFuncIdents[f].isEmpty()) continue;
+	
+	// Add 'transfer' parameters to function call
+	std::vector<RegisterID> newOutParams (outParams);
+	newOutParams.insert (newOutParams.end(), transferOut[f].begin(), transferOut[f].end());
+	std::vector<RegisterID> newInParams (inParams);
+	newInParams.insert (newInParams.end(), transferIn[f].begin(), transferIn[f].end());
+	
+	SequenceOpPtr newOp (boost::make_shared<intermediate::SequenceOpFunctionCall> (destination,
+										       freqFuncIdents[f],
+										       newInParams,
+										       newOutParams));
+	parent.outputSeq[f]->AddOp (newOp);
+      }
     }
 			  
     void SequenceSplitter::InputVisitor::OpBuiltinCall (const RegisterID& destination,
@@ -723,6 +795,10 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
+    SequenceSplitter::SequenceSplitter (ProgramSplitter& progSplit) : progSplit (progSplit)
+    {
+    }
+    
     void SequenceSplitter::SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags)
     {
       paramFlags[input] = freqFlags;
@@ -730,6 +806,7 @@ namespace s1
     
     void SequenceSplitter::PerformSplit ()
     {
+      transferIdentNum = 0;
       regAvailability.clear();
       transferRegs[0].clear();
       for (int f = 0; f < freqNum; f++)
@@ -823,6 +900,16 @@ namespace s1
 	return defaultAvail;
       }
       return avail->second;
+    }
+
+    UnicodeString SequenceSplitter::GetTransferIdent ()
+    {
+      UnicodeString transferIdent ("transfer$");
+      UChar transferSuffix[charsToFormatUint + 1];
+      u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (UChar),
+		  "%u", transferIdentNum++);
+      transferIdent.append (transferSuffix);
+      return transferIdent;
     }
   } // namespace splitter
 } // namespace s1
