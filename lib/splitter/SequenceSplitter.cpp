@@ -454,15 +454,17 @@ namespace s1
       
       // Forward frequencies to subSeqSplitter
       std::vector<RegisterID> newReadRegisters[freqNum];
-      for (Sequence::IdentifierToRegIDMap::const_iterator imports = identToRegIDs_imp.begin();
-	   imports != identToRegIDs_imp.end();
+      const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
+      for (Sequence::RegisterImpMappings::const_iterator imports = blockImports.begin();
+	   imports != blockImports.end();
 	   ++imports)
       {
-	RegisterID reg (parent.inputSeq->GetIdentifierRegisterID (imports->first));
-	RegisterID reg_subseq (imports->second);
+	Sequence::IdentifierToRegIDMap::const_iterator impRegID = identToRegIDs_imp.find (imports->first);
+	assert (impRegID != identToRegIDs_imp.end());
+	RegisterID reg (impRegID->second);
 	
 	unsigned int reg_subseqAvail = parent.GetRegAvailability (reg);
-	blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
+	blockSplitter.SetInputFreqFlags (imports->first, reg_subseqAvail);
 	for (int f = 0; f < freqNum; f++)
 	{
 	  if ((reg_subseqAvail & (1 << f)) == 0) continue;
@@ -474,11 +476,14 @@ namespace s1
       
       // Compute new writtenRegisters, update availability flags
       std::vector<RegisterID> newWrittenRegisters[freqNum];
-      for (Sequence::IdentifierToRegIDMap::const_iterator exports = identToRegIDs_exp.begin();
-	   exports != identToRegIDs_exp.end();
+      const Sequence::RegisterExpMappings& blockExports = blockSequence->GetExports();
+      for (Sequence::RegisterExpMappings::const_iterator exports = blockExports.begin();
+	   exports != blockExports.end();
 	   ++exports)
       {
-	RegisterID reg (parent.inputSeq->GetIdentifierRegisterID (exports->first));
+	Sequence::IdentifierToRegIDMap::const_iterator expRegID = identToRegIDs_exp.find (exports->first);
+	assert (expRegID != identToRegIDs_exp.end());
+	RegisterID reg (expRegID->second);
 	RegisterID reg_subseq (exports->second);
 	
 	unsigned int reg_subseqAvail = blockSplitter.GetRegAvailability (reg_subseq);
@@ -488,7 +493,7 @@ namespace s1
 	  newWrittenRegisters[f].push_back (reg);
 	}
 	parent.SetRegAvailability (reg, reg_subseqAvail);
-      }      
+      }
       
       for (int f = 0; f < freqNum; f++)
       {
@@ -575,7 +580,7 @@ namespace s1
 	SplitBlock (elseBlock->GetSequence(),
 		    elseBlock->GetImportIdentToRegs(),
 		    elseBlock->GetExportIdentToRegs(),
-		    writtenRegs, newIfOps, true);
+		    writtenRegs, newElseOps, true);
       }
       /* @@@ CHECK: Registers are supposed to be written to in both branches.
          Frequencies of those regs should be intersection of frequencies
@@ -729,7 +734,7 @@ namespace s1
 	
 	// @@@ Somewhat crude: propagate all input vars to frequency of function split.
 	// (Needed for recursive funcs)
-	PromoteAll (f, inParams);
+	PromoteAll (freqFragment, inParams);
 	
 	// Add 'transfer' parameters to function call
 	std::vector<RegisterID> newOutParams (outParams);

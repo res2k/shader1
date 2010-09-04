@@ -85,17 +85,9 @@ namespace s1
 	        arguments list...?
 	   */
 	  
-	  // Fake all inputs to fragment frequency
+	  /* Fake output parameter frequencies to 'fragment'
+	     (so the recursive call will have something) */
 	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
-	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
-	  {
-	    seqSplit.SetInputFreqFlags (funcParams[i].identifier,
-					(inputParamFreqFlags[i] & freqFlagU) | freqFlagF);
-	  }
-
-	  seqSplit.PerformSplit();
-	  
-	  // Extract output parameters, to return output value frequencies
 	  const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
 	  BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam, funcParams)
 	  {
@@ -105,20 +97,29 @@ namespace s1
 	    assert (exp != seqExports.end());
 	    
 	    intermediate::RegisterID seqRegID (exp->second);
-	    outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	    //outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	    outputParamFreqs.push_back (freqFlagF);
 	  }
 	  newFunc->outputParamFreqs = outputParamFreqs;
       
 	  // Generate 'split' functions
-	  if (seqSplit.GetOutputFragmentSequence()->GetNumOps() > 0)
+	  UnicodeString funcFName ("fragment_");
+	  funcFName.append (decoratedIdent);
+	  freqFuncIdents[freqFragment] = funcFName;
+	  newFunc->funcFName = funcFName;
+	  
+	  // Fake all inputs to fragment frequency
+	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
 	  {
-	    UnicodeString funcFName ("fragment_");
-	    funcFName.append (decoratedIdent);
-	    parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
-	    AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence());
-	    freqFuncIdents[freqFragment] = funcFName;
-	    newFunc->funcFName = funcFName;
+	    seqSplit.SetInputFreqFlags (funcParams[i].identifier,
+					(inputParamFreqFlags[i] & freqFlagU) | freqFlagF);
 	  }
+
+	  seqSplit.PerformSplit();
+	  
+	  // Generate 'split' functions
+	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
+	  AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence());
 	}
 	else
 	{
