@@ -462,7 +462,9 @@ namespace s1
 						     const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 						     const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
 						     const std::vector<RegisterID>& writtenRegisters,
-						     SequenceOpPtr* newSequences, bool keepEmpty)
+						     SequenceOpPtr* newSequences,
+						     const LoopedRegs& loopedRegs,
+						     bool keepEmpty)
     {
       SequenceSplitter blockSplitter (parent.progSplit);
       blockSplitter.SetInputSequence (blockSequence);
@@ -477,15 +479,26 @@ namespace s1
 	Sequence::IdentifierToRegIDMap::const_iterator impRegID = identToRegIDs_imp.find (imports->first);
 	assert (impRegID != identToRegIDs_imp.end());
 	RegisterID reg (impRegID->second);
+	RegisterID reg_subseq (imports->second);
+
+	BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+	{
+	  /* Blocks import the 'written' version of a looped reg, replace with original
+	     for proper frequency propagation */
+	  if (reg == loopedReg.second)
+	  {
+	    reg = loopedReg.first;
+	  }
+	}
 	
 	unsigned int reg_subseqAvail = parent.GetRegAvailability (reg);
-	blockSplitter.SetInputFreqFlags (imports->first, reg_subseqAvail);
+	blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
 	for (int f = 0; f < freqNum; f++)
 	{
 	  if ((reg_subseqAvail & (1 << f)) == 0) continue;
 	  newReadRegisters[f].push_back (reg);
 	}
-      }      
+      }
       
       blockSplitter.PerformSplit();
       
@@ -584,7 +597,7 @@ namespace s1
 	SplitBlock (ifBlock->GetSequence(),
 		    ifBlock->GetImportIdentToRegs(),
 		    ifBlock->GetExportIdentToRegs(),
-		    writtenRegs, newIfOps, true);
+		    writtenRegs, newIfOps, LoopedRegs(), true);
       }
       SequenceOpPtr newElseOps[freqNum];
       {
@@ -595,7 +608,7 @@ namespace s1
 	SplitBlock (elseBlock->GetSequence(),
 		    elseBlock->GetImportIdentToRegs(),
 		    elseBlock->GetExportIdentToRegs(),
-		    writtenRegs, newElseOps, true);
+		    writtenRegs, newElseOps, LoopedRegs(), true);
       }
       /* @@@ CHECK: Registers are supposed to be written to in both branches.
          Frequencies of those regs should be intersection of frequencies
@@ -624,7 +637,6 @@ namespace s1
 
       // Compute highest frequency of condition and all loop inputs
       std::vector<RegisterID> allInputs;
-      allInputs.push_back (conditionReg);
       {
 	for (std::vector<std::pair<RegisterID, RegisterID> >::const_iterator loopedReg = loopedRegs.begin();
 	     loopedReg != loopedRegs.end();
@@ -639,6 +651,17 @@ namespace s1
       int highestFreq = freqHighest/*ComputeHighestFreq (allInputs)*/;
       unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
       
+      {
+	for (std::vector<std::pair<RegisterID, RegisterID> >::const_iterator loopedReg = loopedRegs.begin();
+	     loopedReg != loopedRegs.end();
+	     ++loopedReg)
+	{
+	  // Set 'writeable' looped regs to same frequency as originals
+	  parent.SetRegAvailability (loopedReg->second,
+				     parent.GetRegAvailability (loopedReg->first));
+	}      
+      }
+      
       // Output branch op to frequencies supported by condition and all sequence inputs
       SequenceOpPtr newOps[freqNum];
       {
@@ -649,7 +672,7 @@ namespace s1
 	SplitBlock (body->GetSequence(),
 		    body->GetImportIdentToRegs(),
 		    body->GetExportIdentToRegs(),
-		    writtenRegs, newOps, true);
+		    writtenRegs, newOps, loopedRegs, true);
       }
       // TODO: Could filter looped regs
       for (int f = 0; f < freqNum; f++)
@@ -832,7 +855,7 @@ namespace s1
     void SequenceSplitter::PerformSplit ()
     {
       transferIdentNum = 0;
-      regAvailability.clear();
+      regAvailability = setAvailability;
       transferRegs[0].clear();
       for (int f = 0; f < freqNum; f++)
       {
@@ -869,7 +892,7 @@ namespace s1
 	  outputSeq[f]->SetExport (expMap->first, expMap->second);
 	}
       }
-	
+      
       InputVisitor visitor (*this);
       
       inputSeq->Visit (visitor);

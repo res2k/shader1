@@ -39,11 +39,15 @@ namespace s1
 	
 	void AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
 	
+	typedef std::pair<RegisterID, RegisterID> LoopedReg;
+	typedef std::vector<LoopedReg> LoopedRegs;
 	void SplitBlock (const SequencePtr& blockSequence,
 			 const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
 			 const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
 			 const std::vector<RegisterID>& writtenRegisters,
-			 SequenceOpPtr* newSequences, bool keepEmpty = false);
+			 SequenceOpPtr* newSequences,
+			 const LoopedRegs& loopedRegs = LoopedRegs(),
+			 bool keepEmpty = false);
       public:
 	InputVisitor (SequenceSplitter& parent);
 	
@@ -116,7 +120,7 @@ namespace s1
 		       const SequenceOpPtr& seqOpIf,
 		       const SequenceOpPtr& seqOpElse);
 	void OpWhile (const RegisterID& conditionReg,
-		      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+		      const LoopedRegs& loopedRegs,
 		      const SequenceOpPtr& seqOpBody);
 			      
 	void OpReturn (const RegisterID& retValReg);
@@ -137,9 +141,9 @@ namespace s1
       // set input param frequencies
       void SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags);
       void SetLocalRegFreqFlags (const RegisterID& regID, unsigned int freqFlags)
-      { SetRegAvailability (regID, freqFlags); }
+      { setAvailability[regID] = freqFlags; }
       unsigned int GetLocalRegFreqFlags (const RegisterID& regID)
-      { return GetRegAvailability (regID); }
+      { return setAvailability[regID]; }
       
       void PerformSplit ();
       
@@ -168,6 +172,7 @@ namespace s1
     private:
       typedef boost::unordered_map<RegisterID, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;
+      AvailabilityMap setAvailability;
       
       unsigned int transferIdentNum;
     };
