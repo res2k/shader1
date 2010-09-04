@@ -51,10 +51,12 @@ namespace s1
       // Sanity checks
       assert (f < freqNum);
       assert (f <= frequency);
+      int lowestFreq = f;
       // Promote register until the requested frequence is reached
       while (f < frequency)
       {
-	parent.transferRegs[f].push_back (reg);
+	if (lowestFreq != freqUniform) // Hack: don't transfer 'uniform' values
+	  parent.transferRegs[f].push_back (reg);
 	f++;
 	availability |= (1 << f);
       }
