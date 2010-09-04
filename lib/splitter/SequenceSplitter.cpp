@@ -87,6 +87,14 @@ namespace s1
       PromoteRegister (source1, highestFreq, src1Avail);
       PromoteRegister (source2, highestFreq, src2Avail);
       
+      /* Hack: If both sources are available in uniform freq,
+         _only_ add op to uniform freq - uniform ops will later be
+         copied into vertex and fragment ops anyway */
+      if (((src1Avail & freqFlagU) != 0) && ((src2Avail & freqFlagU) != 0))
+      {
+	src1Avail = src2Avail = freqFlagU;
+      }
+      
       unsigned int destAvail = 0;
       // Add operation to all frequencies that are supported by both operands
       for (int f = 0; f < freqNum; f++)
@@ -142,6 +150,11 @@ namespace s1
 
     void SequenceSplitter::InputVisitor::AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask)
     {
+      /* Hack: If op is _also_ executed in uniform freq,
+         _only_ add op to uniform freq - uniform ops will later be
+         copied into vertex and fragment ops anyway */
+      if (freqMask & freqFlagU) freqMask = freqFlagU;
+      
       for (int f = 0; f < freqNum; f++)
       {
 	if (freqMask & (1 << f)) parent.outputSeq[f]->AddOp (op);
