@@ -77,7 +77,7 @@ int main (const int argc, const char* const argv[])
   }
   
   ErrorHandler errorHandler;
-  std::ifstream inputFile (argv[1], std::ios_base::in | std::ios_base::binary);
+  std::ifstream inputFile (inputFileName, std::ios_base::in | std::ios_base::binary);
   UnicodeStream uniStream (inputFile, "utf-8");
   // Skip BOM
   if (*uniStream == 0xFEFF) ++uniStream;
