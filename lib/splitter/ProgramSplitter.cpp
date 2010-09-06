@@ -375,6 +375,8 @@ namespace s1
 	
 	parser::SemanticsHandler::Scope::FunctionFormalParameters vParams;
 	parser::SemanticsHandler::Scope::FunctionFormalParameters fParams;
+	typedef std::pair<UnicodeString, int> ParamFreqPair;
+	std::vector<ParamFreqPair> allFrequencies;
 	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
 	{
 	  int paramFreq;
@@ -392,6 +394,8 @@ namespace s1
 	    vParams.push_back (param);
 	  if ((paramFreq & (freqFlagU | freqFlagF)) != 0)
 	    fParams.push_back (param);
+	  
+	  allFrequencies.push_back (std::make_pair (param.identifier, paramFreq));
 	}
 	
 	splitter.PerformSplit();
@@ -405,7 +409,7 @@ namespace s1
 												   vParams,
 												   splitter.GetOutputVertexSequence(),
 												   func->IsEntryFunction()));
-	funcV->SetExecutionFrequence (freqVertex);
+	funcV->SetExecutionFrequency (freqVertex);
 	outputProgram->AddFunction (funcV);
 
 	UnicodeString funcFName ("fragment_");
@@ -417,7 +421,7 @@ namespace s1
 												   fParams,
 												   splitter.GetOutputFragmentSequence(),
 												   func->IsEntryFunction()));
-	funcF->SetExecutionFrequence (freqFragment);
+	funcF->SetExecutionFrequency (freqFragment);
 	outputProgram->AddFunction (funcF);
 	
 	const std::vector<intermediate::RegisterID>& transverV2F = splitter.GetTransferRegs (freqVertex);
@@ -430,6 +434,12 @@ namespace s1
 	  outputProgram->AddTransferValue (regBank->GetOriginalType(), regPtr->GetName());
 	  funcV->SetTransferMapping (regPtr->GetName(), reg);
 	  funcF->SetTransferMapping (regPtr->GetName(), reg);
+	}
+	
+	BOOST_FOREACH(const ParamFreqPair& pfp, allFrequencies)
+	{
+	  funcV->SetParameterFrequency (pfp.first, pfp.second);
+	  funcF->SetParameterFrequency (pfp.first, pfp.second);
 	}
       }
     }

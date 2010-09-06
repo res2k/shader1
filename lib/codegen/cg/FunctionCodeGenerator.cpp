@@ -43,8 +43,10 @@ namespace s1
 	funcDecl.append (identifier);
 	funcDecl.append (" (");
 	
+	const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies());
+	
 	std::tr1::unordered_set<UnicodeString> paramImports;
-	std::vector<std::string> inParams;
+	std::vector<std::pair<std::string, UnicodeString> > inParams;
 	std::vector<std::string> outParams;
 	const FunctionFormalParameters& params (func->GetParams());
 	for (FunctionFormalParameters::const_iterator param = params.begin();
@@ -66,7 +68,7 @@ namespace s1
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
-	    inParams.push_back (paramStr);
+	    inParams.push_back (std::make_pair (paramStr, param->identifier));
 	    
 	    nameRes.inParamMap[param->identifier] = paramIdent;
 	  }
@@ -110,7 +112,7 @@ namespace s1
 	    paramStr.append (" ");
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
-	    inParams.push_back (paramStr);
+	    inParams.push_back (std::make_pair (paramStr, import->first));
 	    
 	    nameRes.inParamMap[import->first] = paramIdent;
 	  }
@@ -144,17 +146,27 @@ namespace s1
 	
 	if (func->IsEntryFunction () && doTransfer)
 	{
-	  if (func->GetExecutionFrequence() == splitter::freqVertex)
+	  if (func->GetExecutionFrequency() == splitter::freqVertex)
 	    paramAdder.Add ("out ", "V2F v2f");
 	  else
 	    paramAdder.Add ("in ", "V2F v2f");
 	}
 	
-	for (std::vector<std::string>::const_iterator inParam (inParams.begin());
+	for (std::vector<std::pair<std::string, UnicodeString> >::const_iterator inParam (inParams.begin());
 	     inParam != inParams.end();
 	     ++inParam)
 	{
-	  paramAdder.Add ("in ", *inParam);
+	  const char* variability = "in ";
+	  intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam->second);
+	  if (pf != paramFreqs.end())
+	  {
+	    if (pf->second & splitter::freqFlagU)
+	      variability = "uniform in ";
+	    else if (pf->second & (splitter::freqFlagV | splitter::freqFlagF))
+	      variability = "varying in ";
+	  }
+	  
+	  paramAdder.Add (variability, inParam->first);
 	}
 	for (std::vector<std::string>::const_iterator outParam (outParams.begin());
 	     outParam != outParams.end();
@@ -176,7 +188,7 @@ namespace s1
       
 	if (func->IsEntryFunction () && doTransfer)
 	{
-	  if (func->GetExecutionFrequence() == splitter::freqVertex)
+	  if (func->GetExecutionFrequency() == splitter::freqVertex)
 	    transferOut = &(func->GetTransferMappings());
 	  else
 	    transferIn = &(func->GetTransferMappings());

@@ -38,15 +38,22 @@ namespace s1
       bool IsEntryFunction() const
       { return isEntryFunction; }
       
-      void SetExecutionFrequence (int freq) { execFreq = freq; }
-      int GetExecutionFrequence () const { return execFreq; }
+      void SetExecutionFrequency (int freq) { execFreq = freq; }
+      int GetExecutionFrequency () const { return execFreq; }
       
       void SetTransferMapping (const UnicodeString& transferVal,
 			       const RegisterID& programReg);
       typedef std::vector<std::pair<UnicodeString, RegisterID> > TransferMappings;
       const TransferMappings& GetTransferMappings () const { return transferMappings; }
+      
+      void SetParameterFrequency (const UnicodeString& param, int freq)
+      { paramFreqMap[param] = freq; }
+      typedef std::tr1::unordered_map<UnicodeString, int> ParameterFrequencyMap;
+      const ParameterFrequencyMap& GetParameterFrequencies() const
+      { return paramFreqMap; }
     private:
       TransferMappings transferMappings;
+      ParameterFrequencyMap paramFreqMap;
     };
   } // namespace intermediate
 } // namespace s1
