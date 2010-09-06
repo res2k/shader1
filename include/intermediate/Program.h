@@ -2,6 +2,7 @@
 #define __INTERMEDIATE_PROGRAM_H__
 
 #include "forwarddecl.h"
+#include "IntermediateGeneratorSemanticsHandler.h"
 
 #include <vector>
 
@@ -20,6 +21,13 @@ namespace s1
       
       size_t GetNumFunctions () const;
       ProgramFunctionPtr GetFunction (size_t n) const;
+      
+      void AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
+			     const UnicodeString& name);
+      typedef std::vector<std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, UnicodeString> > TransferValues;
+      const TransferValues& GetTransferValues () const { return transferValues; }
+    private:
+      TransferValues transferValues;
     };
   } // namespace intermediate
 } // namespace s1

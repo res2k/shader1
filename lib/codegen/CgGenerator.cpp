@@ -1,3 +1,5 @@
+#include <boost/cstdint.hpp>
+
 #include "codegen/CgGenerator.h"
 
 #include "cg/ProgramCodeGenerator.h"

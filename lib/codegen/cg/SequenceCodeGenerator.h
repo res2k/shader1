@@ -3,6 +3,7 @@
 
 #include "codegen/CgGenerator.h"
 #include "codegen/StringsArray.h"
+#include "intermediate/ProgramFunction.h"
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -149,6 +150,8 @@ namespace s1
       
       const intermediate::Sequence& seq;
       ImportedNameResolver* nameRes;
+      const intermediate::ProgramFunction::TransferMappings& transferIn;
+      const intermediate::ProgramFunction::TransferMappings& transferOut;
       StringsArrayPtr strings;
       
       typedef boost::unordered_map<RegisterID, std::string> RegistersToIDMap;
@@ -158,7 +161,9 @@ namespace s1
 					 const std::string& initializer = std::string());
     public:
       SequenceCodeGenerator (const intermediate::Sequence& seq,
-			     ImportedNameResolver* nameRes);
+			     ImportedNameResolver* nameRes,
+			     const intermediate::ProgramFunction::TransferMappings& transferIn,
+			     const intermediate::ProgramFunction::TransferMappings& transferOut);
       
       StringsArrayPtr Generate ();
     };

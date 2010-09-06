@@ -6,6 +6,7 @@
 #include "parser/SemanticsHandler.h"
 
 #include "forwarddecl.h"
+#include "RegisterID.h"
 
 namespace s1
 {
@@ -18,6 +19,7 @@ namespace s1
       parser::SemanticsHandler::Scope::FunctionFormalParameters params;
       SequencePtr body;
       bool isEntryFunction;
+      int execFreq;
     public:
       ProgramFunction (const UnicodeString& identifier,
 		       const parser::SemanticsHandler::TypePtr& returnType,
@@ -35,6 +37,16 @@ namespace s1
       { return body; }
       bool IsEntryFunction() const
       { return isEntryFunction; }
+      
+      void SetExecutionFrequence (int freq) { execFreq = freq; }
+      int GetExecutionFrequence () const { return execFreq; }
+      
+      void SetTransferMapping (const UnicodeString& transferVal,
+			       const RegisterID& programReg);
+      typedef std::vector<std::pair<UnicodeString, RegisterID> > TransferMappings;
+      const TransferMappings& GetTransferMappings () const { return transferMappings; }
+    private:
+      TransferMappings transferMappings;
     };
   } // namespace intermediate
 } // namespace s1

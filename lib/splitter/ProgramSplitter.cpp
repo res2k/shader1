@@ -386,6 +386,7 @@ namespace s1
 												   func->GetParams(),
 												   splitter.GetOutputVertexSequence(),
 												   func->IsEntryFunction()));
+	funcV->SetExecutionFrequence (freqVertex);
 	outputProgram->AddFunction (funcV);
 
 	UnicodeString funcFName ("fragment_");
@@ -396,7 +397,20 @@ namespace s1
 												   func->GetParams(),
 												   splitter.GetOutputFragmentSequence(),
 												   func->IsEntryFunction()));
+	funcF->SetExecutionFrequence (freqFragment);
 	outputProgram->AddFunction (funcF);
+	
+	const std::vector<intermediate::RegisterID>& transverV2F = splitter.GetTransferRegs (freqVertex);
+	BOOST_FOREACH(const intermediate::RegisterID& reg, transverV2F)
+	{
+	  intermediate::Sequence::RegisterBankPtr regBank;
+	  intermediate::Sequence::RegisterPtr regPtr (
+	    splitter.GetOutputVertexSequence()->QueryRegisterPtrFromID (reg, regBank));
+	  
+	  outputProgram->AddTransferValue (regBank->GetOriginalType(), regPtr->GetName());
+	  funcV->SetTransferMapping (regPtr->GetName(), reg);
+	  funcF->SetTransferMapping (regPtr->GetName(), reg);
+	}
       }
     }
     

@@ -1,3 +1,4 @@
+#include <boost/cstdint.hpp>
 #include "intermediate/Program.h"
 
 namespace s1
@@ -17,6 +18,12 @@ namespace s1
     ProgramFunctionPtr Program::GetFunction (size_t n) const
     {
       return functions[n];
+    }
+    
+    void Program::AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
+				    const UnicodeString& name)
+    {
+      transferValues.push_back (std::make_pair (type, name));
     }
   } // namespace intermediate
 } // namespace s1

@@ -56,7 +56,9 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
       typedef SequenceCodeGenerator Superclass;
     
       TestSequenceCodeGenerator (const Sequence& seq, ImportedNameResolver* nameRes)
-       : SequenceCodeGenerator (seq, nameRes) {}
+       : SequenceCodeGenerator (seq, nameRes,
+				ProgramFunction::TransferMappings(),
+				ProgramFunction::TransferMappings()) {}
        
       using Superclass::GetOutputRegisterName;
     };

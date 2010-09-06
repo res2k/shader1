@@ -418,7 +418,9 @@ namespace s1
       }
       
       SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID_imp, identToRegID_exp);
-      SequenceCodeGenerator codegen (*seq, &nameRes);
+      SequenceCodeGenerator codegen (*seq, &nameRes,
+				     intermediate::ProgramFunction::TransferMappings (),
+				     intermediate::ProgramFunction::TransferMappings ());
       StringsArrayPtr blockStrings (codegen.Generate());
       if (blockStrings->Size() > 0)
       {
@@ -561,8 +563,10 @@ namespace s1
     //-----------------------------------------------------------------------
 		      
     CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,
-							       ImportedNameResolver* nameRes)
-     : seq (seq), nameRes (nameRes)
+							       ImportedNameResolver* nameRes,
+							       const intermediate::ProgramFunction::TransferMappings& transferIn,
+							       const intermediate::ProgramFunction::TransferMappings& transferOut)
+     : seq (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut)
     {
     }
     
@@ -586,10 +590,32 @@ namespace s1
 	  /* else: no ID, value is undefined; leave undefined in this block, too */
 	}
       }
+      // Generate transfer ops
+      {
+	for (intermediate::ProgramFunction::TransferMappings::const_iterator transfer = transferIn.begin();
+	     transfer != transferIn.end();
+	     ++transfer)
+	{
+	  std::string transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
+	  transferIdent.append (CgGenerator::NameToCgIdentifier (transfer->first));
+	  visitor.EmitAssign (transfer->second, transferIdent.c_str());
+	}
+      }
       
       // Generate code for actual operations
       seq.Visit (visitor);
       
+      // Generate transfer ops
+      {
+	for (intermediate::ProgramFunction::TransferMappings::const_iterator transfer = transferOut.begin();
+	     transfer != transferOut.end();
+	     ++transfer)
+	{
+	  std::string transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
+	  transferIdent.append (CgGenerator::NameToCgIdentifier (transfer->first));
+	  visitor.EmitAssign (transferIdent.c_str(), transfer->second);
+	}
+      }
       // 'Export' variables to outer scope
       {
 	const intermediate::Sequence::RegisterExpMappings& exports = seq.GetExports();

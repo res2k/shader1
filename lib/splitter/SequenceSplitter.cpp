@@ -55,9 +55,12 @@ namespace s1
       // Promote register until the requested frequence is reached
       while (f < frequency)
       {
-	if (lowestFreq != freqUniform) // Hack: don't transfer 'uniform' values
-	  parent.transferRegs[f].push_back (reg);
 	f++;
+	if ((availability & (1 << f)) == 0)
+	{
+	  if (lowestFreq != freqUniform) // Hack: don't transfer 'uniform' values
+	    parent.transferRegs[f-1].push_back (reg);
+	}
 	availability |= (1 << f);
       }
       parent.SetRegAvailability (reg, availability);

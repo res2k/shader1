@@ -4,6 +4,7 @@
 
 #include "base/unordered_set"
 #include "intermediate/ProgramFunction.h"
+#include "splitter/Frequency.h"
 #include "SequenceCodeGenerator.h"
 
 #include <boost/make_shared.hpp>
@@ -23,7 +24,8 @@ namespace s1
       paramStr.append (attrStr);
     }
 	  
-    StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func)
+    StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
+								  bool doTransfer)
     {
       typedef parser::SemanticsHandler::Scope::FunctionFormalParameters FunctionFormalParameters;
       
@@ -133,6 +135,15 @@ namespace s1
 	}
 	
 	ParamAdder paramAdder;
+	
+	if (func->IsEntryFunction () && doTransfer)
+	{
+	  if (func->GetExecutionFrequence() == splitter::freqVertex)
+	    paramAdder.Add ("out ", "V2F v2f");
+	  else
+	    paramAdder.Add ("in ", "V2F v2f");
+	}
+	
 	for (std::vector<std::string>::const_iterator inParam (inParams.begin());
 	     inParam != inParams.end();
 	     ++inParam)
@@ -152,8 +163,20 @@ namespace s1
 	resultStrings->AddString (funcDecl);
       }
       resultStrings->AddString (std::string ("{"));
+
+      intermediate::ProgramFunction::TransferMappings emptyTransfer;
+      const intermediate::ProgramFunction::TransferMappings* transferIn = &emptyTransfer;
+      const intermediate::ProgramFunction::TransferMappings* transferOut = &emptyTransfer;
       
-      SequenceCodeGenerator seqGen (*(func->GetBody()), &nameRes);
+	if (func->IsEntryFunction () && doTransfer)
+	{
+	  if (func->GetExecutionFrequence() == splitter::freqVertex)
+	    transferOut = &(func->GetTransferMappings());
+	  else
+	    transferIn = &(func->GetTransferMappings());
+	}
+      
+      SequenceCodeGenerator seqGen (*(func->GetBody()), &nameRes, *transferIn, *transferOut);
       resultStrings->AddStrings (*(seqGen.Generate()), 2);
       
       resultStrings->AddString (std::string ("}"));
