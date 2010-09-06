@@ -43,7 +43,17 @@ namespace s1
       {
 	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
 	FunctionCodeGenerator funcGen;
-	resultStrings->AddStrings (*(funcGen.Generate (func, transferValues.size() > 0)));
+	UnicodeString vertexOutput;
+	UnicodeString fragmentOutput;
+	if (func->IsEntryFunction())
+	{
+	  vertexOutput = prog->GetVertexOutputParameter();
+	  fragmentOutput = prog->GetFragmentOutputParameter();
+	}
+	resultStrings->AddStrings (*(funcGen.Generate (func,
+						       vertexOutput,
+						       fragmentOutput,
+						       transferValues.size() > 0)));
 	resultStrings->AddString (std::string ());
       }
       

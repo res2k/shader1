@@ -15,6 +15,7 @@
 
 #include "ErrorHandler.h"
 #include <boost/make_shared.hpp>
+#include <boost/foreach.hpp>
 #include <string.h>
 
 using namespace s1;
@@ -146,9 +147,53 @@ int main (const int argc, const char* const argv[])
     }
   }
 #else
+  intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
+  // Determine output values
+  {
+    UnicodeString vertexOutput;
+    UnicodeString fragmentOutput;
+    
+    for (size_t i = 0; i < prog->GetNumFunctions(); i++)
+    {
+      intermediate::ProgramFunctionPtr func = prog->GetFunction (i);
+      if (!func->IsEntryFunction()) continue;
+      
+      const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = func->GetParams();
+      BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, funcParams)
+      {
+	if (!(param.dir & parser::SemanticsHandler::Scope::dirOut)) continue;
+	
+	// Look for float4 output
+	if (param.type->GetTypeClass() != parser::SemanticsHandler::Type::Vector) continue;
+	if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != parser::SemanticsHandler::Float) continue;
+	if (param.type->GetVectorTypeComponents() != 4) continue;
+	
+	// Parameter qualifies
+	if (vertexOutput.isEmpty())
+	  vertexOutput = param.identifier;
+	else if (fragmentOutput.isEmpty())
+	  fragmentOutput = param.identifier;
+	else
+	{
+	  // Make 'proper' warning
+	  std::cerr << "Entry function has too many 'float4' outputs" << std::endl;
+	}
+      }
+    }
+    
+    if (vertexOutput.isEmpty() || fragmentOutput.isEmpty())
+    {
+      // Make 'proper' warning
+      std::cerr << "Entry function has not enough 'float4' outputs" << std::endl;
+    }
+    
+    prog->SetVertexOutputParameter (vertexOutput);
+    prog->SetFragmentOutputParameter (fragmentOutput);
+  }
+  
   splitter::ProgramSplitter splitter;
 
-  splitter.SetInputProgram (intermediateHandler.GetProgram ());
+  splitter.SetInputProgram (prog);
   for (ParamMap::const_iterator paramFlag = paramFlags.begin();
 	paramFlag != paramFlags.end();
 	++paramFlag)

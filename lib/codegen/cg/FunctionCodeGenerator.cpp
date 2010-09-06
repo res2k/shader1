@@ -25,6 +25,8 @@ namespace s1
     }
 	  
     StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
+								  const UnicodeString& vertexOutput,
+								  const UnicodeString& fragmentOutput,
 								  bool doTransfer)
     {
       typedef parser::SemanticsHandler::Scope::FunctionFormalParameters FunctionFormalParameters;
@@ -77,6 +79,10 @@ namespace s1
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
+	    if (param->identifier == vertexOutput)
+	      paramStr.append (" : POSITION");
+	    else if (param->identifier == fragmentOutput)
+	      paramStr.append (" : COLOR");
 	    outParams.push_back (paramStr);
 	    
 	    nameRes.outParamMap[param->identifier] = paramIdent;

@@ -362,6 +362,8 @@ namespace s1
     void ProgramSplitter::PerformSplit ()
     {
       outputProgram = boost::make_shared<intermediate::Program> ();
+      outputProgram->SetVertexOutputParameter (inputProgram->GetVertexOutputParameter());
+      outputProgram->SetFragmentOutputParameter (inputProgram->GetFragmentOutputParameter());
   
       for (size_t i = 0; i < inputProgram->GetNumFunctions(); i++)
       {

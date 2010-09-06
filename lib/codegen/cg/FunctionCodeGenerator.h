@@ -41,7 +41,10 @@ namespace s1
 	void Add (const char* attr, const std::string& attrStr);
       };
     public:
-      StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func, bool doTransfer);
+      StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
+				const UnicodeString& vertexOutput,
+				const UnicodeString& fragmentOutput,
+				bool doTransfer);
     };
   } // namespace codegen
 } // namespace s1

@@ -26,8 +26,15 @@ namespace s1
 			     const UnicodeString& name);
       typedef std::vector<std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, UnicodeString> > TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
+      
+      void SetVertexOutputParameter (const UnicodeString& name) { vertexOut = name; }
+      const UnicodeString& GetVertexOutputParameter () const { return vertexOut; }
+      void SetFragmentOutputParameter (const UnicodeString& name) { fragmentOut = name; }
+      const UnicodeString& GetFragmentOutputParameter () const { return fragmentOut; }
     private:
       TransferValues transferValues;
+      UnicodeString vertexOut;
+      UnicodeString fragmentOut;
     };
   } // namespace intermediate
 } // namespace s1
