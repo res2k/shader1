@@ -362,8 +362,10 @@ namespace s1
     void ProgramSplitter::PerformSplit ()
     {
       outputProgram = boost::make_shared<intermediate::Program> ();
-      outputProgram->SetVertexOutputParameter (inputProgram->GetVertexOutputParameter());
-      outputProgram->SetFragmentOutputParameter (inputProgram->GetFragmentOutputParameter());
+      const UnicodeString& vertexOutput = inputProgram->GetVertexOutputParameter();
+      const UnicodeString& fragmentOutput = inputProgram->GetFragmentOutputParameter();
+      outputProgram->SetVertexOutputParameter (vertexOutput);
+      outputProgram->SetFragmentOutputParameter (fragmentOutput);
   
       for (size_t i = 0; i < inputProgram->GetNumFunctions(); i++)
       {
@@ -379,23 +381,36 @@ namespace s1
 	std::vector<ParamFreqPair> allFrequencies;
 	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
 	{
-	  int paramFreq;
-	  ParamMap::const_iterator paramFlag = paramFlags.find (param.identifier);
-	  if (paramFlag != paramFlags.end())
+	  if (param.dir & parser::SemanticsHandler::Scope::dirIn)
 	  {
-	    paramFreq = paramFlag->second;
+	    // Input parameter
+	    int paramFreq;
+	    ParamMap::const_iterator paramFlag = paramFlags.find (param.identifier);
+	    if (paramFlag != paramFlags.end())
+	    {
+	      paramFreq = paramFlag->second;
+	    }
+	    else
+	    {
+	      paramFreq = SequenceSplitter::GetDefaultFrequencyForType (param.type);
+	    }
+	    splitter.SetInputFreqFlags (param.identifier, paramFreq);
+	    if ((paramFreq & (freqFlagU | freqFlagV)) != 0)
+	      vParams.push_back (param);
+	    if ((paramFreq & (freqFlagU | freqFlagF)) != 0)
+	      fParams.push_back (param);
+	    
+	    allFrequencies.push_back (std::make_pair (param.identifier, paramFreq));
 	  }
 	  else
 	  {
-	    paramFreq = SequenceSplitter::GetDefaultFrequencyForType (param.type);
+	    // Output parameter
+	    // Filter all except vertex/fragment out
+	    if (param.identifier == vertexOutput)
+	      vParams.push_back (param);
+	    else if (param.identifier == fragmentOutput)
+	      fParams.push_back (param);
 	  }
-	  splitter.SetInputFreqFlags (param.identifier, paramFreq);
-	  if ((paramFreq & (freqFlagU | freqFlagV)) != 0)
-	    vParams.push_back (param);
-	  if ((paramFreq & (freqFlagU | freqFlagF)) != 0)
-	    fParams.push_back (param);
-	  
-	  allFrequencies.push_back (std::make_pair (param.identifier, paramFreq));
 	}
 	
 	splitter.PerformSplit();
