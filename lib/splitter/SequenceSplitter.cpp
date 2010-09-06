@@ -909,7 +909,7 @@ namespace s1
       }
     }
     
-    static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type)
+    int SequenceSplitter::GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type)
     {
       switch (type->GetTypeClass())
       {

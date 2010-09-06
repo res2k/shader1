@@ -154,6 +154,8 @@ namespace s1
       { return outputSeq[freqVertex]; }
       intermediate::SequencePtr GetOutputFragmentSequence ()
       { return outputSeq[freqFragment]; }
+      
+      static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type);
     protected:
       ProgramSplitter& progSplit;
       

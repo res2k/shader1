@@ -370,12 +370,28 @@ namespace s1
 	
 	splitter::SequenceSplitter splitter (*this);
 	splitter.SetInputSequence (func->GetBody());
-	for (ParamMap::const_iterator paramFlag = paramFlags.begin();
-	     paramFlag != paramFlags.end();
-	     ++paramFlag)
+	
+	parser::SemanticsHandler::Scope::FunctionFormalParameters vParams;
+	parser::SemanticsHandler::Scope::FunctionFormalParameters fParams;
+	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
 	{
-	  splitter.SetInputFreqFlags (paramFlag->first, paramFlag->second);
+	  int paramFreq;
+	  ParamMap::const_iterator paramFlag = paramFlags.find (param.identifier);
+	  if (paramFlag != paramFlags.end())
+	  {
+	    paramFreq = paramFlag->second;
+	  }
+	  else
+	  {
+	    paramFreq = SequenceSplitter::GetDefaultFrequencyForType (param.type);
+	  }
+	  splitter.SetInputFreqFlags (param.identifier, paramFreq);
+	  if ((paramFreq & (freqFlagU | freqFlagV)) != 0)
+	    vParams.push_back (param);
+	  if ((paramFreq & (freqFlagU | freqFlagF)) != 0)
+	    fParams.push_back (param);
 	}
+	
 	splitter.PerformSplit();
 	
 	UnicodeString funcVName ("vertex_");
@@ -383,7 +399,7 @@ namespace s1
 	
 	intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (funcVName,
 												   func->GetReturnType(),
-												   func->GetParams(),
+												   vParams,
 												   splitter.GetOutputVertexSequence(),
 												   func->IsEntryFunction()));
 	funcV->SetExecutionFrequence (freqVertex);
@@ -394,7 +410,7 @@ namespace s1
 	
 	intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (funcFName,
 												   func->GetReturnType(),
-												   func->GetParams(),
+												   fParams,
 												   splitter.GetOutputFragmentSequence(),
 												   func->IsEntryFunction()));
 	funcF->SetExecutionFrequence (freqFragment);
