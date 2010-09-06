@@ -397,7 +397,8 @@ namespace s1
 	splitter.PerformSplit();
 	
 	UnicodeString funcVName ("vertex_");
-	funcVName.append (func->GetIdentifier());
+	//funcVName.append (func->GetIdentifier());
+	funcVName.append ("main");
 	
 	intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (funcVName,
 												   func->GetReturnType(),
@@ -408,7 +409,8 @@ namespace s1
 	outputProgram->AddFunction (funcV);
 
 	UnicodeString funcFName ("fragment_");
-	funcFName.append (func->GetIdentifier());
+	//funcFName.append (func->GetIdentifier());
+	funcFName.append ("main");
 	
 	intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (funcFName,
 												   func->GetReturnType(),
