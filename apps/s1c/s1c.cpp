@@ -97,56 +97,6 @@ int main (const int argc, const char* const argv[])
     errorHandler.IntermediateError (e.GetCode());
   }
   
-#if 0
-  intermediate::ProgramPtr progV (boost::make_shared<intermediate::Program> ());
-  intermediate::ProgramPtr progF (boost::make_shared<intermediate::Program> ());
-  
-  // TODO: Handle param flags
-  
-  {
-    intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
-    
-    for (size_t i = 0; i < prog->GetNumFunctions(); i++)
-    {
-      intermediate::ProgramFunctionPtr func = prog->GetFunction (i);
-      splitter::SequenceSplitter splitter;
-      splitter.SetInputSequence (func->GetBody());
-      splitter.PerformSplit();
-      
-      intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (func->GetIdentifier(),
-												 func->GetReturnType(),
-												 func->GetParams(),
-												 splitter.GetOutputVertexSequence(),
-												 func->IsEntryFunction()));
-      progV->AddFunction (funcV);
-      intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (func->GetIdentifier(),
-												 func->GetReturnType(),
-												 func->GetParams(),
-												 splitter.GetOutputFragmentSequence(),
-												 func->IsEntryFunction()));
-      progF->AddFunction (funcF);
-    }
-  }
-  
-  {
-    codegen::CgGenerator codegen;
-    codegen::StringsArrayPtr progOutput (codegen.Generate (progV));
-    
-    for (size_t i = 0; i < progOutput->Size(); i++)
-    {
-      std::cout << progOutput->Get (i) << std::endl;
-    }
-  }
-  {
-    codegen::CgGenerator codegen;
-    codegen::StringsArrayPtr progOutput (codegen.Generate (progF));
-    
-    for (size_t i = 0; i < progOutput->Size(); i++)
-    {
-      std::cout << progOutput->Get (i) << std::endl;
-    }
-  }
-#else
   intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
   // Determine output values
   {
@@ -209,7 +159,6 @@ int main (const int argc, const char* const argv[])
   {
     std::cout << progOutput->Get (i) << std::endl;
   }
-#endif
   
   return 0;
 }
