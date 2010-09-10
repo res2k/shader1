@@ -701,6 +701,220 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
   \label{fig:ir_sample_gen}
 \end{figure}
 
+\subsection{Auftrennung}
+
+% High-Level Arbeitsweise
+Der "`\emph{Splitter}"' trennt ein als Zwischenrepräsentation vorliegendes Programm in ein \emph{Vertex-} und \emph{Fragmentprogramm} auf.
+Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}, % TODO: Verw auf Frequenzen
+in der diese Operation ausgeführt wird, zugeordnet werden: mit \emph{Vertexfrequenz}, oder per Vertex, berechnete Operationen werden dem Vertexprogramm zugeordnet.
+Analog werden mit \emph{Fragmentfrequenz}, oder per Fragment, berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
+und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
+
+\paragraph{Operanden:} Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche die höchste ist, in der einer der Operatoren
+vorliegt. So muss z.B. eine Verknüpfung von zwei Werten per Fragment ausgeführt werden, wenn einer der Operatoren per Fragment berechnet wurde.
+% DIes ist darin begründet, dass Werte nur vom Vertex- zum Fragmentprogramm, aber nicht zurück, übertragen werden können. ... \ref{}
+
+\paragraph{Operation:} Eine Berechnung kann per Vertex ausgeführt werden, wenn beide Eingaben per Vertex vorliegen, und
+sofern die Operation das Kriterium der \emph{Interpolierbarkeit} (Abschnitt~\ref{Interpolierbarkeit}) erfüllt.
+
+\subsubsection{Berechnungsfrequenzen}
+% Welche Frequenzen?
+
+Für die Aufspaltung relevante Frequenzen sind die Mesh-, % TODO Vergl. Nomenklatur mit Erklärung Freq.; "Freq." besser nicht überladen mit "Verarbeitungsschritt"
+% "Uniform" blöd
+Vertex- und Fragmentfrequenz.
+
+Per-Mesh-Eingaben sind Eingaben, die sich nicht während aufeinanderfolgenden Ausführungen eines Programmes
+ändern, und können daher als \emph{konstant} angesehen werden. Deren Werte stammen aus der umgebenden Anwendung.
+
+Per-Vertex-Eingaben sind den verschiedenen Vertices zugeordnete Eingaben . % TODO Verw. auf Vertexdaten
+Auch diese sind Anwendungsdaten.
+
+Per-Fragment-Eingaben sind die interpolierten Ausgaben des Vertexprogramms (siehe Abschnitt~\ref{schnittstelle} unten). 
+Insbesondere besitzt Graphikhardware keinen Mechanismus, der der Anwendung erlauben würden, direkt per-Fragment-Eingaben
+vorzugeben.
+
+"`Echte"' Konstanten werden vom Splitter auch als "`per Mesh"' betrachtet.
+
+Für jedes Register wird verfolgt, für welche Frequenzen es vorliegt, im Wesentlichen also in welchem Teilprogramm es berechnet wird.
+Dabei kann ein Register in mehreren Frequenzen verfügbar sein, wenn es im Vertex-Programm berechnet wurde, aber später als
+an das Fragmentprogramm zu Übertragen markiert wird (Abschnitt~\ref{schnittstelle}).
+
+Der Splitter kategorisiert auch Operationen und Werte als "`per Mesh"', generiert jedoch \emph{kein} separates Programm.
+Stattdessen werden per-Mesh-Operationen sowohl vom Vertex- als auch vom Fragmentprogramm ausgeführt. Zwei Annahmen
+liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen mit uniformen Werten allein vorgenommen werden, es also kein
+Nachteil durch eine mehrfache Ausführung in Vertex- und Fragmentprogramm entsteht. Darüber hinaus können auch durch, so die zweite Annahme,
+weitere Optimierungsschritte wie Dead Code Elimination einige Operationen auf uniformen Werten entfernt werden.
+
+% Eingaben: Uniform oder per Vertex; Fragmentfreq. nur Eingaben von VP
+
+\subsubsection{Schnittstelle Vertex-/Fragmentprogramm}
+\label{schnittstelle}
+
+Da ein Teil der Operationen des ursprünglichen Programms dem Vertexprogramm zugeordnet wird, ein anderer Teil aber dem
+Fragmentprogramm, müssen Ergebnisse des einen Programms zum anderen übertragen werden.
+Dabei ist zu beachten, dass nur Werte vom Vertex- zum Fragmentprogramm übertragen werden können; % @@@ Eher nicht hier
+eine Übertragung in die andere Richtung ist nicht möglich.
+
+Stellt der Splitter die Notwendigkeit des Übertragens für einen Wert fest, wird das Register, welches den Wert enthält, aufgezeichnet.
+Diese Liste der zu übertragenden Werte ("`Schnittstelle"' in Abbildung~\ref{fig:structure}) wird später dem Codegenerator übergeben.
+Dieser kümmert sich um die "`technischen"' Details wie die Zuordnung von für die Übertragung notwendigen Ressourcen und % @@@ Ress. -> Interpolatoren. Verw
+entsprechende Abbildung in der Zieldarstellung.
+
+\subsubsection{Interpolierbarkeit}
+\label{Interpolierbarkeit}
+% Kriterium: Interpolation
+
+Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Operationen per Fragment ausgeführt. % Ref Formulierte Frequenz
+Die vom Splitter zu lösende Problem ist die Bestimmung von Operationen, die per Vertex ausgeführt werden können.
+Das Hauptkriterium diese Entscheidung ist die \emph{Interpolierbarkeit} einer Operation.
+
+\newcommand\lerp{\mathrm{lerp}}
+Vom Vertexprogramm ausgegebene Werte werden, bevor sie wieder dem Fragmentprogramm als Eingabe dienen, \emph{linear interpoliert}: % TODO: Verw. auf Erklärung/Interpolatoren
+Eine lineare Interpolation -- "`$\lerp$"' -- zwischen zwei Werten $a$ und $b$ mit Faktor $f$ ($0 \le f \le 1$) wird durch $\lerp(a, b, f) = a \cdot (1-f) + b \cdot f$ berechnet.
+Soll ein Wert $x$ vom Vertex- and das Fragmentprogramm übergeben werden, so gibt das Vertexprogramm per Vertex verschiedene Werte aus - $x_1, x_2$ usw.
+Das Fragmentprogramm erhält als Eingabe das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$ (wobei $f$ von der Graphikhardware berechnet wird
+und per Fragment variiert)\footnote{Tatsächlich muss bei der Rasterung von Dreiecken zwischen drei Werten interpoliert werden. Dieser Abschnitt betrachtet konkret
+bloss Interpolation zwischen zwei Werten, die Ergebnisse gelten aber auch bei Interpolation zwischen drei Werten.}.
+
+Eine per Fragment ausgeführte Rechenoperation $g(x)$, mit einem aus Ausgaben des Vertexprogramms interpoliertem $x$ -- also $x = \lerp(x_1, x_2, f)$ --
+kann auch per Fragment ausgeführt werden, wenn eine Interpolation des Ergebnisses der per Vertex berechneten Rechenoperation zum gleichen Endergebnis führt:
+es muss $g(\lerp(x_1, x_2, f)) = \lerp (g(x_1), g(x_2), f)$ gelten. Augenscheinlich muss $g$ eine lineare Funktion sein.
+
+Für binäre Rechenoperationen lautet die Bedingung $\lerp (g (x_1, y_1), g (x_2, y_2), f) = g (\lerp (x_1, x_2, f), \lerp (y_1, y_2, f))$.
+Rechenoperationen mit mehr Operanden müssen nicht betrachtet werden, da die Shadingsprache höchstens
+binäre Rechenoperationen vorsieht bzw. "`komplexere"' Rechenoperationen auf binäre Operationen heruntergebrochen werden
+können (siehe auch~\ref{split_builtins}). % Zweistelliges Äquivalent für "lineare Funktion"?
+
+Da Rechenoperationen auf Vektoren komponentweise ausgeführt werden,  ist die "`Interpolierbarkeit"' ohne weiteres auch auf Vektoroperationen anwendbar.
+
+Die geforderte Linearität von $g(x)$ führt dazu, dass bloss Operationen auf \texttt{float}-Werten problemlos interpolierbar sind:
+bei der Interpolation von Integer-Werten können nicht-Integer-Werte als Zwischenergebnisse entstehen,
+die (zwangsweise) gerundet\footnote{Oder Nachkommastelle abgeschnitten usw.} werden müssen. Diese Rundung
+ist aber keine stetige Funktion und deshalb nicht interpolierbar.
+
+Zu Beachten ist, dass Interpolierbarkeit nur Relevanz hat, wenn entschieden wird, ob eine Operation, bei der mindestens ein Operand
+nur per Vertex (oder höher) vorliegt, auch per Vertex ausgeführt werden kann.
+Operationen allein auf Konstanten oder (praktisch konstanten) per-Mesh-Eingaben sind immer auch per Vertex ausführbar - das Ergebnis
+einer solchen Operation kann nicht zwischen den Berechnungen für verschieden Vertices variieren. Insbesondere können damit
+auch Operation auf Integer-Werten, oder Operationen, die nachfolgend als "`nicht interpolierbar"' klassifiziert werden,
+per Vertex ausgeführt werden.
+
+% Konkreter: Ausgabe VP: x_1, x_2, ...
+% Eingabe FP: lerp (x_1, x_2, f) - implizit
+
+%Allerdings kann eine Operation auf Vertex-Frequenz "`abgesenkt"' werden, wenn eine lineare Interpolation
+%des Ergebnisses der Operation äquivalent zu der Operation mit linear interpoliertem Operanden ist
+%($\lerp (g (x_1, y_1), g (x_2, y_2), f) = g (\lerp (x_1, x_2, f), \lerp (y_1, y_2, f))$).
+% Andere Operandenzahlen betrachten
+% Beispiel?
+
+% Stichwort: Linearkombination?
+
+\paragraph{Arithmetische Operationen:} Die Summe oder Differenz von zwei linearen Funktionen
+ist wieder eine lineare Funktion, Addition und Subtraktion sind also uneingeschränkt interpolierbar.
+% @@@ Beweisen? Zumindest erläutern.
+
+Multiplikation und Division sind interpolierbar, wenn mindestens ein Operand höchstens per Mesh gegeben ist.
+Sind beide Operanden per Vertex gegeben, so ist eine Multiplikation oder Division keine lineare,
+sondern eine \emph{quadratische} Funktion. Da per Mesh gegebene Operanden sind praktisch als
+konstant betrachtet werden können ist die Multiplikation oder Division mit einem per Mesh gegebenen
+Operanden eine lineare Funktion und interpolierbar.
+
+Modulo ist nicht interpolierbar da es keine stetige Funktion ist.
+
+\paragraph{Logische Ausdrücke, Vergleichsoperationen:} Diese sind nicht interpolierbar da keine stetigen Funktionen.
+
+\paragraph{Unäre Ausdrücke:} Negation ist offentsichtlich interpolierbar.
+
+Logisches NICHT ist, wie die anderen logischen Ausdrücke, nicht interpolierbar.
+
+Bitweises invertieren ist nur für Integer-Werte sinnvoll und damit nicht interpolierbar.
+
+\paragraph{Eingebaute Funktionen:} \label{split_builtins}
+Skalarprodukt, Vektorprodukt und Matrixmultiplikation lassen sich alle mit arithmetischen Basisoperationen darstellen;
+vor allem eine Multiplikation ist in allen drei "`enthalten"'. Damit ergeben sich die gleichen Beschränkungen:
+diese Operationen sind nur interpolierbar, wenn mindesten ein Operand per Mesh gegeben ist.
+
+Potenzierung ist im Allgemeinen keine stetige Funktion und damit nicht interpolierbar.
+
+Die Berechnung von "`Normalisierung"' und "`Euklidische Länge"' erfordert das Ziehen einer Wurzel bzw. Potenzieren mit $\frac{1}{2}$.
+Damit sind diese Funktionen auch nicht interpolierbar.
+
+Minimum und Maximum sind im Allgemeinen keine stetigen Funktion und damit nicht interpolierbar.
+
+Die Texturfunktionen sind prinzipbedingt nicht interpolierbar.
+
+\paragraph{Sequenzschachtelung:} Eine Sequenzschachtelungsoperation wird prinzipiell zu allen generierten Teilprogrammen hinzugefügt,
+allerdings mit unterschiedlichen Sequenzen. Diese sind selbst das Ergebnis einer Aufspaltung der ursprünglichen Sequenz.
+
+\paragraph{Verzweigung:} Eine Verzweigung besteht konzeptionell aus zwei eingeschalten Sequenzen (für die jeweiligen Verzweigungsblöcke)
+und ein bool'scher Bedingungswert, nach dem verzweigt wird.
+
+Die beiden eingeschachtelten Verzweigungssequenzen werden selbst aufgespalten.
+
+Der bool'scher Bedingungswert kann entweder per Mesh oder per Fragment vorliegen: per Mesh, wenn er eine per-Mesh-Eingabe ist bzw. allein aus
+per-Mesh-Eingaben berechnet wurde. Per Fragment, wenn er aus Werten anderer Frequenzen berechnet wurde. Per Vertex ist nicht
+möglich da auf Grund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen diese immer per Fragment berechnet werden.
+
+Selbst wenn der Bedingungswert nur per Fragment vorliegt, kann die Verzweigungsoperation nicht allein per Fragment ausgeführt werden:
+die Aufspaltung der Verzweigungsblöcke kann auch in per Vertex auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
+eingeschachtelte Sequenzen, d.h. keine Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
+die Vertexteile beider Verzweigungsblöcke ausgeführt. Zwischenergebnisse müssen an das Fragmentprogramm übertragen und dort ausgewählt werden.
+
+Von den Verzweigungsblöcken beschriebene Register sind immer nur in der selben Frequenz wie der Bedingungswert verfügbar:
+Selbst wenn beide Verzweigungen bloss per-Vertex-Operationen ausführen, sind durch die Auswahl nach einer per-Fragment-Bedingung
+die berechneten Wert nur per Fragment verfügbar.
+
+\paragraph{Schleife:} Eine Schleifenoperation besteht aus einer eingeschachtelten Sequenz (dem Schleifenrumpf) sowie
+ein bool'scher Bedingungswert, der Schleifenbedingung.
+
+Wie bei der Verzweigung kann der bool'scher Bedingungswert nur entweder per Mesh oder per Fragment vorliegen.
+
+Ein Ausführen von Teilen des Rumpfes per Vertex wäre problematisch: es müsste bekannt sein, wieviele Werte vom Vertex-Teil
+zum Fragment-Teil übertragen werden sollen. Diese Anzahl hängt von der Anzahl der Schleifendurchläufe ab -
+diese kann aber Im Allgemeinen zur Kompilierzeit nicht bestimmt werden. Schleifenoperationen können also nur komplett
+per Mesh oder per Fragment ausgeführt werden.
+
+\paragraph{Funktionsaufruf:} Der Rumpf einer Funktion ist eine Sequenz, kann also prinzipiell in einen per-Vertex- und einen per-Fragment-Teil aufgespalten werden.
+Das Hauptproblem besteht dabei darin, dass die Frequenzen der Funktionsparameter je nach Aufruf variieren können.
+
+Dies wurde gelöst, in dem für eine Funktion bei der Aufspaltung mehrere Varianten generiert werden: bei einem Funktionsaufruf
+wird die Funktion aufgespalten, mit den jeweiligen Verfügbarkeiten der übergebenen tatsächlichen Parameter. Wird die gleiche Funktion
+nochmals aufgerufen, aber mit einer anderen "`Signatur"' von Verfügbarkeiten, so wird die Funktion in neue Varianten aufgespalten usw.
+
+Die Verfügbarkeiten von Ausgabeparametern hängen von den Verfügbarkeiten der Eingabeparameter ab, können aber nach dem Aufspalten
+einer Variation bestimmt werden.
+
+Das Übertragen von Werten vom per-Vertex- zum per-Fragment-Teil einer Funktionsvariation geschieht über generierte Ausgabe- bzw.
+Eingabeparameter; die eigentliche Übertragung geschieht schlussendlich in der Eintrittsfunktion.
+
+Rekursionen müssen besonders behandelt werden: um die korrekten Verfügbarkeiten der Ausgabeparameter zu bestimmen
+muss eine Funktion zunächst aufgespalten werden. Im Falle einer Rekursion wird möglicherweise aber genau die angetroffene
+Variante gerade selbst aufgespalten -- die Verfügbarkeiten sind also noch nicht bekannt, der Versuch einer Aufspaltung der
+angetroffenen Variante würde über kurz oder lang zum exakt selben Problem führen.
+
+Die Auflösung ist, dass rekursive Funktionen besonders behandelt werden: im Wesentlichen wird, bei einem festgestelltem
+rekursiven Aufruf, konservativ angenommen, die Ausgabeparameter sind nur per Fragment verfügbar. Damit kann der Rumpf
+einer rekursiven Funktion aufgespalten werden.
+
+% Behandlung von: arithm. Ausdr., Logik, Vergl, Unäre Ausdr., Verzweigungen, Schleifen, Funktionen
+
+% Array-Operationen: evtl. nur per Fragment? (bei dyn. Arrays)
+
+% 'Trivial': Zuweisung, Konstante, Typumwandlung, Vektor-Erstellung/-Extraktion, [Array-Erstellung/-Extraktion/-Änderung/-Länge,?]
+% 
+
+\paragraph{Array-Operationen:} Array-Operationen sind nur interpolierbar, wenn die Länge des Arrays \emph{statisch konstant}
+(und nicht per Mesh) bekannt ist und bei der Array-Extraktion bzw. -Änderung der verwendete Index höchstens per Mesh
+verfügbar ist.
+
+\paragraph{Andere Operationen:} Zuweisungen, Konstantenoperationen, Typumwandlung, die Erstellung eines Vektors sowie
+die Extraktion einer Komponente können trivialerweise mit derjenigen Frequenz berechnet werden, die der höchsten Frequenz
+aller Eingaben entspricht.
+
+% Beispiele
+
 \subsection{Code-Generator}
 
 Der \emph{Code-Generator} übersetzt ein in der Zwischenrepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
@@ -758,6 +972,7 @@ gut lesbar lässt.}.
 \section{Ausblick}
 
 % AST: nützlich, wenn FEs für anderen Sprachen, oder komplexer (Strukturen)
+% Manuelles spezifizieren von per-Vertex Ops // keyword 'interpolate'
 
 \cleardoublepage
 \appendix
