@@ -378,12 +378,12 @@ also nur durch die CPU erfolgen, woraufhin die Daten zur GPU übertragen werden.
 und auch entfernen. Dieser Schritt erlaubt die Implementierung von Algorithmen auf der Grafikkarte, die viel 
 Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, erfordern.
 
-Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in dem \emph{Kameraraum}\footnote{Betrachter befindet sich am
+Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in das \emph{Kamerakoordinatensystem}\footnote{Betrachter befindet sich am
 Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rasterbild mit Hilfe einer einfachen linearen Projektion
 abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
 gezeichnet werden. Dies geschieht durch Rasterung der Dreiecke. Um die Farbe eines berechneten 
 \emph{Fragments}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
-Algorithmen zur Kantenglättung benutzt werden. Meist reicht es jedoch aus, anzunehmen, dass ein Fragment einem Pixel entspricht.} zu 
+Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment einem Pixel entspricht.} zu 
 bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
 durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der Drei\-ecks\-eck\-punk\-te  
 berechnet. In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
@@ -391,7 +391,20 @@ und mit den Vertexattributen durch Operationen kombiniert (z.B. Multiplikation, 
 Wie bei den Vertex-Berechnungen werden auch bei den Fragment-Berechnungen die gleichen Berechnungen auf eine Vielzahl
 von Fragmenten zur gleichen Zeit angewendet. Auch die Fragment-Berechnungen erfolgen parallel auf mehreren Vektorrecheneinheiten.
 
-Alle Verarbeitungseinheiten sind auf aktueller Graphikhardware programmierbar.
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.8]{triraster1}
+  \qquad
+  \includegraphics[scale=0.8]{triraster2}
+  \qquad
+  \includegraphics[scale=0.8]{triraster3}
+  \caption{Rasterung eines Dreiecks: 1. Nach Transformation in das Koordinatensystem des Monitors.
+  2. Vom Dreieck überlagerte Fragmente. 3. Ein Vertexattribut "`Grauwert"', über die Fragmente interpoliert.}
+  \label{fig:triraster}
+\end{figure}
+
+
+%Alle Verarbeitungseinheiten sind auf aktueller Graphikhardware programmierbar.
 
 \subsection{Berechnungsfrequenzen}
 \label{berechnungsfrequenz_locker}
