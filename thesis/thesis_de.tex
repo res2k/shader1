@@ -383,7 +383,7 @@ Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rast
 abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
 gezeichnet werden. Dies geschieht durch Rasterung der Dreiecke. Um die Farbe eines berechneten 
 \emph{Fragments}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
-Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment einem Pixel entspricht.} zu 
+Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment genau einem Pixel entspricht.} zu 
 bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
 durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der Drei\-ecks\-eck\-punk\-te  
 berechnet. In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
@@ -1029,10 +1029,12 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 \end{figure}
 
 \subsection{Auftrennung}
+\label{Auftrennung}
 
 % High-Level Arbeitsweise
 Der "`\emph{Splitter}"' trennt ein als Zwischenrepräsentation vorliegendes Programm in ein \emph{Vertex-} und \emph{Fragmentprogramm} auf.
-Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}, % TODO: Verw auf Frequenzen
+Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}
+\footnote{Siehe Abschnitte \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz}},
 in der diese Operation ausgeführt wird, zugeordnet werden: mit \emph{Vertexfrequenz}, oder per Vertex, berechnete Operationen werden dem Vertexprogramm zugeordnet.
 Analog werden mit \emph{Fragmentfrequenz}, oder per Fragment, berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
 und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
@@ -1045,6 +1047,7 @@ vorliegt. So muss z.B. eine Verknüpfung von zwei Werten per Fragment ausgeführ
 sofern die Operation das Kriterium der \emph{Interpolierbarkeit} (Abschnitt~\ref{Interpolierbarkeit}) erfüllt.
 
 \subsubsection{Berechnungsfrequenzen}
+\label{splitter_Berechnungsfrequenzen}
 % Welche Frequenzen?
 
 Für die Aufspaltung relevante Frequenzen sind die Mesh-, % TODO Vergl. Nomenklatur mit Erklärung Freq.; "Freq." besser nicht überladen mit "Verarbeitungsschritt"
@@ -1092,7 +1095,7 @@ entsprechende Abbildung in der Zieldarstellung.
 \label{Interpolierbarkeit}
 % Kriterium: Interpolation
 
-Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Operationen per Fragment ausgeführt. % Ref Formulierte Frequenz
+Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Operationen per Fragment ausgeführt (siehe Abschnitt~\ref{formulierte_frequenz}).
 Die vom Splitter zu lösende Problem ist die Bestimmung von Operationen, die per Vertex ausgeführt werden können.
 Das Hauptkriterium diese Entscheidung ist die \emph{Interpolierbarkeit} einer Operation.
 
