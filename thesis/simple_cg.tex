@@ -1,0 +1,28 @@
+\texttt{struct vertex2fragment \{ }\\
+\texttt{\hspace*{1cm}	float2 TexCoord;}\\
+\texttt{\hspace*{1cm}	float3 litColor;}\\
+\texttt{\};}\\
+
+\texttt{void vertex\_main (}\\
+\texttt{\hspace*{1cm}	\freqPerVert{varying float4 Position},}\\
+\texttt{\hspace*{1cm}	\freqPerVert{varying float2 TexCoord},}\\
+\texttt{\hspace*{1cm}	\freqPerVert{varying float3 Normal},}\\
+\texttt{\hspace*{1cm}	\freqPerMesh{uniform float4x4 ModelViewProj : state.matrix.mvp},}\\
+\texttt{\hspace*{1cm}	\freqPerMesh{uniform float3 LightColor},}\\
+\texttt{\hspace*{1cm}	\freqPerMesh{uniform float3 LightDirObj},}\\
+\texttt{\hspace*{1cm}	\freqPerVert{out float4 outPosition : POSITION},}\\
+\texttt{\hspace*{1cm}	\freqPerVert{out vertex2fragment V2F})}\\
+\texttt{\{}\\
+\texttt{\hspace*{1cm}	outPosition = \freqPerVert{mul (ModelViewProj, Position)};}\\
+\texttt{\hspace*{1cm}	float3 ambient = \freqPerMesh{float3 (0.4)};}\\
+\texttt{\hspace*{1cm}	V2F.litColor = \freqPerMesh{LightColor} * \freqPerVert{dot (LightDirObj, Normal)} + \freqPerMesh{ambient};}\\
+\texttt{\hspace*{1cm}	V2F.TexCoord = \freqPerVert{TexCoord};}\\
+\texttt{\}}\\
+
+\texttt{void fragment\_main (\freqPerFrag{in vertex2fragment V2F},}\\
+\texttt{\hspace*{1cm}		    \freqPerMesh{uniform sampler2D Texture},}\\
+\texttt{\hspace*{1cm}		    \freqPerFrag{out float4 outColor : COLOR})}\\
+\texttt{\{}\\
+\texttt{\hspace*{1cm}	outColor = \freqPerFrag{tex2D (Texture, V2F.TexCoord)} * \freqPerFrag{float4 (V2F.litColor, 1)};}\\
+\texttt{\}}\\
+

@@ -1,0 +1,43 @@
+// Per-Vertex-Daten
+struct app2vertex {
+	float4 Position : POSITION;
+	float2 TexCoord : TEXCOORD0;
+	float3 Normal : NORMAL;
+};
+
+// Von Vertex- an Fragmentprogramm uebergebene Daten
+struct vertex2fragment { 
+	float2 TexCoord;
+	float3 litColor;
+};
+
+// Vertexprogramm
+void vertex_main (app2vertex IN,
+	// Eingaben von Anwendung an Vertex-Programm
+	uniform float4x4 ModelViewInv : state.matrix.modelview.inverse,
+	uniform float4x4 ModelViewProj : state.matrix.mvp,
+	uniform float3 LightColor,
+	uniform float3 LightDir,
+	out float4 outPosition : POSITION,
+	out vertex2fragment V2F)
+{
+	// Transformierte Koordinaten
+	outPosition = mul (ModelViewProj, IN.Position);
+	
+	// Beleuchtungsberechnung
+	float3 ambient = float3 (0.4);
+	float3 lightDirObj = mul (ModelViewInv, float4 (lightDir, 0));
+	V2F.litColor = LightColor * dot (lightDirObj, IN.Normal) + ambient;
+	
+	// Weitergabe Texturkoordinaten
+	V2F.TexCoord = IN.TexCoord;
+}
+
+// Fragmentprogramm
+void fragment_main (in vertex2fragment IN,
+		    uniform sampler2D Texture,
+		    out float4 outColor : COLOR)
+{
+	outColor = tex2D (Texture, IN.TexCoord) * float4 (IN.litColor, 1);
+}
+

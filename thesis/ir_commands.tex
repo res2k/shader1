@@ -4,7 +4,7 @@
 
 \newcommand\sOfunc[1]{\begin{displaymath}\begin{array}{rl}#1\end{array}\end{displaymath}}
 \newcommand\sOfunchead[2]{\mathrm{Funktion:} &\begin{array}[t]{l}\sOident{#2}\end{array}\\\mathrm{R"uckgabetyp:} &\begin{array}[t]{l}\sOident{#1}\end{array}\\}
-\newcommand\sOfuncregset[2]{\mathrm{Registersatz:} & \begin{array}[t]{l}\mathrm{Typ}\ \sOident{#1}\\\mbox{#2}\end{array}\\}
+\newcommand\sOfuncregset[2]{\mathrm{Registersatz\ \sOident{#1}:} & \begin{minipage}[t]{12cm}\raggedright #2\end{minipage}\\}
 \newcommand\sOsetreg[1]{$\sOreg{#1}$ }
 \newcommand\sOfuncbody[1]{\mathrm{Operationen:} &\begin{array}[t]{rl}#1\end{array}}
 \newcommand\sOfuncinparams[1]{\mathrm{Eingabeparameter:} &\begin{array}[t]{l}#1\end{array}\\}
@@ -14,7 +14,7 @@
 
 \newcommand\sOstatement[1]{#1\\}
 
-\newcommand\sObuiltindot[2]{#1 \dot #2}
+\newcommand\sObuiltindot[2]{#1 \cdot #2}
 \newcommand\sObuiltinlength[1]{|#1|}
 \newcommand\sObuiltinmax[2]{\max\{#1, #2\}}
 \newcommand\sObuiltinmul[2]{#1 * #2}
@@ -24,3 +24,4 @@
 \newcommand\sOvecextract[2]{#1_{#2}}
 \newcommand\sOmakevec[1]{(#1)}
 
+\newcommand\sOtransfer[1]{\begin{displaymath}\begin{array}{rl}\mathrm{"Ubertragene\ Register:} & #1\end{array}\end{displaymath}}

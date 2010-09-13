@@ -1,0 +1,16 @@
+\texttt{void main (\freqPerVert{in float4 Position},}\\
+\texttt{\hspace*{1cm}	   \freqPerVert{in float2 TexCoord},}\\
+\texttt{\hspace*{1cm}	   \freqPerVert{in float3 Normal},}\\
+\texttt{\hspace*{1cm}	   \freqPerMesh{in float4x4 ModelViewProj},}\\
+\texttt{\hspace*{1cm}	   \freqPerMesh{in float3 LightColor},}\\
+\texttt{\hspace*{1cm}	   \freqPerMesh{in float3 LightDirObj},}\\
+\texttt{\hspace*{1cm}	   \freqPerMesh{in sampler2D Texture},}\\
+\texttt{\hspace*{1cm}	   \freqPerVert{out float4 outPosition},}\\
+\texttt{\hspace*{1cm}	   \freqPerFrag{out float4 outColor})}\\
+\texttt{\{}\\
+\texttt{\hspace*{1cm}	outPosition = \freqPerVert{mul (ModelViewProj, Position)};}\\
+\texttt{\hspace*{1cm}	float3 ambient = \freqPerMesh{float3 (0.4)};}\\
+\texttt{\hspace*{1cm}	float3 diffuse = \freqPerVert{LightColor * dot (LightDirObj, Normal)};}\\
+\texttt{\hspace*{1cm}	float3 litColor = \freqPerVert{diffuse + ambient};}\\
+\texttt{\hspace*{1cm}	outColor = \freqPerFrag{tex2D (Texture, TexCoord)} * \freqPerVert{float4 (litColor, 1.0)};}\\
+\texttt{\}}\\

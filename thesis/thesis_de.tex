@@ -6,7 +6,7 @@
 \usepackage[T1]{fontenc}
 %\usepackage[]{amsfonts}
 \usepackage{amsmath}
-\usepackage{color}
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{colortbl}
 %\usepackage{mathptmx}
 \usepackage[bitstream-charter]{mathdesign}
@@ -95,7 +95,7 @@
 \fancyfoot[C]{\today}
 \fancyfoot[R]{\footnotesize \thepage{}}
 \renewcommand{\headrulewidth}{0pt}
-\setlength{\headheight}{24pt}
+%\setlength{\headheight}{24pt}
 
 % generates the title
 
@@ -456,6 +456,18 @@ Verarbeitungseinheiten verteilt werden, ohne dass Rechenleistung verschwendet wi
 Programme in der hier beschriebenen Shadingsprache sind genau solche Beschreibungen der Verarbeitungsschritte; der implementierte Compiler
 bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und spaltet das Eingabeprogramm entsprechend auf.
 
+\newcommand\freqPerMesh[1]{\framebox{#1}}
+\newcommand\freqPerVert[1]{\colorbox{SpringGreen}{\textcolor{Black}{#1}}}
+\newcommand\freqPerFrag[1]{\colorbox{BlueViolet}{\textcolor{White}{#1}}}
+\begin{figure}[hp]
+  \input{simple_cg}
+  \caption{Ein Programm-Paar in Cg.}
+  \centering
+  \small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+  \label{fig:simple_cg}
+\end{figure}
+
+\newpage
 \section{Sprachspezifikation}
 \label{langspec}
 
@@ -1244,7 +1256,35 @@ die Extraktion einer Komponente können trivialerweise mit derjenigen Frequenz b
 aller Eingaben entspricht.
 
 % Beispiele
+\begin{figure}[hp]
+  \input{simple_s1}
+  \caption{Ein Programm in der Shading-Sprache.}
+  \centering
+  \small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+  \label{fig:simple_s1}
+\end{figure}
 
+\begin{figure}[!ht]
+  \centering
+  \input{simple_s1_split}
+  \caption{Programm aus \ref{fig:simple_s1} nach der Aufspaltung.}
+  %\small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+  \label{fig:simple_s1_split}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=4cm]{simple_s1_mesh}\quad
+  \includegraphics[width=4cm]{simple_s1_vert}\quad
+  \includegraphics[width=4cm]{simple_s1_frag}
+  \caption{Programm aus \ref{fig:simple_s1}}
+  \small 1. nur per-Mesh-Anteil der Fragment-Farbe\\
+  2. mit zusätzlich per-Vertex-Anteil\\
+  3. vollständige Fragment-Farbe\\
+  \label{fig:simple_s1_images}
+\end{figure}
+
+\newpage
 \subsection{Code-Generator}
 
 Der \emph{Code-Generator} übersetzt ein in der Zwischenrepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
