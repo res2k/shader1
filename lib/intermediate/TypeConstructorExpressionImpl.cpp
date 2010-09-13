@@ -136,10 +136,19 @@ namespace s1
 	  else
 	    desiredDim = type->matrixCols * type->matrixRows;
 	  
-	  if (srcRegs.size() > desiredDim)
-	    throw Exception (TooManyTypeCtorArgs);
-	  if (srcRegs.size() < desiredDim)
-	    throw Exception (TooFewTypeCtorArgs);
+	  if ((type->typeClass == TypeImpl::Vector) && (srcRegs.size() == 1))
+	  {
+	    // Replicate input
+	    for (unsigned int i = 1; i < desiredDim; i++)
+	      srcRegs.push_back (srcRegs[0]);
+	  }
+	  else
+	  {
+	    if (srcRegs.size() > desiredDim)
+	      throw Exception (TooManyTypeCtorArgs);
+	    if (srcRegs.size() < desiredDim)
+	      throw Exception (TooFewTypeCtorArgs);
+	  }
 	  
 	  TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
 	  
