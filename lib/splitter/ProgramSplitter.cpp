@@ -392,7 +392,7 @@ namespace s1
 	    }
 	    else
 	    {
-	      paramFreq = SequenceSplitter::GetDefaultFrequencyForType (param.type);
+	      paramFreq = 1 << SequenceSplitter::GetDefaultFrequencyForType (param.type);
 	    }
 	    splitter.SetInputFreqFlags (param.identifier, paramFreq);
 	    if ((paramFreq & (freqFlagU | freqFlagV)) != 0)
