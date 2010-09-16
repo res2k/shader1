@@ -624,7 +624,7 @@ Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Konstante 
 \Gnt{verzweigung}:\label{verzweigung}\\
 \hspace*{1cm}\Gt{if}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\Gspace\Gopt{\Gt{else}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}}\\
 
-\glq\Gnt{ausdruck}\grq ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+\glq\Gnt{ausdruck}\grq{} ist ein boole'scher Ausdruck, die \emph{Bedingung}.
 
 Wenn die Bedingung zu \kw{true} ausgewertet wird, werden die Kommandos des ersten Blockes (\emph{Wahr-Block}) ausgeführt,
 ansonsten die Kommandos des Blockes im \kw{else}-Zweig (\emph{Falsch-Block}).
@@ -727,9 +727,9 @@ angegeben werden.
 
 \subsubsection{Kommentare}\label{Kommentare}
 \Gnt{COMMENT}:\label{COMMENT}\\
-\hspace*{1cm}\Gt{//}\Gspace\Galt{\Gt{$\backslash$r}\Gor{}\Gt{$\backslash$n}}\\
+\hspace*{1cm}\Gt{//} beliebige Zeichen \Gspace\Galt{\Gt{$\backslash$r}\Gor{}\Gt{$\backslash$n}}\\
 \Gnt{ML\_COMMENT}:\label{ML_COMMENT}\\
-\hspace*{1cm}\glq\kwMlcStart\grq beliebige Zeichen \glq\kwMlcEnd\grq\\
+\hspace*{1cm}\Gt{\kwMlcStart} beliebige Zeichen \Gt{\kwMlcEnd}\\
 
 \Gnt{COMMENT}{\scriptsize (\ref{COMMENT})} ist ein einzeiliger Kommentar. Alle Eingabezeichen bis zum nächsten Zeilenumbruch
 werden ignoriert.
