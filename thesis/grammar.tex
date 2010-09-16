@@ -1,15 +1,11 @@
 \subsection{Programm}\label{Programm}
 \Gnt{programm}:\label{programm}\\
-\hspace*{1cm}\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \Gspace\Gnt{EOF}{\scriptsize (\ref{EOF})} \\
+\hspace*{1cm}\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \Gspace\Gnt{EOF}{\scriptsize (\ref{EOF})}\\
 \Gnt{programm\_statements}:\label{programm_statements}\\
-\hspace*{1cm}\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} \\
-\hspace*{1cm}\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} \Gspace\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
-\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gt{;}\\
-\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gt{;}\Gspace\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
-\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\\
-\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\Gspace\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
-\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} \Gspace\Gt{;}\\
-\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} \Gspace\Gt{;}\Gspace\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \\
+\hspace*{1cm}\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} \Gspace\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\\
+\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\\
+\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\\
 
 
 Ein \emph{Programm} besteht aus jeweils keinen bis mehreren Typdefinitionen, Variablen-, Konstanten- und Funktionsdeklarationen.
@@ -34,23 +30,17 @@ Die Werte dieser Parameter entstammen der Programmumgebung.
 
 \subsection{Blöcke}\label{Bloecke}
 \Gnt{block}:\label{block}\\
-\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \\
-\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gnt{block}{\scriptsize (\ref{block})} \\
-\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\\
-\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \\
-\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} \Gspace\Gt{;}\\
-\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} \Gspace\Gt{;}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \\
-\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})} \\
-\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})} \Gspace\Gnt{block}{\scriptsize (\ref{block})} \\
+\hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\\
+\hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\\
+\hspace*{1cm}\Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\\
+\hspace*{1cm}\Gnt{kommando}{\scriptsize (\ref{kommando})} \Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\\
 \Gnt{kommando}:\label{kommando}\\
 \hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\\
-\hspace*{1cm}\Gt{return}\Gspace\Gt{;}\\
-\hspace*{1cm}\Gt{return}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\\
+\hspace*{1cm}\Gt{return}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\\
 \hspace*{1cm}\Gnt{verzweigung}{\scriptsize (\ref{verzweigung})} \\
 \hspace*{1cm}\Gnt{schleife\_for}{\scriptsize (\ref{schleife_for})} \\
 \hspace*{1cm}\Gnt{schleife\_while}{\scriptsize (\ref{schleife_while})} \\
-\hspace*{1cm}\Gt{\{}\Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\hspace*{1cm}\Gt{\{}\Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\Gspace\Gt{\}}\\
 
 Ein \emph{Block} besteht aus Typdefinitionen, Variablen- und Konstantendeklarationen sowie keinem bis mehreren Kommandos.
 Der Gültigkeitsbereich dieser Deklarationen endet mit dem Ende des Blockes. Kommandos werden zur Laufzeit in Reihenfolge ihres
@@ -62,9 +52,7 @@ werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt 
 
 \subsection{Ausdrücke}\label{Ausdruecke}
 \Gnt{ausdruck}:\label{ausdruck}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gnt{asdr\_ternaer\_suffix}{\scriptsize (\ref{asdr_ternaer_suffix})} \\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gnt{asdr\_zuweisung\_suffix}{\scriptsize (\ref{asdr_zuweisung_suffix})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gopt{\Galt{\Gnt{asdr\_ternaer\_suffix}{\scriptsize (\ref{asdr_ternaer_suffix})} \Gor{}\Gnt{asdr\_zuweisung\_suffix}{\scriptsize (\ref{asdr_zuweisung_suffix})} }}\\
 
 Der Ausdruck höchster Präzedenz ist eine Zuweisung, auf welche einfach in der Regel für
 allgemeine Ausdrücke verwiesen wird.
@@ -88,21 +76,14 @@ Ein Zuweisungsausdruck selbst hat den Wert des zugewiesenen bezeichneten Wertes 
 
 \subsubsection{Basisausdruck}\label{Basisausdruck}
 \Gnt{asdr\_basis}:\label{asdr_basis}\\
-\hspace*{1cm}\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\\
-\hspace*{1cm}\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
-\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \\
-\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
-\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \\
-\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
-\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \\
-\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})} \Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
+\hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
+\hspace*{1cm}\Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})} \Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
+\hspace*{1cm}\Gnt{NUMERIC}{\scriptsize (\ref{NUMERIC})}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
 \Gnt{attribut\_liste\_oder\_array\_element}:\label{attribut_liste_oder_array_element}\\
-\hspace*{1cm}\Gt{.}\Gspace\Gnt{attribut}{\scriptsize (\ref{attribut})} \\
-\hspace*{1cm}\Gt{.}\Gspace\Gnt{attribut}{\scriptsize (\ref{attribut})} \Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
-\hspace*{1cm}\Gt{[}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{]}\\
-\hspace*{1cm}\Gt{[}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{]}\Gspace\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} \\
+\hspace*{1cm}\Gt{.}\Gspace\Gnt{attribut}{\scriptsize (\ref{attribut})} \Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
+\hspace*{1cm}\Gt{[}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{]}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
 
 \emph{Basisausdrücke} sind die Ausdrücke niedrigster Präzedenz. Dies sind neben Bezeichnern
 für Variablen, Konstanten, und Funktionsaufrufe auch Funktionsaufrufe und geschachtelte Ausdrücke.
@@ -136,23 +117,13 @@ Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet
 \paragraph{Arithmetische Operatoren}\label{Arithmetische Operatoren}
 ~\\
 \Gnt{asdr\_mult}:\label{asdr_mult}\\
-\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
-\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gspace\Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
+\hspace*{1cm}\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gspace\Gopt{\Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} }\\
 \Gnt{asdr\_mult\_operanden}:\label{asdr_mult_operanden}\\
-\hspace*{1cm}\Gt{*}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
-\hspace*{1cm}\Gt{*}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gspace\Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
-\hspace*{1cm}\Gt{/}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
-\hspace*{1cm}\Gt{/}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gspace\Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
-\hspace*{1cm}\Gt{\%}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \\
-\hspace*{1cm}\Gt{\%}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gspace\Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} \\
+\hspace*{1cm}\Galt{\Gt{*}\Gor{}\Gt{/}\Gor{}\Gt{\%}}\Gspace\Gnt{asdr\_unaer}{\scriptsize (\ref{asdr_unaer})} \Gspace\Gopt{\Gnt{asdr\_mult\_operanden}{\scriptsize (\ref{asdr_mult_operanden})} }\\
 \Gnt{asdr\_add}:\label{asdr_add}\\
-\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
-\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gspace\Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} \\
+\hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gspace\Gopt{\Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} }\\
 \Gnt{asdr\_add\_operanden}:\label{asdr_add_operanden}\\
-\hspace*{1cm}\Gt{+}\Gspace\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
-\hspace*{1cm}\Gt{+}\Gspace\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gspace\Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} \\
-\hspace*{1cm}\Gt{-}\Gspace\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \\
-\hspace*{1cm}\Gt{-}\Gspace\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gspace\Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} \\
+\hspace*{1cm}\Galt{\Gt{+}\Gor{}\Gt{-}}\Gspace\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gspace\Gopt{\Gnt{asdr\_add\_operanden}{\scriptsize (\ref{asdr_add_operanden})} }\\
 
 \op{\plus} addiert rechten und linken Operanden.
 
@@ -181,10 +152,7 @@ so ist der Typ des ausgewerteten Ausdrucks von einem Fließkommatyp.
 
 \subsubsection{Unäre Ausdrücke}\label{Unaere Ausdruecke}
 \Gnt{asdr\_unaer}:\label{asdr_unaer}\\
-\hspace*{1cm}\Gt{$\sim$}\Gspace\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
-\hspace*{1cm}\Gt{-}\Gspace\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
-\hspace*{1cm}\Gt{!}\Gspace\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
-\hspace*{1cm}\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
+\hspace*{1cm}\Gopt{\Galt{\Gt{$\sim$}\Gor{}\Gt{-}\Gor{}\Gt{!}}}\Gspace\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
 
 Ein \emph{unärer Ausdruck} transformiert den Wert des Operanden.
 
@@ -216,25 +184,13 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 \subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
 \Gnt{asdr\_gleichheit}:\label{asdr_gleichheit}\\
-\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \\
-\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} \\
+\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gopt{\Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} }\\
 \Gnt{asdr\_gleichheit\_operanden}:\label{asdr_gleichheit_operanden}\\
-\hspace*{1cm}\Gt{!=}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \\
-\hspace*{1cm}\Gt{!=}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} \\
-\hspace*{1cm}\Gt{==}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \\
-\hspace*{1cm}\Gt{==}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} \\
+\hspace*{1cm}\Galt{\Gt{!=}\Gor{}\Gt{==}}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gopt{\Gnt{asdr\_gleichheit\_operanden}{\scriptsize (\ref{asdr_gleichheit_operanden})} }\\
 \Gnt{asdr\_vergleich}:\label{asdr_vergleich}\\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gopt{\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} }\\
 \Gnt{asdr\_vergleich\_operanden}:\label{asdr_vergleich_operanden}\\
-\hspace*{1cm}\Gt{>}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gt{>}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
-\hspace*{1cm}\Gt{>=}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gt{>=}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
-\hspace*{1cm}\Gt{<}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gt{<}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
-\hspace*{1cm}\Gt{<=}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \\
-\hspace*{1cm}\Gt{<=}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} \\
+\hspace*{1cm}\Galt{\Gt{>}\Gor{}\Gt{>=}\Gor{}\Gt{<}\Gor{}\Gt{<=}}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gopt{\Gnt{asdr\_vergleich\_operanden}{\scriptsize (\ref{asdr_vergleich_operanden})} }\\
 
 \op{>} gibt an ob der linke Operand größer als der rechte Operand ist.
 
@@ -264,17 +220,13 @@ so findet ein Vergleich von Fließkommawerten statt.
 
 \subsubsection{Logische Operatoren}\label{Logische Operatoren}
 \Gnt{asdr\_logisch\_oder}:\label{asdr_logisch_oder}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
-\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gnt{asdr\_logisch\_oder\_operanden}{\scriptsize (\ref{asdr_logisch_oder_operanden})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gopt{\Gnt{asdr\_logisch\_oder\_operanden}{\scriptsize (\ref{asdr_logisch_oder_operanden})} }\\
 \Gnt{asdr\_logisch\_oder\_operanden}:\label{asdr_logisch_oder_operanden}\\
-\hspace*{1cm}\Gt{||}\Gspace\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \\
-\hspace*{1cm}\Gt{||}\Gspace\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gnt{asdr\_logisch\_oder\_operanden}{\scriptsize (\ref{asdr_logisch_oder_operanden})} \\
+\hspace*{1cm}\Gt{||}\Gspace\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gopt{\Gnt{asdr\_logisch\_oder\_operanden}{\scriptsize (\ref{asdr_logisch_oder_operanden})} }\\
 \Gnt{asdr\_logisch\_und}:\label{asdr_logisch_und}\\
-\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \\
-\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gspace\Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
+\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gspace\Gopt{\Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} }\\
 \Gnt{asdr\_logisch\_und\_operanden}:\label{asdr_logisch_und_operanden}\\
-\hspace*{1cm}\Gt{\&\&}\Gspace\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \\
-\hspace*{1cm}\Gt{\&\&}\Gspace\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gspace\Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} \\
+\hspace*{1cm}\Gt{\&\&}\Gspace\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gspace\Gopt{\Gnt{asdr\_logisch\_und\_operanden}{\scriptsize (\ref{asdr_logisch_und_operanden})} }\\
 
 %  "!" - unäres NOT
 
@@ -287,15 +239,14 @@ Beide Operanden müssen vom Typ \kw{bool} sein.
 
 \subsubsection{Boole'sche Werte}\label{Boole'sche Werte}
 \Gnt{asdr\_konst\_bool}:\label{asdr_konst_bool}\\
-\hspace*{1cm}\Gt{true}\\
-\hspace*{1cm}\Gt{false}\\
+\hspace*{1cm}\Galt{\Gt{true}\Gor{}\Gt{false}}\\
 
 \kw{true} (wahr) und \kw{false} (unwahr) sind Werte vom Typ \kw{bool} (siehe \Gnt{typ\_bool}{\scriptsize (\ref{typ_bool})}).
 
 
 \subsubsection{Attribute}\label{Attribute}
 \Gnt{attribut}:\label{attribut}\\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 
 % TODO 'Attr-Vektor', das Swizzle, Komp. ist
 % TODO kein Bzch-Attribut sondern Attribute ausschreiben
@@ -318,10 +269,9 @@ Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
 \hspace*{1cm}\Gnt{typ\_vektor}{\scriptsize (\ref{typ_vektor})} \\
 \hspace*{1cm}\Gnt{typ\_matrix}{\scriptsize (\ref{typ_matrix})} \\
 \hspace*{1cm}\Gnt{typ\_sampler}{\scriptsize (\ref{typ_sampler})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 \Gnt{typ}:\label{typ}\\
-\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \\
-\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gspace\Gnt{typ\_array}{\scriptsize (\ref{typ_array})} \\
+\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gspace\Gopt{\Gnt{typ\_array}{\scriptsize (\ref{typ_array})} }\\
 \subsubsection{Boole'scher Typ}\label{Boole'scher Typ}
 \Gnt{typ\_bool}:\label{typ_bool}\\
 \hspace*{1cm}\Gt{bool}\\
@@ -332,8 +282,7 @@ Der Typ \kw{bool} spezifiziert den boole'schen Typ mit den möglichen Werten
 
 \subsubsection{Numerische Typen}\label{Numerische Typen}
 \Gnt{typ\_num}:\label{typ_num}\\
-\hspace*{1cm}\Gt{int}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int}\\
+\hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Gt{int}\\
 \hspace*{1cm}\Gt{float}\\
 
 Der Typ \kw{int} spezifiziert vorzeichenbehaftete Ganzzahlwerte.
@@ -366,24 +315,11 @@ Der Typ \kw{float} spezifiziert Fließkommazahlen.
 \hspace*{1cm}\Gnt{typ\_vektor\_float}{\scriptsize (\ref{typ_vektor_float})} \\
 \hspace*{1cm}\Gnt{typ\_vektor\_bool}{\scriptsize (\ref{typ_vektor_bool})} \\
 \Gnt{typ\_vektor\_int}:\label{typ_vektor_int}\\
-\hspace*{1cm}\Gt{int1}\\
-\hspace*{1cm}\Gt{int2}\\
-\hspace*{1cm}\Gt{int3}\\
-\hspace*{1cm}\Gt{int4}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int1}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int2}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int3}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int4}\\
+\hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Galt{\Gt{int1}\Gor{}\Gt{int2}\Gor{}\Gt{int3}\Gor{}\Gt{int4}}\\
 \Gnt{typ\_vektor\_float}:\label{typ_vektor_float}\\
-\hspace*{1cm}\Gt{float1}\\
-\hspace*{1cm}\Gt{float2}\\
-\hspace*{1cm}\Gt{float3}\\
-\hspace*{1cm}\Gt{float4}\\
+\hspace*{1cm}\Galt{\Gt{float1}\Gor{}\Gt{float2}\Gor{}\Gt{float3}\Gor{}\Gt{float4}}\\
 \Gnt{typ\_vektor\_bool}:\label{typ_vektor_bool}\\
-\hspace*{1cm}\Gt{bool1}\\
-\hspace*{1cm}\Gt{bool2}\\
-\hspace*{1cm}\Gt{bool3}\\
-\hspace*{1cm}\Gt{bool4}\\
+\hspace*{1cm}\Galt{\Gt{bool1}\Gor{}\Gt{bool2}\Gor{}\Gt{bool3}\Gor{}\Gt{bool4}}\\
 
 % "normalized"?
 
@@ -432,72 +368,20 @@ Alle verwendeten Vektortypen müssen vom gleichen Basistyp wie der zu konstruier
 \hspace*{1cm}\Gnt{typ\_matrix\_int}{\scriptsize (\ref{typ_matrix_int})} \\
 \hspace*{1cm}\Gnt{typ\_matrix\_bool}{\scriptsize (\ref{typ_matrix_bool})} \\
 \Gnt{typ\_matrix\_float}:\label{typ_matrix_float}\\
-\hspace*{1cm}\Gt{float1x1}\\
-\hspace*{1cm}\Gt{float2x1}\\
-\hspace*{1cm}\Gt{float3x1}\\
-\hspace*{1cm}\Gt{float4x1}\\
-\hspace*{1cm}\Gt{float1x2}\\
-\hspace*{1cm}\Gt{float2x2}\\
-\hspace*{1cm}\Gt{float3x2}\\
-\hspace*{1cm}\Gt{float4x2}\\
-\hspace*{1cm}\Gt{float1x3}\\
-\hspace*{1cm}\Gt{float2x3}\\
-\hspace*{1cm}\Gt{float3x3}\\
-\hspace*{1cm}\Gt{float4x3}\\
-\hspace*{1cm}\Gt{float1x4}\\
-\hspace*{1cm}\Gt{float2x4}\\
-\hspace*{1cm}\Gt{float3x4}\\
-\hspace*{1cm}\Gt{float4x4}\\
+\hspace*{1cm}\Galt{\Gt{float1x1}\Gor{}\Gt{float2x1}\Gor{}\Gt{float3x1}\Gor{}\Gt{float4x1}}\\
+\hspace*{1cm}\Galt{\Gt{float1x2}\Gor{}\Gt{float2x2}\Gor{}\Gt{float3x2}\Gor{}\Gt{float4x2}}\\
+\hspace*{1cm}\Galt{\Gt{float1x3}\Gor{}\Gt{float2x3}\Gor{}\Gt{float3x3}\Gor{}\Gt{float4x3}}\\
+\hspace*{1cm}\Galt{\Gt{float1x4}\Gor{}\Gt{float2x4}\Gor{}\Gt{float3x4}\Gor{}\Gt{float4x4}}\\
 \Gnt{typ\_matrix\_int}:\label{typ_matrix_int}\\
-\hspace*{1cm}\Gt{int1x1}\\
-\hspace*{1cm}\Gt{int2x1}\\
-\hspace*{1cm}\Gt{int3x1}\\
-\hspace*{1cm}\Gt{int4x1}\\
-\hspace*{1cm}\Gt{int1x2}\\
-\hspace*{1cm}\Gt{int2x2}\\
-\hspace*{1cm}\Gt{int3x2}\\
-\hspace*{1cm}\Gt{int4x2}\\
-\hspace*{1cm}\Gt{int1x3}\\
-\hspace*{1cm}\Gt{int2x3}\\
-\hspace*{1cm}\Gt{int3x3}\\
-\hspace*{1cm}\Gt{int4x3}\\
-\hspace*{1cm}\Gt{int1x4}\\
-\hspace*{1cm}\Gt{int2x4}\\
-\hspace*{1cm}\Gt{int3x4}\\
-\hspace*{1cm}\Gt{int4x4}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int1x1}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int2x1}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int3x1}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int4x1}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int1x2}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int2x2}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int3x2}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int4x2}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int1x3}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int2x3}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int3x3}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int4x3}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int1x4}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int2x4}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int3x4}\\
-\hspace*{1cm}\Gt{unsigned}\Gspace\Gt{int4x4}\\
+\hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Galt{\Gt{int1x1}\Gor{}\Gt{int2x1}\Gor{}\Gt{int3x1}\Gor{}\Gt{int4x1}}\\
+\hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Galt{\Gt{int1x2}\Gor{}\Gt{int2x2}\Gor{}\Gt{int3x2}\Gor{}\Gt{int4x2}}\\
+\hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Galt{\Gt{int1x3}\Gor{}\Gt{int2x3}\Gor{}\Gt{int3x3}\Gor{}\Gt{int4x3}}\\
+\hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Galt{\Gt{int1x4}\Gor{}\Gt{int2x4}\Gor{}\Gt{int3x4}\Gor{}\Gt{int4x4}}\\
 \Gnt{typ\_matrix\_bool}:\label{typ_matrix_bool}\\
-\hspace*{1cm}\Gt{bool1x1}\\
-\hspace*{1cm}\Gt{bool2x1}\\
-\hspace*{1cm}\Gt{bool3x1}\\
-\hspace*{1cm}\Gt{bool4x1}\\
-\hspace*{1cm}\Gt{bool1x2}\\
-\hspace*{1cm}\Gt{bool2x2}\\
-\hspace*{1cm}\Gt{bool3x2}\\
-\hspace*{1cm}\Gt{bool4x2}\\
-\hspace*{1cm}\Gt{bool1x3}\\
-\hspace*{1cm}\Gt{bool2x3}\\
-\hspace*{1cm}\Gt{bool3x3}\\
-\hspace*{1cm}\Gt{bool4x3}\\
-\hspace*{1cm}\Gt{bool1x4}\\
-\hspace*{1cm}\Gt{bool2x4}\\
-\hspace*{1cm}\Gt{bool3x4}\\
-\hspace*{1cm}\Gt{bool4x4}\\
+\hspace*{1cm}\Galt{\Gt{bool1x1}\Gor{}\Gt{bool2x1}\Gor{}\Gt{bool3x1}\Gor{}\Gt{bool4x1}}\\
+\hspace*{1cm}\Galt{\Gt{bool1x2}\Gor{}\Gt{bool2x2}\Gor{}\Gt{bool3x2}\Gor{}\Gt{bool4x2}}\\
+\hspace*{1cm}\Galt{\Gt{bool1x3}\Gor{}\Gt{bool2x3}\Gor{}\Gt{bool3x3}\Gor{}\Gt{bool4x3}}\\
+\hspace*{1cm}\Galt{\Gt{bool1x4}\Gor{}\Gt{bool2x4}\Gor{}\Gt{bool3x4}\Gor{}\Gt{bool4x4}}\\
 
 Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher oder Fließkommatyp.
 Der Basistyp wird von einer Zeichenkette der Form $N$\kw{x}$M$ gefolgt. $N$ und
@@ -541,10 +425,7 @@ $N$ sein. Die Anzahl der gegebenen Vektoren muss $M$ sein.
 
 \subsubsection{Samplertypen}\label{Samplertypen}
 \Gnt{typ\_sampler}:\label{typ_sampler}\\
-\hspace*{1cm}\Gt{sampler1D}\\
-\hspace*{1cm}\Gt{sampler2D}\\
-\hspace*{1cm}\Gt{sampler3D}\\
-\hspace*{1cm}\Gt{samplerCUBE}\\
+\hspace*{1cm}\Galt{\Gt{sampler1D}\Gor{}\Gt{sampler2D}\Gor{}\Gt{sampler3D}\Gor{}\Gt{samplerCUBE}}\\
 
 Samplertypen repräsentieren Textureinheiten der Hardware. Texturen verschiedener
 Dimensionalität müssen in Shadingprogrammen verschiedenartig angesprochen werden;
@@ -556,8 +437,7 @@ Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{
 
 \subsubsection{Arraytypen}\label{Arraytypen}
 \Gnt{typ\_array}:\label{typ_array}\\
-\hspace*{1cm}\Gt{[}\Gspace\Gt{]}\\
-\hspace*{1cm}\Gt{[}\Gspace\Gt{]}\Gspace\Gnt{typ\_array}{\scriptsize (\ref{typ_array})} \\
+\hspace*{1cm}\Gt{[}\Gspace\Gt{]}\Gspace\Gopt{\Gnt{typ\_array}{\scriptsize (\ref{typ_array})} }\\
 
 Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch \Gnt{typ}{\scriptsize (\ref{typ})}).
 Die Anzahl der Elemente in individuellen Variablen oder Konstanten eines Arraytyps
@@ -588,7 +468,7 @@ Die Anzahl der Elemente entspricht der Anzahl der dem Konstruktor übergebenen A
 
 \subsubsection{Typdefinitionen}\label{Typdefinitionen}
 \Gnt{typ\_definition}:\label{typ_definition}\\
-\hspace*{1cm}\Gt{typedef}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
+\hspace*{1cm}\Gt{typedef}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 
 \Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} deklariert einen neuen Typ mit dem angegeben Bezeichner der ein Alias für den durch \glq\Gnt{typ}\grq\ bezeichneten Typen ist.
 
@@ -626,34 +506,16 @@ Ein Ausdruck einer expliziten Typumwandlung hat den Typ in den explizit umgewand
 
 \subsection{Funktionen}\label{Funktionen}
 \Gnt{dekl\_funktion}:\label{dekl_funktion}\\
-\hspace*{1cm}\Gnt{typ\_funktion}{\scriptsize (\ref{typ_funktion})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{(}\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gnt{typ\_funktion}{\scriptsize (\ref{typ_funktion})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{(}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\hspace*{1cm}\Gnt{typ\_funktion}{\scriptsize (\ref{typ_funktion})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gt{(}\Gspace\Gopt{\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} }\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 \Gnt{typ\_funktion}:\label{typ_funktion}\\
 \hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \\
 \hspace*{1cm}\Gt{void}\\
 \Gnt{funktion\_param\_formal}:\label{funktion_param_formal}\\
-\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\hspace*{1cm}\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\hspace*{1cm}\Gt{in}\Gspace\Gt{out}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} \\
+\hspace*{1cm}\Gopt{\Gt{in}}\Gspace\Gopt{\Gt{out}}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gopt{\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gopt{\Gt{,}\Gspace\Gnt{funktion\_param\_formal}{\scriptsize (\ref{funktion_param_formal})} }\\
 \Gnt{funktion\_aufruf}:\label{funktion_aufruf}\\
-\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gt{(}\Gspace\Gt{)}\\
-\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gt{(}\Gspace\Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})} \Gspace\Gt{)}\\
+\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gt{(}\Gspace\Gopt{\Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})} }\Gspace\Gt{)}\\
 \Gnt{funktion\_param\_tatsaechl}:\label{funktion_param_tatsaechl}\\
-\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{,}\Gspace\Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})} \\
+\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gopt{\Gt{,}\Gspace\Gnt{funktion\_param\_tatsaechl}{\scriptsize (\ref{funktion_param_tatsaechl})} }\\
 
 % TODO: Default-Parameter
 
@@ -722,11 +584,9 @@ ungültig.
 \Gnt{dekl\_var}:\label{dekl_var}\\
 \hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{dekl\_var\_bzch\_init\_liste}{\scriptsize (\ref{dekl_var_bzch_init_liste})} \\
 \Gnt{dekl\_var\_bzch\_init\_liste}:\label{dekl_var_bzch_init_liste}\\
-\hspace*{1cm}\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \\
-\hspace*{1cm}\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \Gspace\Gt{,}\Gspace\Gnt{dekl\_var\_bzch\_init\_liste}{\scriptsize (\ref{dekl_var_bzch_init_liste})} \\
+\hspace*{1cm}\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \Gspace\Gopt{\Gt{,}\Gspace\Gnt{dekl\_var\_bzch\_init\_liste}{\scriptsize (\ref{dekl_var_bzch_init_liste})} }\\
 \Gnt{dekl\_var\_bzch\_init}:\label{dekl_var_bzch_init}\\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gopt{\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\\
 
 \Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} deklariert eine oder mehrere neue Variablen des gegebenen Typs und den gegebenen Bezeichnern.
 
@@ -745,10 +605,9 @@ Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Variable s
 \Gnt{dekl\_konst}:\label{dekl_konst}\\
 \hspace*{1cm}\Gt{const}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{dekl\_konst\_bzch\_init\_liste}{\scriptsize (\ref{dekl_konst_bzch_init_liste})} \\
 \Gnt{dekl\_konst\_bzch\_init\_liste}:\label{dekl_konst_bzch_init_liste}\\
-\hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \\
-\hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \Gspace\Gt{,}\Gspace\Gnt{dekl\_konst\_bzch\_init\_liste}{\scriptsize (\ref{dekl_konst_bzch_init_liste})} \\
+\hspace*{1cm}\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \Gspace\Gopt{\Gt{,}\Gspace\Gnt{dekl\_konst\_bzch\_init\_liste}{\scriptsize (\ref{dekl_konst_bzch_init_liste})} }\\
 \Gnt{dekl\_konst\_bzch\_init}:\label{dekl_konst_bzch_init}\\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})} \Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
 \Gnt{dekl\_konst}{\scriptsize (\ref{dekl_konst})} deklariert eine oder mehrere neue Konstanten des gegebenen Typs und den gegebenen Bezeichnern.
 
@@ -763,8 +622,7 @@ Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Konstante 
 \subsection{Ablaufsteuerung}\label{Ablaufsteuerung}
 \subsubsection{Verzweigungen}\label{Verzweigungen}
 \Gnt{verzweigung}:\label{verzweigung}\\
-\hspace*{1cm}\Gt{if}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{if}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\Gspace\Gt{else}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\hspace*{1cm}\Gt{if}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\Gspace\Gopt{\Gt{else}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}}\\
 
 \glq\Gnt{ausdruck}\grq ist ein boole'scher Ausdruck, die \emph{Bedingung}.
 
@@ -777,14 +635,7 @@ Die Berechnungsfrequenz der Verzweigung ist die kleinste gemeinsame Frequenz der
 
 \subsubsection{\kw{for}-Schleifen}\label{$_backslash$kw__for__-Schleifen}
 \Gnt{schleife\_for}:\label{schleife_for}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gt{;}\Gspace\Gt{;}\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gt{;}\Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gt{;}\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{;}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 
 Der erste Ausdruck ist die \emph{Initialisierung}. Der zweite Ausdruck ist die \emph{Schleifenbedingung}. Der dritte Ausdruck ist der \emph{Zählausdruck}.
 
@@ -820,42 +671,21 @@ hier \emph{keine} weiteren Trennzeichen zwischen Terminalen!
 \Gnt{Letter}:\label{Letter}\\
 \hspace*{1cm}Unicode-Buchstabe\\
 \Gnt{Comp\_XYZW}:\label{Comp_XYZW}\\
-\hspace*{1cm}\Gt{x}\\
-\hspace*{1cm}\Gt{y}\\
-\hspace*{1cm}\Gt{z}\\
-\hspace*{1cm}\Gt{w}\\
+\hspace*{1cm}\Galt{\Gt{x}\Gor{}\Gt{y}\Gor{}\Gt{z}\Gor{}\Gt{w}}\\
 \Gnt{Comp\_RGBA}:\label{Comp_RGBA}\\
-\hspace*{1cm}\Gt{r}\\
-\hspace*{1cm}\Gt{g}\\
-\hspace*{1cm}\Gt{b}\\
-\hspace*{1cm}\Gt{a}\\
+\hspace*{1cm}\Galt{\Gt{r}\Gor{}\Gt{g}\Gor{}\Gt{b}\Gor{}\Gt{a}}\\
 \Gnt{SWIZZLE\_XYZW}:\label{SWIZZLE_XYZW}\\
-\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
-\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gspace\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
-\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gspace\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gspace\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
-\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gspace\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gspace\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \Gspace\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})} \\
+\hspace*{1cm}\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})}\Gspace\Gopt{\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})}\Gspace\Gopt{\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})}\Gspace\Gopt{\Gnt{Comp\_XYZW}{\scriptsize (\ref{Comp_XYZW})}}}}\\
 \Gnt{SWIZZLE\_RGBA}:\label{SWIZZLE_RGBA}\\
-\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
-\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gspace\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
-\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gspace\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gspace\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
-\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gspace\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gspace\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \Gspace\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})} \\
+\hspace*{1cm}\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})}\Gspace\Gopt{\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})}\Gspace\Gopt{\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})}\Gspace\Gopt{\Gnt{Comp\_RGBA}{\scriptsize (\ref{Comp_RGBA})}}}}\\
 \Gnt{BEZEICHNER}:\label{BEZEICHNER}\\
-\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \\
-\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \Gspace\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
-\hspace*{1cm}\Gt{\_}\\
-\hspace*{1cm}\Gt{\_}\Gspace\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\hspace*{1cm}\Galt{\Gnt{Letter}{\scriptsize (\ref{Letter})}\Gor{}\Gt{\_}}\Gspace\Gopt{\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})}}\\
 \Gnt{LetterNumberStr}:\label{LetterNumberStr}\\
-\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \\
-\hspace*{1cm}\Gnt{Letter}{\scriptsize (\ref{Letter})} \Gspace\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
-\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \\
-\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \Gspace\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
-\hspace*{1cm}\Gt{\_}\\
-\hspace*{1cm}\Gt{\_}\Gspace\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})} \\
+\hspace*{1cm}\Galt{\Gnt{Letter}{\scriptsize (\ref{Letter})}\Gor{}\Gnt{Number}{\scriptsize (\ref{Number})}\Gor{}\Gt{\_}}\Gspace\Gopt{\Gnt{LetterNumberStr}{\scriptsize (\ref{LetterNumberStr})}}\\
 \Gnt{Whitespace}:\label{Whitespace}\\
 \hspace*{1cm}Unicode-Separator\\
 \Gnt{WS}:\label{WS}\\
-\hspace*{1cm}\Gnt{Whitespace}{\scriptsize (\ref{Whitespace})} \\
-\hspace*{1cm}\Gnt{Whitespace}{\scriptsize (\ref{Whitespace})} \Gspace\Gnt{WS}{\scriptsize (\ref{WS})} \\
+\hspace*{1cm}\Gnt{Whitespace}{\scriptsize (\ref{Whitespace})}\Gspace\Gopt{\Gnt{WS}{\scriptsize (\ref{WS})}}\\
 
 \emph{Bezeicher} ergeben sich aus ein oder mehreren Buchstaben, Ziffern und dem Zeichen \Gt{\_}. Das erste Zeichen
 darf keine Ziffer sein.
@@ -871,37 +701,23 @@ Lexikalische Einheiten können mit einem oder mehreren Zeichen der Unicode-Kateg
 
 \subsubsection{Numerische Literale}\label{Numerische Literale}
 \Gnt{Numbers}:\label{Numbers}\\
-\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \\
-\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})} \Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})}\Gspace\Gopt{\Gnt{Numbers}{\scriptsize (\ref{Numbers})}}\\
 \Gnt{Numbers\_Sign}:\label{Numbers_Sign}\\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
-\hspace*{1cm}\Gt{-}\Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\hspace*{1cm}\Gopt{\Gt{-}}\Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})}\\
 \Gnt{Numbers\_Frac}:\label{Numbers_Frac}\\
-\hspace*{1cm}\Gt{.}\Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
+\hspace*{1cm}\Gt{.}\Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})}\\
 \Gnt{Num\_Float\_Exp}:\label{Num_Float_Exp}\\
-\hspace*{1cm}\Gt{e}\Gspace\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \\
-\hspace*{1cm}\Gt{E}\Gspace\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})} \\
+\hspace*{1cm}\Galt{\Gt{e}\Gor{}\Gt{E}}\Gspace\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})}\\
 \Gnt{Num\_Float}:\label{Num_Float}\\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \Gspace\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \Gspace\Gt{.}\\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \Gspace\Gt{.}\Gspace\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \Gspace\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \\
-\hspace*{1cm}\Gnt{Numbers}{\scriptsize (\ref{Numbers})} \Gspace\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \Gspace\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
-\hspace*{1cm}\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \\
-\hspace*{1cm}\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})} \Gspace\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})} \\
+\hspace*{1cm}\Galt{\Gnt{Numbers}{\scriptsize (\ref{Numbers})}\Gspace\Gopt{\Galt{\Gt{.}\Gor{}\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})}}}\Gor{}\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})}}\Gspace\Gopt{\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})}}\\
 \Gnt{Digit\_Hex}:\label{Digit_Hex}\\
-\hspace*{1cm}\Grange{0}{9}\\
-\hspace*{1cm}\Grange{A}{F}\\
-\hspace*{1cm}\Grange{a}{f}\\
+\hspace*{1cm}\Galt{\Grange{0}{9}\Gor{}\Grange{A}{F}\Gor{}\Grange{a}{f}}\\
 \Gnt{Digits\_Hex}:\label{Digits_Hex}\\
-\hspace*{1cm}\Gnt{Digit\_Hex}{\scriptsize (\ref{Digit_Hex})} \\
-\hspace*{1cm}\Gnt{Digit\_Hex}{\scriptsize (\ref{Digit_Hex})} \Gspace\Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})} \\
+\hspace*{1cm}\Gnt{Digit\_Hex}{\scriptsize (\ref{Digit_Hex})}\Gspace\Gopt{\Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})}}\\
 \Gnt{Num\_Hex}:\label{Num_Hex}\\
-\hspace*{1cm}\Gt{0x}\Gspace\Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})} \\
+\hspace*{1cm}\Gt{0x}\Gspace\Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})}\\
 \Gnt{NUMERIC}:\label{NUMERIC}\\
-\hspace*{1cm}\Gnt{Num\_Float}{\scriptsize (\ref{Num_Float})} \\
-\hspace*{1cm}\Gnt{Num\_Hex}{\scriptsize (\ref{Num_Hex})} \\
+\hspace*{1cm}\Galt{\Gnt{Num\_Float}{\scriptsize (\ref{Num_Float})}\Gor{}\Gnt{Num\_Hex}{\scriptsize (\ref{Num_Hex})}}\\
 
 Ganzzahlen können in Dezimal- und Hexadezimalnotation angegeben werden.
 
@@ -911,8 +727,7 @@ angegeben werden.
 
 \subsubsection{Kommentare}\label{Kommentare}
 \Gnt{COMMENT}:\label{COMMENT}\\
-\hspace*{1cm}\Gt{//}\Gspace\Gt{$\backslash$r}\\
-\hspace*{1cm}\Gt{//}\Gspace\Gt{$\backslash$n}\\
+\hspace*{1cm}\Gt{//}\Gspace\Galt{\Gt{$\backslash$r}\Gor{}\Gt{$\backslash$n}}\\
 \Gnt{ML\_COMMENT}:\label{ML_COMMENT}\\
 \hspace*{1cm}\glq\kwMlcStart\grq beliebige Zeichen \glq\kwMlcEnd\grq\\
 

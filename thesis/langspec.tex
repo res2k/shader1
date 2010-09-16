@@ -148,6 +148,9 @@ Deren Regeln sind in \ref{Lexikalische Einheiten} beschrieben.
 \newcommand\Gt[1]{`\texttt{#1}'}
 \newcommand\Gspecial[1]{#1}
 \newcommand\Grange[2]{\Gt{#1} .. \Gt{#2}}
+\newcommand\Gopt[1]{[\ #1\ ]}
+\newcommand\Galt[1]{( #1 )}
+\newcommand\Gor{ | }
 \newcommand\attr[1]{\texttt{#1}}
 \newcommand\kw[1]{\texttt{#1}}
 \newcommand\op[1]{`\texttt{#1}'}
@@ -156,6 +159,11 @@ Deren Regeln sind in \ref{Lexikalische Einheiten} beschrieben.
 \newcommand\plus{+}
 \newcommand\kwMlcStart{\kw{/*}}
 \newcommand\kwMlcEnd{\kw{*/}}
+
+Die Notation ist im Wesentlichen die erweiterte Backus-Naur-Form.
+Die komplette rechte Seite einer Regel ist eingerückt. Besteht eine Regel
+aus mehreren Zeilen, so ist jede Zeile eine alternative Ableitung.
+
 \input{grammar}
 
 \section{Standardumgebung}
