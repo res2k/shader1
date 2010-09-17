@@ -485,10 +485,10 @@ bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und
 \end{figure}
 
 Der Aufbau entspricht grösstenteils dem, was für einen Compiler üblich ist: das \emph{Front-End} generiert nach Syntax- und Semantikanalyse
-eine Repräsentation des Programms in einem \emph{Zwischencode}. Auf dieser Zwischenrepräsentation werden im "`Middle-End"' % Ref wo das gesagt wird, oder besseres Wort
-Optimierungen vorgenommen. Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischenrepräsentation der tatsächliche Zielcode generiert.
+eine Repräsentation des Programms in einem \emph{Zwischencode}. Auf dieser Zwischencoderepräsentation werden im "`Middle-End"' % Ref wo das gesagt wird, oder besseres Wort
+Optimierungen vorgenommen. Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischencoderepräsentation der tatsächliche Zielcode generiert.
 
-Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP}. Hier wird für jeden Befehl der Zwischenrepräsentation untersucht, mit
+Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP}. Hier wird für jeden Befehl der Zwischencoderepräsentation untersucht, mit
 welcher Berechnungsfrequenz~(siehe \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz})
 \footnote{Für "`Meshfrequenz"' wird kein Programm generiert, sie spielt aber eine Rolle bei der Aufspaltung. Generell ist das Konzept der Aufspaltung auch auf weitere Frequenzen erweiterbar.}
 jeder Befehl des Programms ausgeführt werden muss - mit anderen Worten,
@@ -509,7 +509,7 @@ Gründe dafür sind:
 \item Die Flexibilität der Sprache und deren reichhaltige Standardbibliothek,
 \item hohe Portabilität (C++-Compiler sind für praktisch jede Plattform verfügbar),
 \item eine reichhaltige Palette an von Dritten hergestellter Bibliotheken,
-\item die einfache Bindbarkeit an andere Sprachen (direkt oder über eine C-kompatible Schnittstelle),
+\item die einfache Verwendbarkeit in anderen Programmiersprachen (direkt oder über eine C-kompatible Schnittstelle),
 \item nicht zuletzt die Gewandheit des Autors dieser Arbeit in C++.
 \end{itemize}
  
@@ -519,10 +519,10 @@ eine "`Kommandozeilenversion"' des Compilers setzt auch auf diese Bibliothek auf
 Zur Sicherstellung der fortwährend korrekten Funktionsweise aller Module des Compilers wurden entwicklungsbegleitend 
 jeweils \emph{Tests} der Module geschrieben (Black-Box und White-Box); Ausführen der Tests war regelmässiger Teil des Entwicklungsprozesses.
  
-\subsection{Lexer}
+\subsection{Scanner}
 
 Der \emph{Lexer} wandelt die als Byte-Strom vorliegende Eingabe in eine Folge von "`Tokens"'.
-Ein Token ist eine der in Abschn.~\ref{Lexikalische Einheiten} aufgezählten lexikalischen Einheiten, ein bekanntes Symbol (Operatoren etc.) oder Schlüsselwort. 
+Ein Token ist eine der in Abschnitt~\ref{Lexikalische Einheiten} aufgezählten lexikalischen Einheiten, ein bekanntes Symbol (Operatoren etc.) oder Schlüsselwort. 
 Leerzeichen (``Whitespace'') und Kommentare werden bereits vom Lexer ignoriert (d.h. für diese werden keine Tokens produziert).
 
 Der Lexer folgt einer typischen Implementierung wie sie z.B. in \cite{wirth_compiler} beschrieben ist. Auf einige beachtenswerte Aspekte
@@ -535,11 +535,11 @@ Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Lexer in eine
 \paragraph{Schlüsselwörter.} Erkennt der Lexer einen Bezeichner, wird auch geprüft, ob es sich um ein Schlüsselwort handelt. Ist dies der Fall
 wird im Token eine dem Schlüsselwort eindeutig zugeordnete ID gespeichert.
 
-Die erste Ausnahme allerdings bilden die Schlüsselwörter für Vektor- und Matrixtypen (Abschn.~\ref{Vektortypen}, \ref{Matrixtypen}). Diese entsprechen
+Die erste Ausnahme allerdings bilden die Schlüsselwörter für Vektor- und Matrixtypen (Abschnitte~\ref{Vektortypen}, \ref{Matrixtypen}). Diese entsprechen
 jeweils dem Muster $\mathit{typ}\mathrm{N}$ bzw. $\mathit{typ}\mathrm{N}\mathit{x}\mathrm{M}$ (mit $N \in 1 \dots 4, M \in 1 \dots 4$).
 Da eine eigene ID für jeden Vektor- oder Matrix insgesamt 20 weitere IDs pro Basis-Typ nach sich ziehen würde -- wobei später noch jeder ID wiederum
 die ursprünglichen Werte für $N$ und $M$ nochmals zugeordnet
-werden müssten -- wird generierten Token vermerkt, ob es sich um einen Vektor- oder Matrixtyp handelt.
+werden müssten -- wird im generierten Token vermerkt, ob es sich um einen Vektor- oder Matrixtyp handelt.
 Dazu überprüft der Lexer, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht.
 Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfalls vermerkt.
 
@@ -560,7 +560,7 @@ Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegeb
 
 \subsection{Parser}
 
-Der \emph{Parser} (oder auch "`Scanner"') untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen.
+Der \emph{Parser} untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen.
 Es wird überprüft, ob der Token-Strom gültig im Sinne der in der Sprachspezifikation gegebenen Sprache ist --
 sonst liegt ein \emph{Syntaxfehler} vor.
 
@@ -579,12 +579,12 @@ Diese werden bei der \emph{semantischen} Verarbeitung benötigt.
 
 \newcommand\rulelink[1]{\glq\texttt{\detokenize{#1}}\grq~(\ref{#1})}
 
-Der Parser ist handprogrammiert nach der Methode des rekursiven Abstiegs (beschrieben in \cite{wirth_compiler}).
+Der Parser ist nach der Methode des rekursiven Abstiegs (beschrieben in \cite{wirth_compiler}) handprogrammiert.
 Der Aufbau spiegelt im Wesentlichen die Struktur der Regeln wieder -- viele haben ein direktes Gegenstück in einer Methode des Parsers.
 
 \paragraph{Umgang mit Mehrdeutigkeiten:}
 An einigen Stellen der Grammatik gibt es Mehrdeutigkeiten.
-Wird beim parsen eines \rulelink{programm_statements} die Tokens \glq\texttt{typ BEZEICHNER}\grq~(\ref{typ}, \ref{BEZEICHNER})  erkannt,
+Werden beim Parsen eines \rulelink{programm_statements} die Tokens \glq\texttt{typ BEZEICHNER}\grq~(\ref{typ}, \ref{BEZEICHNER})  erkannt,
 so kann es sich entweder um die Regel \rulelink{dekl_funktion} oder um \rulelink{dekl_var} handeln.
 Andere Fälle von Mehrdeutigkeiten sind \rulelink{dekl_var} oder \rulelink{kommando} in \rulelink{block},
 \rulelink{funktion_aufruf} oder \rulelink{BEZEICHNER} in \rulelink{asdr_basis}.
@@ -604,7 +604,7 @@ die mit der mehrdeutigen Token-Sequenz beginnt. Dahinter werden als Alternativen
 die aus den "`Resttokens"' der ursprünglich mehrdeutigen Regeln bestehen müssen. % Hier ne Ref wäre vllt gut
 
 Allerdings wird damit die Lesbarkeit der Grammatik eingeschränkt; nur für die Regel \rulelink{ausdruck} wurde dieser Ansatz verfolgt.
-Für die anderen Regeln wurde das "`Vorausbetrachten"' im Parser gewählt, da es in diesen Fällen einfach zu implementieren war
+Für die anderen Regeln wurde das "`Vorausschauen"' von Tokens gewählt, da es in diesen Fällen einfach zu implementieren war
 und die Grammatik besser lesbar bleibt.
 
 \begin{figure}[h]
@@ -659,28 +659,28 @@ Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Tre
 und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine (annähernde)
 AST-Repräsentation generieren (nur "`annähernd"' da der Parser einige semantische Informationen über
 Bezeichner benötigt). In der tatsächlichen Implementierung wird vom \verb+SemanticHandler+ allerdings 
-gleich eine Umsetzung in die Zwischenrepräsentation vorgenommen (Beschreibung siehe Unten):
-die Generierung eines ASTs wurde als Zwischenschritt wurde als unnötigen angesehen, da die Zwischenrepräsentation
+gleich eine Umsetzung in die Zwischencoderepräsentation vorgenommen (Beschreibung siehe Unten):
+die Generierung eines ASTs wurde als Zwischenschritt wurde als unnötigen angesehen, da die Zwischencoderepräsentation
 wichtige semantische Eigenschaften (wie Typinformationen) erhält und sich die Verarbeitungsschritte "`Auftrennung"'
 und "`Optimierung"' auf dieser besser vornehmen lassen.
 
 \paragraph{Implementierung \texttt{SemanticHandler}:}
-In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine Umsetzung in die Zwischenrepräsentation vorgenommen
+In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine Umsetzung in die Zwischencoderepräsentation vorgenommen
 (Beschreibung siehe Unten). Die Generierung eines ASTs als Zwischenschritt wurde als unnötig angesehen.
-Die Zwischenrepräsentation erhält auch wichtige semantische Eigenschaften (wie Typinformationen) und
-die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf der Zwischenrepräsentation besser vornehmen.
+Die Zwischencoderepräsentation erhält auch wichtige semantische Eigenschaften (wie Typinformationen) und
+die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf der Zwischencoderepräsentation besser vornehmen.
 
 % Zuordnung Variable <-> akt. Register in Symboltabelle
 
-\subsection{Zwischenrepräsentation}
+\subsection{Zwischencoderepräsentation}
 
 \input{ir_commands}
 
 % Abstrakte(s) Beispiel(e): Quellcode + resultierende Zw.rep.
 
-\subsubsection{Vorlagen der Zwischenrepräsentation}
+\subsubsection{Vorlagen der Zwischencoderepräsentation}
 
-Als Vorlagen für die hier vorgestellte Zwischenrepräsentation dienten das ``LLVM Instruction Set''~(\cite{LLVM:CGO04}),
+Als Vorlagen für die hier vorgestellte Zwischencoderepräsentation dienten das ``LLVM Instruction Set''~(\cite{LLVM:CGO04}),
 SafeTSA~(\cite{SafeTSA}) und ``SIMPLE'' des McCAT Compiler-Projektes~(\cite{SIMPLE}).
 
 % "Inspirationen": LLVM, Amme's SSA, GIMPLE/SIMPLE
@@ -691,7 +691,7 @@ eines Programms über dessen ganzen "`Lebenszyklus"' (inklusive Link- und Laufze
 
 Das \emph{LLVM Instruction Set} ist der ausgegebene "`Objektcode"'. Das Programm wird -- ähnlich Maschinen-
 oder Bytecode -- als eine Folge von einfachen Instruktionen auf Registern repräsentiert. 
-Allerdings gibt es eine unendliche Anzahl von typisierten Registern und Typumwandlungen sind immer explizit.
+Allerdings gibt es eine unbeschränkte Anzahl von typisierten Registern. Typumwandlungen sind immer explizit.
 Die Instruktionen sind in SSA-Form.
 
 % LLVM:
@@ -720,7 +720,7 @@ Das Design von SafeTSA ist inhärent sicher. Bösartige Manipulationen von Progr
 problematischem Verhalten wie die Benutzung von undefinierten Werten oder Aliasing von Werten
 eines anderen Typs führen, sind nicht möglich bzw. durch eine einfache Verifizierung feststellbar.
 
-Die Instruktionen basieren auf der SSA-Form. Entsprechend gibt es eine unendliche Zahl von Registern.
+Die Instruktionen basieren auf der SSA-Form. Entsprechend gibt es eine beliebige Zahl von Registern.
 Register sind in mehrere Sätze organisiert, ein Satz pro Typ. Instruktionen können nur auf einen
 spezifischen Registersatz zugreifen. Verschiedene Instruktionsblöcke besitzen eigene Registersätze.
 
@@ -732,7 +732,7 @@ spezifischen Registersatz zugreifen. Verschiedene Instruktionsblöcke besitzen e
 % - Registersätze per Basisblock
 % - 
 
-\paragraph{SIMPLE:} Als "`echte"' Compiler-Zwischenrepräsentation für einen C-Compiler entwickelt
+\paragraph{SIMPLE:} Als "`echte"' Compiler-Zwischencoderepräsentation für einen C-Compiler entwickelt
 stellt sie Programme auf sehr hoher Ebene dar. Ausdrücke sind nicht in der SSA-Form, allerdings
 "`vereinfacht"' auf zwei Operanden und einfache Strukturzugriffe. Symboltabelle und Typinformationen
 sind erhalten. Typumwandlung, und andere in C implizite Verhalten, müssen explizit ausgedrückt werden.
@@ -745,10 +745,10 @@ sind erhalten. Typumwandlung, und andere in C implizite Verhalten, müssen expli
 % - einfache Statements
 
 \paragraph{Zusammenfassung:}
-Die gewählte Zwischenrepräsentation ist größtenteils ein "`Querschnitt"' aus den obigen Repräsentationen
-(allerdings auch mit Aspekten aus keiner Vorlage, wie die Behandlung von Arrays). Am meisten Eigenschaften
-teilt die Zwischenrepräsentation mit dem LLVM Instruction Set; chronologisch wurde dieses jedoch als letzte
-Repräsentation betrachtet. Aus SafeTSA und SIMPLE stammen deshalb grundsätzliche Aspekte der Zwischenrepräsentation 
+Die gewählte Zwischencoderepräsentation ist größtenteils ein "`Querschnitt"' aus den obigen Repräsentationen
+(allerdings auch mit Aspekten aus keiner Vorlage, wie die Behandlung von Arrays). Die meisten Eigenschaften
+teilt die Zwischencoderepräsentation mit dem LLVM Instruction Set; chronologisch wurde dieses jedoch als letzte
+Repräsentation betrachtet. Aus SafeTSA und SIMPLE stammen deshalb grundsätzliche Aspekte der Zwischencoderepräsentation 
 -- einfache Statements, SSA-Form, separate Registersätze.
 
 Anzumerken ist, dass die Shadingsprache keine zufälligen Speicherzugriffe oder Zeiger/Referenzen erlaubt.
@@ -760,7 +760,7 @@ mit ihren vollständigen Fähigkeiten beschrieben.
 
 \subsubsection{Aufbau}
 
-Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA-Form (Single Static Assignment).
+Die \emph{Zwischencoderepräsentation} basiert im Wesentlichen auf der SSA-Form (Single Static Assignment).
 
 % SSA:  B. Alpern, M. N. Wegman, and F. K. Zadeck. Detecting equalities of
 %variables in programs. In 15th Annual ACM Symposium on Principles of
@@ -769,7 +769,7 @@ Die \emph{Zwischenrepräsentation} basiert im Wesentlichen auf der SSA-Form (Sin
 %redundant computations. In 15th Annual ACM Symposium on Principles of
 %Programming Languages, pages 12–27, San Diego, California, Jan. 1988.
 
-Die Zwischenrepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
+Die Zwischencoderepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
 die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt einen Registersatz für jeden verwendeten Typ.
 Die in Operationen gespeicherte Registeridentifikation verweist auf den zugehörigen Registersatz, Typinformationen bleiben also erhalten.
 % Satz teil von Register-ID
@@ -805,10 +805,10 @@ in lokale Register statt. Analog findet am Ende ein zurückkopieren von lokalen 
 \end{figure}
 
 \paragraph{Funktionen:}
-Eine Funktion der Zwischenrepräsentation besteht aus einem eindeutigem Bezeichner, einer Liste von Eingabeparametern,
+Eine Funktion der Zwischencoderepräsentation besteht aus einem eindeutigem Bezeichner, einer Liste von Eingabeparametern,
 einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen.
 
-Jede Überladung einer Funktion wird in der Zwischenrepräsentation durch einen eindeutigen Bezeichner identifiziert.
+Jede Überladung einer Funktion wird in der Zwischencoderepräsentation durch einen eindeutigen Bezeichner identifiziert.
 Dieser wird aus dem ursprünglichen Bezeichner sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
 
 Parameter werden mit einem Mechanismus, der der Behandlung "`externer"' Register in einem eingeschachteltem
@@ -829,9 +829,9 @@ Parametern auch entsprechend verschiedene Register zugeordnet.
 \end{figure}
 
 \paragraph{Globale Variablen:}
-Echte globale Variablen sind nicht vorgesehen. Sie werden nachgebildet, in dem in einer Funktion gelesene globale Variable
-auf einen speziellen, "`versteckten"' Eingabeparameter abgebildet wird. Eine geschriebene globale Variable wird
-auf einen speziellen Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden globalen Variablen tatsächlich
+Echte globale Variablen sind nicht vorgesehen. Sie werden nachgebildet, in dem in einer Funktion gelesene globale Variablen
+auf spezielle, "`versteckte"' Eingabeparameter abgebildet werden. Geschriebene globale Variablen werden
+auf spezielle Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden globalen Variablen tatsächlich
 "`eigene"' Register zugewiesen. Im Prinzip sind "`globale"' Variablen bloss "`versteckte"' lokale Variablen in
 der Eintrittsfunktion.
 
@@ -843,9 +843,11 @@ der Eintrittsfunktion.
 \paragraph{Behandlung von Arrays:}
 Arrays werden als "`ein"' Wert behandelt. D.h. eine Zuweisungsoperation kopiert immer ein ganzes Array.
 Das Lesen einzelner Elemente geschieht mit Hilfe der Operation "`Extraktion eines Arrayelements"'.
-Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelements"'; diese kopiert alle Elemente
-eines Arrays in das Zielarray \emph{außer} das Element eines gegebenen Indexes; im Zielarray wird dort der zu
-schreibende Wert abgelegt.
+Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelements"':
+%diese kopiert alle Elemente eines Arrays in das Zielarray \emph{außer} das Element eines gegebenen Indexes;
+%im Zielarray wird dort der zu schreibende Wert abgelegt.
+diese kopiert alle Elemente, bis auf das zu ändernde Element, eines Arrays in das Zielarray;
+dort wird am gegebenen Index der zu schreibende Wert abgelegt.
 
 Dieser Ansatz wurde gewählt, weil er sehr gut in das "`SSA-Prinzip"' passt.
 Bei der direkten Umsetzung eines Zugriffs auf Array-Elemente ("`$a[i] = x$"') ist es schwierig, sicherzustellen, dass
@@ -856,17 +858,17 @@ Ein solches Verfolgen wird weiterhin schwieriger, sobald die Array-Größe nicht
 die Bedingung "`nur eine Zuweisung"' einzuhalten und zu überprüfen.
 % Andere Alternativen? Wie in LLVM, SafeTSA? Wer hat sich noch über Arrays Gedanken gemacht?
 
-Für manche Optimierungen ist es trotzdem von Vorteil, die einzelnen Element eines Arrays zu verfolgen -- sind diese
+Für manche Optimierungen ist es trotzdem von Vorteil, die einzelnen Elemente eines Arrays zu verfolgen -- sind diese
 z.B. Konstanten können die Werte an einer Konstantenfaltung teilnehmen. Solche Möglichkeiten der Optimierungen
 bleiben bestehen: sind Größe und Elementwerte eines Arrays bekannt, kann ein Optimierer diese wie individuelle
 Register durch die Arrayoperationen hindurch verfolgen, oder sogar ein Array auf individuelle Register "`aufteilen"'.
 
 \subsubsection{Sequenz-Operationen}
 
-Dieser Abschnitt zählt alle Möglichen Operationen in einer Sequenz auf. Eine Operation greift für die Eingabe auf kein, ein oder mehrere
+Dieser Abschnitt zählt alle möglichen Operationen in einer Sequenz auf. Eine Operation greift für die Eingabe auf kein, ein oder mehrere
 \emph{Quellregister} zu. Hat die Operation ein Ergebnis, wird dieses in ein \emph{Zielregister} geschrieben. 
 
-Unter vielen Operationen ist Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
+Unter vielen Operationen ist das Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
 Die Quellregister werden durch $s$, $t$, \dots bezeichnet. 
 
 \paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
@@ -881,7 +883,7 @@ Kann zwischen Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawe
 \\\hspace*{1cm}$d = s\ \mathrm{als}\ \mathrm{"`Ziel-Typ``}$
 
 % Eventuell Tabelle (Operation|Verknüpfung|Eing-Typ|Ausg-Typ) statt Prosa?
-\paragraph{Arithmetische Operation:} Zwei Eingaberegister 
+\paragraph{Arithmetische Operation:} Die Inhalte zweier Eingaberegister 
 werden durch eine arithmetische Operation verknüpft und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
 \\\hspace*{1cm}$d \gets s + t$
@@ -889,7 +891,7 @@ Die Eingaberegister und das Zielregister müssen vom gleichen Typ sein -- Intege
 \\\hspace*{1cm}$d \gets s * t$
 \\\hspace*{1cm}$d \gets s / t$
 
-\paragraph{Vergleichsoperation:} Zwei Eingaberegister 
+\paragraph{Vergleichsoperation:} Die Inhalte zweier Eingaberegister 
 werden miteinander verglichen (gleich, ungleich, größer, größer gleich, kleiner oder kleiner gleich) und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
 Das Zielregister muss vom Typ Boolean sein.
@@ -897,7 +899,7 @@ Das Zielregister muss vom Typ Boolean sein.
 \\\hspace*{1cm}$d \gets s < t$
 \\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
-\paragraph{Logische Operation:} Zwei Eingaberegister durch logisch UND oder logisch ODER verknüpft und das Ergebnis in das Zielregister geschrieben.
+\paragraph{Logische Operation:} Die Inhalte zweier Eingaberegister werden durch logisch UND oder logisch ODER verknüpft und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister und das Zielregister müssen vom Typ Boolean sein.
 \\\hspace*{1cm}$d \gets s \land t$
 \\\hspace*{1cm}$d \gets s \lor t$
@@ -925,7 +927,7 @@ Aus dem Eingabevektor wird die Komponente Nummer $N$ extrahiert und in das Zielr
 \\\hspace*{1cm}$d \gets s_N$
 
 \paragraph{Matrix-Erstellung:} Nimmt als Eingabe ein bis sechzehn Register, je nach den Dimensionen des Zielregisters. Die Eingaberegister müssen alle
-den Basistyp des Zielregisters besitzen. Siew werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
+den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
 als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
 \\\hspace*{1cm}$d \gets \left(s\right)$
 \\\hspace*{1cm}$d \gets \left(\begin{array}{cc}s&t\\u&v\end{array}\right)$
@@ -1014,18 +1016,18 @@ erwartet, welches den Rückgabewert der Funktion enthält.
 \\\hspace*{1cm}$\mathrm{return}\ s$
 \\\hspace*{1cm}$\mathrm{return}$
 
-\paragraph{Eingebaute Funktion:} Diese Operation sammelt den Zugriff auf eigebaute Funktionen (siehe~\ref{builtins})
+\paragraph{Vordefinierte Funktion:} Diese Operation sammelt den Zugriff auf vordefinierte Funktionen (siehe~\ref{builtins})
 und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
 und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
 \\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
 \\\hspace*{1cm}$d \gets s \cdot t$
 \\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
-%$\phi$-Funktion: diese konkrete Zwischenrepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
+%$\phi$-Funktion: diese konkrete Zwischencoderepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
 
 \subsubsection{Beispiel}
 
-Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, Abbildung~\ref{fig:ir_sample_gen} die generierte Zwischenrepräsentation.
+Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, Abbildung~\ref{fig:ir_sample_gen} die generierte Zwischencoderepräsentation.
 
 \begin{figure}[h]
    \centering
@@ -1044,7 +1046,7 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 \label{Auftrennung}
 
 % High-Level Arbeitsweise
-Der "`\emph{Splitter}"' trennt ein als Zwischenrepräsentation vorliegendes Programm in ein \emph{Vertex-} und \emph{Fragmentprogramm} auf.
+Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und \emph{Fragmentprogramm} auf.
 Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}
 \footnote{Siehe Abschnitte \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz}},
 in der diese Operation ausgeführt wird, zugeordnet werden: mit \emph{Vertexfrequenz}, oder per Vertex, berechnete Operationen werden dem Vertexprogramm zugeordnet.
@@ -1287,7 +1289,7 @@ aller Eingaben entspricht.
 \newpage
 \subsection{Code-Generator}
 
-Der \emph{Code-Generator} übersetzt ein in der Zwischenrepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
+Der \emph{Code-Generator} übersetzt ein in der Zwischencoderepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
 Diese "`Darstellung"' kann wieder eine Hochsprache sein, prinzipiell kann ein Code-Generator aber auch Assembler-Quelltext oder eine
 Binärcodierung ausgeben.
 
@@ -1295,12 +1297,12 @@ Binärcodierung ausgeben.
 
 Der \emph{Code-Generator} erhält als Eingabe eine Liste von Funktionsbeschreibungen.
 Eine Funktionsbeschreibung besteht aus dem eindeutigen Bezeichner, einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern)
-und einer Sequenz mit den eigentlichen Operationen. Eine Funktion ist als "`Eintrittsfunktion"' markiert.
+und einer Sequenz mit den eigentlichen Operationen. Eine Funktion aus der Liste ist als "`Eintrittsfunktion"' markiert.
 
 \begin{figure}[h]
    \centering
   \includegraphics{ir_program}
-  \caption{Zusammensetzung eines Programms in der Zwischenrepräsentation}
+  \caption{Zusammensetzung eines Programms in der Zwischencoderepräsentation}
   \label{fig:ir_program}
 \end{figure}
 
@@ -1324,7 +1326,7 @@ sind also nicht nötig.
 
 Jede Funktion wird also direkt auf eine Cg-Funktion abgebildet.
 
-Jedem Register der Zwischenrepräsentation wird eine Variable zugeordnet -- eine Registerallokation ist unnötig, diese wird später vom Cg-Compiler selbst vorgenommen.
+Jedem Register der Zwischencoderepräsentation wird eine Variable zugeordnet -- eine Re\-gis\-ter\-al\-lo\-ka\-tion ist unnötig, diese wird später vom Cg-Compiler selbst vorgenommen.
 "`Einfache"' Sequenzoperation (arithmetische Operationen u.ä.) lassen sich trivialerweise auf ein einzelnes Statement in Cg übertragen. 
 Weiterhin werden die meisten eingebauten Funktionen und Attribute direkt von Cg unterstützt (Ausnahme ist das Matrix-Attribut \texttt{inverted}).
 
