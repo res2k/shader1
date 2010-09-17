@@ -5,7 +5,7 @@ auf allgemeinere Aspekte (z.B. wie die Mischung von Operationen verschiedener Be
 
 Auf höherer Ebene soll die Sprache folgenden Anforderungen erfüllen:
 \begin{itemize}
-\item \emph{C-ähnliche Syntax}: Um ein schnelles Einarbeiten und Verständnis zu ermöglichen soll sich die Syntax an der der verbreiteten
+\item \emph{C-ähnliche Syntax}: Um ein schnelles Einarbeiten und Verständnis zu ermöglichen soll sich die Syntax an den verbreiteten
 Shadingsprachen Cg, DirectX HLSL und OpenGL GLSL orientieren. Diese wiederum sind C-verwandt.
 Weitere syntaktische Anleihen können auch von passenden Stellen der anderen besprochenen  Shadingsprachen übernommen werden.
 \item \emph{Moderne Entwicklungen berücksichtigen}: Die neuesten der C-ähnlichen Sprachen sind Java und C\#. Wenn angebracht sollen
@@ -31,7 +31,7 @@ Mit Unicode gibt es es einen Zeichensatz, der alle weltweit geschriebenen Sprach
 hat auch in den Definitionen von Programmiersprachen Einzug gehalten % TODO Ref C#
 und erlaubt z.B. Bezeichner in der Muttersprache des Programmierers zu deklarieren.
 Aus technischer Sicht gibt es keinen Grund, nicht Unicode als Basis für den Zeichensatz zu benutzen.
-\item \emph{Überdeckung von Bezeichnern}: Bei C\# können Bezeichner nicht anderer Bezeichner überdecken. Dies
+\item \emph{Überdeckung von Bezeichnern}: Bei C\# können Bezeichner nicht andere Bezeichner überdecken. Dies
 verhindert eine Klasse von Fehlern, bei der durch Überdeckung nicht die Variable benutzt wird, die der
 Programmierer angenommen hat. Das Verbot der Überdeckung soll übernommen werden.
 \item \emph{Shadingspezifische Elemente}: Es sollen Vektor- und Matrixtypen vorhanden sein.
@@ -91,19 +91,25 @@ Abschnitt~\ref{Interpolierbarkeit}.
 Zwar soll die Berechnungsfrequenz von Operationen soweit möglich automatisch bestimmt werden, trotzdem muss eine Frequenz
 gewählt werden, in der alle Operationen vorerst formuliert werden.
 
-Betrachtet man "`niedrige"' Frequenzen wie Berechnungen per Vertex, so erkennt man, dass sich damit Berechnungen höherer
-Frequenz (also Fragmente) schlecht darstellen lassen. Betrachtet man Berechnungen auf Fragment-Ebene, so lassen sich
-unter Umständen Berechnungen niedriger Frequenz ableiten.
-Shaderprogramme sollten also grundsätzlich in "`Fragmentfrequenz"' formuliert werden.
+Betrachtet man eine "`niedrige"' Frequenz wie die Vertex-Frequenz, so erkennt man, dass sich damit Berechnungen einer höheren
+Frequenz (also Fragmente) schlecht darstellen lassen. Betrachtet man allerdings Berechnungen mit Fragment-Frequenz, so lassen sich
+unter Umständen Berechnungen niedrigerer Frequenz ableiten.
+Shaderprogramme sollten also grundsätzlich in "`Fragment-Frequenz"' formuliert werden.
 
 \subsubsection{Bestimmung der Berechnungsfrequenz}
 
 \paragraph{Variablen:} Variablen besitzen eine zugeordnete Berechnungsfrequenz, die angibt wie oft sich der enthaltene Wert ändert.
 Diese Frequenz entspricht der Frequenz des zuletzt zugewiesenen Ausdrucks (oder undefiniert wenn noch keine Zuweisung stattfand).
 
-\paragraph{Arrays:} Ist die Größe eines Arrays statisch bekannt kann jedes Element als einzelne Variable gesehen werden.
-Ist die Größe eines Arrays nicht statisch bekannt so muss für ein Element die höchste möglicherweise zugewiesene
-Frequenz angenommen werden.
+\paragraph{Arrays:} %Ist die Größe eines Arrays statisch bekannt kann jedes Element als einzelne Variable gesehen werden
+%(und entsprechend jedem Element eine eigene Berechnungsfrequenz zugeordnet werden).
+%Ist die Größe eines Arrays nicht statisch bekannt, so muss für alle Elemente die höchste, irgendeinem Element möglicherweise zugewiesene
+%Frequenz angenommen werden -- 
+Wird auf Elemente eines Arrays nur mit statisch bekannten Indizes zugegriffen kann jedes Element als einzelne Variable gesehen werden
+(und entsprechend jedem Element eine eigene Berechnungsfrequenz zugeordnet werden).
+Da beim Zugriff mit nicht statisch bekannten Indizes jedoch nicht bestimmt werden kann, welche Berechnungsfrequenz ein
+Element hat (da ja auch nicht bekannt ist, auf welche Elemente genau zugegriffen wird), so muss für alle Elemente die höchste, irgendeinem Element möglicherweise
+zugewiesene Frequenz angenommen werden.
 
 %\paragraph{Ausdrücke:} Die Berechnungsfrequenz eines Wertes eines Ausdrucks ergibt sich aus der kleinsten gemeinsamen Frequenz
 %der in dem Ausdruck enthaltenen Teilausdrücke \emph{nach} möglicher Anwendung von Umformungen zur Vereinfachung/Optimierung --
@@ -225,7 +231,7 @@ und des Vektors muss dabei gleich sein. Nur numerische Basistypen sind erlaubt.
 \texttt{float4 tex3D (sampler3D tex, \emph{<Vektor3>} coord);}\\
 \texttt{float4 texCUBE (samplerCUBE tex, \emph{<Vektor3>} coord);}
 
-Die \ident{tex}*-Funktionen veranlassen das Auslesen der \ident{tex} entsprechenden
+Die Texturfunktionen \ident{tex1D}, \ident{tex2D} usw. veranlassen das Auslesen der \ident{tex} entsprechenden
 Textureinheit mit den Koordinaten \ident{coord}.
 
 \ident{coord} muss dabei ein Vektor eines numerischen Typs und der angegebenen

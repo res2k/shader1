@@ -1,6 +1,6 @@
 \subsection{Programm}\label{Programm}
 \Gnt{programm}:\label{programm}\\
-\hspace*{1cm}\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} \Gspace\Gnt{EOF}{\scriptsize (\ref{EOF})}\\
+\hspace*{1cm}\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\Gspace\Gnt{EOF}{\scriptsize (\ref{EOF})}\\
 \Gnt{programm\_statements}:\label{programm_statements}\\
 \hspace*{1cm}\Gnt{dekl\_funktion}{\scriptsize (\ref{dekl_funktion})} \Gspace\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\\
 \hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\\
@@ -67,10 +67,9 @@ auf der rechten Seite zu. Sofern eine Zuweisung tatsächlich gegeben ist muss
 der Ausdruck auf der linken Seite eine Variable oder ein Arrayelement
 bzw. von diesen ein Swizzle-Attribut (siehe \ref{Vektorattribute}) bezeichnen.
 
-Der Typ des Ausdrucks muss zuweisungskompatibel zum bezeichneten Wert
-sein.
+Der Typ des zugewiesenen Ausdrucks muss zuweisungskompatibel (siehe unten) zur linken Seite der Zuweisung sein.
 
-Ein Zuweisungsausdruck selbst hat den Wert des zugewiesenen bezeichneten Wertes nach der Zuweisung.
+Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 
 \emph{Anfang des Zuweisungsausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
 
@@ -194,15 +193,15 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 \op{>} gibt an ob der linke Operand größer als der rechte Operand ist.
 
-\op{>=} gibt an ob der linke Operand größer oder gleich dem der rechte Operand ist.
+\op{>=} gibt an ob der linke Operand größer oder gleich dem rechten Operanden ist.
 
 \op{<} gibt an ob der linke Operand kleiner als der rechte Operand ist.
 
-\op{<=} gibt an ob der linke Operand kleiner oder gleich dem der rechte Operand ist.
+\op{<=} gibt an ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
 
 \op{==} gibt an ob der linke Operand gleich dem der rechte Operand ist.
 
-\op{!=} gibt an ob der linke Operand nicht gleich dem der rechte Operand ist.
+\op{!=} gibt an ob der linke Operand nicht gleich dem rechten Operanden ist.
 
 Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
 dazu zuweisungskompatiblen Typ sein.
@@ -383,7 +382,7 @@ Alle verwendeten Vektortypen müssen vom gleichen Basistyp wie der zu konstruier
 \hspace*{1cm}\Galt{\Gt{bool1x3}\Gor{}\Gt{bool2x3}\Gor{}\Gt{bool3x3}\Gor{}\Gt{bool4x3}}\\
 \hspace*{1cm}\Galt{\Gt{bool1x4}\Gor{}\Gt{bool2x4}\Gor{}\Gt{bool3x4}\Gor{}\Gt{bool4x4}}\\
 
-Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher oder Fließkommatyp.
+Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher Typ oder Fließkommatyp.
 Der Basistyp wird von einer Zeichenkette der Form $N$\kw{x}$M$ gefolgt. $N$ und
 $M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive annehmen,
 und geben die Spalten- und Zeilenzahl
@@ -473,9 +472,9 @@ Die Anzahl der Elemente entspricht der Anzahl der dem Konstruktor übergebenen A
 \Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} deklariert einen neuen Typ mit dem angegeben Bezeichner der ein Alias für den durch \glq\Gnt{typ}\grq\ bezeichneten Typen ist.
 
 Die Sichtbarkeit des Typbezeichners beginnt hinter der \Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})}
-und reicht bis zum Ende des umgebenden Gültigkeitsbereiches.
+und reicht bis zum Ende des Gültigkeitsbereichs in dem die Definition vorgenommen wurde.
 
-Der Bezeichner darf keinen anderen Bezeichner des umgebenden Gültigkeitsbereiches überdecken.
+Der Bezeichner darf keinen anderen Bezeichner der umgebenden Gültigkeitsbereiche überdecken.
 
 
 \subsubsection{Typumwandlung}\label{Typumwandlung}
@@ -550,14 +549,14 @@ Den Funktionsparametern werden die entsprechenden Werte der Parameterausdrücke 
 Die Parameterausdrücke werden von links nach rechts ausgewertet.
 Die Programmausführung springt dann zu dem ersten
 Kommando des Funktionsblockes. Nach Beendigung von dessen Ausführung wird dem Wert des Aufrufausdrucks der
-Rückgabewert der Funktion zugewiesen. Die Programmausführung fährt mit dem dem ursprünglichen Funktionsaufruf
+Rückgabewert der Funktion zugewiesen. Die Programmausführung fährt mit dem ursprünglichen Funktionsaufruf
 unmittelbar folgendem Kommando fort.
 
 Als Bezeichner für die aufzurufende Funktion können nicht nur Bezeichner benutzerdefinierter und
 vordefinierter Funktionen sondern auch \emph{Typbezeichner} dienen.
 Im Fall von Vektor-, Matrix- oder Arraytypen sind dies die speziellen Konstruktoren
 (siehe \ref{Vektorkonstruktoren}, \ref{Matrixkonstruktoren} und \ref{Arraykonstruktoren}).
-Im Fall von boole'schen oder numerischen Typen wird eine explizite Typumwandlung (siehe
+Im Fall von numerischen Typen wird eine explizite Typumwandlung (siehe
 \ref{Typumwandlung}) veranlasst.
 
 
@@ -631,7 +630,7 @@ ansonsten die Kommandos des Blockes im \kw{else}-Zweig (\emph{Falsch-Block}).
 
 Der \kw{else}-Zweig ist optional.
 
-Die Berechnungsfrequenz der Verzweigung ist die kleinste gemeinsame Frequenz der Blöcke sowie der Bedingung.
+%Die Berechnungsfrequenz der Verzweigung ist die kleinste gemeinsame Frequenz der Blöcke sowie der Bedingung.
 
 \subsubsection{\kw{for}-Schleifen}\label{$_backslash$kw__for__-Schleifen}
 \Gnt{schleife\_for}:\label{schleife_for}\\
@@ -645,8 +644,8 @@ Die \emph{Schleifenbedingung} wird ausgewertet. Ist das Ergebnis \kw{true}, so w
 und anschließend der \emph{Zählausdruck} ausgeführt.
 Dieser Ablauf wird wiederholt bis eine Auswertung der \emph{Schleifenbedingung} das Ergebnis \kw{false} hat.
 
-Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie
-der \emph{Initialisierung}, der \emph{Schleifenbedingung} und des \emph{Zählausdrucks}.
+%Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie
+%der \emph{Initialisierung}, der \emph{Schleifenbedingung} und des \emph{Zählausdrucks}.
 
 \subsubsection{\kw{while}-Schleifen}\label{$_backslash$kw__while__-Schleifen}
 \Gnt{schleife\_while}:\label{schleife_while}\\
