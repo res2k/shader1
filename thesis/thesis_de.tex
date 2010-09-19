@@ -585,7 +585,7 @@ Der Aufbau spiegelt im Wesentlichen die Struktur der Regeln wieder -- viele habe
 \paragraph{Umgang mit Mehrdeutigkeiten:}
 An einigen Stellen der Grammatik gibt es Mehrdeutigkeiten.
 Werden beim Parsen eines \rulelink{programm_statements} die Tokens \glq\texttt{typ BEZEICHNER}\grq~(\ref{typ}, \ref{BEZEICHNER})  erkannt,
-so kann es sich entweder um die Regel \rulelink{dekl_funktion} oder um \rulelink{dekl_var} handeln.
+so kann es sich entweder um die Regel \rulelink{funktion_definition} oder um \rulelink{dekl_var} handeln.
 Andere Fälle von Mehrdeutigkeiten sind \rulelink{dekl_var} oder \rulelink{kommando} in \rulelink{block},
 \rulelink{funktion_aufruf} oder \rulelink{BEZEICHNER} in \rulelink{asdr_basis}.
 
@@ -593,7 +593,7 @@ Solche Mehrdeutigkeiten lassen sich entweder in der Implementierung des Parsers 
 
 Bei der Parser-Lösung werden einfach weitere Tokens betrachtet. Im Falle eines  \rulelink{programm_statements}
 wird auch das nächste Token nach \glq\texttt{typ}\grq{} und \glq\texttt{BEZEICHNER}\grq{} überprüft:
-handelt es sich um \glq\texttt{(}\grq, ist die anzuwendende Regel \rulelink{dekl_funktion};
+handelt es sich um \glq\texttt{(}\grq, ist die anzuwendende Regel \rulelink{funktion_definition};
 handelt es sich um \glq\texttt{=}\grq, \glq\texttt{,}\grq{} oder \glq\texttt{;}\grq{} ist die anzuwendende Regel \rulelink{dekl_var};
 andere Tokens sind ein Syntaxfehler.
 
@@ -1224,7 +1224,7 @@ per Mesh oder per Fragment ausgeführt werden.
 Das Hauptproblem besteht dabei darin, dass die Frequenzen der Funktionsparameter je nach Aufruf variieren können.
 
 Dies wurde gelöst, in dem für eine Funktion bei der Aufspaltung mehrere Varianten generiert werden: bei einem Funktionsaufruf
-wird die Funktion aufgespalten, mit den jeweiligen Verfügbarkeiten der übergebenen tatsächlichen Parameter. Wird die gleiche Funktion
+wird die Funktion aufgespalten, mit den jeweiligen Verfügbarkeiten der übergebenen aktuellen Parameter. Wird die gleiche Funktion
 nochmals aufgerufen, aber mit einer anderen "`Signatur"' von Verfügbarkeiten, so wird die Funktion in neue Varianten aufgespalten usw.
 
 Die Verfügbarkeiten von Ausgabeparametern hängen von den Verfügbarkeiten der Eingabeparameter ab, können aber nach dem Aufspalten
