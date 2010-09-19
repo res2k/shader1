@@ -247,6 +247,13 @@ Einige Variablen (und Konstanten) besitzen über den Wert hinaus weitere Eigensc
 Schlüsselwörter, d.h. sie können auch als Variablenbezeichner, Funktionsbezeichner etc.
 verwendet werden.
 
+\begin{lstlisting}
+float4x4 matrix (...);
+// Erlaubt:
+float4x4 inverted = // 'inverted' hier Variablenbezeichner
+  matrix.inverted;  // 'inverted' hier Attribut von 'matrix'
+\end{lstlisting}
+
 \noindent Vektorattribute werden in \ref{Vektorattribute} beschrieben.\\
 Matrixattribute werden in \ref{Matrixattribute} beschrieben.\\
 Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
@@ -317,8 +324,32 @@ Der Typ \kw{float} spezifiziert Fließkommazahlen.
 Der \emph{Basistyp} eines Vektors ist ein Integer-, Boole'scher oder Fließkommatyp.
 Die Zahl $N$ nach dem Basistyp ist vom Typ
 Ganzzahl, kann Werte zwischen 1 und 4 inklusive annehmen, und gibt die Komponentenanzahl an.
-Ein Vektortyp spezifiziert ein $N$-Tupel von Werten
+ Ein Vektortyp spezifiziert ein $N$-Tupel von Werten
 des Basistyps.
+
+\paragraph{Vektorkonstruktoren}\label{Vektorkonstruktoren}
+
+Vektorkonstruktoren sind besondere, vorgegebene Funktionen, die gleiche Bezeichner wie Vektortypen haben
+(siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
+
+Wird ein Vektor aus einem \emph{Basisausdruck} konstruiert, so haben alle Komponenten diesen Wert.
+Der \emph{Basisausdruck} muss als Typ einen Basistyp besitzen.
+
+Wird ein Vektor aus mehreren Basis- oder Vektorausdrücken oder einem Vektorausdruck konstruiert,
+so wird der ersten Komponente der Wert des ersten Basisausdrucks bzw. der ersten Vektorausdruckskomponente zugewiesen,
+der zweiten Komponente der Wert des nächsten Basisausdrucks bzw. der nächsten Vektorausdruckskomponente usw.
+Allen Komponenten muss ein Wert zugewiesen werden. Die Anzahl aller Basisausdrücke und Komponenten der Vektorausdrücke
+zusammen muss exakt der Komponentenanzahl entsprechen.
+Alle verwendeten Vektortypen müssen vom gleichen Basistyp wie der zu konstruierende Vektor sein.
+
+\begin{lstlisting}
+float3 a = float3 (1.0);           // a = (1.0, 1.0, 1.0)
+float3 b = float3 (1.0, 2.0, 3.0);
+float4 c = float4 (b, 0.5);        // c = (1.0, 2.0, 3.0, 0.5)
+float3 d = float3 (1.0, 2.0);      // Fehler
+				   // (nicht alle Komponenten gegeben)
+\end{lstlisting}
+
 
 
 % Besserer Platz?
@@ -336,20 +367,16 @@ Das Ergebnis eines Swizzles ist vom Typ eines Vektors des Basistyps, mit der Anz
 entsprechend der Anzahl der Komponenten im "`Swizzle"'. Die erste Komponente des Wertes entspricht
 der Komponente des Ursprungsvektors, die an erster Stelle des Swizzles identifiziert wird, usw.
 
-\paragraph{Vektorkonstruktoren}\label{Vektorkonstruktoren}
-
-Vektorkonstruktoren sind besondere, vorgegebene Funktionen, die gleiche Bezeichner wie Vektortypen haben
-(siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
-
-Wird ein Vektor aus einem \emph{Basisausdruck} konstruiert, so haben alle Komponenten diesen Wert.
-Der \emph{Basisausdruck} muss als Typ einen Basistyp besitzen.
-
-Wird ein Vektor aus mehreren Basis- oder Vektorausdrücken oder einem Vektorausdruck konstruiert,
-so wird der ersten Komponente der Wert des ersten Basisausdrucks bzw. der ersten Vektorausdruckskomponente zugewiesen,
-der zweiten Komponente der Wert des nächsten Basisausdrucks bzw. der nächsten Vektorausdruckskomponente usw.
-Allen Komponenten muss ein Wert zugewiesen werden. Die Anzahl aller Basisausdrücke und Komponenten der Vektorausdrücke
-zusammen muss exakt der Komponentenanzahl entsprechen.
-Alle verwendeten Vektortypen müssen vom gleichen Basistyp wie der zu konstruierende Vektor sein.
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+float4 sampleVec = float4 (1.0, 2.0, 3.0, 4.0);
+float  a = sampleVec.x;    // a = 1.0
+float2 b = sampleVec.wz;   // b = (4.0, 3.0)
+float4 c = sampleVec.xxxx; // c = (1.0, 1.0, 1.0, 1.0)
+float4 d = sampleVec.zwyy; // d = (3.0, 4.0, 2.0, 2.0)
+float4 e = sampleVec.bgra; // e = (3.0, 2.0, 1.0, 4.0)
+float4 f = sampleVec.xyba; // Fehler (XYZW/RGBA gemischt)
+float  g = b.z;            // Fehler (Komponente existiert nicht)
+\end{lstlisting}
 
 
 \subsubsection{Matrixtypen}\label{Matrixtypen}
@@ -379,21 +406,6 @@ $M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive anne
 und geben die Spalten- und Zeilenzahl
 der Matrix an. Ein Matrixtyp spezifiziert eine  $N \times M$-Matrix von Werten des Basistyps.
 
-\paragraph{Matrixattribute}\label{Matrixattribute}
-
-Einzelne Zeilen können über das Attribute \attr{row} angesprochen werden. Dieses
-verhält sich wie ein Array mit $M$ Elementen des Vektortyps \emph{Basistyp}$N$.
-
-Einzelne Spalten können über das Attribut \attr{col} angesprochen werden. Dieses
-verhält sich wie ein Array mit $N$ Elementen des \emph{Basistyp}$M$.
-
-Das Attribut \attr{transposed} ist eine Matrix vom Typ \emph{Basistyp}$M$x$N$
-und hat als Wert die transponierte Ursprungsmatrix.
-
-Matrizen mit gleichem $N$ und $M$ besitzen das Attribut \attr{inverted}.
-Es ist eine Matrix vom Typ \emph{Basistyp}$N$x$M$ und hat als Wert die invertierte Ursprungsmatrix.
-Das Ergebnis ist undefiniert, wenn die Ursprungsmatrix nicht invertierbar ist.
-
 \paragraph{Matrixkonstruktoren}\label{Matrixkonstruktoren}
 
 Matrixkonstruktoren sind besondere, vorgegebene Funktionen die gleiche Bezeichner wie Matrixtypen haben
@@ -412,6 +424,41 @@ $N$ sein. Die Anzahl der gegebenen Vektoren muss $M$ sein.
 %nacheinander jeweils die Werte dieser Ausdrücke zugewiesen. Den Feldern der ersten Zeile werden
 %die ersten \Gnt{N}{\scriptsize (\ref{N})} Werte zugewiesen, den Feldern der zweiten Zeile die nächsten \Gnt{N}{\scriptsize (\ref{N})} Werte
 %usw. Die Anzahl der gegebenen Werten muss \Gnt{N}{\scriptsize (\ref{N})}$\cdot$\Gnt{M}{\scriptsize (\ref{M})} sein.
+
+\begin{lstlisting}
+int2 v1 = int2 (1, 2);
+int2 v2 = int2 (3, 4);
+int2x2 m1 = int2x2 (v1, v2); // m1 = (1, 2, 3, 4);
+int3x2 m2 = int3x2 (v1, v2); // Fehler: v1, v2 besitzen
+			     // nicht 3 Komponenten
+int3x2 m3 = int3x2 (int3 (v1, 0),  // m3 = (1, 2, 0,
+                    int3 (v2, 0)); //       3, 4, 0)
+\end{lstlisting}
+
+
+
+\paragraph{Matrixattribute}\label{Matrixattribute}
+
+Einzelne Zeilen können über das Attribute \attr{row} angesprochen werden. Dieses
+verhält sich wie ein Array mit $M$ Elementen des Vektortyps \emph{Basistyp}$N$.
+
+Einzelne Spalten können über das Attribut \attr{col} angesprochen werden. Dieses
+verhält sich wie ein Array mit $N$ Elementen des \emph{Basistyp}$M$.
+
+Das Attribut \attr{transposed} ist eine Matrix vom Typ \emph{Basistyp}$M$x$N$
+und hat als Wert die transponierte Ursprungsmatrix.
+
+Matrizen mit gleichem $N$ und $M$ besitzen das Attribut \attr{inverted}.
+Es ist eine Matrix vom Typ \emph{Basistyp}$N$x$M$ und hat als Wert die invertierte Ursprungsmatrix.
+Das Ergebnis ist undefiniert, wenn die Ursprungsmatrix nicht invertierbar ist.
+\begin{lstlisting}
+float2x2 m1 = float2x2 (float2 (0, 2),
+		        float2 (0.2, 0));
+int2 r1 = m1.row (1);       // r1 = (0.2, 0)
+int2 c1 = m1.col (1);       // c1 = (2, 0)
+float2x2 t = m1.transposed; // t = (0, 0.2, 2, 0)
+float2x2 i = m1.inverted;   // i = (0, 0.5, 5, 0)
+\end{lstlisting}
 
 \subsubsection{Samplertypen}\label{Samplertypen}
 \Gnt{typ\_sampler}:\label{typ_sampler}\\
@@ -439,11 +486,6 @@ Liegt $\mathit{Index}$ ausserhalb des gültigen Bereiches ($0\dots{}N-1$) so ist
 undefiniert.
 
 
-\paragraph{Arrayattribute}\label{Arrayattribute}
-
-Arrays besitzen ein Attribut \attr{length} vom Typ \kw{unsigned int} dessen Wert
-die Anzahl der Elemente im Array ist.
-
 
 \paragraph{Arraykonstruktoren}\label{Arraykonstruktoren}
 
@@ -455,6 +497,22 @@ Arraykonstruktoren sind besondere, vorgegebene Funktionen die gleiche Bezeichner
 
 Ein Array wird aus keinem, einem oder mehreren Werten des Elementtyps konstruiert.
 Die Anzahl der Elemente entspricht der Anzahl der dem Konstruktor übergebenen Ausdrücke.
+
+\begin{lstlisting}
+int[] a = int[] (1, 2, 3); // 'a' besitzt 3 Elemente
+int e1 = a[1];             // e1 = 2
+int e2 = a[4];             // e2 ist undefiniert
+\end{lstlisting}
+
+\paragraph{Arrayattribute}\label{Arrayattribute}
+
+Arrays besitzen ein Attribut \attr{length} vom Typ \kw{unsigned int} dessen Wert
+die Anzahl der Elemente im Array ist.
+
+\begin{lstlisting}
+int[] a = int[] (1, 2, 3);
+unsigned int l = a.length; // l = 3
+\end{lstlisting}
 
 \subsubsection{Typdefinitionen}\label{Typdefinitionen}
 \Gnt{typ\_definition}:\label{typ_definition}\\
@@ -685,7 +743,15 @@ darf keine Ziffer sein.
 Der Unterteilung in Buchstaben und Ziffern liegen Unicode-Kategorien zugrunde (siehe~\cite{unicode}, Abschn. 4.5).
 % TODO Ref: Unicode-Standard - 5.1.0 4.1
 
-Zwei Bezeichner sind identisch wenn deren Zeichensequenzen \emph{kanonisch äquivalent} nach Unicode sind (siehe~\cite{unicode}, Kap. 3, Def. D70).
+Zwei Bezeichner sind identisch wenn deren Zeichensequenzen \emph{kanonisch äquivalent} nach Unicode sind (siehe~\cite{unicode}, Kap. 3, Def. D70)
+\footnote{Verschiedene Glyphen können auf verschiedene Weisen in Unicode codiert werden: z.B. \emph{Ä}
+mit einem einzelnen Zeichen (\texttt{U\plus{}00C4} ``Latin capital letter A with diaresis'') oder als Kombination
+von zwei Zeichen (\texttt{U\plus{}0041} ``Latin capital letter A'' und \texttt{U\plus{}0308} ``Combining diaresis'').
+Bei einem einfachen Stringvergleich würden diese beiden Darstellungen als verschieden angesehen --
+für einen menschlichen Leser wären sie aber semantisch äquivalent.
+Die Unicode-Regeln für kanonische Äquivalenz legen fest, wie solche Glyphen
+dargestellt werden sollen, damit aus semantisch äquivalente Zeichenketten auch "`binär"' gleiche
+Zeichenketten resultieren.}.
 % Unicode 5.1.0 2.12
 
 Lexikalische Einheiten können mit einem oder mehreren Zeichen der Unicode-Kategorie "`Separator"' getrennt werden.
@@ -723,9 +789,9 @@ angegeben werden.
 \Gnt{ML\_COMMENT}:\label{ML_COMMENT}\\
 \hspace*{1cm}\Gt{\kwMlcStart} beliebige Zeichen \Gt{\kwMlcEnd}\\
 
-\Gnt{COMMENT}{\scriptsize (\ref{COMMENT})} ist ein einzeiliger Kommentar. Alle Eingabezeichen bis zum nächsten Zeilenumbruch
-werden ignoriert.
+ \Gnt{COMMENT}{\scriptsize (\ref{COMMENT})} ist ein einzeiliger Kommentar. Alle Eingabezeichen bis zum nächsten Zeilenumbruch
+ werden ignoriert.
 
-\Gnt{ML\_COMMENT}{\scriptsize (\ref{ML_COMMENT})} ist ein mehrzeiliger Kommentar. Alle Eingabezeichen, inklusive Zeilenumbrüchen,
-zwischen Start- (\kwMlcStart) und nächster Endmarkierung (\kwMlcEnd) werden ignoriert.
+ \Gnt{ML\_COMMENT}{\scriptsize (\ref{ML_COMMENT})} ist ein mehrzeiliger Kommentar. Alle Eingabezeichen, inklusive Zeilenumbrüchen,
+ zwischen Start- (\kwMlcStart) und nächster Endmarkierung (\kwMlcEnd) werden ignoriert.
 
