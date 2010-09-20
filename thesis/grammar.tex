@@ -758,18 +758,20 @@ Lexikalische Einheiten können mit einem oder mehreren Zeichen der Unicode-Kateg
 
 
 \subsubsection{Numerische Literale}\label{Numerische Literale}
-\Gnt{Numbers}:\label{Numbers}\\
-\hspace*{1cm}\Gnt{Number}{\scriptsize (\ref{Number})}\Gspace\Gopt{\Gnt{Numbers}{\scriptsize (\ref{Numbers})}}\\
-\Gnt{Numbers\_Sign}:\label{Numbers_Sign}\\
-\hspace*{1cm}\Gopt{\Gt{-}}\Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})}\\
-\Gnt{Numbers\_Frac}:\label{Numbers_Frac}\\
-\hspace*{1cm}\Gt{.}\Gspace\Gnt{Numbers}{\scriptsize (\ref{Numbers})}\\
+\Gnt{Digit\_Dec}:\label{Digit_Dec}\\
+\hspace*{1cm}\Grange{0}{9}\\
+\Gnt{Digits\_Dec}:\label{Digits_Dec}\\
+\hspace*{1cm}\Gnt{Digit\_Dec}{\scriptsize (\ref{Digit_Dec})}\Gspace\Gopt{\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}}\\
+\Gnt{Digits\_Dec\_Sign}:\label{Digits_Dec_Sign}\\
+\hspace*{1cm}\Gopt{\Gt{-}}\Gspace\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}\\
+\Gnt{Digits\_Dec\_Frac}:\label{Digits_Dec_Frac}\\
+\hspace*{1cm}\Gt{.}\Gspace\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}\\
 \Gnt{Num\_Float\_Exp}:\label{Num_Float_Exp}\\
-\hspace*{1cm}\Galt{\Gt{e}\Gor{}\Gt{E}}\Gspace\Gnt{Numbers\_Sign}{\scriptsize (\ref{Numbers_Sign})}\\
+\hspace*{1cm}\Galt{\Gt{e}\Gor{}\Gt{E}}\Gspace\Gnt{Digits\_Dec\_Sign}{\scriptsize (\ref{Digits_Dec_Sign})}\\
 \Gnt{Num\_Float}:\label{Num_Float}\\
-\hspace*{1cm}\Galt{\Gnt{Numbers}{\scriptsize (\ref{Numbers})}\Gspace\Gopt{\Galt{\Gt{.}\Gor{}\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})}}}\Gor{}\Gnt{Numbers\_Frac}{\scriptsize (\ref{Numbers_Frac})}}\Gspace\Gopt{\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})}}\\
+\hspace*{1cm}\Galt{\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}\Gspace\Gopt{\Galt{\Gt{.}\Gor{}\Gnt{Digits\_Dec\_Frac}{\scriptsize (\ref{Digits_Dec_Frac})}}}\Gor{}\Gnt{Digits\_Dec\_Frac}{\scriptsize (\ref{Digits_Dec_Frac})}}\Gspace\Gopt{\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})}}\\
 \Gnt{Digit\_Hex}:\label{Digit_Hex}\\
-\hspace*{1cm}\Galt{\Grange{0}{9}\Gor{}\Grange{A}{F}\Gor{}\Grange{a}{f}}\\
+\hspace*{1cm}\Galt{\Gnt{Digit\_Dec}{\scriptsize (\ref{Digit_Dec})}\Gor{}\Grange{A}{F}\Gor{}\Grange{a}{f}}\\
 \Gnt{Digits\_Hex}:\label{Digits_Hex}\\
 \hspace*{1cm}\Gnt{Digit\_Hex}{\scriptsize (\ref{Digit_Hex})}\Gspace\Gopt{\Gnt{Digits\_Hex}{\scriptsize (\ref{Digits_Hex})}}\\
 \Gnt{Num\_Hex}:\label{Num_Hex}\\
