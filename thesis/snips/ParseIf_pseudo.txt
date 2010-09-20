@@ -1,0 +1,37 @@
+  void ParseIf (Block block)
+  {
+    // 'if'-Token überspringen
+    NextToken();
+    // Erwarte '('
+    Expect (Lexer.ParenL);
+    NextToken();
+    // Bedingung parsen
+    Expression conditionExpr = ParseExpression (block.GetInnerScope());
+    Expect (Lexer.ParenR);
+    NextToken();
+    Expect (Lexer.BraceL);
+    NextToken();
+    // 'if'-Block erstellen, ...
+    Block ifBlock = semanticsHandler.CreateBlock (block.GetInnerScope());
+    // ... einlesen
+    ParseBlock (ifBlock);
+    // Abschliessende '}'
+    Expect (Lexer.BraceR);
+    NextToken();
+    Block elseBlock;
+    // Test, ob 'else'-Block folgt
+    if (currentToken.typeOrID == Lexer.KeywordElse)
+    {
+      NextToken();
+      Expect (Lexer.BraceL);
+      NextToken();
+      // 'else'-Block erstellen, ...
+      elseBlock = semanticsHandler.CreateBlock (block.GetInnerScope());
+      // ... einlesen
+      ParseBlock (elseBlock);
+      Expect (Lexer.BraceR);
+      NextToken();
+    }
+    // Instruktion zu umgebenden Block hinzufügen
+    block.AddBranching (conditionExpr, ifBlock, elseBlock);
+  }

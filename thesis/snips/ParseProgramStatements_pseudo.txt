@@ -1,0 +1,49 @@
+  Lexer.Token currentToken;
+  
+  void ParseProgramStatements (const Scope scope)
+  {
+    while (true)
+    {
+      int beyondType;
+      // Prüfen, ob Token ein Typ (vordefiniert oder Typ-Alias) ist
+      bool isType = IsType (scope, beyondType);
+      // 'const': Eindeutig Konstantendeklaration
+      if (currentToken.typeOrID == Lexer.KeywordConst)
+      {
+	ParseConstDeclare (scope);
+      }
+      /* Ist das Token ein Typ und das folgende Token
+	 (durch 'Peek()' vorausgesehen) ein Bezeichner, so kann
+	 eine Funktionsdeklaration _oder_ eine Variablendeklaration
+	 vorliegen.
+	 (Ein Token 'void' wäre eindeutig eine Funktionsdeklaration.)
+       */
+      else if ((isType
+	  && (Peek (beyondType).typeOrID == Lexer.Identifier))
+	|| (currentToken.typeOrID == Lexer.KeywordVoid))
+      {
+	/* Folgt dem Bezeichner ein '(', so liegt eine
+	   Funktionsdeklaration vor */
+	if ((currentToken.typeOrID == Lexer.KeywordVoid)
+	    || (Peek (beyondType+1).typeOrID == Lexer.ParenL))
+	{
+	  ParseFuncDeclare (scope);
+	}
+	/* Ansonsten: Variablendeklaration */
+	else
+	{
+	  ParseVarDeclare (scope); /* Enthält Test, ob ein Token '=', ','
+				      oder ';' folgt */
+	}
+      }
+      // 'typedef': Eindeutig Typdefinition
+      else if (currentToken.typeOrID == Lexer.Keyword.Typedef)
+      {
+	ParseTypedef (scope);
+      }
+      else
+	/* Unbekanntes Token - aufrufende Methode wird Fehler
+	   auslösen (erwartet "end of file"-Token) */
+	break;
+    }
+  }

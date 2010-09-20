@@ -536,7 +536,8 @@ Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Lexer in eine
 \paragraph{Schlüsselwörter.} Erkennt der Lexer einen Bezeichner, wird auch geprüft, ob es sich um ein Schlüsselwort handelt. Ist dies der Fall
 wird im Token eine dem Schlüsselwort eindeutig zugeordnete ID gespeichert.
 
-Die erste Ausnahme allerdings bilden die Schlüsselwörter für Vektor- und Matrixtypen (Abschnitte~\ref{Vektortypen}, \ref{Matrixtypen}). Diese entsprechen
+%Die erste Ausnahme
+Eine Ausnahme allerdings bilden die Schlüsselwörter für Vektor- und Matrixtypen (Abschnitte~\ref{Vektortypen}, \ref{Matrixtypen}). Diese entsprechen
 jeweils dem Muster $\mathit{typ}\mathrm{N}$ bzw. $\mathit{typ}\mathrm{N}\mathit{x}\mathrm{M}$ (mit $N \in 1 \dots 4, M \in 1 \dots 4$).
 Da eine eigene ID für jeden Vektor- oder Matrix insgesamt 20 weitere IDs pro Basis-Typ nach sich ziehen würde -- wobei später noch jeder ID wiederum
 die ursprünglichen Werte für $N$ und $M$ nochmals zugeordnet
@@ -551,10 +552,11 @@ Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfal
   \label{fig:LexerToken}
 \end{figure}
 
-Die zweite Ausnahme bilden Attributnamen~(\ref{Attribute}) inklusive Swizzles~(\ref{Vektorattribute}). Diese sind teilweise recht allgemein, und
-es erscheint wünschenswert, Bezeichner zuzulassen, die Attributnamen entsprechen -- z.B. ``length'', das auch ein Arrayattribut ist, und einbuchstabige
-Bezeichner wie ``x'', ``y'' etc., welche auch Vektorattribute (Swizzles) sind. Syntaktisch gibt es keine Mehrdeutigkeiten zwischen Attributen und
-anderen Bezeichnern -- ein Attribut kann \emph{nur} rechts eines \op{.} auftauchen, ein anderer Bezeichner dort nie.
+% Die zweite Ausnahme bilden Attributnamen~(\ref{Attribute}) inklusive Swizzles~(\ref{Vektorattribute}). Diese sind teilweise recht allgemein, und
+% es erscheint wünschenswert, Bezeichner zuzulassen, die Attributnamen entsprechen -- z.B. ``length'', das auch ein Arrayattribut ist, und einbuchstabige
+% Bezeichner wie ``x'', ``y'' etc., welche auch Vektorattribute (Swizzles) sind. Syntaktisch gibt es keine Mehrdeutigkeiten zwischen Attributen und
+% anderen Bezeichnern -- ein Attribut kann \emph{nur} rechts eines \op{.} auftauchen, ein anderer Bezeichner dort nie.
+
 
 Weiterhin schreibt die Spezifikation vor, dass zwei Bezeicher als identisch betrachtet werden, wenn sie kanonisch äquivalent im Sinne von Unicode sind.
 Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
@@ -596,7 +598,8 @@ Bei der Parser-Lösung werden einfach weitere Tokens betrachtet. Im Falle eines 
 wird auch das nächste Token nach \glq\texttt{typ}\grq{} und \glq\texttt{BEZEICHNER}\grq{} überprüft:
 handelt es sich um \glq\texttt{(}\grq, ist die anzuwendende Regel \rulelink{funktion_definition};
 handelt es sich um \glq\texttt{=}\grq, \glq\texttt{,}\grq{} oder \glq\texttt{;}\grq{} ist die anzuwendende Regel \rulelink{dekl_var};
-andere Tokens sind ein Syntaxfehler.
+andere Tokens sind ein Syntaxfehler. Eine Pseudo-Code-Version der Implementierung ist in Abbildung~\ref{fig:ParseProgramStatements}
+aufgelistet.
 
 In den Implementierungen der Regeln \rulelink{block} und \rulelink{asdr_basis} wurde analog verfahren.
 
@@ -608,9 +611,9 @@ Allerdings wird damit die Lesbarkeit der Grammatik eingeschränkt; nur für die 
 Für die anderen Regeln wurde das "`Vorausschauen"' von Tokens gewählt, da es in diesen Fällen einfach zu implementieren war
 und die Grammatik besser lesbar bleibt.
 
-\begin{figure}[h]
+\begin{figure}[!h]
    \centering
-  \lstinputlisting[language=C++]{snips/ParseProgramStatements.txt}
+  \lstinputlisting[language=Java]{snips/ParseProgramStatements_pseudo.txt}
   \caption{Beispiel einer Parsing-Methode mit Auflösung von Mehrdeutigkeiten}
   \label{fig:ParseProgramStatements}
 \end{figure}
@@ -641,7 +644,7 @@ Bezeichner).
 
 \begin{figure}[h]
    \centering
-  \lstinputlisting[language=C++]{snips/ParseIf.txt}
+  \lstinputlisting[language=Java]{snips/ParseIf_pseudo.txt}
   \caption{Zusammenspiel Parser und \texttt{SemanticHandler}: Parsen einer Verzweigung}
   \label{fig:ParseIf}
 \end{figure}
