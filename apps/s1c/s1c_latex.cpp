@@ -63,7 +63,6 @@ int main (const int argc, const char* const argv[])
     }
     else if (strcmp (arg, "--nosplit") == 0)
     {
-      argNum++;
       doSplit = false;
     }
     else
