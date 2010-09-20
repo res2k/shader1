@@ -1,5 +1,5 @@
 \newcommand\sOident[1]{\mathtt{#1}}
-\newcommand\sOconst[1]{#1}
+\newcommand\sOconst[1]{\mathtt{#1}}
 \newcommand\sOreg[1]{\mathit{#1}}
 
 \newcommand\sOfunc[1]{\begin{displaymath}\begin{array}{rl}#1\end{array}\end{displaymath}}
@@ -13,15 +13,68 @@
 \newcommand\sOparamOut[3]{\sOident{#1}\ \sOident{#2} \gets #3\\}
 
 \newcommand\sOstatement[1]{#1\\}
+\newcommand\sOstmt[1]{#1\\}
 
-\newcommand\sObuiltindot[2]{#1 \cdot #2}
-\newcommand\sObuiltinlength[1]{|#1|}
-\newcommand\sObuiltinmax[2]{\max\{#1, #2\}}
-\newcommand\sObuiltinmul[2]{#1 * #2}
-\newcommand\sObuiltinnormalize[1]{||#1||}
-\newcommand\sObuiltintexTwoD[2]{\mathrm{tex2D}(#1, #2)}
-\newcommand\sOcast[2]{#1\ \mathrm{als}\ \mathrm{"`#2``}}
-\newcommand\sOvecextract[2]{#1_{#2}}
-\newcommand\sOmakevec[1]{(#1)}
+\newcommand\sOcomma{\mathtt{,\ }}
+\newcommand\sOopNoResult[1]{\mathtt{#1} & }
+\newcommand\sOopNull[2]{\mathtt{#1} & #2}
+\newcommand\sOopOne[3]{\mathtt{#1} & #2 \sOcomma #3}
+\newcommand\sOopTwo[4]{\mathtt{#1} & #2 \sOcomma #3 \sOcomma #4}
+\newcommand\sOopThree[5]{\mathtt{#1} & #2 \sOcomma #3 \sOcomma #4 \sOcomma #5}
+\newcommand\sOassign[2]{\sOopOne{mov}{#1}{#2}}
+\newcommand\sOcast[3]{\sOopOne{cast\ #1}{#2}{#3}}
+
+\newcommand\sOadd[3]{\sOopTwo{add}{#1}{#2}{#3}}
+\newcommand\sOsub[3]{\sOopTwo{sub}{#1}{#2}{#3}}
+\newcommand\sOmul[3]{\sOopTwo{mul}{#1}{#2}{#3}}
+\newcommand\sOdiv[3]{\sOopTwo{div}{#1}{#2}{#3}}
+\newcommand\sOmod[3]{\sOopTwo{mod}{#1}{#2}{#3}}
+
+\newcommand\sOcmp[4]{\sOopTwo{cmp\ #1}{#2}{#3}{#4}}
+\newcommand\sOcmpeq[3]{\sOcmp{eq}{#1}{#2}{#3}}
+\newcommand\sOcmpne[3]{\sOcmp{ne}{#1}{#2}{#3}}
+\newcommand\sOcmplt[3]{\sOcmp{lt}{#1}{#2}{#3}}
+\newcommand\sOcmple[3]{\sOcmp{le}{#1}{#2}{#3}}
+\newcommand\sOcmpgt[3]{\sOcmp{ge}{#1}{#2}{#3}}
+\newcommand\sOcmpge[3]{\sOcmp{gt}{#1}{#2}{#3}}
+
+\newcommand\sOand[3]{\sOopTwo{and}{#1}{#2}{#3}}
+\newcommand\sOor[3]{\sOopTwo{or}{#1}{#2}{#3}}
+
+\newcommand\sOinv[2]{\sOopOne{inv}{#1}{#2}}
+\newcommand\sOneg[2]{\sOopOne{neg}{#1}{#2}}
+\newcommand\sOnot[2]{\sOopOne{not}{#1}{#2}}
+
+\newcommand\sOmakevec[2]{\sOopOne{makevec}{#1}{#2}}
+\newcommand\sOvecextract[3]{\sOopTwo{extract}{#1}{#2}{\sOconst{#3}}}
+\newcommand\sOmakematrix[2]{\sOopOne{makematrix}{#1}{#2}}
+
+\newcommand\sOmakearray[2]{\sOopOne{makearray}{#1}{#2}}
+\newcommand\sOgetelem[3]{\sOopTwo{getelem}{#1}{#2}{#3}}
+\newcommand\sOsetelem[4]{\sOopThree{setelem}{#1}{#2}{#3}{#4}}
+\newcommand\sOarraylen[2]{\sOopOne{arraylen}{#1}{#2}}
+
+\newcommand\sOnestseqbox[1]{\framebox[1.2\width][l]{#1}}
+\newcommand\sOnestseq[1]{& \sOnestseqbox{#1}}
+\newcommand\sObranch[3]{& \mathtt{if}\ #1\mathtt{:}\\& \indent\sOnestseqbox{#2}\\& \mathtt{else:}\\& \indent\sOnestseqbox{#3}}
+\newcommand\sOwhile[3]{& \mathtt{while}\ #1/#2\mathtt{:}\\& \indent\sOnestseqbox{#3}}
+\newcommand\sOcall[2]{& \mathtt{call}\ \mathtt{void}\ #1 \sOcomma #2}
+\newcommand\sOcallret[3]{& \mathtt{call}\ #1 \sOcomma #2 \sOcomma #3}
+\newcommand\sOreturn[1]{\sOopNull{return}{#1}}
+\newcommand\sOreturnvoid{\sOopNoResult{return}}
+
+\newcommand\sObuiltindot[3]{\sOopTwo{dot}{#1}{#2}{#3}}
+\newcommand\sObuiltincross[3]{\sOopTwo{cross}{#1}{#2}{#3}}
+\newcommand\sObuiltinmul[3]{\sOopTwo{mmul}{#1}{#2}{#3}}
+\newcommand\sObuiltinnormalize[2]{\sOopOne{norm}{#1}{#2}}
+\newcommand\sObuiltinlength[2]{\sOopOne{vlen}{#1}{#2}}
+\newcommand\sObuiltinmin[3]{\sOopTwo{min}{#1}{#2}{#3}}
+\newcommand\sObuiltinmax[3]{\sOopTwo{max}{#1}{#2}{#3}}
+\newcommand\sObuiltinpow[3]{\sOopTwo{pow}{#1}{#2}{#3}}
+\newcommand\sObuiltintexOneD[3]{\sOopTwo{tex\ 1D}{#1}{#2}{#3}}
+\newcommand\sObuiltintexTwoD[3]{\sOopTwo{tex\ 2D}{#1}{#2}{#3}}
+\newcommand\sObuiltintexThreeD[3]{\sOopTwo{tex\ 3D}{#1}{#2}{#3}}
+\newcommand\sObuiltintexCUBE[3]{\sOopTwo{tex\ CUBE}{#1}{#2}{#3}}
+
 
 \newcommand\sOtransfer[1]{\begin{displaymath}\begin{array}{rl}\mathrm{"Ubertragene\ Register:} & #1\end{array}\end{displaymath}}

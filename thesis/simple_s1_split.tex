@@ -8,18 +8,18 @@
 \sOfuncregset{float4}{\sOsetreg{i\_tmp12}\sOsetreg{m\_Position\_B0}\sOsetreg{m\_outPosition\_B0}}
 \sOfuncregset{float4x4}{\sOsetreg{m\_ModelViewProj\_B0}}
 \sOfuncbody{
-\sOstatement{\sOreg{i\_tmp1} &\gets \sOconst{0.4}}
-\sOstatement{\sOreg{v\_ambient} &\gets \sOmakevec{\sOreg{i\_tmp1}, \sOreg{i\_tmp1}, \sOreg{i\_tmp1}}}
-\sOstatement{\sOreg{i\_tmp11} &\gets \sOconst{1}}
-\sOstatement{\sOreg{m\_outPosition\_B0} &\gets \sObuiltinmul{\sOreg{m\_ModelViewProj\_B0}}{\sOreg{m\_Position\_B0}}}
-\sOstatement{\sOreg{i\_tmp3} &\gets \sObuiltindot{\sOreg{m\_LightDirObj\_B0}}{\sOreg{m\_Normal\_B0}}}
-\sOstatement{\sOreg{i\_tmp4} &\gets \sOmakevec{\sOreg{i\_tmp3}, \sOreg{i\_tmp3}, \sOreg{i\_tmp3}}}
-\sOstatement{\sOreg{v\_diffuse} &\gets \sOreg{m\_LightColor\_B0} * \sOreg{i\_tmp4}}
-\sOstatement{\sOreg{v\_litColor} &\gets \sOreg{v\_diffuse} + \sOreg{v\_ambient}}
-\sOstatement{\sOreg{i\_tmp8} &\gets \sOvecextract{\sOreg{v\_litColor}}{0}}
-\sOstatement{\sOreg{i\_tmp9} &\gets \sOvecextract{\sOreg{v\_litColor}}{1}}
-\sOstatement{\sOreg{i\_tmp10} &\gets \sOvecextract{\sOreg{v\_litColor}}{2}}
-\sOstatement{\sOreg{i\_tmp12} &\gets \sOmakevec{\sOreg{i\_tmp8}, \sOreg{i\_tmp9}, \sOreg{i\_tmp10}, \sOreg{i\_tmp11}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp1}}{\sOconst{0.4}}}
+\sOstmt{\sOmakevec{\sOreg{v\_ambient}}{\sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp1}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp11}}{\sOconst{1}}}
+\sOstmt{\sObuiltinmul{\sOreg{m\_outPosition\_B0}}{\sOreg{m\_ModelViewProj\_B0}}{\sOreg{m\_Position\_B0}}}
+\sOstmt{\sObuiltindot{\sOreg{i\_tmp3}}{\sOreg{m\_LightDirObj\_B0}}{\sOreg{m\_Normal\_B0}}}
+\sOstmt{\sOmakevec{\sOreg{i\_tmp4}}{\sOreg{i\_tmp3} \sOcomma \sOreg{i\_tmp3} \sOcomma \sOreg{i\_tmp3}}}
+\sOstmt{\sOmul{\sOreg{v\_diffuse}}{\sOreg{m\_LightColor\_B0}}{\sOreg{i\_tmp4}}}
+\sOstmt{\sOadd{\sOreg{v\_litColor}}{\sOreg{v\_diffuse}}{\sOreg{v\_ambient}}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp8}}{\sOreg{v\_litColor}}{0}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp9}}{\sOreg{v\_litColor}}{1}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp10}}{\sOreg{v\_litColor}}{2}}
+\sOstmt{\sOmakevec{\sOreg{i\_tmp12}}{\sOreg{i\_tmp8} \sOcomma \sOreg{i\_tmp9} \sOcomma \sOreg{i\_tmp10} \sOcomma \sOreg{i\_tmp11}}}
 }
 }
 
@@ -31,11 +31,11 @@
 \sOfuncregset{float4}{\sOsetreg{i\_tmp12}\sOsetreg{i\_tmp7}\sOsetreg{m\_outColor\_B0}}
 \sOfuncregset{sampler2D}{\sOsetreg{m\_Texture\_B0}}
 \sOfuncbody{
-\sOstatement{\sOreg{i\_tmp7} &\gets \sObuiltintexTwoD{\sOreg{m\_Texture\_B0}}{\sOreg{m\_TexCoord\_B0}}}
-\sOstatement{\sOreg{m\_outColor\_B0} &\gets \sOreg{i\_tmp7} * \sOreg{i\_tmp12}}
+\sOstmt{\sObuiltintexTwoD{\sOreg{i\_tmp7}}{\sOreg{m\_Texture\_B0}}{\sOreg{m\_TexCoord\_B0}}}
+\sOstmt{\sOmul{\sOreg{m\_outColor\_B0}}{\sOreg{i\_tmp7}}{\sOreg{i\_tmp12}}}
 }
 }
 
 \sOtransfer{
-\sOreg{m\_TexCoord\_B0}\ \sOreg{i\_tmp12}
+\sOreg{m\_TexCoord\_B0}\ \sOreg{i\_tmp12}\ 
 }

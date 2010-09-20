@@ -67,11 +67,11 @@ namespace s1
 									    const char* value)
     {
       std::string targetName (owner->GetOutputRegisterName (destination));
-      std::string line ("\\sOstatement{");
+      std::string line ("\\sOstmt{\\sOassign{");
       line.append (targetName);
-      line.append (" &\\gets ");
+      line.append ("}{");
       line.append (value);
-      line.append ("}");
+      line.append ("}}");
       target->AddString (line);
     }
     
@@ -79,11 +79,11 @@ namespace s1
 									    const RegisterID& value)
     {
       std::string valueName (owner->GetOutputRegisterName (value));
-      std::string line ("\\sOstatement{");
+      std::string line ("\\sOstmt{\\sOassign{");
       line.append (destination);
-      line.append (" &\\gets ");
+      line.append ("}{");
       line.append (valueName);
-      line.append ("}");
+      line.append ("}}");
       target->AddString (line);
     }
     
@@ -105,14 +105,19 @@ namespace s1
 									    const RegisterID& source2,
 									    const char* op)
     {
+      std::string targetName (owner->GetOutputRegisterName (destination));
       std::string source1Name (owner->GetOutputRegisterName (source1));
       std::string source2Name (owner->GetOutputRegisterName (source2));
-      std::string rside (source1Name);
-      rside.append (" ");
-      rside.append (op);
-      rside.append (" ");
-      rside.append (source2Name);
-      EmitAssign (destination, rside.c_str());
+      std::string line ("\\sOstmt{\\sO");
+      line.append (op);
+      line.append ("{");
+      line.append (targetName);
+      line.append ("}{");
+      line.append (source1Name);
+      line.append ("}{");
+      line.append (source2Name);
+      line.append ("}}");
+      target->AddString (line);
     }
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::EmitUnary (const RegisterID& destination,
@@ -176,10 +181,9 @@ namespace s1
 									BaseType destType,
 									const RegisterID& source)
     {
+      std::string targetName (owner->GetOutputRegisterName (destination));
       std::string sourceName (owner->GetOutputRegisterName (source));
-      std::string valueStr ("\\sOcast{");
-      valueStr.append (sourceName.c_str());
-      valueStr.append ("}{");
+      std::string valueStr ("\\sOstmt{\\sOcast{");
       switch (destType)
       {
       case Bool:
@@ -196,7 +200,11 @@ namespace s1
 	break;
       }
       valueStr.append ("}{");
-      EmitAssign (destination, valueStr.c_str());
+      valueStr.append (targetName.c_str());
+      valueStr.append ("}{");
+      valueStr.append (valueStr.c_str());
+      valueStr.append ("}}");
+      target->AddString (valueStr);
     }
     
     
@@ -205,17 +213,20 @@ namespace s1
 									      const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
-      ParamHelper params (paramsStr, ", ");
+      ParamHelper params (paramsStr, " \\sOcomma ");
       for (std::vector<RegisterID>::const_iterator source (sources.begin());
 	   source != sources.end();
 	   ++source)
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string valueStr ("\\sOmakevec{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string valueStr ("\\sOstmt{\\sOmakevec{");
+      valueStr.append (targetName.c_str());
+      valueStr.append ("}{");
       valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
+      valueStr.append ("}}");
+      target->AddString (valueStr);
     }
     
     
@@ -226,29 +237,20 @@ namespace s1
 									      const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
-      std::string rowStr;
-      ParamHelper rows (rowStr, " & ");
-      unsigned int n = 0;
+      ParamHelper params (paramsStr, " \\sOcomma ");
       for (std::vector<RegisterID>::const_iterator source (sources.begin());
 	   source != sources.end();
 	   ++source)
       {
-	std::string colStr ("\\sOmatrixcol{");
-	colStr.append (owner->GetOutputRegisterName (*source));
-	colStr.append ("}");
-	rows.Add (colStr);
-	if (((++n) % matrixCols) == 0)
-	{
-	  paramsStr.append ("\\sOmatrixrow{");
-	  paramsStr.append (rowStr);
-	  paramsStr.append ("}");
-	  rows.Reset();
-	}
+	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string valueStr ("\\sOmakematrix{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string valueStr ("\\sOstmt{\\sOmakematrix{");
+      valueStr.append (targetName.c_str());
+      valueStr.append ("}{");
       valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
+      valueStr.append ("}}");
+      target->AddString (valueStr);
     }
     
 
@@ -256,29 +258,35 @@ namespace s1
 									     const std::vector<RegisterID>& sources)
     {
       std::string paramsStr;
-      ParamHelper params (paramsStr, ", ");
+      ParamHelper params (paramsStr, " \\sOcomma ");
       for (std::vector<RegisterID>::const_iterator source (sources.begin());
 	   source != sources.end();
 	   ++source)
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string valueStr ("\\sOmakearray{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string valueStr ("\\sOstmt{\\sOmakearray{");
+      valueStr.append (targetName.c_str());
+      valueStr.append ("}{");
       valueStr.append (paramsStr.c_str());
-      valueStr.append ("}");
-      EmitAssign (destination, valueStr.c_str());
+      valueStr.append ("}}");
+      target->AddString (valueStr);
     }
 			  
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractArrayElement (const RegisterID& destination,
 										       const RegisterID& source,
 										       const RegisterID& index)
     {
-      std::string sourceName ("\\sOextractarray{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string sourceName ("\\sOstmt{\\sOgetelem{");
+      sourceName.append (targetName.c_str());
+      sourceName.append ("}{");
       sourceName.append (owner->GetOutputRegisterName (source));
       sourceName.append ("}{");
       sourceName.append (owner->GetOutputRegisterName (index));
-      sourceName.append ("}");
-      EmitAssign (destination, sourceName.c_str());
+      sourceName.append ("}}");
+      target->AddString (sourceName);
     }
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpChangeArrayElement (const RegisterID& destination,
@@ -286,23 +294,29 @@ namespace s1
 										      const RegisterID& index,
 										      const RegisterID& newValue)
     {
-      std::string sourceName ("\\sOchangearray{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string sourceName ("\\sOstmt{\\sOsetelem{");
+      sourceName.append (targetName.c_str());
+      sourceName.append ("}{");
       sourceName.append (owner->GetOutputRegisterName (source));
       sourceName.append ("}{");
       sourceName.append (owner->GetOutputRegisterName (index));
       sourceName.append ("}{");
       sourceName.append (owner->GetOutputRegisterName (newValue));
-      sourceName.append ("}");
-      EmitAssign (destination, sourceName.c_str());
+      sourceName.append ("}}");
+      target->AddString (sourceName);
     }
 
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpGetArrayLength (const RegisterID& destination,
 										  const RegisterID& array)
     {
-      std::string sourceName ("\\sOarraylen{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string sourceName ("\\sOstmt{\\sOarraylen{");
+      sourceName.append (targetName.c_str());
+      sourceName.append ("}{");
       sourceName.append (owner->GetOutputRegisterName (array));
-      sourceName.append ("}");
-      EmitAssign (destination, sourceName.c_str());
+      sourceName.append ("}}");
+      target->AddString (sourceName);
     }
 			 
 				    
@@ -310,14 +324,17 @@ namespace s1
 											  const RegisterID& source,
 											  unsigned int comp)
     {
-      std::string sourceName ("\\sOvecextract{");
-      sourceName.append (owner->GetOutputRegisterName (source));
-      sourceName.append ("}{");
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string valueStr ("\\sOstmt{\\sOvecextract{");
+      valueStr.append (targetName.c_str());
+      valueStr.append ("}{");
+      valueStr.append (owner->GetOutputRegisterName (source));
+      valueStr.append ("}{");
       std::stringstream valueStrStream;
       valueStrStream << comp;
-      sourceName.append (valueStrStream.str());
-      sourceName.append ("}");
-      EmitAssign (destination, sourceName.c_str());
+      valueStr.append (valueStrStream.str());
+      valueStr.append ("}}");
+      target->AddString (valueStr);
     }
     
 
@@ -329,19 +346,19 @@ namespace s1
       switch (op)
       {
       case Add:
-	EmitBinary (destination, source1, source2, "+");
+	EmitBinary (destination, source1, source2, "add");
 	break;
       case Sub:
-	EmitBinary (destination, source1, source2, "-");
+	EmitBinary (destination, source1, source2, "sub");
 	break;
       case Mul:
-	EmitBinary (destination, source1, source2, "*");
+	EmitBinary (destination, source1, source2, "mul");
 	break;
       case Div:
-	EmitBinary (destination, source1, source2, "/");
+	EmitBinary (destination, source1, source2, "div");
 	break;
       case Mod:
-	EmitBinary (destination, source1, source2, "%");
+	EmitBinary (destination, source1, source2, "mod");
 	break;
       }
     }
@@ -355,10 +372,10 @@ namespace s1
       switch (op)
       {
       case And:
-	EmitBinary (destination, source1, source2, "\\land");
+	EmitBinary (destination, source1, source2, "and");
 	break;
       case Or:
-	EmitBinary (destination, source1, source2, "\\lor");
+	EmitBinary (destination, source1, source2, "or");
 	break;
       }
     }
@@ -372,13 +389,13 @@ namespace s1
       switch (op)
       {
       case Inv:
-	EmitUnary (destination, source, "$sim$");
+	EmitUnary (destination, source, "inv");
 	break;
       case Neg:
-	EmitUnary (destination, source, "-");
+	EmitUnary (destination, source, "neg");
 	break;
       case Not:
-	EmitUnary (destination, source, "\\neg ");
+	EmitUnary (destination, source, "not");
 	break;
       }
     }
@@ -392,22 +409,22 @@ namespace s1
       switch (op)
       {
       case Eq:
-	EmitBinary (destination, source1, source2, "=");
+	EmitBinary (destination, source1, source2, "cmpeq");
 	break;
       case NE:
-	EmitBinary (destination, source1, source2, "\\neq");
+	EmitBinary (destination, source1, source2, "cmpne");
 	break;
       case LT:
-	EmitBinary (destination, source1, source2, "<");
+	EmitBinary (destination, source1, source2, "cmplt");
 	break;
       case LE:
-	EmitBinary (destination, source1, source2, "\\le");
+	EmitBinary (destination, source1, source2, "cmple");
 	break;
       case GT:
-	EmitBinary (destination, source1, source2, ">");
+	EmitBinary (destination, source1, source2, "cmpgt");
 	break;
       case GE:
-	EmitBinary (destination, source1, source2, "\\ge");
+	EmitBinary (destination, source1, source2, "cmpge");
 	break;
       }
     }
@@ -544,12 +561,7 @@ namespace s1
 									    intermediate:: BuiltinFunction what,
 									    const std::vector<RegisterID>& inParams)
     {
-      std::string line ("\\sOstatement{");
-      if (destination.IsValid())
-      {
-	line.append (owner->GetOutputRegisterName (destination));
-	line.append (" &\\gets \\sObuiltin");
-      }
+      std::string line ("\\sOstmt{\\sObuiltin");
       switch (what)
       {
       case intermediate::dot:		line.append ("dot");		break;
@@ -566,6 +578,11 @@ namespace s1
       case intermediate::pow:		line.append ("pow");		break;
       }
       line.append ("{");
+      if (destination.IsValid())
+      {
+	line.append (owner->GetOutputRegisterName (destination));
+	line.append ("}{");
+      }
       ParamHelper params (line, "}{");
       for (std::vector<RegisterID>::const_iterator inParam (inParams.begin());
 	   inParam != inParams.end();
@@ -573,8 +590,7 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*inParam));
       }
-      line.append ("}");
-      line.append ("}");
+      line.append ("}}");
       target->AddString (line);
     }
     

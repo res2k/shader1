@@ -21,6 +21,7 @@
 \usepackage{setspace}
 \usepackage{ngerman}
 \usepackage{subfig}
+\usepackage{longtable}
 
 \definecolor{darkred}{rgb}{.5,0,0}
 \definecolor{darkblue}{rgb}{0,0,.5}
@@ -868,41 +869,41 @@ Register durch die Arrayoperationen hindurch verfolgen, oder sogar ein Array auf
 Dieser Abschnitt zählt alle möglichen Operationen in einer Sequenz auf. Eine Operation greift für die Eingabe auf kein, ein oder mehrere
 \emph{Quellregister} zu. Hat die Operation ein Ergebnis, wird dieses in ein \emph{Zielregister} geschrieben. 
 
-Unter vielen Operationen ist das Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
-Die Quellregister werden durch $s$, $t$, \dots bezeichnet. 
+%Unter vielen Operationen ist das Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
+%Die Quellregister werden durch $s$, $t$, \dots bezeichnet. 
 
 \paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
-\\\hspace*{1cm}$d = s$
+%\\\hspace*{1cm}$d \gets s$
 
 \paragraph{Konstantenoperation:} Diese weist dem Zielregister eine Bool'sche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
 Fließkommakonstante zu.
-\\\hspace*{1cm}$d = \mathrm{Konstante}$
+%\\\hspace*{1cm}$d \gets \mathrm{Konstante}$
 
 \paragraph{Typumwandlungsoperation:} Liest das Eingaberegister, wandelt dessen Wert in den Ziel-Typ und schreibt den umgewandelten Wert in das Zielregister.
 Kann zwischen Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerten umwandeln.
-\\\hspace*{1cm}$d = s\ \mathrm{als}\ \mathrm{"`Ziel-Typ``}$
+%\\\hspace*{1cm}$d \gets s\ \mathrm{als}\ \mathrm{"`Ziel-Typ``}$
 
 % Eventuell Tabelle (Operation|Verknüpfung|Eing-Typ|Ausg-Typ) statt Prosa?
 \paragraph{Arithmetische Operation:} Die Inhalte zweier Eingaberegister 
 werden durch eine arithmetische Operation verknüpft und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
-\\\hspace*{1cm}$d \gets s + t$
-\\\hspace*{1cm}$d \gets s - t$
-\\\hspace*{1cm}$d \gets s * t$
-\\\hspace*{1cm}$d \gets s / t$
+%\\\hspace*{1cm}$d \gets s + t$
+%\\\hspace*{1cm}$d \gets s - t$
+%\\\hspace*{1cm}$d \gets s * t$
+%\\\hspace*{1cm}$d \gets s / t$
 
 \paragraph{Vergleichsoperation:} Die Inhalte zweier Eingaberegister 
 werden miteinander verglichen (gleich, ungleich, größer, größer gleich, kleiner oder kleiner gleich) und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
 Das Zielregister muss vom Typ Boolean sein.
-\\\hspace*{1cm}$d \gets s = t$
-\\\hspace*{1cm}$d \gets s < t$
-\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+%\\\hspace*{1cm}$d \gets s = t$
+%\\\hspace*{1cm}$d \gets s < t$
+%\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 \paragraph{Logische Operation:} Die Inhalte zweier Eingaberegister werden durch logisch UND oder logisch ODER verknüpft und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister und das Zielregister müssen vom Typ Boolean sein.
-\\\hspace*{1cm}$d \gets s \land t$
-\\\hspace*{1cm}$d \gets s \lor t$
+%\\\hspace*{1cm}$d \gets s \land t$
+%\\\hspace*{1cm}$d \gets s \lor t$
 
 \paragraph{Unäre Operation:} Unäre Operationen sind Negation, Logisches NICHT und bitweise Invertierung.
 Negation negiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
@@ -911,46 +912,59 @@ Logisches NICHT invertiert den Wert des Eingaberegisters und schreibt das Ergebn
 Die Eingabe- und das Zielregister müssen vom gleichen Typ Boolean sein.\\
 Bitweise Invertiertung wird auf das Eingaberegister angewendet und schreibt das Ergebnis in das Zielregister.
 Die Eingabe- und das Zielregister müssen von einem Integer-Typ (vorzeichenlos oder vorzeichenbehaftet) sein.
-\\\hspace*{1cm}$d \gets \neg s$
-\\\hspace*{1cm}$d \gets -s$
-\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+%\\\hspace*{1cm}$d \gets \neg s$
+%\\\hspace*{1cm}$d \gets -s$
+%\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 \paragraph{Vektor-Erstellung:} Nimmt als Eingabe ein bis vier Register, je nach der Komponentenanzahl des Zielregisters. Die Eingaberegister müssen alle
 den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Vektorkomponenten im Zielregister zugeordnet.
-\\\hspace*{1cm}$d \gets (s)$
-\\\hspace*{1cm}$d \gets (s, t)$
-\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+%\\\hspace*{1cm}$d \gets (s)$
+%\\\hspace*{1cm}$d \gets (s, t)$
+%\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 \paragraph{Extraktion einer Vektorkomponente:} Nimmt neben einem Eingaberegister auch eine Integer-Konstante $N$ im Bereich $0 \dots 3$ entgegen.
 Das Eingaberegister muss von einem Vektortyp sein. Das Zielregister muss vom Basistyp des Vektors sein.
 Aus dem Eingabevektor wird die Komponente Nummer $N$ extrahiert und in das Zielregister geschrieben.
-\\\hspace*{1cm}$d \gets s_N$
+%\\\hspace*{1cm}$d \gets s_N$
 
 \paragraph{Matrix-Erstellung:} Nimmt als Eingabe ein bis sechzehn Register, je nach den Dimensionen des Zielregisters. Die Eingaberegister müssen alle
 den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
 als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
-\\\hspace*{1cm}$d \gets \left(s\right)$
-\\\hspace*{1cm}$d \gets \left(\begin{array}{cc}s&t\\u&v\end{array}\right)$
-\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+%\\\hspace*{1cm}$d \gets \left(s\right)$
+%\\\hspace*{1cm}$d \gets \left(\begin{array}{cc}s&t\\u&v\end{array}\right)$
+%\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 \paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays.
 Die Eingaberegister müssen alle den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
-\\\hspace*{1cm}$d \gets (s, t, \dots)$
+%\\\hspace*{1cm}$d \gets (s, t, \dots)$
 
 \paragraph{Extraktion eines Arrayelements:} Verwendet zwei Eingaberegister: ein Arrayregister sowie als Index ein Register mit einem vorzeichenlosen Integer.
 Aus dem Array wird das Element mit dem gegebenen Index extrahiert und in das Zielregister geschrieben.
 Das Zielregister muss den Basistyp des Array-Registers besitzen.
-\\\hspace*{1cm}$d \gets s[t]$
+%\\\hspace*{1cm}$d \gets s[t]$
 
-\paragraph{Änderung eines Arrayelements:} Verwendet drei EIngaberegister: neben einem Arrayregister und dem Indexregister (vorzeichenloser Integer)
+\paragraph{Änderung eines Arrayelements:} Verwendet drei Eingaberegister: neben einem Arrayregister und dem Indexregister (vorzeichenloser Integer)
 weiterhin ein Register mit vom Basistyps des Arrays (der "`neue Wert"').
 Aus dem Eingabearray werden alle Elemente \emph{außer} das Element des gegebenen Indexes in das Zielarray kopiert;
 dort wird stattdessen der "`neue Wert"' abgelegt. Das Zielregister muss den Typ des Arrayregisters besitzen.
-\\\hspace*{1cm}$d \gets (x | x = s[i]\ \mathrm{f"ur\ alle}\ i \neq t, u\ \mathrm{sonst})$
+%\\\hspace*{1cm}$d \gets (x | x = s[i]\ \mathrm{f"ur\ alle}\ i \neq t, u\ \mathrm{sonst})$
+
+In Pseudocode ausgedrückt:
+\begin{lstlisting}
+// Eingaben: Array, Index, NeuerWert
+// Ausgabe: Zielarray
+for element = 0 to Array.length-1
+{
+  if (element == Index)
+    ZielArray[element] = NeuerWert;
+  else
+    ZielArray[element] = Array[element];
+}
+\end{lstlisting}
 
 \paragraph{Arraylänge:} Nimmt im Eingaberegister ein Array entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
 die Anzahl der Elemente des Arrays.
-\\\hspace*{1cm}$d \gets |s|$
+%\\\hspace*{1cm}$d \gets |s|$
 
 \paragraph{Sequenzschachtelung:} Eine Operation, die auf eine weitere, eingeschachtelte Sequenz verweist, welche beim Ausführen der Operation abgearbeitet wird.
 Neben dem Verweis auf eine Sequenz werden auch Listen von "`importierten"' und "`exportierten"' Namen zu der Operation gespeichert.
@@ -974,7 +988,7 @@ Ein Register kann in beiden Blöcken beschrieben werden (z.B. wenn im Quellcode 
 Eine Verzweigung gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch wenn ein Register in beiden Blöcken beschrieben wird wird es,
 von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleiben die SSA-Bedingungen erfüllt,
 ohne dass ein Einsatz der $\phi$-Funktion nötig ist.
-\\\hspace*{1cm}$\mathrm{if}\ s\ \mathrm{then}\ \mathit{Block}\ \mathrm{else}\ \mathit{Block}$
+%\\\hspace*{1cm}$\mathrm{if}\ s\ \mathrm{then}\ \mathit{Block}\ \mathrm{else}\ \mathit{Block}$
 
 %Um die SSA-Bedingungen zu erfüllen, aber
 
@@ -1001,29 +1015,79 @@ von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (e
 Damit bleiben die SSA-Bedingungen erfüllt, und ein Einsatz der $\phi$-Funktion ist weiterhin nicht nötig.
 
 Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf \texttt{while}-Schleifen abgebildet.
-\\\hspace*{1cm}$\mathrm{while}\ s\ \mathrm{do}\ \mathit{Block}$
+%\\\hspace*{1cm}$\mathrm{while}\ s\ \mathrm{do}\ \mathit{Block}$
 
 \paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register, eine Liste Ausgabe-Register
 und eventuell ein Zielregister für den Rückgabewert entgegen. Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
 
 Der "`Bezeichner"' ist eine prinzipiell arbiträre Zeichenkette, die die Funktion bezeichnet. Dem Code-Generator muss
 vorher eine Funktionsbeschreibung übergeben worden sein, die durch den Bezeichner identifiziert werden kann.
-\\\hspace*{1cm}$d \gets \mathrm{Funktion}\ (s, \dots)$
-\\\hspace*{1cm}$\mathrm{Funktion}\ (s, \dots)$
+%\\\hspace*{1cm}$d \gets \mathrm{Funktion}\ (s, \dots)$
+%\\\hspace*{1cm}$\mathrm{Funktion}\ (s, \dots)$
 
 \paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Hat die Funktion einen Rückgabewert, so wird als Parameter ein Register
 erwartet, welches den Rückgabewert der Funktion enthält.
-\\\hspace*{1cm}$\mathrm{return}\ s$
-\\\hspace*{1cm}$\mathrm{return}$
+%\\\hspace*{1cm}$\mathrm{return}\ s$
+%\\\hspace*{1cm}$\mathrm{return}$
 
 \paragraph{Vordefinierte Funktion:} Diese Operation sammelt den Zugriff auf vordefinierte Funktionen (siehe~\ref{builtins})
 und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
 und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
-\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
-\\\hspace*{1cm}$d \gets s \cdot t$
-\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+%\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
+%\\\hspace*{1cm}$d \gets s \cdot t$
+%\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
 %$\phi$-Funktion: diese konkrete Zwischencoderepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
+
+\subsubsection{Textdarstellung}
+
+Die folgende Tabelle listet auf, wie die verschiedenen Sequenzoperationen in den Beispielen als Text dargestellt werden.
+Bei den Parametern steht $d$ für das Zielregister einer Operation, $s$, $t$ bezeichnen die Quellregister.
+
+\begin{longtable}{ l l p{4cm} }
+Zuweisung & \begin{array}[t]{ll}\sOassign{d}{s}\\\sOassign{d}{\mathrm{Konstante}}\end{array}\\
+\hline
+Typumwandlung & \begin{array}[t]{ll}\sOcast{float}{d}{s}\\\sOcast{int}{d}{s}\\\sOcast{uint}{d}{s}\end{array}\\
+\hline
+Arithmetische Operationen & \begin{array}[t]{ll}\sOadd{d}{s}{t}\\\sOsub{d}{s}{t}\\\sOmul{d}{s}{t}\\\sOdiv{d}{s}{t}\\\sOmod{d}{s}{t}\end{array}\\
+\hline
+Vergleichsoperation & \begin{array}[t]{ll}\sOcmpeq{d}{s}{t}\\\sOcmpne{d}{s}{t}\\\sOcmplt{d}{s}{t}\\\sOcmple{d}{s}{t}\\\sOcmpgt{d}{s}{t}\\\sOcmpge{d}{s}{t}\end{array}\\
+\hline
+Logische Operation & \begin{array}[t]{ll}\sOand{d}{s}{t}\\\sOor{d}{s}{t}\end{array}\\
+\hline
+Unäre Operation & \begin{array}[t]{ll}\sOinv{d}{s}\\\sOneg{d}{s}\\\sOnot{d}{s}\end{array}\\
+\hline
+Vektor-Erstellung & \begin{array}[t]{ll}\sOmakevec{d}{\dots}\end{array} & Zahl der Quellregister variiert\\
+Extraktion einer Vektorkomponente & \begin{array}[t]{ll}\sOvecextract{d}{s}{\mathrm{n}}\end{array} & $n$ ist konstante Komponentennummer\\
+\hline
+Matrix-Erstellung & \begin{array}[t]{ll}\sOmakematrix{d}{\dots}\end{array} & Zahl der Quellregister variiert\\
+\hline
+Array-Erstellung & \begin{array}[t]{ll}\sOmakearray{d}{\dots}\end{array} & Zahl der Quellregister variiert\\
+Extraktion eines Arrayelements & \begin{array}[t]{ll}\sOgetelem{d}{s}{i}\end{array} & $i$: zu extrahierender Index\\
+Änderung eines Arrayelements & \begin{array}[t]{ll}\sOsetelem{d}{s}{i}{t}\end{array} & $t$: neuer Elementwert\\
+Arraylänge & \begin{array}[t]{ll}\sOarraylen{d}{s}\end{array}\\
+\hline
+Sequenzschachtelung & \begin{array}[t]{ll}\sOnestseq{Sequenz}\end{array}\\
+\hline
+Verzweigung & \begin{array}[t]{ll}\sObranch{c}{if-Sequenz}{else-Sequenz}\end{array} & $c$: Bedingungsregister\\
+\hline
+While-Schleife & \begin{array}[t]{ll}\sOwhile{c_0}{c_n}{Sequenz}\end{array} & $c_0, c_n$: Bedingungsregister erster Durchlauf/weitere Durchläufe\\
+\hline
+Funktionsaufruf & \begin{array}[t]{ll}\sOcall{\mathrm{Funktion}}{\dots}\\\sOcallret{d}{\mathrm{Funktion}}{\dots}\end{array} & Zahl der Quell- und Zielregister variiert\\
+\hline
+Funktionsrücksprung & \begin{array}[t]{ll}\sOreturnvoid\\\sOreturn{s}\end{array}\\
+\hline
+%Vordefinierte Funktion
+Skalarprodukt & \begin{array}[t]{ll}\sObuiltindot{d}{s}{t}\end{array}\\
+Vektorprodukt & \begin{array}[t]{ll}\sObuiltincross{d}{s}{t}\end{array}\\
+Matrixmultiplikation & \begin{array}[t]{ll}\sObuiltinmul{d}{s}{t}\end{array}\\
+Normalisierung & \begin{array}[t]{ll}\sObuiltinnormalize{d}{s}\end{array}\\
+Euklidische Länge & \begin{array}[t]{ll}\sObuiltinlength{d}{s}\end{array}\\
+Minimum & \begin{array}[t]{ll}\sObuiltinmin{d}{s}{t}\end{array}\\
+Maximum & \begin{array}[t]{ll}\sObuiltinmax{d}{s}{t}\end{array}\\
+Potenz & \begin{array}[t]{ll}\sObuiltinpow{d}{s}{t}\end{array}\\
+Textur auslesen & \begin{array}[t]{ll}\sObuiltintexOneD{d}{s}{t}\\\sObuiltintexTwoD{d}{s}{t}\\\sObuiltintexThreeD{d}{s}{t}\\\sObuiltintexCUBE{d}{s}{t}\\\end{array}\\
+\end{longtable}
 
 \subsubsection{Beispiel}
 
@@ -1038,7 +1102,7 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 \begin{figure}[h]
    \centering
   \input{s1latex/sample_minimal.tex}
-  \caption{Zu~\ref{fig:ir_sample_src} generierte Zwischrepräsentation.}
+  \caption{Zu~\ref{fig:ir_sample_src} generierte Zwischencoderepräsentation.}
   \label{fig:ir_sample_gen}
 \end{figure}
 
