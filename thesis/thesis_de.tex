@@ -670,23 +670,14 @@ einen ``semantic handler'' zu schreiben der genau dies tut.
 % \end{figure}
 
 \paragraph{Fehlerbehandlung:}
-Die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}
-realisiert. Der Parser selbst fängt dabei Ausnahmen ab, um zu gewährleisten, dass möglichst viel eines
-Programms verarbeitet wird, um möglichst viele potentielle Fehler aufzudecken: % Wirth
+In der Implementierung wird die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}
+realisiert. Die Parser-Komponente selbst fängt dabei Ausnahmen ab, um zu gewährleisten, dass möglichst viel eines
+Programms verarbeitet wird, um möglichst viele potentielle Fehler aufzudecken (wie in \cite{wirth_compiler} empfohlen):
 tritt z.B. eine Ausnahme während der Verarbeitung eines Block-Kommandos auf, setzt der Parser die
 Verarbeitung nach dem nächsten Semikolon -- also mit dem nächsten Kommando -- fort (sofern kein Ende
 des Blockes festgestellt wird).
 Die abgefangen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt zur Fehlerbehandlung
-übergeben (um z.B. eine Ausgabe auf der Konsole vorzunehmen).
-
-Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Trennung zwischen syntaktischer
-und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine (annähernde)
-AST-Repräsentation generieren (nur "`annähernd"' da der Parser einige semantische Informationen über
-Bezeichner benötigt). In der tatsächlichen Implementierung wird vom \verb+SemanticHandler+ allerdings 
-gleich eine Umsetzung in die Zwischencoderepräsentation vorgenommen (Beschreibung siehe Unten):
-die Generierung eines ASTs wurde als Zwischenschritt wurde als unnötigen angesehen, da die Zwischencoderepräsentation
-wichtige semantische Eigenschaften (wie Typinformationen) erhält und sich die Verarbeitungsschritte "`Auftrennung"'
-und "`Optimierung"' auf dieser besser vornehmen lassen.
+übergeben um eine Nachricht für den Benutzer darzustellen.
 
 % \paragraph{Implementierung \texttt{SemanticHandler}:}
 % In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine Umsetzung in die Zwischencoderepräsentation vorgenommen
