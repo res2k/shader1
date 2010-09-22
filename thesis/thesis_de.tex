@@ -578,7 +578,6 @@ Diese werden bei der \emph{semantischen} Verarbeitung benötigt.
 %Die Grammatik ist kontextfrei. Die Regeln sind rechtsrekursiv.
 
 \subsubsection{Aufbau des Parsers}
-%- SemanticHandler
 
 \newcommand\rulelink[1]{\glq\texttt{\detokenize{#1}}\grq~(\ref{#1})}
 
@@ -619,35 +618,56 @@ und die Grammatik besser lesbar bleibt.
 \end{figure}
 
 \paragraph{Semantische Verarbeitung:}
-Die semantische Verarbeitung wird an ein Interface vom Typ \verb+SemanticHandler+ übergeben.
-Dieses Interface übernimmt die verschiedenen Aspekte der semantischen Verarbeitung, von der Verwaltung der
-Symboltabelle bis zu einer geeigneten internen Repräsentation von Ausdrücken.
+% Die semantische Verarbeitung wird an ein Interface vom Typ \verb+SemanticHandler+ übergeben.
+% Dieses Interface übernimmt die verschiedenen Aspekte der semantischen Verarbeitung, von der Verwaltung der
+% Symboltabelle bis zu einer geeigneten internen Repräsentation von Ausdrücken.
+Die semantische Verarbeitung wird von einer weiteren Komponente -- hier ``semantic handler'' genannt -- vorgenommen. 
+Dieses Komponente übernimmt die verschiedenen Aspekte der semantischen Verarbeitung, von der Verwaltung der
+Symboltabelle bis zu einer geeigneten internen Repräsentation von Ausdrücken. Die in der Komponente gespeicherten Informationen sind
+in einem Rückkanal dem Parser zugänglich; so werden diese zum Beispiel benutzt um festzustellen, ob ein Bezeichner ein
+Typ-Alias oder eine Funktion identifiziert.
+Die Ausgabe des ``semantic handlers'' ist eine Zwischencoderepräsentation des Programms.
 
-\verb+SemanticHandler+ besitzt Methoden, um syntaktische Elemente -- wie Bezeichner und numerische Literale -- in Objekte 
-einzukapseln. Diese Objekte wiederum werden bei der Verarbeitung anderer syntaktischer Elemente
-zurück an das Interface übergeben. % Wenn Code-Schnipsel dann hier verweisen
+% \verb+SemanticHandler+ besitzt Methoden, um syntaktische Elemente -- wie Bezeichner und numerische Literale -- in Objekte 
+% einzukapseln. Diese Objekte wiederum werden bei der Verarbeitung anderer syntaktischer Elemente
+% zurück an das Interface übergeben. % Wenn Code-Schnipsel dann hier verweisen
 
-%Beispiel: Bei einem Ausdruck \verb+a * 2+ werden von \verb+SemanticHandler+ zunächst Repräsentationen für
-%\verb+a+ und \verb+2+ erfragt. Zurückgegeben werden Repräsentationen von "`Ausdrücken"'. Diese wiederum
-%dienen als Argumente, um eine Repräsentation einer Multiplikation zu erhalten. Diese letzte Repräsentation kann
-%dann überall dort verwendet werden, wo Ausdrücke erwartet werden: Zuweisungen, Funktionsparameter etc.
+% Beispiel: Bei einem Ausdruck \verb+a * 2+ werden von \verb+SemanticHandler+ zunächst Repräsentationen für
+% \verb+a+ und \verb+2+ erfragt. Zurückgegeben werden Repräsentationen von "`Ausdrücken"'. Diese wiederum
+% dienen als Argumente, um eine Repräsentation einer Multiplikation zu erhalten. Diese letzte Repräsentation kann
+% dann überall dort verwendet werden, wo Ausdrücke erwartet werden: Zuweisungen, Funktionsparameter etc.
 
-Vom der \verb+SemanticHandler+-Implementierung zum Parser gibt es auch einen "`Rückkanal"'. Dies ist nötig, da bei einigen
-Konstrukten bekannt sein muss, ob ein Bezeichner eine Variable, eine Funktion oder einen Typ identifiziert:
-Das Ausdruck \verb+foo (1)+ ist, je nachdem ob \verb+foo+ eine Funktion, ein Typ-Alias oder eine Variable bezeichnet,
-entsprechend ein ein Funktionsaufruf, der Aufruf eines Typ-Konstruktors, oder ein ungültiger Ausdruck.
+% Vom der \verb+SemanticHandler+-Implementierung zum Parser gibt es auch einen "`Rückkanal"'. Dies ist nötig, da bei einigen
+% Konstrukten bekannt sein muss, ob ein Bezeichner eine Variable, eine Funktion oder einen Typ identifiziert:
+% Das Ausdruck \verb+foo (1)+ ist, je nachdem ob \verb+foo+ eine Funktion, ein Typ-Alias oder eine Variable bezeichnet,
+% entsprechend ein ein Funktionsaufruf, der Aufruf eines Typ-Konstruktors, oder ein ungültiger Ausdruck.
 
-Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Trennung zwischen syntaktischer
-und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine
-AST-Repräsentation generieren (allerdings benötigt der Parser trotzdem auch einige semantische Informationen über
-Bezeichner).
+Verglichen mit dem "`klassischen"' Ansatz der semantischen Verarbeitung -- Parser erzeugt Abstract Syntax Tree (AST) als ersten Schritt,
+Semantische Analyse erzeugt Zwischencoderepräsentation im zweiten Schritt -- finden sich kleine Teile der semantischen
+Analyse im Parser; die Erstellung eines ASTs wird übergangen, der ``semantic handler'' nimmt mit den vom
+Parser übergebenen Informationen die restliche semantische Analyse vor und erzeugt sofort eine Zwischencoderepräsentation (beschrieben in Abschnitt~\ref{zcr}).
 
-\begin{figure}[h]
-   \centering
-  \lstinputlisting[language=Java]{snips/ParseIf_pseudo.txt}
-  \caption{Zusammenspiel Parser und \texttt{SemanticHandler}: Parsen einer Verzweigung}
-  \label{fig:ParseIf}
-\end{figure}
+Die Erstellung eines AST wurde übergangen, da diese als unnötig angesehen wurde: eine direkte Ausgabe der Zwischencoderepräsentation(ZCR)
+wurde als einfacher umzusetzen und für die weiteren Arbeitsschritte im Compiler als ausreichend angesehen. 
+Insbesondere Optimierungen sind in der gewählten ZCR einfacher vorzunehmen als auf
+einem AST. Auch werden in der ZCR wichtige semantische Informationen, wie Typen von Werten, Funktionssignaturen etc. gespeichert,
+es tritt also kein Informationsverlust im Vergleich zu einem AST auf.
+
+Weiterhin wurde die Implementierung so gestaltet, dass die Komponent des ``semantic handler'' relativ einfach austauschbar ist.
+Sollte also notwendig werden, dass der Compiler einen AST des Programms erstellt, so wäre es prinzipiell möglich,
+einen ``semantic handler'' zu schreiben der genau dies tut.
+
+% Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Trennung zwischen syntaktischer
+% und semantischer Verarbeitung. Eine minimale Implementierung könnte intern eine
+% AST-Repräsentation generieren (allerdings benötigt der Parser trotzdem auch einige semantische Informationen über
+% Bezeichner).
+
+% \begin{figure}[h]
+%    \centering
+%   \lstinputlisting[language=Java]{snips/ParseIf_pseudo.txt}
+%   \caption{Zusammenspiel Parser und \texttt{SemanticHandler}: Parsen einer Verzweigung}
+%   \label{fig:ParseIf}
+% \end{figure}
 
 \paragraph{Fehlerbehandlung:}
 Die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}
@@ -668,15 +688,16 @@ die Generierung eines ASTs wurde als Zwischenschritt wurde als unnötigen angese
 wichtige semantische Eigenschaften (wie Typinformationen) erhält und sich die Verarbeitungsschritte "`Auftrennung"'
 und "`Optimierung"' auf dieser besser vornehmen lassen.
 
-\paragraph{Implementierung \texttt{SemanticHandler}:}
-In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine Umsetzung in die Zwischencoderepräsentation vorgenommen
-(Beschreibung siehe Unten). Die Generierung eines ASTs als Zwischenschritt wurde als unnötig angesehen.
-Die Zwischencoderepräsentation erhält auch wichtige semantische Eigenschaften (wie Typinformationen) und
-die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf der Zwischencoderepräsentation besser vornehmen.
+% \paragraph{Implementierung \texttt{SemanticHandler}:}
+% In der vorgenommen Implementierung von \verb+SemanticHandler+ wird gleich eine Umsetzung in die Zwischencoderepräsentation vorgenommen
+% (Beschreibung siehe Unten). Die Generierung eines ASTs als Zwischenschritt wurde als unnötig angesehen.
+% Die Zwischencoderepräsentation erhält auch wichtige semantische Eigenschaften (wie Typinformationen) und
+% die Verarbeitungsschritte "`Auftrennung"' und "`Optimierung"' lassen sich auf der Zwischencoderepräsentation besser vornehmen.
 
 % Zuordnung Variable <-> akt. Register in Symboltabelle
 
 \subsection{Zwischencoderepräsentation}
+\label{zcr}
 
 \input{ir_commands}
 
