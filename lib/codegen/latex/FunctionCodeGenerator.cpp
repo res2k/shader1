@@ -34,7 +34,7 @@ namespace s1
       {
 	std::string typeStr (TypeString (func->GetReturnType()));
 	std::string identifier;
-	func->GetIdentifier().toUTF8String (identifier);
+	func->GetOriginalIdentifier().toUTF8String (identifier);
 	
 	{
 	  std::string funcDecl ("\\sOfunchead{");

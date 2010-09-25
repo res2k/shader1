@@ -231,7 +231,8 @@ namespace s1
       parser::SemanticsHandler::Scope::FunctionFormalParameters params (originalFunc->GetParams());
       params.insert (params.end(), extraParams.begin(), extraParams.end());
       
-      intermediate::ProgramFunctionPtr newFunc (boost::make_shared<intermediate::ProgramFunction> (funcName,
+      intermediate::ProgramFunctionPtr newFunc (boost::make_shared<intermediate::ProgramFunction> (originalFunc->GetOriginalIdentifier(),
+												   funcName,
 												   originalFunc->GetReturnType(),
 												   params,
 												   sequence,
@@ -419,7 +420,8 @@ namespace s1
 	//funcVName.append (func->GetIdentifier());
 	funcVName.append ("main");
 	
-	intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (funcVName,
+	intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
+												   funcVName,
 												   func->GetReturnType(),
 												   vParams,
 												   splitter.GetOutputVertexSequence(),
@@ -431,7 +433,8 @@ namespace s1
 	//funcFName.append (func->GetIdentifier());
 	funcFName.append ("main");
 	
-	intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (funcFName,
+	intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
+												   funcFName,
 												   func->GetReturnType(),
 												   fParams,
 												   splitter.GetOutputFragmentSequence(),

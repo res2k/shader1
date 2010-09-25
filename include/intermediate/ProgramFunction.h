@@ -14,6 +14,7 @@ namespace s1
   {
     class ProgramFunction
     {
+      UnicodeString originalIdentifier;
       UnicodeString identifier;
       parser::SemanticsHandler::TypePtr returnType;
       parser::SemanticsHandler::Scope::FunctionFormalParameters params;
@@ -21,12 +22,15 @@ namespace s1
       bool isEntryFunction;
       int execFreq;
     public:
-      ProgramFunction (const UnicodeString& identifier,
+      ProgramFunction (const UnicodeString& originalIdentifier,
+		       const UnicodeString& identifier,
 		       const parser::SemanticsHandler::TypePtr& returnType,
 		       const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
 		       const SequencePtr& body,
 		       bool isEntryFunction);
 
+      const UnicodeString& GetOriginalIdentifier() const
+      { return originalIdentifier; }
       const UnicodeString& GetIdentifier() const
       { return identifier; }
       const parser::SemanticsHandler::TypePtr& GetReturnType() const

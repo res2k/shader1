@@ -412,7 +412,8 @@ namespace s1
 	  boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
 	  blockImpl->FinishBlock();
 	  
-	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->identifier,
+	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
+									    (*funcIt)->identifier,
 									    (*funcIt)->returnType,
 									    (*funcIt)->params,
 									    blockImpl->GetSequence (),
