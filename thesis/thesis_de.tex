@@ -1489,6 +1489,30 @@ gut lesbar lässt.}.
 % AST: nützlich, wenn FEs für anderen Sprachen, oder komplexer (Strukturen)
 % Manuelles spezifizieren von per-Vertex Ops // keyword 'interpolate'
 
+Die übersetzte Sprache ist eine zwar vergleichsweise einfache, aber trotzdem praktisch nutzbare
+Shadingsprache, die es erlaubt, Shadingprogramme zu schreiben, ohne den Hardwareaufbau aus verschiedenen Funktionseinheiten
+berücksichtigen zu müssen.
+
+Der in Abschnitt~\ref{Auftrennung} beschriebene Auftrenner arbeitet konservativ in dem Sinne dass eine Operation nur in das Ausgabe-Vertex-Programm
+"`verschoben"' wird wenn das Ergebnis mathematisch äquivalent zu einer Berechnung im Ausgabe-Fragment-Programm wäre.
+Praktisch sollen aber manchmal bewusst Operationen durch eine per-Vertex-Berechnung approximiert werden (aus Geschwindigkeitsgründen
+bei komplexen oder oftmals verwendeten Programmen). Die Sprache sollte deswegen noch um ein Schlüsselwort o.ä. erweitert werden
+welches ein manuelles Bestimmen der Berechnungseinheit für eine Operation erlaubt.
+
+Eine weitere Erweiterung, um das Erstellen von komplexeren Programmen zu vereinfachen, wäre das Hinzufügen von Verbundtypen zur Sprache.
+
+Denkbar ist es auch, den Compiler so zu erweitern, dass Programme aus "`üblichen"' Shadingsprachen mit getrennten Vertex- und Fragmentprogrammen
+-- wie Cg -- akzeptiert werden. Die Ausgabe des Compilers wären ein funktional äquivalente Vertex- und Fragment-Programme,
+allerdings potentiell mit einer besseren Verteilung von Operationen auf Verarbeitungseinheiten.
+
+Bei der Implementierung besteht praktisch das grösste Verbesserungspotential im Aufspalter. Die Behandlung von Funktionen ist relativ
+kompliziert. Rekursiven Funktionen, aber auch Schleifen, werden nur im Fragment-Programm ausgeführt - dies stellt zwar ein korrektes
+Ergebnis sicher, ist aber nicht in allen Fällen die optimale Lösung.
+
+Der Compiler selbst nimmt in der vorliegenden Implementierung noch keine Optimierungsschritte vor. In Anbetracht der bewussten Ausrichtung
+der Zwischencoderepräsentation auf möglichst einfache Optimierungen sowie die bei der Implementierung gemachten Annahmen (z.B. im Aufspalter) über das
+Vorhandensein von Optimierungsschritten wäre es der nächste sinnvolle Schritte, diese Optimierungsschritte tatsächlich umzusetzen.
+
 \cleardoublepage
 \appendix
 \bibliography{thesis_de}
