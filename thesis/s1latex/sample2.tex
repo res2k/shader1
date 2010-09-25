@@ -1,5 +1,5 @@
 \sOfunc{
-\sOfunchead{void}{main\$1vF41vF41vF21vF41mF4x41mF4x41mF4x41vF41vF41vF31S21S22vF42vF4}
+\sOfunchead{void}{main}
 \sOfuncinparams{\sOparamIn{float4}{inPosition}{\sOreg{m\_inPosition\_B0}}\sOparamIn{float4}{inColor}\sOparamIn{float2}{TexCoord}{\sOreg{m\_TexCoord\_B0}}\sOparamIn{float4}{Normal}{\sOreg{m\_Normal\_B0}}\sOparamIn{float4x4}{ModelView}{\sOreg{m\_ModelView\_B0}}\sOparamIn{float4x4}{ModelViewIT}{\sOreg{m\_ModelViewIT\_B0}}\sOparamIn{float4x4}{ModelViewProj}{\sOreg{m\_ModelViewProj\_B0}}\sOparamIn{float4}{LightPos}{\sOreg{m\_LightPos\_B0}}\sOparamIn{float4}{Attenuation}{\sOreg{m\_Attenuation\_B0}}\sOparamIn{float3}{LightColor}{\sOreg{m\_LightColor\_B0}}\sOparamIn{sampler2D}{Texture}{\sOreg{m\_Texture\_B0}}\sOparamIn{sampler2D}{TextureSpec}{\sOreg{m\_TextureSpec\_B0}}}
 \sOfuncoutparams{\sOparamOut{float4}{outPosition}{\sOreg{m\_outPosition\_B0}}\sOparamOut{float4}{outColor}{\sOreg{m\_outColor\_B0}}}
 \sOfuncregset{float}{\sOsetreg{i\_tmp10}\sOsetreg{i\_tmp11}\sOsetreg{i\_tmp13}\sOsetreg{i\_tmp14}\sOsetreg{i\_tmp15}\sOsetreg{i\_tmp19}\sOsetreg{i\_tmp20}\sOsetreg{i\_tmp21}\sOsetreg{i\_tmp23}\sOsetreg{i\_tmp25}\sOsetreg{i\_tmp26}\sOsetreg{i\_tmp3}\sOsetreg{i\_tmp34}\sOsetreg{i\_tmp36}\sOsetreg{i\_tmp37}\sOsetreg{i\_tmp39}\sOsetreg{i\_tmp4}\sOsetreg{i\_tmp42}\sOsetreg{i\_tmp43}\sOsetreg{i\_tmp44}\sOsetreg{i\_tmp46}\sOsetreg{i\_tmp5}\sOsetreg{i\_tmp9}\sOsetreg{v\_att}\sOsetreg{v\_d}\sOsetreg{v\_specCoeff}}
@@ -12,37 +12,37 @@
 \sOfuncbody{
 \sOstmt{\sObuiltinmul{\sOreg{m\_outPosition\_B0}}{\sOreg{m\_ModelViewProj\_B0}}{\sOreg{m\_inPosition\_B0}}}
 \sOstmt{\sObuiltinmul{\sOreg{i\_tmp1}}{\sOreg{m\_ModelViewIT\_B0}}{\sOreg{m\_Normal\_B0}}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp3}}{\sOreg{i\_tmp1}}{0}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp4}}{\sOreg{i\_tmp1}}{1}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp5}}{\sOreg{i\_tmp1}}{2}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp3}}{\sOreg{i\_tmp1}}{0}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp4}}{\sOreg{i\_tmp1}}{1}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp5}}{\sOreg{i\_tmp1}}{2}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp2}}{\sOreg{i\_tmp3} \sOcomma \sOreg{i\_tmp4} \sOcomma \sOreg{i\_tmp5}}}
 \sOstmt{\sObuiltinnormalize{\sOreg{v\_eyeNormal}}{\sOreg{i\_tmp2}}}
 \sOstmt{\sObuiltinmul{\sOreg{i\_tmp7}}{\sOreg{m\_ModelView\_B0}}{\sOreg{m\_inPosition\_B0}}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp9}}{\sOreg{i\_tmp7}}{0}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp10}}{\sOreg{i\_tmp7}}{1}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp11}}{\sOreg{i\_tmp7}}{2}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp9}}{\sOreg{i\_tmp7}}{0}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp10}}{\sOreg{i\_tmp7}}{1}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp11}}{\sOreg{i\_tmp7}}{2}}
 \sOstmt{\sOmakevec{\sOreg{v\_eyeVertex}}{\sOreg{i\_tmp9} \sOcomma \sOreg{i\_tmp10} \sOcomma \sOreg{i\_tmp11}}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp13}}{\sOreg{m\_LightPos\_B0}}{0}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp14}}{\sOreg{m\_LightPos\_B0}}{1}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp15}}{\sOreg{m\_LightPos\_B0}}{2}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp13}}{\sOreg{m\_LightPos\_B0}}{0}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp14}}{\sOreg{m\_LightPos\_B0}}{1}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp15}}{\sOreg{m\_LightPos\_B0}}{2}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp12}}{\sOreg{i\_tmp13} \sOcomma \sOreg{i\_tmp14} \sOcomma \sOreg{i\_tmp15}}}
-\sOstmt{\sOassign{\sOreg{v\_vertToLight}}{\sOreg{i\_tmp12} - \sOreg{v\_eyeVertex}}}
+\sOstmt{\sOsub{\sOreg{v\_vertToLight}}{\sOreg{i\_tmp12}}{\sOreg{v\_eyeVertex}}}
 \sOstmt{\sObuiltinlength{\sOreg{v\_d}}{\sOreg{v\_vertToLight}}}
 \sOstmt{\sObuiltinnormalize{\sOreg{v\_vertToLight.1}}{\sOreg{v\_vertToLight}}}
 \sOstmt{\sOassign{\sOreg{i\_tmp19}}{\sOconst{1}}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp20}}{\sOreg{m\_Attenuation\_B0}}{0}}
-\sOstmt{\sOassign{\sOreg{i\_tmp21}}{\sOreg{v\_d} / \sOreg{i\_tmp20}}}
-\sOstmt{\sOassign{\sOreg{v\_att}}{\sOreg{i\_tmp19} - \sOreg{i\_tmp21}}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp20}}{\sOreg{m\_Attenuation\_B0}}{0}}
+\sOstmt{\sOdiv{\sOreg{i\_tmp21}}{\sOreg{v\_d}}{\sOreg{i\_tmp20}}}
+\sOstmt{\sOsub{\sOreg{v\_att}}{\sOreg{i\_tmp19}}{\sOreg{i\_tmp21}}}
 \sOstmt{\sObuiltindot{\sOreg{i\_tmp23}}{\sOreg{v\_eyeNormal}}{\sOreg{v\_vertToLight.1}}}
 \sOstmt{\sOassign{\sOreg{i\_tmp24}}{\sOconst{0}}}
 \sOstmt{\sOcast{float}{\sOreg{i\_tmp25}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp25}}{}}
 \sOstmt{\sObuiltinmax{\sOreg{i\_tmp26}}{\sOreg{i\_tmp23}}{\sOreg{i\_tmp25}}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp27}}{\sOreg{i\_tmp26} \sOcomma \sOreg{i\_tmp26} \sOcomma \sOreg{i\_tmp26}}}
-\sOstmt{\sOassign{\sOreg{i\_tmp28}}{\sOreg{m\_LightColor\_B0} * \sOreg{i\_tmp27}}}
+\sOstmt{\sOmul{\sOreg{i\_tmp28}}{\sOreg{m\_LightColor\_B0}}{\sOreg{i\_tmp27}}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp29}}{\sOreg{v\_att} \sOcomma \sOreg{v\_att} \sOcomma \sOreg{v\_att}}}
-\sOstmt{\sOassign{\sOreg{v\_litColor}}{\sOreg{i\_tmp28} * \sOreg{i\_tmp29}}}
+\sOstmt{\sOmul{\sOreg{v\_litColor}}{\sOreg{i\_tmp28}}{\sOreg{i\_tmp29}}}
 \sOstmt{\sObuiltinnormalize{\sOreg{v\_eyeVertex.1}}{\sOreg{v\_eyeVertex}}}
-\sOstmt{\sOassign{\sOreg{i\_tmp32}}{\sOreg{v\_vertToLight.1} - \sOreg{v\_eyeVertex.1}}}
+\sOstmt{\sOsub{\sOreg{i\_tmp32}}{\sOreg{v\_vertToLight.1}}{\sOreg{v\_eyeVertex.1}}}
 \sOstmt{\sObuiltinnormalize{\sOreg{v\_halfVec}}{\sOreg{i\_tmp32}}}
 \sOstmt{\sObuiltindot{\sOreg{i\_tmp34}}{\sOreg{v\_eyeNormal}}{\sOreg{v\_halfVec}}}
 \sOstmt{\sOassign{\sOreg{i\_tmp35}}{\sOconst{0}}}
@@ -52,17 +52,17 @@
 \sOstmt{\sOcast{float}{\sOreg{i\_tmp39}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp39}}{}}
 \sOstmt{\sObuiltinpow{\sOreg{v\_specCoeff}}{\sOreg{i\_tmp37}}{\sOreg{i\_tmp39}}}
 \sOstmt{\sObuiltintexTwoD{\sOreg{i\_tmp41}}{\sOreg{m\_Texture\_B0}}{\sOreg{m\_TexCoord\_B0}}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp42}}{\sOreg{v\_litColor}}{0}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp43}}{\sOreg{v\_litColor}}{1}}
-\sOstmt{\\sOvecextract{\sOreg{i\_tmp44}}{\sOreg{v\_litColor}}{2}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp42}}{\sOreg{v\_litColor}}{0}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp43}}{\sOreg{v\_litColor}}{1}}
+\sOstmt{\sOvecextract{\sOreg{i\_tmp44}}{\sOreg{v\_litColor}}{2}}
 \sOstmt{\sOassign{\sOreg{i\_tmp45}}{\sOconst{1}}}
 \sOstmt{\sOcast{float}{\sOreg{i\_tmp46}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp46}}{}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp47}}{\sOreg{i\_tmp42} \sOcomma \sOreg{i\_tmp43} \sOcomma \sOreg{i\_tmp44} \sOcomma \sOreg{i\_tmp46}}}
-\sOstmt{\sOassign{\sOreg{i\_tmp48}}{\sOreg{i\_tmp41} * \sOreg{i\_tmp47}}}
+\sOstmt{\sOmul{\sOreg{i\_tmp48}}{\sOreg{i\_tmp41}}{\sOreg{i\_tmp47}}}
 \sOstmt{\sObuiltintexTwoD{\sOreg{i\_tmp49}}{\sOreg{m\_TextureSpec\_B0}}{\sOreg{m\_TexCoord\_B0}}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp50}}{\sOreg{v\_specCoeff} \sOcomma \sOreg{v\_specCoeff} \sOcomma \sOreg{v\_specCoeff} \sOcomma \sOreg{v\_specCoeff}}}
-\sOstmt{\sOassign{\sOreg{i\_tmp51}}{\sOreg{i\_tmp49} * \sOreg{i\_tmp50}}}
-\sOstmt{\sOassign{\sOreg{m\_outColor\_B0}}{\sOreg{i\_tmp48} + \sOreg{i\_tmp51}}}
+\sOstmt{\sOmul{\sOreg{i\_tmp51}}{\sOreg{i\_tmp49}}{\sOreg{i\_tmp50}}}
+\sOstmt{\sOadd{\sOreg{m\_outColor\_B0}}{\sOreg{i\_tmp48}}{\sOreg{i\_tmp51}}}
 }
 }
 
