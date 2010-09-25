@@ -776,21 +776,32 @@ mit ihren vollständigen Fähigkeiten beschrieben.
 
 \subsubsection{Aufbau}
 
-Die \emph{Zwischencoderepräsentation} basiert im Wesentlichen auf der SSA-Form (Single Static Assignment).
+Bei der Gestaltung der \emph{Zwischencoderepräsentation} sollten folgende Rahmenbedingungen erfüllt werden:
+\begin{itemize}
+\item \emph{Eignung als Zwischenrepräsentation zwischen verschiedenen Arbeitsschritten des Compilers}.
+Um die Komplexität des Compilers und den damit verbundenen Implementierungsaufwand klein zu halten
+sollte \emph{ein} Format zur Zwischenrepräsentation für den Compiler-internen Austausch verwendet werden.
+(Andere Compiler verwenden verschiedene Formate zwischen Verarbeitungsschritten, siehe z.B.~\cite{SIMPLE}.)
+\item Dies schliesst auch \emph{Eignung für Optimierungen} ein. Es sollten also genug Information enthalten sein,
+um verschiedene Optimierungsalgorithmen umzusetzen. Idealerweise sollte die Zwischencoderepräsentation
+diese Umsetzung von Optimierungen möglichst unterstützen und vereinfachen.
+% \item Eignung als Ausgabe für Auftrenner?
+\item Auch der \emph{Aufbau} sollte möglichst \emph{einfach} sein, damit Programme in der Zwischencoderepräsentation 
+unkompliziert traversiert und manipuliert werden können.
+\end{itemize}
 
-% SSA:  B. Alpern, M. N. Wegman, and F. K. Zadeck. Detecting equalities of
-%variables in programs. In 15th Annual ACM Symposium on Principles of
-%Programming Languages, pages 1–11, San Diego, California, Jan. 1988.
-% B. K. Rosen, M. N. Wegman, and F. K. Zadeck. Global value numbers and
-%redundant computations. In 15th Annual ACM Symposium on Principles of
-%Programming Languages, pages 12–27, San Diego, California, Jan. 1988.
+Die Optimierbarkeit wird unterstützt, in dem der Zwischencoderepräsentation die \emph{``Single Static Assignment''-Form} (SSA, siehe~\cite{ssa1} und \cite{ssa2})
+für Ausdrücke zugrunde liegt. Der gewünschte einfache Aufbau äußert sich darin, dass Befehle eines Programmes
+in einer einfachen Reihung gespeichert werden -- ohne Sprungmarken oder ähnliches. Verzweigungen und Schleifen werden
+durch "`komplexe"' Befehle realisiert (die intern wiederum Reihungen von Befehlen enthalten).
 
-Die Zwischencoderepräsentation ist um "`Sequenzen"' herum organisiert. Eine Sequenz besteht aus "`Operationen"',
-die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt einen Registersatz für jeden verwendeten Typ.
+Das "`Grundelement"' der Zwischencoderepräsentation ist eine "`Sequenzen"'. Eine Sequenz besteht aus "`Operationen"',
+die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt getrennte Registersätze, ein Satz für jeden verwendeten Typ. 
+Der Aufbau einer Sequenz ist in Abbildung~\ref{fig:ir_sequence} schematisch dargestellt.
+
 Die in Operationen gespeicherte Registeridentifikation verweist auf den zugehörigen Registersatz, Typinformationen bleiben also erhalten.
 % Satz teil von Register-ID
 %Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
-Der wesentliche, von der SSA-Form entliehene, Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf.
 
 \begin{figure}[h]
    \centering
@@ -798,6 +809,16 @@ Der wesentliche, von der SSA-Form entliehene, Aspekt ist, dass ein Register nur 
   \caption{Teile einer Sequenz}
   \label{fig:ir_sequence}
 \end{figure}
+
+Der wesentliche, von der SSA-Form entliehene, Aspekt ist, dass ein Register nur von \emph{einer} Operation der Sequenz beschrieben werden darf
+(im Weiteren "`Register-Zuweisungs-Bedingung"' genannt).
+
+Im Gegensatz zu einer "`reinen"' SSA-Form gibt es jedoch keine $\phi$-Operation. Stattdessen werden $\phi$-Operation bereits "`aufgelöst"'
+gespeichert: soll z.B. bei einer Verzweigung eine Variable in einem Zweig verändert werden, so werden in beiden Zweigen Zuweisungen zum
+entsprechenden Register generiert. Ein Zweig enthält die Zuweisung des neuen Wertes, der andere die Zuweisung des alten Wertes.
+
+Anzumerken ist, dass dieses Auflösen nicht die oben gegebenen "`Register-Zuweisungs-Bedingung"' verletzt, da Verzweigungen und Schleifen
+jeweils als \emph{eine} Operation in der Sequenz, in der sie verwendet werden, gelten.
 
 Die Sichtbarkeit von Registern ist auf die Sequenz, in der sie deklariert wurden, beschränkt.
 %Insbesondere können auf diese nicht implizit
@@ -809,9 +830,16 @@ zugegriffen werden.
 Stattdessen werden zu eingeschachtelten Blöcken eine Zuordnung zwischen Registern aus dem umgebenden Block
 ("`extern"') und
 Registern des eingeschachtelten Blockes ("`lokal"') gespeichert.
-Semantisch findet am Anfang des Blockes ein Kopieren von externen Eingaberegistern
-in lokale Register statt. Analog findet am Ende ein zurückkopieren von lokalen Registern in die externen Ausgaberegister.
-(Die genaue Umsetzung dieses Verhaltens ist ein Implementierungsdetail, dass dem Generator obliegt.)
+Wie genau die Abbildung von Werten von "`externen"' an "`lokale"' Register statfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
+das Verhalten muss bloss einem "`umleiten"' von Lese- oder Schreibzugriffen von den angegebenen lokalen auf die zugeordneten externen
+Registern entsprechen.
+%Wie genau die Übergabe von Werten von "`externen"' an "`lokale"' Register statfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
+%das Verhalten muss jedoch semantisch äquivalent zu einem Kopieren der externen Eingaberegister in lokale Register Anfang des Blockes
+%und analog am Ende zu einem zurückkopieren von lokalen Registern in die externen Ausgaberegister sein.
+
+Abbildung~\ref{fig:ir_seq_block_nest} zeigt eine Sequenz, in der die zweite Operation eine Sequenzschachtelung ist.
+Der Sequenzoperation sind neben einem Verweis auf die auszuführende Sequenz auch Registerzuordnungen von
+Registern der äusseren (einschachtelnden) zu Registern der inneren (eingeschachtelten) Sequenz.
 
 \begin{figure}[h]
    \centering
@@ -822,10 +850,14 @@ in lokale Register statt. Analog findet am Ende ein zurückkopieren von lokalen 
 
 \paragraph{Funktionen:}
 Eine Funktion der Zwischencoderepräsentation besteht aus einem eindeutigem Bezeichner, einer Liste von Eingabeparametern,
-einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen.
+einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen. Abbildung~\ref{fig:ir_function}
+ist eine schematische Abbildung einer Funktion.
 
-Jede Überladung einer Funktion wird in der Zwischencoderepräsentation durch einen eindeutigen Bezeichner identifiziert.
-Dieser wird aus dem ursprünglichen Bezeichner sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
+%Jede Überladung einer Funktion wird in der Zwischencoderepräsentation durch einen eindeutigen Bezeichner identifiziert.
+%Dieser wird aus dem ursprünglichen Bezeichner sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
+Bei überladenen Funktionen muss die auszuführende Variante der Funktion in der Zwischencoderepräsentation
+explizit angegeben werden.
+Aus diesem Grund wird in der Zwischencoderepräsentation jede Überladung einer Funktion durch einen eindeutigen Bezeichner identifiziert.
 
 Parameter werden mit einem Mechanismus, der der Behandlung "`externer"' Register in einem eingeschachteltem
 Block ähnelt, übergeben. Die Parameterlisten enthalten zu jedem Eingabeparameter ein lokales Register, in dem die
@@ -841,6 +873,7 @@ Parametern auch entsprechend verschiedene Register zugeordnet.
    \centering
   \includegraphics{ir_function}
   \caption{Schema einer Funktionsbeschreibung}
+  {\small für eine Funktion deklariert mit \texttt{float lerp (float a, float b, float factor)}.}
   \label{fig:ir_function}
 \end{figure}
 
@@ -851,6 +884,15 @@ auf spezielle Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden g
 "`eigene"' Register zugewiesen. Im Prinzip sind "`globale"' Variablen bloss "`versteckte"' lokale Variablen in
 der Eintrittsfunktion.
 
+Damit müssen globale Variablen nicht besonders von Optimierungsschritten u.ä. berücksichtigt werden.
+Insbesondere müssen keine "`Seiteneffekte"' von Funktionen ermittelt werden: manipuliert eine Funktion eine "`globale"' Variable,
+so erhält sie in der Zwischencoderepräsentation bloss einen weiteren Ausgabeparameter.
+Betrachtet man den Aufruf dieser Funktion so wird nur eine weitere Variable beschrieben.
+
+Optimierungsschritte wie Constant Propagation oder Dead Code Elimination. aber auch der Auftrennungs-Schritt werden vereinfacht,
+da nur "`lokale"' Variablen berücksichtigt werden müssen; gleichzeitig werden als global deklarierte Variablen
+von solchen Verarbeitungsschritten korrekt behandelt.
+
 %Stattdessen werden zu eingeschachtelten Blöcken gespeichert, welche Register von dem Block gelesen oder
 %beschrieben werden sollen
 
@@ -858,15 +900,15 @@ der Eintrittsfunktion.
 
 \paragraph{Behandlung von Arrays:}
 Arrays werden als "`ein"' Wert behandelt. D.h. eine Zuweisungsoperation kopiert immer ein ganzes Array.
-Das Lesen einzelner Elemente geschieht mit Hilfe der Operation "`Extraktion eines Arrayelements"'.
-Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelements"':
+Das Lesen einzelner Elemente geschieht mit Hilfe der Operation "`Extraktion eines Arrayelements"' ($\mathtt{getelem}$).
+
+Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelements"' ($\mathtt{setelem}$):
 %diese kopiert alle Elemente eines Arrays in das Zielarray \emph{außer} das Element eines gegebenen Indexes;
 %im Zielarray wird dort der zu schreibende Wert abgelegt.
 diese kopiert alle Elemente, bis auf das zu ändernde Element, eines Arrays in das Zielarray;
 dort wird am gegebenen Index der zu schreibende Wert abgelegt.
-
 Dieser Ansatz wurde gewählt, weil er sehr gut in das "`SSA-Prinzip"' passt.
-Bei der direkten Umsetzung eines Zugriffs auf Array-Elemente ("`$a[i] = x$"') ist es schwierig, sicherzustellen, dass
+Bei der direkten Umsetzung eines Zugriffs auf Array-Elemente (Ausdrücke wie eine Zuweisung "`$a[i] = x$"') ist es schwierig, sicherzustellen, dass
 jedes Element von $a$ wie verlangt nur einmal beschrieben wird (insbesondere bei Schleifen); es
 müsste für jedes Array-Element individuell "`verfolgt' werden, ob es beschrieben wurde.
 Ein solches Verfolgen wird weiterhin schwieriger, sobald die Array-Größe nicht bekannt ist
@@ -985,27 +1027,40 @@ die Anzahl der Elemente des Arrays.
 Neben dem Verweis auf eine Sequenz werden auch Listen von "`importierten"' und "`exportierten"' Namen zu der Operation gespeichert.
 Jedem Namen ist weiterhin ein Register in der eingeschachtelten Sequenz zugeordnet.
 
-Beim Einfügen der Operation in eine "`umgebende"' Sequenz wird von dieser eine Zuordnung von "`importierten"' und "`exportierten"' Namen der
+Für den Zugriff auf Register der "`umgebenden"' Sequenz wird von dieser 
+beim Einfügen der Operation eine Zuordnung von "`importierten"' und "`exportierten"' Namen der
 eingeschachtelten Sequenz zu Registern der umgebenden Sequenz vorgenommen. 
-Diese Zuordnung wird benutzt, um vor der Abarbeitung der eingeschachtelten Sequenz Registerwerte von der umgebenden in die eingeschachtelte Sequenz zu kopieren.
-Nach der Abarbeitung erfolgt ein Kopieren in die umgekehrte Richtung.
+%Diese Zuordnung wird benutzt, um vor der Abarbeitung der eingeschachtelten Sequenz Registerwerte von der umgebenden in die eingeschachtelte Sequenz zu kopieren.
+%Nach der Abarbeitung erfolgt ein Kopieren in die umgekehrte Richtung.
 
 Eine Sequenzschachtelung gilt als \emph{eine} Operation in der umgebenden Sequenz. Solange die Zuordnung von "`exportierten"' Namen der
-eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wird kein Register verwendet, das bereits beschrieben wurde), bleiben die SSA-Bedingungen erfüllt.
+eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wird kein Register verwendet, das bereits beschrieben wurde), bleibt die Register-Zuweisungs-Bedingung erfüllt.
 
-\paragraph{Verzweigung:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind zwei Blöcke (ein ``if''- und ein ``else''-Block) sowie ein Register vom
-Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird der ``if''-Block ausgeführt, sonst der ``else''-Block. Es müssen immer beide Blöcke
-gegeben werden, Blöcke können aber leer sein.
+\paragraph{Verzweigung:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind zwei Sequenzen (eine ``if''- und eine ``else''-Sequenz) sowie ein Register vom
+Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird die ``if''-Sequenz ausgeführt, sonst die ``else''-Sequenzen. Es müssen immer beide Sequenzen
+gegeben werden, Sequenzen können aber leer sein.
 %Soll ein Register in einer Verzweigung beschrieben werden, so muss dies immer in \emph{beiden} Blöcken geschehen, da ansonsten je nach Ausführungspfad ein
 %Register undefinierte Wert
 
-Ein Register kann in beiden Blöcken beschrieben werden (z.B. wenn im Quellcode eine Variable von einer Bedingung abhängig unterschiedliche Werte zugewiesen wurden).
-Eine Verzweigung gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch wenn ein Register in beiden Blöcken beschrieben wird wird es,
-von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleiben die SSA-Bedingungen erfüllt,
-ohne dass ein Einsatz der $\phi$-Funktion nötig ist.
+%Ein Register kann in beiden Blöcken beschrieben werden (z.B. wenn im Quellcode eine Variable von einer Bedingung abhängig unterschiedliche Werte zugewiesen wurden).
+%Eine Verzweigung gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch wenn ein Register in beiden Blöcken beschrieben wird, wird es,
+%von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
+Ein beschriebenes "`exportiertes"' Register muss in beiden Untersequenzen beschrieben werden. (Problematisch ist der Fall, wenn in einer Verzweigung
+in nur einer Sequenz ein Register beschrieben wird. Bei Ausführung des "`anderen"' Pfades entweder zur Laufzeit das Register einen undefinierten Wert besitzen, oder
+es müsste anderweitig überschrieben werden, was die Register-Zuweisungs-Bedingung verletzt. In der "`anderen"' Sequenz muss eine Zuweisung vom alten
+Wert vorgenommen werden.)
+
+Da eine Verzweigung als \emph{eine} Operation in der umgebenden Sequenz gilt, wird ein Register, auch wenn es in beiden Blöcken beschrieben wird, 
+von der umgebenden Sequenz aus gesehen bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
+
 %\\\hspace*{1cm}$\mathrm{if}\ s\ \mathrm{then}\ \mathit{Block}\ \mathrm{else}\ \mathit{Block}$
 
 %Um die SSA-Bedingungen zu erfüllen, aber
+
+Abbildung~\ref{fig:ir_seq_branch} zeigt Schematisch eine Verzweigungsoperation in einer Sequenz.
+Zuerst wird der Bedingungswert \texttt{Z} berechnet. Die Verzweigungsoperation selbst enthält dazu noch
+Verweise auf die ``if''- und ``else''-Sequenzen, zu denen es jeweils Zuordnungen von "`importierten"' und "`exportierten"' 
+Namen der umgebenden Sequenz zu Registern der verwiesenen Sequenz gibt.
 
 \begin{figure}[h]
    \centering
@@ -1015,19 +1070,28 @@ ohne dass ein Einsatz der $\phi$-Funktion nötig ist.
   \label{fig:ir_seq_branch}
 \end{figure}
 
-\paragraph{While-Schleife:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind ein Block sowie zwei Register vom
-Typ Boolean, jeweils mit einem Wert der Bedingung: das erste Register enthält die Bedingung \emph{vor} der ersten Ausführung des Blockes,
-das zweite Register die Bedingung \emph{nach} einer Ausführung des Blockes.
+\paragraph{While-Schleife:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind eine Sequenz sowie zwei Register vom
+Typ Boolean, jeweils mit einem Wert der Bedingung: das erste Register enthält die Bedingung \emph{vor} der ersten Ausführung der Sequenz,
+das zweite Register die Bedingung \emph{nach} einer Ausführung der Sequenz.
 
 Werte, die sich von Schleifendurchlauf zu Schleifendurchlauf ändern, werden ähnlich behandelt: es muss jedem solchen Wert ein lokales
 Register im Schleifenkörper zugeordnet werden. Die Schleifenoperation selber erhält eine Abbildung von einem Paar "`externer"' Register
-(Wert vor dem ersten Durchlauf sowie Wert nach dem ersten Durchlauf) zu den lokalen Registern als weitere Eingabe. Durch die Verwendung eines
-Paares von Eingaben wird die Verwendung der $\phi$-Funktion vermieden.
+(Wert vor der ersten Ausführung sowie Wert nach einer Ausführung) zu den lokalen Registern als weitere Eingabe.
+Durch diese Verwendung von Paaren von Eingaben ist es möglich, Werte in einem Schleifendurchlauf zu beschreiben
+und im nächsten Durchlauf wieder als Eingabe für eine Operation zu verwenden. (Angenommen sei ein Quellcode wie 
+\texttt{int i = 0; while (...) \{ i = i + 1; \}}. Ohne Registerpaare müsste bei \texttt{i = i + 1} entweder Eingabe-\texttt{i}
+wie auch Ergebnis-\texttt{i} auf das gleiche Register umgesetzt werden, welches entsprend mehrfach zugewiesen wird, oder aber verschiedene Register, wobei
+Eingabe-\texttt{i} immer den anfänglichen Wert \texttt{0} besitzen würde. Registerpaare erlauben es, das im ersten Durchlauf
+der anfängliche Wert \texttt{0} für Eingabe-\texttt{i} verwendet wird, in anschliessenden Durchläufen aber der Wert des Ergebnis-\texttt{i}
+des letzten Durchlaufs.)
 
-Ein Register kann in mehreren Schleifendurchläufen beschrieben werden.
-Eine Schleife gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch ein mehrmals beschriebenes Register wird,
+%Durch die Verwendung eines
+%Paares von Eingaben wird die Verwendung der $\phi$-Funktion vermieden.
+
+Ein Register kann also in mehreren Schleifendurchläufen beschrieben werden.
+Da aber rine Schleife gilt als \emph{eine} Operation in der umgebenden Sequenz gilt, wird auch ein mehrmals beschriebenes Register,
 von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Schleife).
-Damit bleiben die SSA-Bedingungen erfüllt, und ein Einsatz der $\phi$-Funktion ist weiterhin nicht nötig.
+Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
 
 Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf \texttt{while}-Schleifen abgebildet.
 %\\\hspace*{1cm}$\mathrm{while}\ s\ \mathrm{do}\ \mathit{Block}$
@@ -1035,7 +1099,7 @@ Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf 
 \paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register, eine Liste Ausgabe-Register
 und eventuell ein Zielregister für den Rückgabewert entgegen. Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
 
-Der "`Bezeichner"' ist eine prinzipiell arbiträre Zeichenkette, die die Funktion bezeichnet. Dem Code-Generator muss
+Der "`Bezeichner"' ist eine prinzipiell beliebig wählbare Zeichenkette, die die Funktion bezeichnet. Dem Code-Generator muss
 vorher eine Funktionsbeschreibung übergeben worden sein, die durch den Bezeichner identifiziert werden kann.
 %\\\hspace*{1cm}$d \gets \mathrm{Funktion}\ (s, \dots)$
 %\\\hspace*{1cm}$\mathrm{Funktion}\ (s, \dots)$
