@@ -1,4 +1,4 @@
-\documentclass[twoside,a4paper,fleqn,12pt]{article}
+\documentclass[twoside,a4paper,fleqn,12pt]{book}
 \usepackage{fancyhdr,a4wide,graphicx}
 \usepackage[paper=a4paper,left=20mm,right=20mm,top=25mm,bottom=25mm]{geometry}
 \pagestyle{fancy}
@@ -114,7 +114,7 @@
 \newcommand\fcite[1]{\footnote{\cite{#1}}}
 \newcommand\fciteX[2]{\footnote{\cite{#1}, #2}}
 
-\section{Zielstellung}
+\chapter{Zielstellung}
 
 In der Echtzeit-3D-Graphik werden für 3D-Objekte überwiegend Dreiecksnetze\footnote{engl. ``triangle mesh'' und kürzer ``mesh''; siehe z.B. \cite{watt_de}}
 verwendet. Dies spiegelt sich in dem Aufbau von 3D-Graphikprozessoren~("`GPU"') wie auch
@@ -130,7 +130,7 @@ Die Implementierung des Compilers wird in Abschnitt~\ref{implementation} beschri
 
 % Nochmal Abschnitt mit kurzer Beschreibung wichtiger Konzepte? (meshes, Vertices vs Fragmente, ...)
 
-\section{Einführung 3D-Grafik}
+\chapter{Einführung 3D-Grafik}
 
 Als "`3D-Grafik"' wird die Berechnung zweidimensionaler Bilder aus dreidimensionalen Daten (die sog. "`\emph{Szene}"')
  bezeichnet.
@@ -138,7 +138,7 @@ Anwendung findet sie in vielen Bereichen: Visualisierung abstrakter mathematisch
 von geologischen Profilen, digitales Erstellen von Konstruktionszeichnungen, Spezialeffekte in Filmen und
 Rundgänge durch künstliche Szenarien in Computerspielen. 
 
-\subsection{Vorberechnete 3D-Grafik und Echtzeit-3D-Grafik}
+\section{Vorberechnete 3D-Grafik und Echtzeit-3D-Grafik}
 
 Die Berechnung von 3D-Grafiken wird als \emph{Rendering} bezeichnet. Bei den Anwendungen für das Rendering
 von 3D-Grafiken ist eine wichtige Untergruppe die der \emph{Echtzeitgrafik}, die sich durch besondere Anforderungen
@@ -166,7 +166,7 @@ angestrebt um alle Bewegungen möglichst flüssig darzustellen.} darzustellen. �
 geringe Latenzen bei Aktionen des Spielers sind von höchster Wichtigkeit; dafür werden aber, im Vergleich zur
 Verwendung vorberechneter 3D-Grafiken, reduzierte Details in Kauf genommen.
 
-\subsection{Renderingmethoden}
+\section{Renderingmethoden}
 
 Die zu rendernden zweidimensionalen Bilder werden in fast allen Fällen als Rastergrafiken gespeichert\footnote{Es gibt
 auch Renderer, die Vektorgrafiken erzeugen können.}: für jedes Pixel der Rastergrafik muss aus den gegebenen dreidimensionalen
@@ -191,9 +191,9 @@ Vor allem ist spezielle Hardware verfügbar welche die Rasterung stark beschleun
 Raytracing findet vor allem bei der Vorberechnung von Grafiken statt. Allerdings wird dort zunächst auch Rasterung eingesetzt,
 gemischt mit Raytracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
 
-\subsection{Grundlegende Strukturen}
+\section{Grundlegende Strukturen}
 
-\subsubsection{Modelle}
+\subsection{Modelle}
 
 Dreidimensionale Objekte ("`\emph{Modelle}"') einer Szene können auf verschiedene Arten repräsentiert werden~(\cite{watt_de}, S. 45-47). 
 
@@ -254,7 +254,7 @@ oder durch Benutzung von Schnittflächen~(\cite{watt_de} Abschn. 13.6).
 
 % TODO Skizze Rendering-Pipeline?
 
-\subsubsection{Räume, Transformationen und Kamera}
+\subsection{Räume, Transformationen und Kamera}
 
 In praktischen Anwendungen wird selten ein einziges Modell statisch dargestellt. In der Regel müssen mehrere Modelle
 gleichzeitig dargestellt werden (z.B. ein aus mehreren Baugruppen zusammengesetztes Teil), wobei die Modelle
@@ -300,7 +300,7 @@ Werden nun die transformierten Koordinaten durch die $w$-Komponente dividiert so
 Die Projektionsmatrix kann frei gewählt werden -- z.B. kann sie, durch Setzen der $w$-Koordinate auf $1$, auch orthographische
 Projektionen darstellen.
 
-\subsubsection{Texturen}
+\subsection{Texturen}
 
 Zur Simulation von detaillierten Oberflächen werden \emph{Texturen} verwendet. Im Regelfall sind dies zweidimensionale
 Bilder. Einem jeden Dreieck eines Modells ist ein (ebenfalls dreieckiger) Ausschnitt auf einer Textur zugeordnet. 
@@ -310,7 +310,7 @@ Beim Rendering wird nun der durch diese Koordinaten beschriebene Texturausschnit
 "`gespannt"': für jedes gerenderte Pixel des Dreiecks wird die Position des zugehörigen Texturepixels (``texel'')
 berechnet. Der Farbwert der Textur an dieser Position wird ausgelesen und dient als Farbwert des gerenderten Pixels~(\cite{watt_de}, S. 160).
 
-\subsubsection{Shading}
+\subsection{Shading}
 
 Bei der visuellen Wahrnehmung spielt die Interaktion von wahrgenommen Oberflächen mit Lichtquellen eine wichtige
 Rolle. Die Helligkeit einer Oberfläche variiert mit Abstand und Lage bezüglich einer Lichtquelle. 
@@ -345,9 +345,9 @@ nur per Vertex verfügbare Werte über das Dreieck linear interpoliert werden (a
 Gouraud-Shading). Der Aufwand wird aber damit belohnt, dass keine Facetten und wenig Kanten sichtbar sind.
 % @@@ Kanten sichtbar an Umriss
 
-\subsection{Aufbau Hardware}
+\section{Aufbau Hardware}
 
-\subsubsection{Ablauf Echtzeit-Rendering}
+\subsection{Ablauf Echtzeit-Rendering}
 
 \begin{figure}[h]
   \centering
@@ -407,7 +407,7 @@ von Fragmenten zur gleichen Zeit angewendet. Auch die Fragment-Berechnungen erfo
 
 %Alle Verarbeitungseinheiten sind auf aktueller Graphikhardware programmierbar.
 
-\subsection{Berechnungsfrequenzen}
+\section{Berechnungsfrequenzen}
 \label{berechnungsfrequenz_locker}
 
 Für das Rendering eines 3D-Modells werden verschiedenartige Daten benötigt. So zuerst das Modell selbst, als Dreiecksnetz. Dazu
@@ -469,15 +469,15 @@ bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und
 \end{figure}
 
 \newpage
-\section{Sprachspezifikation}
+\chapter{Sprachspezifikation}
 \label{langspec}
 
 \input{langspec}
 
-\section{Implementierung}
+\chapter{Implementierung}
 \label{implementation}
 
-\subsection{Compiler-Aufbau}
+\section{Compiler-Aufbau}
 \begin{figure}[h]
    \centering
   \includegraphics{compiler_structure}
@@ -502,7 +502,7 @@ Die Programme werden vom Aufspalter in Zwischencode ausgegeben und können noch 
 Abschließend werden ein Fragment- und ein Vertexprogramm im gewünschten Zielcode ausgegeben\footnote{Diese Implementierung benutzt den
 gleichen Generator für beide Programme, prinzipiell könnten diese jedoch mit verschiedenen Generatoren ausgegeben werden.}.
 
-\subsection{Implementierungsdetails}
+\section{Implementierungsdetails}
 
 Als \emph{Programmiersprache}, in der die hier beschriebene Implementierung verfasst ist, wurde C++ gewählt.
 Gründe dafür sind:
@@ -520,7 +520,7 @@ eine "`Kommandozeilenversion"' des Compilers setzt auch auf diese Bibliothek auf
 Zur Sicherstellung der fortwährend korrekten Funktionsweise aller Module des Compilers wurden entwicklungsbegleitend 
 jeweils \emph{Tests} der Module geschrieben (Black-Box und White-Box); Ausführen der Tests war regelmässiger Teil des Entwicklungsprozesses.
  
-\subsection{Scanner}
+\section{Scanner}
 
 Der \emph{Lexer} wandelt die als Byte-Strom vorliegende Eingabe in eine Folge von "`Tokens"'.
 Ein Token ist eine der in Abschnitt~\ref{Lexikalische Einheiten} aufgezählten lexikalischen Einheiten, ein bekanntes Symbol (Operatoren etc.) oder Schlüsselwort. 
@@ -561,7 +561,7 @@ Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfal
 Weiterhin schreibt die Spezifikation vor, dass zwei Bezeicher als identisch betrachtet werden, wenn sie kanonisch äquivalent im Sinne von Unicode sind.
 Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
 
-\subsection{Parser}
+\section{Parser}
 
 Der \emph{Parser} untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen.
 Es wird überprüft, ob der Token-Strom gültig im Sinne der in der Sprachspezifikation gegebenen Sprache ist --
@@ -573,11 +573,11 @@ Diese werden bei der \emph{semantischen} Verarbeitung benötigt.
 %- Lookahead: unendl.
 %- Grammatik: kontextfrei, rechtsrekursiv
 
-%\subsubsection{Eigenschaften der Grammatik}
+%\subsection{Eigenschaften der Grammatik}
 
 %Die Grammatik ist kontextfrei. Die Regeln sind rechtsrekursiv.
 
-\subsubsection{Aufbau des Parsers}
+\subsection{Aufbau des Parsers}
 
 \newcommand\rulelink[1]{\glq\texttt{\detokenize{#1}}\grq~(\ref{#1})}
 
@@ -687,14 +687,14 @@ Die abgefangen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt zu
 
 % Zuordnung Variable <-> akt. Register in Symboltabelle
 
-\subsection{Zwischencoderepräsentation}
+\section{Zwischencoderepräsentation}
 \label{zcr}
 
 \input{ir_commands}
 
 % Abstrakte(s) Beispiel(e): Quellcode + resultierende Zw.rep.
 
-\subsubsection{Vorlagen der Zwischencoderepräsentation}
+\subsection{Vorlagen der Zwischencoderepräsentation}
 
 Als Vorlagen für die hier vorgestellte Zwischencoderepräsentation dienten das ``LLVM Instruction Set''~(\cite{LLVM:CGO04}),
 SafeTSA~(\cite{SafeTSA}) und ``SIMPLE'' des McCAT Compiler-Projektes~(\cite{SIMPLE}).
@@ -774,7 +774,7 @@ stellen sie Lösungen für Probleme, wie die Aliasing\footnote{Zugriff auf ein D
 der hier spezifizierten Shadingsprache nicht vorkommen. Insofern sind diese Repräsentationen hier nicht
 mit ihren vollständigen Fähigkeiten beschrieben.
 
-\subsubsection{Aufbau}
+\subsection{Aufbau}
 
 Bei der Gestaltung der \emph{Zwischencoderepräsentation} sollten folgende Rahmenbedingungen erfüllt werden:
 \begin{itemize}
@@ -921,13 +921,15 @@ z.B. Konstanten können die Werte an einer Konstantenfaltung teilnehmen. Solche 
 bleiben bestehen: sind Größe und Elementwerte eines Arrays bekannt, kann ein Optimierer diese wie individuelle
 Register durch die Arrayoperationen hindurch verfolgen, oder sogar ein Array auf individuelle Register "`aufteilen"'.
 
-\subsubsection{Sequenz-Operationen}
+\subsection{Sequenz-Operationen}
 
 Dieser Abschnitt zählt alle möglichen Operationen in einer Sequenz auf. Eine Operation greift für die Eingabe auf kein, ein oder mehrere
 \emph{Quellregister} zu. Hat die Operation ein Ergebnis, wird dieses in ein \emph{Zielregister} geschrieben. 
 
 %Unter vielen Operationen ist das Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
 %Die Quellregister werden durch $s$, $t$, \dots bezeichnet. 
+
+\subsubsection{Einfache Operationen}
 
 \paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
 %\\\hspace*{1cm}$d \gets s$
@@ -973,6 +975,8 @@ Die Eingabe- und das Zielregister müssen von einem Integer-Typ (vorzeichenlos o
 %\\\hspace*{1cm}$d \gets -s$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 
+\subsubsection{Vektor- und Matrix-Operationen}
+
 \paragraph{Vektor-Erstellung:} Nimmt als Eingabe ein bis vier Register, je nach der Komponentenanzahl des Zielregisters. Die Eingaberegister müssen alle
 den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Vektorkomponenten im Zielregister zugeordnet.
 %\\\hspace*{1cm}$d \gets (s)$
@@ -990,6 +994,8 @@ als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
 %\\\hspace*{1cm}$d \gets \left(s\right)$
 %\\\hspace*{1cm}$d \gets \left(\begin{array}{cc}s&t\\u&v\end{array}\right)$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+
+\subsubsection{Array-Operationen}
 
 \paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays.
 Die Eingaberegister müssen alle den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
@@ -1022,6 +1028,8 @@ for element = 0 to Array.length-1
 \paragraph{Arraylänge:} Nimmt im Eingaberegister ein Array entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
 die Anzahl der Elemente des Arrays.
 %\\\hspace*{1cm}$d \gets |s|$
+
+\subsubsection{Komplexe Operationen}
 
 \paragraph{Sequenzschachtelung:} Eine Operation, die auf eine weitere, eingeschachtelte Sequenz verweist, welche beim Ausführen der Operation abgearbeitet wird.
 Neben dem Verweis auf eine Sequenz werden auch Listen von "`importierten"' und "`exportierten"' Namen zu der Operation gespeichert.
@@ -1096,6 +1104,8 @@ Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
 Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf \texttt{while}-Schleifen abgebildet.
 %\\\hspace*{1cm}$\mathrm{while}\ s\ \mathrm{do}\ \mathit{Block}$
 
+\subsubsection{Funktions-Operationen}
+
 \paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register, eine Liste Ausgabe-Register
 und eventuell ein Zielregister für den Rückgabewert entgegen. Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
 
@@ -1118,7 +1128,7 @@ und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegiste
 
 %$\phi$-Funktion: diese konkrete Zwischencoderepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
 
-\subsubsection{Textdarstellung}
+\subsection{Textdarstellung}
 
 Die folgende Tabelle listet auf, wie die verschiedenen Sequenzoperationen in den Beispielen als Text dargestellt werden.
 Bei den Parametern steht $d$ für das Zielregister einer Operation, $s$, $t$ bezeichnen die Quellregister.
@@ -1168,7 +1178,7 @@ Potenz & \begin{array}[t]{ll}\sObuiltinpow{d}{s}{t}\end{array}\\
 Textur auslesen & \begin{array}[t]{ll}\sObuiltintexOneD{d}{s}{t}\\\sObuiltintexTwoD{d}{s}{t}\\\sObuiltintexThreeD{d}{s}{t}\\\sObuiltintexCUBE{d}{s}{t}\\\end{array}\\
 \end{longtable}
 
-\subsubsection{Beispiel}
+\subsection{Beispiel}
 
 Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, Abbildung~\ref{fig:ir_sample_gen} die generierte Zwischencoderepräsentation.
 
@@ -1185,7 +1195,7 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
   \label{fig:ir_sample_gen}
 \end{figure}
 
-\subsection{Auftrennung}
+\section{Auftrennung}
 \label{Auftrennung}
 
 % High-Level Arbeitsweise
@@ -1203,7 +1213,7 @@ vorliegt. So muss z.B. eine Verknüpfung von zwei Werten per Fragment ausgeführ
 \paragraph{Operation:} Eine Berechnung kann per Vertex ausgeführt werden, wenn beide Eingaben per Vertex vorliegen, und
 sofern die Operation das Kriterium der \emph{Interpolierbarkeit} (Abschnitt~\ref{Interpolierbarkeit}) erfüllt.
 
-\subsubsection{Berechnungsfrequenzen}
+\subsection{Berechnungsfrequenzen}
 \label{splitter_Berechnungsfrequenzen}
 % Welche Frequenzen?
 
@@ -1235,7 +1245,7 @@ weitere Optimierungsschritte wie Dead Code Elimination einige Operationen auf un
 
 % Eingaben: Uniform oder per Vertex; Fragmentfreq. nur Eingaben von VP
 
-\subsubsection{Schnittstelle Vertex-/Fragmentprogramm}
+\subsection{Schnittstelle Vertex-/Fragmentprogramm}
 \label{schnittstelle}
 
 Da ein Teil der Operationen des ursprünglichen Programms dem Vertexprogramm zugeordnet wird, ein anderer Teil aber dem
@@ -1248,7 +1258,7 @@ Diese Liste der zu übertragenden Werte ("`Schnittstelle"' in Abbildung~\ref{fig
 Dieser kümmert sich um die "`technischen"' Details wie die Zuordnung von für die Übertragung notwendigen Ressourcen und % @@@ Ress. -> Interpolatoren. Verw
 entsprechende Abbildung in der Zieldarstellung.
 
-\subsubsection{Interpolierbarkeit}
+\subsection{Interpolierbarkeit}
 \label{Interpolierbarkeit}
 % Kriterium: Interpolation
 
@@ -1430,13 +1440,13 @@ aller Eingaben entspricht.
 \end{figure}
 
 \newpage
-\subsection{Code-Generator}
+\section{Code-Generator}
 
 Der \emph{Code-Generator} übersetzt ein in der Zwischencoderepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
 Diese "`Darstellung"' kann wieder eine Hochsprache sein, prinzipiell kann ein Code-Generator aber auch Assembler-Quelltext oder eine
 Binärcodierung ausgeben.
 
-\subsubsection{Eingaben und Aufgaben}
+\subsection{Eingaben und Aufgaben}
 
 Der \emph{Code-Generator} erhält als Eingabe eine Liste von Funktionsbeschreibungen.
 Eine Funktionsbeschreibung besteht aus dem eindeutigen Bezeichner, einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern)
@@ -1460,7 +1470,7 @@ oder die Behandlung von Werten "`vor dem ersten Durchlauf, nach dem ersten Durch
 auftreten.
 \end{itemize}
 
-\subsubsection{Generator für Cg}
+\subsection{Generator für Cg}
 
 In der vorliegenden Implementierung wurde als Zieldarstellung die Sprache Cg~(\cite{cgpaper}, \cite{cg_home}) gewählt.
 
@@ -1484,7 +1494,7 @@ gut lesbar lässt.}.
 
 % Original-Schnipsel und Generator-Output
 
-\section{Ausblick}
+\chapter{Ausblick}
 
 % AST: nützlich, wenn FEs für anderen Sprachen, oder komplexer (Strukturen)
 % Manuelles spezifizieren von per-Vertex Ops // keyword 'interpolate'

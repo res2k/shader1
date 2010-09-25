@@ -1,4 +1,4 @@
-\subsection{Programm}\label{Programm}
+\section{Programm}\label{Programm}
 \Gnt{programm}:\label{programm}\\
 \hspace*{1cm}\Gopt{\Gnt{programm\_statements}{\scriptsize (\ref{programm_statements})} }\Gspace\Gnt{EOF}{\scriptsize (\ref{EOF})}\\
 \Gnt{programm\_statements}:\label{programm_statements}\\
@@ -14,7 +14,7 @@ Der Gültigkeitsbereich dieser Deklarationen ist global.
 \label{EOF} Das Terminal \emph{EOF} markiert das Ende der Eingabe.
 
 
-\subsubsection{{Eintrittsfunktion}}\label{__Eintrittsfunktion__}
+\subsection{{Eintrittsfunktion}}\label{__Eintrittsfunktion__}
 Der Eintrittspunkt der Ausführung eines Programms ist eine Funktion~(\ref{Funktionen}) namens "`\ident{main}"'. Ist eine solche Funktion nicht definiert, so
 kann das Programm nicht ausgeführt werden.
 
@@ -28,7 +28,7 @@ Es können beliebig viele Eingabeparameter beliebigen Typs für die Eintrittsfun
 Die Werte dieser Parameter entstammen der Programmumgebung.
 
 
-\subsection{Blöcke}\label{Bloecke}
+\section{Blöcke}\label{Bloecke}
 \Gnt{block}:\label{block}\\
 \hspace*{1cm}\Gnt{typ\_definition}{\scriptsize (\ref{typ_definition})} \Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\\
 \hspace*{1cm}\Gnt{dekl\_var}{\scriptsize (\ref{dekl_var})} \Gspace\Gt{;}\Gspace\Gopt{\Gnt{block}{\scriptsize (\ref{block})} }\\
@@ -50,7 +50,7 @@ Ein \kw{return}-Kommando führt zum sofortigen Verlassen der umschließenden Fun
 Bei Funktionen mit einem anderen Rückgabetyp als \kw{void} muss ein \emph{Ausdruck} mit angegeben
 werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt wird.
 
-\subsection{Ausdrücke}\label{Ausdruecke}
+\section{Ausdrücke}\label{Ausdruecke}
 \Gnt{ausdruck}:\label{ausdruck}\\
 \hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gopt{\Galt{\Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} \Gor{}\Gnt{asdr\_suffix\_zuweisung}{\scriptsize (\ref{asdr_suffix_zuweisung})} }}\\
 
@@ -58,7 +58,7 @@ Der Ausdruck höchster Präzedenz ist eine Zuweisung, auf welche einfach in der 
 allgemeine Ausdrücke verwiesen wird.
 
 
-\subsubsection{Zuweisung}\label{Zuweisung}
+\subsection{Zuweisung}\label{Zuweisung}
 \Gnt{asdr\_suffix\_zuweisung}:\label{asdr_suffix_zuweisung}\\
 \hspace*{1cm}\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
@@ -74,7 +74,7 @@ Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 
 \emph{Anfang des Zuweisungsausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
 
-\subsubsection{Basisausdruck}\label{Basisausdruck}
+\subsection{Basisausdruck}\label{Basisausdruck}
 \Gnt{asdr\_basis}:\label{asdr_basis}\\
 \hspace*{1cm}\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
 \hspace*{1cm}\Gnt{asdr\_konst\_bool}{\scriptsize (\ref{asdr_konst_bool})} \Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
@@ -90,7 +90,7 @@ für Variablen, Konstanten, und Funktionsaufrufe auch Funktionsaufrufe und gesch
 Weiterhin können Zugriffe auf Attribute (siehe \Gnt{attribut}{\scriptsize (\ref{attribut})}) bzw. Arrayelemente spezifiziert werden.
 
 
-\paragraph{Zuweisungskompatibilität}\label{Zuweisungskompatibilitaet}
+\subsubsection{Zuweisungskompatibilität}\label{Zuweisungskompatibilitaet}
 
 Ein Ausdruck ist \emph{zuweisungskompatibel} zu einem bezeichneten Wert wenn
 Wert und Ausdruck den selben Typ besitzen oder eine implizite Typumwandlung
@@ -103,7 +103,7 @@ ohne Präzisionsverlust möglich ist.
 Siehe auch \ref{Typumwandlung}.
 
 
-\subsubsection{Binäre Ausdrücke}\label{Binaere Ausdruecke}
+\subsection{Binäre Ausdrücke}\label{Binaere Ausdruecke}
 
 Ein \emph{binärer Ausdruck} wendet eine arithmetische, bitweise, logische oder vergleichende Verknüpfung
 (bestimmt durch den Operator) auf die Werte zweier Ausdrücke an.
@@ -114,7 +114,7 @@ die gleiche Komponentenanzahl besitzen.
 
 Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet, und an\-schließend die Verknüpfung angewendet.
 
-\paragraph{Arithmetische Operatoren}\label{Arithmetische Operatoren}
+\subsubsection{Arithmetische Operatoren}\label{Arithmetische Operatoren}
 ~\\
 \Gnt{asdr\_add}:\label{asdr_add}\\
 \hspace*{1cm}\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} \Gspace\Gclosure{\Galt{\Gt{+}\Gor{}\Gt{-}}\Gspace\Gnt{asdr\_mult}{\scriptsize (\ref{asdr_mult})} }\\
@@ -146,7 +146,7 @@ so ist der Typ des ausgewerteten Ausdrucks von einem Fließkommatyp.
 %Die Präzision entspricht der höheren Präzision der beiden Operanden.
 
 
-\subsubsection{Unäre Ausdrücke}\label{Unaere Ausdruecke}
+\subsection{Unäre Ausdrücke}\label{Unaere Ausdruecke}
 \Gnt{asdr\_unaer}:\label{asdr_unaer}\\
 \hspace*{1cm}\Gopt{\Galt{\Gt{$\sim$}\Gor{}\Gt{-}\Gor{}\Gt{!}}}\Gspace\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
 
@@ -162,7 +162,7 @@ Ist der Operand von einem Fließkommatyp, so ist der Typ des unären Ausdrucks v
 
 \op{!} logisch invertiert den Operanden. Der Operand muss vom Typ \kw{bool} sein. Der Typ des unären Ausdrucks ist vom Typ \kw{bool}.
 
-\subsubsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
+\subsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
 \Gnt{asdr\_suffix\_ternaer}:\label{asdr_suffix_ternaer}\\
 \hspace*{1cm}\Gt{?}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{:}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
@@ -180,7 +180,7 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 \emph{Anfang des ternären Ausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
 
 
-\subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
+\subsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
 \Gnt{asdr\_gleichheit}:\label{asdr_gleichheit}\\
 \hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gclosure{\Galt{\Gt{!=}\Gor{}\Gt{==}}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} }\\
 \Gnt{asdr\_vergleich}:\label{asdr_vergleich}\\
@@ -212,7 +212,7 @@ so findet ein Vergleich von Fließkommawerten statt.
 %Die Präzision entspricht der höheren Präzision der beiden Operanden.
 
 
-\subsubsection{Logische Operatoren}\label{Logische Operatoren}
+\subsection{Logische Operatoren}\label{Logische Operatoren}
 \Gnt{asdr\_logisch\_oder}:\label{asdr_logisch_oder}\\
 \hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gclosure{\Gt{||}\Gspace\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} }\\
 \Gnt{asdr\_logisch\_und}:\label{asdr_logisch_und}\\
@@ -227,14 +227,14 @@ Beide Operanden müssen vom Typ \kw{bool} sein.
 \op{||} logisch ODER-verknüpft die Operanden.
 
 
-\subsubsection{Boole'sche Werte}\label{Boole'sche Werte}
+\subsection{Boole'sche Werte}\label{Boole'sche Werte}
 \Gnt{asdr\_konst\_bool}:\label{asdr_konst_bool}\\
 \hspace*{1cm}\Galt{\Gt{true}\Gor{}\Gt{false}}\\
 
 \kw{true} (wahr) und \kw{false} (unwahr) sind Werte vom Typ \kw{bool} (siehe \Gnt{typ\_bool}{\scriptsize (\ref{typ_bool})}).
 
 
-\subsubsection{Attribute}\label{Attribute}
+\subsection{Attribute}\label{Attribute}
 \Gnt{attribut}:\label{attribut}\\
 \hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 
@@ -259,7 +259,7 @@ Matrixattribute werden in \ref{Matrixattribute} beschrieben.\\
 Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
 
 
-\subsection{Typen}\label{Typen}
+\section{Typen}\label{Typen}
 \Gnt{typ\_basis}:\label{typ_basis}\\
 \hspace*{1cm}\Gnt{typ\_num}{\scriptsize (\ref{typ_num})} \\
 \hspace*{1cm}\Gnt{typ\_bool}{\scriptsize (\ref{typ_bool})} \\
@@ -269,7 +269,7 @@ Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
 \hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 \Gnt{typ}:\label{typ}\\
 \hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
-\subsubsection{Boole'scher Typ}\label{Boole'scher Typ}
+\subsection{Boole'scher Typ}\label{Boole'scher Typ}
 \Gnt{typ\_bool}:\label{typ_bool}\\
 \hspace*{1cm}\Gt{bool}\\
 
@@ -277,7 +277,7 @@ Der Typ \kw{bool} spezifiziert den boole'schen Typ mit den möglichen Werten
 \kw{true} (wahr) oder \kw{false} (unwahr).
 
 
-\subsubsection{Numerische Typen}\label{Numerische Typen}
+\subsection{Numerische Typen}\label{Numerische Typen}
 \Gnt{typ\_num}:\label{typ_num}\\
 \hspace*{1cm}\Gopt{\Gt{unsigned}}\Gspace\Gt{int}\\
 \hspace*{1cm}\Gt{float}\\
@@ -306,7 +306,7 @@ Der Typ \kw{float} spezifiziert Fließkommazahlen.
 %Präzision ist nicht verbindlich. Genauigkeit und Wertebereich sind jeweils implementierungsabhängig.
 
 
-\subsubsection{Vektortypen}\label{Vektortypen}
+\subsection{Vektortypen}\label{Vektortypen}
 \Gnt{typ\_vektor}:\label{typ_vektor}\\
 \hspace*{1cm}\Gnt{typ\_vektor\_int}{\scriptsize (\ref{typ_vektor_int})} \\
 \hspace*{1cm}\Gnt{typ\_vektor\_float}{\scriptsize (\ref{typ_vektor_float})} \\
@@ -327,7 +327,7 @@ Ganzzahl, kann Werte zwischen 1 und 4 inklusive annehmen, und gibt die Komponent
  Ein Vektortyp spezifiziert ein $N$-Tupel von Werten
 des Basistyps.
 
-\paragraph{Vektorkonstruktoren}\label{Vektorkonstruktoren}
+\subsubsection{Vektorkonstruktoren}\label{Vektorkonstruktoren}
 
 Vektorkonstruktoren sind besondere, vorgegebene Funktionen, die gleiche Bezeichner wie Vektortypen haben
 (siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
@@ -354,7 +354,7 @@ float3 d = float3 (1.0, 2.0);      // Fehler
 
 % Besserer Platz?
 
-\paragraph{Vektorattribute}\label{Vektorattribute}
+\subsubsection{Vektorattribute}\label{Vektorattribute}
 Einzelne Komponenten können entweder mit Array-Syntax oder den Attributen \attr{x},
 \attr{y}, \attr{z}, \attr{w}, \attr{r}, \attr{g}, \attr{b}, \attr{a} angesprochen
 werden. \attr{x}/\attr{r} spezifiert die erste Komponente,
@@ -379,7 +379,7 @@ float  g = b.z;            // Fehler (Komponente existiert nicht)
 \end{lstlisting}
 
 
-\subsubsection{Matrixtypen}\label{Matrixtypen}
+\subsection{Matrixtypen}\label{Matrixtypen}
 \Gnt{typ\_matrix}:\label{typ_matrix}\\
 \hspace*{1cm}\Gnt{typ\_matrix\_float}{\scriptsize (\ref{typ_matrix_float})} \\
 \hspace*{1cm}\Gnt{typ\_matrix\_int}{\scriptsize (\ref{typ_matrix_int})} \\
@@ -406,7 +406,7 @@ $M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive anne
 und geben die Spalten- und Zeilenzahl
 der Matrix an. Ein Matrixtyp spezifiziert eine  $N \times M$-Matrix von Werten des Basistyps.
 
-\paragraph{Matrixkonstruktoren}\label{Matrixkonstruktoren}
+\subsubsection{Matrixkonstruktoren}\label{Matrixkonstruktoren}
 
 Matrixkonstruktoren sind besondere, vorgegebene Funktionen die gleiche Bezeichner wie Matrixtypen haben
 (siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
@@ -437,7 +437,7 @@ int3x2 m3 = int3x2 (int3 (v1, 0),  // m3 = (1, 2, 0,
 
 
 
-\paragraph{Matrixattribute}\label{Matrixattribute}
+\subsubsection{Matrixattribute}\label{Matrixattribute}
 
 Einzelne Zeilen können über das Attribute \attr{row} angesprochen werden. Dieses
 verhält sich wie ein Array mit $M$ Elementen des Vektortyps \emph{Basistyp}$N$.
@@ -460,7 +460,7 @@ float2x2 t = m1.transposed; // t = (0, 0.2, 2, 0)
 float2x2 i = m1.inverted;   // i = (0, 0.5, 5, 0)
 \end{lstlisting}
 
-\subsubsection{Samplertypen}\label{Samplertypen}
+\subsection{Samplertypen}\label{Samplertypen}
 \Gnt{typ\_sampler}:\label{typ_sampler}\\
 \hspace*{1cm}\Galt{\Gt{sampler1D}\Gor{}\Gt{sampler2D}\Gor{}\Gt{sampler3D}\Gor{}\Gt{samplerCUBE}}\\
 
@@ -472,7 +472,7 @@ reflektieren.
 Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{Texturfunktionen}).
 
 
-\subsubsection{Arraytypen}\label{Arraytypen}
+\subsection{Arraytypen}\label{Arraytypen}
 \Gnt{typ\_suffix\_array}:\label{typ_suffix_array}\\
 \hspace*{1cm}\Gt{[}\Gspace\Gt{]}\Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
 
@@ -487,7 +487,7 @@ undefiniert.
 
 
 
-\paragraph{Arraykonstruktoren}\label{Arraykonstruktoren}
+\subsubsection{Arraykonstruktoren}\label{Arraykonstruktoren}
 
 %Ktor-Array:
 %  Bzch-Typ."[]" "(" [Ausdruck { "," Ausdruck } "," ] ")"
@@ -504,7 +504,7 @@ int e1 = a[1];             // e1 = 2
 int e2 = a[4];             // e2 ist undefiniert
 \end{lstlisting}
 
-\paragraph{Arrayattribute}\label{Arrayattribute}
+\subsubsection{Arrayattribute}\label{Arrayattribute}
 
 Arrays besitzen ein Attribut \attr{length} vom Typ \kw{unsigned int} dessen Wert
 die Anzahl der Elemente im Array ist.
@@ -514,7 +514,7 @@ int[] a = int[] (1, 2, 3);
 unsigned int l = a.length; // l = 3
 \end{lstlisting}
 
-\subsubsection{Typdefinitionen}\label{Typdefinitionen}
+\subsection{Typdefinitionen}\label{Typdefinitionen}
 \Gnt{typ\_definition}:\label{typ_definition}\\
 \hspace*{1cm}\Gt{typedef}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 
@@ -526,9 +526,9 @@ und reicht bis zum Ende des Gültigkeitsbereichs in dem die Definition vorgenomm
 Der Bezeichner darf keinen anderen Bezeichner der umgebenden Gültigkeitsbereiche überdecken.
 
 
-\subsubsection{Typumwandlung}\label{Typumwandlung}
+\subsection{Typumwandlung}\label{Typumwandlung}
 
-\paragraph{{Implizite Typumwandlungen}}\label{__Implizite Typumwandlungen__}
+\subsubsection{{Implizite Typumwandlungen}}\label{__Implizite Typumwandlungen__}
 Ausdrücke eines numerischen Typs können in einen anderen numerischen Typ umgewandelt werden.
 Wird ein Ausdruck einen numerischen Typs einer Variable oder einem formalen Funktionsparameter
 eines anderen numerischen Typs zugewiesen, findet eine \emph{implizite} Typumwandlung statt
@@ -546,15 +546,15 @@ angenommen.
 
 Eine Zuweisung von \kw{float} zu \kw{int} oder \kw{unsigned int} wird immer mit Präzisionsverlust zuweisbar angenommen.
 
-\paragraph{{Explizite Typumwandlungen}}\label{__Explizite Typumwandlungen__}
+\subsubsection{{Explizite Typumwandlungen}}\label{__Explizite Typumwandlungen__}
 Ausdrücke können explizit in einen anderen Typ umgewandelt werden (syntaktisch ein Funktionsaufruf mit
 Typbezeichner als Funktionsbezeichner). Umwandlungen mit Präzisionsverlust sind dabei erlaubt.
 Ein Ausdruck einer expliziten Typumwandlung hat den Typ in den explizit umgewandelt wurde.
 
 
-\subsection{Funktionen}\label{Funktionen}
+\section{Funktionen}\label{Funktionen}
 
-\subsubsection{Definition}\label{Definition}
+\subsection{Definition}\label{Definition}
 \Gnt{funktion\_definition}:\label{funktion_definition}\\
 \hspace*{1cm}\Gnt{funktion\_kopf}{\scriptsize (\ref{funktion_kopf})} \Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 \Gnt{funktion\_kopf}:\label{funktion_kopf}\\
@@ -593,7 +593,7 @@ aber auch hier auf den zugeordneten aktuellen Parameter aus.
 
 
 
-\subsubsection{Aufruf}\label{Aufruf}
+\subsection{Aufruf}\label{Aufruf}
 \Gnt{funktion\_aufruf}:\label{funktion_aufruf}\\
 \hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gt{(}\Gspace\Gopt{\Gnt{funktion\_param\_aktuell}{\scriptsize (\ref{funktion_param_aktuell})} }\Gspace\Gt{)}\\
 \Gnt{funktion\_param\_aktuell}:\label{funktion_param_aktuell}\\
@@ -617,7 +617,7 @@ Im Fall von numerischen Typen wird eine explizite Typumwandlung (siehe
 \ref{Typumwandlung}) veranlasst.
 
 
-\subsubsection{Überladene Funktionen}\label{Ueberladene Funktionen}
+\subsection{Überladene Funktionen}\label{Ueberladene Funktionen}
 
 Es können mehrere Funktionen mit identischem Bezeichner, aber unterschiedlicher Signatur,
 deklariert werden. Die Signatur einer Funktion wird aus Position und Typ jedes Parameters
@@ -635,8 +635,8 @@ mit diesem fortgesetzt. Gibt es keinen oder mehrere Kandidaten ist das Programm
 ungültig.
 
 
-\subsection{Konstanten und Variablen}\label{Konstanten und Variablen}
-\subsubsection{Variablendeklarationen}\label{Variablendeklarationen}
+\section{Konstanten und Variablen}\label{Konstanten und Variablen}
+\subsection{Variablendeklarationen}\label{Variablendeklarationen}
 \Gnt{dekl\_var}:\label{dekl_var}\\
 \hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} \Gspace\Gclosure{\Gt{,}\Gspace\Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})} }\\
 \Gnt{dekl\_var\_bzch\_init}:\label{dekl_var_bzch_init}\\
@@ -655,7 +655,7 @@ Wird ein initialer Ausdruck angegeben, so entspricht dies semantisch einer Zuwei
 hinter \Gnt{dekl\_var\_bzch\_init}{\scriptsize (\ref{dekl_var_bzch_init})}, aber vor der Deklaration der nächsten Variable.
 Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Variable sein.
 
-\subsubsection{Konstantendeklarationen}\label{Konstantendeklarationen}
+\subsection{Konstantendeklarationen}\label{Konstantendeklarationen}
 \Gnt{dekl\_konst}:\label{dekl_konst}\\
 \hspace*{1cm}\Gt{const}\Gspace\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} \Gspace\Gclosure{\Gt{,}\Gspace\Gnt{dekl\_konst\_bzch\_init}{\scriptsize (\ref{dekl_konst_bzch_init})} }\\
 \Gnt{dekl\_konst\_bzch\_init}:\label{dekl_konst_bzch_init}\\
@@ -671,8 +671,8 @@ Der Bezeichner darf keinen anderen Bezeichner des umgebenden Gültigkeitsbereich
 Die Konstante wird mit dem Wert des initialen Ausdrucks initialisiert.
 Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Konstante sein.
 
-\subsection{Ablaufsteuerung}\label{Ablaufsteuerung}
-\subsubsection{Verzweigungen}\label{Verzweigungen}
+\section{Ablaufsteuerung}\label{Ablaufsteuerung}
+\subsection{Verzweigungen}\label{Verzweigungen}
 \Gnt{verzweigung}:\label{verzweigung}\\
 \hspace*{1cm}\Gt{if}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\Gspace\Gopt{\Gt{else}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}}\\
 
@@ -685,7 +685,7 @@ Der \kw{else}-Zweig ist optional.
 
 %Die Berechnungsfrequenz der Verzweigung ist die kleinste gemeinsame Frequenz der Blöcke sowie der Bedingung.
 
-\subsubsection{\kw{for}-Schleifen}\label{$_backslash$kw__for__-Schleifen}
+\subsection{\kw{for}-Schleifen}\label{$_backslash$kw__for__-Schleifen}
 \Gnt{schleife\_for}:\label{schleife_for}\\
 \hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 
@@ -700,7 +700,7 @@ Dieser Ablauf wird wiederholt bis eine Auswertung der \emph{Schleifenbedingung} 
 %Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie
 %der \emph{Initialisierung}, der \emph{Schleifenbedingung} und des \emph{Zählausdrucks}.
 
-\subsubsection{\kw{while}-Schleifen}\label{$_backslash$kw__while__-Schleifen}
+\subsection{\kw{while}-Schleifen}\label{$_backslash$kw__while__-Schleifen}
 \Gnt{schleife\_while}:\label{schleife_while}\\
 \hspace*{1cm}\Gt{while}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 
@@ -711,13 +711,13 @@ ausgeführt. Dieser Ablauf wird wiederholt bis eine Auswertung der Bedingung das
 
 Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie der Bedingung.
 
-\subsection{Lexikalische Einheiten}\label{Lexikalische Einheiten}
+\section{Lexikalische Einheiten}\label{Lexikalische Einheiten}
 
 \emph{Anmerkung:} Da diese Regeln die lexikalischen Einheiten selbst beschreiben gibt es
 hier \emph{keine} weiteren Trennzeichen zwischen Terminalen!
 
 
-\subsubsection{Bezeichner}\label{Bezeichner}
+\subsection{Bezeichner}\label{Bezeichner}
 \Gnt{Number}:\label{Number}\\
 \hspace*{1cm}Unicode-Ziffer\\
 \Gnt{Letter}:\label{Letter}\\
@@ -757,7 +757,7 @@ Zeichenketten resultieren.}.
 Lexikalische Einheiten können mit einem oder mehreren Zeichen der Unicode-Kategorie "`Separator"' getrennt werden.
 
 
-\subsubsection{Numerische Literale}\label{Numerische Literale}
+\subsection{Numerische Literale}\label{Numerische Literale}
 \Gnt{Digit\_Dec}:\label{Digit_Dec}\\
 \hspace*{1cm}\Grange{0}{9}\\
 \Gnt{Digits\_Dec}:\label{Digits_Dec}\\
@@ -785,7 +785,7 @@ Fließkommazahlen können als Dezimalbruch oder in Exponentialschreibweise
 angegeben werden.
 
 
-\subsubsection{Kommentare}\label{Kommentare}
+\subsection{Kommentare}\label{Kommentare}
 \Gnt{COMMENT}:\label{COMMENT}\\
 \hspace*{1cm}\Gt{//} beliebige Zeichen \Gspace\Galt{\Gt{$\backslash$r}\Gor{}\Gt{$\backslash$n}}\\
 \Gnt{ML\_COMMENT}:\label{ML_COMMENT}\\
