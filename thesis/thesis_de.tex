@@ -538,18 +538,18 @@ jeweils \emph{Tests} der Module geschrieben (Black-Box und White-Box); Ausführe
  
 \section{Scanner}
 
-Der \emph{Lexer} wandelt die als Byte-Strom vorliegende Eingabe in eine Folge von "`Tokens"'.
+Der \emph{Scanner} wandelt die als Byte-Strom vorliegende Eingabe in eine Folge von "`Tokens"'.
 Ein Token ist eine der in Abschnitt~\ref{Lexikalische Einheiten} aufgezählten lexikalischen Einheiten, ein bekanntes Symbol (Operatoren etc.) oder Schlüsselwort. 
-Leerzeichen (``Whitespace'') und Kommentare werden bereits vom Lexer ignoriert (d.h. für diese werden keine Tokens produziert).
+Leerzeichen (``Whitespace'') und Kommentare werden bereits vom Scanner ignoriert (d.h. für diese werden keine Tokens produziert).
 
-Der Lexer folgt einer typischen Implementierung wie sie z.B. in \cite{wirth_compiler} beschrieben ist. Auf einige beachtenswerte Aspekte
+Der Scanner folgt einer typischen Implementierung wie sie z.B. in \cite{wirth_compiler} beschrieben ist. Auf einige beachtenswerte Aspekte
 wird im folgenden eingegangen.
 
-\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht, arbeitet der Lexer entsprechend auf der Basis von Unicode-kodierten Zeichen.
-Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Lexer in einen "`Unicode-Strom"' umkodiert\footnote{Verwendet wird dazu die Bibliothek ICU,
+\paragraph{Eingabe.} Da die Spezifikation von Unicode als Eingabe ausgeht, arbeitet der Scanner entsprechend auf der Basis von Unicode-kodierten Zeichen.
+Der Byte-Strom der Eingabe wird also in einem Schritt noch vor dem Scanner in einen "`Unicode-Strom"' umkodiert\footnote{Verwendet wird dazu die Bibliothek ICU,
 \url{http://site.icu-project.org/}}.
 
-\paragraph{Schlüsselwörter.} Erkennt der Lexer einen Bezeichner, wird auch geprüft, ob es sich um ein Schlüsselwort handelt. Ist dies der Fall
+\paragraph{Schlüsselwörter.} Erkennt der Scanner einen Bezeichner, wird auch geprüft, ob es sich um ein Schlüsselwort handelt. Ist dies der Fall
 wird im Token eine dem Schlüsselwort eindeutig zugeordnete ID gespeichert.
 
 %Die erste Ausnahme
@@ -558,13 +558,13 @@ jeweils dem Muster $\mathit{typ}\mathrm{N}$ bzw. $\mathit{typ}\mathrm{N}\mathit{
 Da eine eigene ID für jeden Vektor- oder Matrix insgesamt 20 weitere IDs pro Basis-Typ nach sich ziehen würde -- wobei später noch jeder ID wiederum
 die ursprünglichen Werte für $N$ und $M$ nochmals zugeordnet
 werden müssten -- wird im generierten Token vermerkt, ob es sich um einen Vektor- oder Matrixtyp handelt.
-Dazu überprüft der Lexer, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht.
+Dazu überprüft der Scanner, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht.
 Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfalls vermerkt.
 
 \begin{figure}[h]
    \centering
   \lstinputlisting[language=C++]{snips/LexerToken.txt}
-  \caption{Daten eines vom Lexer ausgegebenen Tokens}
+  \caption{Daten eines vom Scanner ausgegebenen Tokens}
   \label{fig:LexerToken}
 \end{figure}
 
@@ -575,11 +575,11 @@ Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfal
 
 
 Weiterhin schreibt die Spezifikation vor, dass zwei Bezeicher als identisch betrachtet werden, wenn sie kanonisch äquivalent im Sinne von Unicode sind.
-Zu diesem Zweck werden alle Bezeichner vom Lexer nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
+Zu diesem Zweck werden alle Bezeichner vom Scanner nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
 
 \section{Parser}
 
-Der \emph{Parser} untersucht den vom Lexer gelieferten Strom von Tokens auf syntaktische Strukturen.
+Der \emph{Parser} untersucht den vom Scanner gelieferten Strom von Tokens auf syntaktische Strukturen.
 Es wird überprüft, ob der Token-Strom gültig im Sinne der in der Sprachspezifikation gegebenen Sprache ist --
 sonst liegt ein \emph{Syntaxfehler} vor.
 
