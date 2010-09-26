@@ -422,7 +422,6 @@ von Fragmenten zur gleichen Zeit angewendet. Auch die Fragment-Berechnungen erfo
 
 
 %Alle Verarbeitungseinheiten sind auf aktueller Graphikhardware programmierbar.
-
 \section{Berechnungsfrequenzen}
 \label{berechnungsfrequenz_locker}
 
@@ -463,6 +462,9 @@ Eine höhere Berechnungsfrequenz korrespondiert prinzipiell mit einer weiter hin
 Statische und Meshfrequenz sind praktisch sogar noch vor der Verarbeitung auf der GPU angesiedelt. Berechnungen in Vertexfrequenz (oder "`per Vertex"')
 entsprechen Berechnungen auf der Vertexeinheit, analog werden Berechnungen in Fragmentfrequenz (oder "`per Fragment) auf der Fragmenteinheit ausgeführt.
 
+Abbildung~\ref{fig:simple_cg} zeigt ein Programm-Paar für eine einfache Shadingberechnung in Cg. Die verschiedenen auftretenden Berechnungsfrequenzen
+sind dabei farbig markiert. 
+
 Die Nützlichkeit von Berechnungsfrequenzen besteht in der Verwendbarkeit als Werkzeug zur Optimierung des Renderings von 3D-Modellen.
 Bei der Echtzeitgrafik ist ein grundsätzliches Bestreben, zum Zwecke schnellerem Renderings Operationen so selten wie möglich auszuführen.
 Wird eine Operation, für die eine Berechnung per Vertex ausreichend wäre, auf der Fragmenteinheit ausgeführt, so bedeutet dies
@@ -484,7 +486,21 @@ bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und
   \label{fig:simple_cg}
 \end{figure}
 
-\newpage
+\section{Zusammenfassung}
+
+Bei der Echtzeit-3D-Graphik werden von der Graphikhardware als Dreiecksnetze vorliegende 3D-Modelle dargestellt.
+Diese Modelle bestehen aus \emph{``Vertices''}, die die Eckpunkte von Dreiecken bilden. Bei der Darstellung eines
+Modelles wird zuerst die \emph{Vertexverarbeitung} vorgenommen; dabei werden die Raumkoordinaten der Vertices transformiert
+und weitere Berechnungen auf den Vertices zugeordneten Daten vorgenommen ("`Vertexattribute"').
+Als nächsten Schritt der Darstellung werden Dreiecke bei der \emph{Rasterung} auf Fragmente (im Wesentlichen Pixel) des Ausgabegerätes abgebildet.
+Bei dieser \emph{Fragmentverarbeitung} dienen als Eingaben die Ausgaben der Vertexverarbeitung, allerdings \emph{interpoliert}.
+Es werden weitere Berechnung vorgenommen, um Details hinzuzufügen, für die eine Berechnung per Vertex zu "`grob"' wäre,
+wie das "`aufziehen"' von \emph{Texturen} (Bilddaten) auf das 3D-Modell.
+
+Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Fragmentverarbeitung"' sind beide programmierbar, die Ausgabe des Compilers
+soll ein Programm-Paar aus Vertex- und Fragmentprogramm sein.
+
+
 \chapter{Sprachspezifikation}
 \label{langspec}
 
@@ -492,6 +508,11 @@ bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und
 
 \chapter{Implementierung}
 \label{implementation}
+
+In diesem Kapitel wird auf die Implementierung des Compilers selbst eingegangen. 
+Neben Scanner und Parser werden vor allem die verwendete Zwischencoderepräsentation
+für die Weitergabe des Programmen zwischen den verschiedenen Arbeitsschritten des Compilers 
+sowie die Komponente zur Auftrennung eines Programms -- das eigentliche "`Ziel"' dieser Arbeit -- beschrieben.
 
 \section{Compiler-Aufbau}
 \begin{figure}[h]
@@ -501,7 +522,7 @@ bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und
   \label{fig:structure}
 \end{figure}
 
-Der Aufbau entspricht grösstenteils dem, was für einen Compiler üblich ist: das \emph{Front-End} generiert nach Syntax- und Semantikanalyse
+Der Aufbau entspricht grösstenteils der Compiler-Standardarchitektur (Abbildung~\ref{fig:structure}): das \emph{Front-End} generiert nach Syntax- und Semantikanalyse
 eine Repräsentation des Programms in einem \emph{Zwischencode}. Auf dieser Zwischencoderepräsentation werden im "`Middle-End"' % Ref wo das gesagt wird, oder besseres Wort
 Optimierungen vorgenommen. Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischencoderepräsentation der tatsächliche Zielcode generiert.
 
@@ -526,8 +547,8 @@ Gründe dafür sind:
 \item Die Flexibilität der Sprache und deren reichhaltige Standardbibliothek,
 \item hohe Portabilität (C++-Compiler sind für praktisch jede Plattform verfügbar),
 \item eine reichhaltige Palette an von Dritten hergestellter Bibliotheken,
-\item die einfache Verwendbarkeit in anderen Programmiersprachen (direkt oder über eine C-kompatible Schnittstelle),
-\item nicht zuletzt die Gewandheit des Autors dieser Arbeit in C++.
+\item die einfache Verwendbarkeit in anderen Programmiersprachen (direkt oder über eine C-kompatible Schnittstelle).%,
+%\item nicht zuletzt die Gewandheit des Autors dieser Arbeit in C++.
 \end{itemize}
  
 Um eine Wiederverwendung des Compilers zu vereinfachen wurde dieser im Wesentlichen als eine \emph{Bibliothek} realisiert;
@@ -778,7 +799,9 @@ sind erhalten. Typumwandlung, und andere in C implizite Verhalten, müssen expli
 
 \paragraph{Zusammenfassung:}
 Die gewählte Zwischencoderepräsentation ist größtenteils ein "`Querschnitt"' aus den obigen Repräsentationen
-(allerdings auch mit Aspekten aus keiner Vorlage, wie die Behandlung von Arrays). Die meisten Eigenschaften
+%(allerdings auch mit Aspekten aus keiner Vorlage, wie die Behandlung von Arrays).
+(allerdings auch mit eigenständig entwickelten Aspekten, wie die Behandlung von Arrays).
+Die meisten Eigenschaften
 teilt die Zwischencoderepräsentation mit dem LLVM Instruction Set; chronologisch wurde dieses jedoch als letzte
 Repräsentation betrachtet. Aus SafeTSA und SIMPLE stammen deshalb grundsätzliche Aspekte der Zwischencoderepräsentation 
 -- einfache Statements, SSA-Form, separate Registersätze.
@@ -1509,6 +1532,19 @@ Zeichenmenge umgewandelt\footnote{Als Kodierung wurde Punycode~(\cite{rfc3492}) 
 gut lesbar lässt.}.
 
 % Original-Schnipsel und Generator-Output
+
+\section{Zusammenfassung}
+
+Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur dafür; die Abweichnung ist der Verarbeitungsschritt der "`Auftrennung"' in mehrere
+Programme.
+
+Die Auftrennung nutzt dabei Eigenschaften von Graphikhardware aus, deren Aufbau auf den Ablauf des Echtzeit-3D-Renderings abgestimmt ist.
+Speziell werden Operationen in der Vertex- statt Fragmentverarbeitung ausgeführt sofern das Ergebnis zur ursprünglichen Operation mathematisch äquivalent ist,
+nachdem die von der Graphikhardware vorgenommen Interpolation von Ausgaben der Vertexverarbeitung angewendet wurde.
+
+Auch hervorzuheben ist die verwendete Zwischencoderepräsentation, die als Übergabeformat zwischen allen Verarbeitungsschritten von der
+semantischen Analyse bis zur Codegenerierung dient. Weiterhin ist sie darauf ausgerichtet, die Implementierung von Optimierungsschritten
+möglichst zu vereinfachen.
 
 \chapter{Ausblick}
 
