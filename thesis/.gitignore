@@ -5,3 +5,6 @@
 *.out
 *.pdf
 *.toc
+*.gl?
+*.ist
+

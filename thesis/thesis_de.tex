@@ -23,6 +23,10 @@
 \usepackage{subfig}
 \usepackage{longtable}
 
+% Anm.: vor hyperref um Glossar-Ref nicht "klickbar" zu machen
+\usepackage[toc]{glossaries}
+\renewcommand{\glossaryname}{Glossar}
+
 \definecolor{darkred}{rgb}{.5,0,0}
 \definecolor{darkblue}{rgb}{0,0,.5}
 \usepackage[plainpages=false,pdfpagelabels,colorlinks=true,urlcolor=darkblue,pagecolor=darkred,citecolor=darkred,linkcolor=darkred]{hyperref}
@@ -34,6 +38,8 @@
 \author{Frank Richter 68278\\frank.richter@gmail.com}
 \title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Graphikkarten \normalfont}
 \date{\today}
+
+\makeglossaries
 
 \begin{document}
 
@@ -99,7 +105,6 @@
 %\setlength{\headheight}{24pt}
 
 % generates the title
-
 
 % ---------- table of contents ---------- %
 \newpage
@@ -235,12 +240,15 @@ beschreiben; Eigenschaften wie die Krümmung einer Oberfläche lassen sich durch
 Formeln abändern. Jeder Punkt auf der Oberfläche lässt sich exakt berechnen. Allerdings ist das Rendering von Patches
 sehr aufwending.
 
-Die einfachste Form der Darstellung ist die des \emph{Dreiecksnetzes} (engl. ``triangle mesh'' und kürzer ``mesh'').
+\newglossaryentry{Dreiecksnetz}{name={Dreiecksnetz},description={3D-Modell, Menge von Eckpunkten (Vertices) und Dreiecken}}
+\newglossaryentry{Vertex}{name={Vertex},plural={Vertices},description={Eckpunkt eines Dreiecksnetzes. Mehrzahl: Vertices}}
+Die einfachste Form der Darstellung ist die des \emph{\gls{Dreiecksnetz}es} (engl. ``triangle mesh'' und kürzer ``mesh'').
  Diese bestehen aus einer Menge von Eckpunkten,
-als \emph{Vertices} bezeichnet, sowie einer Menge von Dreiecken, wobei deren Ecken aus der Menge der Vertices stammen.
+als \emph{\glspl{Vertex}} bezeichnet, sowie einer Menge von Dreiecken, wobei deren Ecken aus der Menge der Vertices stammen.
 Einem Vertex ist mindestens eine Position im Raum, meist aber auch weitere Daten, die für die Oberflächendarstellung und
 \mbox{-schattierung} verwendet werden,  zugeordnet~(\cite{watt_de}, S. 50).
 Analog sind auch Dreiecken neben Referenzen zu den Eckvertices weitere Daten wie z.B. eine Oberflächenfarbe zugeordnet.
+
 
 Um ein passgenaues Abschließen der Dreiecke zu sichern teilen sich in der Regel Ecken mehrerer Dreiecke ein
 Vertex\footnote{Selten haben zwei Ecken in \emph{einem} Dreieck das selbe Vertex -- dies führt zu "`degenerierten"' Dreiecken}. 
@@ -318,7 +326,8 @@ Projektionen darstellen.
 
 \subsection{Texturen}
 
-Zur Simulation von detaillierten Oberflächen werden \emph{Texturen} verwendet. Im Regelfall sind dies zweidimensionale
+\newglossaryentry{Textur}{name={Textur},plural={Textures},description={Bilddaten, bei der Fragmentverarbeitung ausgelesen. Typischerweise auf Oberfläche von Modellen "`gespannt"'}}
+Zur Simulation von detaillierten Oberflächen werden \emph{\glspl{Textur}} verwendet. Im Regelfall sind dies zweidimensionale
 Bilder. Einem jeden Dreieck eines Modells ist ein (ebenfalls dreieckiger) Ausschnitt auf einer Textur zugeordnet. 
 Die Zuordnung findet über \emph{Texturkoordinaten} statt, d.h. jedem Vertex ist ein weiteres Zahlenpaar zugeordnet,
 welches einen Punkt auf der Textur angibt.
@@ -328,6 +337,7 @@ berechnet. Der Farbwert der Textur an dieser Position wird ausgelesen und dient 
 
 \subsection{Shading}
 
+\newglossaryentry{Shading}{name={Shading},description={Berechnung der Farbe eines beleuchteten Punktes auf einer 3D-Oberfläche}}
 Bei der visuellen Wahrnehmung spielt die Interaktion von wahrgenommen Oberflächen mit Lichtquellen eine wichtige
 Rolle. Die Helligkeit einer Oberfläche variiert mit Abstand und Lage bezüglich einer Lichtquelle. 
 Aus Helligkeitsunterschieden können auf Objekteigenschaften wie Drehung, Größe und Form sowie auf Oberflächeneigenschaften
@@ -338,7 +348,7 @@ Konstruktion eines Bauteils werden dagegen Berechnungen verwendet, die nicht phy
 die dreidimensionale Form einfach erkennen lassen.
 
 In der bisherigen Beschreibung der Darstellung von Oberflächen wurde die Berechnung der Beleuchtung einer
-Oberfläche ausgelassen. Diese Berechnung wird \emph{Shading} (übersetzt "`Schattierung"') genannt~(\cite{watt_de}, S. 146, 198).
+Oberfläche ausgelassen. Diese Berechnung wird \emph{\gls{Shading}} (übersetzt "`Schattierung"') genannt~(\cite{watt_de}, S. 146, 198).
 % Begr. Shading: , Schattierung: Watt (DE) 146, 198 -> Ergebnis ist "Intensität"
 Beim Shading wird eine \emph{Lichtintensität}, d.h. die Intensität des reflektierten Lichts, für Punkte auf der
 Oberfläche berechnet.
@@ -395,11 +405,12 @@ also nur durch die CPU erfolgen, woraufhin die Daten zur GPU übertragen werden.
 und auch entfernen. Dieser Schritt erlaubt die Implementierung von Algorithmen auf der Grafikkarte, die viel 
 Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, erfordern.
 
+\newglossaryentry{Fragment}{name={Fragment},description={Ergebnis der Rasterung eines Dreiecks}}
 Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in das \emph{Kamerakoordinatensystem}\footnote{Betrachter befindet sich am
 Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rasterbild mit Hilfe einer einfachen linearen Projektion
 abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
 gezeichnet werden. Dies geschieht durch Rasterung der Dreiecke. Um die Farbe eines berechneten 
-\emph{Fragments}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
+\emph{\gls{Fragment}s}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
 Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment genau einem Pixel entspricht.} zu 
 bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
 durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der Drei\-ecks\-eck\-punk\-te  
@@ -684,9 +695,9 @@ Semantische Analyse erzeugt Zwischencoderepräsentation im zweiten Schritt -- fi
 Analyse im Parser; die Erstellung eines ASTs wird übergangen, der ``semantic handler'' nimmt mit den vom
 Parser übergebenen Informationen die restliche semantische Analyse vor und erzeugt sofort eine Zwischencoderepräsentation (beschrieben in Abschnitt~\ref{zcr}).
 
-Die Erstellung eines AST wurde übergangen, da diese als unnötig angesehen wurde: eine direkte Ausgabe der Zwischencoderepräsentation(ZCR)
+Die Erstellung eines AST wurde übergangen, da diese als unnötig angesehen wurde: eine direkte Ausgabe der Zwischencoderepräsentation
 wurde als einfacher umzusetzen und für die weiteren Arbeitsschritte im Compiler als ausreichend angesehen. 
-Insbesondere Optimierungen sind in der gewählten ZCR einfacher vorzunehmen als auf
+Insbesondere Optimierungen sind in der gewählten Zwischencoderepräsentation (ZCR) einfacher vorzunehmen als auf
 einem AST. Auch werden in der ZCR wichtige semantische Informationen, wie Typen von Werten, Funktionssignaturen etc. gespeichert,
 es tritt also kein Informationsverlust im Vergleich zu einem AST auf.
 
@@ -1577,6 +1588,9 @@ Vorhandensein von Optimierungsschritten wäre es der nächste sinnvolle Schritte
 
 \cleardoublepage
 \appendix
+
+\printglossaries
+
 \bibliography{thesis_de}
 \addcontentsline{toc}{section}{Literatur}
 
