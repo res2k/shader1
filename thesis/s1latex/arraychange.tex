@@ -1,0 +1,15 @@
+\sOfunc{
+\sOfunchead{void}{main}
+\sOfuncinparams{\sOparamIn{float[]}{x}{\sOreg{m\_x\_B0}}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp0}\sOsetreg{i\_tmp1}}
+\sOfuncregset{float[]}{\sOsetreg{m\_x\_B0}\sOsetreg{v\_a}\sOsetreg{v\_a.1}}
+\sOfuncregset{unsigned\ int}{\sOsetreg{x\_tmp2}}
+\sOfuncbody{
+\sOstmt{\sOassign{\sOreg{v\_a}}{\sOreg{m\_x\_B0}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp0}}{\sOconst{1.2}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp1}}{\sOreg{i\_tmp0}}}
+\sOstmt{\sOassign{\sOreg{x\_tmp2}}{\sOconst{0}}}
+\sOstmt{\sOsetelem{\sOreg{v\_a.1}}{\sOreg{v\_a}}{\sOreg{x\_tmp2}}{\sOreg{i\_tmp1}}}
+}
+}
+

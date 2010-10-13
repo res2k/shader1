@@ -1,0 +1,5 @@
+void main (bool x, bool y)
+{
+  bool a = x && y;
+  bool b = x || y;
+}

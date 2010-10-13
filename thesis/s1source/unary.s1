@@ -1,0 +1,7 @@
+void main (bool x, float y,
+	   int z)
+{
+  bool a = !x;
+  float b = -y;
+  int c = ~z;
+}

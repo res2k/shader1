@@ -1,0 +1,8 @@
+void main (float x, float y)
+{
+  float a = x+y;
+  float b = x-y;
+  float c = x*y;
+  float d = x/y;
+  float e = x%y;
+}

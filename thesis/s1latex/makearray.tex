@@ -1,0 +1,12 @@
+\sOfunc{
+\sOfunchead{void}{main}
+\sOfuncregset{float}{\sOsetreg{i\_tmp1}\sOsetreg{i\_tmp2}\sOsetreg{i\_tmp3}}
+\sOfuncregset{float[]}{\sOsetreg{v\_a}}
+\sOfuncbody{
+\sOstmt{\sOassign{\sOreg{i\_tmp1}}{\sOconst{1}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp2}}{\sOconst{2}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp3}}{\sOconst{3}}}
+\sOstmt{\sOmakearray{\sOreg{v\_a}}{\sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp3}}}
+}
+}
+

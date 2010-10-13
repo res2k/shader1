@@ -35,7 +35,7 @@
 \sOstmt{\sOsub{\sOreg{v\_att}}{\sOreg{i\_tmp19}}{\sOreg{i\_tmp21}}}
 \sOstmt{\sObuiltindot{\sOreg{i\_tmp23}}{\sOreg{v\_eyeNormal}}{\sOreg{v\_vertToLight.1}}}
 \sOstmt{\sOassign{\sOreg{i\_tmp24}}{\sOconst{0}}}
-\sOstmt{\sOcast{float}{\sOreg{i\_tmp25}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp25}}{}}
+\sOstmt{\sOcast{float}{\sOreg{i\_tmp25}}{\sOreg{i\_tmp24}}}
 \sOstmt{\sObuiltinmax{\sOreg{i\_tmp26}}{\sOreg{i\_tmp23}}{\sOreg{i\_tmp25}}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp27}}{\sOreg{i\_tmp26} \sOcomma \sOreg{i\_tmp26} \sOcomma \sOreg{i\_tmp26}}}
 \sOstmt{\sOmul{\sOreg{i\_tmp28}}{\sOreg{m\_LightColor\_B0}}{\sOreg{i\_tmp27}}}
@@ -46,17 +46,17 @@
 \sOstmt{\sObuiltinnormalize{\sOreg{v\_halfVec}}{\sOreg{i\_tmp32}}}
 \sOstmt{\sObuiltindot{\sOreg{i\_tmp34}}{\sOreg{v\_eyeNormal}}{\sOreg{v\_halfVec}}}
 \sOstmt{\sOassign{\sOreg{i\_tmp35}}{\sOconst{0}}}
-\sOstmt{\sOcast{float}{\sOreg{i\_tmp36}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp36}}{}}
+\sOstmt{\sOcast{float}{\sOreg{i\_tmp36}}{\sOreg{i\_tmp35}}}
 \sOstmt{\sObuiltinmax{\sOreg{i\_tmp37}}{\sOreg{i\_tmp34}}{\sOreg{i\_tmp36}}}
 \sOstmt{\sOassign{\sOreg{i\_tmp38}}{\sOconst{32}}}
-\sOstmt{\sOcast{float}{\sOreg{i\_tmp39}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp39}}{}}
+\sOstmt{\sOcast{float}{\sOreg{i\_tmp39}}{\sOreg{i\_tmp38}}}
 \sOstmt{\sObuiltinpow{\sOreg{v\_specCoeff}}{\sOreg{i\_tmp37}}{\sOreg{i\_tmp39}}}
 \sOstmt{\sObuiltintexTwoD{\sOreg{i\_tmp41}}{\sOreg{m\_Texture\_B0}}{\sOreg{m\_TexCoord\_B0}}}
 \sOstmt{\sOvecextract{\sOreg{i\_tmp42}}{\sOreg{v\_litColor}}{0}}
 \sOstmt{\sOvecextract{\sOreg{i\_tmp43}}{\sOreg{v\_litColor}}{1}}
 \sOstmt{\sOvecextract{\sOreg{i\_tmp44}}{\sOreg{v\_litColor}}{2}}
 \sOstmt{\sOassign{\sOreg{i\_tmp45}}{\sOconst{1}}}
-\sOstmt{\sOcast{float}{\sOreg{i\_tmp46}}{\sOstmt{\sOcast{float}{\sOreg{i\_tmp46}}{}}
+\sOstmt{\sOcast{float}{\sOreg{i\_tmp46}}{\sOreg{i\_tmp45}}}
 \sOstmt{\sOmakevec{\sOreg{i\_tmp47}}{\sOreg{i\_tmp42} \sOcomma \sOreg{i\_tmp43} \sOcomma \sOreg{i\_tmp44} \sOcomma \sOreg{i\_tmp46}}}
 \sOstmt{\sOmul{\sOreg{i\_tmp48}}{\sOreg{i\_tmp41}}{\sOreg{i\_tmp47}}}
 \sOstmt{\sObuiltintexTwoD{\sOreg{i\_tmp49}}{\sOreg{m\_TextureSpec\_B0}}{\sOreg{m\_TexCoord\_B0}}}

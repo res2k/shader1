@@ -1,0 +1,4 @@
+void main (float[] x)
+{
+  float a = x[0];
+}

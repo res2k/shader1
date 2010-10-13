@@ -1,0 +1,13 @@
+\sOfunc{
+\sOfunchead{void}{main}
+\sOfuncinparams{\sOparamIn{bool}{x}{\sOreg{m\_x\_B0}}\sOparamIn{float}{y}{\sOreg{m\_y\_B0}}\sOparamIn{int}{z}{\sOreg{m\_z\_B0}}}
+\sOfuncregset{bool}{\sOsetreg{m\_x\_B0}\sOsetreg{v\_a}}
+\sOfuncregset{float}{\sOsetreg{m\_y\_B0}\sOsetreg{v\_b}}
+\sOfuncregset{int}{\sOsetreg{m\_z\_B0}\sOsetreg{v\_c}}
+\sOfuncbody{
+\sOstmt{\sOnot{\sOreg{v\_a}}{\sOreg{m\_x\_B0}}}
+\sOstmt{\sOneg{\sOreg{v\_b}}{\sOreg{m\_y\_B0}}}
+\sOstmt{\sOinv{\sOreg{v\_c}}{\sOreg{m\_z\_B0}}}
+}
+}
+

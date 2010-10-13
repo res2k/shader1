@@ -1,0 +1,8 @@
+void main (bool a)
+{
+  float x = 1.0;
+  if (a)
+  {
+    x = 2.0;
+  }
+}

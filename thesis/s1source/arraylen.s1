@@ -1,0 +1,4 @@
+void main (float[] x)
+{
+  unsigned int a = x.length;
+}

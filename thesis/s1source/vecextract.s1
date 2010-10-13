@@ -1,0 +1,4 @@
+void main (int2 a)
+{
+  int x = a.y;
+}

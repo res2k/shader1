@@ -1,0 +1,5 @@
+void main (float y)
+{
+	int x;
+	x = int (y);
+}

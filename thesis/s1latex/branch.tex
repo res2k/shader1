@@ -1,0 +1,22 @@
+\sOfunc{
+\sOfunchead{void}{main}
+\sOfuncinparams{\sOparamIn{bool}{a}{\sOreg{m\_a\_B0}}}
+\sOfuncregset{bool}{\sOsetreg{m\_a\_B0}}
+\sOfuncregset{float}{\sOsetreg{v\_x}\sOsetreg{v\_x.1}}
+\sOfuncbody{
+\sOstmt{\sOassign{\sOreg{v\_x}}{\sOconst{1}}}
+\sObranch{\sOreg{m\_a\_B0}}{
+\sOnestseq{
+  \sOstmt{\sOassign{\sOreg{m\_x\_B0}}{\sOconst{2}}}
+\sOnestmapOut{\sOreg{v\_x.1}}{\sOreg{m\_x\_B0}}
+}
+}{
+\sOnestseq{
+\sOnestmapIn{\sOreg{v\_x}}{\sOreg{m\_x\_B0}}
+  \sOstmt{\sOassign{\sOreg{m\_x\_B0.1}}{\sOreg{m\_x\_B0}}}
+\sOnestmapOut{\sOreg{v\_x.1}}{\sOreg{m\_x\_B0.1}}
+}
+}
+}
+}
+
