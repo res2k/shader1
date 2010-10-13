@@ -202,7 +202,7 @@ namespace s1
       valueStr.append ("}{");
       valueStr.append (targetName.c_str());
       valueStr.append ("}{");
-      valueStr.append (valueStr.c_str());
+      valueStr.append (sourceName.c_str());
       valueStr.append ("}}");
       target->AddString (valueStr);
     }
@@ -386,18 +386,29 @@ namespace s1
 									 UnaryOp op,
 									 const RegisterID& source)
     {
+      const char* opStr;
       switch (op)
       {
       case Inv:
-	EmitUnary (destination, source, "inv");
+	opStr = "inv";
 	break;
       case Neg:
-	EmitUnary (destination, source, "neg");
+	opStr = "neg";
 	break;
       case Not:
-	EmitUnary (destination, source, "not");
+	opStr = "not";
 	break;
       }
+      
+      std::string targetName (owner->GetOutputRegisterName (destination));
+      std::string valueStr ("\\sOstmt{\\sO");
+      valueStr.append (opStr);
+      valueStr.append ("{");
+      valueStr.append (targetName.c_str());
+      valueStr.append ("}{");
+      valueStr.append (owner->GetOutputRegisterName (source));
+      valueStr.append ("}}");
+      target->AddString (valueStr);
     }
 
 		      
@@ -450,8 +461,38 @@ namespace s1
       StringsArrayPtr blockStrings (codegen.Generate());
       if (blockStrings->Size() > 0)
       {
-	target->AddString ("\\sOblock{");
+	target->AddString ("\\sOnestseq{");
+	const Sequence::RegisterImpMappings& seqImports = seq->GetImports();
+	for (Sequence::RegisterImpMappings::const_iterator imp = seqImports.begin();
+	     imp != seqImports.end();
+	     ++imp)
+	{
+	  Sequence::IdentifierToRegIDMap::const_iterator impName = identToRegID_imp.find (imp->first);
+	  if (impName == identToRegID_imp.end()) continue;
+	  
+	  std::string nestStr ("\\sOnestmapIn{");
+	  nestStr.append (owner->GetOutputRegisterName (impName->second));
+	  nestStr.append ("}{");
+	  nestStr.append (codegen.GetOutputRegisterName (imp->second));
+	  nestStr.append ("}");
+	  target->AddString (nestStr);
+	}
 	target->AddStrings (*blockStrings, 2);
+	const Sequence::RegisterExpMappings& seqExports = seq->GetExports();
+	for (Sequence::RegisterExpMappings::const_iterator exp = seqExports.begin();
+	     exp != seqExports.end();
+	     ++exp)
+	{
+	  Sequence::IdentifierToRegIDMap::const_iterator expName = identToRegID_exp.find (exp->first);
+	  if (expName == identToRegID_exp.end()) continue;
+	  
+	  std::string nestStr ("\\sOnestmapOut{");
+	  nestStr.append (owner->GetOutputRegisterName (expName->second));
+	  nestStr.append ("}{");
+	  nestStr.append (codegen.GetOutputRegisterName (exp->second));
+	  nestStr.append ("}");
+	  target->AddString (nestStr);
+	}
 	target->AddString ("}");
       }
     }
@@ -482,7 +523,7 @@ namespace s1
       }
       #endif
       
-      std::string ifLine ("\\sOif{");
+      std::string ifLine ("\\sObranch{");
       ifLine.append (owner->GetOutputRegisterName (conditionReg));
       ifLine.append ("}{");
       target->AddString (ifLine);

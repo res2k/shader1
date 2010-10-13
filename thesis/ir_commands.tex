@@ -2,7 +2,7 @@
 \newcommand\sOconst[1]{\mathtt{#1}}
 \newcommand\sOreg[1]{\mathit{#1}}
 
-\newcommand\sOfunc[1]{\begin{displaymath}\begin{array}{rl}#1\end{array}\end{displaymath}}
+\newcommand\sOfunc[1]{$\begin{array}[t]{rl}#1\end{array}$}
 \newcommand\sOfunchead[2]{\mathrm{Funktion:} &\begin{array}[t]{l}\sOident{#2}\end{array}\\\mathrm{R"uckgabetyp:} &\begin{array}[t]{l}\sOident{#1}\end{array}\\}
 \newcommand\sOfuncregset[2]{\mathrm{Registersatz\ \sOident{#1}:} & \begin{minipage}[t]{12cm}\raggedright #2\end{minipage}\\}
 \newcommand\sOsetreg[1]{$\sOreg{#1}$ }
@@ -54,9 +54,12 @@
 \newcommand\sOsetelem[4]{\sOopThree{setelem}{#1}{#2}{#3}{#4}}
 \newcommand\sOarraylen[2]{\sOopOne{arraylen}{#1}{#2}}
 
-\newcommand\sOnestseqbox[1]{\framebox[1.2\width][l]{#1}}
+\newcommand\sOnestwrap[1]{$\begin{array}[t]{rl}#1\end{array}$}
+\newcommand\sOnestseqbox[1]{\framebox[1.2\width][l]{\sOnestwrap{#1}}}
+\newcommand\sOnestmapIn[2]{\mathrm{Import:} &\sOident{#1} \to #2\\}
+\newcommand\sOnestmapOut[2]{\mathrm{Export:} &\sOident{#1} \gets #2\\}
 \newcommand\sOnestseq[1]{& \sOnestseqbox{#1}}
-\newcommand\sObranch[3]{& \mathtt{if}\ #1\mathtt{:}\\& \indent\sOnestseqbox{#2}\\& \mathtt{else:}\\& \indent\sOnestseqbox{#3}}
+\newcommand\sObranch[3]{& \mathtt{if}\ #1\mathtt{:}\\& \indent\sOnestwrap{#2}\\& \mathtt{else:}\\& \indent\sOnestwrap{#3}}
 \newcommand\sOwhile[3]{& \mathtt{while}\ #1/#2\mathtt{:}\\& \indent\sOnestseqbox{#3}}
 \newcommand\sOcall[2]{& \mathtt{call}\ \mathtt{void}\ #1 \sOcomma #2}
 \newcommand\sOcallret[3]{& \mathtt{call}\ #1 \sOcomma #2 \sOcomma #3}

@@ -161,6 +161,7 @@ namespace s1
       
       StringsArrayPtr Generate ();
       
+      bool HasRegister (const RegisterID& reg);
       std::string GetOutputRegisterName (const RegisterID& reg,
 					 const std::string& initializer = std::string());
 
