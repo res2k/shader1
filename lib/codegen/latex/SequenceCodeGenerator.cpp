@@ -554,28 +554,16 @@ namespace s1
       target->AddString ("}");
     }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const RegisterID& retValReg)
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterID>& outParamVals)
     {
-      std::string retLine ("\\sOreturn{");
-      if (retValReg.IsValid())
-      {
-	retLine.append (owner->GetOutputRegisterName (retValReg));
-      }
-      retLine.append ("}");
-      target->AddString (retLine);
+      target->AddString ("\\sOreturn{}");
     }
     
-    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const RegisterID& destination,
-										const UnicodeString& funcIdent,
+    void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const UnicodeString& funcIdent,
 										const std::vector<RegisterID>& inParams,
 										const std::vector<RegisterID>& outParams)
     {
       std::string line;
-      if (destination.IsValid())
-      {
-	line.append (owner->GetOutputRegisterName (destination));
-	line.append (" \\gets ");
-      }
       std::string function;
       funcIdent.toUTF8String (function);
       line.append (" \\sOfunccall{");

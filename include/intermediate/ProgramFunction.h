@@ -16,7 +16,6 @@ namespace s1
     {
       UnicodeString originalIdentifier;
       UnicodeString identifier;
-      parser::SemanticsHandler::TypePtr returnType;
       parser::SemanticsHandler::Scope::FunctionFormalParameters params;
       SequencePtr body;
       bool isEntryFunction;
@@ -24,7 +23,6 @@ namespace s1
     public:
       ProgramFunction (const UnicodeString& originalIdentifier,
 		       const UnicodeString& identifier,
-		       const parser::SemanticsHandler::TypePtr& returnType,
 		       const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
 		       const SequencePtr& body,
 		       bool isEntryFunction);
@@ -33,8 +31,6 @@ namespace s1
       { return originalIdentifier; }
       const UnicodeString& GetIdentifier() const
       { return identifier; }
-      const parser::SemanticsHandler::TypePtr& GetReturnType() const
-      { return returnType; }
       const parser::SemanticsHandler::Scope::FunctionFormalParameters& GetParams() const
       { return params; }
       SequencePtr GetBody() const

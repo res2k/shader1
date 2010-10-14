@@ -62,6 +62,9 @@ namespace s1
 				     param.dir == dirIn));
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
+      
+      if ((param.dir & dirOut) != 0)
+	outputParams.push_back (param.identifier);
     }
 
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const UnicodeString& identifier,

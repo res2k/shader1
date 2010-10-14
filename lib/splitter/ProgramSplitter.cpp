@@ -41,7 +41,6 @@ namespace s1
     void ProgramSplitter::GetSplitFunctions (const UnicodeString& originalIdent,
 					     const std::vector<unsigned int>& inputParamFreqFlags,
 					     UnicodeString freqFuncIdents[freqNum],
-					     unsigned int& returnFreq,
 					     std::vector<unsigned int>& outputParamFreqs,
 					     std::vector<FunctionTransferValues> transferValues[freqNum-1])
     {
@@ -93,11 +92,13 @@ namespace s1
 	  {
 	    if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
 	    
+	    #if 0
 	    intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (funcParam.identifier);
 	    assert (exp != seqExports.end());
 	    
 	    intermediate::RegisterID seqRegID (exp->second);
 	    //outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	    #endif
 	    outputParamFreqs.push_back (freqFlagF);
 	  }
 	  newFunc->outputParamFreqs = outputParamFreqs;
@@ -184,10 +185,16 @@ namespace s1
 	    if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
 	    
 	    intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (funcParam.identifier);
-	    assert (exp != seqExports.end());
-	    
-	    intermediate::RegisterID seqRegID (exp->second);
-	    outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	    if (exp == seqExports.end())
+	    {
+	      // Output param is never written...
+	      outputParamFreqs.push_back (freqFlagU);
+	    }
+	    else
+	    {
+	      intermediate::RegisterID seqRegID (exp->second);
+	      outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	    }
 	  }
 	  newFunc->outputParamFreqs = outputParamFreqs;
       
@@ -233,7 +240,6 @@ namespace s1
       
       intermediate::ProgramFunctionPtr newFunc (boost::make_shared<intermediate::ProgramFunction> (originalFunc->GetOriginalIdentifier(),
 												   funcName,
-												   originalFunc->GetReturnType(),
 												   params,
 												   sequence,
 												   false));
@@ -317,9 +323,8 @@ namespace s1
 	block->GetSequence()->Visit (*this);
       }
 			    
-      void OpReturn (const RegisterID&) {}
-      void OpFunctionCall (const RegisterID& destination,
-			   const UnicodeString& funcIdent,
+      void OpReturn (const std::vector<RegisterID>&) {}
+      void OpFunctionCall (const UnicodeString& funcIdent,
 			   const std::vector<RegisterID>& inParams,
 			   const std::vector<RegisterID>& outParams)
       {
@@ -422,7 +427,6 @@ namespace s1
 	
 	intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
 												   funcVName,
-												   func->GetReturnType(),
 												   vParams,
 												   splitter.GetOutputVertexSequence(),
 												   func->IsEntryFunction()));
@@ -435,7 +439,6 @@ namespace s1
 	
 	intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
 												   funcFName,
-												   func->GetReturnType(),
 												   fParams,
 												   splitter.GetOutputFragmentSequence(),
 												   func->IsEntryFunction()));

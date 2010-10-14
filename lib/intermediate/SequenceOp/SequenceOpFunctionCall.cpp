@@ -5,11 +5,10 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpFunctionCall::SequenceOpFunctionCall (const RegisterID& destination,
-						    const UnicodeString& funcIdent,
+    SequenceOpFunctionCall::SequenceOpFunctionCall (const UnicodeString& funcIdent,
 						    const std::vector<RegisterID>& inParams,
 						    const std::vector<RegisterID>& outParams)
-     : SequenceOpWithResult (destination), funcIdent (funcIdent), inParams (inParams), outParams (outParams)
+     : funcIdent (funcIdent), inParams (inParams), outParams (outParams)
     {
     }
     
@@ -22,14 +21,14 @@ namespace s1
     
     RegisterIDSet SequenceOpFunctionCall::GetWrittenRegisters () const
     {
-      RegisterIDSet regs (SequenceOpFunctionCall::GetWrittenRegisters());
+      RegisterIDSet regs;
       regs.insert (outParams.begin(), outParams.end());
       return regs;
     }
     
     void SequenceOpFunctionCall::Visit (SequenceVisitor& visitor)
     {
-      visitor.OpFunctionCall (destination, funcIdent, inParams, outParams);
+      visitor.OpFunctionCall (funcIdent, inParams, outParams);
     }
   } // namespace intermediate
 } // namespace s1

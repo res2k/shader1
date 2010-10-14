@@ -30,6 +30,7 @@ namespace s1
       typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
+      std::vector<UnicodeString> outputParams;
       
       typedef std::tr1::unordered_map<UnicodeString, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
@@ -69,6 +70,13 @@ namespace s1
 	if (funcReturnType) return funcReturnType;
 	if (parent) return parent->GetFunctionReturnType();
 	return TypePtr ();
+      }
+      const std::vector<UnicodeString>& GetFunctionOutputParams () const
+      {
+	if (!parent || (parent->level < Function))
+	  return outputParams;
+	else
+	  return parent->outputParams;
       }
       int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
       

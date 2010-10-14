@@ -176,8 +176,11 @@ namespace s1
 	seqOp = boost::make_shared<SequenceOpBuiltinCall> (destination, overload->builtin->GetBuiltinFunction(),
 							   inParams);
       else
-	seqOp = boost::make_shared<SequenceOpFunctionCall> (destination, overload->identifier,
-							    inParams, outParams);
+      {
+	if (destination.IsValid())
+	  outParams.insert (outParams.begin(), destination);
+	seqOp = boost::make_shared<SequenceOpFunctionCall> (overload->identifier, inParams, outParams);
+      }
       block.GetSequence()->AddOp (seqOp);
       
       for (PostActions::const_iterator postAction (postActions.begin());

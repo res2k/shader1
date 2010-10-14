@@ -420,7 +420,8 @@ namespace s1
       SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID_imp, identToRegID_exp);
       SequenceCodeGenerator codegen (*seq, &nameRes,
 				     intermediate::ProgramFunction::TransferMappings (),
-				     intermediate::ProgramFunction::TransferMappings ());
+				     intermediate::ProgramFunction::TransferMappings (),
+				     owner->outParams);
       StringsArrayPtr blockStrings (codegen.Generate());
       if (blockStrings->Size() > 0)
       {
@@ -481,29 +482,19 @@ namespace s1
       seqOpBody->Visit (*this);
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const RegisterID& retValReg)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterID>& outParamVals)
     {
-      std::string retLine ("return");
-      if (retValReg.IsValid())
-      {
-	retLine.append (" ");
-	retLine.append (owner->GetOutputRegisterName (retValReg));
-      }
-      retLine.append (";");
-      target->AddString (retLine);
+      assert (outParamVals.size() == owner->outParams.size());
+      for (size_t i = 0; i < outParamVals.size(); i++)
+	EmitAssign (owner->outParams[i].c_str(), outParamVals[i]);
+      target->AddString ("return;");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const RegisterID& destination,
-									     const UnicodeString& funcIdent,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const UnicodeString& funcIdent,
 									     const std::vector<RegisterID>& inParams,
 									     const std::vector<RegisterID>& outParams)
     {
       std::string line;
-      if (destination.IsValid())
-      {
-	line.append (owner->GetOutputRegisterName (destination));
-	line.append (" = ");
-      }
       line.append (NameToCgIdentifier (funcIdent));
       line.append (" (");
       ParamHelper params (line);
@@ -565,8 +556,9 @@ namespace s1
     CgGenerator::SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,
 							       ImportedNameResolver* nameRes,
 							       const intermediate::ProgramFunction::TransferMappings& transferIn,
-							       const intermediate::ProgramFunction::TransferMappings& transferOut)
-     : seq (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut)
+							       const intermediate::ProgramFunction::TransferMappings& transferOut,
+							       const std::vector<std::string>& outParams)
+     : seq (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut), outParams (outParams)
     {
     }
     

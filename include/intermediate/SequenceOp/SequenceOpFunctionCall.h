@@ -1,7 +1,7 @@
 #ifndef __INTERMEDIATE_SEQUENCEOPFUNCTIONCALL_H__
 #define __INTERMEDIATE_SEQUENCEOPFUNCTIONCALL_H__
 
-#include "SequenceOpWithResult.h"
+#include "SequenceOp.h"
 #include "../forwarddecl.h"
 #include "../RegisterID.h"
 
@@ -12,14 +12,13 @@ namespace s1
 {
   namespace intermediate
   {
-    class SequenceOpFunctionCall : public SequenceOpWithResult
+    class SequenceOpFunctionCall : public SequenceOp
     {
       UnicodeString funcIdent;
       std::vector<RegisterID> inParams;
       std::vector<RegisterID> outParams;
     public:
-      SequenceOpFunctionCall (const RegisterID& destination,
-			      const UnicodeString& funcIdent,
+      SequenceOpFunctionCall (const UnicodeString& funcIdent,
 			      const std::vector<RegisterID>& inParams,
 			      const std::vector<RegisterID>& outParams);
       

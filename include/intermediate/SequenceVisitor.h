@@ -91,9 +91,8 @@ namespace s1
 			    const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
 			    const SequenceOpPtr& seqOpBody) = 0;
 			    
-      virtual void OpReturn (const RegisterID& retValReg) = 0;
-      virtual void OpFunctionCall (const RegisterID& destination,
-				   const UnicodeString& funcIdent,
+      virtual void OpReturn (const std::vector<RegisterID>& outParamVals) = 0;
+      virtual void OpFunctionCall (const UnicodeString& funcIdent,
 				   const std::vector<RegisterID>& inParams,
 				   const std::vector<RegisterID>& outParams) = 0;
       virtual void OpBuiltinCall (const RegisterID& destination,

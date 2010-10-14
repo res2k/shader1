@@ -5,16 +5,15 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpReturn::SequenceOpReturn (RegisterID retValReg)
-     : retValReg (retValReg)
+    SequenceOpReturn::SequenceOpReturn (const std::vector<RegisterID>& outParamVals)
+     : outParamVals (outParamVals)
     {
     }
     
     RegisterIDSet SequenceOpReturn::GetReadRegisters () const
     {
       RegisterIDSet regs;
-      if (retValReg.IsValid())
-	regs.insert (retValReg);
+      regs.insert (outParamVals.begin(), outParamVals.end());
       return regs;
     }
     
@@ -26,7 +25,7 @@ namespace s1
     
     void SequenceOpReturn::Visit (SequenceVisitor& visitor)
     {
-      visitor.OpReturn (retValReg);
+      visitor.OpReturn (outParamVals);
     }
   } // namespace intermediate
 } // namespace s1

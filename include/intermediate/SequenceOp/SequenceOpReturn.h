@@ -5,15 +5,17 @@
 #include "../forwarddecl.h"
 #include "../RegisterID.h"
 
+#include <vector>
+
 namespace s1
 {
   namespace intermediate
   {
     class SequenceOpReturn : public SequenceOp
     {
-      RegisterID retValReg;
+      std::vector<RegisterID> outParamVals;
     public:
-      SequenceOpReturn (RegisterID retValReg);
+      SequenceOpReturn (const std::vector<RegisterID>& outParamVals);
       
       RegisterIDSet GetReadRegisters () const;
       RegisterIDSet GetWrittenRegisters () const;

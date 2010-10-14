@@ -13,6 +13,7 @@
 #include "ScopeImpl.h"
 #include "VariableExpressionImpl.h"
 
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <unicode/ustdio.h>
 
@@ -22,6 +23,7 @@ namespace s1
   {
     static const char varConditionName[] = "$cond";
     static const char varTernaryResultName[] = "$tr";
+    const char IntermediateGeneratorSemanticsHandler::BlockImpl::varReturnValueName[] = "$retval";
     
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 ScopePtr innerScope)
@@ -34,6 +36,17 @@ namespace s1
       varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
 										    UnicodeString (newCondName),
 										    ExpressionPtr(), false));
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      TypeImplPtr retTypeImpl (boost::shared_static_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
+      if (!handler->voidType->IsEqual (*retTypeImpl))
+      {
+	char newRetValName[sizeof (varReturnValueName) + charsToFormatInt + 1];
+	snprintf (newRetValName, sizeof (newRetValName), "%s%d", varReturnValueName, 
+		  boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+	varReturnValue = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (retTypeImpl,
+											UnicodeString (newRetValName),
+											ExpressionPtr(), false));
+      }
     }
      
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddExpressionCommand (ExpressionPtr expr)
@@ -47,13 +60,15 @@ namespace s1
     {
       FlushVariableInitializers();
       
-      RegisterID retValReg;
+      std::vector<RegisterID> retValRegs;
       if (returnValue)
       {
+	/*
 	ExpressionImpl* impl = static_cast<ExpressionImpl*> (returnValue.get());
 	TypeImplPtr retType (boost::shared_static_cast<TypeImpl> (
 	  boost::shared_static_cast<ScopeImpl> (innerScope)->GetFunctionReturnType()));
 	  
+	RegisterID retValReg;
 	RegisterID exprTargetReg (impl->AddToSequence (*this, Intermediate));
 	if (retType->IsEqual (*(impl->GetValueType ())))
 	{
@@ -65,8 +80,33 @@ namespace s1
 	  handler->GenerateCast (*sequence, retValReg, retType,
 				 exprTargetReg, impl->GetValueType ());
 	}
+	retValRegs.push_back (retValReg);
+	*/
+	// Emit initial assignment to return value output parameter
+	assert (varReturnValue);
+	ExpressionPtr retValVarExpr (handler->CreateVariableExpression (varReturnValue));
+	ExpressionPtr retValAssign (handler->CreateAssignExpression (retValVarExpr, returnValue));
+	AddExpressionCommand (retValAssign);
+	RegisterID retValReg (GetRegisterForName (varReturnValue, false));
+	retValRegs.push_back (retValReg);
+	
+	// @@@ This is a hack so the return val out param is later correctly "seen" by the splitter.
+	sequence->SetExport (varReturnValueName, retValReg);
       }
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValReg));
+      else
+      {
+	assert (!varReturnValue);
+      }
+      
+      // Need to collect regs for all output params
+      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      const std::vector<UnicodeString>& outputParams = blockScopeImpl->GetFunctionOutputParams();
+      BOOST_FOREACH(const UnicodeString& identifier, outputParams)
+      {
+	retValRegs.push_back (sequence->GetIdentifierRegisterID (identifier));
+      }
+
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValRegs));
       sequence->AddOp (seqOp);
     }
 

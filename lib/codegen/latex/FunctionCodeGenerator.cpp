@@ -32,14 +32,11 @@ namespace s1
       StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
       resultStrings->AddString ("\\sOfunc{");
       {
-	std::string typeStr (TypeString (func->GetReturnType()));
 	std::string identifier;
 	func->GetOriginalIdentifier().toUTF8String (identifier);
 	
 	{
 	  std::string funcDecl ("\\sOfunchead{");
-	  funcDecl.append (typeStr);
-	  funcDecl.append ("}{");
 	  funcDecl.append (LatexEscape (identifier));
 	  funcDecl.append ("}");
 	  resultStrings->AddString (funcDecl);

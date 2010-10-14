@@ -138,9 +138,8 @@ namespace s1
 		      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
 		      const intermediate::SequenceOpPtr& seqOpBody);
 		      
-	void OpReturn (const RegisterID& retValReg);
-	void OpFunctionCall (const RegisterID& destination,
-			     const UnicodeString& funcIdent,
+	void OpReturn (const std::vector<RegisterID>& outParamVals);
+	void OpFunctionCall (const UnicodeString& funcIdent,
 			     const std::vector<RegisterID>& inParams,
 			     const std::vector<RegisterID>& outParams);
 	void OpBuiltinCall (const RegisterID& destination,
@@ -153,6 +152,7 @@ namespace s1
       const intermediate::ProgramFunction::TransferMappings& transferIn;
       const intermediate::ProgramFunction::TransferMappings& transferOut;
       StringsArrayPtr strings;
+      const std::vector<std::string>& outParams;
       
       typedef boost::unordered_map<RegisterID, std::string> RegistersToIDMap;
       RegistersToIDMap seenRegisters;
@@ -163,7 +163,8 @@ namespace s1
       SequenceCodeGenerator (const intermediate::Sequence& seq,
 			     ImportedNameResolver* nameRes,
 			     const intermediate::ProgramFunction::TransferMappings& transferIn,
-			     const intermediate::ProgramFunction::TransferMappings& transferOut);
+			     const intermediate::ProgramFunction::TransferMappings& transferOut,
+			     const std::vector<std::string>& outParams);
       
       StringsArrayPtr Generate ();
     };

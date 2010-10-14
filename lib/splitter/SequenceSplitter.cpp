@@ -241,6 +241,10 @@ namespace s1
 						       BaseType compType,
 						       const std::vector<RegisterID>& sources)
     {
+      /* @@@ Consider operations like: float4 foo = float4 (RGB, 1)
+	 Now, if 'foo' is used in a fragment frequency op, 'foo' is promoted -
+	 even though this is suboptimal, as the 4th component is constant anyway.
+	 Better: just promote RGB */
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
@@ -620,6 +624,7 @@ namespace s1
       {
 	//if (!newSeqOps[f]) continue;
 	if ((commonFreqs & (1 << f)) == 0) continue;
+	// @@@ Should be possible to emit branches to VP even if condition is FP
 	assert(newIfOps[f] != 0);
 	assert(newElseOps[f] != 0);
 	
@@ -690,21 +695,20 @@ namespace s1
       }
     }
     
-    void SequenceSplitter::InputVisitor::OpReturn (const RegisterID& retValReg)
+    void SequenceSplitter::InputVisitor::OpReturn (const std::vector<RegisterID>& outParamVals)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpReturn> (retValReg));
+      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpReturn> (outParamVals));
       
       /* 'return': only execute on fragment frequency */
-      if (retValReg.IsValid())
+      BOOST_FOREACH(const RegisterID& reg, outParamVals)
       {
-	unsigned int srcAvail = parent.GetRegAvailability (retValReg);
-	PromoteRegister (retValReg, freqFragment, srcAvail);
+	unsigned int srcAvail = parent.GetRegAvailability (reg);
+	PromoteRegister (reg, freqFragment, srcAvail);
       }
       parent.outputSeq[freqFragment]->AddOp (newSeqOp);
     }
     
-    void SequenceSplitter::InputVisitor::OpFunctionCall (const RegisterID& destination,
-							 const UnicodeString& funcIdent,
+    void SequenceSplitter::InputVisitor::OpFunctionCall (const UnicodeString& funcIdent,
 							 const std::vector<RegisterID>& inParams,
 							 const std::vector<RegisterID>& outParams)
     {
@@ -725,17 +729,12 @@ namespace s1
 	inputParamFreqFlags.push_back (parent.GetRegAvailability (reg));
       }
       UnicodeString freqFuncIdents[freqNum];
-      unsigned int returnFreq = (1 << freqNum) - 1; // @@@ 'return' is just _so_ broken ...
       std::vector<unsigned int> outputParamFreqs;
       std::vector<ProgramSplitter::FunctionTransferValues> transferValues[freqNum-1];
       parent.progSplit.GetSplitFunctions (funcIdent, inputParamFreqFlags, freqFuncIdents,
-					  returnFreq, outputParamFreqs,
+					  outputParamFreqs,
 					  transferValues);
 	
-      if (destination.IsValid())
-      {
-	parent.SetRegAvailability (destination, returnFreq);
-      }
       // Set availability of output values
       assert (outputParamFreqs.size() == outParams.size());
       for (size_t i = 0; i < outParams.size(); i++)
@@ -783,8 +782,7 @@ namespace s1
 	std::vector<RegisterID> newInParams (inParams);
 	newInParams.insert (newInParams.end(), transferIn[f].begin(), transferIn[f].end());
 	
-	SequenceOpPtr newOp (boost::make_shared<intermediate::SequenceOpFunctionCall> (destination,
-										       freqFuncIdents[f],
+	SequenceOpPtr newOp (boost::make_shared<intermediate::SequenceOpFunctionCall> (freqFuncIdents[f],
 										       newInParams,
 										       newOutParams));
 	parent.outputSeq[f]->AddOp (newOp);

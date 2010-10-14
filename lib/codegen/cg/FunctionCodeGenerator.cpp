@@ -33,13 +33,12 @@ namespace s1
       
       BlockNameResolver nameRes;
       StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
+      std::vector<std::string> outParamIdents;
       {
 	std::string typeSuffix;
-	std::string typeStr (TypeToCgType (func->GetReturnType(), typeSuffix));
 	std::string identifier (NameToCgIdentifier (func->GetIdentifier()));
 	
-	std::string funcDecl (typeStr);
-	funcDecl.append (" ");
+	std::string funcDecl ("void ");
 	funcDecl.append (identifier);
 	funcDecl.append (" (");
 	
@@ -78,6 +77,7 @@ namespace s1
 	    UnicodeString paramIdentDecorated ("o");
 	    paramIdentDecorated.append (param->identifier);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
+	    outParamIdents.push_back (paramIdent);
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
@@ -194,7 +194,8 @@ namespace s1
 	    transferIn = &(func->GetTransferMappings());
 	}
       
-      SequenceCodeGenerator seqGen (*(func->GetBody()), &nameRes, *transferIn, *transferOut);
+      SequenceCodeGenerator seqGen (*(func->GetBody()), &nameRes, *transferIn, *transferOut,
+				    outParamIdents);
       resultStrings->AddStrings (*(seqGen.Generate()), 2);
       
       resultStrings->AddString (std::string ("}"));

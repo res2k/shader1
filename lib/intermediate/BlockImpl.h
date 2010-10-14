@@ -37,6 +37,7 @@ namespace s1
       NameImplPtr varCondition;
       typedef std::tr1::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
       TernaryResultVarsMap varsTernaryResult;
+      NameImplPtr varReturnValue;
       
       /**
        * Checks for new variables since last command and synthesizes initializations,
@@ -59,6 +60,8 @@ namespace s1
       
       SequenceOpPtr CreateBlockSeqOp (BlockPtr block, const NameImplSet& loopNames = NameImplSet());
     public:
+      static const char varReturnValueName[];
+      
       BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
       
       /**\name SemanticsHandler::Block implementation

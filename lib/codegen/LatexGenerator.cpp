@@ -1,3 +1,5 @@
+#include <boost/cstdint.hpp>
+
 #include "codegen/LatexGenerator.h"
 
 #include "latex/ProgramCodeGenerator.h"

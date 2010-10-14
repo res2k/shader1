@@ -11,18 +11,13 @@ namespace s1
   {
     ProgramFunction::ProgramFunction (const UnicodeString& originalIdentifier,
 				      const UnicodeString& identifier,
-				      const parser::SemanticsHandler::TypePtr& returnType,
 				      const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
 				      const SequencePtr& body,
 				      bool isEntryFunction)
      : originalIdentifier (originalIdentifier) ,identifier (identifier),
-       returnType (returnType), params (params), body (body),
+       params (params), body (body),
        isEntryFunction (isEntryFunction), execFreq (-1)
     {
-      /*boost::shared_ptr<IntermediateGeneratorSemanticsHandler::BlockImpl> blockImpl (
-	boost::static_pointer_cast<IntermediateGeneratorSemanticsHandler::BlockImpl> (block));
-      blockImpl->FinishBlock();
-      body = blockImpl->GetSequence ();*/
     }
 
     void ProgramFunction::SetTransferMapping (const UnicodeString& transferVal,

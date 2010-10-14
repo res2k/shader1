@@ -403,22 +403,20 @@ public:
   {
   }
 
-  void OpReturn (const RegisterID& retValReg)
+  void OpReturn (const std::vector<RegisterID>& outParamVals)
   {
     SequenceEntry entry;
     entry.op = opReturn;
-    entry.sourceReg[0] = retValReg;
+    entry.sourceRegs = outParamVals;
     entries.push_back (entry);
   }
   
-  void OpFunctionCall (const RegisterID& destination,
-		       const UnicodeString& funcIdent,
+  void OpFunctionCall (const UnicodeString& funcIdent,
 		       const std::vector<RegisterID>& inParams,
 		       const std::vector<RegisterID>& outParams)
   {
     SequenceEntry entry;
     entry.op = opFunctionCall;
-    entry.destReg = destination;
     entry.functionIdentifier = funcIdent;
     entry.inParams = inParams;
     entry.outParams = outParams;

@@ -412,10 +412,20 @@ namespace s1
 	  boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
 	  blockImpl->FinishBlock();
 	  
+	  parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
+	  TypeImplPtr retTypeImpl (boost::shared_static_cast<TypeImpl> ((*funcIt)->returnType));
+	  if (!voidType->IsEqual (*retTypeImpl))
+	  {
+	    parser::SemanticsHandler::Scope::FunctionFormalParameter retParam;
+	    retParam.type = (*funcIt)->returnType;
+	    retParam.identifier = BlockImpl::varReturnValueName;
+	    retParam.dir = parser::SemanticsHandler::Scope::dirOut;
+	    params.insert (params.begin(), retParam);
+	  }
+	  
 	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
 									    (*funcIt)->identifier,
-									    (*funcIt)->returnType,
-									    (*funcIt)->params,
+									    params,
 									    blockImpl->GetSequence (),
 									    IsEntryFunction ((*funcIt)->originalIdentifier)));
 	  newProg->AddFunction (newFunc);

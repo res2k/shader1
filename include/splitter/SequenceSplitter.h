@@ -123,9 +123,8 @@ namespace s1
 		      const LoopedRegs& loopedRegs,
 		      const SequenceOpPtr& seqOpBody);
 			      
-	void OpReturn (const RegisterID& retValReg);
-	void OpFunctionCall (const RegisterID& destination,
-			     const UnicodeString& funcIdent,
+	void OpReturn (const std::vector<RegisterID>& outParamVals);
+	void OpFunctionCall (const UnicodeString& funcIdent,
 			     const std::vector<RegisterID>& inParams,
 			     const std::vector<RegisterID>& outParams);
 	void OpBuiltinCall (const RegisterID& destination,

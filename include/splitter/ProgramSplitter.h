@@ -52,7 +52,6 @@ namespace s1
       void GetSplitFunctions (const UnicodeString& originalIdent,
 			      const std::vector<unsigned int>& inputParamFreqFlags,
 			      UnicodeString freqFuncIdents[freqNum],
-			      unsigned int& returnFreq,
 			      std::vector<unsigned int>& outputParamFreqs,
 			      std::vector<FunctionTransferValues> transferValues[freqNum-1]);
 			      
