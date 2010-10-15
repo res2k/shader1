@@ -193,7 +193,7 @@ namespace s1
 	    else
 	    {
 	      intermediate::RegisterID seqRegID (exp->second);
-	      outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
+	      outputParamFreqs.push_back (seqSplit.GetRegAvailability (seqRegID));
 	    }
 	  }
 	  newFunc->outputParamFreqs = outputParamFreqs;

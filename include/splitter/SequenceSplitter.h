@@ -143,6 +143,7 @@ namespace s1
       { setAvailability[regID] = freqFlags; }
       unsigned int GetLocalRegFreqFlags (const RegisterID& regID)
       { return setAvailability[regID]; }
+      unsigned int GetRegAvailability (const RegisterID& reg);
       
       void PerformSplit ();
       
@@ -165,7 +166,6 @@ namespace s1
           the registers in element 1 from frequency 2 to frequency 2 and so on. */
       std::vector<RegisterID> transferRegs[freqNum-1];
       
-      unsigned int GetRegAvailability (const RegisterID& reg);
       void SetRegAvailability (const RegisterID& regID, unsigned int freqFlags)
       { regAvailability[regID] = freqFlags; }
       
