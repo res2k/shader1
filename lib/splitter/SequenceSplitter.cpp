@@ -844,7 +844,9 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    SequenceSplitter::SequenceSplitter (ProgramSplitter& progSplit) : progSplit (progSplit)
+    SequenceSplitter::SequenceSplitter (ProgramSplitter& progSplit,
+					bool mergeUniformToVF)
+     : progSplit (progSplit), mergeUniformToVF (mergeUniformToVF)					
     {
     }
     
@@ -899,11 +901,16 @@ namespace s1
       inputSeq->Visit (visitor);
       
       // Insert 'uniform' sequence at start of both V/F sequences
-      for (size_t i = 0; i < outputSeq[freqUniform]->GetNumOps(); i++)
+      if (mergeUniformToVF)
       {
-	SequenceOpPtr uniOp (outputSeq[freqUniform]->GetOp (i));
-	outputSeq[freqVertex]->InsertOp (i, uniOp);
-	outputSeq[freqFragment]->InsertOp (i, uniOp);
+	for (size_t i = 0; i < outputSeq[freqUniform]->GetNumOps(); i++)
+	{
+	  SequenceOpPtr uniOp (outputSeq[freqUniform]->GetOp (i));
+	  outputSeq[freqVertex]->InsertOp (i, uniOp);
+	  outputSeq[freqFragment]->InsertOp (i, uniOp);
+	}
+	
+	outputSeq[freqUniform]->Clear ();
       }
     }
     

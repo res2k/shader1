@@ -132,7 +132,7 @@ namespace s1
 			    const std::vector<RegisterID>& inParams);
       };
     public:
-      SequenceSplitter (ProgramSplitter& progSplit);
+      SequenceSplitter (ProgramSplitter& progSplit, bool mergeUniformToVF = true);
       
       void SetInputSequence (const intermediate::SequencePtr& sequence)
       { inputSeq = sequence; }
@@ -150,14 +150,20 @@ namespace s1
       const std::vector<RegisterID>& GetTransferRegs (int srcFreq) const
       { return transferRegs[srcFreq]; }
       
+      intermediate::SequencePtr GetOutputUniformSequence ()
+      { return outputSeq[freqUniform]; }
       intermediate::SequencePtr GetOutputVertexSequence ()
       { return outputSeq[freqVertex]; }
       intermediate::SequencePtr GetOutputFragmentSequence ()
       { return outputSeq[freqFragment]; }
       
+      intermediate::SequencePtr GetOutputSequence (int freq)
+      { return outputSeq[freq]; }
+      
       static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type);
     protected:
       ProgramSplitter& progSplit;
+      bool mergeUniformToVF;
       
       intermediate::SequencePtr outputSeq[freqNum];
       

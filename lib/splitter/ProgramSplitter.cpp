@@ -54,8 +54,8 @@ namespace s1
       if (splitFuncInfo != splitFunctions.end())
       {
 	SplitFunctionInfoPtr funcInfo (splitFuncInfo->second);
-	freqFuncIdents[freqVertex] = funcInfo->funcVName;
-	freqFuncIdents[freqFragment] = funcInfo->funcFName;
+	for (int f = 0; f < freqNum; f++)
+	  freqFuncIdents[f] = funcInfo->funcName[f];
 	outputParamFreqs = funcInfo->outputParamFreqs;
 	for (int f = 0; f < freqNum-1; f++)
 	  transferValues[f] = funcInfo->transferValues[f];
@@ -67,7 +67,7 @@ namespace s1
 	
 	intermediate::ProgramFunctionPtr progFunc = FindProgramFunction (originalIdent);
 	  
-	SequenceSplitter seqSplit (*this);
+	SequenceSplitter seqSplit (*this, false);
 	seqSplit.SetInputSequence (progFunc->GetBody());
 	
 	bool isRecursive = CheckFuncRecursive (progFunc);
@@ -107,7 +107,7 @@ namespace s1
 	  UnicodeString funcFName ("fragment_");
 	  funcFName.append (decoratedIdent);
 	  freqFuncIdents[freqFragment] = funcFName;
-	  newFunc->funcFName = funcFName;
+	  newFunc->funcName[freqFragment] = funcFName;
 	  
 	  // Fake all inputs to fragment frequency
 	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
@@ -134,8 +134,7 @@ namespace s1
 	  seqSplit.PerformSplit();
 	  
 	  // Turn values 'transferred' by the function into extra output/input paramerts
-	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsV;
-	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
+	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParams[freqNum];
 	  const std::vector<intermediate::RegisterID>& transfers = seqSplit.GetTransferRegs (freqVertex);
 	  unsigned int n = 0;
 	  BOOST_FOREACH (const intermediate::RegisterID& reg, transfers)
@@ -157,7 +156,7 @@ namespace s1
 	      paramV.dir = parser::SemanticsHandler::Scope::dirOut;
 	      paramV.identifier = transferIdent;
 	      paramV.type = regBank->GetOriginalType();
-	      extraParamsV.push_back (paramV);
+	      extraParams[freqVertex].push_back (paramV);
 	      
 	      seqSplit.GetOutputVertexSequence()->SetExport (transferIdent, reg);
 	    }
@@ -166,7 +165,7 @@ namespace s1
 	      paramF.dir = parser::SemanticsHandler::Scope::dirIn;
 	      paramF.identifier = transferIdent;
 	      paramF.type = regBank->GetOriginalType();
-	      extraParamsF.push_back (paramF);
+	      extraParams[freqFragment].push_back (paramF);
 	      
 	      seqSplit.GetOutputFragmentSequence()->AddImport (transferIdent, reg);
 	    }
@@ -199,22 +198,19 @@ namespace s1
 	  newFunc->outputParamFreqs = outputParamFreqs;
       
 	  // Generate 'split' functions
-	  if ((seqSplit.GetOutputVertexSequence()->GetNumOps() > 0) || (extraParamsV.size() > 0))
+	  for (int f = 0; f < freqNum; f++)
 	  {
-	    UnicodeString funcVName ("vertex_");
-	    funcVName.append (decoratedIdent);
-	    AddFreqFunction (funcVName, progFunc, extraParamsV, seqSplit.GetOutputVertexSequence());
-	    freqFuncIdents[freqVertex] = funcVName;
-	    newFunc->funcVName = funcVName;
-	  }
-	  
-	  if ((seqSplit.GetOutputFragmentSequence()->GetNumOps() > 0) || (extraParamsF.size() > 0))
-	  {
-	    UnicodeString funcFName ("fragment_");
-	    funcFName.append (decoratedIdent);
-	    AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence());
-	    freqFuncIdents[freqFragment] = funcFName;
-	    newFunc->funcFName = funcFName;
+	    intermediate::SequencePtr seq (seqSplit.GetOutputSequence (f));
+	    if (!(seq->GetNumOps() > 0) || (extraParams[f].size() > 0))
+	      continue;
+	    
+	    static const char* const freqPrefix[freqNum] = { "uniform_", "vertex_", "fragment_" };
+	      
+	    UnicodeString funcName (freqPrefix[f]);
+	    funcName.append (decoratedIdent);
+	    AddFreqFunction (funcName, progFunc, extraParams[f], seq);
+	    freqFuncIdents[f] = funcName;
+	    newFunc->funcName[f] = funcName;
 	  }
 	}
       }

@@ -31,8 +31,7 @@ namespace s1
       };
       struct SplitFunctionInfo
       {
-	UnicodeString funcVName;
-	UnicodeString funcFName;
+	UnicodeString funcName[freqNum];
 	std::vector<unsigned int> outputParamFreqs;
 	std::vector<FunctionTransferValues> transferValues[freqNum-1];
       };

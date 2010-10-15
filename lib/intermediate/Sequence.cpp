@@ -84,6 +84,16 @@ namespace s1
       ops.insert (ops.begin() + before, op);
     }
       
+    void Sequence::Clear ()
+    {
+      ops.clear();
+      registerBanks.clear();
+      typeToRegBank.clear();
+      identToRegID.clear();
+      imports.clear();;
+      exports.clear();;
+    }
+      
     RegisterID Sequence::AllocateRegister (const std::string& typeStr,
 					   const TypePtr& originalType,
 					   const UnicodeString& name)

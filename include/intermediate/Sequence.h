@@ -69,6 +69,8 @@ namespace s1
       size_t GetNumOps() const { return ops.size(); }
       /// Get a specific op
       SequenceOpPtr GetOp(size_t index) const { return ops[index]; }
+      /// Clear sequence
+      void Clear ();
       /** @} */
       
       RegisterID AllocateRegister (const std::string& typeStr,
