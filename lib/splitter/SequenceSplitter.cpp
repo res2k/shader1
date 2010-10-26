@@ -41,9 +41,11 @@ namespace s1
     {
     }
     
-    void SequenceSplitter::InputVisitor::PromoteRegister (const RegisterID& reg, int frequency,
-							  unsigned int& availability)
+    unsigned int SequenceSplitter::InputVisitor::PromoteRegister (const RegisterID& reg,
+								  int frequency)
     {
+      unsigned int availability = parent.GetRegAvailability (reg);
+      
       int f = 0;
       // Find lowest frequency the reg is available in
       while ((f < freqNum) && ((availability & (1 << f)) == 0))
@@ -64,6 +66,8 @@ namespace s1
 	availability |= (1 << f);
       }
       parent.SetRegAvailability (reg, availability);
+      
+      return availability;
     }
     
     void SequenceSplitter::InputVisitor::SplitBinaryOp (const RegisterID& destination,
@@ -87,8 +91,8 @@ namespace s1
       assert (highestFreq >= 0);
       
       // Make sure each source reg is also available in the highest frequency
-      PromoteRegister (source1, highestFreq, src1Avail);
-      PromoteRegister (source2, highestFreq, src2Avail);
+      src1Avail = PromoteRegister (source1, highestFreq);
+      src2Avail = PromoteRegister (source2, highestFreq);
       
       /* Hack: If both sources are available in uniform freq,
          _only_ add op to uniform freq - uniform ops will later be
@@ -141,7 +145,7 @@ namespace s1
 	    ++it)
       {
 	unsigned int srcAvail = parent.GetRegAvailability (*it);
-	PromoteRegister (*it, freq, srcAvail);
+	srcAvail = PromoteRegister (*it, freq);
 	parent.SetRegAvailability (*it, srcAvail);
 	commonFreqs &= srcAvail;
       }
@@ -385,8 +389,8 @@ namespace s1
       else
       {
 	// Promote inputs to fragment freq
-	PromoteRegister (source1, freqFragment, src1Avail);
-	PromoteRegister (source2, freqFragment, src2Avail);
+	PromoteRegister (source1, freqFragment);
+	PromoteRegister (source2, freqFragment);
 	
 	// Add operation to fragment frequency
 	parent.outputSeq[freqFragment]->AddOp (newSeqOp);
@@ -400,11 +404,9 @@ namespace s1
 						    const RegisterID& source2)
     {
       // Interpolation safety: comparison ops really aren't
-      unsigned int src1Avail = parent.GetRegAvailability (source1);
-      unsigned int src2Avail = parent.GetRegAvailability (source2);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCompare> (destination, op, source1, source2));
-      PromoteRegister (source1, freqFragment, src1Avail);
-      PromoteRegister (source2, freqFragment, src2Avail);
+      PromoteRegister (source1, freqFragment);
+      PromoteRegister (source2, freqFragment);
       
       // Add operation to fragment frequency
       parent.outputSeq[freqFragment]->AddOp (newSeqOp);
@@ -417,11 +419,9 @@ namespace s1
 						  const RegisterID& source2)
     {
       // Interpolation safety: logic ops really aren't
-      unsigned int src1Avail = parent.GetRegAvailability (source1);
-      unsigned int src2Avail = parent.GetRegAvailability (source2);
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpLogic> (destination, op, source1, source2));
-      PromoteRegister (source1, freqFragment, src1Avail);
-      PromoteRegister (source2, freqFragment, src2Avail);
+      PromoteRegister (source1, freqFragment);
+      PromoteRegister (source2, freqFragment);
       
       // Add operation to fragment frequency
       parent.outputSeq[freqFragment]->AddOp (newSeqOp);
@@ -457,7 +457,7 @@ namespace s1
       else
       {
 	// Promote inputs to fragment freq
-	PromoteRegister (source, freqFragment, srcAvail);
+	PromoteRegister (source, freqFragment);
 	
 	// Add operation to fragment frequency
 	parent.outputSeq[freqFragment]->AddOp (newSeqOp);
@@ -702,8 +702,7 @@ namespace s1
       /* 'return': only execute on fragment frequency */
       BOOST_FOREACH(const RegisterID& reg, outParamVals)
       {
-	unsigned int srcAvail = parent.GetRegAvailability (reg);
-	PromoteRegister (reg, freqFragment, srcAvail);
+	PromoteRegister (reg, freqFragment);
       }
       parent.outputSeq[freqFragment]->AddOp (newSeqOp);
     }

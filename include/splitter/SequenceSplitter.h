@@ -31,7 +31,7 @@ namespace s1
       {
 	SequenceSplitter& parent;
 	
-	void PromoteRegister (const RegisterID& reg, int frequency, unsigned int& availability);
+	unsigned int PromoteRegister (const RegisterID& reg, int frequency);
 	void SplitBinaryOp (const RegisterID& destination, const SequenceOpPtr& op,
 			    const RegisterID& source1, const RegisterID& source2);
 	int ComputeHighestFreq (const std::vector<RegisterID>& sources);
