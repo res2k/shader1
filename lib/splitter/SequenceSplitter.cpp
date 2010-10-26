@@ -403,8 +403,17 @@ namespace s1
 						    const RegisterID& source1,
 						    const RegisterID& source2)
     {
-      // Interpolation safety: comparison ops really aren't
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCompare> (destination, op, source1, source2));
+      // Interpolation safety: comparison ops really aren't, except if both operands are uniform
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
+      bool lerpSafe = (((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0));
+      if (lerpSafe)
+      {
+	SplitBinaryOp (destination, newSeqOp, source1, source2);
+	return;
+      }
+      
       PromoteRegister (source1, freqFragment);
       PromoteRegister (source2, freqFragment);
       
@@ -418,8 +427,17 @@ namespace s1
 						  const RegisterID& source1,
 						  const RegisterID& source2)
     {
-      // Interpolation safety: logic ops really aren't
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpLogic> (destination, op, source1, source2));
+      // Interpolation safety: logic ops really aren't, except if both operands are uniform
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
+      bool lerpSafe = (((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0));
+      if (lerpSafe)
+      {
+	SplitBinaryOp (destination, newSeqOp, source1, source2);
+	return;
+      }
+      
       PromoteRegister (source1, freqFragment);
       PromoteRegister (source2, freqFragment);
       
