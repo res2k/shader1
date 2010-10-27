@@ -411,7 +411,7 @@ namespace s1
       // Interpolation safety: comparison ops really aren't, except if both operands are uniform
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
-      bool lerpSafe = (((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0));
+      bool lerpSafe = (((src1Avail & freqFlagU) != 0) && ((src2Avail & freqFlagU) != 0));
       if (lerpSafe)
       {
 	SplitBinaryOp (destination, newSeqOp, source1, source2);
@@ -435,7 +435,7 @@ namespace s1
       // Interpolation safety: logic ops really aren't, except if both operands are uniform
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
-      bool lerpSafe = (((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0));
+      bool lerpSafe = (((src1Avail & freqFlagU) != 0) && ((src2Avail & freqFlagU) != 0));
       if (lerpSafe)
       {
 	SplitBinaryOp (destination, newSeqOp, source1, source2);
