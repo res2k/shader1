@@ -41,17 +41,21 @@ namespace s1
     {
     }
     
+    static inline int LowestFreq (unsigned int availabilityFlag)
+    {
+      int f = __builtin_ffs (availabilityFlag) - 1;
+      // Sanity checks
+      assert ((f >= 0) && (f < freqNum));
+      return f;
+    }
+    
     unsigned int SequenceSplitter::InputVisitor::PromoteRegister (const RegisterID& reg,
 								  int frequency)
     {
       unsigned int availability = parent.GetRegAvailability (reg);
       
-      int f = 0;
-      // Find lowest frequency the reg is available in
-      while ((f < freqNum) && ((availability & (1 << f)) == 0))
-	f++;
+      int f = LowestFreq (availability);
       // Sanity checks
-      assert (f < freqNum);
       assert (f <= frequency);
       int lowestFreq = f;
       // Promote register until the requested frequence is reached
@@ -491,7 +495,7 @@ namespace s1
 						     const LoopedRegs& loopedRegs,
 						     bool keepEmpty)
     {
-      SequenceSplitter blockSplitter (parent.progSplit);
+      SequenceSplitter blockSplitter (parent.progSplit, false);
       blockSplitter.SetInputSequence (blockSequence);
       
       // Forward frequencies to subSeqSplitter
@@ -590,18 +594,18 @@ namespace s1
       std::vector<RegisterID> allInputs;
       allInputs.push_back (conditionReg);
       {
-	const Sequence::IdentifierToRegIDMap& identToRegIDs_imp (ifBlock->GetImportIdentToRegs());
-	for (Sequence::IdentifierToRegIDMap::const_iterator imports = identToRegIDs_imp.begin();
-	     imports != identToRegIDs_imp.end();
+	const Sequence::RegisterImpMappings& seqImports (ifBlock->GetSequence()->GetImports());
+	for (Sequence::RegisterImpMappings::const_iterator imports = seqImports.begin();
+	     imports != seqImports.end();
 	     ++imports)
 	{
 	  allInputs.push_back (parent.inputSeq->GetIdentifierRegisterID (imports->first));
 	}      
       }
       {
-	const Sequence::IdentifierToRegIDMap& identToRegIDs_imp (elseBlock->GetImportIdentToRegs());
-	for (Sequence::IdentifierToRegIDMap::const_iterator imports = identToRegIDs_imp.begin();
-	     imports != identToRegIDs_imp.end();
+	const Sequence::RegisterImpMappings& seqImports (elseBlock->GetSequence()->GetImports());
+	for (Sequence::RegisterImpMappings::const_iterator imports = seqImports.begin();
+	     imports != seqImports.end();
 	     ++imports)
 	{
 	  allInputs.push_back (parent.inputSeq->GetIdentifierRegisterID (imports->first));
