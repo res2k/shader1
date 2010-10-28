@@ -79,6 +79,7 @@ namespace s1
       /** @} */
       
       const SequencePtr& GetSequence() const { return sequence; }
+      SequencePtr& GetSequence() { return sequence; }
       
       void FinishBlock() { FlushVariableInitializers(); }
       void GenerateGlobalVarInitialization ();

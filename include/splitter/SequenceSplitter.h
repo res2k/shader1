@@ -34,6 +34,7 @@ namespace s1
 	unsigned int PromoteRegister (const RegisterID& reg, int frequency);
 	void SplitBinaryOp (const RegisterID& destination, const SequenceOpPtr& op,
 			    const RegisterID& source1, const RegisterID& source2);
+	unsigned int ComputeCombinedFreqs (const std::vector<RegisterID>& sources);
 	int ComputeHighestFreq (const std::vector<RegisterID>& sources);
 	unsigned int PromoteAll (int freq, const std::vector<RegisterID>& sources);
 	
@@ -48,6 +49,8 @@ namespace s1
 			 SequenceOpPtr* newSequences,
 			 const LoopedRegs& loopedRegs = LoopedRegs(),
 			 bool keepEmpty = false);
+	
+	void EmitUnconditionalBranchBlock (const char* suffix, const SequenceOpPtr& blockOp, int f);
       public:
 	InputVisitor (SequenceSplitter& parent);
 	
@@ -176,6 +179,11 @@ namespace s1
       { regAvailability[regID] = freqFlags; }
       
       UnicodeString GetTransferIdent ();
+      
+      /// Allocate register in all output sequences
+      RegisterID AllocateRegister (const std::string& typeStr,
+				   const s1::parser::SemanticsHandler::TypePtr& originalType,
+				   const UnicodeString& name);
     private:
       typedef boost::unordered_map<RegisterID, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;

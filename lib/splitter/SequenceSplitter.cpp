@@ -49,6 +49,15 @@ namespace s1
       return f;
     }
     
+    static inline int HighestFreq (unsigned int availabilityFlag)
+    {
+      assert (availabilityFlag != 0);
+      int f =  (CHAR_BIT * sizeof (unsigned int) - __builtin_clz (availabilityFlag) - 1);
+      // Sanity checks
+      assert ((f >= 0) && (f < freqNum));
+      return f;
+    }
+    
     unsigned int SequenceSplitter::InputVisitor::PromoteRegister (const RegisterID& reg,
 								  int frequency)
     {
@@ -118,6 +127,19 @@ namespace s1
       parent.SetRegAvailability (destination, destAvail);
     }
     
+    unsigned int SequenceSplitter::InputVisitor::ComputeCombinedFreqs (const std::vector<RegisterID>& sources)
+    {
+      unsigned int allFreq = 0;
+      for (std::vector<RegisterID>::const_iterator it (sources.begin());
+	   it != sources.end();
+	   ++it)
+      {
+	unsigned int srcAvail = parent.GetRegAvailability (*it);
+	allFreq |= srcAvail;
+      }
+      return allFreq;
+    }
+    
     int SequenceSplitter::InputVisitor::ComputeHighestFreq (const std::vector<RegisterID>& sources)
     {
       bool found = false;
@@ -168,7 +190,10 @@ namespace s1
       
       for (int f = 0; f < freqNum; f++)
       {
-	if (freqMask & (1 << f)) parent.outputSeq[f]->AddOp (op);
+	if (freqMask & (1 << f))
+	{
+	  parent.outputSeq[f]->AddOp (op);
+	}
       }
     }
     
@@ -579,6 +604,49 @@ namespace s1
       }
     }
     
+    void SequenceSplitter::InputVisitor::EmitUnconditionalBranchBlock (const char* suffix,
+								       const SequenceOpPtr& blockOp,
+								       int f)
+    {
+      boost::shared_ptr<intermediate::SequenceOpBlock> newBlock (
+	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (blockOp));
+      SequencePtr seq (newBlock->GetSequence());
+      
+      Sequence::RegisterExpMappings newExports;
+      Sequence::RegisterExpMappings& seqExports (seq->GetExports());
+      Sequence::IdentifierToRegIDMap newIdentToRegIDsExp (newBlock->GetExportIdentToRegs());
+      for (Sequence::RegisterExpMappings::iterator seqExp (seqExports.begin());
+	    seqExp != seqExports.end();
+	    ++seqExp)
+      {
+	RegisterID oldReg (parent.inputSeq->GetIdentifierRegisterID (seqExp->first));
+	Sequence::RegisterBankPtr bank;
+	Sequence::RegisterPtr reg (parent.inputSeq->QueryRegisterPtrFromID (oldReg, bank));
+	UnicodeString newIdent (reg->GetName());
+	newIdent.append ("$");
+	newIdent.append (suffix);
+	newIdent.append (UChar ('0' + f));
+	
+	std::string typeStr (
+	  intermediate::IntermediateGeneratorSemanticsHandler::GetTypeString (bank->GetOriginalType()));
+	RegisterID newReg (parent.AllocateRegister (typeStr, bank->GetOriginalType(), newIdent));
+	newExports[newIdent] = seqExp->second;
+	newIdentToRegIDsExp[newIdent] = newReg;
+      }
+      seqExports = newExports;
+    
+      std::vector<RegisterID> readRegs;
+      readRegs.insert (readRegs.begin(), newBlock->GetReadRegisters().begin(), newBlock->GetReadRegisters().end());
+      std::vector<RegisterID> writtenRegs;
+      writtenRegs.insert (writtenRegs.begin(), newBlock->GetWrittenRegisters().begin(), newBlock->GetWrittenRegisters().end());
+      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seq,
+										 newBlock->GetImportIdentToRegs(),
+										 newIdentToRegIDsExp,
+										 readRegs,
+										 writtenRegs));
+      parent.outputSeq[f]->AddOp (newSeqOp);
+    }
+    
     void SequenceSplitter::InputVisitor::OpBranch (const RegisterID& conditionReg,
 						   const SequenceOpPtr& seqOpIf,
 						   const SequenceOpPtr& seqOpElse)
@@ -613,6 +681,7 @@ namespace s1
       }
       
       // Propagate condition and all sequence inputs to highest frequency
+      unsigned int combinedFreqs = ComputeCombinedFreqs (allInputs);
       int highestFreq = ComputeHighestFreq (allInputs);
       unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
       
@@ -642,18 +711,31 @@ namespace s1
       /* @@@ CHECK: Registers are supposed to be written to in both branches.
          Frequencies of those regs should be intersection of frequencies
          from _both_ branches, */
+      
+      // Frequency at which the condition needs to be evaluated
+      int condFreq = HighestFreq (commonFreqs);
+      
       for (int f = 0; f < freqNum; f++)
       {
 	//if (!newSeqOps[f]) continue;
-	if ((commonFreqs & (1 << f)) == 0) continue;
+	//if ((commonFreqs & (1 << f)) == 0) continue;
+	if ((combinedFreqs & (1 << f)) == 0) continue;
 	// @@@ Should be possible to emit branches to VP even if condition is FP
 	assert(newIfOps[f] != 0);
 	assert(newElseOps[f] != 0);
 	
-	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBranch> (conditionReg,
-										    newIfOps[f],
-										    newElseOps[f]));
-	parent.outputSeq[f]->AddOp (newSeqOp);
+	if (f == condFreq)
+	{
+	  SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBranch> (conditionReg,
+										      newIfOps[f],
+										      newElseOps[f]));
+	  parent.outputSeq[f]->AddOp (newSeqOp);
+	}
+	else
+	{
+	  EmitUnconditionalBranchBlock ("if", newIfOps[f], f);
+	  EmitUnconditionalBranchBlock ("else", newElseOps[f], f);
+	}
       }
     }
     
@@ -775,12 +857,7 @@ namespace s1
 	  
 	  std::string typeStr (
 	    intermediate::IntermediateGeneratorSemanticsHandler::GetTypeString (tfv.valueType));
-	  // Generate registers thrice so IDs are the same across all frequency program. (Makes life easier.)
-	  RegisterID regID (parent.outputSeq[freqUniform]->AllocateRegister (typeStr, tfv.valueType, transferIdent));
-	  RegisterID regID2 (parent.outputSeq[freqVertex]->AllocateRegister (typeStr, tfv.valueType, transferIdent));
-	  assert (regID == regID2);
-	  RegisterID regID3 (parent.outputSeq[freqFragment]->AllocateRegister (typeStr, tfv.valueType, transferIdent));
-	  assert (regID == regID3);
+	  RegisterID regID (parent.AllocateRegister (typeStr, tfv.valueType, transferIdent));
 	  
 	  transferOut[f].push_back (regID);
 	  transferIn[f+1].push_back (regID);
@@ -987,6 +1064,21 @@ namespace s1
 		  "%u", transferIdentNum++);
       transferIdent.append (transferSuffix);
       return transferIdent;
+    }
+    
+    s1::intermediate::RegisterID
+    SequenceSplitter::AllocateRegister (const std::string& typeStr,
+					const s1::parser::SemanticsHandler::TypePtr& originalType,
+					const UnicodeString& name)
+    {
+      // Generate registers for all output sequences are the same across all frequency program. (Makes life easier.)
+      RegisterID regID (outputSeq[0]->AllocateRegister (typeStr, originalType, name));
+      for (int f = 1; f < freqNum; f++)
+      {
+	RegisterID regID2 (outputSeq[f]->AllocateRegister (typeStr, originalType, name));
+	assert (regID == regID2);
+      }
+      return regID;
     }
   } // namespace splitter
 } // namespace s1

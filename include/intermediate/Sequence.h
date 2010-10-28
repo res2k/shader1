@@ -101,6 +101,7 @@ namespace s1
 		      const RegisterID& localID);
       typedef std::tr1::unordered_map<UnicodeString, RegisterID> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const { return exports; }
+      RegisterExpMappings& GetExports () { return exports; }
       void SetExport (const UnicodeString& parentRegName,
 		      const RegisterID& localID);
     protected:
