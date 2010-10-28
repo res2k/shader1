@@ -38,7 +38,7 @@ namespace s1
 	int ComputeHighestFreq (const std::vector<RegisterID>& sources);
 	unsigned int PromoteAll (int freq, const std::vector<RegisterID>& sources);
 	
-	void AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
+	unsigned int AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
 	
 	typedef std::pair<RegisterID, RegisterID> LoopedReg;
 	typedef std::vector<LoopedReg> LoopedRegs;
