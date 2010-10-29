@@ -56,7 +56,7 @@ namespace s1
     
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
-     : owner (owner), target (target)
+     : owner (owner), target (target), emitEmptyBlocks (false)
     {
     }
     
@@ -423,7 +423,7 @@ namespace s1
 				     intermediate::ProgramFunction::TransferMappings (),
 				     owner->outParams);
       StringsArrayPtr blockStrings (codegen.Generate());
-      if (blockStrings->Size() > 0)
+      if (emitEmptyBlocks || (blockStrings->Size() > 0))
       {
 	target->AddString ("{");
 	target->AddStrings (*blockStrings, 2);
@@ -455,6 +455,8 @@ namespace s1
 	}
       }
       
+      bool oldEmitEmptyBlocks = emitEmptyBlocks;
+      emitEmptyBlocks = true;
       std::string ifLine ("if (");
       ifLine.append (owner->GetOutputRegisterName (conditionReg));
       ifLine.append (")");
@@ -462,6 +464,7 @@ namespace s1
       seqOpIf->Visit (*this);
       target->AddString ("else");
       seqOpElse->Visit (*this);
+      emitEmptyBlocks = oldEmitEmptyBlocks;
     }
 
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpWhile (const RegisterID& conditionReg,

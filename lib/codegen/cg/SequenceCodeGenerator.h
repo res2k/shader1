@@ -47,6 +47,7 @@ namespace s1
 	
 	SequenceCodeGenerator* owner;
 	StringsArrayPtr target;
+	bool emitEmptyBlocks;
 	
 	void EmitAssign (const RegisterID& destination,
 			 const char* value);
