@@ -179,6 +179,40 @@ namespace s1
     {
       exports[parentRegName] = localID;
     }
+    
+    void Sequence::CleanUnusedImportsExports ()
+    {
+      RegisterIDSet allReadRegisters, allWrittenRegisters;
+      for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
+      {
+	const RegisterIDSet& opRead = (*op)->GetReadRegisters();
+	allReadRegisters.insert (opRead.begin(), opRead.end());
+	const RegisterIDSet& opWritten = (*op)->GetWrittenRegisters();
+	allWrittenRegisters.insert (opWritten.begin(), opWritten.end());
+      }
+      
+      {
+	RegisterImpMappings::iterator it = imports.begin();
+	while (it != imports.end())
+	{
+	  if (allReadRegisters.count (it->second) == 0)
+	    it = imports.erase (it);
+	  else
+	    ++it;
+	}
+      }
+      {
+	RegisterExpMappings::iterator it = exports.begin();
+	while (it != exports.end())
+	{
+	  if (allWrittenRegisters.count (it->second) == 0)
+	    it = exports.erase (it);
+	  else
+	    ++it;
+	}
+      }
+    }
+
   } // namespace intermediate
 } // namespace s1
 

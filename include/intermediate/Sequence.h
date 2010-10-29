@@ -104,6 +104,8 @@ namespace s1
       RegisterExpMappings& GetExports () { return exports; }
       void SetExport (const UnicodeString& parentRegName,
 		      const RegisterID& localID);
+		      
+      void CleanUnusedImportsExports ();
     protected:
       std::vector<RegisterBankPtr> registerBanks;
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;

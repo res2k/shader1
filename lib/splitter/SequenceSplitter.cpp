@@ -994,6 +994,11 @@ namespace s1
       
       inputSeq->Visit (visitor);
       
+      for (int f = 0; f < freqNum; f++)
+      {
+	outputSeq[f]->CleanUnusedImportsExports ();
+      }
+      
       // Insert 'uniform' sequence at start of both V/F sequences
       if (mergeUniformToVF)
       {
