@@ -38,7 +38,8 @@ namespace s1
 										    ExpressionPtr(), false));
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       TypeImplPtr retTypeImpl (boost::shared_static_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
-      if (!handler->voidType->IsEqual (*retTypeImpl))
+      if (retTypeImpl // @@@ retTypeImpl == 0 happens in tests; but also in real life?
+	&& !handler->voidType->IsEqual (*retTypeImpl))
       {
 	char newRetValName[sizeof (varReturnValueName) + charsToFormatInt + 1];
 	snprintf (newRetValName, sizeof (newRetValName), "%s%d", varReturnValueName, 
