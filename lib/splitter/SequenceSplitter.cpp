@@ -645,7 +645,8 @@ namespace s1
     
     void SequenceSplitter::InputVisitor::EmitUnconditionalBranchBlock (const char* suffix,
 								       const SequenceOpPtr& blockOp,
-								       int f)
+								       int f,
+								       RenamedBranchOutputs& outputs)
     {
       boost::shared_ptr<intermediate::SequenceOpBlock> newBlock (
 	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (blockOp));
@@ -654,11 +655,22 @@ namespace s1
       Sequence::RegisterExpMappings newExports;
       Sequence::RegisterExpMappings& seqExports (seq->GetExports());
       Sequence::IdentifierToRegIDMap newIdentToRegIDsExp (newBlock->GetExportIdentToRegs());
+      std::vector<RegisterID> writtenRegs;
       for (Sequence::RegisterExpMappings::iterator seqExp (seqExports.begin());
 	    seqExp != seqExports.end();
 	    ++seqExp)
       {
 	RegisterID oldReg (parent.inputSeq->GetIdentifierRegisterID (seqExp->first));
+	if (!oldReg.IsValid())
+	{
+	  /* Happens for transfer regs created by block splitting.
+	     Keep them as-is. */
+	  newExports[seqExp->first] = seqExp->second;
+	  Sequence::IdentifierToRegIDMap::const_iterator expReg = newIdentToRegIDsExp.find (seqExp->first);
+	  assert (expReg != newIdentToRegIDsExp.end());
+	  writtenRegs.push_back (expReg->second);
+	  continue;
+	}
 	Sequence::RegisterBankPtr bank;
 	Sequence::RegisterPtr reg (parent.inputSeq->QueryRegisterPtrFromID (oldReg, bank));
 	UnicodeString newIdent (reg->GetName());
@@ -671,19 +683,75 @@ namespace s1
 	RegisterID newReg (parent.AllocateRegister (typeStr, bank->GetOriginalType(), newIdent));
 	newExports[newIdent] = seqExp->second;
 	newIdentToRegIDsExp[newIdent] = newReg;
+	
+	parent.SetRegAvailability (newReg, 1 << f);
+	outputs.push_back (std::make_pair (oldReg, newReg));
+	writtenRegs.push_back (newReg);
       }
       seqExports = newExports;
     
       std::vector<RegisterID> readRegs;
       readRegs.insert (readRegs.begin(), newBlock->GetReadRegisters().begin(), newBlock->GetReadRegisters().end());
-      std::vector<RegisterID> writtenRegs;
-      writtenRegs.insert (writtenRegs.begin(), newBlock->GetWrittenRegisters().begin(), newBlock->GetWrittenRegisters().end());
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seq,
 										 newBlock->GetImportIdentToRegs(),
 										 newIdentToRegIDsExp,
 										 readRegs,
 										 writtenRegs));
       parent.outputSeq[f]->AddOp (newSeqOp);
+    }
+    
+    intermediate::SequenceOpPtr SequenceSplitter::InputVisitor::AugmentBranchBlockWithRenames (const char* suffix,
+											       const SequenceOpPtr& blockOp,
+											       const RenamedBranchOutputs* renames,
+											       int f)
+    {
+      boost::shared_ptr<intermediate::SequenceOpBlock> newBlock (
+	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (blockOp));
+      SequencePtr seq (newBlock->GetSequence());
+      
+      Sequence::IdentifierToRegIDMap newIdentToRegIDsImp (newBlock->GetImportIdentToRegs());
+      Sequence::IdentifierToRegIDMap newIdentToRegIDsExp (newBlock->GetExportIdentToRegs());
+      
+      std::vector<RegisterID> readRegs;
+      readRegs.insert (readRegs.begin(), newBlock->GetReadRegisters().begin(), newBlock->GetReadRegisters().end());
+      std::vector<RegisterID> writtenRegs;
+      writtenRegs.insert (writtenRegs.begin(), newBlock->GetWrittenRegisters().begin(), newBlock->GetWrittenRegisters().end());
+      for (int g = 0; g < f; g++)
+      {
+	BOOST_FOREACH(const RegisterPair& rename, renames[g])
+	{
+	  PromoteRegister (rename.second, f);
+	  
+	  intermediate::Sequence::RegisterBankPtr srcRegBank;
+	  intermediate::Sequence::RegisterPtr srcRegPtr (parent.outputSeq[g]->QueryRegisterPtrFromID (rename.second, srcRegBank));
+	  intermediate::Sequence::RegisterPtr dstRegPtr (parent.outputSeq[g]->QueryRegisterPtrFromID (rename.first));
+	  
+	  UnicodeString newIdent (dstRegPtr->GetName());
+	  newIdent.append ("$");
+	  newIdent.append (suffix);
+	  newIdent.append (UChar ('0' + f));
+	  
+	  std::string typeStr (
+	    intermediate::IntermediateGeneratorSemanticsHandler::GetTypeString (srcRegBank->GetOriginalType()));
+	  RegisterID newReg (seq->AllocateRegister (typeStr, srcRegBank->GetOriginalType(), newIdent));
+	  seq->AddImport (srcRegPtr->GetName(), newReg);
+	  seq->SetExport (dstRegPtr->GetName(), newReg);
+	  
+	  writtenRegs.push_back (rename.first);
+	  readRegs.push_back (rename.second);
+	  
+	  newIdentToRegIDsImp[srcRegPtr->GetName()] = rename.second;
+	  newIdentToRegIDsExp[dstRegPtr->GetName()] = rename.first;
+	}
+      }
+    
+      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seq,
+										 newIdentToRegIDsImp,
+										 newIdentToRegIDsExp,
+										 readRegs,
+										 writtenRegs));
+      
+      return newSeqOp;
     }
     
     void SequenceSplitter::InputVisitor::OpBranch (const RegisterID& conditionReg,
@@ -754,6 +822,9 @@ namespace s1
       // Frequency at which the condition needs to be evaluated
       int condFreq = HighestFreq (commonFreqs);
       
+      RenamedBranchOutputs ifRenames[freqNum];
+      RenamedBranchOutputs elseRenames[freqNum];
+      
       for (int f = 0; f < freqNum; f++)
       {
 	//if (!newSeqOps[f]) continue;
@@ -765,15 +836,18 @@ namespace s1
 	
 	if (f == condFreq)
 	{
+	  SequenceOpPtr augmentedIfOp (AugmentBranchBlockWithRenames ("if", newIfOps[f], ifRenames, f));
+	  SequenceOpPtr augmentedElseOp (AugmentBranchBlockWithRenames ("else", newElseOps[f], elseRenames, f));
+	  
 	  SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBranch> (conditionReg,
-										      newIfOps[f],
-										      newElseOps[f]));
+										      augmentedIfOp,
+										      augmentedElseOp));
 	  parent.outputSeq[f]->AddOp (newSeqOp);
 	}
 	else
 	{
-	  EmitUnconditionalBranchBlock ("if", newIfOps[f], f);
-	  EmitUnconditionalBranchBlock ("else", newElseOps[f], f);
+	  EmitUnconditionalBranchBlock ("if", newIfOps[f], f, ifRenames[f]);
+	  EmitUnconditionalBranchBlock ("else", newElseOps[f], f, elseRenames[f]);
 	}
       }
     }
@@ -1133,10 +1207,12 @@ namespace s1
     {
       // Generate registers for all output sequences are the same across all frequency program. (Makes life easier.)
       RegisterID regID (outputSeq[0]->AllocateRegister (typeStr, originalType, name));
+      outputSeq[0]->SetIdentifierRegisterID (name, regID);
       for (int f = 1; f < freqNum; f++)
       {
 	RegisterID regID2 (outputSeq[f]->AllocateRegister (typeStr, originalType, name));
 	assert (regID == regID2);
+	outputSeq[f]->SetIdentifierRegisterID (name, regID);
       }
       return regID;
     }

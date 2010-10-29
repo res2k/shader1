@@ -50,7 +50,14 @@ namespace s1
 			 const LoopedRegs& loopedRegs = LoopedRegs(),
 			 bool keepEmpty = false);
 	
-	void EmitUnconditionalBranchBlock (const char* suffix, const SequenceOpPtr& blockOp, int f);
+	typedef std::pair<RegisterID, RegisterID> RegisterPair;
+	typedef std::vector<RegisterPair> RenamedBranchOutputs;
+	void EmitUnconditionalBranchBlock (const char* suffix, const SequenceOpPtr& blockOp, int f,
+					   RenamedBranchOutputs& outputs);
+	SequenceOpPtr AugmentBranchBlockWithRenames (const char* suffix,
+						     const SequenceOpPtr& blockOp,
+						     const RenamedBranchOutputs* renames,
+						     int f);
       public:
 	InputVisitor (SequenceSplitter& parent);
 	
