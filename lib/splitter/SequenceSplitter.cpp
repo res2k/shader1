@@ -742,6 +742,8 @@ namespace s1
 	  
 	  newIdentToRegIDsImp[srcRegPtr->GetName()] = rename.second;
 	  newIdentToRegIDsExp[dstRegPtr->GetName()] = rename.first;
+	  
+	  parent.SetRegAvailability (rename.first, 1 << f);
 	}
       }
     
@@ -815,10 +817,6 @@ namespace s1
 		    elseBlock->GetExportIdentToRegs(),
 		    writtenRegs, newElseOps, LoopedRegs(), true);
       }
-      /* @@@ CHECK: Registers are supposed to be written to in both branches.
-         Frequencies of those regs should be intersection of frequencies
-         from _both_ branches, */
-      
       // Frequency at which the condition needs to be evaluated
       int condFreq = HighestFreq (commonFreqs);
       
