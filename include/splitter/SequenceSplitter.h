@@ -150,7 +150,8 @@ namespace s1
       
       void PerformSplit ();
       
-      const std::vector<RegisterID>& GetTransferRegs (int srcFreq) const
+      typedef std::vector<RegisterID> TransferRegsVector;
+      const TransferRegsVector& GetTransferRegs (int srcFreq) const
       { return transferRegs[srcFreq]; }
       
       intermediate::SequencePtr GetOutputUniformSequence ()
@@ -173,7 +174,7 @@ namespace s1
       /** Registers to transfer to next frequency.
           The registers in element 0 need to be transferred from frequency 0 to frequency 1,
           the registers in element 1 from frequency 2 to frequency 2 and so on. */
-      std::vector<RegisterID> transferRegs[freqNum-1];
+      TransferRegsVector transferRegs[freqNum-1];
       
       void SetRegAvailability (const RegisterID& regID, unsigned int freqFlags)
       { regAvailability[regID] = freqFlags; }

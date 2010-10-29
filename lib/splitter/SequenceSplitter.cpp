@@ -66,15 +66,13 @@ namespace s1
       int f = LowestFreq (availability);
       // Sanity checks
       assert (f <= frequency);
-      int lowestFreq = f;
       // Promote register until the requested frequence is reached
       while (f < frequency)
       {
 	f++;
 	if ((availability & (1 << f)) == 0)
 	{
-	  if (lowestFreq != freqUniform) // Hack: don't transfer 'uniform' values
-	    parent.transferRegs[f-1].push_back (reg);
+	  parent.transferRegs[f-1].push_back (reg);
 	}
 	availability |= (1 << f);
       }
@@ -552,6 +550,51 @@ namespace s1
       
       blockSplitter.PerformSplit();
       
+      Sequence::IdentifierToRegIDMap newIdentToRegIDs_imp (identToRegIDs_imp);
+      Sequence::IdentifierToRegIDMap newIdentToRegIDs_exp (identToRegIDs_exp);
+      // Propagate registers transferred by nested block to this block
+      typedef boost::unordered_map<RegisterID, std::pair<RegisterID, UnicodeString> > TransferRegsMap;
+      TransferRegsMap transferRegsMap;
+      for (int f = 0; f < freqNum-1; f++)
+      {
+	const SequencePtr& srcSeq (blockSplitter.GetOutputSequence (f));
+	const SequencePtr& dstSeq (blockSplitter.GetOutputSequence (f+1));
+	const TransferRegsVector& transferRegs = blockSplitter.GetTransferRegs (f);
+	BOOST_FOREACH(const RegisterID& reg, transferRegs)
+	{
+	  RegisterID newReg;
+	  UnicodeString regName;
+	  TransferRegsMap::const_iterator transferReg (transferRegsMap.find (reg));
+	  if (transferReg != transferRegsMap.end())
+	  {
+	    newReg = transferReg->second.first;
+	    regName = transferReg->second.second;
+	  }
+	  else
+	  {
+	    Sequence::RegisterBankPtr regBank;
+	    Sequence::RegisterPtr regPtr (srcSeq->QueryRegisterPtrFromID (reg, regBank));
+	    
+	    std::string typeStr (
+	      intermediate::IntermediateGeneratorSemanticsHandler::GetTypeString (regBank->GetOriginalType()));
+	    regName = parent.GetTransferIdent ();
+	    newReg = parent.AllocateRegister (typeStr, regBank->GetOriginalType(), regName);
+	    transferRegsMap[reg] = std::make_pair (newReg, regName);
+	    
+	    newIdentToRegIDs_imp[regName] = newReg;
+	    newIdentToRegIDs_exp[regName] = newReg;
+	  
+	    parent.SetRegAvailability (newReg, blockSplitter.GetRegAvailability (reg));
+	    srcSeq->SetExport (regName, reg);
+	  }
+	  
+	  dstSeq->AddImport (regName, reg);
+	  parent.transferRegs[f].push_back (newReg);
+	  //parent.SetRegAvailability (newReg, (1 << f) | (1 << (f+1)));
+	  //parent.SetRegAvailability (newReg, (1 << f));
+	}
+      }
+      
       // Compute new writtenRegisters, update availability flags
       std::vector<RegisterID> newWrittenRegisters[freqNum];
       const Sequence::RegisterExpMappings& blockExports = blockSequence->GetExports();
@@ -559,8 +602,8 @@ namespace s1
 	   exports != blockExports.end();
 	   ++exports)
       {
-	Sequence::IdentifierToRegIDMap::const_iterator expRegID = identToRegIDs_exp.find (exports->first);
-	assert (expRegID != identToRegIDs_exp.end());
+	Sequence::IdentifierToRegIDMap::const_iterator expRegID = newIdentToRegIDs_exp.find (exports->first);
+	assert (expRegID != newIdentToRegIDs_exp.end());
 	RegisterID reg (expRegID->second);
 	RegisterID reg_subseq (exports->second);
 	
@@ -577,8 +620,8 @@ namespace s1
       {
 	if (!keepEmpty && (blockSplitter.outputSeq[f]->GetNumOps() == 0)) continue;
 	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (blockSplitter.outputSeq[f],
-										   identToRegIDs_imp,
-										   identToRegIDs_exp,
+										   newIdentToRegIDs_imp,
+										   newIdentToRegIDs_exp,
 										   newReadRegisters[f],
 										   newWrittenRegisters[f]));
 	newSequences[f] = newSeqOp;
@@ -1002,6 +1045,22 @@ namespace s1
       // Insert 'uniform' sequence at start of both V/F sequences
       if (mergeUniformToVF)
       {
+	// Remove transfer regs that originate from the uniform seq
+	for (int f = 0; f < freqNum-1; f++)
+	{
+	  TransferRegsVector::iterator it = transferRegs[f].begin();
+	  while (it != transferRegs[f].end())
+	  {
+	    RegisterID reg (*it);
+	    unsigned int avail = regAvailability[reg];
+
+	    if (LowestFreq (avail) == freqUniform)
+	      transferRegs[f].erase (it);
+	    else
+	      ++it;
+	  }
+	}
+
 	for (size_t i = 0; i < outputSeq[freqUniform]->GetNumOps(); i++)
 	{
 	  SequenceOpPtr uniOp (outputSeq[freqUniform]->GetOp (i));
