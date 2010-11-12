@@ -42,6 +42,7 @@ namespace s1
 	const TypePtr& GetOriginalType () const { return originalType; }
       };
       typedef boost::shared_ptr<Register> RegisterPtr;
+      typedef boost::unordered_set<RegisterPtr> RegisterSet;
       
       class RegisterBank
       {
@@ -102,6 +103,9 @@ namespace s1
       RegisterExpMappings& GetExports () { return exports; }
       void SetExport (const UnicodeString& parentRegName,
 		      const RegisterPtr& localReg);
+
+      RegisterSet GetAllReadRegisters() const;
+      RegisterSet GetAllWrittenRegisters() const;
 		      
       void CleanUnusedImportsExports ();
     protected:
@@ -117,7 +121,7 @@ namespace s1
     };
     
     typedef Sequence::RegisterPtr RegisterPtr;
-    typedef boost::unordered_set<RegisterPtr> RegisterSet;
+    typedef Sequence::RegisterSet RegisterSet;
     
   } // namespace intermediate
 } // namespace s1

@@ -168,16 +168,32 @@ namespace s1
       exports[parentRegName] = local;
     }
     
-    void Sequence::CleanUnusedImportsExports ()
+    RegisterSet Sequence::GetAllReadRegisters() const
     {
-      RegisterSet allReadRegisters, allWrittenRegisters;
+      RegisterSet allReadRegisters;
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
 	const RegisterSet& opRead = (*op)->GetReadRegisters();
 	allReadRegisters.insert (opRead.begin(), opRead.end());
+      }
+      return allReadRegisters;
+    }
+    
+    RegisterSet Sequence::GetAllWrittenRegisters() const
+    {
+      RegisterSet allWrittenRegisters;
+      for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
+      {
 	const RegisterSet& opWritten = (*op)->GetWrittenRegisters();
 	allWrittenRegisters.insert (opWritten.begin(), opWritten.end());
       }
+      return allWrittenRegisters;
+    }
+    
+    void Sequence::CleanUnusedImportsExports ()
+    {
+      RegisterSet allReadRegisters (GetAllReadRegisters ());
+      RegisterSet allWrittenRegisters (GetAllWrittenRegisters ());
       
       {
 	RegisterImpMappings::iterator it = imports.begin();
