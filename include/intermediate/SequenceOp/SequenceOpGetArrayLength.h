@@ -11,8 +11,8 @@ namespace s1
     class SequenceOpGetArrayLength : public SequenceOpUnary
     {
     public:
-      SequenceOpGetArrayLength (RegisterID destination,
-				RegisterID source);
+      SequenceOpGetArrayLength (RegisterPtr destination,
+				RegisterPtr source);
 			    
       void Visit (SequenceVisitor& visitor);
     };

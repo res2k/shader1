@@ -67,7 +67,7 @@ namespace s1
     {
       for (size_t i = 0; i < actualParams.size(); i++)
       {
-	RegisterID reg1, reg2;
+	RegisterPtr reg1, reg2;
 	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	if (overload->params[i].dir & ScopeImpl::dirIn)
 	{
@@ -91,22 +91,22 @@ namespace s1
       return boost::shared_static_cast<TypeImpl> (overload->returnType);
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
-												 RegisterClassification classify,
-												 bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
+												  RegisterClassification classify,
+												  bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
       SelectOverload ();
       
-      if (overload->identifier.isEmpty()) return RegisterID();
+      if (overload->identifier.isEmpty()) return RegisterPtr();
       
       FetchedRegs fetchedRegs;
       PostActions postActions;
       FetchRegisters (block, fetchedRegs, postActions);
       
-      std::vector<RegisterID> inParams;
-      std::vector<RegisterID> outParams;
+      std::vector<RegisterPtr> inParams;
+      std::vector<RegisterPtr> outParams;
       for (size_t i = 0; i < overload->params.size(); i++)
       {
 	const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
@@ -114,12 +114,12 @@ namespace s1
 	{
 	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
 	  boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
-	  RegisterID inReg (fetchedRegs[i].first);
-	  assert (inReg.IsValid());
+	  RegisterPtr inReg (fetchedRegs[i].first);
+	  assert (inReg);
 	  boost::shared_ptr<TypeImpl> formalParamType (boost::shared_static_cast<TypeImpl> (param.type));
 	  if (!paramExprType->IsEqual (*formalParamType))
 	  {
-	    RegisterID targetReg (handler->AllocateRegister (*(block.GetSequence()), formalParamType, Intermediate));
+	    RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequence()), formalParamType, Intermediate));
 	    handler->GenerateCast (*(block.GetSequence()), targetReg, formalParamType, inReg, paramExprType);
 	    inReg = targetReg;
 	  }
@@ -128,8 +128,8 @@ namespace s1
 	if (param.dir & ScopeImpl::dirOut)
 	{
 	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
-	  RegisterID outReg (fetchedRegs[i].second);
-	  if (!outReg.IsValid())
+	  RegisterPtr outReg (fetchedRegs[i].second);
+	  if (!outReg)
 	    throw Exception (ActualParameterNotAnLValue);
 	  outParams.push_back (outReg);
 	}
@@ -147,7 +147,7 @@ namespace s1
 	  NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (imported->first));
 	  if (global)
 	  {
-	    RegisterID globLocal (block.GetRegisterForName (global, false));
+	    RegisterPtr globLocal (block.GetRegisterForName (global, false));
 	    inParams.push_back (globLocal);
 	  }
 	}
@@ -160,13 +160,13 @@ namespace s1
 	  NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (exported->first));
 	  if (global)
 	  {
-	    RegisterID globLocal (block.GetRegisterForName (global, true));
+	    RegisterPtr globLocal (block.GetRegisterForName (global, true));
 	    outParams.push_back (globLocal);
 	  }
 	}
       }
       
-      RegisterID destination;
+      RegisterPtr destination;
       boost::shared_ptr<TypeImpl> retType (GetValueType());
       if (!retType->IsEqual (*(handler->GetVoidType())))
 	destination = handler->AllocateRegister (*(block.GetSequence()), retType, classify);
@@ -177,7 +177,7 @@ namespace s1
 							   inParams);
       else
       {
-	if (destination.IsValid())
+	if (destination)
 	  outParams.insert (outParams.begin(), destination);
 	seqOp = boost::make_shared<SequenceOpFunctionCall> (overload->identifier, inParams, outParams);
       }

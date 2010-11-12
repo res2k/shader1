@@ -1,19 +1,20 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpBinary.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    SequenceOpBinary::SequenceOpBinary (RegisterID destination,
-					RegisterID source1,
-					RegisterID source2)
+    SequenceOpBinary::SequenceOpBinary (RegisterPtr destination,
+					RegisterPtr source1,
+					RegisterPtr source2)
      : SequenceOpWithResult (destination), source1 (source1), source2 (source2)
     {
     }
     
-    RegisterIDSet SequenceOpBinary::GetReadRegisters () const
+    RegisterSet SequenceOpBinary::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (source1);
       regs.insert (source2);
       return regs;

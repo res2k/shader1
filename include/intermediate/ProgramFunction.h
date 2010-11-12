@@ -3,10 +3,10 @@
 
 #include <unicode/unistr.h>
 
+#include "intermediate/Sequence.h"
 #include "parser/SemanticsHandler.h"
 
 #include "forwarddecl.h"
-#include "RegisterID.h"
 
 namespace s1
 {
@@ -42,8 +42,8 @@ namespace s1
       int GetExecutionFrequency () const { return execFreq; }
       
       void SetTransferMapping (const UnicodeString& transferVal,
-			       const RegisterID& programReg);
-      typedef std::vector<std::pair<UnicodeString, RegisterID> > TransferMappings;
+			       const RegisterPtr& programReg);
+      typedef std::vector<std::pair<UnicodeString, RegisterPtr> > TransferMappings;
       const TransferMappings& GetTransferMappings () const { return transferMappings; }
       
       void SetParameterFrequency (const UnicodeString& param, int freq)

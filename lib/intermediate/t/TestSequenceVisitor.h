@@ -51,7 +51,7 @@ public:
     opFunctionCall,
     opBuiltinCall
   };
-  typedef s1::intermediate::RegisterID RegisterID;
+  typedef s1::intermediate::RegisterPtr RegisterPtr;
   typedef s1::intermediate::Sequence Sequence;
   struct SequenceEntry
   {
@@ -65,9 +65,9 @@ public:
       float floatConst;
     };
       
-    RegisterID destReg;
-    RegisterID sourceReg[3];
-    std::vector<RegisterID> sourceRegs;
+    RegisterPtr destReg;
+    RegisterPtr sourceReg[3];
+    std::vector<RegisterPtr> sourceRegs;
     
     unsigned int matrixRows;
     unsigned int matrixCols;
@@ -76,13 +76,13 @@ public:
     
     UnicodeString functionIdentifier;
     s1::intermediate::BuiltinFunction whatBuiltin;
-    std::vector<RegisterID> inParams;
-    std::vector<RegisterID> outParams;
+    std::vector<RegisterPtr> inParams;
+    std::vector<RegisterPtr> outParams;
   };
   
   std::vector<SequenceEntry> entries;
   
-  void OpConstBool (const RegisterID& destination,
+  void OpConstBool (const RegisterPtr& destination,
 		    bool value)
   {
     SequenceEntry entry;
@@ -92,7 +92,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpConstInt (const RegisterID& destination,
+  void OpConstInt (const RegisterPtr& destination,
 		   int value)
   {
     SequenceEntry entry;
@@ -102,7 +102,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpConstUInt (const RegisterID& destination,
+  void OpConstUInt (const RegisterPtr& destination,
 		    unsigned int value)
   {
     SequenceEntry entry;
@@ -112,7 +112,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpConstFloat (const RegisterID& destination,
+  void OpConstFloat (const RegisterPtr& destination,
 		     float value)
   {
     SequenceEntry entry;
@@ -123,8 +123,8 @@ public:
   }
   
 			      
-  void OpAssign (const RegisterID& destination,
-		 const RegisterID& source)
+  void OpAssign (const RegisterPtr& destination,
+		 const RegisterPtr& source)
   {
     SequenceEntry entry;
     entry.op = opAssignment;
@@ -134,9 +134,9 @@ public:
   }
   
 			      
-  void OpCast (const RegisterID& destination,
+  void OpCast (const RegisterPtr& destination,
 	       BaseType destType,
-	       const RegisterID& source)
+	       const RegisterPtr& source)
   {
     SequenceEntry entry;
     switch (destType)
@@ -160,9 +160,9 @@ public:
   }
   
   
-  void OpMakeVector (const RegisterID& destination,
+  void OpMakeVector (const RegisterPtr& destination,
 		     BaseType compType,
-		     const std::vector<RegisterID>& sources)
+		     const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     switch (compType)
@@ -186,10 +186,10 @@ public:
   }
 
 
-  void OpMakeMatrix (const RegisterID& destination,
+  void OpMakeMatrix (const RegisterPtr& destination,
 		     BaseType compType,
 		     unsigned int matrixRows, unsigned int matrixCols,
-		     const std::vector<RegisterID>& sources)
+		     const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     switch (compType)
@@ -215,8 +215,8 @@ public:
   }
 
 
-  void OpMakeArray (const RegisterID& destination,
-		    const std::vector<RegisterID>& sources)
+  void OpMakeArray (const RegisterPtr& destination,
+		    const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     entry.op = opMakeArray;
@@ -225,9 +225,9 @@ public:
     entries.push_back (entry);
   }
 				
-  void OpExtractArrayElement (const RegisterID& destination,
-			      const RegisterID& source,
-			      const RegisterID& index)
+  void OpExtractArrayElement (const RegisterPtr& destination,
+			      const RegisterPtr& source,
+			      const RegisterPtr& index)
   {
     SequenceEntry entry;
     entry.op = opExtractArrayElement;
@@ -237,10 +237,10 @@ public:
     entries.push_back (entry);
   }
 
-  void OpChangeArrayElement (const RegisterID& destination,
-			     const RegisterID& source,
-			     const RegisterID& index,
-			     const RegisterID& newValue)
+  void OpChangeArrayElement (const RegisterPtr& destination,
+			     const RegisterPtr& source,
+			     const RegisterPtr& index,
+			     const RegisterPtr& newValue)
   {
     SequenceEntry entry;
     entry.op = opChangeArrayElement;
@@ -251,8 +251,8 @@ public:
     entries.push_back (entry);
   }
       
-  void OpGetArrayLength (const RegisterID& destination,
-			 const RegisterID& array)
+  void OpGetArrayLength (const RegisterPtr& destination,
+			 const RegisterPtr& array)
   {
     SequenceEntry entry;
     entry.op = opGetArrayLength;
@@ -262,8 +262,8 @@ public:
   }
 
 					 
-  void OpExtractVectorComponent (const RegisterID& destination,
-				 const RegisterID& source,
+  void OpExtractVectorComponent (const RegisterPtr& destination,
+				 const RegisterPtr& source,
 				 unsigned int comp)
   {
     SequenceEntry entry;
@@ -275,10 +275,10 @@ public:
   }
 					     
 					     
-  void OpArith (const RegisterID& destination,
+  void OpArith (const RegisterPtr& destination,
 		ArithmeticOp op,
-		const RegisterID& source1,
-		const RegisterID& source2)
+		const RegisterPtr& source1,
+		const RegisterPtr& source2)
   {
     SequenceEntry entry;
     switch (op)
@@ -306,10 +306,10 @@ public:
   }
 
 
-  void OpLogic (const RegisterID& destination,
+  void OpLogic (const RegisterPtr& destination,
 		LogicOp op,
-		const RegisterID& source1,
-		const RegisterID& source2)
+		const RegisterPtr& source1,
+		const RegisterPtr& source2)
   {
     SequenceEntry entry;
     switch (op)
@@ -328,9 +328,9 @@ public:
   }
 
 
-  void OpUnary (const RegisterID& destination,
+  void OpUnary (const RegisterPtr& destination,
 		UnaryOp op,
-		const RegisterID& source)
+		const RegisterPtr& source)
   {
     SequenceEntry entry;
     switch (op)
@@ -351,10 +351,10 @@ public:
   }
 
   
-  void OpCompare (const RegisterID& destination,
+  void OpCompare (const RegisterPtr& destination,
 		  CompareOp op,
-		  const RegisterID& source1,
-		  const RegisterID& source2)
+		  const RegisterPtr& source1,
+		  const RegisterPtr& source2)
   {
     SequenceEntry entry;
     switch (op)
@@ -385,25 +385,25 @@ public:
   }
   
   void OpBlock (const boost::shared_ptr<Sequence>& seq,
-		const Sequence::IdentifierToRegIDMap&,
-		const Sequence::IdentifierToRegIDMap&,
-		const std::vector<RegisterID>& writtenRegisters)
+		const Sequence::IdentifierToRegMap&,
+		const Sequence::IdentifierToRegMap&,
+		const std::vector<RegisterPtr>& writtenRegisters)
   {
   }
   
-  void OpBranch (const RegisterID& conditionReg,
+  void OpBranch (const RegisterPtr& conditionReg,
 		 const s1::intermediate::SequenceOpPtr& seqOpIf,
 		 const s1::intermediate::SequenceOpPtr& seqOpElse)
   {
   }
   
-  void OpWhile (const RegisterID& conditionReg,
-		const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+  void OpWhile (const RegisterPtr& conditionReg,
+		const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 		const s1::intermediate::SequenceOpPtr& seqOpBody)
   {
   }
 
-  void OpReturn (const std::vector<RegisterID>& outParamVals)
+  void OpReturn (const std::vector<RegisterPtr>& outParamVals)
   {
     SequenceEntry entry;
     entry.op = opReturn;
@@ -412,8 +412,8 @@ public:
   }
   
   void OpFunctionCall (const UnicodeString& funcIdent,
-		       const std::vector<RegisterID>& inParams,
-		       const std::vector<RegisterID>& outParams)
+		       const std::vector<RegisterPtr>& inParams,
+		       const std::vector<RegisterPtr>& outParams)
   {
     SequenceEntry entry;
     entry.op = opFunctionCall;
@@ -423,9 +423,9 @@ public:
     entries.push_back (entry);
   }
   
-  void OpBuiltinCall (const RegisterID& destination,
+  void OpBuiltinCall (const RegisterPtr& destination,
 		      s1::intermediate::BuiltinFunction what,
-		      const std::vector<RegisterID>& inParams)
+		      const std::vector<RegisterPtr>& inParams)
   {
     SequenceEntry entry;
     entry.op = opBuiltinCall;

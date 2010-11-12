@@ -105,10 +105,8 @@ namespace s1
 	    UnicodeString paramIdentDecorated ("I");
 	    paramIdentDecorated.append (import->first);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
-	    intermediate::Sequence::RegisterBankPtr bank;
-	    func->GetBody()->QueryRegisterPtrFromID (import->second, bank);
 	    std::string typeSuffix;
-	    std::string paramStr (TypeToCgType (bank->GetOriginalType(), typeSuffix));
+	    std::string paramStr (TypeToCgType (import->second->GetOriginalType(), typeSuffix));
 	    paramStr.append (" ");
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
@@ -129,10 +127,8 @@ namespace s1
 	    UnicodeString paramIdentDecorated ("O");
 	    paramIdentDecorated.append (exported->first);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
-	    intermediate::Sequence::RegisterBankPtr bank;
-	    func->GetBody()->QueryRegisterPtrFromID (exported->second, bank);
 	    std::string typeSuffix;
-	    std::string paramStr (TypeToCgType (bank->GetOriginalType(), typeSuffix));
+	    std::string paramStr (TypeToCgType (exported->second->GetOriginalType(), typeSuffix));
 	    paramStr.append (" ");
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);

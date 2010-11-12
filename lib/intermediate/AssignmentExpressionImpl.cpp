@@ -49,17 +49,17 @@ namespace s1
       AddToSequence (block, Dummy);
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
-											       RegisterClassification classify,
-											       bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
+												RegisterClassification classify,
+												bool asLvalue)
     {
-      if (asLvalue) return RegisterID ();
+      if (asLvalue) return RegisterPtr ();
       
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
 
-      RegisterID exprDestinationReg;
+      RegisterPtr exprDestinationReg;
       // Evaluate 'value'
       exprDestinationReg = value->AddToSequence (block, Intermediate);
       NameImplPtr targetName (target->GetExpressionName());
@@ -67,7 +67,7 @@ namespace s1
       if (!valueType->IsEqual (*(targetType.get())))
       {
 	// Set up register for left-side value
-	RegisterID targetReg (target->AddToSequence (block, Intermediate, true));
+	RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
 	// Generate cast to targetReg
 	handler->GenerateCast (seq, targetReg, targetType,
 			       exprDestinationReg, valueType);
@@ -89,7 +89,7 @@ namespace s1
 	  }
 	}
 	// Set up register for left-side value
-	RegisterID targetReg (target->AddToSequence (block, Intermediate, true));
+	RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
 	// Generate another assignment from exprDestinationReg to targetReg
 	SequenceOpPtr seqOp;
 	seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));

@@ -1,12 +1,13 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    SequenceOpUnaryOp::SequenceOpUnaryOp (RegisterID destination,
+    SequenceOpUnaryOp::SequenceOpUnaryOp (RegisterPtr destination,
 					  SequenceVisitor::UnaryOp op,
-					  RegisterID source)
+					  RegisterPtr source)
      : SequenceOpUnary (destination, source), op (op)
     {
     }

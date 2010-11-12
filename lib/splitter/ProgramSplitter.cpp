@@ -96,7 +96,7 @@ namespace s1
 	    intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (funcParam.identifier);
 	    assert (exp != seqExports.end());
 	    
-	    intermediate::RegisterID seqRegID (exp->second);
+	    intermediate::RegisterPtr seqRegID (exp->second);
 	    //outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
 	    #endif
 	    outputParamFreqs.push_back (freqFlagF);
@@ -135,14 +135,10 @@ namespace s1
 	  
 	  // Turn values 'transferred' by the function into extra output/input paramerts
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParams[freqNum];
-	  const std::vector<intermediate::RegisterID>& transfers = seqSplit.GetTransferRegs (freqVertex);
+	  const std::vector<intermediate::RegisterPtr>& transfers = seqSplit.GetTransferRegs (freqVertex);
 	  unsigned int n = 0;
-	  BOOST_FOREACH (const intermediate::RegisterID& reg, transfers)
+	  BOOST_FOREACH (const intermediate::RegisterPtr& reg, transfers)
 	  {
-	    // Get register bank, for type
-	    intermediate::Sequence::RegisterBankPtr regBank;
-	    seqSplit.GetOutputVertexSequence()->QueryRegisterPtrFromID (reg, regBank);
-	    
 	    // Generate unique parameter identifier
 	    UnicodeString transferIdent ("transferP$");
 	    UChar transferSuffix[charsToFormatUint + 1];
@@ -155,7 +151,7 @@ namespace s1
 	      parser::SemanticsHandler::Scope::FunctionFormalParameter paramV;
 	      paramV.dir = parser::SemanticsHandler::Scope::dirOut;
 	      paramV.identifier = transferIdent;
-	      paramV.type = regBank->GetOriginalType();
+	      paramV.type = reg->GetOriginalType();
 	      extraParams[freqVertex].push_back (paramV);
 	      
 	      seqSplit.GetOutputVertexSequence()->SetExport (transferIdent, reg);
@@ -164,7 +160,7 @@ namespace s1
 	      parser::SemanticsHandler::Scope::FunctionFormalParameter paramF;
 	      paramF.dir = parser::SemanticsHandler::Scope::dirIn;
 	      paramF.identifier = transferIdent;
-	      paramF.type = regBank->GetOriginalType();
+	      paramF.type = reg->GetOriginalType();
 	      extraParams[freqFragment].push_back (paramF);
 	      
 	      seqSplit.GetOutputFragmentSequence()->AddImport (transferIdent, reg);
@@ -172,7 +168,7 @@ namespace s1
 	    
 	    // Also return transfer info
 	    FunctionTransferValues newTransferValue;
-	    newTransferValue.valueType = regBank->GetOriginalType();
+	    newTransferValue.valueType = reg->GetOriginalType();
 	    transferValues[freqVertex].push_back (newTransferValue);
 	  }
 	  newFunc->transferValues[freqVertex] = transferValues[freqVertex];
@@ -191,7 +187,7 @@ namespace s1
 	    }
 	    else
 	    {
-	      intermediate::RegisterID seqRegID (exp->second);
+	      intermediate::RegisterPtr seqRegID (exp->second);
 	      outputParamFreqs.push_back (seqSplit.GetRegAvailability (seqRegID));
 	    }
 	  }
@@ -255,43 +251,43 @@ namespace s1
       
       bool WasRecursionFound() const { return recursionFound; }
       
-      typedef intermediate::RegisterID RegisterID;
-      void OpConstBool (const RegisterID&, bool) {}
-      void OpConstInt (const RegisterID&, int) {}
-      void OpConstUInt (const RegisterID&, unsigned int) {}
-      void OpConstFloat (const RegisterID&, float) {}
+      typedef intermediate::RegisterPtr RegisterPtr;
+      void OpConstBool (const RegisterPtr&, bool) {}
+      void OpConstInt (const RegisterPtr&, int) {}
+      void OpConstUInt (const RegisterPtr&, unsigned int) {}
+      void OpConstFloat (const RegisterPtr&, float) {}
 				
-      void OpAssign (const RegisterID&, const RegisterID&) {}
+      void OpAssign (const RegisterPtr&, const RegisterPtr&) {}
 				
-      void OpCast (const RegisterID&, BaseType, const RegisterID&) {}
+      void OpCast (const RegisterPtr&, BaseType, const RegisterPtr&) {}
 				  
-      void OpMakeVector (const RegisterID&, BaseType, const std::vector<RegisterID>&) {}
+      void OpMakeVector (const RegisterPtr&, BaseType, const std::vector<RegisterPtr>&) {}
 
-      void OpMakeMatrix (const RegisterID&, BaseType, unsigned int, unsigned int,
-			 const std::vector<RegisterID>&) {}
+      void OpMakeMatrix (const RegisterPtr&, BaseType, unsigned int, unsigned int,
+			 const std::vector<RegisterPtr>&) {}
 
-      void OpMakeArray (const RegisterID&, const std::vector<RegisterID>&) {}
-      void OpExtractArrayElement (const RegisterID&, const RegisterID&, const RegisterID&) {}
-      void OpChangeArrayElement (const RegisterID&, const RegisterID&, const RegisterID&, const RegisterID&) {}
-      void OpGetArrayLength (const RegisterID&, const RegisterID&) {}
+      void OpMakeArray (const RegisterPtr&, const std::vector<RegisterPtr>&) {}
+      void OpExtractArrayElement (const RegisterPtr&, const RegisterPtr&, const RegisterPtr&) {}
+      void OpChangeArrayElement (const RegisterPtr&, const RegisterPtr&, const RegisterPtr&, const RegisterPtr&) {}
+      void OpGetArrayLength (const RegisterPtr&, const RegisterPtr&) {}
 
-      void OpExtractVectorComponent (const RegisterID&, const RegisterID&, unsigned int) {}
+      void OpExtractVectorComponent (const RegisterPtr&, const RegisterPtr&, unsigned int) {}
 				
-      void OpArith (const RegisterID&, ArithmeticOp, const RegisterID&, const RegisterID&) {}
-      void OpCompare (const RegisterID&, CompareOp, const RegisterID&, const RegisterID&) {}
-      void OpLogic (const RegisterID&, LogicOp, const RegisterID&, const RegisterID&) {}
-      void OpUnary (const RegisterID&, UnaryOp, const RegisterID&) {}
+      void OpArith (const RegisterPtr&, ArithmeticOp, const RegisterPtr&, const RegisterPtr&) {}
+      void OpCompare (const RegisterPtr&, CompareOp, const RegisterPtr&, const RegisterPtr&) {}
+      void OpLogic (const RegisterPtr&, LogicOp, const RegisterPtr&, const RegisterPtr&) {}
+      void OpUnary (const RegisterPtr&, UnaryOp, const RegisterPtr&) {}
 			      
       void OpBlock (const intermediate::SequencePtr& subSequence,
-		    const intermediate::Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
-		    const intermediate::Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
-		    const std::vector<RegisterID>& writtenRegisters)
+		    const intermediate::Sequence::IdentifierToRegMap& identToRegIDs_imp,
+		    const intermediate::Sequence::IdentifierToRegMap& identToRegIDs_exp,
+		    const std::vector<RegisterPtr>& writtenRegisters)
       {
 	if (recursionFound) return;
 	subSequence->Visit (*this);
       }
 			    
-      void OpBranch (const RegisterID& conditionReg,
+      void OpBranch (const RegisterPtr& conditionReg,
 		      const intermediate::SequenceOpPtr& seqOpIf,
 		      const intermediate::SequenceOpPtr& seqOpElse)
       {
@@ -308,8 +304,8 @@ namespace s1
 	elseBlock->GetSequence()->Visit (*this);
       }
       
-      void OpWhile (const RegisterID& conditionReg,
-		    const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+      void OpWhile (const RegisterPtr& conditionReg,
+		    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 		    const intermediate::SequenceOpPtr& seqOpBody)
       {
 	if (recursionFound) return;
@@ -319,10 +315,10 @@ namespace s1
 	block->GetSequence()->Visit (*this);
       }
 			    
-      void OpReturn (const std::vector<RegisterID>&) {}
+      void OpReturn (const std::vector<RegisterPtr>&) {}
       void OpFunctionCall (const UnicodeString& funcIdent,
-			   const std::vector<RegisterID>& inParams,
-			   const std::vector<RegisterID>& outParams)
+			   const std::vector<RegisterPtr>& inParams,
+			   const std::vector<RegisterPtr>& outParams)
       {
 	if (recursionFound) return;
 	
@@ -341,7 +337,7 @@ namespace s1
 	}
       }
       
-      void OpBuiltinCall (const RegisterID&, intermediate::BuiltinFunction, const std::vector<RegisterID>&) {}
+      void OpBuiltinCall (const RegisterPtr&, intermediate::BuiltinFunction, const std::vector<RegisterPtr>&) {}
     };
     
     bool ProgramSplitter::CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func)
@@ -441,16 +437,12 @@ namespace s1
 	funcF->SetExecutionFrequency (freqFragment);
 	outputProgram->AddFunction (funcF);
 	
-	const std::vector<intermediate::RegisterID>& transverV2F = splitter.GetTransferRegs (freqVertex);
-	BOOST_FOREACH(const intermediate::RegisterID& reg, transverV2F)
+	const std::vector<intermediate::RegisterPtr>& transverV2F = splitter.GetTransferRegs (freqVertex);
+	BOOST_FOREACH(const intermediate::RegisterPtr& reg, transverV2F)
 	{
-	  intermediate::Sequence::RegisterBankPtr regBank;
-	  intermediate::Sequence::RegisterPtr regPtr (
-	    splitter.GetOutputVertexSequence()->QueryRegisterPtrFromID (reg, regBank));
-	  
-	  outputProgram->AddTransferValue (regBank->GetOriginalType(), regPtr->GetName());
-	  funcV->SetTransferMapping (regPtr->GetName(), reg);
-	  funcF->SetTransferMapping (regPtr->GetName(), reg);
+	  outputProgram->AddTransferValue (reg->GetOriginalType(), reg->GetName());
+	  funcV->SetTransferMapping (reg->GetName(), reg);
+	  funcF->SetTransferMapping (reg->GetName(), reg);
 	}
 	
 	BOOST_FOREACH(const ParamFreqPair& pfp, allFrequencies)

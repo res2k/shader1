@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,8 +6,8 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpExtractVectorComponent::SequenceOpExtractVectorComponent (RegisterID destination,
-									RegisterID source,
+    SequenceOpExtractVectorComponent::SequenceOpExtractVectorComponent (RegisterPtr destination,
+									RegisterPtr source,
 									unsigned int vecComp)
      : SequenceOpUnary (destination, source), comp (vecComp)
     {}

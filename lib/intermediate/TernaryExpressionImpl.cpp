@@ -52,11 +52,11 @@ namespace s1
       return valueType;
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::AddToSequence (BlockImpl& block,
-											    RegisterClassification classify,
-											    bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::AddToSequence (BlockImpl& block,
+											     RegisterClassification classify,
+											     bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
       /* Spec says: if condition is true, evaluate 'if' expression;
 	 if condition is false, evaluate 'else' expression.

@@ -16,8 +16,8 @@ namespace s1
 			     const UnicodeString& valueStr);
       
       boost::shared_ptr<TypeImpl> GetValueType();
-      RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				bool asLvalue = false);
+      RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
+				 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

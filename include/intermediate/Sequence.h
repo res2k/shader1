@@ -2,10 +2,9 @@
 #define __INTERMEDIATE_SEQUENCE_H__
 
 #include "forwarddecl.h"
-#include "RegisterID.h"
-#include "SequenceOp/SequenceOp.h"
 #include "parser/SemanticsHandler.h"
 
+#include <boost/unordered_set.hpp>
 #include "base/unordered_map"
 #include <unicode/unistr.h>
 #include <vector>
@@ -31,13 +30,16 @@ namespace s1
 	UnicodeString originalName;
 	unsigned int generation;
 	UnicodeString name;
+	
+	TypePtr originalType;
       public:
-	Register (const UnicodeString& name);
+	Register (const UnicodeString& name, const TypePtr& originalType);
 	Register (const Register& other);
-	Register (const Register& other, int copyHack);
 	
 	const UnicodeString& GetName() const { return name; }
 	void StealName (Register& other);
+	
+	const TypePtr& GetOriginalType () const { return originalType; }
       };
       typedef boost::shared_ptr<Register> RegisterPtr;
       
@@ -49,11 +51,11 @@ namespace s1
 	
 	std::vector<RegisterPtr> registers;
 	
-	unsigned int AddRegister (const UnicodeString& name);
-	unsigned int AddRegister (const RegisterPtr& oldReg);
+	RegisterPtr AddRegister (const UnicodeString& name);
+	RegisterPtr AddRegister (const RegisterPtr& oldReg);
+	void TrackRegister (const RegisterPtr& reg);
       public:
 	RegisterBank (const TypePtr& originalType);
-	RegisterBank (const RegisterBank& other);
 	
 	const TypePtr& GetOriginalType () const { return originalType; }
       };
@@ -73,48 +75,49 @@ namespace s1
       void Clear ();
       /** @} */
       
-      RegisterID AllocateRegister (const std::string& typeStr,
-				   const TypePtr& originalType,
-				   const UnicodeString& name);
-      RegisterID AllocateRegister (const RegisterID& oldReg);
+      RegisterPtr AllocateRegister (const TypePtr& originalType,
+				    const UnicodeString& name);
+      RegisterPtr AllocateRegister (const RegisterPtr& oldReg);
+      void TrackRegister (const RegisterPtr& reg);
       
-      RegisterPtr QueryRegisterPtrFromID (const RegisterID& id, RegisterBankPtr& bank) const;
-      RegisterPtr QueryRegisterPtrFromID (const RegisterID& id) const
-      { RegisterBankPtr dummyBank; return QueryRegisterPtrFromID (id, dummyBank); }
+      void SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& regID);
+      RegisterPtr GetIdentifierRegister (const UnicodeString& identifier) const;
       
-      void SetIdentifierRegisterID (const UnicodeString& identifier, RegisterID regID);
-      RegisterID GetIdentifierRegisterID (const UnicodeString& identifier) const;
-      
-      typedef std::tr1::unordered_map<UnicodeString, RegisterID> IdentifierToRegIDMap;
-      /// Get current identifiers-to-register-ID map
-      const IdentifierToRegIDMap& GetIdentifierToRegisterIDMap () const
-      { return identToRegID; }
+      typedef std::tr1::unordered_map<UnicodeString, RegisterPtr> IdentifierToRegMap;
+      /// Get current identifiers-to-register map
+      const IdentifierToRegMap& GetIdentifierToRegisterMap () const
+      { return identToReg; }
       
       /// Deep copy register banks setup from another sequence
       void CopyRegisterBanks (const SequencePtr& other);
       
       void Visit (SequenceVisitor& visitor) const;
       
-      typedef std::vector<std::pair<UnicodeString, RegisterID> > RegisterImpMappings;
+      typedef std::vector<std::pair<UnicodeString, RegisterPtr> > RegisterImpMappings;
       const RegisterImpMappings& GetImports () const { return imports; }
       void AddImport (const UnicodeString& parentRegName,
-		      const RegisterID& localID);
-      typedef std::tr1::unordered_map<UnicodeString, RegisterID> RegisterExpMappings;
+		      const RegisterPtr& localReg);
+      typedef std::tr1::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const { return exports; }
       RegisterExpMappings& GetExports () { return exports; }
       void SetExport (const UnicodeString& parentRegName,
-		      const RegisterID& localID);
+		      const RegisterPtr& localReg);
 		      
       void CleanUnusedImportsExports ();
     protected:
       std::vector<RegisterBankPtr> registerBanks;
       typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
       TypeToRegBankType typeToRegBank;
-      IdentifierToRegIDMap identToRegID;
+      IdentifierToRegMap identToReg;
       
       RegisterImpMappings imports;
       RegisterExpMappings exports;
+      
+      RegisterBankPtr GetRegisterBank (const TypePtr& originalType);
     };
+    
+    typedef Sequence::RegisterPtr RegisterPtr;
+    typedef boost::unordered_set<RegisterPtr> RegisterSet;
     
   } // namespace intermediate
 } // namespace s1

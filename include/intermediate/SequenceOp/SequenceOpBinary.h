@@ -10,14 +10,14 @@ namespace s1
     class SequenceOpBinary : public SequenceOpWithResult
     {
     protected:
-      RegisterID source1;
-      RegisterID source2;
+      RegisterPtr source1;
+      RegisterPtr source2;
     public:
-      SequenceOpBinary (RegisterID destination,
-			RegisterID source1,
-			RegisterID source2);
+      SequenceOpBinary (RegisterPtr destination,
+			RegisterPtr source1,
+			RegisterPtr source2);
 			
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
     };
     
   } // namespace intermediate

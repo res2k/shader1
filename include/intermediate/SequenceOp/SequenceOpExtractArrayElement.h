@@ -10,13 +10,13 @@ namespace s1
   {
     class SequenceOpExtractArrayElement : public SequenceOpUnary
     {
-      RegisterID index;
+      RegisterPtr index;
     public:
-      SequenceOpExtractArrayElement (RegisterID destination,
-				     RegisterID source,
-				     RegisterID index);
+      SequenceOpExtractArrayElement (RegisterPtr destination,
+				     RegisterPtr source,
+				     RegisterPtr index);
 			    
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
 
       void Visit (SequenceVisitor& visitor);
     };

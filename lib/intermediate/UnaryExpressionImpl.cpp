@@ -62,11 +62,11 @@ namespace s1
       return valueType;
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::AddToSequence (BlockImpl& block,
-											  RegisterClassification classify,
-											  bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::AddToSequence (BlockImpl& block,
+											   RegisterClassification classify,
+											   bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
@@ -74,18 +74,18 @@ namespace s1
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
 
       // Set up register for operand value
-      RegisterID orgReg, reg;
+      RegisterPtr orgReg, reg;
       orgReg = reg = operand->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(operandType.get())))
       {
 	// Insert cast op
-	RegisterID newReg (handler->AllocateRegister (seq, valueType, Intermediate));
+	RegisterPtr newReg (handler->AllocateRegister (seq, valueType, Intermediate));
 	handler->GenerateCast (seq, newReg, valueType,
 			       reg, operandType);
 	reg = newReg;
       }
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;

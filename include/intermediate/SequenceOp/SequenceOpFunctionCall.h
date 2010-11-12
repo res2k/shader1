@@ -3,7 +3,6 @@
 
 #include "SequenceOp.h"
 #include "../forwarddecl.h"
-#include "../RegisterID.h"
 
 #include <unicode/unistr.h>
 #include <vector>
@@ -15,15 +14,15 @@ namespace s1
     class SequenceOpFunctionCall : public SequenceOp
     {
       UnicodeString funcIdent;
-      std::vector<RegisterID> inParams;
-      std::vector<RegisterID> outParams;
+      std::vector<RegisterPtr> inParams;
+      std::vector<RegisterPtr> outParams;
     public:
       SequenceOpFunctionCall (const UnicodeString& funcIdent,
-			      const std::vector<RegisterID>& inParams,
-			      const std::vector<RegisterID>& outParams);
+			      const std::vector<RegisterPtr>& inParams,
+			      const std::vector<RegisterPtr>& outParams);
       
-      RegisterIDSet GetReadRegisters () const;
-      RegisterIDSet GetWrittenRegisters () const;
+      RegisterSet GetReadRegisters () const;
+      RegisterSet GetWrittenRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
     };

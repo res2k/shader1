@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,16 +6,16 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpWhile::SequenceOpWhile (RegisterID conditionReg,
-				      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+    SequenceOpWhile::SequenceOpWhile (const RegisterPtr& conditionReg,
+				      const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 				      const SequenceOpPtr& bodyOp)
      : conditionReg (conditionReg), loopedRegs (loopedRegs), bodyOp (bodyOp)
     {
     }
     
-    RegisterIDSet SequenceOpWhile::GetReadRegisters () const
+    RegisterSet SequenceOpWhile::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       /*regs.insert (conditionReg);
       if (trueOp)
       {
@@ -29,9 +30,9 @@ namespace s1
       return regs;
     }
     
-    RegisterIDSet SequenceOpWhile::GetWrittenRegisters () const
+    RegisterSet SequenceOpWhile::GetWrittenRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       /*if (trueOp)
       {
 	RegisterIDSet trueRegs (trueOp->GetWrittenRegisters());

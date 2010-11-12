@@ -42,15 +42,15 @@ namespace s1
       };
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
-											    RegisterClassification classify,
-											    bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
+											     RegisterClassification classify,
+											     bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
       U_NAMESPACE_USE
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
       // Mark 'destination' as constant or something?
       

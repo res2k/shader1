@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpMakeMatrix.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,17 +6,17 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpMakeMatrix::SequenceOpMakeMatrix (RegisterID destination,
+    SequenceOpMakeMatrix::SequenceOpMakeMatrix (RegisterPtr destination,
 						BasicType matrixBaseType,
 						unsigned int matrixRows, unsigned int matrixCols,
-						const std::vector<RegisterID>& sources)
+						const std::vector<RegisterPtr>& sources)
       : SequenceOpWithResult (destination), matrixBaseType (matrixBaseType),
 	matrixRows (matrixRows), matrixCols (matrixCols), sources (sources)
     {}
 			  
-    RegisterIDSet SequenceOpMakeMatrix::GetReadRegisters () const
+    RegisterSet SequenceOpMakeMatrix::GetReadRegisters () const
     {
-      RegisterIDSet set;
+      RegisterSet set;
       set.insert (sources.begin(), sources.end());
       return set;
     }

@@ -1,6 +1,7 @@
 #include <boost/cstdint.hpp>
 
 #include "base/hash_UnicodeString.h"
+#include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"
 
 #include <boost/make_shared.hpp>
@@ -11,13 +12,13 @@ namespace s1
   namespace codegen
   {
     CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::SequenceIdentifiersToRegIDsNameResolver (
-      SequenceCodeGenerator* owner, const Sequence::IdentifierToRegIDMap& identToRegID_imp,
-      const Sequence::IdentifierToRegIDMap& identToRegID_exp)
+      SequenceCodeGenerator* owner, const Sequence::IdentifierToRegMap& identToRegID_imp,
+      const Sequence::IdentifierToRegMap& identToRegID_exp)
       : owner (owner), identToRegID_imp (identToRegID_imp), identToRegID_exp (identToRegID_exp) {}
 
     std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const UnicodeString& name)
     {
-      Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID_imp.find (name);
+      Sequence::IdentifierToRegMap::const_iterator regIt = identToRegID_imp.find (name);
       if (regIt != identToRegID_imp.end())
 	return owner->GetOutputRegisterName (regIt->second);
       return std::string ();
@@ -25,7 +26,7 @@ namespace s1
 	
     std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const UnicodeString& name)
     {
-      Sequence::IdentifierToRegIDMap::const_iterator regIt = identToRegID_exp.find (name);
+      Sequence::IdentifierToRegMap::const_iterator regIt = identToRegID_exp.find (name);
       if (regIt != identToRegID_exp.end())
 	return owner->GetOutputRegisterName (regIt->second);
       return std::string ();
@@ -60,7 +61,7 @@ namespace s1
     {
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const RegisterPtr& destination,
 									 const char* value)
     {
       std::string targetName (owner->GetOutputRegisterName (destination));
@@ -72,7 +73,7 @@ namespace s1
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const char* destination,
-									 const RegisterID& value)
+									 const RegisterPtr& value)
     {
       std::string valueName (owner->GetOutputRegisterName (value));
       std::string line (destination);
@@ -82,7 +83,7 @@ namespace s1
       target->AddString (line);
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterPtr& destination,
 									       const char* function,
 									       const char* paramsStr)
     {
@@ -94,9 +95,9 @@ namespace s1
       EmitAssign (destination, rside.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitBinary (const RegisterID& destination,
-									 const RegisterID& source1,
-									 const RegisterID& source2,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitBinary (const RegisterPtr& destination,
+									 const RegisterPtr& source1,
+									 const RegisterPtr& source2,
 									 const char* op)
     {
       std::string source1Name (owner->GetOutputRegisterName (source1));
@@ -109,8 +110,8 @@ namespace s1
       EmitAssign (destination, rside.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitUnary (const RegisterID& destination,
-									const RegisterID& source,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitUnary (const RegisterPtr& destination,
+									const RegisterPtr& source,
 									const char* op)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
@@ -119,13 +120,13 @@ namespace s1
       EmitAssign (destination, rside.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterPtr& destination,
 									  bool value)
     {
       EmitAssign (destination, value ? "true" : "false");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstInt (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstInt (const RegisterPtr& destination,
 									 int value)
     {
       std::stringstream valueStrStream;
@@ -133,7 +134,7 @@ namespace s1
       EmitAssign (destination, valueStrStream.str().c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstUInt (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstUInt (const RegisterPtr& destination,
 									  unsigned int value)
     {
       std::stringstream valueStrStream;
@@ -141,7 +142,7 @@ namespace s1
       EmitAssign (destination, valueStrStream.str().c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstFloat (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstFloat (const RegisterPtr& destination,
 									   float value)
     {
       std::stringstream valueStrStream;
@@ -149,17 +150,17 @@ namespace s1
       EmitAssign (destination, valueStrStream.str().c_str());
     }
 			      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpAssign (const RegisterID& destination,
-								       const RegisterID& source)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpAssign (const RegisterPtr& destination,
+								       const RegisterPtr& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitAssign (destination, sourceName.c_str());
     }
 			      
 			      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCast (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCast (const RegisterPtr& destination,
 								     BaseType destType,
-								     const RegisterID& source)
+								     const RegisterPtr& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       switch (destType)
@@ -180,13 +181,13 @@ namespace s1
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterPtr& destination,
 									   BaseType compType,
-									   const std::vector<RegisterID>& sources)
+									   const std::vector<RegisterPtr>& sources)
     {
       std::string paramsStr;
       ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+      for (std::vector<RegisterPtr>::const_iterator source (sources.begin());
 	   source != sources.end();
 	   ++source)
       {
@@ -216,15 +217,15 @@ namespace s1
     
     
 				
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterPtr& destination,
 									   BaseType compType,
 									   unsigned int matrixRows,
 									   unsigned int matrixCols,
-									   const std::vector<RegisterID>& sources)
+									   const std::vector<RegisterPtr>& sources)
     {
       std::string paramsStr;
       ParamHelper params (paramsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+      for (std::vector<RegisterPtr>::const_iterator source (sources.begin());
 	   source != sources.end();
 	   ++source)
       {
@@ -253,12 +254,12 @@ namespace s1
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeArray (const RegisterID& destination,
-									  const std::vector<RegisterID>& sources)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeArray (const RegisterPtr& destination,
+									  const std::vector<RegisterPtr>& sources)
     {
       std::string elementsStr ("{ ");
       ParamHelper elements (elementsStr);
-      for (std::vector<RegisterID>::const_iterator source (sources.begin());
+      for (std::vector<RegisterPtr>::const_iterator source (sources.begin());
 	   source != sources.end();
 	   ++source)
       {
@@ -268,9 +269,9 @@ namespace s1
       owner->GetOutputRegisterName (destination, elementsStr);
     }
 			  
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractArrayElement (const RegisterID& destination,
-										    const RegisterID& source,
-										    const RegisterID& index)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractArrayElement (const RegisterPtr& destination,
+										    const RegisterPtr& source,
+										    const RegisterPtr& index)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       sourceName.append ("[");
@@ -279,10 +280,10 @@ namespace s1
       EmitAssign (destination, sourceName.c_str());
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpChangeArrayElement (const RegisterID& destination,
-										   const RegisterID& source,
-										   const RegisterID& index,
-										   const RegisterID& newValue)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpChangeArrayElement (const RegisterPtr& destination,
+										   const RegisterPtr& source,
+										   const RegisterPtr& index,
+										   const RegisterPtr& newValue)
     {
       EmitAssign (destination, owner->GetOutputRegisterName (source).c_str());
       std::string changeDest (owner->GetOutputRegisterName (destination));
@@ -292,8 +293,8 @@ namespace s1
       EmitAssign (changeDest.c_str(), newValue);
     }
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpGetArrayLength (const RegisterID& destination,
-									       const RegisterID& array)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpGetArrayLength (const RegisterPtr& destination,
+									       const RegisterPtr& array)
     {
       std::string sourceName (owner->GetOutputRegisterName (array));
       sourceName.append (".length");
@@ -301,8 +302,8 @@ namespace s1
     }
 			 
 				    
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterID& destination,
-										       const RegisterID& source,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterPtr& destination,
+										       const RegisterPtr& source,
 										       unsigned int comp)
     {
       static const char* const compStr[] = { "x", "y", "z", "w" };
@@ -314,10 +315,10 @@ namespace s1
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArith (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpArith (const RegisterPtr& destination,
 								      ArithmeticOp op,
-								      const RegisterID& source1,
-								      const RegisterID& source2)
+								      const RegisterPtr& source1,
+								      const RegisterPtr& source2)
     {
       switch (op)
       {
@@ -340,10 +341,10 @@ namespace s1
     }
     
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogic (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpLogic (const RegisterPtr& destination,
 								      LogicOp op,
-								      const RegisterID& source1,
-								      const RegisterID& source2)
+								      const RegisterPtr& source1,
+								      const RegisterPtr& source2)
     {
       switch (op)
       {
@@ -357,9 +358,9 @@ namespace s1
     }
 
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnary (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpUnary (const RegisterPtr& destination,
 								      UnaryOp op,
-								      const RegisterID& source)
+								      const RegisterPtr& source)
     {
       switch (op)
       {
@@ -376,10 +377,10 @@ namespace s1
     }
 
 		      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompare (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCompare (const RegisterPtr& destination,
 									CompareOp op,
-									const RegisterID& source1,
-									const RegisterID& source2)
+									const RegisterPtr& source1,
+									const RegisterPtr& source2)
     {
       switch (op)
       {
@@ -405,12 +406,12 @@ namespace s1
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
-								      const Sequence::IdentifierToRegIDMap& identToRegID_imp,
-								      const Sequence::IdentifierToRegIDMap& identToRegID_exp,
-								      const std::vector<RegisterID>& writtenRegisters)
+								      const Sequence::IdentifierToRegMap& identToRegID_imp,
+								      const Sequence::IdentifierToRegMap& identToRegID_exp,
+								      const std::vector<RegisterPtr>& writtenRegisters)
     {
       // Generate registers for 'exported' variables
-      for (std::vector<RegisterID>::const_iterator writtenReg = writtenRegisters.begin();
+      for (std::vector<RegisterPtr>::const_iterator writtenReg = writtenRegisters.begin();
 	   writtenReg != writtenRegisters.end();
 	   ++writtenReg)
       {
@@ -431,14 +432,14 @@ namespace s1
       }
     }
 		      
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBranch (const RegisterID& conditionReg,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBranch (const RegisterPtr& conditionReg,
 								       const intermediate::SequenceOpPtr& seqOpIf,
 								       const intermediate::SequenceOpPtr& seqOpElse)
     {
       // Generate registers for variables 'exported' by either branch
       {
-	intermediate::RegisterIDSet ifRegs (seqOpIf->GetWrittenRegisters());
-	for (intermediate::RegisterIDSet::const_iterator writtenReg = ifRegs.begin();
+	intermediate::RegisterSet ifRegs (seqOpIf->GetWrittenRegisters());
+	for (intermediate::RegisterSet::const_iterator writtenReg = ifRegs.begin();
 	    writtenReg != ifRegs.end();
 	    ++writtenReg)
 	{
@@ -446,8 +447,8 @@ namespace s1
 	}
       }
       {
-	intermediate::RegisterIDSet elseRegs (seqOpElse->GetWrittenRegisters());
-	for (intermediate::RegisterIDSet::const_iterator writtenReg = elseRegs.begin();
+	intermediate::RegisterSet elseRegs (seqOpElse->GetWrittenRegisters());
+	for (intermediate::RegisterSet::const_iterator writtenReg = elseRegs.begin();
 	    writtenReg != elseRegs.end();
 	    ++writtenReg)
 	{
@@ -467,8 +468,8 @@ namespace s1
       emitEmptyBlocks = oldEmitEmptyBlocks;
     }
 
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpWhile (const RegisterID& conditionReg,
-								      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpWhile (const RegisterPtr& conditionReg,
+								      const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 								      const intermediate::SequenceOpPtr& seqOpBody)
     {
       for (size_t i = 0; i < loopedRegs.size(); i++)
@@ -485,7 +486,7 @@ namespace s1
       seqOpBody->Visit (*this);
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterID>& outParamVals)
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
       assert (outParamVals.size() == owner->outParams.size());
       for (size_t i = 0; i < outParamVals.size(); i++)
@@ -494,20 +495,20 @@ namespace s1
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const UnicodeString& funcIdent,
-									     const std::vector<RegisterID>& inParams,
-									     const std::vector<RegisterID>& outParams)
+									     const std::vector<RegisterPtr>& inParams,
+									     const std::vector<RegisterPtr>& outParams)
     {
       std::string line;
       line.append (NameToCgIdentifier (funcIdent));
       line.append (" (");
       ParamHelper params (line);
-      for (std::vector<RegisterID>::const_iterator inParam (inParams.begin());
+      for (std::vector<RegisterPtr>::const_iterator inParam (inParams.begin());
 	   inParam != inParams.end();
 	   ++inParam)
       {
 	params.Add (owner->GetOutputRegisterName (*inParam));
       }
-      for (std::vector<RegisterID>::const_iterator outParam (outParams.begin());
+      for (std::vector<RegisterPtr>::const_iterator outParam (outParams.begin());
 	   outParam != outParams.end();
 	   ++outParam)
       {
@@ -517,12 +518,12 @@ namespace s1
       target->AddString (line);
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBuiltinCall (const RegisterID& destination,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBuiltinCall (const RegisterPtr& destination,
 									    intermediate:: BuiltinFunction what,
-									    const std::vector<RegisterID>& inParams)
+									    const std::vector<RegisterPtr>& inParams)
     {
       std::string line;
-      if (destination.IsValid())
+      if (destination)
       {
 	line.append (owner->GetOutputRegisterName (destination));
 	line.append (" = ");
@@ -544,7 +545,7 @@ namespace s1
       }
       line.append (" (");
       ParamHelper params (line);
-      for (std::vector<RegisterID>::const_iterator inParam (inParams.begin());
+      for (std::vector<RegisterPtr>::const_iterator inParam (inParams.begin());
 	   inParam != inParams.end();
 	   ++inParam)
       {
@@ -627,21 +628,18 @@ namespace s1
       return strings;
     }
     
-    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterID& reg,
+    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr,
 									   const std::string& initializer)
     {
-      RegistersToIDMap::iterator regIt = seenRegisters.find (reg);
+      RegistersToIDMap::iterator regIt = seenRegisters.find (regPtr);
       if (regIt != seenRegisters.end())
 	return regIt->second;
       
-      Sequence::RegisterBankPtr bankPtr;
-      Sequence::RegisterPtr regPtr (seq.QueryRegisterPtrFromID (reg, bankPtr));
-      
       std::string cgName (NameToCgIdentifier (regPtr->GetName()));
-      seenRegisters[reg] = cgName;
+      seenRegisters[regPtr] = cgName;
       
       std::string typeSuffix;
-      std::string cgType (TypeToCgType (bankPtr->GetOriginalType(), typeSuffix));
+      std::string cgType (TypeToCgType (regPtr->GetOriginalType(), typeSuffix));
       std::string declLine (cgType);
       declLine.append (" ");
       declLine.append (cgName);

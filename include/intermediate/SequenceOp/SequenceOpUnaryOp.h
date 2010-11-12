@@ -12,9 +12,9 @@ namespace s1
     {
       SequenceVisitor::UnaryOp op;
     public:
-      SequenceOpUnaryOp (RegisterID destination,
+      SequenceOpUnaryOp (RegisterPtr destination,
 			 SequenceVisitor::UnaryOp op,
-			 RegisterID source);
+			 RegisterPtr source);
 		       
       void Visit (SequenceVisitor& visitor);
     };

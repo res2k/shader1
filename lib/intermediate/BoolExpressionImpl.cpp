@@ -24,13 +24,13 @@ namespace s1
       return handler->GetBoolType();
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::AddToSequence (BlockImpl& block,
-											 RegisterClassification classify,
-											 bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::AddToSequence (BlockImpl& block,
+											  RegisterClassification classify,
+											  bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpConst> (destination, value));
       assert (seqOp);
       block.GetSequence()->AddOp (seqOp);

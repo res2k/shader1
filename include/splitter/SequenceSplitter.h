@@ -4,7 +4,6 @@
 #include <boost/unordered_map.hpp>
 
 #include "intermediate/forwarddecl.h"
-#include "intermediate/RegisterID.h"
 #include "intermediate/SequenceVisitor.h"
 
 #include "Frequency.h"
@@ -17,7 +16,7 @@ namespace s1
 
     class SequenceSplitter
     {
-      typedef intermediate::RegisterID RegisterID;
+      typedef intermediate::RegisterPtr RegisterPtr;
       typedef intermediate::Sequence Sequence;
       typedef intermediate::SequencePtr SequencePtr;
       typedef intermediate::SequenceOpPtr SequenceOpPtr;
@@ -31,26 +30,26 @@ namespace s1
       {
 	SequenceSplitter& parent;
 	
-	unsigned int PromoteRegister (const RegisterID& reg, int frequency);
-	void SplitBinaryOp (const RegisterID& destination, const SequenceOpPtr& op,
-			    const RegisterID& source1, const RegisterID& source2);
-	unsigned int ComputeCombinedFreqs (const std::vector<RegisterID>& sources);
-	int ComputeHighestFreq (const std::vector<RegisterID>& sources);
-	unsigned int PromoteAll (int freq, const std::vector<RegisterID>& sources);
+	unsigned int PromoteRegister (const RegisterPtr& reg, int frequency);
+	void SplitBinaryOp (const RegisterPtr& destination, const SequenceOpPtr& op,
+			    const RegisterPtr& source1, const RegisterPtr& source2);
+	unsigned int ComputeCombinedFreqs (const std::vector<RegisterPtr>& sources);
+	int ComputeHighestFreq (const std::vector<RegisterPtr>& sources);
+	unsigned int PromoteAll (int freq, const std::vector<RegisterPtr>& sources);
 	
 	unsigned int AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
 	
-	typedef std::pair<RegisterID, RegisterID> LoopedReg;
+	typedef std::pair<RegisterPtr, RegisterPtr> LoopedReg;
 	typedef std::vector<LoopedReg> LoopedRegs;
 	void SplitBlock (const SequencePtr& blockSequence,
-			 const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
-			 const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
-			 const std::vector<RegisterID>& writtenRegisters,
+			 const Sequence::IdentifierToRegMap& identToRegIDs_imp,
+			 const Sequence::IdentifierToRegMap& identToRegIDs_exp,
+			 const std::vector<RegisterPtr>& writtenRegisters,
 			 SequenceOpPtr* newSequences,
 			 const LoopedRegs& loopedRegs = LoopedRegs(),
 			 bool keepEmpty = false);
 	
-	typedef std::pair<RegisterID, RegisterID> RegisterPair;
+	typedef std::pair<RegisterPtr, RegisterPtr> RegisterPair;
 	typedef std::vector<RegisterPair> RenamedBranchOutputs;
 	void EmitUnconditionalBranchBlock (const char* suffix, const SequenceOpPtr& blockOp, int f,
 					   RenamedBranchOutputs& outputs);
@@ -61,85 +60,85 @@ namespace s1
       public:
 	InputVisitor (SequenceSplitter& parent);
 	
-	void OpConstBool (const RegisterID& destination,
+	void OpConstBool (const RegisterPtr& destination,
 			  bool value);
-	void OpConstInt (const RegisterID& destination,
+	void OpConstInt (const RegisterPtr& destination,
 			 int value);
-	void OpConstUInt (const RegisterID& destination,
+	void OpConstUInt (const RegisterPtr& destination,
 			  unsigned int value);
-	void OpConstFloat (const RegisterID& destination,
+	void OpConstFloat (const RegisterPtr& destination,
 			   float value);
 				  
-	void OpAssign (const RegisterID& destination,
-		       const RegisterID& source);
+	void OpAssign (const RegisterPtr& destination,
+		       const RegisterPtr& source);
 				  
-	void OpCast (const RegisterID& destination,
+	void OpCast (const RegisterPtr& destination,
 		     BaseType destType,
-		     const RegisterID& source);
+		     const RegisterPtr& source);
 				    
-	void OpMakeVector (const RegisterID& destination,
+	void OpMakeVector (const RegisterPtr& destination,
 			   BaseType compType,
-			   const std::vector<RegisterID>& sources);
+			   const std::vector<RegisterPtr>& sources);
 
-	void OpMakeMatrix (const RegisterID& destination,
+	void OpMakeMatrix (const RegisterPtr& destination,
 			   BaseType compType,
 			   unsigned int matrixRows, unsigned int matrixCols,
-			   const std::vector<RegisterID>& sources);
+			   const std::vector<RegisterPtr>& sources);
 
-	void OpMakeArray (const RegisterID& destination,
-			  const std::vector<RegisterID>& sources);
-	void OpExtractArrayElement (const RegisterID& destination,
-				    const RegisterID& source,
-				    const RegisterID& index);
-	void OpChangeArrayElement (const RegisterID& destination,
-				   const RegisterID& source,
-				   const RegisterID& index,
-				   const RegisterID& newValue);
-	void OpGetArrayLength (const RegisterID& destination,
-			       const RegisterID& array);
+	void OpMakeArray (const RegisterPtr& destination,
+			  const std::vector<RegisterPtr>& sources);
+	void OpExtractArrayElement (const RegisterPtr& destination,
+				    const RegisterPtr& source,
+				    const RegisterPtr& index);
+	void OpChangeArrayElement (const RegisterPtr& destination,
+				   const RegisterPtr& source,
+				   const RegisterPtr& index,
+				   const RegisterPtr& newValue);
+	void OpGetArrayLength (const RegisterPtr& destination,
+			       const RegisterPtr& array);
 
-	void OpExtractVectorComponent (const RegisterID& destination,
-				       const RegisterID& source,
+	void OpExtractVectorComponent (const RegisterPtr& destination,
+				       const RegisterPtr& source,
 				       unsigned int comp);
 				  
-	void OpArith (const RegisterID& destination,
+	void OpArith (const RegisterPtr& destination,
 		      ArithmeticOp op,
-		      const RegisterID& source1,
-		      const RegisterID& source2);
+		      const RegisterPtr& source1,
+		      const RegisterPtr& source2);
 
-	void OpCompare (const RegisterID& destination,
+	void OpCompare (const RegisterPtr& destination,
 			CompareOp op,
-			const RegisterID& source1,
-			const RegisterID& source2);
+			const RegisterPtr& source1,
+			const RegisterPtr& source2);
 				  
-	void OpLogic (const RegisterID& destination,
+	void OpLogic (const RegisterPtr& destination,
 		      LogicOp op,
-		      const RegisterID& source1,
-		      const RegisterID& source2);
+		      const RegisterPtr& source1,
+		      const RegisterPtr& source2);
 
-	void OpUnary (const RegisterID& destination,
+	void OpUnary (const RegisterPtr& destination,
 		      UnaryOp op,
-		      const RegisterID& source);
+		      const RegisterPtr& source);
 				
 	void OpBlock (const SequencePtr& subSequence,
-		      const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
-		      const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
-		      const std::vector<RegisterID>& writtenRegisters);
+		      const Sequence::IdentifierToRegMap& identToRegIDs_imp,
+		      const Sequence::IdentifierToRegMap& identToRegIDs_exp,
+		      const std::vector<RegisterPtr>& writtenRegisters);
 			      
-	void OpBranch (const RegisterID& conditionReg,
+	void OpBranch (const RegisterPtr& conditionReg,
 		       const SequenceOpPtr& seqOpIf,
 		       const SequenceOpPtr& seqOpElse);
-	void OpWhile (const RegisterID& conditionReg,
+	void OpWhile (const RegisterPtr& conditionReg,
 		      const LoopedRegs& loopedRegs,
 		      const SequenceOpPtr& seqOpBody);
 			      
-	void OpReturn (const std::vector<RegisterID>& outParamVals);
+	void OpReturn (const std::vector<RegisterPtr>& outParamVals);
 	void OpFunctionCall (const UnicodeString& funcIdent,
-			     const std::vector<RegisterID>& inParams,
-			     const std::vector<RegisterID>& outParams);
-	void OpBuiltinCall (const RegisterID& destination,
+			     const std::vector<RegisterPtr>& inParams,
+			     const std::vector<RegisterPtr>& outParams);
+	void OpBuiltinCall (const RegisterPtr& destination,
 			    intermediate::BuiltinFunction what,
-			    const std::vector<RegisterID>& inParams);
+			    const std::vector<RegisterPtr>& inParams);
       };
     public:
       SequenceSplitter (ProgramSplitter& progSplit, bool mergeUniformToVF = true);
@@ -149,15 +148,15 @@ namespace s1
       
       // set input param frequencies
       void SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags);
-      void SetLocalRegFreqFlags (const RegisterID& regID, unsigned int freqFlags)
+      void SetLocalRegFreqFlags (const RegisterPtr& regID, unsigned int freqFlags)
       { setAvailability[regID] = freqFlags; }
-      unsigned int GetLocalRegFreqFlags (const RegisterID& regID)
+      unsigned int GetLocalRegFreqFlags (const RegisterPtr& regID)
       { return setAvailability[regID]; }
-      unsigned int GetRegAvailability (const RegisterID& reg);
+      unsigned int GetRegAvailability (const RegisterPtr& reg);
       
       void PerformSplit ();
       
-      typedef std::vector<RegisterID> TransferRegsVector;
+      typedef std::vector<RegisterPtr> TransferRegsVector;
       const TransferRegsVector& GetTransferRegs (int srcFreq) const
       { return transferRegs[srcFreq]; }
       
@@ -183,17 +182,16 @@ namespace s1
           the registers in element 1 from frequency 2 to frequency 2 and so on. */
       TransferRegsVector transferRegs[freqNum-1];
       
-      void SetRegAvailability (const RegisterID& regID, unsigned int freqFlags)
+      void SetRegAvailability (const RegisterPtr& regID, unsigned int freqFlags)
       { regAvailability[regID] = freqFlags; }
       
       UnicodeString GetTransferIdent ();
       
       /// Allocate register in all output sequences
-      RegisterID AllocateRegister (const std::string& typeStr,
-				   const s1::parser::SemanticsHandler::TypePtr& originalType,
-				   const UnicodeString& name);
+      RegisterPtr AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
+				    const UnicodeString& name);
     private:
-      typedef boost::unordered_map<RegisterID, unsigned int> AvailabilityMap;
+      typedef boost::unordered_map<RegisterPtr, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;
       AvailabilityMap setAvailability;
       

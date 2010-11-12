@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpChangeArrayElement.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,16 +6,16 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpChangeArrayElement::SequenceOpChangeArrayElement (RegisterID destination,
-								RegisterID source,
-								RegisterID index,
-								RegisterID newValue)
+    SequenceOpChangeArrayElement::SequenceOpChangeArrayElement (RegisterPtr destination,
+								RegisterPtr source,
+								RegisterPtr index,
+								RegisterPtr newValue)
      : SequenceOpUnary (destination, source), index (index), newValue (newValue)
     {}
 			    
-    RegisterIDSet SequenceOpChangeArrayElement::GetReadRegisters () const
+    RegisterSet SequenceOpChangeArrayElement::GetReadRegisters () const
     {
-      RegisterIDSet set (SequenceOpUnary::GetReadRegisters ());
+      RegisterSet set (SequenceOpUnary::GetReadRegisters ());
       set.insert (index);
       set.insert (newValue);
       return set;

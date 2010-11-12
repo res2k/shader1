@@ -12,27 +12,27 @@ namespace s1
     class SequenceOpBlock : public SequenceOp
     {
       SequencePtr subSequence;
-      Sequence::IdentifierToRegIDMap identToRegIDs_imp;
-      Sequence::IdentifierToRegIDMap identToRegIDs_exp;
-      std::vector<RegisterID> readRegisters;
-      std::vector<RegisterID> writtenRegisters;
+      Sequence::IdentifierToRegMap identToRegs_imp;
+      Sequence::IdentifierToRegMap identToRegs_exp;
+      std::vector<RegisterPtr> readRegisters;
+      std::vector<RegisterPtr> writtenRegisters;
     public:
       SequenceOpBlock (const SequencePtr& subSequence,
-		       const Sequence::IdentifierToRegIDMap& identToRegIDs_imp,
-		       const Sequence::IdentifierToRegIDMap& identToRegIDs_exp,
-		       const std::vector<RegisterID>& readRegisters,
-		       const std::vector<RegisterID>& writtenRegisters);
+		       const Sequence::IdentifierToRegMap& identToRegs_imp,
+		       const Sequence::IdentifierToRegMap& identToRegs_exp,
+		       const std::vector<RegisterPtr>& readRegisters,
+		       const std::vector<RegisterPtr>& writtenRegisters);
       
-      RegisterIDSet GetReadRegisters () const;
-      RegisterIDSet GetWrittenRegisters () const;
+      RegisterSet GetReadRegisters () const;
+      RegisterSet GetWrittenRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
       
       const SequencePtr& GetSequence() const { return subSequence; }
-      const Sequence::IdentifierToRegIDMap& GetImportIdentToRegs() const
-      { return identToRegIDs_imp; }
-      const Sequence::IdentifierToRegIDMap& GetExportIdentToRegs() const
-      { return identToRegIDs_exp; }
+      const Sequence::IdentifierToRegMap& GetImportIdentToRegs() const
+      { return identToRegs_imp; }
+      const Sequence::IdentifierToRegMap& GetExportIdentToRegs() const
+      { return identToRegs_exp; }
     };
     
   } // namespace intermediate

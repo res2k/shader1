@@ -48,8 +48,8 @@ namespace s1
       struct NameReg
       {
 	bool isImported;
-	RegisterID reg;
-	RegisterID initialReg;
+	RegisterPtr reg;
+	RegisterPtr initialReg;
 	bool initiallyWriteable;
 	
 	NameReg() : isImported (false) {}
@@ -85,8 +85,8 @@ namespace s1
       void GenerateGlobalVarInitialization ();
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
       
-      RegisterID GetRegisterForName (const NameImplPtr& name, bool writeable);
-      bool OverrideNameRegister (const NameImplPtr& name, const RegisterID& reg);
+      RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);
+      bool OverrideNameRegister (const NameImplPtr& name, const RegisterPtr& reg);
     };
   } // namespace intermediate
 } // namespace s1

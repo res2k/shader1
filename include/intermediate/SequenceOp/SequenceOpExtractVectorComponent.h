@@ -12,8 +12,8 @@ namespace s1
     {
       unsigned int comp;
     public:
-      SequenceOpExtractVectorComponent (RegisterID destination,
-					RegisterID source,
+      SequenceOpExtractVectorComponent (RegisterPtr destination,
+					RegisterPtr source,
 					unsigned int vecComp);
 			    
       void Visit (SequenceVisitor& visitor);

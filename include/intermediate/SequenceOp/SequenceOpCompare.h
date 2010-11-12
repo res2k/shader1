@@ -12,10 +12,10 @@ namespace s1
     {
       SequenceVisitor::CompareOp op;
     public:
-      SequenceOpCompare (RegisterID destination,
+      SequenceOpCompare (RegisterPtr destination,
 			 SequenceVisitor::CompareOp op,
-			 RegisterID source1,
-			 RegisterID source2);
+			 RegisterPtr source1,
+			 RegisterPtr source2);
       
       void Visit (SequenceVisitor& visitor);
     };

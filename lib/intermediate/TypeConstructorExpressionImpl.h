@@ -12,8 +12,8 @@ namespace s1
       TypeImplPtr type;
       ExpressionVector params;
       
-      typedef std::vector<std::pair<boost::shared_ptr<ExpressionImpl>, RegisterID> > PostActionList;
-      void ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterID>& reg,
+      typedef std::vector<std::pair<boost::shared_ptr<ExpressionImpl>, RegisterPtr> > PostActionList;
+      void ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterPtr>& reg,
 				      PostActionList& postActions);
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
@@ -21,8 +21,8 @@ namespace s1
 				     const ExpressionVector& params);
       
       TypeImplPtr GetValueType () { return type; }
-      RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				bool asLvalue = false);
+      RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
+				 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

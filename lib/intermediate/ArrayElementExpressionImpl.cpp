@@ -31,9 +31,9 @@ namespace s1
       return boost::shared_static_cast<TypeImpl> (exprType->avmBase);
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,
-												 RegisterClassification classify,
-												 bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,
+												  RegisterClassification classify,
+												  bool asLvalue)
     {
       Sequence& seq (*(block.GetSequence()));
 
@@ -44,7 +44,7 @@ namespace s1
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
 	throw Exception (IndexNotAnInteger);
       
-      RegisterID targetReg (handler->AllocateRegister (seq, GetValueType(), classify));
+      RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), classify));
       
       if (asLvalue)
       {
@@ -52,13 +52,13 @@ namespace s1
       }
       else
       {
-	RegisterID arrayReg (arrayExprImpl->AddToSequence (block, Intermediate));
+	RegisterPtr arrayReg (arrayExprImpl->AddToSequence (block, Intermediate));
 	
-	RegisterID indexReg (indexExprImpl->AddToSequence (block, Index));
-	RegisterID orgIndexReg (indexReg);
+	RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
+	RegisterPtr orgIndexReg (indexReg);
 	if (!indexType->IsEqual (*(handler->GetUintType())))
 	{
-	  RegisterID newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
+	  RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
 	  handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
 	  indexReg = newIndexReg;
 	}
@@ -75,7 +75,7 @@ namespace s1
     }
 
     void IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequencePostAction (BlockImpl& block,
-												     const RegisterID& target,
+												     const RegisterPtr& target,
 												     bool wasLvalue)
     {
       if (!wasLvalue) return;
@@ -86,16 +86,16 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::shared_static_cast<ExpressionImpl> (indexExpr));
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       
-      RegisterID arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));
-      RegisterID arrayRegDst (arrayExprImpl->AddToSequence (block, Intermediate, true));
-      if (!arrayRegDst.IsValid())
+      RegisterPtr arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));
+      RegisterPtr arrayRegDst (arrayExprImpl->AddToSequence (block, Intermediate, true));
+      if (!arrayRegDst)
 	throw Exception (ArrayNotAnLValue);
       
-      RegisterID indexReg (indexExprImpl->AddToSequence (block, Index));
-      RegisterID orgIndexReg (indexReg);
+      RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
+      RegisterPtr orgIndexReg (indexReg);
       if (!indexType->IsEqual (*(handler->GetUintType())))
       {
-	RegisterID newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
+	RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
 	handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
 	indexReg = newIndexReg;
       }

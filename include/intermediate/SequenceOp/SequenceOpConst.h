@@ -19,16 +19,16 @@ namespace s1
 	float floatVal;
       };
     public:
-      SequenceOpConst (RegisterID destination, bool val)
+      SequenceOpConst (RegisterPtr destination, bool val)
        : SequenceOpWithResult (destination), type (Bool), boolVal (val) {}
-      SequenceOpConst (RegisterID destination, int val)
+      SequenceOpConst (RegisterPtr destination, int val)
        : SequenceOpWithResult (destination), type (Int), intVal (val) {}
-      SequenceOpConst (RegisterID destination, unsigned int val)
+      SequenceOpConst (RegisterPtr destination, unsigned int val)
        : SequenceOpWithResult (destination), type (UInt), uintVal (val) {}
-      SequenceOpConst (RegisterID destination, float val)
+      SequenceOpConst (RegisterPtr destination, float val)
        : SequenceOpWithResult (destination), type (Float), floatVal (val) {}
 
-      RegisterIDSet GetReadRegisters () const { return RegisterIDSet(); }
+      RegisterSet GetReadRegisters () const { return RegisterSet(); }
       
       void Visit (SequenceVisitor& visitor);
     };

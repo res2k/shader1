@@ -4,7 +4,6 @@
 #include "SequenceOpWithResult.h"
 #include "../forwarddecl.h"
 #include "../BuiltinFunction.h"
-#include "../RegisterID.h"
 
 #include <vector>
 
@@ -15,13 +14,13 @@ namespace s1
     class SequenceOpBuiltinCall : public SequenceOpWithResult
     {
       BuiltinFunction what;
-      std::vector<RegisterID> inParams;
+      std::vector<RegisterPtr> inParams;
     public:
-      SequenceOpBuiltinCall (const RegisterID& destination,
+      SequenceOpBuiltinCall (const RegisterPtr& destination,
 			     BuiltinFunction what,
-			     const std::vector<RegisterID>& inParams);
+			     const std::vector<RegisterPtr>& inParams);
       
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
     };

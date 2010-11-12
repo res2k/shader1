@@ -12,10 +12,10 @@ namespace s1
     {
       SequenceVisitor::LogicOp op;
     public:
-      SequenceOpLogic (RegisterID destination,
+      SequenceOpLogic (RegisterPtr destination,
 		       SequenceVisitor::LogicOp op,
-		       RegisterID source1,
-		       RegisterID source2);
+		       RegisterPtr source1,
+		       RegisterPtr source2);
       
       void Visit (SequenceVisitor& visitor);
     };

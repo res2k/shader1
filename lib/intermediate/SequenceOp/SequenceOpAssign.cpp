@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,8 +6,8 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpAssign::SequenceOpAssign (RegisterID destination,
-				        RegisterID source)
+    SequenceOpAssign::SequenceOpAssign (RegisterPtr destination,
+				        RegisterPtr source)
      : SequenceOpUnary (destination, source)
     {
     }

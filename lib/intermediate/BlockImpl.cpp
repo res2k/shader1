@@ -61,7 +61,7 @@ namespace s1
     {
       FlushVariableInitializers();
       
-      std::vector<RegisterID> retValRegs;
+      std::vector<RegisterPtr> retValRegs;
       if (returnValue)
       {
 	/*
@@ -88,7 +88,7 @@ namespace s1
 	ExpressionPtr retValVarExpr (handler->CreateVariableExpression (varReturnValue));
 	ExpressionPtr retValAssign (handler->CreateAssignExpression (retValVarExpr, returnValue));
 	AddExpressionCommand (retValAssign);
-	RegisterID retValReg (GetRegisterForName (varReturnValue, false));
+	RegisterPtr retValReg (GetRegisterForName (varReturnValue, false));
 	retValRegs.push_back (retValReg);
 	
 	// @@@ This is a hack so the return val out param is later correctly "seen" by the splitter.
@@ -104,7 +104,7 @@ namespace s1
       const std::vector<UnicodeString>& outputParams = blockScopeImpl->GetFunctionOutputParams();
       BOOST_FOREACH(const UnicodeString& identifier, outputParams)
       {
-	retValRegs.push_back (sequence->GetIdentifierRegisterID (identifier));
+	retValRegs.push_back (sequence->GetIdentifierRegister (identifier));
       }
 
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValRegs));
@@ -117,7 +117,7 @@ namespace s1
     {
       FlushVariableInitializers();
       ExpressionImpl* impl = static_cast<ExpressionImpl*> (branchCondition.get());
-      RegisterID condReg (impl->AddToSequence (*this, Condition));
+      RegisterPtr condReg (impl->AddToSequence (*this, Condition));
       
       if (!elseBlock)
       {
@@ -133,8 +133,8 @@ namespace s1
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
       // Collect registers read by the blocks
-      std::vector<RegisterID> readRegistersIf;
-      std::vector<RegisterID> readRegistersElse;
+      std::vector<RegisterPtr> readRegistersIf;
+      std::vector<RegisterPtr> readRegistersElse;
       {
 	for (NameRegMap::const_iterator import = ifBlockImpl->nameRegisters.begin();
 	     import != ifBlockImpl->nameRegisters.end();
@@ -144,7 +144,7 @@ namespace s1
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterID reg (GetRegisterForName (import->first, false));
+	    RegisterPtr reg (GetRegisterForName (import->first, false));
 	    readRegistersIf.push_back (reg);
 	  }
 	}
@@ -156,7 +156,7 @@ namespace s1
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterID reg (GetRegisterForName (import->first, false));
+	    RegisterPtr reg (GetRegisterForName (import->first, false));
 	    readRegistersElse.push_back (reg);
 	  }
 	}
@@ -167,7 +167,7 @@ namespace s1
          insertion_ is needed, hence the snapshot.
          Also, do it before allocating new registers for the 'written registers',
          as we want the ID before that */
-      Sequence::IdentifierToRegIDMap identifierToRegIDMap (sequence->GetIdentifierToRegisterIDMap ());
+      Sequence::IdentifierToRegMap identifierToRegMap (sequence->GetIdentifierToRegisterMap ());
       
       NameImplSet allExportedNames (ifBlockImpl->exportedNames);
       allExportedNames.insert (elseBlockImpl->exportedNames.begin(), elseBlockImpl->exportedNames.end());
@@ -195,16 +195,16 @@ namespace s1
       }
       
       // Generate register IDs for all values the nested blocks export
-      typedef std::tr1::unordered_map<NameImplPtr, RegisterID> ExportedNamesMap;
+      typedef std::tr1::unordered_map<NameImplPtr, RegisterPtr> ExportedNamesMap;
       ExportedNamesMap seenExportedNames;
-      std::vector<RegisterID> writtenRegistersIf;
-      std::vector<RegisterID> writtenRegistersElse;
+      std::vector<RegisterPtr> writtenRegistersIf;
+      std::vector<RegisterPtr> writtenRegistersElse;
       {
 	for (NameImplSet::const_iterator exportedName = ifBlockImpl->exportedNames.begin();
 	     exportedName != ifBlockImpl->exportedNames.end();
 	     exportedName++)
 	{
-	  RegisterID reg (GetRegisterForName (*exportedName, true));
+	  RegisterPtr reg (GetRegisterForName (*exportedName, true));
 	  writtenRegistersIf.push_back (reg);
 	  seenExportedNames.insert (std::make_pair (*exportedName, reg));
 	}
@@ -214,7 +214,7 @@ namespace s1
 	     exportedName != elseBlockImpl->exportedNames.end();
 	     exportedName++)
 	{
-	  RegisterID reg;
+	  RegisterPtr reg;
 	  
 	  ExportedNamesMap::const_iterator prevName (seenExportedNames.find (*exportedName));
 	  
@@ -231,13 +231,13 @@ namespace s1
       }
       
       SequenceOpPtr seqOpIf (boost::make_shared<SequenceOpBlock> (ifBlockImpl->GetSequence(),
-								  identifierToRegIDMap,
-								  sequence->GetIdentifierToRegisterIDMap (),
+								  identifierToRegMap,
+								  sequence->GetIdentifierToRegisterMap (),
 								  readRegistersIf,
 								  writtenRegistersIf));
       SequenceOpPtr seqOpElse (boost::make_shared<SequenceOpBlock> (elseBlockImpl->GetSequence(),
-								    identifierToRegIDMap,
-								    sequence->GetIdentifierToRegisterIDMap (),
+								    identifierToRegMap,
+								    sequence->GetIdentifierToRegisterMap (),
 								    readRegistersElse,
 								    writtenRegistersElse));
       
@@ -295,13 +295,13 @@ namespace s1
       }
       
       // For those variable, allocate new 'writeable' registers
-      std::vector<std::pair<RegisterID, RegisterID> > loopedRegs;
+      std::vector<std::pair<RegisterPtr, RegisterPtr> > loopedRegs;
       for (NameImplSet::const_iterator loopVar = loopVars.begin();
 	   loopVar != loopVars.end();
 	   ++loopVar)
       {
-	RegisterID regIn (GetRegisterForName (*loopVar, false));
-	RegisterID regOut (GetRegisterForName (*loopVar, true));
+	RegisterPtr regIn (GetRegisterForName (*loopVar, false));
+	RegisterPtr regOut (GetRegisterForName (*loopVar, true));
 	loopedRegs.push_back (std::make_pair (regIn, regOut));
       }
       
@@ -313,7 +313,7 @@ namespace s1
 	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
 	newBlock->AddExpressionCommand (condAssign);
       }
-      RegisterID condReg (GetRegisterForName (varCondition, false));
+      RegisterPtr condReg (GetRegisterForName (varCondition, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
@@ -387,13 +387,13 @@ namespace s1
       }
       
       // For those variable, allocate new 'writeable' registers
-      std::vector<std::pair<RegisterID, RegisterID> > loopedRegs;
+      std::vector<std::pair<RegisterPtr, RegisterPtr> > loopedRegs;
       for (NameImplSet::const_iterator loopVar = loopVars.begin();
 	   loopVar != loopVars.end();
 	   ++loopVar)
       {
-	RegisterID regIn (GetRegisterForName (*loopVar, false));
-	RegisterID regOut (GetRegisterForName (*loopVar, true));
+	RegisterPtr regIn (GetRegisterForName (*loopVar, false));
+	RegisterPtr regOut (GetRegisterForName (*loopVar, true));
 	loopedRegs.push_back (std::make_pair (regIn, regOut));
       }
       
@@ -412,7 +412,7 @@ namespace s1
 	  condAssign = handler->CreateConstBoolExpression (true);
 	newBlock->AddExpressionCommand (condAssign);
       }
-      RegisterID condReg (GetRegisterForName (varCondition, false));
+      RegisterPtr condReg (GetRegisterForName (varCondition, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
@@ -480,7 +480,7 @@ namespace s1
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
-      std::vector<RegisterID> readRegisters;
+      std::vector<RegisterPtr> readRegisters;
       {
 	for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
 	     import != blockImpl->nameRegisters.end();
@@ -490,7 +490,7 @@ namespace s1
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterID reg (GetRegisterForName (import->first, false));
+	    RegisterPtr reg (GetRegisterForName (import->first, false));
 	    readRegisters.push_back (reg);
 	  }
 	}
@@ -501,9 +501,9 @@ namespace s1
          insertion_ is needed, hence the snapshot.
          Also, do it before allocating new registers for the 'written registers',
          as we want the ID before that */
-      Sequence::IdentifierToRegIDMap identifierToRegIDMap (sequence->GetIdentifierToRegisterIDMap ());
+      Sequence::IdentifierToRegMap identifierToRegIDMap (sequence->GetIdentifierToRegisterMap ());
       // Generate register IDs for all values the nested block exports
-      std::vector<RegisterID> writtenRegisters;
+      std::vector<RegisterPtr> writtenRegisters;
       {
 	for (NameImplSet::const_iterator exportedName = blockImpl->exportedNames.begin();
 	     exportedName != blockImpl->exportedNames.end();
@@ -512,7 +512,7 @@ namespace s1
 	  /* "Loop names" are treated somewhat special as the caller will have taken care of
 	     allocating writeable regs for these names. */
 	  bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
-	  RegisterID reg;
+	  RegisterPtr reg;
 	  reg = GetRegisterForName (*exportedName, !isLoopName);
 	  writtenRegisters.push_back (reg);
 	}
@@ -520,7 +520,7 @@ namespace s1
       // Apply overrides for register IDs of exported identifiers
       return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
 						  identifierToRegIDMap,
-						  sequence->GetIdentifierToRegisterIDMap (),
+						  sequence->GetIdentifierToRegisterMap (),
 						  readRegisters,
 						  writtenRegisters);
     }
@@ -544,8 +544,8 @@ namespace s1
       return newVar;
     }
 
-    RegisterID IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
-										     bool writeable)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
+										      bool writeable)
     {
       bool doImport = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
       
@@ -555,10 +555,10 @@ namespace s1
       }
       
       NameReg& nameReg = nameRegisters[name];
-      RegisterID& reg = nameReg.reg;
+      RegisterPtr& reg = nameReg.reg;
       /* Note: asking for a register for a constant value is only an error for the second time and
 	  after; the first request is satisfied as the constant may have to be loaded somewhere */
-      if (!reg.IsValid())
+      if (!reg)
       {
 	nameReg.isImported = doImport;
 	if (doImport)
@@ -586,7 +586,7 @@ namespace s1
 	}
 	nameReg.initiallyWriteable = writeable;
 	nameReg.initialReg = reg;
-	sequence->SetIdentifierRegisterID (name->identifier, reg);
+	sequence->SetIdentifierRegister (name->identifier, reg);
       }
       else
       {
@@ -595,7 +595,7 @@ namespace s1
 	  if (name->varConstant)
 	    throw Exception (AssignmentTargetIsNotAnLValue);
 	  reg = handler->AllocateRegister (*sequence, reg);
-	  sequence->SetIdentifierRegisterID (name->identifier, reg);
+	  sequence->SetIdentifierRegister (name->identifier, reg);
 	}
       }
       if (doImport && writeable)
@@ -607,17 +607,15 @@ namespace s1
     }
     
     bool IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (const NameImplPtr& name,
-										 const RegisterID& reg)
+										 const RegisterPtr& newRegPtr)
     {
-      RegisterID origReg (GetRegisterForName (name, true));
-      Sequence::RegisterPtr origRegPtr (sequence->QueryRegisterPtrFromID (origReg));
-      Sequence::RegisterPtr newRegPtr (sequence->QueryRegisterPtrFromID (reg));
+      RegisterPtr origRegPtr (GetRegisterForName (name, true));
       newRegPtr->StealName (*origRegPtr);
       NameReg& nameReg = nameRegisters[name];
-      nameReg.reg = reg;
-      sequence->SetIdentifierRegisterID (name->identifier, reg);
+      nameReg.reg = newRegPtr;
+      sequence->SetIdentifierRegister (name->identifier, newRegPtr);
       if (nameReg.isImported)
-	sequence->SetExport (name->identifier, reg);
+	sequence->SetExport (name->identifier, newRegPtr);
       return true;
     }
   } // namespace intermediate

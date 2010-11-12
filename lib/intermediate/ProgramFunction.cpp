@@ -21,7 +21,7 @@ namespace s1
     }
 
     void ProgramFunction::SetTransferMapping (const UnicodeString& transferVal,
-					      const RegisterID& programReg)
+					      const RegisterPtr& programReg)
     {
       transferMappings.push_back (std::make_pair (transferVal, programReg));
     }

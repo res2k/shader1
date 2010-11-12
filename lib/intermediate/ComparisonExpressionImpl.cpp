@@ -44,11 +44,11 @@ namespace s1
       return handler->GetBoolType();
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::AddToSequence (BlockImpl& block,
-											       RegisterClassification classify,
-											       bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::AddToSequence (BlockImpl& block,
+												RegisterClassification classify,
+												bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
       Sequence& seq (*(block.GetSequence()));
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
@@ -57,28 +57,28 @@ namespace s1
       boost::shared_ptr<TypeImpl> comparisonType = handler->GetHigherPrecisionType (type1, type2);
 	
       // Set up registers for operand values
-      RegisterID orgReg1, reg1;
+      RegisterPtr orgReg1, reg1;
       orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
       if (!comparisonType->IsEqual (*(type1.get())))
       {
 	// Insert cast op
-	RegisterID newReg1 (handler->AllocateRegister (seq, comparisonType, Intermediate));
+	RegisterPtr newReg1 (handler->AllocateRegister (seq, comparisonType, Intermediate));
 	handler->GenerateCast (seq, newReg1, comparisonType,
 			       reg1, type1);
 	reg1 = newReg1;
       }
-      RegisterID orgReg2, reg2;
+      RegisterPtr orgReg2, reg2;
       orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       if (!comparisonType->IsEqual (*(type2.get())))
       {
 	// Insert cast op
-	RegisterID newReg2 (handler->AllocateRegister (seq, comparisonType, Intermediate));
+	RegisterPtr newReg2 (handler->AllocateRegister (seq, comparisonType, Intermediate));
 	handler->GenerateCast (seq, newReg2, comparisonType,
 			       reg2, type2);
 	reg2 = newReg2;
       }
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;

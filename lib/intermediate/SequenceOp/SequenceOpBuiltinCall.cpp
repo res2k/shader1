@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,16 +6,16 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpBuiltinCall::SequenceOpBuiltinCall (const RegisterID& destination,
+    SequenceOpBuiltinCall::SequenceOpBuiltinCall (const RegisterPtr& destination,
 						  BuiltinFunction what,
-						  const std::vector<RegisterID>& inParams)
+						  const std::vector<RegisterPtr>& inParams)
      : SequenceOpWithResult (destination), what (what), inParams (inParams)
     {
     }
     
-    RegisterIDSet SequenceOpBuiltinCall::GetReadRegisters () const
+    RegisterSet SequenceOpBuiltinCall::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (inParams.begin(), inParams.end());
       return regs;
     }

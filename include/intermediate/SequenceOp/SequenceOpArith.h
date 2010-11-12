@@ -12,10 +12,10 @@ namespace s1
     {
       SequenceVisitor::ArithmeticOp op;
     public:
-      SequenceOpArith (RegisterID destination,
+      SequenceOpArith (RegisterPtr destination,
 		       SequenceVisitor::ArithmeticOp op,
-		       RegisterID source1,
-		       RegisterID source2);
+		       RegisterPtr source1,
+		       RegisterPtr source2);
       
       void Visit (SequenceVisitor& visitor);
     };

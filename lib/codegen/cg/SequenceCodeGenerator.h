@@ -24,18 +24,18 @@ namespace s1
     class CgGenerator::SequenceCodeGenerator
     {
     protected:
-      typedef intermediate::RegisterID RegisterID;
+      typedef intermediate::RegisterPtr RegisterPtr;
       typedef intermediate::Sequence Sequence;
       
       class SequenceIdentifiersToRegIDsNameResolver : public ImportedNameResolver
       {
 	SequenceCodeGenerator* owner;
-	const Sequence::IdentifierToRegIDMap& identToRegID_imp;
-	const Sequence::IdentifierToRegIDMap& identToRegID_exp;
+	const Sequence::IdentifierToRegMap& identToRegID_imp;
+	const Sequence::IdentifierToRegMap& identToRegID_exp;
       public:
 	SequenceIdentifiersToRegIDsNameResolver (SequenceCodeGenerator* owner,
-						 const Sequence::IdentifierToRegIDMap& identToRegID_imp,
-						 const Sequence::IdentifierToRegIDMap& identToRegID_exp);
+						 const Sequence::IdentifierToRegMap& identToRegID_imp,
+						 const Sequence::IdentifierToRegMap& identToRegID_exp);
 					 
 	std::string GetImportedNameIdentifier (const UnicodeString& name);
 	std::string GetExportedNameIdentifier (const UnicodeString& name);
@@ -49,103 +49,103 @@ namespace s1
 	StringsArrayPtr target;
 	bool emitEmptyBlocks;
 	
-	void EmitAssign (const RegisterID& destination,
+	void EmitAssign (const RegisterPtr& destination,
 			 const char* value);
 	void EmitAssign (const char* destination,
-			 const RegisterID& source);
-	void EmitFunctionCall (const RegisterID& destination,
+			 const RegisterPtr& source);
+	void EmitFunctionCall (const RegisterPtr& destination,
 			       const char* function,
 			       const char* paramsStr);
-	void EmitBinary (const RegisterID& destination,
-			 const RegisterID& source1,
-			 const RegisterID& source2,
+	void EmitBinary (const RegisterPtr& destination,
+			 const RegisterPtr& source1,
+			 const RegisterPtr& source2,
 			 const char* op);
-	void EmitUnary (const RegisterID& destination,
-			const RegisterID& source,
+	void EmitUnary (const RegisterPtr& destination,
+			const RegisterPtr& source,
 			const char* op);
       public:
 	CodegenVisitor (SequenceCodeGenerator* owner,
 			const StringsArrayPtr& target);
 	
-	void OpConstBool (const RegisterID& destination,
+	void OpConstBool (const RegisterPtr& destination,
 			  bool value);
-	void OpConstInt (const RegisterID& destination,
+	void OpConstInt (const RegisterPtr& destination,
 			 int value);
-	void OpConstUInt (const RegisterID& destination,
+	void OpConstUInt (const RegisterPtr& destination,
 			  unsigned int value);
-	void OpConstFloat (const RegisterID& destination,
+	void OpConstFloat (const RegisterPtr& destination,
 			   float value);
 				  
-	void OpAssign (const RegisterID& destination,
-		       const RegisterID& source);
+	void OpAssign (const RegisterPtr& destination,
+		       const RegisterPtr& source);
 				  
-	void OpCast (const RegisterID& destination,
+	void OpCast (const RegisterPtr& destination,
 		     BaseType destType,
-		     const RegisterID& source);
+		     const RegisterPtr& source);
 
-	void OpMakeVector (const RegisterID& destination,
+	void OpMakeVector (const RegisterPtr& destination,
 			   BaseType compType,
-			   const std::vector<RegisterID>& sources);
+			   const std::vector<RegisterPtr>& sources);
 				     
-	void OpMakeMatrix (const RegisterID& destination,
+	void OpMakeMatrix (const RegisterPtr& destination,
 			   BaseType compType,
 			   unsigned int matrixRows, unsigned int matrixCols,
-			   const std::vector<RegisterID>& sources);
+			   const std::vector<RegisterPtr>& sources);
 				     
-	void OpMakeArray (const RegisterID& destination,
-			  const std::vector<RegisterID>& sources);
-	void OpExtractArrayElement (const RegisterID& destination,
-				    const RegisterID& source,
-				    const RegisterID& index);
-	void OpChangeArrayElement (const RegisterID& destination,
-				   const RegisterID& source,
-				   const RegisterID& index,
-				   const RegisterID& newValue);
-	void OpGetArrayLength (const RegisterID& destination,
-			       const RegisterID& array);
+	void OpMakeArray (const RegisterPtr& destination,
+			  const std::vector<RegisterPtr>& sources);
+	void OpExtractArrayElement (const RegisterPtr& destination,
+				    const RegisterPtr& source,
+				    const RegisterPtr& index);
+	void OpChangeArrayElement (const RegisterPtr& destination,
+				   const RegisterPtr& source,
+				   const RegisterPtr& index,
+				   const RegisterPtr& newValue);
+	void OpGetArrayLength (const RegisterPtr& destination,
+			       const RegisterPtr& array);
 
-	void OpExtractVectorComponent (const RegisterID& destination,
-				       const RegisterID& source,
+	void OpExtractVectorComponent (const RegisterPtr& destination,
+				       const RegisterPtr& source,
 				       unsigned int comp);
 				      
-	void OpArith (const RegisterID& destination,
+	void OpArith (const RegisterPtr& destination,
 		      ArithmeticOp op,
-		      const RegisterID& source1,
-		      const RegisterID& source2);
+		      const RegisterPtr& source1,
+		      const RegisterPtr& source2);
 
-	void OpLogic (const RegisterID& destination,
+	void OpLogic (const RegisterPtr& destination,
 		      LogicOp op,
-		      const RegisterID& source1,
-		      const RegisterID& source2);
+		      const RegisterPtr& source1,
+		      const RegisterPtr& source2);
 
-	void OpUnary (const RegisterID& destination,
+	void OpUnary (const RegisterPtr& destination,
 		      UnaryOp op,
-		      const RegisterID& source);
+		      const RegisterPtr& source);
 			       
-	void OpCompare (const RegisterID& destination,
+	void OpCompare (const RegisterPtr& destination,
 			CompareOp op,
-			const RegisterID& source1,
-			const RegisterID& source2);
+			const RegisterPtr& source1,
+			const RegisterPtr& source2);
 			  
 	void OpBlock (const intermediate::SequencePtr& seq,
-		      const Sequence::IdentifierToRegIDMap& identToRegID_imp,
-		      const Sequence::IdentifierToRegIDMap& identToRegID_exp,
-		      const std::vector<RegisterID>& writtenRegisters);
+		      const Sequence::IdentifierToRegMap& identToRegID_imp,
+		      const Sequence::IdentifierToRegMap& identToRegID_exp,
+		      const std::vector<RegisterPtr>& writtenRegisters);
 		      
-	void OpBranch (const RegisterID& conditionReg,
+	void OpBranch (const RegisterPtr& conditionReg,
 		       const intermediate::SequenceOpPtr& seqOpIf,
 		       const intermediate::SequenceOpPtr& seqOpElse);
-	void OpWhile (const RegisterID& conditionReg,
-		      const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+	void OpWhile (const RegisterPtr& conditionReg,
+		      const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 		      const intermediate::SequenceOpPtr& seqOpBody);
 		      
-	void OpReturn (const std::vector<RegisterID>& outParamVals);
+	void OpReturn (const std::vector<RegisterPtr>& outParamVals);
 	void OpFunctionCall (const UnicodeString& funcIdent,
-			     const std::vector<RegisterID>& inParams,
-			     const std::vector<RegisterID>& outParams);
-	void OpBuiltinCall (const RegisterID& destination,
+			     const std::vector<RegisterPtr>& inParams,
+			     const std::vector<RegisterPtr>& outParams);
+	void OpBuiltinCall (const RegisterPtr& destination,
 			    intermediate::BuiltinFunction what,
-			    const std::vector<RegisterID>& inParams);
+			    const std::vector<RegisterPtr>& inParams);
       };
       
       const intermediate::Sequence& seq;
@@ -155,10 +155,10 @@ namespace s1
       StringsArrayPtr strings;
       const std::vector<std::string>& outParams;
       
-      typedef boost::unordered_map<RegisterID, std::string> RegistersToIDMap;
+      typedef boost::unordered_map<RegisterPtr, std::string> RegistersToIDMap;
       RegistersToIDMap seenRegisters;
       
-      std::string GetOutputRegisterName (const RegisterID& reg,
+      std::string GetOutputRegisterName (const RegisterPtr& reg,
 					 const std::string& initializer = std::string());
     public:
       SequenceCodeGenerator (const intermediate::Sequence& seq,

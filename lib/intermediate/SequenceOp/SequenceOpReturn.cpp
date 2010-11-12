@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,21 +6,21 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpReturn::SequenceOpReturn (const std::vector<RegisterID>& outParamVals)
+    SequenceOpReturn::SequenceOpReturn (const std::vector<RegisterPtr>& outParamVals)
      : outParamVals (outParamVals)
     {
     }
     
-    RegisterIDSet SequenceOpReturn::GetReadRegisters () const
+    RegisterSet SequenceOpReturn::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (outParamVals.begin(), outParamVals.end());
       return regs;
     }
     
-    RegisterIDSet SequenceOpReturn::GetWrittenRegisters () const
+    RegisterSet SequenceOpReturn::GetWrittenRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       return regs;
     }
     

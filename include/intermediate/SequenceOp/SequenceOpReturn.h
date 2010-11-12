@@ -3,7 +3,6 @@
 
 #include "SequenceOp.h"
 #include "../forwarddecl.h"
-#include "../RegisterID.h"
 
 #include <vector>
 
@@ -13,12 +12,12 @@ namespace s1
   {
     class SequenceOpReturn : public SequenceOp
     {
-      std::vector<RegisterID> outParamVals;
+      std::vector<RegisterPtr> outParamVals;
     public:
-      SequenceOpReturn (const std::vector<RegisterID>& outParamVals);
+      SequenceOpReturn (const std::vector<RegisterPtr>& outParamVals);
       
-      RegisterIDSet GetReadRegisters () const;
-      RegisterIDSet GetWrittenRegisters () const;
+      RegisterSet GetReadRegisters () const;
+      RegisterSet GetWrittenRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
     };

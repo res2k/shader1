@@ -54,21 +54,21 @@ namespace s1
       return handler->GetBoolType();
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::AddToSequence (BlockImpl& block,
-											  RegisterClassification classify,
-											  bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::AddToSequence (BlockImpl& block,
+											   RegisterClassification classify,
+											   bool asLvalue)
     {
-      if (asLvalue) return RegisterID();
+      if (asLvalue) return RegisterPtr();
       
       Sequence& seq (*(block.GetSequence()));
 	
       // Set up registers for operand values
-      RegisterID orgReg1, reg1;
+      RegisterPtr orgReg1, reg1;
       orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
-      RegisterID orgReg2, reg2;
+      RegisterPtr orgReg2, reg2;
       orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       
-      RegisterID destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;

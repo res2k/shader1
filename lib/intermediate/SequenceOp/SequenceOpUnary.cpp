@@ -1,18 +1,19 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpUnary.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    SequenceOpUnary::SequenceOpUnary (RegisterID destination,
-				      RegisterID source)
+    SequenceOpUnary::SequenceOpUnary (RegisterPtr destination,
+				      RegisterPtr source)
      : SequenceOpWithResult (destination), source (source)
     {
     }
     
-    RegisterIDSet SequenceOpUnary::GetReadRegisters () const
+    RegisterSet SequenceOpUnary::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (source);
       return regs;
     }

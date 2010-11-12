@@ -134,17 +134,17 @@ namespace s1
        * Allocate a new register.
        * If name is empty generates a dummy name.
        */
-      RegisterID AllocateRegister (Sequence& seq, const TypeImplPtr& type,
-				   RegisterClassification classify,
-				   const UnicodeString& name = UnicodeString ());
+      RegisterPtr AllocateRegister (Sequence& seq, const TypeImplPtr& type,
+				    RegisterClassification classify,
+				    const UnicodeString& name = UnicodeString ());
       /// Create a new generation of a register
-      RegisterID AllocateRegister (Sequence& seq, const RegisterID& oldReg);
+      RegisterPtr AllocateRegister (Sequence& seq, const RegisterPtr& oldReg);
       /** @} */
       
       void GenerateCast (Sequence& seq,
-			 const RegisterID& castDestination,
+			 const RegisterPtr& castDestination,
 			 const TypeImplPtr& typeDestination,
-			 const RegisterID& castSource,
+			 const RegisterPtr& castSource,
 			 const TypeImplPtr& typeSource);
 			 
       ProgramPtr GetProgram ();

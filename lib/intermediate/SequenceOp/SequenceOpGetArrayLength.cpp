@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpGetArrayLength.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,8 +6,8 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpGetArrayLength::SequenceOpGetArrayLength (RegisterID destination,
-							RegisterID source)
+    SequenceOpGetArrayLength::SequenceOpGetArrayLength (RegisterPtr destination,
+							RegisterPtr source)
      : SequenceOpUnary (destination, source)
     {}
 

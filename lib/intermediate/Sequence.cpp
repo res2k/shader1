@@ -5,6 +5,9 @@
 
 #include "base/hash_UnicodeString.h"
 #include "intermediate/Sequence.h"
+#include "intermediate/SequenceOp/SequenceOp.h"
+
+#include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
 #include <unicode/ustdio.h>
 
@@ -12,24 +15,18 @@ namespace s1
 {
   namespace intermediate
   {
-    Sequence::Register::Register (const UnicodeString& name)
-     : originalName (name), generation (0), name (name)
+    Sequence::Register::Register (const UnicodeString& name, const TypePtr& originalType)
+     : originalName (name), generation (0), name (name), originalType (originalType)
     {}
     
     Sequence::Register::Register (const Sequence::Register& other)
      : originalName (other.originalName), generation (other.generation+1),
-       name (other.originalName)
+       name (other.originalName), originalType (other.originalType)
     {
       UChar generationSuffix[charsToFormatUint + 2];
       u_snprintf (generationSuffix, sizeof (generationSuffix)/sizeof (UChar),
 		  ".%u", generation);
       name.append (generationSuffix);
-    }
-    
-    Sequence::Register::Register (const Sequence::Register& other, int copyHack)
-     : originalName (other.originalName), generation (other.generation),
-       name (other.name)
-    {
     }
     
     void Sequence::Register::StealName (Register& other)
@@ -46,30 +43,23 @@ namespace s1
     Sequence::RegisterBank::RegisterBank (const TypePtr& originalType)
      : originalType (originalType) {}
      
-    Sequence::RegisterBank::RegisterBank (const RegisterBank& other)
-     : originalType (other.originalType)
+    RegisterPtr Sequence::RegisterBank::AddRegister (const UnicodeString& name)
     {
-      for (std::vector<RegisterPtr>::const_iterator reg = other.registers.begin();
-	   reg != other.registers.end();
-	   ++reg)
-      {
-	RegisterPtr newReg (boost::make_shared<Register> (**reg, 1));
-	registers.push_back (newReg);
-      }
-    }
-
-    unsigned int Sequence::RegisterBank::AddRegister (const UnicodeString& name)
-    {
-      unsigned int num = registers.size();
-      registers.push_back (boost::make_shared<Register> (name));
-      return num;
+      RegisterPtr reg (boost::make_shared<Register> (name, originalType));
+      registers.push_back (reg);
+      return reg;
     }
     
-    unsigned int Sequence::RegisterBank::AddRegister (const RegisterPtr& oldReg)
+    RegisterPtr Sequence::RegisterBank::AddRegister (const RegisterPtr& oldReg)
     {
-      unsigned int num = registers.size();
-      registers.push_back (boost::make_shared<Register> (*oldReg));
-      return num;
+      RegisterPtr reg (boost::make_shared<Register> (*oldReg));
+      registers.push_back (reg);
+      return reg;
+    }
+    
+    void Sequence::RegisterBank::TrackRegister (const RegisterPtr& reg)
+    {
+      registers.push_back (reg);
     }
     
     // ----------------------------------------------------------------------
@@ -89,15 +79,15 @@ namespace s1
       ops.clear();
       registerBanks.clear();
       typeToRegBank.clear();
-      identToRegID.clear();
+      identToReg.clear();
       imports.clear();;
       exports.clear();;
     }
-      
-    RegisterID Sequence::AllocateRegister (const std::string& typeStr,
-					   const TypePtr& originalType,
-					   const UnicodeString& name)
+
+    Sequence::RegisterBankPtr Sequence::GetRegisterBank (const TypePtr& originalType)
     {
+      std::string typeStr (IntermediateGeneratorSemanticsHandler::GetTypeString (originalType));
+      
       unsigned int bank;
       TypeToRegBankType::iterator bankIt = typeToRegBank.find (typeStr);
       if (bankIt != typeToRegBank.end())
@@ -108,44 +98,42 @@ namespace s1
 	registerBanks.push_back (RegisterBankPtr (new RegisterBank (originalType)));
 	typeToRegBank[typeStr] = bank;
       }
-      RegisterBankPtr bankPtr = registerBanks[bank];
+      return registerBanks[bank];
+    }
       
-      unsigned int regNum = bankPtr->AddRegister (UnicodeString (name));
-      return RegisterID (bank, regNum);
+    RegisterPtr Sequence::AllocateRegister (const TypePtr& originalType,
+					    const UnicodeString& name)
+    {
+      RegisterBankPtr bankPtr = GetRegisterBank (originalType);
+      return bankPtr->AddRegister (UnicodeString (name));
     }
     
-    RegisterID Sequence::AllocateRegister (const RegisterID& oldReg)
+    RegisterPtr Sequence::AllocateRegister (const RegisterPtr& oldReg)
     {
-      if (!oldReg.IsValid()) return RegisterID ();
+      if (!oldReg) return RegisterPtr ();
       
-      RegisterBankPtr bankPtr = registerBanks[oldReg.bank];
-      RegisterPtr regPtr = bankPtr->registers[oldReg.num];
+      RegisterBankPtr bankPtr = GetRegisterBank (oldReg->GetOriginalType());
       
-      unsigned int regNum = bankPtr->AddRegister (regPtr);
-      return RegisterID (oldReg.bank, regNum);
+      return bankPtr->AddRegister (oldReg);
     }
 
-    Sequence::RegisterPtr Sequence::QueryRegisterPtrFromID (const RegisterID& id, RegisterBankPtr& bank) const
+    void Sequence::TrackRegister (const RegisterPtr& reg)
     {
-      if (!id.IsValid()) return RegisterPtr ();
-      
-      bank = registerBanks[id.bank];
-      RegisterPtr regPtr = bank->registers[id.num];
-      
-      return regPtr;
+      RegisterBankPtr bankPtr = GetRegisterBank (reg->GetOriginalType());
+      return bankPtr->TrackRegister (reg);
     }
-      
-    void Sequence::SetIdentifierRegisterID (const UnicodeString& identifier, RegisterID regID)
+
+    void Sequence::SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& reg)
     {
-      identToRegID[identifier] = regID;
+      identToReg[identifier] = reg;
     }
     
-    RegisterID Sequence::GetIdentifierRegisterID (const UnicodeString& identifier) const
+    RegisterPtr Sequence::GetIdentifierRegister (const UnicodeString& identifier) const
     {
-      IdentifierToRegIDMap::const_iterator regIt = identToRegID.find (identifier);
-      if (regIt != identToRegID.end())
+      IdentifierToRegMap::const_iterator regIt = identToReg.find (identifier);
+      if (regIt != identToReg.end())
 	return regIt->second;
-      return RegisterID ();
+      return RegisterPtr ();
     }
       
     void Sequence::CopyRegisterBanks (const SequencePtr& other)
@@ -169,25 +157,25 @@ namespace s1
     }
     
     void Sequence::AddImport (const UnicodeString& parentRegName,
-			      const RegisterID& localID)
+			      const RegisterPtr& local)
     {
-      imports.push_back (std::make_pair (parentRegName, localID));
+      imports.push_back (std::make_pair (parentRegName, local));
     }
     
     void Sequence::SetExport (const UnicodeString& parentRegName,
-			      const RegisterID& localID)
+			      const RegisterPtr& local)
     {
-      exports[parentRegName] = localID;
+      exports[parentRegName] = local;
     }
     
     void Sequence::CleanUnusedImportsExports ()
     {
-      RegisterIDSet allReadRegisters, allWrittenRegisters;
+      RegisterSet allReadRegisters, allWrittenRegisters;
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
-	const RegisterIDSet& opRead = (*op)->GetReadRegisters();
+	const RegisterSet& opRead = (*op)->GetReadRegisters();
 	allReadRegisters.insert (opRead.begin(), opRead.end());
-	const RegisterIDSet& opWritten = (*op)->GetWrittenRegisters();
+	const RegisterSet& opWritten = (*op)->GetWrittenRegisters();
 	allWrittenRegisters.insert (opWritten.begin(), opWritten.end());
       }
       

@@ -5,6 +5,7 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
+#include "intermediate/SequenceOp/SequenceOp.h"
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
@@ -17,14 +18,14 @@ class SplitterNestedBlockTestSuite : public CxxTest::TestSuite
 {
   void VerifyRegsAssignedOnce (const s1::intermediate::SequencePtr& seq)
   {
-    typedef boost::unordered_map<s1::intermediate::RegisterID, size_t> AssignCountMap;
+    typedef boost::unordered_map<s1::intermediate::RegisterPtr, size_t> AssignCountMap;
     AssignCountMap assignCount;
     
     for (size_t n = 0; n < seq->GetNumOps(); n++)
     {
       s1::intermediate::SequenceOpPtr op (seq->GetOp (n));
-      s1::intermediate::RegisterIDSet writtenRegs (op->GetWrittenRegisters());
-      BOOST_FOREACH(const s1::intermediate::RegisterID& reg, writtenRegs)
+      s1::intermediate::RegisterSet writtenRegs (op->GetWrittenRegisters());
+      BOOST_FOREACH(const s1::intermediate::RegisterPtr& reg, writtenRegs)
       {
 	++(assignCount[reg]);
       }
@@ -34,31 +35,29 @@ class SplitterNestedBlockTestSuite : public CxxTest::TestSuite
 	 it != assignCount.end();
 	 ++it)
     {
-      s1::intermediate::Sequence::RegisterPtr regPtr (seq->QueryRegisterPtrFromID (it->first));
       std::string regName;
-      regPtr->GetName().toUTF8String (regName);
+      it->first->GetName().toUTF8String (regName);
       TSM_ASSERT_EQUALS (regName, it->second, 1);
     }
   }
   
   void VerifyRegsWrittenBeforeRead (const s1::intermediate::SequencePtr& seq)
   {
-    s1::intermediate::RegisterIDSet allWrittenRegs;
+    s1::intermediate::RegisterSet allWrittenRegs;
     
     for (size_t n = 0; n < seq->GetNumOps(); n++)
     {
       s1::intermediate::SequenceOpPtr op (seq->GetOp (n));
-      s1::intermediate::RegisterIDSet readRegs (op->GetReadRegisters());
-      BOOST_FOREACH(const s1::intermediate::RegisterID& reg, readRegs)
+      s1::intermediate::RegisterSet readRegs (op->GetReadRegisters());
+      BOOST_FOREACH(const s1::intermediate::RegisterPtr& reg, readRegs)
       {
-	s1::intermediate::Sequence::RegisterPtr regPtr (seq->QueryRegisterPtrFromID (reg));
 	std::string regName;
-	regPtr->GetName().toUTF8String (regName);
+	reg->GetName().toUTF8String (regName);
 	
-	s1::intermediate::RegisterIDSet::const_iterator writtenRegIt = allWrittenRegs.find (reg);
+	s1::intermediate::RegisterSet::const_iterator writtenRegIt = allWrittenRegs.find (reg);
 	TSM_ASSERT_DIFFERS (regName, writtenRegIt, allWrittenRegs.end());
       }
-      s1::intermediate::RegisterIDSet writtenRegs (op->GetWrittenRegisters());
+      s1::intermediate::RegisterSet writtenRegs (op->GetWrittenRegisters());
       allWrittenRegs.insert (writtenRegs.begin(), writtenRegs.end());
     }
   }

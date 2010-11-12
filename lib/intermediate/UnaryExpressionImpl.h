@@ -19,8 +19,8 @@ namespace s1
       NameImplSet QueryWrittenNames (bool asLvalue);
       
       boost::shared_ptr<TypeImpl> GetValueType();
-      RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				bool asLvalue = false);
+      RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
+				 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

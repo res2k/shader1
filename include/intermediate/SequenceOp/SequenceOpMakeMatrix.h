@@ -15,14 +15,14 @@ namespace s1
       BasicType matrixBaseType;
       unsigned int matrixRows;
       unsigned int matrixCols;
-      std::vector<RegisterID> sources;
+      std::vector<RegisterPtr> sources;
     public:
-      SequenceOpMakeMatrix (RegisterID destination,
+      SequenceOpMakeMatrix (RegisterPtr destination,
 			    BasicType matrixBaseType,
 			    unsigned int matrixRows, unsigned int matrixCols,
-			    const std::vector<RegisterID>& sources);
+			    const std::vector<RegisterPtr>& sources);
 			    
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
 
       void Visit (SequenceVisitor& visitor);
     };

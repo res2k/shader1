@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpExtractArrayElement.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,15 +6,15 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpExtractArrayElement::SequenceOpExtractArrayElement (RegisterID destination,
-								  RegisterID source,
-								  RegisterID index)
+    SequenceOpExtractArrayElement::SequenceOpExtractArrayElement (RegisterPtr destination,
+								  RegisterPtr source,
+								  RegisterPtr index)
      : SequenceOpUnary (destination, source), index (index)
     {}
 			    
-    RegisterIDSet SequenceOpExtractArrayElement::GetReadRegisters () const
+    RegisterSet SequenceOpExtractArrayElement::GetReadRegisters () const
     {
-      RegisterIDSet set (SequenceOpUnary::GetReadRegisters ());
+      RegisterSet set (SequenceOpUnary::GetReadRegisters ());
       set.insert (index);
       return set;
     }

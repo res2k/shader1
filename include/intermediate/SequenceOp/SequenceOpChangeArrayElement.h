@@ -10,15 +10,15 @@ namespace s1
   {
     class SequenceOpChangeArrayElement : public SequenceOpUnary
     {
-      RegisterID index;
-      RegisterID newValue;
+      RegisterPtr index;
+      RegisterPtr newValue;
     public:
-      SequenceOpChangeArrayElement (RegisterID destination,
-				    RegisterID source,
-				    RegisterID index,
-				    RegisterID newValue);
+      SequenceOpChangeArrayElement (RegisterPtr destination,
+				    RegisterPtr source,
+				    RegisterPtr index,
+				    RegisterPtr newValue);
 			    
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
 
       void Visit (SequenceVisitor& visitor);
     };

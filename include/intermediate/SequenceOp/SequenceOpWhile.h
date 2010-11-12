@@ -3,7 +3,6 @@
 
 #include "SequenceOp.h"
 #include "../forwarddecl.h"
-#include "../RegisterID.h"
 
 #include <vector>
 
@@ -13,16 +12,16 @@ namespace s1
   {
     class SequenceOpWhile : public SequenceOp
     {
-      RegisterID conditionReg;
-      std::vector<std::pair<RegisterID, RegisterID> > loopedRegs;
+      RegisterPtr conditionReg;
+      std::vector<std::pair<RegisterPtr, RegisterPtr> > loopedRegs;
       SequenceOpPtr bodyOp;
     public:
-      SequenceOpWhile (RegisterID conditionReg,
-		       const std::vector<std::pair<RegisterID, RegisterID> >& loopedRegs,
+      SequenceOpWhile (const RegisterPtr& conditionReg,
+		       const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 		       const SequenceOpPtr& bodyOp);
       
-      RegisterIDSet GetReadRegisters () const;
-      RegisterIDSet GetWrittenRegisters () const;
+      RegisterSet GetReadRegisters () const;
+      RegisterSet GetWrittenRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
     };

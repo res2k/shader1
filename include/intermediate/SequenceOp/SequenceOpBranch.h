@@ -3,7 +3,6 @@
 
 #include "SequenceOp.h"
 #include "../forwarddecl.h"
-#include "../RegisterID.h"
 
 namespace s1
 {
@@ -11,16 +10,16 @@ namespace s1
   {
     class SequenceOpBranch : public SequenceOp
     {
-      RegisterID conditionReg;
+      RegisterPtr conditionReg;
       SequenceOpPtr trueOp;
       SequenceOpPtr falseOp;
     public:
-      SequenceOpBranch (RegisterID conditionReg,
+      SequenceOpBranch (RegisterPtr conditionReg,
 			const SequenceOpPtr& trueOp,
 			const SequenceOpPtr& falseOp);
       
-      RegisterIDSet GetReadRegisters () const;
-      RegisterIDSet GetWrittenRegisters () const;
+      RegisterSet GetReadRegisters () const;
+      RegisterSet GetWrittenRegisters () const;
       
       void Visit (SequenceVisitor& visitor);
     };

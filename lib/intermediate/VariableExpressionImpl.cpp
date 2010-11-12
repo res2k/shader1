@@ -35,9 +35,9 @@ namespace s1
       return name->valueType;
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
-											     RegisterClassification classify,
-											     bool asLvalue)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
+											      RegisterClassification classify,
+											      bool asLvalue)
     {
       return block.GetRegisterForName (this->name, asLvalue);
     }

@@ -1,17 +1,18 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpWithResult.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    SequenceOpWithResult::SequenceOpWithResult (RegisterID destination)
+    SequenceOpWithResult::SequenceOpWithResult (RegisterPtr destination)
      : destination (destination)
     {
     }
     
-    RegisterIDSet SequenceOpWithResult::GetWrittenRegisters () const
+    RegisterSet SequenceOpWithResult::GetWrittenRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (destination);
       return regs;
     }

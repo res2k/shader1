@@ -10,12 +10,12 @@ namespace s1
     class SequenceOpUnary : public SequenceOpWithResult
     {
     protected:
-      RegisterID source;
+      RegisterPtr source;
     public:
-      SequenceOpUnary (RegisterID destination,
-		       RegisterID source);
+      SequenceOpUnary (RegisterPtr destination,
+		       RegisterPtr source);
 		       
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
     };
     
   } // namespace intermediate

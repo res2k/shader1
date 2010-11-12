@@ -1,13 +1,14 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpArith.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    SequenceOpArith::SequenceOpArith (RegisterID destination,
+    SequenceOpArith::SequenceOpArith (RegisterPtr destination,
 				      SequenceVisitor::ArithmeticOp op,
-				      RegisterID source1,
-				      RegisterID source2)
+				      RegisterPtr source1,
+				      RegisterPtr source2)
      : SequenceOpBinary (destination, source1, source2), op (op)
     {
     }

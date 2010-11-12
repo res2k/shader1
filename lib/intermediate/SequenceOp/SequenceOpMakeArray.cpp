@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpMakeArray.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,14 +6,14 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpMakeArray::SequenceOpMakeArray (RegisterID destination,
-					      const std::vector<RegisterID>& sources)
+    SequenceOpMakeArray::SequenceOpMakeArray (RegisterPtr destination,
+					      const std::vector<RegisterPtr>& sources)
       : SequenceOpWithResult (destination), sources (sources)
     {}
 			  
-    RegisterIDSet SequenceOpMakeArray::GetReadRegisters () const
+    RegisterSet SequenceOpMakeArray::GetReadRegisters () const
     {
-      RegisterIDSet set;
+      RegisterSet set;
       set.insert (sources.begin(), sources.end());
       return set;
     }

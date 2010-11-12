@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpCast.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,9 +6,9 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpCast::SequenceOpCast (RegisterID destination,
+    SequenceOpCast::SequenceOpCast (RegisterPtr destination,
 				    BasicType castTo,
-				    RegisterID source)
+				    RegisterPtr source)
      : SequenceOpUnary (destination, source), castTo (castTo)
     {
     }

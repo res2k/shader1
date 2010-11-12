@@ -265,10 +265,10 @@ namespace s1
       return boost::shared_static_cast<TypeImpl> (attrType);
     }
     
-    RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
-									const TypeImplPtr& type,
-									RegisterClassification classify,
-									const UnicodeString& name)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
+									 const TypeImplPtr& type,
+									 RegisterClassification classify,
+									 const UnicodeString& name)
     {
       const UChar prefix[3] = { UChar (classify), '_', 0};
       UnicodeString regName (prefix);
@@ -283,20 +283,19 @@ namespace s1
 	regName.append (regNumStr);
       }
       
-      std::string typeStr (GetTypeString (type));
-      return seq.AllocateRegister (typeStr, type, regName);
+      return seq.AllocateRegister (type, regName);
     }
 
-    RegisterID IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
-									const RegisterID& oldReg)
+    RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
+									 const RegisterPtr& oldReg)
     {
       return seq.AllocateRegister (oldReg);
     }
       
     void IntermediateGeneratorSemanticsHandler::GenerateCast (Sequence& seq,
-							      const RegisterID& castDestination,
+							      const RegisterPtr& castDestination,
 							      const TypeImplPtr& typeDestination,
-							      const RegisterID& castSource,
+							      const RegisterPtr& castSource,
 							      const TypeImplPtr& typeSource)
     {
       switch (typeDestination->typeClass)
@@ -336,13 +335,13 @@ namespace s1
 	// Special case: allow casting from a base type to a vector, replicate value across all components
 	if (typeSource->typeClass == TypeImpl::Base)
 	{
-	  std::vector<RegisterID> srcVec;
+	  std::vector<RegisterPtr> srcVec;
 	  TypeImplPtr destBaseType (boost::shared_static_cast<TypeImpl> (typeDestination->avmBase));
-	  RegisterID srcReg;
+	  RegisterPtr srcReg;
 	  if (!destBaseType->IsEqual (*(typeSource)))
 	  {
 	    // Generate cast
-	    RegisterID srcVecReg (AllocateRegister (seq, destBaseType, Intermediate));
+	    RegisterPtr srcVecReg (AllocateRegister (seq, destBaseType, Intermediate));
 	    GenerateCast (seq, srcVecReg, destBaseType, castSource, typeSource);
 	    srcReg = srcVecReg;
 	  }

@@ -12,12 +12,12 @@ namespace s1
   {
     class SequenceOpMakeArray : public SequenceOpWithResult
     {
-      std::vector<RegisterID> sources;
+      std::vector<RegisterPtr> sources;
     public:
-      SequenceOpMakeArray (RegisterID destination,
-			   const std::vector<RegisterID>& sources);
+      SequenceOpMakeArray (RegisterPtr destination,
+			   const std::vector<RegisterPtr>& sources);
 			    
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
 
       void Visit (SequenceVisitor& visitor);
     };

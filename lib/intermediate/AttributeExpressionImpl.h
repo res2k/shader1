@@ -17,10 +17,10 @@ namespace s1
 			       const IntermediateGeneratorSemanticsHandler::Attribute& attr);
       
       TypeImplPtr GetValueType ();
-      RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				bool asLvalue = false);
+      RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
+				 bool asLvalue = false);
       void AddToSequencePostAction (BlockImpl& block,
-				    const RegisterID& target,
+				    const RegisterPtr& target,
 				    bool wasLvalue);
     };
   } // namespace intermediate

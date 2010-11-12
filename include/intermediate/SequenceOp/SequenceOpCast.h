@@ -12,9 +12,9 @@ namespace s1
     {
       BasicType castTo;
     public:
-      SequenceOpCast (RegisterID destination,
+      SequenceOpCast (RegisterPtr destination,
 		      BasicType castTo,
-		      RegisterID source);
+		      RegisterPtr source);
 
       void Visit (SequenceVisitor& visitor);
     };

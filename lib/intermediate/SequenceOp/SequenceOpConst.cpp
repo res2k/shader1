@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "intermediate/SequenceVisitor.h"
 

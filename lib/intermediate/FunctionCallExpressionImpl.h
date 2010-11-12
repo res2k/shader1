@@ -19,14 +19,14 @@ namespace s1
       ExpressionVector actualParams;
       
       void SelectOverload ();
-      typedef std::vector<std::pair<RegisterID, RegisterID> > FetchedRegs;
+      typedef std::vector<std::pair<RegisterPtr, RegisterPtr> > FetchedRegs;
       struct PostActionInfo
       {
 	boost::shared_ptr<ExpressionImpl> expr;
-	RegisterID reg;
+	RegisterPtr reg;
 	bool lValue;
 	
-	PostActionInfo (const boost::shared_ptr<ExpressionImpl>& expr, RegisterID reg, bool lValue)
+	PostActionInfo (const boost::shared_ptr<ExpressionImpl>& expr, RegisterPtr reg, bool lValue)
 	 : expr (expr), reg (reg), lValue (lValue) {}
       };
       typedef std::vector<PostActionInfo> PostActions;
@@ -38,8 +38,8 @@ namespace s1
 				  const ExpressionVector& params);
       
       boost::shared_ptr<TypeImpl> GetValueType ();
-      RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				bool asLvalue = false);
+      RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
+				 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

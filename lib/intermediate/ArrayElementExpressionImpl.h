@@ -17,9 +17,9 @@ namespace s1
 				  const ExpressionPtr& indexExpr);
       
       TypeImplPtr GetValueType ();
-      RegisterID AddToSequence (BlockImpl& block, RegisterClassification classify,
-				bool asLvalue = false);
-      void AddToSequencePostAction (BlockImpl& block, const RegisterID& target,
+      RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
+				 bool asLvalue = false);
+      void AddToSequencePostAction (BlockImpl& block, const RegisterPtr& target,
 				    bool wasLvalue);
     };
   } // namespace intermediate

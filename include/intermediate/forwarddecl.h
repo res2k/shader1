@@ -11,6 +11,8 @@ namespace s1
     
     class Sequence;
     typedef boost::shared_ptr<Sequence> SequencePtr;
+    class SequenceOp;
+    typedef boost::shared_ptr<SequenceOp> SequenceOpPtr;
     class Program;
     typedef boost::shared_ptr<Program> ProgramPtr;
     class ProgramFunction;

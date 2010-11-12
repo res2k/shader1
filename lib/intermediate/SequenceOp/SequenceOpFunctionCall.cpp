@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -6,22 +7,22 @@ namespace s1
   namespace intermediate
   {
     SequenceOpFunctionCall::SequenceOpFunctionCall (const UnicodeString& funcIdent,
-						    const std::vector<RegisterID>& inParams,
-						    const std::vector<RegisterID>& outParams)
+						    const std::vector<RegisterPtr>& inParams,
+						    const std::vector<RegisterPtr>& outParams)
      : funcIdent (funcIdent), inParams (inParams), outParams (outParams)
     {
     }
     
-    RegisterIDSet SequenceOpFunctionCall::GetReadRegisters () const
+    RegisterSet SequenceOpFunctionCall::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (inParams.begin(), inParams.end());
       return regs;
     }
     
-    RegisterIDSet SequenceOpFunctionCall::GetWrittenRegisters () const
+    RegisterSet SequenceOpFunctionCall::GetWrittenRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (outParams.begin(), outParams.end());
       return regs;
     }

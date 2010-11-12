@@ -10,11 +10,11 @@ namespace s1
     class SequenceOpWithResult : public SequenceOp
     {
     protected:
-      RegisterID destination;
+      RegisterPtr destination;
     public:
-      SequenceOpWithResult (RegisterID destination);
+      SequenceOpWithResult (RegisterPtr destination);
       
-      RegisterIDSet GetWrittenRegisters () const;
+      RegisterSet GetWrittenRegisters () const;
     };
     
   } // namespace intermediate

@@ -1,3 +1,4 @@
+#include "base/common.h"
 #include "intermediate/SequenceOp/SequenceOpBranch.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -5,41 +6,41 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpBranch::SequenceOpBranch (RegisterID conditionReg,
+    SequenceOpBranch::SequenceOpBranch (RegisterPtr conditionReg,
 					const SequenceOpPtr& trueOp,
 					const SequenceOpPtr& falseOp)
      : conditionReg (conditionReg), trueOp (trueOp), falseOp (falseOp)
     {
     }
     
-    RegisterIDSet SequenceOpBranch::GetReadRegisters () const
+    RegisterSet SequenceOpBranch::GetReadRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       regs.insert (conditionReg);
       if (trueOp)
       {
-	RegisterIDSet trueRegs (trueOp->GetReadRegisters());
+	RegisterSet trueRegs (trueOp->GetReadRegisters());
 	regs.insert (trueRegs.begin(), trueRegs.end());
       }
       if (falseOp)
       {
-	RegisterIDSet falseRegs (falseOp->GetReadRegisters());
+	RegisterSet falseRegs (falseOp->GetReadRegisters());
 	regs.insert (falseRegs.begin(), falseRegs.end());
       }
       return regs;
     }
     
-    RegisterIDSet SequenceOpBranch::GetWrittenRegisters () const
+    RegisterSet SequenceOpBranch::GetWrittenRegisters () const
     {
-      RegisterIDSet regs;
+      RegisterSet regs;
       if (trueOp)
       {
-	RegisterIDSet trueRegs (trueOp->GetWrittenRegisters());
+	RegisterSet trueRegs (trueOp->GetWrittenRegisters());
 	regs.insert (trueRegs.begin(), trueRegs.end());
       }
       if (falseOp)
       {
-	RegisterIDSet falseRegs (falseOp->GetWrittenRegisters());
+	RegisterSet falseRegs (falseOp->GetWrittenRegisters());
 	regs.insert (falseRegs.begin(), falseRegs.end());
       }
       return regs;

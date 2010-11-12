@@ -13,13 +13,13 @@ namespace s1
     class SequenceOpMakeVector : public SequenceOpWithResult
     {
       BasicType vectorBaseType;
-      std::vector<RegisterID> sources;
+      std::vector<RegisterPtr> sources;
     public:
-      SequenceOpMakeVector (RegisterID destination,
+      SequenceOpMakeVector (RegisterPtr destination,
 			    BasicType vectorBaseType,
-			    const std::vector<RegisterID>& sources);
+			    const std::vector<RegisterPtr>& sources);
 			    
-      RegisterIDSet GetReadRegisters () const;
+      RegisterSet GetReadRegisters () const;
 
       void Visit (SequenceVisitor& visitor);
     };
