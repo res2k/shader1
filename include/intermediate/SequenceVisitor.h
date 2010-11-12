@@ -13,6 +13,8 @@ namespace s1
     {
       virtual ~SequenceVisitor() {}
       
+      virtual void SetVisitedOp (const intermediate::SequenceOpPtr& op) = 0;
+      
       virtual void OpConstBool (const RegisterPtr& destination,
 				bool value) = 0;
       virtual void OpConstInt (const RegisterPtr& destination,

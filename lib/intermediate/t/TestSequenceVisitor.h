@@ -82,6 +82,8 @@ public:
   
   std::vector<SequenceEntry> entries;
   
+  void SetVisitedOp (const s1::intermediate::SequenceOpPtr& op) {}
+  
   void OpConstBool (const RegisterPtr& destination,
 		    bool value)
   {

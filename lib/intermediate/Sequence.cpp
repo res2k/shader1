@@ -6,6 +6,7 @@
 #include "base/hash_UnicodeString.h"
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
+#include "intermediate/SequenceVisitor.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
@@ -90,8 +91,10 @@ namespace s1
     {
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
+	visitor.SetVisitedOp (*op);
 	(*op)->Visit (visitor);
       }
+      visitor.SetVisitedOp (SequenceOpPtr ());
     }
     
     void Sequence::AddImport (const UnicodeString& parentRegName,
