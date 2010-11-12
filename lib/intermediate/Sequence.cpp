@@ -39,30 +39,6 @@ namespace s1
     }
     
     // ----------------------------------------------------------------------
-
-    Sequence::RegisterBank::RegisterBank (const TypePtr& originalType)
-     : originalType (originalType) {}
-     
-    RegisterPtr Sequence::RegisterBank::AddRegister (const UnicodeString& name)
-    {
-      RegisterPtr reg (boost::make_shared<Register> (name, originalType));
-      registers.push_back (reg);
-      return reg;
-    }
-    
-    RegisterPtr Sequence::RegisterBank::AddRegister (const RegisterPtr& oldReg)
-    {
-      RegisterPtr reg (boost::make_shared<Register> (*oldReg));
-      registers.push_back (reg);
-      return reg;
-    }
-    
-    void Sequence::RegisterBank::TrackRegister (const RegisterPtr& reg)
-    {
-      registers.push_back (reg);
-    }
-    
-    // ----------------------------------------------------------------------
     
     void Sequence::AddOp (SequenceOpPtr op)
     {
@@ -77,50 +53,24 @@ namespace s1
     void Sequence::Clear ()
     {
       ops.clear();
-      registerBanks.clear();
-      typeToRegBank.clear();
       identToReg.clear();
       imports.clear();;
       exports.clear();;
     }
 
-    Sequence::RegisterBankPtr Sequence::GetRegisterBank (const TypePtr& originalType)
-    {
-      std::string typeStr (IntermediateGeneratorSemanticsHandler::GetTypeString (originalType));
-      
-      unsigned int bank;
-      TypeToRegBankType::iterator bankIt = typeToRegBank.find (typeStr);
-      if (bankIt != typeToRegBank.end())
-	bank = bankIt->second;
-      else
-      {
-	bank = registerBanks.size();
-	registerBanks.push_back (RegisterBankPtr (new RegisterBank (originalType)));
-	typeToRegBank[typeStr] = bank;
-      }
-      return registerBanks[bank];
-    }
-      
     RegisterPtr Sequence::AllocateRegister (const TypePtr& originalType,
 					    const UnicodeString& name)
     {
-      RegisterBankPtr bankPtr = GetRegisterBank (originalType);
-      return bankPtr->AddRegister (UnicodeString (name));
+      RegisterPtr reg (boost::make_shared<Register> (name, originalType));
+      return reg;
     }
     
     RegisterPtr Sequence::AllocateRegister (const RegisterPtr& oldReg)
     {
       if (!oldReg) return RegisterPtr ();
       
-      RegisterBankPtr bankPtr = GetRegisterBank (oldReg->GetOriginalType());
-      
-      return bankPtr->AddRegister (oldReg);
-    }
-
-    void Sequence::TrackRegister (const RegisterPtr& reg)
-    {
-      RegisterBankPtr bankPtr = GetRegisterBank (reg->GetOriginalType());
-      return bankPtr->TrackRegister (reg);
+      RegisterPtr reg (boost::make_shared<Register> (*oldReg));
+      return reg;
     }
 
     void Sequence::SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& reg)
@@ -134,18 +84,6 @@ namespace s1
       if (regIt != identToReg.end())
 	return regIt->second;
       return RegisterPtr ();
-    }
-      
-    void Sequence::CopyRegisterBanks (const SequencePtr& other)
-    {
-      registerBanks.clear();
-      for (std::vector<RegisterBankPtr>::const_iterator regBank = other->registerBanks.begin();
-	   regBank != other->registerBanks.end();
-	   ++regBank)
-      {
-	RegisterBankPtr newBank = boost::make_shared<RegisterBank> (**regBank);
-	registerBanks.push_back (newBank);
-      }
     }
       
     void Sequence::Visit (SequenceVisitor& visitor) const

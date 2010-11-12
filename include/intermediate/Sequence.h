@@ -44,24 +44,6 @@ namespace s1
       typedef boost::shared_ptr<Register> RegisterPtr;
       typedef boost::unordered_set<RegisterPtr> RegisterSet;
       
-      class RegisterBank
-      {
-	friend class Sequence;
-	
-	TypePtr originalType;
-	
-	std::vector<RegisterPtr> registers;
-	
-	RegisterPtr AddRegister (const UnicodeString& name);
-	RegisterPtr AddRegister (const RegisterPtr& oldReg);
-	void TrackRegister (const RegisterPtr& reg);
-      public:
-	RegisterBank (const TypePtr& originalType);
-	
-	const TypePtr& GetOriginalType () const { return originalType; }
-      };
-      typedef boost::shared_ptr<RegisterBank> RegisterBankPtr;
-      
       /** \name Sequence manipulation
        * @{ */
       /// Add an operation
@@ -79,7 +61,6 @@ namespace s1
       RegisterPtr AllocateRegister (const TypePtr& originalType,
 				    const UnicodeString& name);
       RegisterPtr AllocateRegister (const RegisterPtr& oldReg);
-      void TrackRegister (const RegisterPtr& reg);
       
       void SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& regID);
       RegisterPtr GetIdentifierRegister (const UnicodeString& identifier) const;
@@ -88,9 +69,6 @@ namespace s1
       /// Get current identifiers-to-register map
       const IdentifierToRegMap& GetIdentifierToRegisterMap () const
       { return identToReg; }
-      
-      /// Deep copy register banks setup from another sequence
-      void CopyRegisterBanks (const SequencePtr& other);
       
       void Visit (SequenceVisitor& visitor) const;
       
@@ -109,15 +87,10 @@ namespace s1
 		      
       void CleanUnusedImportsExports ();
     protected:
-      std::vector<RegisterBankPtr> registerBanks;
-      typedef std::tr1::unordered_map<std::string, unsigned int> TypeToRegBankType;
-      TypeToRegBankType typeToRegBank;
       IdentifierToRegMap identToReg;
       
       RegisterImpMappings imports;
       RegisterExpMappings exports;
-      
-      RegisterBankPtr GetRegisterBank (const TypePtr& originalType);
     };
     
     typedef Sequence::RegisterPtr RegisterPtr;

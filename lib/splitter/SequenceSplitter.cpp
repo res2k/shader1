@@ -1058,7 +1058,6 @@ namespace s1
       for (int f = 0; f < freqNum; f++)
       {
 	outputSeq[f] = boost::make_shared<intermediate::Sequence> ();
-	outputSeq[f]->CopyRegisterBanks (inputSeq);
 	
       }
       for (intermediate::Sequence::RegisterImpMappings::const_iterator impMap = inputSeq->GetImports().begin();
@@ -1190,7 +1189,6 @@ namespace s1
       outputSeq[0]->SetIdentifierRegister (name, reg);
       for (int f = 1; f < freqNum; f++)
       {
-	outputSeq[f]->TrackRegister (reg);
 	outputSeq[f]->SetIdentifierRegister (name, reg);
       }
       return reg;
