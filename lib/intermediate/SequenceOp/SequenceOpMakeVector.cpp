@@ -21,21 +21,7 @@ namespace s1
 
     void SequenceOpMakeVector::Visit (SequenceVisitor& visitor)
     {
-      switch (vectorBaseType)
-      {
-      case Bool:
-	visitor.OpMakeVector (destination, SequenceVisitor::Bool, sources);
-	break;
-      case Int:
-	visitor.OpMakeVector (destination, SequenceVisitor::Int, sources);
-	break;
-      case UInt:
-	visitor.OpMakeVector (destination, SequenceVisitor::UInt, sources);
-	break;
-      case Float:
-	visitor.OpMakeVector (destination, SequenceVisitor::Float, sources);
-	break;
-      }
+      visitor.OpMakeVector (destination, vectorBaseType, sources);
     }
   } // namespace intermediate
 } // namespace s1

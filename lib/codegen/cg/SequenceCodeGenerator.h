@@ -82,15 +82,15 @@ namespace s1
 		       const RegisterPtr& source);
 				  
 	void OpCast (const RegisterPtr& destination,
-		     BaseType destType,
+		     intermediate::BasicType destType,
 		     const RegisterPtr& source);
 
 	void OpMakeVector (const RegisterPtr& destination,
-			   BaseType compType,
+			   intermediate::BasicType compType,
 			   const std::vector<RegisterPtr>& sources);
 				     
 	void OpMakeMatrix (const RegisterPtr& destination,
-			   BaseType compType,
+			   intermediate::BasicType compType,
 			   unsigned int matrixRows, unsigned int matrixCols,
 			   const std::vector<RegisterPtr>& sources);
 				     

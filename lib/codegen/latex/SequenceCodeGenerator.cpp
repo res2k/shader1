@@ -179,7 +179,7 @@ namespace s1
 			      
 			      
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpCast (const RegisterPtr& destination,
-									BaseType destType,
+									intermediate::BasicType destType,
 									const RegisterPtr& source)
     {
       std::string targetName (owner->GetOutputRegisterName (destination));
@@ -187,16 +187,16 @@ namespace s1
       std::string valueStr ("\\sOstmt{\\sOcast{");
       switch (destType)
       {
-      case Bool:
+      case intermediate::Bool:
 	valueStr.append (typeBool);
 	break;
-      case Int:
+      case intermediate::Int:
 	valueStr.append (typeInt);
 	break;
-      case UInt:
+      case intermediate::UInt:
 	valueStr.append (typeUInt);
 	break;
-      case Float:
+      case intermediate::Float:
 	valueStr.append (typeFloat);
 	break;
       }
@@ -210,7 +210,7 @@ namespace s1
     
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterPtr& destination,
-									      BaseType compType,
+									      intermediate::BasicType compType,
 									      const std::vector<RegisterPtr>& sources)
     {
       std::string paramsStr;
@@ -232,7 +232,7 @@ namespace s1
     
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterPtr& destination,
-      									      BaseType compType,
+      									      intermediate::BasicType compType,
 									      unsigned int matrixRows,
 									      unsigned int matrixCols,
 									      const std::vector<RegisterPtr>& sources)

@@ -23,21 +23,7 @@ namespace s1
 
     void SequenceOpMakeMatrix::Visit (SequenceVisitor& visitor)
     {
-      switch (matrixBaseType)
-      {
-      case Bool:
-	visitor.OpMakeMatrix (destination, SequenceVisitor::Bool, matrixRows, matrixCols, sources);
-	break;
-      case Int:
-	visitor.OpMakeMatrix (destination, SequenceVisitor::Int, matrixRows, matrixCols, sources);
-	break;
-      case UInt:
-	visitor.OpMakeMatrix (destination, SequenceVisitor::UInt, matrixRows, matrixCols, sources);
-	break;
-      case Float:
-	visitor.OpMakeMatrix (destination, SequenceVisitor::Float, matrixRows, matrixCols, sources);
-	break;
-      }
+      visitor.OpMakeMatrix (destination, matrixBaseType, matrixRows, matrixCols, sources);
     }
   } // namespace intermediate
 } // namespace s1

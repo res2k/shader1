@@ -2,6 +2,7 @@
 #define __INTERMEDIATE_SEQUENCEVISITOR_H__
 
 #include "forwarddecl.h"
+#include "BasicType.h"
 #include "BuiltinFunction.h"
 #include "Sequence.h"
 
@@ -27,17 +28,16 @@ namespace s1
       virtual void OpAssign (const RegisterPtr& destination,
 			     const RegisterPtr& source) = 0;
 				 
-      enum BaseType { Bool, Int, UInt, Float };
       virtual void OpCast (const RegisterPtr& destination,
-			   BaseType destType,
+			   BasicType destType,
 			   const RegisterPtr& source) = 0;
 				  
       virtual void OpMakeVector (const RegisterPtr& destination,
-				 BaseType compType,
+				 BasicType compType,
 				 const std::vector<RegisterPtr>& sources) = 0;
 
       virtual void OpMakeMatrix (const RegisterPtr& destination,
-				 BaseType compType,
+				 BasicType compType,
 				 unsigned int matrixRows, unsigned int matrixCols,
 				 const std::vector<RegisterPtr>& sources) = 0;
 

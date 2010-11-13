@@ -15,21 +15,7 @@ namespace s1
     
     void SequenceOpCast::Visit (SequenceVisitor& visitor)
     {
-      switch (castTo)
-      {
-      case Bool:
-	visitor.OpCast (destination, SequenceVisitor::Bool, source);
-	break;
-      case Int:
-	visitor.OpCast (destination, SequenceVisitor::Int, source);
-	break;
-      case UInt:
-	visitor.OpCast (destination, SequenceVisitor::UInt, source);
-	break;
-      case Float:
-	visitor.OpCast (destination, SequenceVisitor::Float, source);
-	break;
-      }
+      visitor.OpCast (destination, castTo, source);
     }
   } // namespace intermediate
 } // namespace s1

@@ -244,34 +244,20 @@ namespace s1
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
     
-    static inline intermediate::BasicType ToBasicType (intermediate::SequenceVisitor::BaseType t)
-    {
-      switch (t)
-      {
-      case intermediate::SequenceVisitor::Bool:		return intermediate::Bool;
-      case intermediate::SequenceVisitor::Int:		return intermediate::Int;
-      case intermediate::SequenceVisitor::UInt:		return intermediate::UInt;
-      case intermediate::SequenceVisitor::Float:	return intermediate::Float;
-      }
-      
-      assert (false);
-      return intermediate::Int;
-    }
-			  
     void SequenceSplitter::InputVisitor::OpCast (const RegisterPtr& destination,
-						 BaseType destType,
+						 intermediate::BasicType destType,
 						 const RegisterPtr& source)
     {
       unsigned int srcAvail = parent.GetRegAvailability (source);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCast> (destination,
-										ToBasicType (destType),
+										destType,
 										source));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
     
     void SequenceSplitter::InputVisitor::OpMakeVector (const RegisterPtr& destination,
-						       BaseType compType,
+						       intermediate::BasicType compType,
 						       const std::vector<RegisterPtr>& sources)
     {
       /* @@@ Consider operations like: float4 foo = float4 (RGB, 1)
@@ -282,13 +268,13 @@ namespace s1
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeVector> (destination,
-										      ToBasicType (compType),
+										      compType,
 										      sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
     
     void SequenceSplitter::InputVisitor::OpMakeMatrix (const RegisterPtr& destination,
-						       BaseType compType,
+						       intermediate::BasicType compType,
 						       unsigned int matrixRows, unsigned int matrixCols,
 						       const std::vector<RegisterPtr>& sources)
     {
@@ -296,7 +282,7 @@ namespace s1
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeMatrix> (destination,
-										      ToBasicType (compType), 
+										      compType, 
 										      matrixRows, matrixCols,
 										      sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));

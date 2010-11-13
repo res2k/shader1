@@ -261,11 +261,11 @@ namespace s1
 				
       void OpAssign (const RegisterPtr&, const RegisterPtr&) {}
 				
-      void OpCast (const RegisterPtr&, BaseType, const RegisterPtr&) {}
+      void OpCast (const RegisterPtr&, intermediate::BasicType, const RegisterPtr&) {}
 				  
-      void OpMakeVector (const RegisterPtr&, BaseType, const std::vector<RegisterPtr>&) {}
+      void OpMakeVector (const RegisterPtr&, intermediate::BasicType, const std::vector<RegisterPtr>&) {}
 
-      void OpMakeMatrix (const RegisterPtr&, BaseType, unsigned int, unsigned int,
+      void OpMakeMatrix (const RegisterPtr&, intermediate::BasicType, unsigned int, unsigned int,
 			 const std::vector<RegisterPtr>&) {}
 
       void OpMakeArray (const RegisterPtr&, const std::vector<RegisterPtr>&) {}

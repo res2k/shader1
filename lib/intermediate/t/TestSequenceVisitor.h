@@ -137,22 +137,22 @@ public:
   
 			      
   void OpCast (const RegisterPtr& destination,
-	       BaseType destType,
+	       s1::intermediate::BasicType destType,
 	       const RegisterPtr& source)
   {
     SequenceEntry entry;
     switch (destType)
     {
-    case Bool:
+    case s1::intermediate::Bool:
       entry.op = opCastToBool;
       break;
-    case Int:
+    case s1::intermediate::Int:
       entry.op = opCastToInt;
       break;
-    case UInt:
+    case s1::intermediate::UInt:
       entry.op = opCastToUInt;
       break;
-    case Float:
+    case s1::intermediate::Float:
       entry.op = opCastToFloat;
       break;
     }
@@ -163,22 +163,22 @@ public:
   
   
   void OpMakeVector (const RegisterPtr& destination,
-		     BaseType compType,
+		     s1::intermediate::BasicType compType,
 		     const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     switch (compType)
     {
-    case Bool:
+    case s1::intermediate::Bool:
       entry.op = opMakeVectorBool;
       break;
-    case Int:
+    case s1::intermediate::Int:
       entry.op = opMakeVectorInt;
       break;
-    case UInt:
+    case s1::intermediate::UInt:
       entry.op = opMakeVectorUInt;
       break;
-    case Float:
+    case s1::intermediate::Float:
       entry.op = opMakeVectorFloat;
       break;
     }
@@ -189,23 +189,23 @@ public:
 
 
   void OpMakeMatrix (const RegisterPtr& destination,
-		     BaseType compType,
+		     s1::intermediate::BasicType compType,
 		     unsigned int matrixRows, unsigned int matrixCols,
 		     const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     switch (compType)
     {
-    case Bool:
+    case s1::intermediate::Bool:
       entry.op = opMakeMatrixBool;
       break;
-    case Int:
+    case s1::intermediate::Int:
       entry.op = opMakeMatrixInt;
       break;
-    case UInt:
+    case s1::intermediate::UInt:
       entry.op = opMakeMatrixUInt;
       break;
-    case Float:
+    case s1::intermediate::Float:
       entry.op = opMakeMatrixFloat;
       break;
     }

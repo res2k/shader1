@@ -159,22 +159,22 @@ namespace s1
 			      
 			      
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpCast (const RegisterPtr& destination,
-								     BaseType destType,
+								     intermediate::BasicType destType,
 								     const RegisterPtr& source)
     {
       std::string sourceName (owner->GetOutputRegisterName (source));
       switch (destType)
       {
-      case Bool:
+      case intermediate::Bool:
 	EmitFunctionCall (destination, cgTypeBool, sourceName.c_str());
 	break;
-      case Int:
+      case intermediate::Int:
 	EmitFunctionCall (destination, cgTypeInt, sourceName.c_str());
 	break;
-      case UInt:
+      case intermediate::UInt:
 	EmitFunctionCall (destination, cgTypeUInt, sourceName.c_str());
 	break;
-      case Float:
+      case intermediate::Float:
 	EmitFunctionCall (destination, cgTypeFloat, sourceName.c_str());
 	break;
       }
@@ -182,7 +182,7 @@ namespace s1
     
 
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterPtr& destination,
-									   BaseType compType,
+									   intermediate::BasicType compType,
 									   const std::vector<RegisterPtr>& sources)
     {
       std::string paramsStr;
@@ -196,16 +196,16 @@ namespace s1
       std::string typeStr;
       switch (compType)
       {
-      case Bool:
+      case intermediate::Bool:
 	typeStr = cgTypeBool;
 	break;
-      case Int:
+      case intermediate::Int:
 	typeStr = cgTypeInt;
 	break;
-      case UInt:
+      case intermediate::UInt:
 	typeStr = cgTypeUInt;
 	break;
-      case Float:
+      case intermediate::Float:
 	typeStr = cgTypeFloat;
 	break;
       }
@@ -218,7 +218,7 @@ namespace s1
     
 				
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterPtr& destination,
-									   BaseType compType,
+									   intermediate::BasicType compType,
 									   unsigned int matrixRows,
 									   unsigned int matrixCols,
 									   const std::vector<RegisterPtr>& sources)
@@ -234,16 +234,16 @@ namespace s1
       std::string typeStr;
       switch (compType)
       {
-      case Bool:
+      case intermediate::Bool:
 	typeStr = cgTypeBool;
 	break;
-      case Int:
+      case intermediate::Int:
 	typeStr = cgTypeInt;
 	break;
-      case UInt:
+      case intermediate::UInt:
 	typeStr = cgTypeUInt;
 	break;
-      case Float:
+      case intermediate::Float:
 	typeStr = cgTypeFloat;
 	break;
       }
