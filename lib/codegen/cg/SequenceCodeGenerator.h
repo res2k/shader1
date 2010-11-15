@@ -131,8 +131,7 @@ namespace s1
 			  
 	void OpBlock (const intermediate::SequencePtr& seq,
 		      const Sequence::IdentifierToRegMap& identToRegID_imp,
-		      const Sequence::IdentifierToRegMap& identToRegID_exp,
-		      const std::vector<RegisterPtr>& writtenRegisters);
+		      const Sequence::IdentifierToRegMap& identToRegID_exp);
 		      
 	void OpBranch (const RegisterPtr& conditionReg,
 		       const intermediate::SequenceOpPtr& seqOpIf,

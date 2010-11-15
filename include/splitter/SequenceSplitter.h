@@ -44,7 +44,6 @@ namespace s1
 	void SplitBlock (const SequencePtr& blockSequence,
 			 const Sequence::IdentifierToRegMap& identToRegIDs_imp,
 			 const Sequence::IdentifierToRegMap& identToRegIDs_exp,
-			 const std::vector<RegisterPtr>& writtenRegisters,
 			 SequenceOpPtr* newSequences,
 			 const LoopedRegs& loopedRegs = LoopedRegs(),
 			 bool keepEmpty = false);
@@ -75,15 +74,15 @@ namespace s1
 		       const RegisterPtr& source);
 				  
 	void OpCast (const RegisterPtr& destination,
-		     BaseType destType,
+		     intermediate::BasicType destType,
 		     const RegisterPtr& source);
 				    
 	void OpMakeVector (const RegisterPtr& destination,
-			   BaseType compType,
+			   intermediate::BasicType compType,
 			   const std::vector<RegisterPtr>& sources);
 
 	void OpMakeMatrix (const RegisterPtr& destination,
-			   BaseType compType,
+			   intermediate::BasicType compType,
 			   unsigned int matrixRows, unsigned int matrixCols,
 			   const std::vector<RegisterPtr>& sources);
 
@@ -124,8 +123,7 @@ namespace s1
 				
 	void OpBlock (const SequencePtr& subSequence,
 		      const Sequence::IdentifierToRegMap& identToRegIDs_imp,
-		      const Sequence::IdentifierToRegMap& identToRegIDs_exp,
-		      const std::vector<RegisterPtr>& writtenRegisters);
+		      const Sequence::IdentifierToRegMap& identToRegIDs_exp);
 			      
 	void OpBranch (const RegisterPtr& conditionReg,
 		       const SequenceOpPtr& seqOpIf,

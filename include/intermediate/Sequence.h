@@ -84,6 +84,19 @@ namespace s1
 
       RegisterSet GetAllReadRegisters() const;
       RegisterSet GetAllWrittenRegisters() const;
+      
+      /**
+       * Get imported registers from outer sequence.
+       * \a identToReg is the identifier-to-register mapping, from the outer sequence, to be used
+       * to resolve names.
+       */
+      RegisterSet GetImportOuterRegs (const IdentifierToRegMap& identToReg);
+      /**
+       * Get exported registers from outer sequence.
+       * \a identToReg is the identifier-to-register mapping, from the outer sequence, to be used
+       * to resolve names.
+       */
+      RegisterSet GetExportOuterRegs (const IdentifierToRegMap& identToReg);
 		      
       void CleanUnusedImportsExports ();
     protected:

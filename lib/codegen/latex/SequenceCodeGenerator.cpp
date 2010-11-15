@@ -444,8 +444,7 @@ namespace s1
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
 								      const Sequence::IdentifierToRegMap& identToRegID_imp,
-								      const Sequence::IdentifierToRegMap& identToRegID_exp,
-								      const std::vector<RegisterPtr>& writtenRegisters)
+								      const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
       #if 0
       // Generate registers for 'exported' variables

@@ -131,6 +131,36 @@ namespace s1
       return allWrittenRegisters;
     }
     
+    RegisterSet Sequence::GetImportOuterRegs (const IdentifierToRegMap& identToReg)
+    {
+      RegisterSet importRegs;
+      
+      RegisterImpMappings::iterator it = imports.begin();
+      while (it != imports.end())
+      {
+	IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
+	assert (outerReg != identToReg.end());
+	importRegs.insert (outerReg->second);
+	++it;
+      }
+      return importRegs;
+    }
+    
+    RegisterSet Sequence::GetExportOuterRegs (const IdentifierToRegMap& identToReg)
+    {
+      RegisterSet exportRegs;
+      
+      RegisterExpMappings::iterator it = exports.begin();
+      while (it != exports.end())
+      {
+	IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
+	assert (outerReg != identToReg.end());
+	exportRegs.insert (outerReg->second);
+	++it;
+      }
+      return exportRegs;
+    }
+    
     void Sequence::CleanUnusedImportsExports ()
     {
       RegisterSet allReadRegisters (GetAllReadRegisters ());

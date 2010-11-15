@@ -495,7 +495,6 @@ namespace s1
     void SequenceSplitter::InputVisitor::SplitBlock (const SequencePtr& blockSequence,
 						     const Sequence::IdentifierToRegMap& identToRegIDs_imp,
 						     const Sequence::IdentifierToRegMap& identToRegIDs_exp,
-						     const std::vector<RegisterPtr>& writtenRegisters,
 						     SequenceOpPtr* newSequences,
 						     const LoopedRegs& loopedRegs,
 						     bool keepEmpty)
@@ -602,20 +601,17 @@ namespace s1
 	if (!keepEmpty && (blockSplitter.outputSeq[f]->GetNumOps() == 0)) continue;
 	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (blockSplitter.outputSeq[f],
 										   newIdentToRegIDs_imp,
-										   newIdentToRegIDs_exp,
-										   newReadRegisters[f],
-										   newWrittenRegisters[f]));
+										   newIdentToRegIDs_exp));
 	newSequences[f] = newSeqOp;
       }
     }
     
     void SequenceSplitter::InputVisitor::OpBlock (const SequencePtr& subSequence,
 						  const Sequence::IdentifierToRegMap& identToRegIDs_imp,
-						  const Sequence::IdentifierToRegMap& identToRegIDs_exp,
-						  const std::vector<RegisterPtr>& writtenRegisters)
+						  const Sequence::IdentifierToRegMap& identToRegIDs_exp)
     {
       SequenceOpPtr newSeqOps[freqNum];
-      SplitBlock (subSequence, identToRegIDs_imp, identToRegIDs_exp, writtenRegisters, newSeqOps);
+      SplitBlock (subSequence, identToRegIDs_imp, identToRegIDs_exp, newSeqOps);
       
       for (int f = 0; f < freqNum; f++)
       {
@@ -671,9 +667,7 @@ namespace s1
       readRegs.insert (readRegs.begin(), newBlock->GetReadRegisters().begin(), newBlock->GetReadRegisters().end());
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seq,
 										 newBlock->GetImportIdentToRegs(),
-										 newIdentToRegIDsExp,
-										 readRegs,
-										 writtenRegs));
+										 newIdentToRegIDsExp));
       parent.outputSeq[f]->AddOp (newSeqOp);
     }
     
@@ -723,9 +717,7 @@ namespace s1
     
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seq,
 										 newIdentToRegIDsImp,
-										 newIdentToRegIDsExp,
-										 readRegs,
-										 writtenRegs));
+										 newIdentToRegIDsExp));
       
       return newSeqOp;
     }
@@ -778,7 +770,7 @@ namespace s1
 	SplitBlock (ifBlock->GetSequence(),
 		    ifBlock->GetImportIdentToRegs(),
 		    ifBlock->GetExportIdentToRegs(),
-		    writtenRegs, newIfOps, LoopedRegs(), true);
+		    newIfOps, LoopedRegs(), true);
       }
       SequenceOpPtr newElseOps[freqNum];
       {
@@ -789,7 +781,7 @@ namespace s1
 	SplitBlock (elseBlock->GetSequence(),
 		    elseBlock->GetImportIdentToRegs(),
 		    elseBlock->GetExportIdentToRegs(),
-		    writtenRegs, newElseOps, LoopedRegs(), true);
+		    newElseOps, LoopedRegs(), true);
       }
       // Frequency at which the condition needs to be evaluated
       int condFreq = HighestFreq (commonFreqs);
@@ -869,7 +861,7 @@ namespace s1
 	SplitBlock (body->GetSequence(),
 		    body->GetImportIdentToRegs(),
 		    body->GetExportIdentToRegs(),
-		    writtenRegs, newOps, loopedRegs, true);
+		    newOps, loopedRegs, true);
       }
       // TODO: Could filter looped regs
       for (int f = 0; f < freqNum; f++)

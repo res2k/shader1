@@ -282,8 +282,7 @@ namespace s1
 			      
       void OpBlock (const intermediate::SequencePtr& subSequence,
 		    const intermediate::Sequence::IdentifierToRegMap& identToRegIDs_imp,
-		    const intermediate::Sequence::IdentifierToRegMap& identToRegIDs_exp,
-		    const std::vector<RegisterPtr>& writtenRegisters)
+		    const intermediate::Sequence::IdentifierToRegMap& identToRegIDs_exp)
       {
 	if (recursionFound) return;
 	subSequence->Visit (*this);

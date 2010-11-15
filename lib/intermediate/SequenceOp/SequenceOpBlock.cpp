@@ -8,12 +8,11 @@ namespace s1
   {
     SequenceOpBlock::SequenceOpBlock (const SequencePtr& subSequence,
 				      const Sequence::IdentifierToRegMap& identToRegs_imp,
-				      const Sequence::IdentifierToRegMap& identToRegs_exp,
-				      const std::vector<RegisterPtr>& readRegisters,
-				      const std::vector<RegisterPtr>& writtenRegisters)
+				      const Sequence::IdentifierToRegMap& identToRegs_exp)
      : subSequence (subSequence), identToRegs_imp (identToRegs_imp),
-       identToRegs_exp (identToRegs_exp), readRegisters (readRegisters),
-       writtenRegisters (writtenRegisters)
+       identToRegs_exp (identToRegs_exp),
+       readRegisters (subSequence->GetAllReadRegisters()),
+       writtenRegisters (subSequence->GetAllWrittenRegisters())
     {
     }
     
@@ -33,7 +32,7 @@ namespace s1
     
     void SequenceOpBlock::Visit (SequenceVisitor& visitor)
     {
-      visitor.OpBlock (subSequence, identToRegs_imp, identToRegs_exp, writtenRegisters);
+      visitor.OpBlock (subSequence, identToRegs_imp, identToRegs_exp);
     }
   } // namespace intermediate
 } // namespace s1

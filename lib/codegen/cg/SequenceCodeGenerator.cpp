@@ -4,6 +4,7 @@
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"
 
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <sstream>
 
@@ -407,15 +408,13 @@ namespace s1
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
 								      const Sequence::IdentifierToRegMap& identToRegID_imp,
-								      const Sequence::IdentifierToRegMap& identToRegID_exp,
-								      const std::vector<RegisterPtr>& writtenRegisters)
+								      const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
       // Generate registers for 'exported' variables
-      for (std::vector<RegisterPtr>::const_iterator writtenReg = writtenRegisters.begin();
-	   writtenReg != writtenRegisters.end();
-	   ++writtenReg)
+      intermediate::RegisterSet writtenRegisters (seq->GetExportOuterRegs (identToRegID_exp));
+      BOOST_FOREACH(const RegisterPtr& writtenReg, writtenRegisters)
       {
-	owner->GetOutputRegisterName (*writtenReg);
+	owner->GetOutputRegisterName (writtenReg);
       }
       
       SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID_imp, identToRegID_exp);

@@ -232,14 +232,10 @@ namespace s1
       
       SequenceOpPtr seqOpIf (boost::make_shared<SequenceOpBlock> (ifBlockImpl->GetSequence(),
 								  identifierToRegMap,
-								  sequence->GetIdentifierToRegisterMap (),
-								  readRegistersIf,
-								  writtenRegistersIf));
+								  sequence->GetIdentifierToRegisterMap ()));
       SequenceOpPtr seqOpElse (boost::make_shared<SequenceOpBlock> (elseBlockImpl->GetSequence(),
 								    identifierToRegMap,
-								    sequence->GetIdentifierToRegisterMap (),
-								    readRegistersElse,
-								    writtenRegistersElse));
+								    sequence->GetIdentifierToRegisterMap ()));
       
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBranch> (condReg, seqOpIf, seqOpElse));
       sequence->AddOp (seqOp);
@@ -520,9 +516,7 @@ namespace s1
       // Apply overrides for register IDs of exported identifiers
       return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
 						  identifierToRegIDMap,
-						  sequence->GetIdentifierToRegisterMap (),
-						  readRegisters,
-						  writtenRegisters);
+						  sequence->GetIdentifierToRegisterMap ());
     }
 
     IntermediateGeneratorSemanticsHandler::NameImplPtr

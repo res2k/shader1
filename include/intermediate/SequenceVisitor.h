@@ -82,8 +82,7 @@ namespace s1
 			       
       virtual void OpBlock (const SequencePtr& subSequence,
 			    const Sequence::IdentifierToRegMap& identToRegs_imp,
-			    const Sequence::IdentifierToRegMap& identToRegs_exp,
-			    const std::vector<RegisterPtr>& writtenRegisters) = 0;
+			    const Sequence::IdentifierToRegMap& identToRegs_exp) = 0;
 			    
       virtual void OpBranch (const RegisterPtr& conditionReg,
 			     const SequenceOpPtr& seqOpIf,
