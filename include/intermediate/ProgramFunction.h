@@ -43,7 +43,8 @@ namespace s1
       
       void SetTransferMapping (const UnicodeString& transferVal,
 			       const RegisterPtr& programReg);
-      typedef std::vector<std::pair<UnicodeString, RegisterPtr> > TransferMappings;
+      typedef std::pair<UnicodeString, RegisterPtr> TransferMappingPair;
+      typedef std::vector<TransferMappingPair> TransferMappings;
       const TransferMappings& GetTransferMappings () const { return transferMappings; }
       
       void SetParameterFrequency (const UnicodeString& param, int freq)

@@ -24,7 +24,8 @@ namespace s1
       
       void AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
 			     const UnicodeString& name);
-      typedef std::vector<std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, UnicodeString> > TransferValues;
+      typedef std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, UnicodeString> TransferValuePair;
+      typedef std::vector<TransferValuePair> TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
       
       void SetVertexOutputParameter (const UnicodeString& name) { vertexOut = name; }
