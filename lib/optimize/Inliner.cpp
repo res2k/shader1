@@ -36,14 +36,14 @@ namespace s1
     
     class Inliner::InliningVisitor : public CommonSequenceVisitor
     {
-      UnicodeString regsPrefix;
+      UnicodeString regsSuffix;
       
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       RegisterMap registerMap;
     public:
       InliningVisitor (const intermediate::SequencePtr& outputSeq,
-		       const UnicodeString& regsPrefix)
-       : CommonSequenceVisitor (outputSeq), regsPrefix (regsPrefix)
+		       const UnicodeString& regsSuffix)
+       : CommonSequenceVisitor (outputSeq), regsSuffix (regsSuffix)
       {
       }
 		       
@@ -58,8 +58,8 @@ namespace s1
 	if (mappedReg != registerMap.end())
 	  return mappedReg->second;
 	
-	UnicodeString newRegName (regsPrefix);
-	newRegName.append (reg->GetName());
+	UnicodeString newRegName (reg->GetName());
+	newRegName.append (regsSuffix);
 	RegisterPtr newReg = newSequence->AllocateRegister (reg->GetOriginalType(), newRegName);
 	registerMap[reg] = newReg;
 	return newReg;
@@ -81,12 +81,12 @@ namespace s1
 					       const Sequence::IdentifierToRegMap& identToRegID_imp,
 					       const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
-      UChar blockPrefix[charsToFormatUint + 3];
-      u_snprintf (blockPrefix, sizeof (blockPrefix)/sizeof (UChar),
-		  "b%u$", blockNum);
+      UChar blockSuffix[charsToFormatUint + 3];
+      u_snprintf (blockSuffix, sizeof (blockSuffix)/sizeof (UChar),
+		  "$b%u", blockNum);
       blockNum++;
       
-      InliningVisitor visitor (newSequence, blockPrefix);
+      InliningVisitor visitor (newSequence, blockSuffix);
       for (Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
 	    imp != seq->GetImports().end();
 	    ++imp)
