@@ -10,10 +10,13 @@
 #include "intermediate/ProgramFunction.h" // @@@ Temp.
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
+#include "optimize/Optimizer.h"
 #include "splitter/Frequency.h"
 #include "splitter/ProgramSplitter.h"
 
 #include "ErrorHandler.h"
+#include "OptimizationFlags.h"
+
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 #include <string.h>
@@ -31,6 +34,7 @@ int main (const int argc, const char* const argv[])
   const char* entryName = "main";
   typedef std::tr1::unordered_map<std::string, unsigned int> ParamMap;
   ParamMap paramFlags;
+  OptimizationFlags optFlags;
   int argNum = 1;
   while (argNum < argc)
   {
@@ -58,6 +62,14 @@ int main (const int argc, const char* const argv[])
       argNum++;
       if (argNum < argc)
 	entryName = argv[argNum];
+    }
+    else if (strncmp (arg, "-O", 2) == 0)
+    {
+      if (!optFlags.ParseFlag (arg+2))
+      {
+	PrintSyntax (argv[0]);
+	return 1;
+      }
     }
     else
     {
@@ -97,7 +109,11 @@ int main (const int argc, const char* const argv[])
     errorHandler.IntermediateError (e.GetCode());
   }
   
+  optimize::Optimizer opt;
+  optFlags.ApplyFlags (opt);
+  
   intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
+  prog = opt.ApplyOptimizations (prog);
   // Determine output values
   {
     UnicodeString vertexOutput;
@@ -152,8 +168,9 @@ int main (const int argc, const char* const argv[])
   }
   splitter.PerformSplit();
 
+  prog = opt.ApplyOptimizations (splitter.GetOutputProgram());
   codegen::CgGenerator codegen;
-  codegen::StringsArrayPtr progOutput (codegen.Generate (splitter.GetOutputProgram()));
+  codegen::StringsArrayPtr progOutput (codegen.Generate (prog));
   
   for (size_t i = 0; i < progOutput->Size(); i++)
   {
