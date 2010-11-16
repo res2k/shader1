@@ -12,7 +12,7 @@ find_program(ICU_CONFIG icu-config)
 if(NOT ICU_CONFIG)
   message(FATAL_ERROR "ICU is required.")
 endif()
-message(STATUS "icu-config: ${ICU_CONFIG}")
+find_package_message(ICU_CONFIG "icu-config: ${ICU_CONFIG}" ${ICU_CONFIG})
 set(ICU_FOUND ON)
 execute_process(COMMAND ${ICU_CONFIG} --ldflags
 		OUTPUT_VARIABLE ICU_LIBRARIES)
