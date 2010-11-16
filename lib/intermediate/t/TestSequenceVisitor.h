@@ -47,6 +47,7 @@ public:
     opCompareLT,
     opCompareGE,
     opCompareGT,
+    opBlock,
     opReturn,
     opFunctionCall,
     opBuiltinCall
@@ -390,6 +391,9 @@ public:
 		const Sequence::IdentifierToRegMap&,
 		const Sequence::IdentifierToRegMap&)
   {
+    SequenceEntry entry;
+    entry.op = opBlock;
+    entries.push_back (entry);
   }
   
   void OpBranch (const RegisterPtr& conditionReg,
