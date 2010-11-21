@@ -38,6 +38,7 @@ namespace s1
 	  intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
 	  newSeq->AddImports (currentSeq->GetImports ());
 	  newSeq->AddExports (currentSeq->GetExports ());
+	  newSeq->SetIdentifierRegisters  (currentSeq->GetIdentifierToRegisterMap());
 	  unsigned int changes = step->Apply (newSeq, currentSeq);
 	  currentSeq = newSeq;
 	  
