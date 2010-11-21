@@ -72,15 +72,18 @@ namespace s1
       
       void Visit (SequenceVisitor& visitor) const;
       
-      typedef std::vector<std::pair<UnicodeString, RegisterPtr> > RegisterImpMappings;
+      typedef std::pair<UnicodeString, RegisterPtr> IdentRegPair;
+      typedef std::vector<IdentRegPair> RegisterImpMappings;
       const RegisterImpMappings& GetImports () const { return imports; }
       void AddImport (const UnicodeString& parentRegName,
 		      const RegisterPtr& localReg);
+      void AddImports (const RegisterImpMappings& imports);
       typedef std::tr1::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const { return exports; }
       RegisterExpMappings& GetExports () { return exports; }
       void SetExport (const UnicodeString& parentRegName,
 		      const RegisterPtr& localReg);
+      void AddExports (const RegisterExpMappings& exports);
 
       RegisterSet GetAllReadRegisters() const;
       RegisterSet GetAllWrittenRegisters() const;

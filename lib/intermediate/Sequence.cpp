@@ -1,5 +1,6 @@
 #include "base/common.h"
 
+#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/make_shared.hpp>
 
@@ -103,10 +104,26 @@ namespace s1
       imports.push_back (std::make_pair (parentRegName, local));
     }
     
+    void Sequence::AddImports (const RegisterImpMappings& imports)
+    {
+      BOOST_FOREACH(const IdentRegPair& imp, imports)
+      {
+	this->imports.push_back (imp);
+      }
+    }
+    
     void Sequence::SetExport (const UnicodeString& parentRegName,
 			      const RegisterPtr& local)
     {
       exports[parentRegName] = local;
+    }
+    
+    void Sequence::AddExports (const RegisterExpMappings& exports)
+    {
+      BOOST_FOREACH(const IdentRegPair& exp, exports)
+      {
+	this->exports[exp.first] = exp.second;
+      }
     }
     
     RegisterSet Sequence::GetAllReadRegisters() const
