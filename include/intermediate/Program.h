@@ -4,6 +4,7 @@
 #include "forwarddecl.h"
 #include "IntermediateGeneratorSemanticsHandler.h"
 
+#include <boost/unordered_map.hpp>
 #include <vector>
 
 namespace s1
@@ -28,15 +29,22 @@ namespace s1
       typedef std::vector<TransferValuePair> TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
       
-      // @@@ This should better be a map parameter -> binding (enum or so)
-      void SetVertexOutputParameter (const UnicodeString& name) { vertexOut = name; }
-      const UnicodeString& GetVertexOutputParameter () const { return vertexOut; }
-      void SetFragmentOutputParameter (const UnicodeString& name) { fragmentOut = name; }
-      const UnicodeString& GetFragmentOutputParameter () const { return fragmentOut; }
+      enum ParameterTarget
+      {
+	/// Vertex output position
+	Position,
+	/// Fragment output color
+	Color
+      };
+      typedef boost::unordered_map<UnicodeString, ParameterTarget> OutputParameters;
+      void SetOutputParameter (const UnicodeString& name, ParameterTarget target);
+      const OutputParameters& GetOutputParameters () const;
+      
+      // @@@ Actualls, should perhaps better be in splitter ...
+      static int GetTargetFrequency (ParameterTarget target);
     private:
       TransferValues transferValues;
-      UnicodeString vertexOut;
-      UnicodeString fragmentOut;
+      OutputParameters outputParams;
     };
   } // namespace intermediate
 } // namespace s1

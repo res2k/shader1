@@ -25,7 +25,7 @@ namespace s1
     }
 	  
     StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
-								  const UnicodeString& output,
+								  const intermediate::Program::OutputParameters& output,
 								  bool doTransfer,
 								  int frequency)
     {
@@ -81,14 +81,15 @@ namespace s1
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
-	    if (param->identifier == output)
+	    intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
+	    if (outputInfo != output.end())
 	    {
-	      switch (frequency)
+	      switch (outputInfo->second)
 	      {
-	      case splitter::freqVertex:
+	      case intermediate::Program::Position:
 		paramStr.append (" : POSITION");
 		break;
-	      case splitter::freqFragment:
+	      case intermediate::Program::Color:
 		paramStr.append (" : COLOR");
 		break;
 	      }

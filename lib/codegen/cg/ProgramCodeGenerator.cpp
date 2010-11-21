@@ -45,21 +45,10 @@ namespace s1
       {
 	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
 	FunctionCodeGenerator funcGen;
-	UnicodeString output;
-	if (func->IsEntryFunction())
-	{
-	  switch (frequency)
-	  {
-	  case splitter::freqVertex:
-	    output = prog->GetVertexOutputParameter();
-	    break;
-	  case splitter::freqFragment:
-	    output = prog->GetFragmentOutputParameter();
-	    break;
-	  }
-	}
 	resultStrings->AddStrings (*(funcGen.Generate (func,
-						       output,
+						       func->IsEntryFunction()
+							 ? prog->GetOutputParameters()
+							 : intermediate::Program::OutputParameters(),
 						       transferValues.size() > 0,
 						       frequency)));
 	resultStrings->AddString (std::string ());

@@ -142,9 +142,9 @@ int main (const int argc, const char* const argv[])
       // Make 'proper' warning
       std::cerr << "Entry function has not enough 'float4' outputs" << std::endl;
     }
-    
-    prog->SetVertexOutputParameter (vertexOutput);
-    prog->SetFragmentOutputParameter (fragmentOutput);
+
+    prog->SetOutputParameter (vertexOutput, intermediate::Program::Position);
+    prog->SetOutputParameter (fragmentOutput, intermediate::Program::Color);
   }
   
   if (doSplit)

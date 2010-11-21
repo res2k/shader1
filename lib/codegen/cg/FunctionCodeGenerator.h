@@ -42,7 +42,7 @@ namespace s1
       };
     public:
       StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
-				const UnicodeString& output,
+				const intermediate::Program::OutputParameters& output,
 				bool doTransfer,
 				int frequency);
     };

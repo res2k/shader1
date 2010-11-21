@@ -362,11 +362,19 @@ namespace s1
     void ProgramSplitter::PerformSplit ()
     {
       for (int f = 0; f < freqNum; f++)
+      {
 	outputPrograms[f] = boost::make_shared<intermediate::Program> ();
-      const UnicodeString& vertexOutput = inputProgram->GetVertexOutputParameter();
-      const UnicodeString& fragmentOutput = inputProgram->GetFragmentOutputParameter();
-      outputPrograms[freqVertex]->SetVertexOutputParameter (vertexOutput);
-      outputPrograms[freqFragment]->SetFragmentOutputParameter (fragmentOutput);
+      }
+      const intermediate::Program::OutputParameters& progOutput = inputProgram->GetOutputParameters();
+      {
+	for (intermediate::Program::OutputParameters::const_iterator outParam = progOutput.begin();
+	     outParam != progOutput.end();
+	     ++outParam)
+	{
+	  int f = intermediate::Program::GetTargetFrequency (outParam->second);
+	  outputPrograms[f]->SetOutputParameter (outParam->first, outParam->second);
+	}
+      }
   
       for (size_t i = 0; i < inputProgram->GetNumFunctions(); i++)
       {
@@ -407,10 +415,19 @@ namespace s1
 	  {
 	    // Output parameter
 	    // Filter all except vertex/fragment out
-	    if (param.identifier == vertexOutput)
-	      vParams.push_back (param);
-	    else if (param.identifier == fragmentOutput)
-	      fParams.push_back (param);
+	    intermediate::Program::OutputParameters::const_iterator outParam = progOutput.find (param.identifier);
+	    if (outParam != progOutput.end())
+	    {
+	      switch (intermediate::Program::GetTargetFrequency (outParam->second))
+	      {
+	      case freqVertex:
+		vParams.push_back (param);
+		break;
+	      case freqFragment:
+		fParams.push_back (param);
+		break;
+	      }
+	    }
 	  }
 	}
 	
