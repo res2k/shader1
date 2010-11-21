@@ -36,6 +36,8 @@ namespace s1
 	BOOST_FOREACH(const OptimizeSequenceStepPtr& step, steps)
 	{
 	  intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
+	  newSeq->AddImports (currentSeq->GetImports ());
+	  newSeq->AddExports (currentSeq->GetExports ());
 	  unsigned int changes = step->Apply (newSeq, currentSeq);
 	  currentSeq = newSeq;
 	  
