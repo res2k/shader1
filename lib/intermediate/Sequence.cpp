@@ -87,6 +87,14 @@ namespace s1
 	return regIt->second;
       return RegisterPtr ();
     }
+
+    void Sequence::SetIdentifierRegisters (const IdentifierToRegMap& map)
+    {
+      BOOST_FOREACH(const IdentRegPair& i2r, map)
+      {
+	identToReg[i2r.first] = i2r.second;
+      }
+    }
       
     void Sequence::Visit (SequenceVisitor& visitor) const
     {

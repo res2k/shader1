@@ -69,6 +69,7 @@ namespace s1
       /// Get current identifiers-to-register map
       const IdentifierToRegMap& GetIdentifierToRegisterMap () const
       { return identToReg; }
+      void SetIdentifierRegisters (const IdentifierToRegMap& map);
       
       void Visit (SequenceVisitor& visitor) const;
       
