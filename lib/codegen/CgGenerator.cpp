@@ -20,10 +20,11 @@ namespace s1
     {
     }
     
-    StringsArrayPtr CgGenerator::Generate (const intermediate::ProgramPtr& program)
+    StringsArrayPtr CgGenerator::Generate (const intermediate::ProgramPtr& program,
+					   int frequency)
     {
       ProgramCodeGenerator progGen;
-      return progGen.Generate (program);
+      return progGen.Generate (program, frequency);
     }
     
     std::string CgGenerator::TypeToCgType (const parser::SemanticsHandler::TypePtr& type,

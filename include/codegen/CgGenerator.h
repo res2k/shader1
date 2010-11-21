@@ -15,7 +15,8 @@ namespace s1
     public:
       CgGenerator ();
       
-      StringsArrayPtr Generate (const intermediate::ProgramPtr& program);
+      StringsArrayPtr Generate (const intermediate::ProgramPtr& program,
+				int frequency);
       
       /**\name Code generation helper functions
        * @{ */

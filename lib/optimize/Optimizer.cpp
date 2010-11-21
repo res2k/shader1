@@ -39,8 +39,6 @@ namespace s1
 	  newFunc->SetTransferMapping (tmp.first, tmp.second);
 	}
 							     
-	newFunc->SetExecutionFrequency (func->GetExecutionFrequency());
-	
 	for (intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator paramFreq = func->GetParameterFrequencies().begin();
 	     paramFreq != func->GetParameterFrequencies().end();
 	     ++paramFreq)

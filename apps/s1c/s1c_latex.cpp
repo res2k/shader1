@@ -160,25 +160,28 @@ int main (const int argc, const char* const argv[])
     }
     splitter.PerformSplit();
 
-    codegen::LatexGenerator codegen;
-    codegen::StringsArrayPtr progOutput (codegen.Generate (splitter.GetOutputProgram()));
-    
-    for (size_t i = 0; i < progOutput->Size(); i++)
+    for (int f = 0; f < splitter::freqNum; f++)
     {
-      std::cout << progOutput->Get (i) << std::endl;
+      codegen::LatexGenerator codegen;
+      codegen::StringsArrayPtr progOutput (codegen.Generate (splitter.GetOutputProgram (f)));
+      
+      for (size_t i = 0; i < progOutput->Size(); i++)
+      {
+	std::cout << progOutput->Get (i) << std::endl;
+      }
+      
+      std::cout << "\\sOtransfer{" << std::endl;
+      const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram (f)->GetTransferValues();
+      for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
+	  transferVal != transferValues.end();
+	  ++transferVal)
+      {
+	std::string str;
+	transferVal->second.toUTF8String (str);
+	std::cout << "\\sOreg{" << codegen::LatexGenerator::LatexEscape (str) << "}\\ ";
+      }
+      std::cout << std::endl << "}" << std::endl;
     }
-    
-    std::cout << "\\sOtransfer{" << std::endl;
-    const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram()->GetTransferValues();
-    for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
-	 transferVal != transferValues.end();
-	 ++transferVal)
-    {
-      std::string str;
-      transferVal->second.toUTF8String (str);
-      std::cout << "\\sOreg{" << codegen::LatexGenerator::LatexEscape (str) << "}\\ ";
-    }
-    std::cout << std::endl << "}" << std::endl;
   }
   else
   {

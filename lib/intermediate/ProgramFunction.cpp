@@ -16,7 +16,7 @@ namespace s1
 				      bool isEntryFunction)
      : originalIdentifier (originalIdentifier) ,identifier (identifier),
        params (params), body (body),
-       isEntryFunction (isEntryFunction), execFreq (-1)
+       isEntryFunction (isEntryFunction)
     {
     }
 

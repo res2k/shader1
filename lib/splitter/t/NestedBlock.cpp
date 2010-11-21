@@ -43,12 +43,15 @@ public:
     splitter.SetInputProgram (prog);
     splitter.PerformSplit();
 
-    s1::intermediate::ProgramPtr outProg = splitter.GetOutputProgram();
-    for (size_t func = 0; func < outProg->GetNumFunctions(); func++)
+    for (int f = 0; f < s1::splitter::freqNum; f++)
     {
-      s1::intermediate::ProgramFunctionPtr mainFunc = outProg->GetFunction (func);
-      VerifyRegsAssignedOnce (mainFunc->GetBody());
-      //VerifyRegsWrittenBeforeRead ();
+      s1::intermediate::ProgramPtr outProg = splitter.GetOutputProgram (f);
+      for (size_t func = 0; func < outProg->GetNumFunctions(); func++)
+      {
+	s1::intermediate::ProgramFunctionPtr mainFunc = outProg->GetFunction (func);
+	VerifyRegsAssignedOnce (mainFunc->GetBody());
+	//VerifyRegsWrittenBeforeRead ();
+      }
     }
   }
   

@@ -25,9 +25,9 @@ namespace s1
     }
 	  
     StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
-								  const UnicodeString& vertexOutput,
-								  const UnicodeString& fragmentOutput,
-								  bool doTransfer)
+								  const UnicodeString& output,
+								  bool doTransfer,
+								  int frequency)
     {
       typedef parser::SemanticsHandler::Scope::FunctionFormalParameters FunctionFormalParameters;
       
@@ -81,10 +81,18 @@ namespace s1
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
-	    if (param->identifier == vertexOutput)
-	      paramStr.append (" : POSITION");
-	    else if (param->identifier == fragmentOutput)
-	      paramStr.append (" : COLOR");
+	    if (param->identifier == output)
+	    {
+	      switch (frequency)
+	      {
+	      case splitter::freqVertex:
+		paramStr.append (" : POSITION");
+		break;
+	      case splitter::freqFragment:
+		paramStr.append (" : COLOR");
+		break;
+	      }
+	    }
 	    outParams.push_back (paramStr);
 	    
 	    nameRes.outParamMap[param->identifier] = paramIdent;
@@ -142,7 +150,7 @@ namespace s1
 	
 	if (func->IsEntryFunction () && doTransfer)
 	{
-	  if (func->GetExecutionFrequency() == splitter::freqVertex)
+	  if (frequency == splitter::freqVertex)
 	    paramAdder.Add ("out ", "V2F v2f");
 	  else
 	    paramAdder.Add ("in ", "V2F v2f");
@@ -184,7 +192,7 @@ namespace s1
       
 	if (func->IsEntryFunction () && doTransfer)
 	{
-	  if (func->GetExecutionFrequency() == splitter::freqVertex)
+	  if (frequency == splitter::freqVertex)
 	    transferOut = &(func->GetTransferMappings());
 	  else
 	    transferIn = &(func->GetTransferMappings());

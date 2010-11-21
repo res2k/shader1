@@ -168,13 +168,16 @@ int main (const int argc, const char* const argv[])
   }
   splitter.PerformSplit();
 
-  prog = opt.ApplyOptimizations (splitter.GetOutputProgram());
-  codegen::CgGenerator codegen;
-  codegen::StringsArrayPtr progOutput (codegen.Generate (prog));
-  
-  for (size_t i = 0; i < progOutput->Size(); i++)
+  for (int f = 0; f < splitter::freqNum; f++)
   {
-    std::cout << progOutput->Get (i) << std::endl;
+    prog = opt.ApplyOptimizations (splitter.GetOutputProgram (f));
+    codegen::CgGenerator codegen;
+    codegen::StringsArrayPtr progOutput (codegen.Generate (prog, f));
+    
+    for (size_t i = 0; i < progOutput->Size(); i++)
+    {
+      std::cout << progOutput->Get (i) << std::endl;
+    }
   }
   
   return 0;

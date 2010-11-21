@@ -42,9 +42,9 @@ namespace s1
       };
     public:
       StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
-				const UnicodeString& vertexOutput,
-				const UnicodeString& fragmentOutput,
-				bool doTransfer);
+				const UnicodeString& output,
+				bool doTransfer,
+				int frequency);
     };
   } // namespace codegen
 } // namespace s1

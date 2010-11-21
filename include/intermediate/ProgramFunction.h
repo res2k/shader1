@@ -19,7 +19,6 @@ namespace s1
       parser::SemanticsHandler::Scope::FunctionFormalParameters params;
       SequencePtr body;
       bool isEntryFunction;
-      int execFreq;
     public:
       ProgramFunction (const UnicodeString& originalIdentifier,
 		       const UnicodeString& identifier,
@@ -37,9 +36,6 @@ namespace s1
       { return body; }
       bool IsEntryFunction() const
       { return isEntryFunction; }
-      
-      void SetExecutionFrequency (int freq) { execFreq = freq; }
-      int GetExecutionFrequency () const { return execFreq; }
       
       void SetTransferMapping (const UnicodeString& transferVal,
 			       const RegisterPtr& programReg);

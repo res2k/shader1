@@ -5,6 +5,7 @@
 
 #include "intermediate/Program.h"
 #include "FunctionCodeGenerator.h"
+#include "splitter/Frequency.h"
 
 #include <boost/make_shared.hpp>
 #include <string>
@@ -13,7 +14,8 @@ namespace s1
 {
   namespace codegen
   {
-    StringsArrayPtr CgGenerator::ProgramCodeGenerator::Generate (const intermediate::ProgramPtr& prog)
+    StringsArrayPtr CgGenerator::ProgramCodeGenerator::Generate (const intermediate::ProgramPtr& prog,
+								 int frequency)
     {
       StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
       
@@ -43,17 +45,23 @@ namespace s1
       {
 	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
 	FunctionCodeGenerator funcGen;
-	UnicodeString vertexOutput;
-	UnicodeString fragmentOutput;
+	UnicodeString output;
 	if (func->IsEntryFunction())
 	{
-	  vertexOutput = prog->GetVertexOutputParameter();
-	  fragmentOutput = prog->GetFragmentOutputParameter();
+	  switch (frequency)
+	  {
+	  case splitter::freqVertex:
+	    output = prog->GetVertexOutputParameter();
+	    break;
+	  case splitter::freqFragment:
+	    output = prog->GetFragmentOutputParameter();
+	    break;
+	  }
 	}
 	resultStrings->AddStrings (*(funcGen.Generate (func,
-						       vertexOutput,
-						       fragmentOutput,
-						       transferValues.size() > 0)));
+						       output,
+						       transferValues.size() > 0,
+						       frequency)));
 	resultStrings->AddString (std::string ());
       }
       

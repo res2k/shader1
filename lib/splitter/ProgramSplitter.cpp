@@ -120,7 +120,7 @@ namespace s1
 	  
 	  // Generate 'split' functions
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
-	  AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence());
+	  AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence(), freqFragment);
 	}
 	else
 	{
@@ -204,7 +204,7 @@ namespace s1
 	      
 	    UnicodeString funcName (freqPrefix[f]);
 	    funcName.append (decoratedIdent);
-	    AddFreqFunction (funcName, progFunc, extraParams[f], seq);
+	    AddFreqFunction (funcName, progFunc, extraParams[f], seq, f);
 	    freqFuncIdents[f] = funcName;
 	    newFunc->funcName[f] = funcName;
 	  }
@@ -225,7 +225,8 @@ namespace s1
     void ProgramSplitter::AddFreqFunction (const UnicodeString& funcName,
 					   const intermediate::ProgramFunctionPtr& originalFunc,
 					   const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
-					   const intermediate::SequencePtr& sequence)
+					   const intermediate::SequencePtr& sequence,
+					   int freq)
     {
       parser::SemanticsHandler::Scope::FunctionFormalParameters params (originalFunc->GetParams());
       params.insert (params.end(), extraParams.begin(), extraParams.end());
@@ -235,7 +236,7 @@ namespace s1
 												   params,
 												   sequence,
 												   false));
-      outputProgram->AddFunction (newFunc);
+      outputPrograms[freq]->AddFunction (newFunc);
     }
     
     class ProgramSplitter::RecursionChecker : public intermediate::SequenceVisitor
@@ -360,11 +361,12 @@ namespace s1
     
     void ProgramSplitter::PerformSplit ()
     {
-      outputProgram = boost::make_shared<intermediate::Program> ();
+      for (int f = 0; f < freqNum; f++)
+	outputPrograms[f] = boost::make_shared<intermediate::Program> ();
       const UnicodeString& vertexOutput = inputProgram->GetVertexOutputParameter();
       const UnicodeString& fragmentOutput = inputProgram->GetFragmentOutputParameter();
-      outputProgram->SetVertexOutputParameter (vertexOutput);
-      outputProgram->SetFragmentOutputParameter (fragmentOutput);
+      outputPrograms[freqVertex]->SetVertexOutputParameter (vertexOutput);
+      outputPrograms[freqFragment]->SetFragmentOutputParameter (fragmentOutput);
   
       for (size_t i = 0; i < inputProgram->GetNumFunctions(); i++)
       {
@@ -423,8 +425,7 @@ namespace s1
 												   vParams,
 												   splitter.GetOutputVertexSequence(),
 												   func->IsEntryFunction()));
-	funcV->SetExecutionFrequency (freqVertex);
-	outputProgram->AddFunction (funcV);
+	outputPrograms[freqVertex]->AddFunction (funcV);
 
 	UnicodeString funcFName ("fragment_");
 	//funcFName.append (func->GetIdentifier());
@@ -435,13 +436,12 @@ namespace s1
 												   fParams,
 												   splitter.GetOutputFragmentSequence(),
 												   func->IsEntryFunction()));
-	funcF->SetExecutionFrequency (freqFragment);
-	outputProgram->AddFunction (funcF);
+	outputPrograms[freqFragment]->AddFunction (funcF);
 	
-	const std::vector<intermediate::RegisterPtr>& transverV2F = splitter.GetTransferRegs (freqVertex);
-	BOOST_FOREACH(const intermediate::RegisterPtr& reg, transverV2F)
+	const std::vector<intermediate::RegisterPtr>& transferV2F = splitter.GetTransferRegs (freqVertex);
+	BOOST_FOREACH(const intermediate::RegisterPtr& reg, transferV2F)
 	{
-	  outputProgram->AddTransferValue (reg->GetOriginalType(), reg->GetName());
+	  outputPrograms[freqVertex]->AddTransferValue (reg->GetOriginalType(), reg->GetName());
 	  funcV->SetTransferMapping (reg->GetName(), reg);
 	  funcF->SetTransferMapping (reg->GetName(), reg);
 	}
@@ -454,9 +454,9 @@ namespace s1
       }
     }
     
-    const intermediate::ProgramPtr& ProgramSplitter::GetOutputProgram ()
+    const intermediate::ProgramPtr& ProgramSplitter::GetOutputProgram (int freq)
     {
-      return outputProgram;
+      return outputPrograms[freq];
     }
     
   } // namespace splitter

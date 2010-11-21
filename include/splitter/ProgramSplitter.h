@@ -18,7 +18,7 @@ namespace s1
     class ProgramSplitter
     {
       intermediate::ProgramPtr inputProgram;
-      intermediate::ProgramPtr outputProgram;
+      intermediate::ProgramPtr outputPrograms[freqNum];
       
       typedef std::tr1::unordered_map<UnicodeString, unsigned int> ParamMap;
       ParamMap paramFlags;
@@ -59,7 +59,8 @@ namespace s1
       void AddFreqFunction (const UnicodeString& funcName,
 			    const intermediate::ProgramFunctionPtr& originalFunc,
 			    const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
-			    const intermediate::SequencePtr& sequence);
+			    const intermediate::SequencePtr& sequence,
+			    int freq);
 			    
       class RecursionChecker;
       bool CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func);
@@ -69,7 +70,7 @@ namespace s1
       
       void PerformSplit ();
       
-      const intermediate::ProgramPtr& GetOutputProgram ();
+      const intermediate::ProgramPtr& GetOutputProgram (int frequency);
     };
   } // namespace splitter
 } // namespace s1

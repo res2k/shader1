@@ -28,6 +28,7 @@ namespace s1
       typedef std::vector<TransferValuePair> TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
       
+      // @@@ This should better be a map parameter -> binding (enum or so)
       void SetVertexOutputParameter (const UnicodeString& name) { vertexOut = name; }
       const UnicodeString& GetVertexOutputParameter () const { return vertexOut; }
       void SetFragmentOutputParameter (const UnicodeString& name) { fragmentOut = name; }

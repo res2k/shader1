@@ -12,7 +12,7 @@ namespace s1
     class CgGenerator::ProgramCodeGenerator
     {
     public:
-      StringsArrayPtr Generate (const intermediate::ProgramPtr& prog);
+      StringsArrayPtr Generate (const intermediate::ProgramPtr& prog, int frequency);
     };
   } // namespace codegen
 } // namespace s1
