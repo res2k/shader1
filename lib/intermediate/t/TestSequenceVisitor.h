@@ -2,7 +2,10 @@
 #define __TESTSEQUENCEVISITOR_H__
 
 #include "intermediate/Sequence.h"
+#include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceVisitor.h"
+
+#include <boost/make_shared.hpp>
 
 class TestSequenceVisitor : public s1::intermediate::SequenceVisitor
 {
@@ -48,6 +51,7 @@ public:
     opCompareGE,
     opCompareGT,
     opBlock,
+    opBranch,
     opReturn,
     opFunctionCall,
     opBuiltinCall
@@ -79,6 +83,9 @@ public:
     s1::intermediate::BuiltinFunction whatBuiltin;
     std::vector<RegisterPtr> inParams;
     std::vector<RegisterPtr> outParams;
+    
+    boost::shared_ptr<TestSequenceVisitor> branchIfVisitor;
+    boost::shared_ptr<TestSequenceVisitor> branchElseVisitor;
   };
   
   std::vector<SequenceEntry> entries;
@@ -400,6 +407,16 @@ public:
 		 const s1::intermediate::SequenceOpPtr& seqOpIf,
 		 const s1::intermediate::SequenceOpPtr& seqOpElse)
   {
+    boost::shared_ptr<TestSequenceVisitor> ifVisitor = boost::make_shared<TestSequenceVisitor> ();
+    if (seqOpIf) seqOpIf->Visit (*ifVisitor);
+    boost::shared_ptr<TestSequenceVisitor> elseVisitor = boost::make_shared<TestSequenceVisitor> ();
+    if (seqOpElse) seqOpIf->Visit (*elseVisitor);
+    
+    SequenceEntry entry;
+    entry.op = opBranch;
+    entry.branchIfVisitor = ifVisitor;
+    entry.branchElseVisitor = elseVisitor;
+    entries.push_back (entry);
   }
   
   void OpWhile (const RegisterPtr& conditionReg,

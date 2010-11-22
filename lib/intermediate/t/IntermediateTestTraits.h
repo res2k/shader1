@@ -45,6 +45,7 @@ CXXTEST_ENUM_TRAITS (TestSequenceVisitor::Operation,
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opCompareGE)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opCompareGT)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opBlock)
+		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opBranch)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opReturn)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opFunctionCall)
 		     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opBuiltinCall)
