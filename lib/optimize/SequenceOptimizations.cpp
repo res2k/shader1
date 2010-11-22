@@ -1,6 +1,7 @@
 #include "base/common.h"
 #include "SequenceOptimizations.h"
 #include "OptimizeSequenceStep.h"
+#include "OptimizeSequenceDeadCodeEliminate.h"
 #include "OptimizeSequenceInlineBlocks.h"
 
 #include "intermediate/Sequence.h"
@@ -18,7 +19,8 @@ namespace s1
     
     bool SequenceOptimizations::Apply (unsigned int optimizations,
 				       intermediate::SequencePtr& outputSeq,
-				       const intermediate::SequencePtr& inputSeq)
+				       const intermediate::SequencePtr& inputSeq,
+				       const intermediate::RegisterSet& usedRegs)
     {
       bool seqChanged = false;
       intermediate::SequencePtr currentSeq (inputSeq);
@@ -32,6 +34,10 @@ namespace s1
 	{
 	  steps.push_back (boost::make_shared<OptimizeSequenceInlineBlocks> ());
 	}
+	if (currentOpt & Optimizer::optDeadCodeElimination)
+	{
+	  steps.push_back (boost::make_shared<OptimizeSequenceDeadCodeEliminate> (usedRegs));
+	}
 	
 	BOOST_FOREACH(const OptimizeSequenceStepPtr& step, steps)
 	{
@@ -41,10 +47,11 @@ namespace s1
 	  newSeq->SetIdentifierRegisters  (currentSeq->GetIdentifierToRegisterMap());
 	  unsigned int changes = step->Apply (newSeq, currentSeq);
 	  currentSeq = newSeq;
+	  newOpt = step->FilterOptimizerFlags (newOpt);
 	  
 	  if (changes & OptimizeSequenceStep::opsExpanded)
 	  {
-	    // newOpt |= ...
+	    newOpt |= Optimizer::optDeadCodeElimination;
 	  }
 	}
 	

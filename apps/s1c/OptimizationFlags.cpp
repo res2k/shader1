@@ -5,7 +5,7 @@
 #include <string.h>
 
 OptimizationFlags::OptimizationFlags ()
- : doInlineBlocks (true)
+ : doInlineBlocks (true), doDeadCodeElimination (true)
 {
 }
 
@@ -15,6 +15,7 @@ bool OptimizationFlags::ParseFlag (const char* flagString)
   {
     // Disable all optimizations
     doInlineBlocks = false;
+    doDeadCodeElimination = false;
     return true;
   }
   
@@ -30,6 +31,11 @@ bool OptimizationFlags::ParseFlag (const char* flagString)
     doInlineBlocks = flagVal;
     return true;
   }
+  else if (strcmp (flagString, "dce") == 0)
+  {
+    doDeadCodeElimination = flagVal;
+    return true;
+  }
   else
   {
     return false;
@@ -39,4 +45,5 @@ bool OptimizationFlags::ParseFlag (const char* flagString)
 void OptimizationFlags::ApplyFlags (s1::optimize::Optimizer& opt)
 {
   opt.SetInlineBlocks (doInlineBlocks);
+  opt.SetDeadCodeElimination (doDeadCodeElimination);
 }

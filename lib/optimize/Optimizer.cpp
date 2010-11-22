@@ -24,8 +24,26 @@ namespace s1
       {
 	intermediate::ProgramFunctionPtr func (program->GetFunction (f));
 	
+	intermediate::RegisterSet usedRegs;
+	const intermediate::Sequence::RegisterExpMappings seqExports (func->GetBody()->GetExports ());
+	// Collect function outputs, mark them as 'used' for DCE
+	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
+	{
+	  if ((param.dir & parser::SemanticsHandler::Scope::dirOut) != 0)
+	  {
+	    const intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (param.identifier);
+	    if (exp == seqExports.end()) continue;
+	    usedRegs.insert (exp->second);	  
+	  }
+	}
+	// Also, als transferred regs must be considered 'used'
+	BOOST_FOREACH(const intermediate::ProgramFunction::TransferMappingPair& tmp, func->GetTransferMappings())
+	{
+	  usedRegs.insert (tmp.second);
+	}
+	
 	intermediate::SequencePtr newBody;
-	SequenceOptimizations::Apply (optimizations, newBody, func->GetBody());
+	SequenceOptimizations::Apply (optimizations, newBody, func->GetBody(), usedRegs);
 	
 	intermediate::ProgramFunctionPtr newFunc (
 	  boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),

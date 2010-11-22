@@ -19,10 +19,17 @@ namespace s1
 	 * Might give new opportunities for dead code removal or
 	 * constant propagation.
 	 */
-	opsExpanded = 1 << 0
+	opsExpanded = 1 << 0,
+	/**
+	 * Some operations have been removed, the sets of read/written
+	 * registers have probably changed.
+	 */
+	opsRemoved = 1 << 1,
       };
       virtual unsigned int Apply (const intermediate::SequencePtr& outputSeq,
 				  const intermediate::SequencePtr& inputSeq) = 0;
+				  
+      virtual unsigned int FilterOptimizerFlags (unsigned int optimizers) = 0;
     };
   } // namespace optimize
 } // namespace s1

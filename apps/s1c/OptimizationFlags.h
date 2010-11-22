@@ -12,6 +12,7 @@ namespace s1
 class OptimizationFlags
 {
   bool doInlineBlocks;
+  bool doDeadCodeElimination;
 public:
   OptimizationFlags ();
   

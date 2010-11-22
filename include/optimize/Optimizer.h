@@ -20,11 +20,13 @@ namespace s1
     public:
       enum
       {
-	optInlineBlocks = 1 << 0
+	optInlineBlocks = 1 << 0,
+	optDeadCodeElimination = 1 << 1,
       };
       Optimizer() : optimizations (0) {}
       
       void SetInlineBlocks (bool flag) { SetOptFlag (optInlineBlocks, flag); }
+      void SetDeadCodeElimination (bool flag) { SetOptFlag (optDeadCodeElimination, flag); }
       
       intermediate::ProgramPtr ApplyOptimizations (const intermediate::ProgramPtr& program);
     };
