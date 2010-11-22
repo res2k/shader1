@@ -72,6 +72,7 @@ namespace s1
       void SetIdentifierRegisters (const IdentifierToRegMap& map);
       
       void Visit (SequenceVisitor& visitor) const;
+      void ReverseVisit (SequenceVisitor& visitor) const;
       
       typedef std::pair<UnicodeString, RegisterPtr> IdentRegPair;
       typedef std::vector<IdentRegPair> RegisterImpMappings;

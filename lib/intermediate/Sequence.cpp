@@ -106,6 +106,16 @@ namespace s1
       visitor.SetVisitedOp (SequenceOpPtr ());
     }
     
+    void Sequence::ReverseVisit (SequenceVisitor& visitor) const
+    {
+      BOOST_REVERSE_FOREACH(const SequenceOpPtr& op, ops)
+      {
+	visitor.SetVisitedOp (op);
+	op->Visit (visitor);
+      }
+      visitor.SetVisitedOp (SequenceOpPtr ());
+    }
+    
     void Sequence::AddImport (const UnicodeString& parentRegName,
 			      const RegisterPtr& local)
     {
