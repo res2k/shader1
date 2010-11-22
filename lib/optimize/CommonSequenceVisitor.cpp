@@ -39,7 +39,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpConst> (MapRegister (destination),
 							   value));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
     
     void CommonSequenceVisitor::OpConstInt (const RegisterPtr& destination,
@@ -48,7 +48,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpConst> (MapRegister (destination),
 							   value));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
     
     void CommonSequenceVisitor::OpConstUInt (const RegisterPtr& destination,
@@ -57,7 +57,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpConst> (MapRegister (destination),
 							   value));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
     
     void CommonSequenceVisitor::OpConstFloat (const RegisterPtr& destination,
@@ -66,7 +66,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpConst> (MapRegister (destination),
 							   value));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
     
     void CommonSequenceVisitor::OpAssign (const RegisterPtr& destination,
@@ -75,7 +75,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpAssign> (MapRegister (destination),
 							    MapRegister (source)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 
     void CommonSequenceVisitor::OpCast (const RegisterPtr& destination,
@@ -86,7 +86,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpCast> (MapRegister (destination),
 							  destType,
 							  MapRegister (source)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 
     void CommonSequenceVisitor::OpMakeVector (const RegisterPtr& destination,
@@ -103,7 +103,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpMakeVector> (MapRegister (destination),
 								compType,
 								newSources));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 				  
     void CommonSequenceVisitor::OpMakeMatrix (const RegisterPtr& destination,
@@ -122,7 +122,7 @@ namespace s1
 								compType,
 								matrixRows, matrixCols,
 								newSources));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 				  
     void CommonSequenceVisitor::OpMakeArray (const RegisterPtr& destination,
@@ -137,7 +137,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpMakeArray> (MapRegister (destination),
 							       newSources));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 				  
     void CommonSequenceVisitor::OpExtractArrayElement (const RegisterPtr& destination,
@@ -148,7 +148,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpExtractArrayElement> (MapRegister (destination),
 									 MapRegister (source),
 									 MapRegister (index)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 
     void CommonSequenceVisitor::OpChangeArrayElement (const RegisterPtr& destination,
@@ -161,7 +161,7 @@ namespace s1
 									MapRegister (source),
 									MapRegister (index),
 									MapRegister (newValue)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 						      
     void CommonSequenceVisitor::OpGetArrayLength (const RegisterPtr& destination,
@@ -170,7 +170,7 @@ namespace s1
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpGetArrayLength> (MapRegister (destination),
 								    MapRegister (array)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 
     void CommonSequenceVisitor::OpExtractVectorComponent (const RegisterPtr& destination,
@@ -181,7 +181,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpExtractVectorComponent> (MapRegister (destination),
 									    MapRegister (source),
 									    comp));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 							  
     void CommonSequenceVisitor::OpArith (const RegisterPtr& destination,
@@ -194,7 +194,7 @@ namespace s1
 							   op,
 							   MapRegister (source1),
 							   MapRegister (source2)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 
     void CommonSequenceVisitor::OpLogic (const RegisterPtr& destination,
@@ -207,7 +207,7 @@ namespace s1
 							   op,
 							   MapRegister (source1),
 							   MapRegister (source2)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 
     void CommonSequenceVisitor::OpUnary (const RegisterPtr& destination,
@@ -218,7 +218,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpUnaryOp> (MapRegister (destination),
 							     op,
 							     MapRegister (source)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 			    
     void CommonSequenceVisitor::OpCompare (const RegisterPtr& destination,
@@ -231,7 +231,7 @@ namespace s1
 							     op,
 							     MapRegister (source1),
 							     MapRegister (source2)));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 		      
     void CommonSequenceVisitor::OpBlock (const intermediate::SequencePtr& seq,
@@ -258,7 +258,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpBlock> (seq,
 							   newIdentToReg_imp,
 							   newIdentToReg_exp));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 		  
     void CommonSequenceVisitor::OpBranch (const RegisterPtr& conditionReg,
@@ -266,7 +266,7 @@ namespace s1
 					  const intermediate::SequenceOpPtr& seqOpElse)
     {
       SequenceOpPtr newSeqOpIf;
-      if (newSeqOpIf)
+      if (seqOpIf)
       {
 	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
 	SequenceVisitor* visitor = Clone (newSeq);
@@ -278,7 +278,7 @@ namespace s1
 	newSeqOpIf = newSeq->GetOp (0);
       }
       SequenceOpPtr newSeqOpElse;
-      if (newSeqOpElse)
+      if (seqOpElse)
       {
 	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
 	SequenceVisitor* visitor = Clone (newSeq);
@@ -294,7 +294,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpBranch> (MapRegister (conditionReg),
 							    newSeqOpIf,
 							    newSeqOpElse));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 		    
     void CommonSequenceVisitor::OpWhile (const RegisterPtr& conditionReg,
@@ -326,7 +326,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpWhile> (MapRegister (conditionReg),
 							   newLoopedRegs,
 							   newSeqOpBody));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
 		  
     void CommonSequenceVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
@@ -339,7 +339,7 @@ namespace s1
       
       SequenceOpPtr newOp (
 	boost::make_shared<intermediate::SequenceOpReturn> (newOutParams));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
     
     void CommonSequenceVisitor::OpFunctionCall (const UnicodeString& funcIdent,
@@ -361,7 +361,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpFunctionCall> (funcIdent,
 								  newInParams,
 								  newOutParams));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
     
     void CommonSequenceVisitor::OpBuiltinCall (const RegisterPtr& destination,
@@ -378,7 +378,7 @@ namespace s1
 	boost::make_shared<intermediate::SequenceOpBuiltinCall> (MapRegister (destination),
 								 what,
 								 newInParams));
-      newSequence->AddOp (newOp);
+      AddOpToSequence (newOp);
     }
   } // namespace optimize
 } // namespace s1

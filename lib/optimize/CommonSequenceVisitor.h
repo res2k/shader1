@@ -21,6 +21,10 @@ namespace s1
       
       virtual RegisterPtr MapRegister (const RegisterPtr& reg)
       { return reg; }
+      virtual void AddOpToSequence (const SequenceOpPtr& seqOp)
+      {
+	newSequence->AddOp (seqOp);
+      }
 		      
       void SetVisitedOp (const intermediate::SequenceOpPtr& op)
       { visitedOp = op; }
