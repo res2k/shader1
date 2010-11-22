@@ -1,13 +1,13 @@
 #ifndef __SPLITTER_PROGRAMSPLITTER_H__
 #define __SPLITTER_PROGRAMSPLITTER_H__
 
-#include "base/unordered_map"
 #include "intermediate/forwarddecl.h"
 #include "parser/SemanticsHandler.h"
 
 #include "Frequency.h"
 
 #include <unicode/unistr.h>
+#include <boost/unordered_map.hpp>
 
 namespace s1
 {
@@ -20,7 +20,7 @@ namespace s1
       intermediate::ProgramPtr inputProgram;
       intermediate::ProgramPtr outputPrograms[freqNum];
       
-      typedef std::tr1::unordered_map<UnicodeString, unsigned int> ParamMap;
+      typedef boost::unordered_map<UnicodeString, unsigned int> ParamMap;
       ParamMap paramFlags;
       
       friend class SequenceSplitter;
@@ -36,7 +36,7 @@ namespace s1
 	std::vector<FunctionTransferValues> transferValues[freqNum-1];
       };
       typedef boost::shared_ptr<SplitFunctionInfo> SplitFunctionInfoPtr;
-      typedef std::tr1::unordered_map<UnicodeString, SplitFunctionInfoPtr> SplitFunctionInfoMap;
+      typedef boost::unordered_map<UnicodeString, SplitFunctionInfoPtr> SplitFunctionInfoMap;
       SplitFunctionInfoMap splitFunctions;
       /**
        * \param originalIdent Original identifier of function.

@@ -27,12 +27,12 @@ namespace s1
     private:
       friend class IntermediateGeneratorSemanticsHandler;
       
-      typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+      typedef boost::unordered_map<UnicodeString, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
       std::vector<UnicodeString> outputParams;
       
-      typedef std::tr1::unordered_map<UnicodeString, FunctionInfoVector> FunctionsMap;
+      typedef boost::unordered_map<UnicodeString, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
       

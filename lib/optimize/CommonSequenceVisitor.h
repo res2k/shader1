@@ -1,8 +1,6 @@
 #ifndef __COMMONSEQUENCEVISITOR_H__
 #define __COMMONSEQUENCEVISITOR_H__
 
-#include "base/hash_UnicodeString.h"
-
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceVisitor.h"
 

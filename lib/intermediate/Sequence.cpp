@@ -4,7 +4,6 @@
 #include <boost/functional/hash.hpp>
 #include <boost/make_shared.hpp>
 
-#include "base/hash_UnicodeString.h"
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceVisitor.h"

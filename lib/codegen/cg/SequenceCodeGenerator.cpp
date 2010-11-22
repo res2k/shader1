@@ -1,6 +1,5 @@
-#include <boost/cstdint.hpp>
+#include "base/common.h"
 
-#include "base/hash_UnicodeString.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"
 

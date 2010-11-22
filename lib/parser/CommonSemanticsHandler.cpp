@@ -1,5 +1,4 @@
-#include "base/hash_UnicodeString.h"
-
+#include "base/common.h"
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Exception.h"
 

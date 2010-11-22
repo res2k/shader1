@@ -1,8 +1,5 @@
 #include "base/common.h"
 
-// Must be first; otherwise, link errors may occur
-#include "base/hash_UnicodeString.h"
-
 #include "intermediate/Exception.h"
 #include "FunctionCallExpressionImpl.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"

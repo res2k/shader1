@@ -1,10 +1,10 @@
 #ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
-#include <boost/enable_shared_from_this.hpp>
-
-#include "base/unordered_map"
 #include "SemanticsHandler.h"
+
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/unordered_map.hpp>
 
 namespace s1
 {
@@ -127,7 +127,7 @@ namespace s1
       {
 	friend class CommonSemanticsHandler;
 	
-	typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+	typedef boost::unordered_map<UnicodeString, NamePtr> IdentifierMap;
 	IdentifierMap identifiers;
 	
 	void CheckIdentifierUnique (const UnicodeString& identifier);

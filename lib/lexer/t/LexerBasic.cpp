@@ -1,5 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
+#include "base/common.h"
+
 #include "base/UnicodeStream.h"
 
 #include "lexer/Lexer.h"

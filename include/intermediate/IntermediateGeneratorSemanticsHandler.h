@@ -3,7 +3,6 @@
 
 #include "parser/CommonSemanticsHandler.h"
 
-#include "base/unordered_set"
 #include "forwarddecl.h"
 #include "Sequence.h"
 
@@ -41,7 +40,7 @@ namespace s1
       class VariableExpressionImpl;
       
       typedef boost::shared_ptr<NameImpl> NameImplPtr;
-      typedef std::tr1::unordered_set<NameImplPtr> NameImplSet;
+      typedef boost::unordered_set<NameImplPtr> NameImplSet;
       
       typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
       TypeImplPtr voidType;

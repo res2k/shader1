@@ -1,6 +1,4 @@
 #include "base/common.h"
-#include "base/hash_UnicodeString.h"
-#include "base/unordered_set"
 
 #include "splitter/ProgramSplitter.h"
 
@@ -245,7 +243,7 @@ namespace s1
       UnicodeString funcToCheck;
       bool recursionFound;
       
-      std::tr1::unordered_set<UnicodeString> seenFunctions;
+      boost::unordered_set<UnicodeString> seenFunctions;
     public:
       RecursionChecker (ProgramSplitter& parent, const UnicodeString& funcToCheck)
        : parent (parent), funcToCheck (funcToCheck), recursionFound (false) {}

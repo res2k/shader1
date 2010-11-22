@@ -32,7 +32,7 @@ int main (const int argc, const char* const argv[])
 {
   const char* inputFileName = 0;
   const char* entryName = "main";
-  typedef std::tr1::unordered_map<std::string, unsigned int> ParamMap;
+  typedef boost::unordered_map<std::string, unsigned int> ParamMap;
   ParamMap paramFlags;
   OptimizationFlags optFlags;
   int argNum = 1;

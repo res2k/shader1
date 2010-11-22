@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include "ErrorHandler.h"
 
 #include <iostream>

@@ -1,5 +1,4 @@
 #include "base/common.h"
-#include "base/hash_UnicodeString.h"
 
 #include "splitter/SequenceSplitter.h"
 

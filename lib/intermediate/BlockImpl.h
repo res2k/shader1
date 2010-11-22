@@ -1,25 +1,8 @@
 #ifndef __INTERMEDIATE_BLOCKIMPL_H__
 #define __INTERMEDIATE_BLOCKIMPL_H__
 
-#include "base/unordered_set"
-
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
-
-namespace std
-{
-  namespace tr1
-  {
-    template<typename T>
-    struct hash<boost::shared_ptr<T> >
-    {
-      size_t operator() (const boost::shared_ptr<T>& ptr) const
-      {
-	return uintptr_t (ptr.get());
-      }
-    };
-  } // namespace tr1
-} // namespace std
 
 namespace s1
 {
@@ -35,7 +18,7 @@ namespace s1
       
       // Special, internal names
       NameImplPtr varCondition;
-      typedef std::tr1::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
+      typedef boost::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
       TernaryResultVarsMap varsTernaryResult;
       NameImplPtr varReturnValue;
       
@@ -54,7 +37,7 @@ namespace s1
 	
 	NameReg() : isImported (false) {}
       };
-      typedef std::tr1::unordered_map<NameImplPtr, NameReg> NameRegMap;
+      typedef boost::unordered_map<NameImplPtr, NameReg> NameRegMap;
       NameRegMap nameRegisters;
       NameImplSet exportedNames;
       

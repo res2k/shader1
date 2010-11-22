@@ -1,3 +1,5 @@
+#include "base/common.h"
+
 #include "parser/Parser.h"
 
 #include "parser/ErrorCode.h"

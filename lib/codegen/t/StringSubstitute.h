@@ -1,9 +1,7 @@
 #ifndef __STRINGSUBSTITUTE_H__
 #define __STRINGSUBSTITUTE_H__
 
-#include "base/unordered_map"
-
-typedef std::tr1::unordered_map<std::string, std::string> StringStringMap;
+typedef boost::unordered_map<std::string, std::string> StringStringMap;
 
 static inline std::string StringSubstitute (const char* templ,
 					    const StringStringMap& substMap)

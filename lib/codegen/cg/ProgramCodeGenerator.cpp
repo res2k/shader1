@@ -1,5 +1,4 @@
-#include <boost/cstdint.hpp>
-#include "base/hash_UnicodeString.h"
+#include "base/common.h"
 
 #include "ProgramCodeGenerator.h"
 

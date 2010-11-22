@@ -1,8 +1,7 @@
-#include <boost/cstdint.hpp>
+#include "base/common.h"
 
 #include "FunctionCodeGenerator.h"
 
-#include "base/unordered_set"
 #include "intermediate/ProgramFunction.h"
 #include "splitter/Frequency.h"
 #include "SequenceCodeGenerator.h"
@@ -44,7 +43,7 @@ namespace s1
 	
 	const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies());
 	
-	std::tr1::unordered_set<UnicodeString> paramImports;
+	boost::unordered_set<UnicodeString> paramImports;
 	std::vector<std::pair<std::string, UnicodeString> > inParams;
 	std::vector<std::string> outParams;
 	const FunctionFormalParameters& params (func->GetParams());

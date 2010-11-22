@@ -1,5 +1,5 @@
 #include <cxxtest/TestSuite.h>
-#include <boost/cstdint.hpp>
+#include "base/common.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"

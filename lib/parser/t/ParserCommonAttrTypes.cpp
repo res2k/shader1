@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "base/hash_UnicodeString.h"
+#include "base/common.h"
 
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Exception.h"

@@ -13,7 +13,7 @@ public:
   {
     friend class TestSemanticsHandler;
     
-    typedef std::tr1::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+    typedef boost::unordered_map<UnicodeString, NamePtr> IdentifierMap;
     IdentifierMap identifiers;
     
     void CheckIdentifierUnique (const UnicodeString& identifier);

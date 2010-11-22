@@ -15,5 +15,17 @@ static const size_t charsToFormatUint = (sizeof(unsigned int) * 25) / 10;
 // Add 1 for '-'
 static const size_t charsToFormatInt = (sizeof(unsigned int) * 25) / 10 + 1;
 
+#include <unicode/unistr.h>
+
+// Boost hash function for UnicodeString
+namespace boost
+{
+  inline std::size_t hash_value (const UnicodeString& s)
+  {
+    return s.hashCode();
+  }
+}
+
+
 
 #endif // __BASE_COMMON_H__

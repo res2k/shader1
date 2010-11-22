@@ -1,6 +1,4 @@
-// The hash<> specialization must come before Lexer.h is included
-#include "base/hash_UnicodeString.h"
-
+#include "base/common.h"
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
 

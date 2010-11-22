@@ -4,8 +4,8 @@
 #include "forwarddecl.h"
 #include "parser/SemanticsHandler.h"
 
+#include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include "base/unordered_map"
 #include <unicode/unistr.h>
 #include <vector>
 
@@ -65,7 +65,7 @@ namespace s1
       void SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& regID);
       RegisterPtr GetIdentifierRegister (const UnicodeString& identifier) const;
       
-      typedef std::tr1::unordered_map<UnicodeString, RegisterPtr> IdentifierToRegMap;
+      typedef boost::unordered_map<UnicodeString, RegisterPtr> IdentifierToRegMap;
       /// Get current identifiers-to-register map
       const IdentifierToRegMap& GetIdentifierToRegisterMap () const
       { return identToReg; }
@@ -80,7 +80,7 @@ namespace s1
       void AddImport (const UnicodeString& parentRegName,
 		      const RegisterPtr& localReg);
       void AddImports (const RegisterImpMappings& imports);
-      typedef std::tr1::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
+      typedef boost::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const { return exports; }
       RegisterExpMappings& GetExports () { return exports; }
       void SetExport (const UnicodeString& parentRegName,

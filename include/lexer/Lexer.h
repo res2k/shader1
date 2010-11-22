@@ -5,7 +5,7 @@
 
 #include "base/UnicodeStream.h"
 
-#include "base/unordered_map"
+#include <boost/unordered_map.hpp>
 
 namespace s1
 {
@@ -198,7 +198,7 @@ namespace s1
     UnicodeStream& inputChars;
     LexerErrorHandler& errorHandler;
     
-    typedef std::tr1::unordered_map<UnicodeString, TokenType> KeywordMap;
+    typedef boost::unordered_map<UnicodeString, TokenType> KeywordMap;
     /// Map of identifier strings to keyword names
     KeywordMap keywords;
     

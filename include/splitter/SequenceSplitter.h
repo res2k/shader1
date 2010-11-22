@@ -23,7 +23,7 @@ namespace s1
       
       intermediate::SequencePtr inputSeq;
       
-      typedef std::tr1::unordered_map<UnicodeString, unsigned int> ParamMap;
+      typedef boost::unordered_map<UnicodeString, unsigned int> ParamMap;
       ParamMap paramFlags;
       
       class InputVisitor : public intermediate::SequenceVisitor

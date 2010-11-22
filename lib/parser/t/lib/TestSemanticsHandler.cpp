@@ -1,6 +1,4 @@
-// Must be first; otherwise, link errors may occur
-#include "base/hash_UnicodeString.h"
-
+#include "base/common.h"
 #include "../TestSemanticsHandler.h"
 
 #include "parser/Exception.h"
