@@ -15,15 +15,17 @@ namespace s1
   {
     class Inliner::InlineBranchBlockVisitor : public CommonSequenceVisitor
     {
+      bool& haveInlined;
     public:
-      InlineBranchBlockVisitor (const intermediate::SequencePtr& outputSeq)
-       : CommonSequenceVisitor (outputSeq) { }
+      InlineBranchBlockVisitor (const intermediate::SequencePtr& outputSeq,
+				bool& haveInlined)
+       : CommonSequenceVisitor (outputSeq), haveInlined (haveInlined) { }
       
       CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
       {
 	assert (false); /* ... since we're supposed to be used on a sequence with
 			   only a single block op. */
-	return new InlineBranchBlockVisitor (newSequence);
+	return new InlineBranchBlockVisitor (newSequence, haveInlined);
       }
       
       void OpBlock (const intermediate::SequencePtr& seq,
@@ -35,7 +37,7 @@ namespace s1
 	newSeq->AddExports (seq->GetExports ());
 	newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
 	
-	Inliner::InlineAllBlocks (newSeq, seq);
+	haveInlined |= Inliner::InlineAllBlocks (newSeq, seq);
 	
 	SequenceOpPtr newOp (
 	  boost::make_shared<intermediate::SequenceOpBlock> (newSeq,
@@ -50,13 +52,14 @@ namespace s1
     class Inliner::InlineBlockVisitor : public CommonSequenceVisitor
     {
       unsigned int blockNum;
+      bool haveInlined;
     public:
       InlineBlockVisitor (const intermediate::SequencePtr& outputSeq)
-       : CommonSequenceVisitor (outputSeq), blockNum (0)
+       : CommonSequenceVisitor (outputSeq), blockNum (0), haveInlined (false)
       {
       }
       
-      bool HasInlined() const { return blockNum > 0; }
+      bool HasInlined() const { return haveInlined; }
       
       void OpBlock (const intermediate::SequencePtr& seq,
 		    const Sequence::IdentifierToRegMap& identToRegID_imp,
@@ -64,7 +67,7 @@ namespace s1
 
       CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
       {
-	return new InlineBranchBlockVisitor (newSequence);
+	return new InlineBranchBlockVisitor (newSequence, haveInlined);
       }
     };
     
@@ -106,7 +109,8 @@ namespace s1
 	/* Called for branch or while ops.
 	   The expected result is a sequence with a single block op.
 	   */
-	return new InlineBranchBlockVisitor (newSequence);
+	bool haveInlined = false;
+	return new InlineBranchBlockVisitor (newSequence, haveInlined);
       }
     };
     
@@ -116,6 +120,9 @@ namespace s1
 					       const Sequence::IdentifierToRegMap& identToRegID_imp,
 					       const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
+      haveInlined = true;
+      if (seq->GetNumOps() == 0) return;
+      
       UChar blockSuffix[charsToFormatUint + 3];
       u_snprintf (blockSuffix, sizeof (blockSuffix)/sizeof (UChar),
 		  "$b%u", blockNum);
