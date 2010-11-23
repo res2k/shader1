@@ -84,6 +84,7 @@ public:
     std::vector<RegisterPtr> inParams;
     std::vector<RegisterPtr> outParams;
     
+    boost::shared_ptr<TestSequenceVisitor> blockVisitor;
     boost::shared_ptr<TestSequenceVisitor> branchIfVisitor;
     boost::shared_ptr<TestSequenceVisitor> branchElseVisitor;
   };
@@ -398,8 +399,12 @@ public:
 		const Sequence::IdentifierToRegMap&,
 		const Sequence::IdentifierToRegMap&)
   {
+    boost::shared_ptr<TestSequenceVisitor> blockVisitor = boost::make_shared<TestSequenceVisitor> ();
+    seq->Visit (*blockVisitor);
+    
     SequenceEntry entry;
     entry.op = opBlock;
+    entry.blockVisitor = blockVisitor;
     entries.push_back (entry);
   }
   
