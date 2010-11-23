@@ -11,6 +11,7 @@ namespace s1
     {
       class InlineBlockVisitor;
       class InliningVisitor;
+      class InlineBranchBlockVisitor;
     public:
       static bool InlineAllBlocks (const intermediate::SequencePtr& outputSeq,
 				   const intermediate::SequencePtr& inputSeq);

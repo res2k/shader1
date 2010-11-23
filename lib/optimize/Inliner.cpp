@@ -1,6 +1,8 @@
 #include "base/common.h"
 #include "optimize/Inliner.h"
 
+#include "intermediate/SequenceOp/SequenceOpBlock.h"
+
 #include "CommonSequenceVisitor.h"
 
 #include <boost/make_shared.hpp>
@@ -11,6 +13,40 @@ namespace s1
 {
   namespace optimize
   {
+    class Inliner::InlineBranchBlockVisitor : public CommonSequenceVisitor
+    {
+    public:
+      InlineBranchBlockVisitor (const intermediate::SequencePtr& outputSeq)
+       : CommonSequenceVisitor (outputSeq) { }
+      
+      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
+      {
+	assert (false); /* ... since we're supposed to be used on a sequence with
+			   only a single block op. */
+	return new InlineBranchBlockVisitor (newSequence);
+      }
+      
+      void OpBlock (const intermediate::SequencePtr& seq,
+		    const Sequence::IdentifierToRegMap& identToReg_imp,
+		    const Sequence::IdentifierToRegMap& identToReg_exp)
+      {
+	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
+	newSeq->AddImports (seq->GetImports ());
+	newSeq->AddExports (seq->GetExports ());
+	newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
+	
+	Inliner::InlineAllBlocks (newSeq, seq);
+	
+	SequenceOpPtr newOp (
+	  boost::make_shared<intermediate::SequenceOpBlock> (newSeq,
+							     identToReg_imp,
+							     identToReg_exp));
+	AddOpToSequence (newOp);
+      }
+    };
+      
+    //-----------------------------------------------------------------------
+    
     class Inliner::InlineBlockVisitor : public CommonSequenceVisitor
     {
       unsigned int blockNum;
@@ -28,7 +64,7 @@ namespace s1
 
       CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
       {
-	return new InlineBlockVisitor (newSequence);
+	return new InlineBranchBlockVisitor (newSequence);
       }
     };
     
@@ -67,11 +103,10 @@ namespace s1
       
       CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
       {
-	/* Not called for a block op (these are inlined), only for branch or
-	   while ops.
-	   In this case, 'simple' block inlining is what we need, so create
-	   an InlineBlockVisitor */
-	return new InlineBlockVisitor (newSequence);
+	/* Called for branch or while ops.
+	   The expected result is a sequence with a single block op.
+	   */
+	return new InlineBranchBlockVisitor (newSequence);
       }
     };
     
