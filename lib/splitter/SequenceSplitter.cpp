@@ -1101,6 +1101,9 @@ namespace s1
 	  outputSeq[freqVertex]->InsertOp (i, uniOp);
 	  outputSeq[freqFragment]->InsertOp (i, uniOp);
 	}
+
+	outputSeq[freqVertex]->AddExports (outputSeq[freqUniform]->GetExports());
+	outputSeq[freqFragment]->AddExports (outputSeq[freqUniform]->GetExports());
 	
 	outputSeq[freqUniform]->Clear ();
       }
