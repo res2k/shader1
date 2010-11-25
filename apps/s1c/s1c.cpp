@@ -113,7 +113,6 @@ int main (const int argc, const char* const argv[])
   optFlags.ApplyFlags (opt);
   
   intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
-  prog = opt.ApplyOptimizations (prog);
   // Determine output values
   {
     UnicodeString vertexOutput;
@@ -156,6 +155,7 @@ int main (const int argc, const char* const argv[])
     prog->SetOutputParameter (vertexOutput, intermediate::Program::Position);
     prog->SetOutputParameter (fragmentOutput, intermediate::Program::Color);
   }
+  prog = opt.ApplyOptimizations (prog);
   
   splitter::ProgramSplitter splitter;
 
