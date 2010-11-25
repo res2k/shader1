@@ -29,6 +29,144 @@ namespace s1
 {
   namespace optimize
   {
+    class CommonSequenceVisitor::BlockNestingSequenceVisitor
+      : public CommonSequenceVisitor
+    {
+    public:
+      typedef intermediate::RegisterPtr RegisterPtr;
+      typedef intermediate::Sequence Sequence;
+      typedef intermediate::SequenceOpPtr SequenceOpPtr;
+      
+      BlockNestingSequenceVisitor (const intermediate::SequencePtr& newSequence,
+				   CommonSequenceVisitor* owner)
+       : CommonSequenceVisitor (newSequence), owner (owner) {}
+      
+      void SetVisitedOp (const intermediate::SequenceOpPtr& op) { }
+      
+      void OpConstBool (const RegisterPtr& destination,
+			bool value)
+      { assert (false); }
+      void OpConstInt (const RegisterPtr& destination,
+			int value)
+      { assert (false); }
+      void OpConstUInt (const RegisterPtr& destination,
+			unsigned int value)
+      { assert (false); }
+      void OpConstFloat (const RegisterPtr& destination,
+			  float value)
+      { assert (false); }
+				
+      void OpAssign (const RegisterPtr& destination,
+		      const RegisterPtr& source)
+      { assert (false); }
+				
+      void OpCast (const RegisterPtr& destination,
+		    intermediate::BasicType destType,
+		    const RegisterPtr& source)
+      { assert (false); }
+
+      void OpMakeVector (const RegisterPtr& destination,
+			  intermediate::BasicType compType,
+			  const std::vector<RegisterPtr>& sources)
+      { assert (false); }
+				    
+      void OpMakeMatrix (const RegisterPtr& destination,
+			  intermediate::BasicType compType,
+			  unsigned int matrixRows, unsigned int matrixCols,
+			  const std::vector<RegisterPtr>& sources)
+      { assert (false); }
+				    
+      void OpMakeArray (const RegisterPtr& destination,
+			const std::vector<RegisterPtr>& sources)
+      { assert (false); }
+      void OpExtractArrayElement (const RegisterPtr& destination,
+				  const RegisterPtr& source,
+				  const RegisterPtr& index)
+      { assert (false); }
+      void OpChangeArrayElement (const RegisterPtr& destination,
+				  const RegisterPtr& source,
+				  const RegisterPtr& index,
+				  const RegisterPtr& newValue)
+      { assert (false); }
+      void OpGetArrayLength (const RegisterPtr& destination,
+			      const RegisterPtr& array)
+      { assert (false); }
+
+      void OpExtractVectorComponent (const RegisterPtr& destination,
+				      const RegisterPtr& source,
+				      unsigned int comp)
+      { assert (false); }
+				    
+      void OpArith (const RegisterPtr& destination,
+		    ArithmeticOp op,
+		    const RegisterPtr& source1,
+		    const RegisterPtr& source2)
+      { assert (false); }
+
+      void OpLogic (const RegisterPtr& destination,
+		    LogicOp op,
+		    const RegisterPtr& source1,
+		    const RegisterPtr& source2)
+      { assert (false); }
+
+      void OpUnary (const RegisterPtr& destination,
+		    UnaryOp op,
+		    const RegisterPtr& source)
+      { assert (false); }
+			      
+      void OpCompare (const RegisterPtr& destination,
+		      CompareOp op,
+		      const RegisterPtr& source1,
+		      const RegisterPtr& source2)
+      { assert (false); }
+			
+      void OpBlock (const intermediate::SequencePtr& seq,
+		    const Sequence::IdentifierToRegMap& identToRegID_imp,
+		    const Sequence::IdentifierToRegMap& identToRegID_exp)
+      {
+	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
+	newSeq->AddImports (seq->GetImports ());
+	newSeq->AddExports (seq->GetExports ());
+	newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
+	
+	CommonSequenceVisitor* visitor = owner->Clone (newSeq);
+	seq->Visit (*visitor);
+	delete visitor;
+	
+	CommonSequenceVisitor::OpBlock (newSeq, identToRegID_imp, identToRegID_exp);
+      }
+		    
+      void OpBranch (const RegisterPtr& conditionReg,
+		      const intermediate::SequenceOpPtr& seqOpIf,
+		      const intermediate::SequenceOpPtr& seqOpElse)
+      { assert (false); }
+      void OpWhile (const RegisterPtr& conditionReg,
+		    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+		    const intermediate::SequenceOpPtr& seqOpBody)
+      { assert (false); }
+		    
+      void OpReturn (const std::vector<RegisterPtr>& outParamVals)
+      { assert (false); }
+      void OpFunctionCall (const UnicodeString& funcIdent,
+			    const std::vector<RegisterPtr>& inParams,
+			    const std::vector<RegisterPtr>& outParams)
+      { assert (false); }
+      void OpBuiltinCall (const RegisterPtr& destination,
+			  intermediate::BuiltinFunction what,
+			  const std::vector<RegisterPtr>& inParams)
+      { assert (false); }
+    protected:
+      CommonSequenceVisitor* owner;
+      
+      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
+      {
+	assert (false);
+	return 0;
+      }
+    };
+    
+    //-----------------------------------------------------------------------
+    
     CommonSequenceVisitor::CommonSequenceVisitor (const intermediate::SequencePtr& newSequence)
      : newSequence (newSequence)
     {}
@@ -269,10 +407,9 @@ namespace s1
       if (seqOpIf)
       {
 	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
-	SequenceVisitor* visitor = Clone (newSeq);
-	visitor->SetVisitedOp (seqOpIf);
-	seqOpIf->Visit (*visitor);
-	delete visitor;
+	BlockNestingSequenceVisitor visitor (newSeq, this);
+	visitor.SetVisitedOp (seqOpIf);
+	seqOpIf->Visit (visitor);
 	
 	assert (newSeq->GetNumOps() == 1);
 	newSeqOpIf = newSeq->GetOp (0);
@@ -281,10 +418,9 @@ namespace s1
       if (seqOpElse)
       {
 	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
-	SequenceVisitor* visitor = Clone (newSeq);
-	visitor->SetVisitedOp (seqOpElse);
-	seqOpElse->Visit (*visitor);
-	delete visitor;
+	BlockNestingSequenceVisitor visitor (newSeq, this);
+	visitor.SetVisitedOp (seqOpElse);
+	seqOpElse->Visit (visitor);
 	
 	assert (newSeq->GetNumOps() == 1);
 	newSeqOpElse = newSeq->GetOp (0);
@@ -305,10 +441,9 @@ namespace s1
       if (seqOpBody)
       {
 	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
-	SequenceVisitor* visitor = Clone (newSeq);
-	visitor->SetVisitedOp (seqOpBody);
-	seqOpBody->Visit (*visitor);
-	delete visitor;
+	BlockNestingSequenceVisitor visitor (newSeq, this);
+	visitor.SetVisitedOp (seqOpBody);
+	seqOpBody->Visit (visitor);
 	
 	assert (newSeq->GetNumOps() == 1);
 	newSeqOpBody = newSeq->GetOp (0);

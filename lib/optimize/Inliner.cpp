@@ -13,53 +13,16 @@ namespace s1
 {
   namespace optimize
   {
-    class Inliner::InlineBranchBlockVisitor : public CommonSequenceVisitor
-    {
-      bool& haveInlined;
-    public:
-      InlineBranchBlockVisitor (const intermediate::SequencePtr& outputSeq,
-				bool& haveInlined)
-       : CommonSequenceVisitor (outputSeq), haveInlined (haveInlined) { }
-      
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
-      {
-	assert (false); /* ... since we're supposed to be used on a sequence with
-			   only a single block op. */
-	return new InlineBranchBlockVisitor (newSequence, haveInlined);
-      }
-      
-      void OpBlock (const intermediate::SequencePtr& seq,
-		    const Sequence::IdentifierToRegMap& identToReg_imp,
-		    const Sequence::IdentifierToRegMap& identToReg_exp)
-      {
-	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
-	newSeq->AddImports (seq->GetImports ());
-	newSeq->AddExports (seq->GetExports ());
-	newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
-	
-	haveInlined |= Inliner::InlineAllBlocks (newSeq, seq);
-	
-	SequenceOpPtr newOp (
-	  boost::make_shared<intermediate::SequenceOpBlock> (newSeq,
-							     identToReg_imp,
-							     identToReg_exp));
-	AddOpToSequence (newOp);
-      }
-    };
-      
-    //-----------------------------------------------------------------------
-    
     class Inliner::InlineBlockVisitor : public CommonSequenceVisitor
     {
       unsigned int blockNum;
-      bool haveInlined;
+      bool& haveInlined;
     public:
-      InlineBlockVisitor (const intermediate::SequencePtr& outputSeq)
-       : CommonSequenceVisitor (outputSeq), blockNum (0), haveInlined (false)
+      InlineBlockVisitor (const intermediate::SequencePtr& outputSeq,
+			  bool& haveInlined)
+       : CommonSequenceVisitor (outputSeq), blockNum (0), haveInlined (haveInlined)
       {
       }
-      
-      bool HasInlined() const { return haveInlined; }
       
       void OpBlock (const intermediate::SequencePtr& seq,
 		    const Sequence::IdentifierToRegMap& identToRegID_imp,
@@ -67,7 +30,7 @@ namespace s1
 
       CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
       {
-	return new InlineBranchBlockVisitor (newSequence, haveInlined);
+	return new InlineBlockVisitor (newSequence, haveInlined);
       }
     };
     
@@ -106,11 +69,11 @@ namespace s1
       
       CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
       {
-	/* Called for branch or while ops.
-	   The expected result is a sequence with a single block op.
+	/* Called for blocks in branch or while ops.
+	   Inline contained ops, but not the block itself.
 	   */
-	bool haveInlined = false;
-	return new InlineBranchBlockVisitor (newSequence, haveInlined);
+	bool haveInlined;
+	return new InlineBlockVisitor (newSequence, haveInlined);
       }
     };
     
@@ -134,8 +97,10 @@ namespace s1
 	    ++imp)
       {
 	Sequence::IdentifierToRegMap::const_iterator mappedReg = identToRegID_imp.find (imp->first);
-	assert (mappedReg != identToRegID_imp.end());
-	visitor.AddRegisterMapping (imp->second, mappedReg->second);
+	RegisterPtr mapTo;
+	if (mappedReg != identToRegID_imp.end())
+	  visitor.AddRegisterMapping (imp->second, mappedReg->second);
+	// else: Register is uninitialized. So don't map it to anything
       }
       for (Sequence::RegisterExpMappings::const_iterator exp = seq->GetExports().begin();
 	    exp != seq->GetExports().end();
@@ -156,9 +121,10 @@ namespace s1
     bool Inliner::InlineAllBlocks (const intermediate::SequencePtr& outputSeq,
 				   const intermediate::SequencePtr& inputSeq)
     {
-      InlineBlockVisitor visitor (outputSeq);
+      bool haveInlined;
+      InlineBlockVisitor visitor (outputSeq, haveInlined);
       inputSeq->Visit (visitor);
-      return visitor.HasInlined();
+      return haveInlined;
     }
   } // namespace optimize
 } // namespace s1

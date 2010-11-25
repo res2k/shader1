@@ -108,6 +108,8 @@ namespace s1
 			  intermediate::BuiltinFunction what,
 			  const std::vector<RegisterPtr>& inParams);
     protected:
+      class BlockNestingSequenceVisitor;
+      
       intermediate::SequenceOpPtr visitedOp;
       
       virtual CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence) = 0;
