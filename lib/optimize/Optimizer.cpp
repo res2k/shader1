@@ -19,6 +19,12 @@ namespace s1
       {
 	newProgram->AddTransferValue (tvp.first, tvp.second);
       }
+      for (intermediate::Program::OutputParameters::const_iterator outputParam = program->GetOutputParameters().begin();
+	   outputParam != program->GetOutputParameters().end();
+	   ++outputParam)
+      {
+	newProgram->SetOutputParameter (outputParam->first, outputParam->second);
+      }      
       
       for (size_t f = 0; f < program->GetNumFunctions(); f++)
       {
