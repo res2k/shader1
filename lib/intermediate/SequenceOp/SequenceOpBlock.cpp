@@ -9,10 +9,11 @@ namespace s1
     SequenceOpBlock::SequenceOpBlock (const SequencePtr& subSequence,
 				      const Sequence::IdentifierToRegMap& identToRegs_imp,
 				      const Sequence::IdentifierToRegMap& identToRegs_exp)
-     : subSequence (subSequence), identToRegs_imp (identToRegs_imp),
+     : subSequence (subSequence),
+       identToRegs_imp (identToRegs_imp),
        identToRegs_exp (identToRegs_exp),
-       readRegisters (subSequence->GetAllReadRegisters()),
-       writtenRegisters (subSequence->GetAllWrittenRegisters())
+       readRegisters (subSequence->GetImportOuterRegs (identToRegs_imp)),
+       writtenRegisters (subSequence->GetExportOuterRegs (identToRegs_exp))
     {
     }
     

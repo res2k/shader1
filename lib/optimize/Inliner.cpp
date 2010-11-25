@@ -28,7 +28,8 @@ namespace s1
 		    const Sequence::IdentifierToRegMap& identToRegID_imp,
 		    const Sequence::IdentifierToRegMap& identToRegID_exp);
 
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
+      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+				    const RegisterMap& regMap)
       {
 	return new InlineBlockVisitor (newSequence, haveInlined);
       }
@@ -67,7 +68,8 @@ namespace s1
 	return newReg;
       }
       
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
+      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+				    const RegisterMap& regMap)
       {
 	/* Called for blocks in branch or while ops.
 	   Inline contained ops, but not the block itself.

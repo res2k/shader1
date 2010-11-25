@@ -121,19 +121,37 @@ namespace s1
       { assert (false); }
 			
       void OpBlock (const intermediate::SequencePtr& seq,
-		    const Sequence::IdentifierToRegMap& identToRegID_imp,
-		    const Sequence::IdentifierToRegMap& identToRegID_exp)
+		    const Sequence::IdentifierToRegMap& identToReg_imp,
+		    const Sequence::IdentifierToRegMap& identToReg_exp)
       {
 	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
 	newSeq->AddImports (seq->GetImports ());
 	newSeq->AddExports (seq->GetExports ());
 	newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
 	
-	CommonSequenceVisitor* visitor = owner->Clone (newSeq);
+	RegisterMap regMap;
+	for (intermediate::Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
+	     imp != seq->GetImports().end();
+	     ++imp)
+	{
+	  intermediate::Sequence::IdentifierToRegMap::const_iterator thisSeqReg = identToReg_imp.find (imp->first);
+	  if (thisSeqReg != identToReg_imp.end())
+	    regMap[thisSeqReg->second] = imp->second;
+	}
+	for (intermediate::Sequence::RegisterExpMappings::const_iterator exp = seq->GetExports().begin();
+	     exp != seq->GetExports().end();
+	     ++exp)
+	{
+	  intermediate::Sequence::IdentifierToRegMap::const_iterator thisSeqReg = identToReg_exp.find (exp->first);
+	  if (thisSeqReg != identToReg_exp.end())
+	    regMap[thisSeqReg->second] = exp->second;
+	}
+	
+	CommonSequenceVisitor* visitor = owner->Clone (newSeq, regMap);
 	seq->Visit (*visitor);
 	delete visitor;
 	
-	CommonSequenceVisitor::OpBlock (newSeq, identToRegID_imp, identToRegID_exp);
+	CommonSequenceVisitor::OpBlock (newSeq, identToReg_imp, identToReg_exp);
       }
 		    
       void OpBranch (const RegisterPtr& conditionReg,
@@ -158,7 +176,8 @@ namespace s1
     protected:
       CommonSequenceVisitor* owner;
       
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
+      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+				    const RegisterMap& regMap)
       {
 	assert (false);
 	return 0;

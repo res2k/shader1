@@ -2,6 +2,7 @@
 #include "optimize/DeadCodeElimination.h"
 
 #include "CommonSequenceVisitor.h"
+#include "intermediate/SequenceOp/SequenceOp.h"
 
 #include <boost/foreach.hpp>
 
@@ -11,20 +12,29 @@ namespace s1
   {
     class DeadCodeElimination::DeadCodeChecker : public CommonSequenceVisitor
     {
-      bool seqChanged;
+      bool& seqChanged;
       intermediate::RegisterSet usedRegisters;
     public:
       DeadCodeChecker (const intermediate::SequencePtr& outputSeq,
-		       const intermediate::RegisterSet& usedRegistersSeed)
-       : CommonSequenceVisitor (outputSeq), seqChanged (false), usedRegisters (usedRegistersSeed)
+		       const intermediate::RegisterSet& usedRegistersSeed,
+		       bool& seqChanged)
+       : CommonSequenceVisitor (outputSeq), seqChanged (seqChanged), usedRegisters (usedRegistersSeed)
       {
       }
       
-      bool HasChangedSeq() const { return seqChanged; }
-      
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence)
+      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+				    const RegisterMap& regMap)
       {
-	return new DeadCodeChecker (newSequence, usedRegisters);
+	intermediate::RegisterSet newUsedRegisters;
+	BOOST_FOREACH(const RegisterPtr& reg, usedRegisters)
+	{
+	  RegisterMap::const_iterator newSeqReg = regMap.find (reg);
+	  if (newSeqReg != regMap.end())
+	  {
+	    newUsedRegisters.insert (newSeqReg->second);
+	  }
+	}
+	return new DeadCodeChecker (newSequence, newUsedRegisters, seqChanged);
       }
       
       void AddOpToSequence (const SequenceOpPtr& seqOp)
@@ -363,7 +373,34 @@ namespace s1
 							 const intermediate::SequenceOpPtr& seqOpIf,
 							 const intermediate::SequenceOpPtr& seqOpElse)
     {
+      intermediate::RegisterSet readRegisters;
+      intermediate::RegisterSet writtenRegisters;
+      if (seqOpIf)
+      {
+	readRegisters = seqOpIf->GetReadRegisters();
+	writtenRegisters = seqOpIf->GetWrittenRegisters();
+      }
+      if (seqOpElse)
+      {
+	intermediate::RegisterSet elseReadRegs (seqOpElse->GetReadRegisters());
+	readRegisters.insert (elseReadRegs.begin(), elseReadRegs.end());
+	intermediate::RegisterSet elseWrittenRegs (seqOpElse->GetWrittenRegisters());
+	writtenRegisters.insert (elseWrittenRegs.begin(), elseWrittenRegs.end());
+      }
+      size_t writtenRegsUsed = 0;
+      BOOST_FOREACH(const RegisterPtr& reg, writtenRegisters)
+      {
+	if (usedRegisters.count (reg) > 0)
+	  writtenRegsUsed++;
+      }
+      if (writtenRegsUsed == 0)
+      {
+	seqChanged = true;
+	return;
+      }
+      
       usedRegisters.insert (conditionReg);
+      usedRegisters.insert (readRegisters.begin(), readRegisters.end());
       CommonSequenceVisitor::OpBranch (conditionReg, seqOpIf, seqOpElse);
     }
     
@@ -426,9 +463,10 @@ namespace s1
 						 const intermediate::SequencePtr& inputSeq,
 						 const intermediate::RegisterSet& usedRegistersSeed)
     {
-      DeadCodeChecker checker (outputSeq, usedRegistersSeed);
+      bool seqChanged;
+      DeadCodeChecker checker (outputSeq, usedRegistersSeed, seqChanged);
       inputSeq->ReverseVisit (checker);
-      return checker.HasChangedSeq();      
+      return seqChanged;
     }
   } // namespace optimize
 } // namespace s1

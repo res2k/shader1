@@ -112,7 +112,9 @@ namespace s1
       
       intermediate::SequenceOpPtr visitedOp;
       
-      virtual CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence) = 0;
+      typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
+      virtual CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+					    const RegisterMap& regMap) = 0;
     };
   } // namespace optimize
 } // namespace s1

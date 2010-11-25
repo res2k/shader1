@@ -298,12 +298,14 @@ public:
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries.size(), 1);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].op, TestSequenceVisitor::opBlock);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1);
+    if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
     
     TS_ASSERT (testVisitor.entries[0].branchElseVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].op, TestSequenceVisitor::opBlock);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1);
+    if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
   }
   
@@ -343,6 +345,7 @@ public:
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    testBlockImpl->FinishBlock();
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -360,12 +363,14 @@ public:
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries.size(), 1);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].op, TestSequenceVisitor::opBlock);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1);
+    if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
     
     TS_ASSERT (testVisitor.entries[0].branchElseVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].op, TestSequenceVisitor::opBlock);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1);
+    if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
   }
   
@@ -409,8 +414,7 @@ public:
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
-    RegisterPtr regA = testBlockImpl->GetSequence()->GetIdentifierRegister ("a");
-    usedRegs.insert (regA);
+    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("a"));
     bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, true);
     
@@ -424,14 +428,18 @@ public:
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries.size(), 1);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].op, TestSequenceVisitor::opBlock);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1);
+    if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
-    TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].destReg, regA);
+    // @@@ Slightly fragile, relies on imported regs naming
+    TS_ASSERT (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].destReg->GetName().compare ("m_a_B0") == 0);
     
     TS_ASSERT (testVisitor.entries[0].branchElseVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].op, TestSequenceVisitor::opBlock);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1);
+    if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
-    TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].destReg, regA);
+    // @@@ Slightly fragile, relies on imported regs naming
+    TS_ASSERT (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].destReg->GetName().compare ("m_a_B0") == 0);
   }
 };
