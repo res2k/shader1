@@ -173,8 +173,10 @@ namespace s1
       while (it != imports.end())
       {
 	IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
-	assert (outerReg != identToReg.end());
-	importRegs.insert (outerReg->second);
+	if (outerReg != identToReg.end())
+	{
+	  importRegs.insert (outerReg->second);
+	}
 	++it;
       }
       return importRegs;
