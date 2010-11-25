@@ -52,6 +52,7 @@ public:
     opCompareGT,
     opBlock,
     opBranch,
+    opWhile,
     opReturn,
     opFunctionCall,
     opBuiltinCall
@@ -87,6 +88,7 @@ public:
     boost::shared_ptr<TestSequenceVisitor> blockVisitor;
     boost::shared_ptr<TestSequenceVisitor> branchIfVisitor;
     boost::shared_ptr<TestSequenceVisitor> branchElseVisitor;
+    boost::shared_ptr<TestSequenceVisitor> whileVisitor;
   };
   
   std::vector<SequenceEntry> entries;
@@ -419,6 +421,7 @@ public:
     
     SequenceEntry entry;
     entry.op = opBranch;
+    entry.sourceReg[0] = conditionReg;
     entry.branchIfVisitor = ifVisitor;
     entry.branchElseVisitor = elseVisitor;
     entries.push_back (entry);
@@ -428,6 +431,14 @@ public:
 		const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 		const s1::intermediate::SequenceOpPtr& seqOpBody)
   {
+    boost::shared_ptr<TestSequenceVisitor> whileVisitor = boost::make_shared<TestSequenceVisitor> ();
+    seqOpBody->Visit (*whileVisitor);
+    
+    SequenceEntry entry;
+    entry.op = opWhile;
+    entry.sourceReg[0] = conditionReg;
+    entry.blockVisitor = whileVisitor;
+    entries.push_back (entry);
   }
 
   void OpReturn (const std::vector<RegisterPtr>& outParamVals)
