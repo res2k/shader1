@@ -442,4 +442,90 @@ public:
     // @@@ Slightly fragile, relies on imported regs naming
     TS_ASSERT (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].destReg->GetName().compare ("m_a_B0") == 0);
   }
+  
+  void testLoopUnused (void)
+  {
+    static const char blockSource[] =
+      "unsigned int a;"
+      "bool c;"
+      "while (c)"
+      "{"
+      "  a = 1;"
+      "}"
+      ;
+    
+    using namespace s1::parser;
+    
+    std::istringstream in (blockSource);
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    
+    // global scope is required so BlockImpl can create some unique var names
+    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+					    TestSemanticsHandler::Global,
+					    semanticsHandler.GetVoidType()));
+    SemanticsHandler::BlockPtr block (
+      semanticsHandler.CreateBlock (globalScope));
+    TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    
+    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
+      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      
+    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::RegisterSet usedRegs;
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    TS_ASSERT_EQUALS (codeEliminated, true);
+    
+    TestSequenceVisitor testVisitor;
+    newSeq->Visit (testVisitor);
+    TS_ASSERT_EQUALS (testVisitor.entries.size(), 0);
+  }
+  
+  void testLoopUsed (void)
+  {
+    static const char blockSource[] =
+      "unsigned int a;"
+      "bool c;"
+      "while (c)"
+      "{"
+      "  a = 1;"
+      "}"
+      ;
+    
+    using namespace s1::parser;
+    
+    std::istringstream in (blockSource);
+    s1::UnicodeStream ustream (in, "utf-8");
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    s1::parser::ErrorHandler parserErrorHandler;
+    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    
+    // global scope is required so BlockImpl can create some unique var names
+    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+					    TestSemanticsHandler::Global,
+					    semanticsHandler.GetVoidType()));
+    SemanticsHandler::BlockPtr block (
+      semanticsHandler.CreateBlock (globalScope));
+    TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    
+    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
+      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      
+    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::RegisterSet usedRegs;
+    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("a"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    TS_ASSERT_EQUALS (codeEliminated, false);
+    
+    TestSequenceVisitor testVisitor;
+    TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
+    if (testVisitor.entries.size() < 1) return;
+    TS_ASSERT_EQUALS (testVisitor.entries[0].op, TestSequenceVisitor::opWhile);
+  }
 };
