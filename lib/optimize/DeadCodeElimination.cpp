@@ -410,14 +410,33 @@ namespace s1
 							const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 							const intermediate::SequenceOpPtr& seqOpBody)
     {
-      usedRegisters.insert (conditionReg);
-      
+      intermediate::RegisterSet readRegisters;
+      intermediate::RegisterSet writtenRegisters;
+      if (seqOpBody)
+      {
+	readRegisters = seqOpBody->GetReadRegisters();
+	writtenRegisters = seqOpBody->GetWrittenRegisters();
+      }
       typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
       BOOST_FOREACH(const RegPair& loopPair, loopedRegs)
       {
-	usedRegisters.insert (loopPair.first);
-	usedRegisters.insert (loopPair.second);
+	readRegisters.insert (loopPair.first);
+	writtenRegisters.insert (loopPair.second);
       }
+      size_t writtenRegsUsed = 0;
+      BOOST_FOREACH(const RegisterPtr& reg, writtenRegisters)
+      {
+	if (usedRegisters.count (reg) > 0)
+	  writtenRegsUsed++;
+      }
+      if (writtenRegsUsed == 0)
+      {
+	seqChanged = true;
+	return;
+      }
+      
+      usedRegisters.insert (conditionReg);
+      usedRegisters.insert (readRegisters.begin(), readRegisters.end());
       CommonSequenceVisitor::OpWhile (conditionReg, loopedRegs, seqOpBody);
     }
 
