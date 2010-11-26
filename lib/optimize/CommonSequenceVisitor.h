@@ -115,6 +115,7 @@ namespace s1
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       virtual CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
 					    const RegisterMap& regMap) = 0;
+      virtual bool VisitBackwards() const { return false; }
     };
   } // namespace optimize
 } // namespace s1

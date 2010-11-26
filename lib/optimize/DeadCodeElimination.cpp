@@ -37,6 +37,8 @@ namespace s1
 	return new DeadCodeChecker (newSequence, newUsedRegisters, seqChanged);
       }
       
+      bool VisitBackwards() const { return true; }
+      
       void AddOpToSequence (const SequenceOpPtr& seqOp)
       {
 	// DeadCodeChecker is meant to use with reverse Sequence visiting,

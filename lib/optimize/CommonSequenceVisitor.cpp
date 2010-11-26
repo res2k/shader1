@@ -24,6 +24,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/scoped_ptr.hpp>
 
 namespace s1
 {
@@ -147,9 +148,14 @@ namespace s1
 	    regMap[thisSeqReg->second] = exp->second;
 	}
 	
-	CommonSequenceVisitor* visitor = owner->Clone (newSeq, regMap);
-	seq->Visit (*visitor);
-	delete visitor;
+	{
+	  boost::scoped_ptr<CommonSequenceVisitor> visitor (owner->Clone (newSeq, regMap));
+	  if (owner->VisitBackwards())
+	    seq->ReverseVisit (*visitor);
+	  else
+	    seq->Visit (*visitor);
+	}
+	newSeq->CleanUnusedImportsExports();
 	
 	CommonSequenceVisitor::OpBlock (newSeq, identToReg_imp, identToReg_exp);
       }
