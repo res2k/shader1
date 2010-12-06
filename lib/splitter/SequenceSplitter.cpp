@@ -502,7 +502,6 @@ namespace s1
       blockSplitter.SetInputSequence (blockSequence);
       
       // Forward frequencies to subSeqSplitter
-      std::vector<RegisterPtr> newReadRegisters[freqNum];
       const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
       for (Sequence::RegisterImpMappings::const_iterator imports = blockImports.begin();
 	   imports != blockImports.end();
@@ -525,11 +524,6 @@ namespace s1
 	
 	unsigned int reg_subseqAvail = parent.GetRegAvailability (reg);
 	blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
-	for (int f = 0; f < freqNum; f++)
-	{
-	  if ((reg_subseqAvail & (1 << f)) == 0) continue;
-	  newReadRegisters[f].push_back (reg);
-	}
       }
       
       blockSplitter.PerformSplit();
@@ -574,8 +568,7 @@ namespace s1
 	}
       }
       
-      // Compute new writtenRegisters, update availability flags
-      std::vector<RegisterPtr> newWrittenRegisters[freqNum];
+      // Update availability flags
       const Sequence::RegisterExpMappings& blockExports = blockSequence->GetExports();
       for (Sequence::RegisterExpMappings::const_iterator exports = blockExports.begin();
 	   exports != blockExports.end();
@@ -587,11 +580,6 @@ namespace s1
 	RegisterPtr reg_subseq (exports->second);
 	
 	unsigned int reg_subseqAvail = blockSplitter.GetRegAvailability (reg_subseq);
-	for (int f = 0; f < freqNum; f++)
-	{
-	  if ((reg_subseqAvail & (1 << f)) == 0) continue;
-	  newWrittenRegisters[f].push_back (reg);
-	}
 	parent.SetRegAvailability (reg, reg_subseqAvail);
       }
       
