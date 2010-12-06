@@ -283,6 +283,8 @@ namespace s1
 	     ++import)
 	{
 	  if (!import->second.isImported) continue;
+	  // If reg is not read initially it can't be looped
+	  if (import->second.initiallyWriteable) continue;
 	  if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
 	  {
 	    loopVars.insert (import->first);
@@ -375,6 +377,8 @@ namespace s1
 	     ++import)
 	{
 	  if (!import->second.isImported) continue;
+	  // If reg is not read initially it can't be looped
+	  if (import->second.initiallyWriteable) continue;
 	  if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
 	  {
 	    loopVars.insert (import->first);
