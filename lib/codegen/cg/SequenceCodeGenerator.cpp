@@ -477,11 +477,14 @@ namespace s1
 		    owner->GetOutputRegisterName (loopedRegs[i].first).c_str());
       }
       
+      bool oldEmitEmptyBlocks = emitEmptyBlocks;
+      emitEmptyBlocks = true;
       std::string whileLine ("while (");
       whileLine.append (owner->GetOutputRegisterName (conditionReg));
       whileLine.append (")");
       target->AddString (whileLine);
       seqOpBody->Visit (*this);
+      emitEmptyBlocks = oldEmitEmptyBlocks;
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
