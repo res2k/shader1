@@ -32,6 +32,7 @@ int main (const int argc, const char* const argv[])
 {
   const char* inputFileName = 0;
   const char* entryName = "main";
+  bool doSplit = true;
   typedef boost::unordered_map<std::string, unsigned int> ParamMap;
   ParamMap paramFlags;
   OptimizationFlags optFlags;
@@ -62,6 +63,10 @@ int main (const int argc, const char* const argv[])
       argNum++;
       if (argNum < argc)
 	entryName = argv[argNum];
+    }
+    else if (strcmp (arg, "--nosplit") == 0)
+    {
+      doSplit = false;
     }
     else if (strncmp (arg, "-O", 2) == 0)
     {
@@ -157,22 +162,35 @@ int main (const int argc, const char* const argv[])
   }
   prog = opt.ApplyOptimizations (prog);
   
-  splitter::ProgramSplitter splitter;
-
-  splitter.SetInputProgram (prog);
-  for (ParamMap::const_iterator paramFlag = paramFlags.begin();
-	paramFlag != paramFlags.end();
-	++paramFlag)
+  if (doSplit)
   {
-    splitter.SetInputFreqFlags (paramFlag->first.c_str(), paramFlag->second);
+    splitter::ProgramSplitter splitter;
+
+    splitter.SetInputProgram (prog);
+    for (ParamMap::const_iterator paramFlag = paramFlags.begin();
+	  paramFlag != paramFlags.end();
+	  ++paramFlag)
+    {
+      splitter.SetInputFreqFlags (paramFlag->first.c_str(), paramFlag->second);
+    }
+    splitter.PerformSplit();
+
+    for (int f = 0; f < splitter::freqNum; f++)
+    {
+      prog = opt.ApplyOptimizations (splitter.GetOutputProgram (f));
+      codegen::CgGenerator codegen;
+      codegen::StringsArrayPtr progOutput (codegen.Generate (prog, f));
+      
+      for (size_t i = 0; i < progOutput->Size(); i++)
+      {
+	std::cout << progOutput->Get (i) << std::endl;
+      }
+    }
   }
-  splitter.PerformSplit();
-
-  for (int f = 0; f < splitter::freqNum; f++)
+  else
   {
-    prog = opt.ApplyOptimizations (splitter.GetOutputProgram (f));
     codegen::CgGenerator codegen;
-    codegen::StringsArrayPtr progOutput (codegen.Generate (prog, f));
+    codegen::StringsArrayPtr progOutput (codegen.Generate (prog, -1));
     
     for (size_t i = 0; i < progOutput->Size(); i++)
     {
