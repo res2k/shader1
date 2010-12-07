@@ -13,11 +13,12 @@ namespace s1
     class SequenceOpWhile : public SequenceOp
     {
       RegisterPtr conditionReg;
-      std::vector<std::pair<RegisterPtr, RegisterPtr> > loopedRegs;
+      typedef std::pair<RegisterPtr, RegisterPtr> LoopedRegsPair;
+      std::vector<LoopedRegsPair> loopedRegs;
       SequenceOpPtr bodyOp;
     public:
       SequenceOpWhile (const RegisterPtr& conditionReg,
-		       const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+		       const std::vector<LoopedRegsPair>& loopedRegs,
 		       const SequenceOpPtr& bodyOp);
       
       RegisterSet GetReadRegisters () const;

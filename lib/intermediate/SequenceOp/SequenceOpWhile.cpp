@@ -2,6 +2,8 @@
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "intermediate/SequenceVisitor.h"
 
+#include <boost/foreach.hpp>
+
 namespace s1
 {
   namespace intermediate
@@ -15,34 +17,21 @@ namespace s1
     
     RegisterSet SequenceOpWhile::GetReadRegisters () const
     {
-      RegisterSet regs;
-      /*regs.insert (conditionReg);
-      if (trueOp)
+      RegisterSet regs (bodyOp->GetReadRegisters());
+      BOOST_FOREACH(const LoopedRegsPair& loopedReg, loopedRegs)
       {
-	RegisterIDSet trueRegs (trueOp->GetReadRegisters());
-	regs.insert (trueRegs.begin(), trueRegs.end());
+	regs.insert (loopedReg.first);
       }
-      if (falseOp)
-      {
-	RegisterIDSet falseRegs (falseOp->GetReadRegisters());
-	regs.insert (falseRegs.begin(), falseRegs.end());
-      }*/
       return regs;
     }
     
     RegisterSet SequenceOpWhile::GetWrittenRegisters () const
     {
-      RegisterSet regs;
-      /*if (trueOp)
+      RegisterSet regs (bodyOp->GetWrittenRegisters());
+      BOOST_FOREACH(const LoopedRegsPair& loopedReg, loopedRegs)
       {
-	RegisterIDSet trueRegs (trueOp->GetWrittenRegisters());
-	regs.insert (trueRegs.begin(), trueRegs.end());
+	regs.insert (loopedReg.second);
       }
-      if (falseOp)
-      {
-	RegisterIDSet falseRegs (falseOp->GetWrittenRegisters());
-	regs.insert (falseRegs.begin(), falseRegs.end());
-      }*/
       return regs;
     }
     
