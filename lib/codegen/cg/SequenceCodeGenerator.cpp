@@ -476,11 +476,16 @@ namespace s1
 	EmitAssign (loopedRegs[i].second,
 		    owner->GetOutputRegisterName (loopedRegs[i].first).c_str());
       }
-      // Generate registers for each "only written" variable
+      // Generate registers for each read or written variable
       intermediate::RegisterSet writtenRegisters (seqOpBody->GetWrittenRegisters());
-      BOOST_FOREACH(const RegisterPtr& writtenReg, writtenRegisters)
+      intermediate::RegisterSet readRegisters (seqOpBody->GetReadRegisters());
+      BOOST_FOREACH(const RegisterPtr& reg, writtenRegisters)
       {
-	owner->GetOutputRegisterName (writtenReg);
+	owner->GetOutputRegisterName (reg);
+      }
+      BOOST_FOREACH(const RegisterPtr& reg, readRegisters)
+      {
+	owner->GetOutputRegisterName (reg);
       }
       
       bool oldEmitEmptyBlocks = emitEmptyBlocks;
