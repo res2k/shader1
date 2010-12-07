@@ -811,6 +811,71 @@ namespace s1
 	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpBody));
       assert (body);
 
+      /* Do a couple of "dry-run" splits to determine the required frequencies 
+	 for looped vars */
+      AvailabilityMap loopedRegFreqs;
+      // Frequencies of looped regs start out with the frequency of the first-loop reg.
+      BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+      {
+	loopedRegFreqs[loopedReg.second] = parent.GetRegAvailability (loopedReg.first);
+      }
+      for (int n = 0; n < freqNum-1; n++)
+      {
+	SequencePtr blockSequence (body->GetSequence());
+	const Sequence::IdentifierToRegMap& identToRegIDs_imp = body->GetImportIdentToRegs();
+	const Sequence::IdentifierToRegMap& identToRegIDs_exp = body->GetExportIdentToRegs();
+	SequenceSplitter blockSplitter (parent.progSplit, false);
+	blockSplitter.SetInputSequence (blockSequence);
+	
+	// Forward frequencies to subSeqSplitter
+	const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
+	for (Sequence::RegisterImpMappings::const_iterator imports = blockImports.begin();
+	    imports != blockImports.end();
+	    ++imports)
+	{
+	  Sequence::IdentifierToRegMap::const_iterator impRegID = identToRegIDs_imp.find (imports->first);
+	  assert (impRegID != identToRegIDs_imp.end());
+	  RegisterPtr reg (impRegID->second);
+	  RegisterPtr reg_subseq (imports->second);
+
+	  unsigned int reg_subseqAvail;
+	  AvailabilityMap::const_iterator loopedRegFreq = loopedRegFreqs.find (reg);
+	  if (loopedRegFreq != loopedRegFreqs.end())
+	    reg_subseqAvail = loopedRegFreq->second;
+	  else
+	    reg_subseqAvail = parent.GetRegAvailability (reg);
+	  blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
+	}
+		
+	blockSplitter.PerformSplit();
+	
+	// Update frequencies of looped regs
+	const Sequence::RegisterExpMappings& blockExports = blockSequence->GetExports();
+	for (Sequence::RegisterExpMappings::const_iterator exports = blockExports.begin();
+	    exports != blockExports.end();
+	    ++exports)
+	{
+	  Sequence::IdentifierToRegMap::const_iterator expRegID = identToRegIDs_exp.find (exports->first);
+	  assert (expRegID != identToRegIDs_imp.end());
+	  RegisterPtr reg (expRegID->second);
+	  RegisterPtr reg_subseq (exports->second);
+	  
+	  AvailabilityMap::iterator loopedRegFreq = loopedRegFreqs.find (reg);
+	  if (loopedRegFreq == loopedRegFreqs.end()) continue;
+	  loopedRegFreq->second = blockSplitter.GetRegAvailability (reg_subseq);
+	}
+      }
+      
+      // Take "dry-run" frequencies for looped regs and promote actual loop input registers
+      BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+      {
+	unsigned int postLoopAvail = loopedRegFreqs[loopedReg.second];
+	int freq = HighestFreq (postLoopAvail);
+	PromoteRegister (loopedReg.first, freq);
+	// Force reg to be only available in highest freq
+	parent.SetRegAvailability (loopedReg.first, 1 << freq);
+      }
+
       // Compute highest frequency of condition and all loop inputs
       std::vector<RegisterPtr> allInputs;
       {
@@ -824,9 +889,11 @@ namespace s1
       // Propagate condition and all sequence inputs to highest frequency
       /* @@@ Force highest frequency to cover the case where a looped reg gets a higher
 	 frequency after a loop */
+      unsigned int combinedFreqs = ComputeCombinedFreqs (allInputs);
       int highestFreq = freqHighest/*ComputeHighestFreq (allInputs)*/;
-      unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
+      //unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
       
+      /*
       {
 	for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
 	     loopedReg != loopedRegs.end();
@@ -837,23 +904,19 @@ namespace s1
 				     parent.GetRegAvailability (loopedReg->first));
 	}      
       }
+      */
       
       // Output branch op to frequencies supported by condition and all sequence inputs
       SequenceOpPtr newOps[freqNum];
-      {
-	std::vector<RegisterPtr> writtenRegs;
-	writtenRegs.insert (writtenRegs.begin(),
-			    body->GetWrittenRegisters().begin(),
-			    body->GetWrittenRegisters().end());
-	SplitBlock (body->GetSequence(),
-		    body->GetImportIdentToRegs(),
-		    body->GetExportIdentToRegs(),
-		    newOps, loopedRegs, true);
-      }
+      SplitBlock (body->GetSequence(),
+		  body->GetImportIdentToRegs(),
+		  body->GetExportIdentToRegs(),
+		  newOps, loopedRegs, true);
       // TODO: Could filter looped regs
       for (int f = 0; f < freqNum; f++)
       {
-	if ((commonFreqs & (1 << f)) == 0) continue;
+	//if ((commonFreqs & (1 << f)) == 0) continue;
+	if ((combinedFreqs & (1 << f)) == 0) continue;
 	assert(newOps[f] != 0);
 	
 	SequenceOpPtr newWhileOp (boost::make_shared<intermediate::SequenceOpWhile> (conditionReg,
