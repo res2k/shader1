@@ -927,8 +927,16 @@ namespace s1
 	if ((combinedFreqs & (1 << f)) == 0) continue;
 	assert(newOps[f] != 0);
 	
+	std::vector<LoopedReg> newLoopedRegs;
+	BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+	{
+	  unsigned int avail = parent.GetRegAvailability (loopedReg.second);
+	  if ((avail & (1 << f)) != 0)
+	    newLoopedRegs.push_back (loopedReg);
+	}
+	
 	SequenceOpPtr newWhileOp (boost::make_shared<intermediate::SequenceOpWhile> (conditionReg,
-										     loopedRegs,
+										     newLoopedRegs,
 										     newOps[f]));
 	parent.outputSeq[f]->AddOp (newWhileOp);
       }
