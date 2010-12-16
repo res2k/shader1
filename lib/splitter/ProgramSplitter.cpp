@@ -457,6 +457,7 @@ namespace s1
 	BOOST_FOREACH(const intermediate::RegisterPtr& reg, transferV2F)
 	{
 	  outputPrograms[freqVertex]->AddTransferValue (reg->GetOriginalType(), reg->GetName());
+	  outputPrograms[freqFragment]->AddTransferValue (reg->GetOriginalType(), reg->GetName());
 	  funcV->SetTransferMapping (reg->GetName(), reg);
 	  funcF->SetTransferMapping (reg->GetName(), reg);
 	}
