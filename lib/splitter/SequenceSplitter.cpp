@@ -496,9 +496,11 @@ namespace s1
 						     const Sequence::IdentifierToRegMap& identToRegIDs_exp,
 						     SequenceOpPtr* newSequences,
 						     const LoopedRegs& loopedRegs,
-						     bool keepEmpty)
+						     bool keepEmpty,
+						     bool mergeUniformToVF)
     {
-      SequenceSplitter blockSplitter (parent.progSplit, false);
+      AvailabilityMap regAvailability;
+      SequenceSplitter blockSplitter (parent.progSplit, mergeUniformToVF);
       blockSplitter.SetInputSequence (blockSequence);
       
       // Forward frequencies to subSeqSplitter
@@ -519,6 +521,7 @@ namespace s1
 	  if (reg == loopedReg.second)
 	  {
 	    reg = loopedReg.first;
+	    break;
 	  }
 	}
 	
@@ -750,10 +753,6 @@ namespace s1
       // Output branch op to frequencies supported by condition and all sequence inputs
       SequenceOpPtr newIfOps[freqNum];
       {
-	std::vector<RegisterPtr> writtenRegs;
-	writtenRegs.insert (writtenRegs.begin(),
-			    ifBlock->GetWrittenRegisters().begin(),
-			    ifBlock->GetWrittenRegisters().end());
 	SplitBlock (ifBlock->GetSequence(),
 		    ifBlock->GetImportIdentToRegs(),
 		    ifBlock->GetExportIdentToRegs(),
@@ -761,10 +760,6 @@ namespace s1
       }
       SequenceOpPtr newElseOps[freqNum];
       {
-	std::vector<RegisterPtr> writtenRegs;
-	writtenRegs.insert (writtenRegs.begin(),
-			    elseBlock->GetWrittenRegisters().begin(),
-			    elseBlock->GetWrittenRegisters().end());
 	SplitBlock (elseBlock->GetSequence(),
 		    elseBlock->GetImportIdentToRegs(),
 		    elseBlock->GetExportIdentToRegs(),
@@ -866,16 +861,19 @@ namespace s1
 	}
       }
       
+      //unsigned int combinedFreqs = 0;
       // Take "dry-run" frequencies for looped regs and promote actual loop input registers
       BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
       {
 	unsigned int postLoopAvail = loopedRegFreqs[loopedReg.second];
+	//combinedFreqs |= postLoopAvail;
 	int freq = HighestFreq (postLoopAvail);
 	PromoteRegister (loopedReg.first, freq);
 	// Force reg to be only available in highest freq
+	if (loopedReg.second == conditionReg) continue;
 	parent.SetRegAvailability (loopedReg.first, 1 << freq);
       }
-
+      
       // Compute highest frequency of condition and all loop inputs
       std::vector<RegisterPtr> allInputs;
       {
@@ -893,6 +891,14 @@ namespace s1
       int highestFreq = freqHighest/*ComputeHighestFreq (allInputs)*/;
       //unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
       
+      BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+      {
+	if (loopedReg.second != conditionReg) continue;
+	int freq = HighestFreq (combinedFreqs);
+	PromoteRegister (loopedReg.first, freq);
+	//PromoteRegister (loopedReg.second, freq);
+      }
+
       /*
       {
 	for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
@@ -911,10 +917,12 @@ namespace s1
       SplitBlock (body->GetSequence(),
 		  body->GetImportIdentToRegs(),
 		  body->GetExportIdentToRegs(),
-		  newOps, loopedRegs, true);
+		  newOps, loopedRegs, true,
+		  true);
       // TODO: Could filter looped regs
       for (int f = 0; f < freqNum; f++)
       {
+	if (f == freqUniform) continue;
 	//if ((commonFreqs & (1 << f)) == 0) continue;
 	if ((combinedFreqs & (1 << f)) == 0) continue;
 	assert(newOps[f] != 0);

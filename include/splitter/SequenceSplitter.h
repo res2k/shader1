@@ -46,7 +46,8 @@ namespace s1
 			 const Sequence::IdentifierToRegMap& identToRegIDs_exp,
 			 SequenceOpPtr* newSequences,
 			 const LoopedRegs& loopedRegs = LoopedRegs(),
-			 bool keepEmpty = false);
+			 bool keepEmpty = false,
+			 bool mergeUniformToVF = false);
 	
 	typedef std::pair<RegisterPtr, RegisterPtr> RegisterPair;
 	typedef std::vector<RegisterPair> RenamedBranchOutputs;
