@@ -495,7 +495,6 @@ namespace s1
 						     const Sequence::IdentifierToRegMap& identToRegIDs_imp,
 						     const Sequence::IdentifierToRegMap& identToRegIDs_exp,
 						     SequenceOpPtr* newSequences,
-						     const LoopedRegs& loopedRegs,
 						     bool keepEmpty,
 						     bool mergeUniformToVF)
     {
@@ -514,17 +513,6 @@ namespace s1
 	RegisterPtr reg (impRegID->second);
 	RegisterPtr reg_subseq (imports->second);
 
-	BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
-	{
-	  /* Blocks import the 'written' version of a looped reg, replace with original
-	     for proper frequency propagation */
-	  if (reg == loopedReg.second)
-	  {
-	    reg = loopedReg.first;
-	    break;
-	  }
-	}
-	
 	unsigned int reg_subseqAvail = parent.GetRegAvailability (reg);
 	blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
       }
@@ -756,14 +744,14 @@ namespace s1
 	SplitBlock (ifBlock->GetSequence(),
 		    ifBlock->GetImportIdentToRegs(),
 		    ifBlock->GetExportIdentToRegs(),
-		    newIfOps, LoopedRegs(), true);
+		    newIfOps, true);
       }
       SequenceOpPtr newElseOps[freqNum];
       {
 	SplitBlock (elseBlock->GetSequence(),
 		    elseBlock->GetImportIdentToRegs(),
 		    elseBlock->GetExportIdentToRegs(),
-		    newElseOps, LoopedRegs(), true);
+		    newElseOps, true);
       }
       // Frequency at which the condition needs to be evaluated
       int condFreq = HighestFreq (commonFreqs);
@@ -870,8 +858,9 @@ namespace s1
 	int freq = HighestFreq (postLoopAvail);
 	PromoteRegister (loopedReg.first, freq);
 	// Force reg to be only available in highest freq
-	if (loopedReg.second == conditionReg) continue;
-	parent.SetRegAvailability (loopedReg.first, 1 << freq);
+	if (loopedReg.second != conditionReg)
+	  parent.SetRegAvailability (loopedReg.first, 1 << freq);
+	parent.SetRegAvailability (loopedReg.second, parent.GetRegAvailability (loopedReg.first));
       }
       
       // Compute highest frequency of condition and all loop inputs
@@ -917,7 +906,7 @@ namespace s1
       SplitBlock (body->GetSequence(),
 		  body->GetImportIdentToRegs(),
 		  body->GetExportIdentToRegs(),
-		  newOps, loopedRegs, true,
+		  newOps, true,
 		  true);
       // TODO: Could filter looped regs
       for (int f = 0; f < freqNum; f++)

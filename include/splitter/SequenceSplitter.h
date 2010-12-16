@@ -45,7 +45,6 @@ namespace s1
 			 const Sequence::IdentifierToRegMap& identToRegIDs_imp,
 			 const Sequence::IdentifierToRegMap& identToRegIDs_exp,
 			 SequenceOpPtr* newSequences,
-			 const LoopedRegs& loopedRegs = LoopedRegs(),
 			 bool keepEmpty = false,
 			 bool mergeUniformToVF = false);
 	
