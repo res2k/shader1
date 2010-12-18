@@ -859,8 +859,7 @@ namespace s1
 	PromoteRegister (loopedReg.first, freq);
 	// Force reg to be only available in highest freq
 	if (loopedReg.second != conditionReg)
-	  parent.SetRegAvailability (loopedReg.first, 1 << freq);
-	parent.SetRegAvailability (loopedReg.second, parent.GetRegAvailability (loopedReg.first));
+	  parent.SetRegAvailability (loopedReg.second, 1 << freq);
       }
       
       // Compute highest frequency of condition and all loop inputs
@@ -880,14 +879,6 @@ namespace s1
       int highestFreq = freqHighest/*ComputeHighestFreq (allInputs)*/;
       //unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
       
-      BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
-      {
-	if (loopedReg.second != conditionReg) continue;
-	int freq = HighestFreq (combinedFreqs);
-	PromoteRegister (loopedReg.first, freq);
-	//PromoteRegister (loopedReg.second, freq);
-      }
-
       /*
       {
 	for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
