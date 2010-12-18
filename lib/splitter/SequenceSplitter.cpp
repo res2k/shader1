@@ -849,7 +849,6 @@ namespace s1
 	}
       }
       
-      //unsigned int combinedFreqs = 0;
       // Take "dry-run" frequencies for looped regs and promote actual loop input registers
       BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
       {
@@ -876,21 +875,6 @@ namespace s1
       /* @@@ Force highest frequency to cover the case where a looped reg gets a higher
 	 frequency after a loop */
       unsigned int combinedFreqs = ComputeCombinedFreqs (allInputs);
-      int highestFreq = freqHighest/*ComputeHighestFreq (allInputs)*/;
-      //unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
-      
-      /*
-      {
-	for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
-	     loopedReg != loopedRegs.end();
-	     ++loopedReg)
-	{
-	  // Set 'writeable' looped regs to same frequency as originals
-	  parent.SetRegAvailability (loopedReg->second,
-				     parent.GetRegAvailability (loopedReg->first));
-	}      
-      }
-      */
       
       // Output branch op to frequencies supported by condition and all sequence inputs
       SequenceOpPtr newOps[freqNum];
@@ -899,11 +883,9 @@ namespace s1
 		  body->GetExportIdentToRegs(),
 		  newOps, true,
 		  true);
-      // TODO: Could filter looped regs
       for (int f = 0; f < freqNum; f++)
       {
 	if (f == freqUniform) continue;
-	//if ((commonFreqs & (1 << f)) == 0) continue;
 	if ((combinedFreqs & (1 << f)) == 0) continue;
 	assert(newOps[f] != 0);
 	
