@@ -878,6 +878,12 @@ namespace s1
       
       // Output branch op to frequencies supported by condition and all sequence inputs
       SequenceOpPtr newOps[freqNum];
+      /* @@@ Merging the uniform sequence into vertex+fragment sequence is a trick to ensure
+	 that the condition ops are emitted to all sequences in case the condition is computed
+	 with uniform freq. This trick will break down if ever sequences for truly all frequencies
+	 should be emitted.
+	 So the right way to fix this would be to make sure the ops affecting the conditions
+	 are replicated in *all* sequences ... */
       SplitBlock (body->GetSequence(),
 		  body->GetImportIdentToRegs(),
 		  body->GetExportIdentToRegs(),
@@ -893,7 +899,7 @@ namespace s1
 	BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
 	{
 	  unsigned int avail = parent.GetRegAvailability (loopedReg.second);
-	  if ((avail & (1 << f)) != 0)
+	  if ((avail & ((1 << f) | freqFlagU)) != 0)
 	    newLoopedRegs.push_back (loopedReg);
 	}
 	
