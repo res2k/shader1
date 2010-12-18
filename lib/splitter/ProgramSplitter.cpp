@@ -161,7 +161,7 @@ namespace s1
 	      paramF.type = reg->GetOriginalType();
 	      extraParams[freqFragment].push_back (paramF);
 	      
-	      seqSplit.GetOutputFragmentSequence()->AddImport (transferIdent, reg);
+	      seqSplit.GetOutputFragmentSequence()->SetImport (reg, transferIdent);
 	    }
 	    
 	    // Also return transfer info

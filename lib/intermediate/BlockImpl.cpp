@@ -575,7 +575,7 @@ namespace s1
 	  }
 	  reg = handler->AllocateRegister (*sequence, name->valueType, Imported,
 					  importName);
-	  if (!writeable) sequence->AddImport (name->identifier, reg);
+	  if (!writeable) sequence->SetImport (reg, name->identifier);
 	}
 	else
 	{

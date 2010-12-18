@@ -552,7 +552,7 @@ namespace s1
 	    srcSeq->SetExport (regName, reg);
 	  }
 	  
-	  dstSeq->AddImport (regName, reg);
+	  dstSeq->SetImport (reg, regName);
 	  parent.transferRegs[f].push_back (newReg);
 	  //parent.SetRegAvailability (newReg, (1 << f) | (1 << (f+1)));
 	  //parent.SetRegAvailability (newReg, (1 << f));
@@ -680,7 +680,7 @@ namespace s1
 	  newIdent.append (UChar ('0' + f));
 	  
 	  RegisterPtr newReg (seq->AllocateRegister (srcRegPtr->GetOriginalType(), newIdent));
-	  seq->AddImport (srcRegPtr->GetName(), newReg);
+	  seq->SetImport (newReg, srcRegPtr->GetName());
 	  seq->SetExport (dstRegPtr->GetName(), newReg);
 	  
 	  writtenRegs.push_back (rename.first);
@@ -1072,7 +1072,7 @@ namespace s1
       {
 	for (int f = 0; f < freqNum; f++)
 	{
-	  outputSeq[f]->AddImport (impMap->first, impMap->second);
+	  outputSeq[f]->SetImport (impMap->second, impMap->first);
 	}
 	
 	ParamMap::const_iterator inputFreq = paramFlags.find (impMap->first);

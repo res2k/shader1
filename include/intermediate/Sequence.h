@@ -77,12 +77,24 @@ namespace s1
       typedef std::pair<UnicodeString, RegisterPtr> IdentRegPair;
       typedef std::vector<IdentRegPair> RegisterImpMappings;
       const RegisterImpMappings& GetImports () const { return imports; }
-      void AddImport (const UnicodeString& parentRegName,
-		      const RegisterPtr& localReg);
+      /**
+       * Set an import mapping for a register.
+       * \a localReg will be initialized with the value from \a parentRegName
+       * in the parent scope. If a mapping for \a localReg already exists
+       * it will be replaced.
+       */
+      void SetImport (const RegisterPtr& localReg,
+		      const UnicodeString& parentRegName);
       void AddImports (const RegisterImpMappings& imports);
       typedef boost::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const { return exports; }
       RegisterExpMappings& GetExports () { return exports; }
+      /**
+       * Set an export mapping for a register.
+       * When the block ends, the value of \a parentRegName in the parent scope
+       * will be set to the value of \a localReg. If a mapping for \a parentRegName already
+       * exists it will be replaced.
+       */
       void SetExport (const UnicodeString& parentRegName,
 		      const RegisterPtr& localReg);
       void AddExports (const RegisterExpMappings& exports);

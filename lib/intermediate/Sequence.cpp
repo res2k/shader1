@@ -115,10 +115,21 @@ namespace s1
       visitor.SetVisitedOp (SequenceOpPtr ());
     }
     
-    void Sequence::AddImport (const UnicodeString& parentRegName,
-			      const RegisterPtr& local)
+    void Sequence::SetImport (const RegisterPtr& localReg,
+			      const UnicodeString& parentRegName)
     {
-      imports.push_back (std::make_pair (parentRegName, local));
+      RegisterImpMappings::iterator it = imports.begin();
+      while (it != imports.end())
+      {
+	if (it->second == localReg)
+	{
+	  it->first = parentRegName;
+	  return;
+	}
+	++it;
+      }
+	
+      imports.push_back (std::make_pair (parentRegName, localReg));
     }
     
     void Sequence::AddImports (const RegisterImpMappings& imports)
