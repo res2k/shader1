@@ -202,6 +202,17 @@ namespace s1
       RegisterSet allReadRegisters (GetAllReadRegisters ());
       RegisterSet allWrittenRegisters (GetAllWrittenRegisters ());
       
+      // Import destinations are considered 'written'
+      BOOST_FOREACH(const IdentRegPair& imp, imports)
+      {
+	allWrittenRegisters.insert (imp.second);
+      }
+      // Export sources are considered 'read'
+      BOOST_FOREACH(const IdentRegPair& exp, exports)
+      {
+	allReadRegisters.insert (exp.second);
+      }
+      
       {
 	RegisterImpMappings::iterator it = imports.begin();
 	while (it != imports.end())
