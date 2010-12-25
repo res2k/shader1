@@ -22,11 +22,13 @@ namespace s1
       {
 	optInlineBlocks = 1 << 0,
 	optDeadCodeElimination = 1 << 1,
+	optConstantFolding = 1 << 2,
       };
       Optimizer() : optimizations (0) {}
       
       void SetInlineBlocks (bool flag) { SetOptFlag (optInlineBlocks, flag); }
       void SetDeadCodeElimination (bool flag) { SetOptFlag (optDeadCodeElimination, flag); }
+      void SetConstantFolding (bool flag) { SetOptFlag (optConstantFolding, flag); }
       
       intermediate::ProgramPtr ApplyOptimizations (const intermediate::ProgramPtr& program);
     };

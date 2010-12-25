@@ -25,6 +25,8 @@ namespace s1
 	 * registers have probably changed.
 	 */
 	opsRemoved = 1 << 1,
+	/// Some new nested block ops were added
+	opsBlocksChanged = 1 << 2,
       };
       virtual unsigned int Apply (const intermediate::SequencePtr& outputSeq,
 				  const intermediate::SequencePtr& inputSeq) = 0;

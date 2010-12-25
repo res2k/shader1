@@ -13,6 +13,7 @@ class OptimizationFlags
 {
   bool doInlineBlocks;
   bool doDeadCodeElimination;
+  bool doConstantFolding;
 public:
   OptimizationFlags ();
   

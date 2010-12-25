@@ -5,7 +5,7 @@
 #include <string.h>
 
 OptimizationFlags::OptimizationFlags ()
- : doInlineBlocks (true), doDeadCodeElimination (true)
+ : doInlineBlocks (true), doDeadCodeElimination (true), doConstantFolding (true)
 {
 }
 
@@ -36,6 +36,11 @@ bool OptimizationFlags::ParseFlag (const char* flagString)
     doDeadCodeElimination = flagVal;
     return true;
   }
+  else if (strcmp (flagString, "constant-folding") == 0)
+  {
+    doConstantFolding = flagVal;
+    return true;
+  }
   else
   {
     return false;
@@ -46,4 +51,5 @@ void OptimizationFlags::ApplyFlags (s1::optimize::Optimizer& opt)
 {
   opt.SetInlineBlocks (doInlineBlocks);
   opt.SetDeadCodeElimination (doDeadCodeElimination);
+  opt.SetConstantFolding (doConstantFolding);
 }

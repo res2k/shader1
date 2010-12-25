@@ -1,6 +1,7 @@
 #include "base/common.h"
 #include "SequenceOptimizations.h"
 #include "OptimizeSequenceStep.h"
+#include "OptimizeSequenceConstantFolding.h"
 #include "OptimizeSequenceDeadCodeEliminate.h"
 #include "OptimizeSequenceInlineBlocks.h"
 
@@ -34,6 +35,10 @@ namespace s1
 	{
 	  steps.push_back (boost::make_shared<OptimizeSequenceInlineBlocks> ());
 	}
+	if (currentOpt & Optimizer::optConstantFolding)
+	{
+	  steps.push_back (boost::make_shared<OptimizeSequenceConstantFolding> ());
+	}
 	if (currentOpt & Optimizer::optDeadCodeElimination)
 	{
 	  steps.push_back (boost::make_shared<OptimizeSequenceDeadCodeEliminate> (usedRegs));
@@ -51,7 +56,14 @@ namespace s1
 	  
 	  if (changes & OptimizeSequenceStep::opsExpanded)
 	  {
-	    newOpt |= Optimizer::optDeadCodeElimination;
+	    newOpt |= Optimizer::optDeadCodeElimination | Optimizer::optConstantFolding;
+	  }
+	  if (changes & OptimizeSequenceStep::opsRemoved)
+	  {
+	  }
+	  if (changes & OptimizeSequenceStep::opsBlocksChanged)
+	  {
+	    newOpt |= Optimizer::optInlineBlocks | Optimizer::optDeadCodeElimination;
 	  }
 	}
 	
