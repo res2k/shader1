@@ -39,6 +39,13 @@ namespace s1
       
       bool VisitBackwards() const { return true; }
       
+      void PostVisitSequence (CommonSequenceVisitor* visitor,
+			      const intermediate::SequencePtr& newSequence,
+			      const RegisterMap& regMap)
+      {
+	newSequence->CleanUnusedImportsExports();
+      }
+      
       void AddOpToSequence (const SequenceOpPtr& seqOp)
       {
 	// DeadCodeChecker is meant to use with reverse Sequence visiting,

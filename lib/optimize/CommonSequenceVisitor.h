@@ -109,6 +109,10 @@ namespace s1
 			  const std::vector<RegisterPtr>& inParams);
     protected:
       class BlockNestingSequenceVisitor;
+      void NestedBlock (CommonSequenceVisitor* handlingVisitor,
+			const intermediate::SequencePtr& seq,
+			const Sequence::IdentifierToRegMap& identToReg_imp,
+			const Sequence::IdentifierToRegMap& identToReg_exp);
       
       intermediate::SequenceOpPtr visitedOp;
       
@@ -116,6 +120,9 @@ namespace s1
       virtual CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
 					    const RegisterMap& regMap) = 0;
       virtual bool VisitBackwards() const { return false; }
+      virtual void PostVisitSequence (CommonSequenceVisitor* visitor,
+				      const intermediate::SequencePtr& newSequence,
+				      const RegisterMap& regMap) {}
     };
   } // namespace optimize
 } // namespace s1

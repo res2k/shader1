@@ -125,39 +125,7 @@ namespace s1
 		    const Sequence::IdentifierToRegMap& identToReg_imp,
 		    const Sequence::IdentifierToRegMap& identToReg_exp)
       {
-	intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
-	newSeq->AddImports (seq->GetImports ());
-	newSeq->AddExports (seq->GetExports ());
-	newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
-	
-	RegisterMap regMap;
-	for (intermediate::Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
-	     imp != seq->GetImports().end();
-	     ++imp)
-	{
-	  intermediate::Sequence::IdentifierToRegMap::const_iterator thisSeqReg = identToReg_imp.find (imp->first);
-	  if (thisSeqReg != identToReg_imp.end())
-	    regMap[thisSeqReg->second] = imp->second;
-	}
-	for (intermediate::Sequence::RegisterExpMappings::const_iterator exp = seq->GetExports().begin();
-	     exp != seq->GetExports().end();
-	     ++exp)
-	{
-	  intermediate::Sequence::IdentifierToRegMap::const_iterator thisSeqReg = identToReg_exp.find (exp->first);
-	  if (thisSeqReg != identToReg_exp.end())
-	    regMap[thisSeqReg->second] = exp->second;
-	}
-	
-	{
-	  boost::scoped_ptr<CommonSequenceVisitor> visitor (owner->Clone (newSeq, regMap));
-	  if (owner->VisitBackwards())
-	    seq->ReverseVisit (*visitor);
-	  else
-	    seq->Visit (*visitor);
-	}
-	newSeq->CleanUnusedImportsExports();
-	
-	CommonSequenceVisitor::OpBlock (newSeq, identToReg_imp, identToReg_exp);
+	owner->NestedBlock (this, seq, identToReg_imp, identToReg_exp);
       }
 		    
       void OpBranch (const RegisterPtr& conditionReg,
@@ -195,6 +163,67 @@ namespace s1
     CommonSequenceVisitor::CommonSequenceVisitor (const intermediate::SequencePtr& newSequence)
      : newSequence (newSequence)
     {}
+
+    void CommonSequenceVisitor::NestedBlock (CommonSequenceVisitor* handlingVisitor,
+					     const intermediate::SequencePtr& seq,
+					     const Sequence::IdentifierToRegMap& identToReg_imp,
+					     const Sequence::IdentifierToRegMap& identToReg_exp)
+    {
+      intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
+      newSeq->AddImports (seq->GetImports ());
+      newSeq->AddExports (seq->GetExports ());
+      newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
+      
+      RegisterMap regMap;
+      for (intermediate::Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
+	    imp != seq->GetImports().end();
+	    ++imp)
+      {
+	intermediate::Sequence::IdentifierToRegMap::const_iterator thisSeqReg = identToReg_imp.find (imp->first);
+	if (thisSeqReg != identToReg_imp.end())
+	  regMap[thisSeqReg->second] = imp->second;
+      }
+      for (intermediate::Sequence::RegisterExpMappings::const_iterator exp = seq->GetExports().begin();
+	    exp != seq->GetExports().end();
+	    ++exp)
+      {
+	intermediate::Sequence::IdentifierToRegMap::const_iterator thisSeqReg = identToReg_exp.find (exp->first);
+	if (thisSeqReg != identToReg_exp.end())
+	  regMap[thisSeqReg->second] = exp->second;
+      }
+      
+      {
+	boost::scoped_ptr<CommonSequenceVisitor> visitor (Clone (newSeq, regMap));
+	if (VisitBackwards())
+	  seq->ReverseVisit (*visitor);
+	else
+	  seq->Visit (*visitor);
+	PostVisitSequence (visitor.get(), newSeq, regMap);
+      }
+      
+      //CommonSequenceVisitor::OpBlock (newSeq, identToReg_imp, identToReg_exp);
+      Sequence::IdentifierToRegMap newIdentToReg_imp;
+      for (Sequence::IdentifierToRegMap::const_iterator i2r = identToReg_imp.begin();
+	   i2r != identToReg_imp.end();
+	   ++i2r)
+      {
+	newIdentToReg_imp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
+      }
+      
+      Sequence::IdentifierToRegMap newIdentToReg_exp;
+      for (Sequence::IdentifierToRegMap::const_iterator i2r = identToReg_exp.begin();
+	   i2r != identToReg_exp.end();
+	   ++i2r)
+      {
+	newIdentToReg_exp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
+      }
+      
+      SequenceOpPtr newOp (
+	boost::make_shared<intermediate::SequenceOpBlock> (newSeq,
+							   newIdentToReg_imp,
+							   newIdentToReg_exp));
+      handlingVisitor->AddOpToSequence (newOp);
+    }
     
     void CommonSequenceVisitor::OpConstBool (const RegisterPtr& destination,
 					     bool value)
@@ -401,27 +430,7 @@ namespace s1
 					 const Sequence::IdentifierToRegMap& identToReg_imp,
 					 const Sequence::IdentifierToRegMap& identToReg_exp)
     {
-      Sequence::IdentifierToRegMap newIdentToReg_imp;
-      for (Sequence::IdentifierToRegMap::const_iterator i2r = identToReg_imp.begin();
-	   i2r != identToReg_imp.end();
-	   ++i2r)
-      {
-	newIdentToReg_imp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
-      }
-      
-      Sequence::IdentifierToRegMap newIdentToReg_exp;
-      for (Sequence::IdentifierToRegMap::const_iterator i2r = identToReg_exp.begin();
-	   i2r != identToReg_exp.end();
-	   ++i2r)
-      {
-	newIdentToReg_exp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
-      }
-      
-      SequenceOpPtr newOp (
-	boost::make_shared<intermediate::SequenceOpBlock> (seq,
-							   newIdentToReg_imp,
-							   newIdentToReg_exp));
-      AddOpToSequence (newOp);
+      NestedBlock (this, seq, identToReg_imp, identToReg_exp);
     }
 		  
     void CommonSequenceVisitor::OpBranch (const RegisterPtr& conditionReg,
