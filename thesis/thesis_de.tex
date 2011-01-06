@@ -900,8 +900,9 @@ Registern der äusseren (einschachtelnden) zu Registern der inneren (eingeschach
 
 \paragraph{Funktionen:}
 Eine Funktion der Zwischencoderepräsentation besteht aus einem eindeutigem Bezeichner, einer Liste von Eingabeparametern,
-einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen. Abbildung~\ref{fig:ir_function}
-ist eine schematische Abbildung einer Funktion.
+einer Liste von Ausgabeparametern und einer Sequenz mit den eigentlichen Funktionsoperationen.
+Ein eventueller Rückgabewert ist nur ein weiterer Ausgabeparameter.
+Abbildung~\ref{fig:ir_function} ist eine schematische Abbildung einer Funktion.
 
 %Jede Überladung einer Funktion wird in der Zwischencoderepräsentation durch einen eindeutigen Bezeichner identifiziert.
 %Dieser wird aus dem ursprünglichen Bezeichner sowie einer aus den Parametertypen generierten "`Signatur"' konstruiert.
@@ -1194,16 +1195,18 @@ Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf 
 
 \subsubsection{Funktions-Operationen}
 
-\paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register, eine Liste Ausgabe-Register
-und eventuell ein Zielregister für den Rückgabewert entgegen. Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
+\paragraph{Funktionsaufruf:} Diese Operation nimmt einen Funktionsbezeichner, eine Liste Eingabe-Register und eine Liste Ausgabe-Register
+entgegen.
+% Rückgabewert?
+Die Eingaberegister werden der Position nach auf die Funktionsparameter abgebildet.
 
 Der "`Bezeichner"' ist eine prinzipiell beliebig wählbare Zeichenkette, die die Funktion bezeichnet. Dem Code-Generator muss
 vorher eine Funktionsbeschreibung übergeben worden sein, die durch den Bezeichner identifiziert werden kann.
 %\\\hspace*{1cm}$d \gets \mathrm{Funktion}\ (s, \dots)$
 %\\\hspace*{1cm}$\mathrm{Funktion}\ (s, \dots)$
 
-\paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Hat die Funktion einen Rückgabewert, so wird als Parameter ein Register
-erwartet, welches den Rückgabewert der Funktion enthält.
+\paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Es wird eine Liste von Registern entgegengenommen. Diese
+werden, der Position nach, den Ausgabeparametern der Funktion zugewiesen.
 %\\\hspace*{1cm}$\mathrm{return}\ s$
 %\\\hspace*{1cm}$\mathrm{return}$
 
