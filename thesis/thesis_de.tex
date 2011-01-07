@@ -1186,7 +1186,7 @@ des letzten Durchlaufs.)
 %Paares von Eingaben wird die Verwendung der $\phi$-Funktion vermieden.
 
 Ein Register kann also in mehreren Schleifendurchläufen beschrieben werden.
-Da aber rine Schleife gilt als \emph{eine} Operation in der umgebenden Sequenz gilt, wird auch ein mehrmals beschriebenes Register,
+Da aber eine Schleife als \emph{eine} Operation in der umgebenden Sequenz gilt, wird auch ein mehrmals beschriebenes Register,
 von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Schleife).
 Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
 
@@ -1436,17 +1436,17 @@ Die Texturfunktionen sind prinzipbedingt nicht interpolierbar.
 \paragraph{Sequenzschachtelung:} Eine Sequenzschachtelungsoperation wird prinzipiell zu allen generierten Teilprogrammen hinzugefügt,
 allerdings mit unterschiedlichen Sequenzen. Diese sind selbst das Ergebnis einer Aufspaltung der ursprünglichen Sequenz.
 
-\paragraph{Verzweigung:} Eine Verzweigung besteht konzeptionell aus zwei eingeschalten Sequenzen (für die jeweiligen Verzweigungsblöcke)
-und ein bool'scher Bedingungswert, nach dem verzweigt wird.
+\paragraph{Verzweigung:} Eine Verzweigung besteht konzeptionell aus zwei eingeschachtelten Sequenzen (für die jeweiligen Verzweigungsblöcke)
+und einem bool'scher Bedingungswert, nach dessen Wert abhängig verzweigt wird.
 
 Die beiden eingeschachtelten Verzweigungssequenzen werden selbst aufgespalten.
 
 Der bool'scher Bedingungswert kann entweder per Mesh oder per Fragment vorliegen: per Mesh, wenn er eine per-Mesh-Eingabe ist bzw. allein aus
 per-Mesh-Eingaben berechnet wurde. Per Fragment, wenn er aus Werten anderer Frequenzen berechnet wurde. Per Vertex ist nicht
-möglich da auf Grund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen diese immer per Fragment berechnet werden.
+möglich, da auf Grund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen diese immer per Fragment berechnet werden.
 
 Selbst wenn der Bedingungswert nur per Fragment vorliegt, kann die Verzweigungsoperation nicht allein per Fragment ausgeführt werden:
-die Aufspaltung der Verzweigungsblöcke kann auch in per Vertex auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
+die Aufspaltung der Verzweigungsblöcke kann auch in per Mesh bzw. per Vertex auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
 eingeschachtelte Sequenzen, d.h. keine Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
 die Vertexteile beider Verzweigungsblöcke ausgeführt. Zwischenergebnisse müssen an das Fragmentprogramm übertragen und dort ausgewählt werden.
 
@@ -1455,14 +1455,26 @@ Selbst wenn beide Verzweigungen bloss per-Vertex-Operationen ausführen, sind du
 die berechneten Wert nur per Fragment verfügbar.
 
 \paragraph{Schleife:} Eine Schleifenoperation besteht aus einer eingeschachtelten Sequenz (dem Schleifenrumpf) sowie
-ein bool'scher Bedingungswert, der Schleifenbedingung.
+einem bool'scher Bedingungswert, der Schleifenbedingung.
 
 Wie bei der Verzweigung kann der bool'scher Bedingungswert nur entweder per Mesh oder per Fragment vorliegen.
 
-Ein Ausführen von Teilen des Rumpfes per Vertex wäre problematisch: es müsste bekannt sein, wieviele Werte vom Vertex-Teil
-zum Fragment-Teil übertragen werden sollen. Diese Anzahl hängt von der Anzahl der Schleifendurchläufe ab -
-diese kann aber Im Allgemeinen zur Kompilierzeit nicht bestimmt werden. Schleifenoperationen können also nur komplett
-per Mesh oder per Fragment ausgeführt werden.
+Bei der Bestimmung, in welcher Frequenz einzelne Operanden im Schleifenrumpf vorliegen,
+ergibt sich das Problem, dass die Frequenzen, in denen ein Register vorliegt, von der Anzahl der Schleifendurchläufe
+abhängt: z.B. kann eine Multiplikation eines Registers mit einem per Vertex vorliegendem Wert im ersten Durchlauf
+eine interpolierbare Operation sein, im zweiten Durchlauf aber nicht mehr, wenn dem Register ein bloss per Vertex
+verfügbarem Ergebnis aus dem vorherigen Durchlauf zugewiesen wurde.
+Um eine "`stabile"' Verfügbarkeit von Registern, die von vorherigen Schleifendurchläufen abhängen, zu ermitteln,
+werden zwei Schleifendurchläufe\footnote{Zwei Durchläufe sind ausreichend, da die Verfügbarkeit eines Registers
+nach höchstens zwei Schritten bei der höchsten Frequenz liegt -- von Mesh auf Vertex bzw. von Vertex auf Fragment.}
+simuliert und die damit bestimmten Verfügbarkeiten für das Aufspalten des Schleifenrumpfes verwendet.
+
+Teile des Rumpfes können per Mesh oder per Vertex ausgeführt werden, wenn die Operationen nicht von vorhergegangenen Schleifendurchläufen
+abhängen. Ein per-Mesh- oder per-Vertex-Ausführen von Operationen, die eine solche Abhängigkeit besitzen, wäre problematisch: es müsste bekannt sein, wieviele Werte vom
+Mesh- bzw. Vertex-Teil zum Fragment-Teil übertragen werden sollen. Dies hängt von der Anzahl der Schleifendurchläufe ab,
+welche im Allgemeinen nicht zur Kompilierzeit bestimmt werden kann.
+Ausführen von "`echten"' Schleifen ist also nur komplett per Mesh oder per Fragment möglich.
+%Schleifenoperationen können also nur komplett per Mesh oder per Fragment ausgeführt werden.
 
 \paragraph{Funktionsaufruf:} Der Rumpf einer Funktion ist eine Sequenz, kann also prinzipiell in einen per-Vertex- und einen per-Fragment-Teil aufgespalten werden.
 Das Hauptproblem besteht dabei darin, dass die Frequenzen der Funktionsparameter je nach Aufruf variieren können.
