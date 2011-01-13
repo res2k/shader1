@@ -15,6 +15,7 @@ bool OptimizationFlags::ParseFlag (const char* flagString)
   {
     // Disable all optimizations
     doInlineBlocks = false;
+    doConstantFolding = false;
     doDeadCodeElimination = false;
     return true;
   }
