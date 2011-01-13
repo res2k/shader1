@@ -1,0 +1,5 @@
+void main(out float4 pos, out float4 color)
+{
+  pos = float4 (0.0);
+  color = float4 (1.0);
+}

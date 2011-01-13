@@ -1,0 +1,28 @@
+\vspace{0.5em}
+\sOfunc{
+\sOfunchead{main}
+\sOfuncoutparams{\sOparamOut{float4}{pos}{\sOreg{m\_pos\_B0}}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp0}\sOsetreg{i\_tmp2}}
+\sOfuncregset{float4}{\sOsetreg{m\_color\_B0}\sOsetreg{m\_pos\_B0}}
+\sOfuncbody{
+\sOstmt{\sOassign{\sOreg{i\_tmp0}}{\sOconst{0}}}
+\sOstmt{\sOmakevec{\sOreg{m\_pos\_B0}}{\sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp2}}{\sOconst{1}}}
+\sOstmt{\sOmakevec{\sOreg{m\_color\_B0}}{\sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2}}}
+}
+}
+
+\vspace{0.5em}
+\sOfunc{
+\sOfunchead{main}
+\sOfuncoutparams{\sOparamOut{float4}{color}{\sOreg{m\_color\_B0}}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp0}\sOsetreg{i\_tmp2}}
+\sOfuncregset{float4}{\sOsetreg{m\_color\_B0}\sOsetreg{m\_pos\_B0}}
+\sOfuncbody{
+\sOstmt{\sOassign{\sOreg{i\_tmp0}}{\sOconst{0}}}
+\sOstmt{\sOmakevec{\sOreg{m\_pos\_B0}}{\sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp2}}{\sOconst{1}}}
+\sOstmt{\sOmakevec{\sOreg{m\_color\_B0}}{\sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2}}}
+}
+}
+

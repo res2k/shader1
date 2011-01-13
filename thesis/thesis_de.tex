@@ -1597,6 +1597,156 @@ gut lesbar lässt.}.
 
 % Original-Schnipsel und Generator-Output
 
+\newpage
+\section{Optimierer}
+
+\newcommand\OptSample[2]{
+  \begin{figure}[!h]
+    \centering
+    \begin{minipage}{8cm}\lstinputlisting{s1source/opt_ex/#1.s1}\end{minipage}
+    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_unopt}\end{minipage}
+    \vspace{0.3em}
+    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_opt}\end{minipage}
+    \caption{#2.}
+    \label{fig:ir_optex_#1}
+  \end{figure}
+}
+\newcommand\OptSampleStacked[2]{
+  \begin{figure}[!h]
+    \centering
+    \begin{minipage}{8cm}\lstinputlisting{s1source/opt_ex/#1.s1}\end{minipage}
+    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_unopt}\end{minipage}\\
+    \vspace{0.3em}
+    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_opt}\end{minipage}
+    \caption{#2.}
+    \label{fig:ir_optex_#1}
+  \end{figure}
+}
+
+Die Aufgabe eines \emph{Optimierers} ist es, ein gegebenes Programm so umzuschreiben, dass es zur Laufzeit
+schnellstmöglich ausgeführt wird. Im allgemeinen erstrecken sich mögliche Optimierungen von Vereinfachungen,
+wie ein Entfernen von unbenötigten Operationen und ein Berechnen von Ausdrücken zur Kompilierzeit,
+bis hin zu komplexen Umsortierungen oder Zusammenfassung von Operationen, z.B. um ``multiply-add''-Operation
+besser auszunutzen.
+
+Ein Optimierer, der Redundanzen u.ä. entfernt, erlaubt als Nebeneffekt auch, dass die vorhergehenden Arbeitsschritte
+eines Compilers -- im vorliegenden Compiler insbesondere der Splitter --
+nicht selbst optimalen Zwischencode erzeugen müssen. Die Implementierung jener Arbeitsschritte kann damit
+vereinfacht werden.
+
+\subsection{Aufbau}
+
+% Ein-, Ausgabe: Programme
+
+Der Optimierer im vorliegenden Compiler nimmt als Eingabe ein komplettes Programm entgegen
+und liefert als Ausgabe entsprechend auch ein komplettes Programm.
+
+Das Arbeiten auf ganzen Programmen erlaubt es prinzipiell, funktionsübergreifende Optimierungen
+vorzunehmen, von einem entfernen unbenötigter Funktionen über Inlining bis zu einem entfernen
+einzelner, nicht benötigter Funktionsparameter.
+
+Allerdings beschränken sich die implementierten, unten beschriebenen Optimierungen auf Sequenzen
+von Operationen; diese Sequenzoptimierungen werden auf alle Funktionen eines Programms unabhängig
+voneinander angewendet.
+
+% mehrere Stufen
+Die einzelnen Sequenzenoptimierungen werden nacheinander angewendet. Bei Bedarf kann eine
+Optimierung mehrmals angewendet werden - z.B. kann das ``Constant Folding'' einen Ausführungszweig
+einer Verzweigung auswählen; in diesem Fall wird ein erneutes ``Block Inlining'' veranlasst,
+um die dadurch eingefügte Sequenzschachtelungsoperation zu vereinfachen.
+% bei Bedarf mehrere Durchgänge -> z.B. erneutes BI when CF einen Branch o.ä. "geinlined" hat
+
+\subsection{Block Inlining}
+
+% 'entfernt' Block-Seqop.
+Das \emph{Block Inlining} ersetzt alle Sequenzschachtelungsoperationen einer Sequenz durch
+die in der eingeschachtelten Sequenz enthaltenen Operationen. Dabei werden die von den
+Operationen verwendeten bzw. veränderten Register angepasst: Register, die einem importiertem
+oder exportiertem Namen zugeordnet sind, werden durch ihre Gegenstücke in der umgebenden
+Sequenz ersetzt. Andere Register werden umbenannt um Kollisionen zu vermeiden.
+
+% v.a. "Hilfsschritt" für andere Opt.
+Die vom Block Inlining vorgenommen Änderungen an einer Sequenz haben keine Auswirkungen auf das
+Laufzeitverhalten des Programms. Dieser Optimierungsschritt dient vor allem als "`Hilfsschritt"',
+um die Implementierungen anderer Optimierungsschritte zu vereinfachen: einerseits können
+Sequenzschachtelungsoperationen als "`nicht vorhanden"' angenommen werden, andererseits kann
+ein Inlining von Blöcken -- z.B. wegen der statischen Auswahl eines Verzweigungsblockes --
+einfach vorgenommen werden, da die nötige "`Hauptarbeit"' später vom Block-Inlining-Schritt
+vorgenommen wird.
+
+Abbildung~\ref{fig:ir_optex_bi} vergleicht ein einfaches Programm vor und nach der Anwendung von Block Inlining.
+
+\OptSampleStacked{bi}{Block Inlining: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert}
+
+\subsection{Constant Folding}
+
+% Berechnung von konstanten Ausdrücken
+% (Cast, Arithmetische, Logische, Unäre, Vergleichsop., Builtins, Arraylänge, Array getelem)
+% Entfernung von Branches/Schleifen mit konst. Bedingung
+\emph{Constant Folding} berechnet das Ergebnis einer Sequenzoperation zur Kompilierzeit
+wenn alle Eingabeoperanden zur Kompilierzeit bekannte Konstanten sind. Berücksichtigt
+werden Zuweisungs-, Cast-, arithmetische, logische, unäre und Vergleichsoperationen, alle eingebauten
+Funktionen (mit Ausnahme von Texturfunktionen) sowie die Operationen "`Arraylänge"' und
+"`Extraktion eines Arrayelements"'.
+Weiterhin werden Verzweigungsoperationen, deren Bedingung ein konstanter Wert ist,
+durch eine Schachtelung der entsprechenden Sequenz ersetzt (die andere Sequenz wird verworfen).
+Auch Schleifenoperationen, deren Schleifenbedingung den konstanten Wert "`falsch"' besitzt,
+werden verworfen.
+
+% Fkt.weise: speichert für jedes Reg., ob konst., und wenn ja, dessen Wert;
+% Op. auf Konstanten zur Kompilierzeit berechnet
+In der Implementierung des Constant Folding wird eine Zuordnung zwischen Registern und konstanten
+Werten verwendet; ist einem Register kein solcher Wert zugeordnet besitzt es keinen bekannten
+konstanten Wert. Eine solche Zuordnung wird erstellt, wenn eine Operationen ein konstantes
+Ergebnis hat. Dies sind zuvorderst Konstantenoperationen.
+Bei Operationen, die einer der oben genannten Arten entsprechen, wird überprüft, ob alle Operanden
+konstante Werte sind. Ist dies der Fall wird das Ergebnis der Operation vom Compiler berechnet
+und die Operation durch eine einfache Konstantenoperation ersetzt.
+
+% Zukunft: Funktionen mit rein konstanten Argumenten
+
+Abbildung~\ref{fig:ir_optex_cf} vergleicht ein einfaches Programm vor und nach der Anwendung von Constant Folding.
+Anzumerken ist, dass die Addition vom Compiler ausgerechnet und durch eine Konstantenoperation ersetzt
+wird; die Konstantenoperationen der Quelloperanden bleiben jedoch erhalten - deren Entfernung ist
+die Aufgabe der Dead Code Elimination, welche aber in diesem Beispiel nicht durchgeführt wurde.
+
+\OptSampleStacked{cf}{Constant Folding: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert}
+
+\subsection{Dead Code Elimination}
+
+\emph{Dead Code Elimination} entfernt unnötige Sequenzoperationen; eine Operation ist "`unnötig"',
+wenn keines der von ihr geschriebenen Register jemals benutzt wird.
+
+% entfernt Op., deren Ergebnis nie benutzt wird
+
+In der Implementierung werden die Operationen einer Sequenz \emph{von hinten} betrachtet.
+Es wird eine Menge von "`ausgelesenen"' Registern gespeichert. Bei jeder Operation wird
+zunächst überprüft, ob wenigstens eins der Ausgaberegister ein solches "`ausgelesenes"'
+Register ist. Ist dies nicht der Fall, wird die Operation verworfen. Andernfalls wird
+die Operation beibehalten und alle ihre Eingaberegister als "`ausgelesen"' markiert.
+
+Die Menge der "`ausgelesenen"' Register benötigt eine "`Saat"' von Registern, die als
+immer ausgelesen angenommen werden (sonst würden alle Operationen einer Sequenz verworfen
+werden). Dies sind immer die Ausgabeparameter der Funktion, die die Sequenz enthält.
+Für Sequenzen, die z.B. in Verzweigungen eingeschachtelt sind, dient die Menge der
+ausgelesenen Register der umgebenden Sequenz als Saat.
+
+% Fkt.weise: iteriert Operationen rückwärts
+% speichert zu jedem Reg., ob gelesen
+% verwirft Op., deren Zielregister nie gelesen wurde
+% verwirft Blöcke, bei denen kein "exportiertes" Register gelesen wurde
+% verwirft Fkt.aufrufe, bei denen kein Ausgabereg. gelesen wurde
+% benötigt "Saat-Register" (Ausgabeparameter)
+
+Abbildung~\ref{fig:ir_optex_dce} vergleicht ein einfaches Programm vor und nach der Anwendung von Dead Code Elimination.
+Dargestellt sind die Zwischencoderepräsentationen nach der Aufspaltung des Programms.
+In den unoptimierten Programmen werden beide Ausgabeparameter sowohl in Vertex- als auch Fragmentprogramm
+beschrieben, obwohl jeweils nur einer tatsächlich verwendet wird. Aus den optimierten Programmen wurde die jeweils unnötige
+Zuweisung entfernt.
+
+\OptSampleStacked{dce}{Dead Code Elimination: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert;
+Zwischencoderepräsentation nach Aufspaltung in Vertex- und Fragmentprogramme}
+
 \section{Zusammenfassung}
 
 Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur dafür; die Abweichnung ist der Verarbeitungsschritt der "`Auftrennung"' in mehrere
