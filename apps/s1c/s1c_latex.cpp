@@ -178,6 +178,8 @@ int main (const int argc, const char* const argv[])
 
     for (int f = 0; f < splitter::freqNum; f++)
     {
+      if (f > 0) std::cout << "\\vspace{0.5em}" << std::endl;
+      
       prog = opt.ApplyOptimizations (splitter.GetOutputProgram (f));
       codegen::LatexGenerator codegen;
       codegen::StringsArrayPtr progOutput (codegen.Generate (prog));
