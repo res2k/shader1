@@ -11,10 +11,13 @@
 #include "intermediate/ProgramFunction.h" // @@@ Temp.
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
+#include "optimize/Optimizer.h"
 #include "splitter/Frequency.h"
 #include "splitter/ProgramSplitter.h"
 
 #include "ErrorHandler.h"
+#include "OptimizationFlags.h"
+
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
 #include <string.h>
@@ -33,6 +36,7 @@ int main (const int argc, const char* const argv[])
   bool doSplit = true;
   typedef boost::unordered_map<std::string, unsigned int> ParamMap;
   ParamMap paramFlags;
+  OptimizationFlags optFlags;
   int argNum = 1;
   while (argNum < argc)
   {
@@ -64,6 +68,14 @@ int main (const int argc, const char* const argv[])
     else if (strcmp (arg, "--nosplit") == 0)
     {
       doSplit = false;
+    }
+    else if (strncmp (arg, "-O", 2) == 0)
+    {
+      if (!optFlags.ParseFlag (arg+2))
+      {
+	PrintSyntax (argv[0]);
+	return 1;
+      }
     }
     else
     {
@@ -102,6 +114,9 @@ int main (const int argc, const char* const argv[])
   {
     errorHandler.IntermediateError (e.GetCode());
   }
+  
+  optimize::Optimizer opt;
+  optFlags.ApplyFlags (opt);
   
   intermediate::ProgramPtr prog = intermediateHandler.GetProgram ();
   // Determine output values
@@ -146,6 +161,7 @@ int main (const int argc, const char* const argv[])
     prog->SetOutputParameter (vertexOutput, intermediate::Program::Position);
     prog->SetOutputParameter (fragmentOutput, intermediate::Program::Color);
   }
+  prog = opt.ApplyOptimizations (prog);
   
   if (doSplit)
   {
@@ -162,8 +178,9 @@ int main (const int argc, const char* const argv[])
 
     for (int f = 0; f < splitter::freqNum; f++)
     {
+      prog = opt.ApplyOptimizations (splitter.GetOutputProgram (f));
       codegen::LatexGenerator codegen;
-      codegen::StringsArrayPtr progOutput (codegen.Generate (splitter.GetOutputProgram (f)));
+      codegen::StringsArrayPtr progOutput (codegen.Generate (prog));
       
       for (size_t i = 0; i < progOutput->Size(); i++)
       {
@@ -186,7 +203,7 @@ int main (const int argc, const char* const argv[])
   else
   {
     codegen::LatexGenerator codegen;
-    codegen::StringsArrayPtr progOutput (codegen.Generate (intermediateHandler.GetProgram ()));
+    codegen::StringsArrayPtr progOutput (codegen.Generate (prog));
     
     for (size_t i = 0; i < progOutput->Size(); i++)
     {
