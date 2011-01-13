@@ -189,17 +189,20 @@ int main (const int argc, const char* const argv[])
 	std::cout << progOutput->Get (i) << std::endl;
       }
       
-      std::cout << "\\sOtransfer{" << std::endl;
-      const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram (f)->GetTransferValues();
-      for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
-	  transferVal != transferValues.end();
-	  ++transferVal)
+      if (!splitter.GetOutputProgram (f)->GetTransferValues().empty())
       {
-	std::string str;
-	transferVal->second.toUTF8String (str);
-	std::cout << "\\sOreg{" << codegen::LatexGenerator::LatexEscape (str) << "}\\ ";
+	std::cout << "\\sOtransfer{" << std::endl;
+	const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram (f)->GetTransferValues();
+	for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
+	    transferVal != transferValues.end();
+	    ++transferVal)
+	{
+	  std::string str;
+	  transferVal->second.toUTF8String (str);
+	  std::cout << "\\sOreg{" << codegen::LatexGenerator::LatexEscape (str) << "}\\ ";
+	}
+	std::cout << std::endl << "}" << std::endl;
       }
-      std::cout << std::endl << "}" << std::endl;
     }
   }
   else
