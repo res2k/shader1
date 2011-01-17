@@ -189,7 +189,8 @@ int main (const int argc, const char* const argv[])
 	std::cout << progOutput->Get (i) << std::endl;
       }
       
-      if (!splitter.GetOutputProgram (f)->GetTransferValues().empty())
+      if ((f < splitter::freqFragment)
+	&& (!splitter.GetOutputProgram (f)->GetTransferValues().empty()))
       {
 	std::cout << "\\sOtransfer{" << std::endl;
 	const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram (f)->GetTransferValues();
