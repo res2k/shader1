@@ -68,18 +68,18 @@ namespace s1
 	  {
 	    std::string paramStrIn ("\\sOparamIn");
 	    paramStrIn.append (paramStr);
+	    paramStrIn.append ("{");
 	    for (intermediate::Sequence::RegisterImpMappings::const_iterator import = imports.begin();
 		  import != imports.end();
 		  ++import)
 	    {
 	      if (import->first.compare (param->identifier) == 0)
 	      {
-		paramStrIn.append ("{");
 		paramStrIn.append (seqGen.GetOutputRegisterName (import->second));
-		paramStrIn.append ("}");
 		break;
 	      }
 	    }
+	    paramStrIn.append ("}");
 	    inParams.push_back (paramStrIn);
 	    
 	    nameRes.inParamMap[param->identifier] = paramStrIn;
