@@ -1108,7 +1108,12 @@ namespace s1
       
       for (int f = 0; f < freqNum; f++)
       {
-	outputSeq[f]->CleanUnusedImportsExports ();
+	intermediate::Sequence::RegisterSet keepRegs;
+	if (f > 0)
+	  keepRegs.insert (transferRegs[f-1].begin(), transferRegs[f-1].end());
+	if (f < freqNum-1)
+	  keepRegs.insert (transferRegs[f].begin(), transferRegs[f].end());
+	outputSeq[f]->CleanUnusedImportsExports (keepRegs, keepRegs);
       }
       
       // Insert 'uniform' sequence at start of both V/F sequences

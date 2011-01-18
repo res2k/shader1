@@ -115,7 +115,8 @@ namespace s1
        */
       RegisterSet GetExportOuterRegs (const IdentifierToRegMap& identToReg);
 		      
-      void CleanUnusedImportsExports ();
+      void CleanUnusedImportsExports (const RegisterSet& keepImports = RegisterSet (),
+				      const RegisterSet& keepExports = RegisterSet ());
     protected:
       IdentifierToRegMap identToReg;
       

@@ -208,11 +208,15 @@ namespace s1
       return exportRegs;
     }
     
-    void Sequence::CleanUnusedImportsExports ()
+    void Sequence::CleanUnusedImportsExports (const RegisterSet& keepImports,
+					      const RegisterSet& keepExports)
     {
       RegisterSet allReadRegisters (GetAllReadRegisters ());
       RegisterSet allWrittenRegisters (GetAllWrittenRegisters ());
       
+      // Forcibly kept import/export regs are treated like read/written
+      allReadRegisters.insert (keepImports.begin(), keepImports.end());
+      allWrittenRegisters.insert (keepExports.begin(), keepExports.end());
       // Import destinations are considered 'written'
       BOOST_FOREACH(const IdentRegPair& imp, imports)
       {
