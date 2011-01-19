@@ -1,12 +1,13 @@
 \sOfunc{
-\sOfunchead{void}{vertex\_main}
-\sOfuncinparams{\sOparamIn{float4}{Position}{\sOreg{m\_Position\_B0}}\sOparamIn{float2}{TexCoord}{\sOreg{m\_TexCoord\_B0}}\sOparamIn{float3}{Normal}{\sOreg{m\_Normal\_B0}}\sOparamIn{float4x4}{ModelViewProj}{\sOreg{m\_ModelViewProj\_B0}}\sOparamIn{float3}{LightColor}{\sOreg{m\_LightColor\_B0}}\sOparamIn{float3}{LightDirObj}{\sOreg{m\_LightDirObj\_B0}}}
+\sOfunchead{main}
+\sOfuncinparams{\sOparamIn{float4}{Position}{\sOreg{m\_Position\_B0}}\sOparamIn{float2}{TexCoord}{\sOreg{m\_TexCoord\_B0}}\sOparamIn{float3}{Normal}{\sOreg{m\_Normal\_B0}}\sOparamIn{float4x4}{ModelViewProj}{\sOreg{m\_ModelViewProj\_B0}}\sOparamIn{float3}{LightColor}{\sOreg{m\_LightColor\_B0}}\sOparamIn{float3}{LightDirObj}{\sOreg{m\_LightDirObj\_B0}}\sOparamIn{sampler2D}{Texture}{\sOreg{m\_Texture\_B0}}}
 \sOfuncoutparams{\sOparamOut{float4}{outPosition}{\sOreg{m\_outPosition\_B0}}}
 \sOfuncregset{float}{\sOsetreg{i\_tmp1}\sOsetreg{i\_tmp10}\sOsetreg{i\_tmp11}\sOsetreg{i\_tmp3}\sOsetreg{i\_tmp8}\sOsetreg{i\_tmp9}}
 \sOfuncregset{float2}{\sOsetreg{m\_TexCoord\_B0}}
 \sOfuncregset{float3}{\sOsetreg{i\_tmp4}\sOsetreg{m\_LightColor\_B0}\sOsetreg{m\_LightDirObj\_B0}\sOsetreg{m\_Normal\_B0}\sOsetreg{v\_ambient}\sOsetreg{v\_diffuse}\sOsetreg{v\_litColor}}
 \sOfuncregset{float4}{\sOsetreg{i\_tmp12}\sOsetreg{m\_Position\_B0}\sOsetreg{m\_outPosition\_B0}}
 \sOfuncregset{float4x4}{\sOsetreg{m\_ModelViewProj\_B0}}
+\sOfuncregset{sampler2D}{\sOsetreg{m\_Texture\_B0}}
 \sOfuncbody{
 \sOstmt{\sOassign{\sOreg{i\_tmp1}}{\sOconst{0.4}}}
 \sOstmt{\sOmakevec{\sOreg{v\_ambient}}{\sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp1}}}
@@ -23,19 +24,25 @@
 }
 }
 
+\sOtransfer{
+\sOreg{m\_TexCoord\_B0}\ \sOreg{i\_tmp12}\ 
+}
 \sOfunc{
-\sOfunchead{void}{fragment\_main}
-\sOfuncinparams{\sOparamIn{sampler2D}{Texture}{\sOreg{m\_Texture\_B0}}}
+\sOfunchead{main}
+\sOfuncinparams{\sOparamIn{float4x4}{ModelViewProj}{\sOreg{m\_ModelViewProj\_B0}}\sOparamIn{float3}{LightColor}{\sOreg{m\_LightColor\_B0}}\sOparamIn{float3}{LightDirObj}{\sOreg{m\_LightDirObj\_B0}}\sOparamIn{sampler2D}{Texture}{\sOreg{m\_Texture\_B0}}}
 \sOfuncoutparams{\sOparamOut{float4}{outColor}{\sOreg{m\_outColor\_B0}}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp1}\sOsetreg{i\_tmp11}}
 \sOfuncregset{float2}{\sOsetreg{m\_TexCoord\_B0}}
+\sOfuncregset{float3}{\sOsetreg{m\_LightColor\_B0}\sOsetreg{m\_LightDirObj\_B0}\sOsetreg{v\_ambient}}
 \sOfuncregset{float4}{\sOsetreg{i\_tmp12}\sOsetreg{i\_tmp7}\sOsetreg{m\_outColor\_B0}}
+\sOfuncregset{float4x4}{\sOsetreg{m\_ModelViewProj\_B0}}
 \sOfuncregset{sampler2D}{\sOsetreg{m\_Texture\_B0}}
 \sOfuncbody{
+\sOstmt{\sOassign{\sOreg{i\_tmp1}}{\sOconst{0.4}}}
+\sOstmt{\sOmakevec{\sOreg{v\_ambient}}{\sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp1} \sOcomma \sOreg{i\_tmp1}}}
+\sOstmt{\sOassign{\sOreg{i\_tmp11}}{\sOconst{1}}}
 \sOstmt{\sObuiltintexTwoD{\sOreg{i\_tmp7}}{\sOreg{m\_Texture\_B0}}{\sOreg{m\_TexCoord\_B0}}}
 \sOstmt{\sOmul{\sOreg{m\_outColor\_B0}}{\sOreg{i\_tmp7}}{\sOreg{i\_tmp12}}}
 }
 }
 
-\sOtransfer{
-\sOreg{m\_TexCoord\_B0}\ \sOreg{i\_tmp12}\ 
-}

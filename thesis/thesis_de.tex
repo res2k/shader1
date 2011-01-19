@@ -1513,8 +1513,22 @@ verfügbar ist.
 die Extraktion einer Komponente können trivialerweise mit derjenigen Frequenz berechnet werden, die der höchsten Frequenz
 aller Eingaben entspricht.
 
+\subsection{Beispiel}
+
+Ein einfaches Beispiel soll die Ausgabe des Auftrenners demonstrieren.
+
+\subsubsection{Eingabeprogramm}
+
+Als Eingabe dient das einfache Shading-Programm aus Abbildung~\ref{fig:simple_s1}.
+Es berechnet eine Beleuchtungsintensität für eine Lichtquelle mit konstanter Richtung des Lichteinfalls (also eine Lichtquelle im
+Unendlichen) und gegebener Farbe. Diese Beleuchtungsintensität, addiert zur ``ambient''-Farbe (eine Annäherung von "`Streulicht"')
+wird dann mit einer aus einer Texture ausgelesenen Oberflächenfarbe moduliert.
+
+In der Abbildung wurde (manuell) markiert, in welchen Frequenzen die Eingabeparameter vorliegen,
+sowie die Frequenz, in der die einzelnen Ausdrücke ausgeführt werden sollen.
+
 % Beispiele
-\begin{figure}[hp]
+\begin{figure}[ht]
   \input{simple_s1}
   \caption{Ein Programm in der Shading-Sprache.}
   \centering
@@ -1522,7 +1536,70 @@ aller Eingaben entspricht.
   \label{fig:simple_s1}
 \end{figure}
 
-\begin{figure}[!ht]
+\subsubsection{Auftrennung}
+
+Die für die Ausdrücke anzuwendenen Aufspaltungsregeln sind:
+
+\paragraph{\texttt{outPosition}}: \texttt{Position} liegt per Vertex vor, der Gesamtausdruck muss daher mindestens per Vertex
+berechnet werden. \texttt{ModelViewProj} liegt per Mesh vor, die Matrixmultiplikation ist interpolierbar,
+der Gesamtausdruck kann daher auch höchstens per Vertex berechnet werden.
+
+\paragraph{\texttt{ambient}}: Konstante, liegt daher per Mesh vor.
+
+\paragraph{\texttt{diffuse}}: Das Skalarprodukt zwischen \texttt{LightDirObj} und \texttt{Normal} muss, da \texttt{Normal} per Vertex vorliegt,
+mindestens per Vertex berechnet werden. \texttt{LightDirObj} liegt per Mesh vor, das Skalarprodukt ist also interpolierbar,
+kann daher auch höchstens per Vertex berechnet werden.
+
+Ebenso ist die Multiplikation von \texttt{LightColor} und dem Skalarprodukt interpolierbar, der Gesamtausdruck kann also per Vertex
+berechnet werden.
+
+\paragraph{\texttt{litColor}}: Da \texttt{diffuse} per Vertex vorliegt,\texttt{ambient} per Mesh, und weiterhin
+Additionen uneingeschränkt interpolierbar sind, kann der Gesamtausdruck per Vertex berechnet werden.
+
+\paragraph{\texttt{outColor}}: Das Erstellen eines \texttt{float4}-Vektors aus \texttt{litColor} wirkt sich nicht 
+auf die Berechnungsfrequenz aus, der neue \texttt{float4}-Vektor liegt also per Vertex vor.
+
+Das Auslesen der Textur mit \texttt{tex2D} kann nur per Fragment erfolgen. Damit muss auch die Multiplikation des Texturwertes mit
+dem \texttt{float4}-Vektor per Fragment erfolgen.
+
+\subsubsection{Ausgabe}
+
+Abbildung~\ref{fig:simple_s1_split} enthält das Ergebnis nach Aufspaltung in Zwischencoderepräsentation.
+(Vor oder nach der Aufspaltung wurden keine Optimierungen angewendet.)
+
+%Die erste Hälfte stellt das Vertexprogramm dar. Direkt Ergebnisse der Aufspaltung sind:
+Die Aufspaltung wirkt sich auf alle Aspekte der Programme aus:
+\begin{itemize}
+\item \emph{Eingabeparameter:} Im Vertexprogramm sind alle Eingabeparameter des Originalprogramms erhalten,
+auch \texttt{Texture}, welches nur im Fragmentprogramm ausgelesen wird.
+
+Bei den Eingabeparametern des Fragmentprogramms fehlen die per Vertex vorliegenden Eingaben -- diese werden
+stattdessen vom Vertexprogramm weitergegeben ("`Übertragene Register"'). Allerdings gibt es auch
+hier "`unnötige"' Eingaben, wie \texttt{ModelViewProj}. 
+
+\item \emph{Ausgabeparameter:} Dies sind die vom jeweiligen Verarbeitungsschritt zu berechnenden Ausgaben --
+die projizierte Vertex-Position im Falle des Vertexprogramms bzw. die finale Fragmentfarbe im Falle des
+Fragmentprogramms.
+
+\item \emph{Übertragene Register:} Die "`Schnittstelle"' zwischen Vertex- und Fragmentprogramm.
+Dabei enthält $\sOreg{m\_TexCoord\_B0}$ den Wert des Eingabeparameters \texttt{TexCoord}, der per Vertex vorliegt,
+aber nur im Fragmentprogramm verwendet wird. $\sOreg{i\_tmp12}$ das Ergebnis der Beleuchtungsberechnung
+-- der rechte Faktor in der abschliessenden Multiplikation nach \texttt{outColor} --
+welches im Fragmentprogramm mit der ausgelesenen Texturfarbe multipliziert werden soll.
+
+Der Aufspalter hat diese Register zur Übertragung ausgewählt, da deren Werte nur per Vertex vorliegen,
+aber im Fragmentprogramm verwendet werden.
+
+\item \emph{Operationen:} Der Splitter hat die per Vertex und per Fragment zu berechnenden Operationen
+genau so aufgeteilt, wie es nach der manuellen Klassifizierung im Eingabeprogramm zu erwarten war.
+Die per Mesh zu berechnenden Operationen wurde, wie in Abschnitt~\ref{splitter_Berechnungsfrequenzen}
+beschrieben, sowohl in das Vertex- wie auch das Fragmentprogramm ausgegeben. In diesem Fall ist dies
+nur die Zuweisungen von $\sOreg{v\_ambient}$ und $\sOreg{i\_tmp11}$. Diese Werte werden im Fragment-Programm nicht verwendet,
+die Operationen selbst bleiben aber in diesem Fall wegen nicht vorgenommener Optimierungen dort erhalten.
+
+\end{itemize}
+
+\begin{figure}[h!t]
   \centering
   \input{simple_s1_split}
   \caption{Programm aus \ref{fig:simple_s1} nach der Aufspaltung.}
@@ -1530,11 +1607,27 @@ aller Eingaben entspricht.
   \label{fig:simple_s1_split}
 \end{figure}
 
+Abbildung~\ref{fig:simple_s1_images} visualisiert die Anteile der Berechnungen der verschiedenen Berechnungsfrequenzen
+an der finalen Fragmentfarbe. Dafür wurde mit Hilfe des Compilers das Eingabeprogramm in ein Vertex- und Fragmentprogramm
+in der Shadingsprache Cg übersetzt. Diese wurden für die Visualisierung der per-Mesh- bzw. per-Vertex-Anteile leicht bearbeitet
+um eben diese Anteile auszugeben. Die Bilder selbst wurden mit Hilfe eines kurzen, selbstgeschriebenen Programms erstellt,
+dass ein texturiertes 3D-Dreiecksmodel unter Verwendung der Shadingprogramme darstellt.
+
+Das erste Bild zeigt den per-Mesh-Anteil (\texttt{ambient}) und zeigt dementsprechend eine durchgängige Färbung.
+
+Im zweiten Bild zeigt wurde der per-Vertex-Anteil (\texttt{litColor}) hinzugenommen. Es ist deutlich erkennbar,
+dass die Farbe über das Modell stark variiert und damit eine Beleuchtung aus der rechten oberen Richtung suggeriert.
+Allerdings sind auch Facettierungen von der per-Vertex-Berechnung erkennbar (am deutlichsten auf dem Ausguss oder dem Henkel).
+
+Im dritten Bild wurde schliesslich auch der per-Fragment-Anteil hinzugenommen. Die Farbveränderung aus der "`Beleuchtung"'
+ist noch klar erkennbar, aber das Auslesen einer Oberflächenfarbe aus einer Textur fügt weitere visuelle Details hinzu
+und reduziert die Sichtbarkeit der Facettierungen.
+
 \begin{figure}[h]
   \centering
-  \includegraphics[width=4cm]{simple_s1_mesh}\quad
-  \includegraphics[width=4cm]{simple_s1_vert}\quad
-  \includegraphics[width=4cm]{simple_s1_frag}
+  \includegraphics[width=8cm]{simple_s1_mesh}\\
+  \includegraphics[width=8cm]{simple_s1_vert}\\
+  \includegraphics[width=8cm]{simple_s1_frag}
   \caption{Programm aus \ref{fig:simple_s1}}
   \small 1. nur per-Mesh-Anteil der Fragment-Farbe\\
   2. mit zusätzlich per-Vertex-Anteil\\
@@ -1542,7 +1635,8 @@ aller Eingaben entspricht.
   \label{fig:simple_s1_images}
 \end{figure}
 
-\newpage
+% Force figures to appear before section
+\clearpage
 \section{Code-Generator}
 
 Der \emph{Code-Generator} übersetzt ein in der Zwischencoderepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
