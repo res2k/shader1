@@ -165,13 +165,10 @@ Die Berechnung von 3D-Grafiken wird als \emph{Rendering} bezeichnet. Bei den Anw
 von 3D-Grafiken ist eine wichtige Untergruppe die der \emph{Echtzeitgrafik}, die sich durch besondere Anforderungen
 an die Berechnungszeit abgrenzt.
 
-\emph{"`Vorberechnete"'} 3D-Grafiken kommen zur Anwendung, wenn die gleiche Grafik mehrmals reproduziert werden
-soll. Dabei nimmt man lange Renderingzeiten (Minuten bis Stunden) in Kauf, die von einer Verwendung von hohen
-Bildauflösungen und komplexen Berechnungen herrühren. Diese Berechnungen werden von naturgetreuen Modellierungen 
-natürlicher Phänomene verursacht; damit erlauben diese Berechnungen aber auch fast realitätsnahe Bilder. Beispiele 
-für vorberechnete Grafiken sind computergenerierte Spezialeffekte in Filmen bzw. komplette Kinofilme aus dem Computer: 
-ein Film soll bei jeder Betrachtung in gleicher Art reproduziert werden, muss offensichtlich also nur einmal berechnet
-werden. Dadurch relativiert sich der erhöhte Aufwand zur Bildberechnung.
+\emph{"`Vorberechnete"'} 3D-Grafiken kommen vor allem zur Anwendung, wenn fast realitätsnahe Bilder gewünscht sind.
+Für deren hohe Bildauflösungen und komplexe Berechnungen werden lange Renderingzeiten (Minuten bis Stunden) in Kauf
+genommen. Beispiele 
+für vorberechnete Grafiken sind computergenerierte Spezialeffekte in Filmen bzw. komplette Kinofilme aus dem Computer.
 
 Dagegen fordert \emph{Echtzeitgrafik} Bildberechnungen, die nur Bruchteile einer Sekunde benötigen, um
 dynamische Daten mit geringen bis keinen wahrnehmbaren Verzögerungen in einer 3D-Grafik 
@@ -191,54 +188,31 @@ Verwendung vorberechneter 3D-Grafiken, reduzierte Details in Kauf genommen.
 
 Die zu rendernden zweidimensionalen Bilder werden in fast allen Fällen als Rastergrafiken gespeichert\footnote{Es gibt
 auch Renderer, die Vektorgrafiken erzeugen können.}: für jedes Pixel der Rastergrafik muss aus den gegebenen dreidimensionalen
-Daten ein Farbwert berechnet werden. Die beiden hauptsächlich verwendeten Methoden sind Raytracing und Rasterung.
+Daten ein Farbwert berechnet werden. Die beiden hauptsächlich verwendeten Methoden sind Ray Tracing und Rasterung.
 
-Beim \emph{Raytracing} wird für jeden Bildpunkt ausgehend ein Strahl in die dreidimensionale Szene nachverfolgt. Trifft
-der Strahl auf ein Objekt, wird die Farbe des von der Oberfläche des Schnittpunktes reflektierten Lichts als die Farbe
-des Bildpixels übernommen. Die reflektierte Farbe wird entweder durch eine Annäherung oder durch rekursives
-Nachverfolgen von weiteren Strahlen bestimmt. Vorteile des Raytracings sind die einfache Unterstützung von Schatten und Nachbildung von Effekten wie spiegelnder
-Oberflächen und Lichtbrechung an Oberflächenübergängen. Nachteil ist der Rechenaufwand; abhängig von gewünschter Bildauflösung und
-Szenenkomplexität kann die Anzahl der zu berechnenden Strahlen im Millionenbereich und höher liegen.
-Dabei muss für jeden Strahl wiederum eine Vielzahl von Berechnungen ausgeführt werden, um zu bestimmen, welches Objekt wo
-geschnitten wird.
+Beim \emph{Ray Tracing} wird für jeden Bildpunkt ausgehend ein Strahl in die dreidimensionale Szene nachverfolgt. 
+Die Farbe des Bildpixels wird aus dem "`Licht"', welches von der Oberfläche des zuerst "`getroffenen"' Objekts reflektiert wird,
+berechnet. Dieses reflektierte Licht wird entweder durch eine Annäherung oder durch weiteres, rekursives
+Nachverfolgen von Strahlen bestimmt. 
+Vorteile des Ray Tracings sind die einfache Unterstützung von Schatten und Effekten wie spiegelnde
+Oberflächen und Lichtbrechung; Nachteil ist der nötige Rechenaufwand.
+\footnote{Ray Tracing ist detailliert in~\cite{watt_de}, Kap. 12, beschrieben.}
 
 Beim \emph{Rastern} werden die Daten hingegen auf die Bildpixel projiziert und Farbwerte für diese Pixel berechnet.
-Während dies weniger rechenintensiv als Raytracing ist können jedoch Effekte wie Spiegelungen und Schatten nicht so
-einfach berechnet werden, sondern werden meist approximiert.
+Während dies weniger rechenintensiv als Ray Tracing ist können jedoch Effekte wie Spiegelungen und Schatten nicht so
+einfach berechnet werden, sondern werden meist approximiert.\footnote{Siehe auch~\cite{watt_de}, Kap. 4.}
 
 Die Geschwindigkeit und Einfachheit des Rasterns ist jedoch vorteilhaft für die Echtzeitgrafik und ist dort die praktisch
-ausschließlich verwendete Variante. % TODO Intel-Raytracer
+ausschließlich verwendete Variante. % TODO Intel-Ray Tracer
 Vor allem ist spezielle Hardware verfügbar welche die Rasterung stark beschleunigt. % TODO siehe Aufbau Hardware
-Raytracing findet vor allem bei der Vorberechnung von Grafiken statt. Allerdings wird dort zunächst auch Rasterung eingesetzt,
-gemischt mit Raytracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
+Ray Tracing findet vor allem bei der Vorberechnung von Grafiken statt. Allerdings wird dort zunächst auch Rasterung eingesetzt,
+gemischt mit Ray Tracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
 
 \section{Grundlegende Strukturen}
 
 \subsection{Modelle}
 
 Dreidimensionale Objekte ("`\emph{Modelle}"') einer Szene können auf verschiedene Arten repräsentiert werden~(\cite{watt_de}, S. 45-47). 
-
-Bei der \emph{impliziten Darstellung} werden Objekte durch eine Formel beschrieben. So beschreibt z.B. $x^2 + y^2 + z^2 = r^2$
-alle Oberflächenpunkte einer Kugel mit Radius $r$ am Koordinatenursprung. Diese Darstellung wird vor allem zusammen
-mit Raytracing verwendet, da sich damit die Schnittpunkte von Strahlen und Objekten einfach berechnen lassen. Allerdings
-können kompliziertere Objekte nicht mehr praktikabel implizit dargestellt werden.
-
-Das dreidimensionale Äquivalent von Rastergrafiken sind \emph{Voxelgrafiken}\footnote{Voxel: ``volumetric pixel''}. 
-Analog zu Bildern sind dies dreidimensionale
-Raster, an dessen Rasterpunkte Farbwerte o.ä. gespeichert werden. 
-%Im Vergleich zu anderen Darstellungen, die nur --
-%einen menschlichen Betrachter alleinig interessierenden -- Oberflächen abbilden, können auch komplexere
-%innere Strukturen einfach abgebildet werden.
-Damit können auch komplexere innere Strukturen einfach abgebildet werden -- andere Darstellungen bilden bloß
-Oberflächen ab, da meist allein diese einen menschlichen Betrachter interessieren.
-Der Nachteil von Voxelgrafiken ist jedoch der hohe Speicheraufwand für Voxeldaten. Diese werden
-vor allem im medizinischen Bereich verwendet, da z.B. Geräte wie CT-Scanner ihre Daten, welche mit
-höchstmöglicher Genauigkeit archiviert werden müssen, als Voxelgrafiken ausgeben.
-
-\emph{Patches} sind, einfach gesagt, gekrümmte Vierecke. Solche Oberflächen lassen sich durch mathematische Formeln
-beschreiben; Eigenschaften wie die Krümmung einer Oberfläche lassen sich durch Manipulation von Parametern der
-Formeln abändern. Jeder Punkt auf der Oberfläche lässt sich exakt berechnen. Allerdings ist das Rendering von Patches
-sehr aufwending.
 
 \newglossaryentry{Dreiecksnetz}{name={Dreiecksnetz},description={3D-Modell, Menge von Eckpunkten (Vertices) und Dreiecken}}
 \newglossaryentry{Vertex}{name={Vertex},plural={Vertices},description={Eckpunkt eines Dreiecksnetzes. Mehrzahl: Vertices}}
@@ -268,11 +242,19 @@ abgebildet werden.
 
 Hervorzuheben ist, dass auf die Berechnung von 3D-Grafiken spezialisierte Hardware 
 ausschließlich mit Dreiecksdaten arbeiten -- die Hardware kann eigentlich nichts anderes zeichnen. Wegen der Einfachheit der Darstellung
-können aber sehr viele Dreiecke in einer Sekunde gezeichnet werden. Gekrümmte Oberflächen (z.B. Kugeln, Patches) können unter Verwendung von Dreiecken visualisiert werden,
-in dem die Oberfläche mit einer hohen Anzahl von Dreiecken angenähert wird.
+können aber sehr viele Dreiecke in einer Sekunde gezeichnet werden. 
+
+Andere Arten der Modelldarstellung, wie die \emph{implizite Darstellung}\footnote{Beschreibung eines Objekts durch eine Formel,
+z.B. $x^2 + y^2 + z^2 = r^2$ für eine Kugel -- siehe~\cite{watt_de}, Abschn. 2.4}, \emph{Voxelgrafiken}\footnote{Voxel: ``volumetric pixel'' --
+Analog zu Bildern sind dies dreidimensionale Raster, an dessen Rasterpunkte Farbwerte o.ä. gespeichert werden -- siehe~\cite{watt_de}, Abschn. 4.4}
+und \emph{Patches}\footnote{Einfach gesagt, gekrümmte Vierecke -- durch mathematische Formeln beschriebene Oberflächen -- siehe~\cite{watt_de}, Kap. 3}
+finden in der Echtzeit-3D-Grafik kaum Verwendung, da sie -- im Vergleich zu Dreiecksnetzen -- aufwändig in der Darstellung sind.
+
+So müssen auf 3D-Grafik-Hardware gekrümmte Oberflächen (wie Kugeln, Patches) unter Verwendung von Dreiecken visualisiert werden:
+die Oberfläche wird mit einer hohen Anzahl von Dreiecken angenähert.
 
 %Auch zum Umrechnen von Voxel-Daten existieren Algorithmen, um daraus Dreiecksdaten zu erzeugen. % TODO Ref Marching cubes, Slides
-Auch Voxel-Daten müssen zur Darstellung auf 3D-Hardware durch Dreiecksdaten angenähert werden,
+Auch Voxel-Daten müssen dort durch Dreiecksdaten angenähert werden,
 entweder als Dreiecksnetz einer Oberfläche (``marching cubes''-Algorithmus,~\cite{watt_de} Abschn. 13.3.1)
 oder durch Benutzung von Schnittflächen~(\cite{watt_de} Abschn. 13.6).
 
@@ -281,9 +263,9 @@ oder durch Benutzung von Schnittflächen~(\cite{watt_de} Abschn. 13.6).
 \subsection{Räume, Transformationen und Kamera}
 
 In praktischen Anwendungen wird selten ein einziges Modell statisch dargestellt. In der Regel müssen mehrere Modelle
-gleichzeitig dargestellt werden (z.B. ein aus mehreren Baugruppen zusammengesetztes Teil), wobei die Modelle
-in bestimmter Weise zueinander positioniert dargestellt werden müssen. Weiterhin soll ein "`Bewegen"' um und in den 3D-Modellen
- möglich sein, also die Betrachtung von beliebigen Punkten aus. Dieser "`Blickpunkt"' des Betrachters ist die \emph{Kamera}.
+gleichzeitig dargestellt werden (z.B. zusammengesetztes Bauteil), wobei die Modelle
+in bestimmter Weise zueinander positioniert dargestellt werden müssen. Weiterhin soll ein "`Bewegen"' im Raum --
+also die Betrachtung von beliebigen Punkten aus -- möglich sein. Dieser "`Blickpunkt"' des Betrachters ist die \emph{Kamera}.
 
 Zu diesem Zweck werden verschiedene \emph{virtuelle Räume} definiert~(\cite{watt_de}, S. 166ff).
  So gibt es für jedes Modell ein \emph{Objektkoordinatensystem}\footnote{engl. ``object space''},
@@ -293,10 +275,10 @@ Dazu wird jedem Modell eine \emph{Transformation} zugewiesen, welche Koordinaten
 Weltkoordinatensystem überführt. 
 
 Eine Transformation wendet Verschiebungen, Skalierungen und Rotationen an. Als Repräsentation von Transformationen
-verwendet man Matrizen, genauer $4 \times 4$-Matrizen: die dreidimensionalen Koordinaten des Modells werden
-in homogene Koordinaten überführt, % Ref Watt (DE)
-jede Koordinate wird dann mit der Transformationsmatrix multipliziert. Die Verwendung von homogenen Koordinaten
-erlaubt das Darstellen von Verschiebungen in der Matrix. Mehrere Transformationen können angewendet werden, indem 
+verwendet man Matrizen\footnote{Genauer: $4 \times 4$-Matrizen -- die dreidimensionalen Koordinaten des Modells werden
+in homogene Koordinaten überführt. Die Verwendung von homogenen Koordinaten
+erlaubt das Darstellen von Verschiebungen in der Matrix.}, % Ref Watt (DE)
+jede Koordinate wird dann mit der Transformationsmatrix multipliziert. Mehrere Transformationen können angewendet werden, indem 
 die entsprechenden Matrizen der Teiltransformationen in der gewünschten Reihenfolge zu der Gesamtmatrix konkateniert werden~(\cite{watt_de}, Kap. 1).
 
 Die Übersetzung eines Dreiecksnetz-Modells in das Weltkoordinatensystem erfordert nur die Anwendung der Transformationsmatrix
@@ -306,27 +288,31 @@ auf die Koordinaten aller Vertices.
 Die Position des Betrachters wird durch das \emph{Kamerakoordinatensystem}\footnote{engl. ``eye space'' oder ``camera space''}
  bestimmt. Dies ist so definiert, dass der "`Blickpunkt"' am Koordinatenursprung des Systems liegt
 und die "`Blickrichtung"' einer gegebenen Achse entspricht. 
-Durch eine weitere Transformation werden Koordinaten im Weltkoordinatensystem in das Kamerakoordinatensystem
-überführt um damit eine Positionierung des Betrachters an einer beliebigen Position in der Szene und den Blick in eine beliebige Richtung zu erlauben.
+Durch eine weitere Transformation werden Welt-Koordinaten in Kamera-Koordinaten
+überführt. Dies erlaubt eine beliebige Positionierung des Betrachters in der Szene und eine beliebige Blickrichtung.
 Die zugrundeliegenden Prinzipien sind die selben wie bei der Transformation aus dem Objektkoordinatensystem.
 
 Der Blickpunkt ist ein Punkt in einem \emph{dreidimensionalem} Raum, eine Szene wird jedoch auf einem
-\emph{zweidimensionalem} Bild dargestellt -- es besitzt also eine Ausdehnung in Breite
-und Höhe, aber nicht Tiefe. Zu diesem Zweck wird eine \emph{Bildebene} in geringem Abstand zum Betrachter gesetzt,
+\emph{zweidimensionalem} Bild dargestellt -- die "`verlorene"' Dimension ist die Tiefe.
+Daher wird eine \emph{Bildebene} in geringem Abstand zum Betrachter gesetzt,
 welche als "`Projektionsfläche"' der Szene dient.
 
-Weiterhin müssen Modelle \emph{perspektivisch verzerrt} werden. Bei den vorangegangenen Transformationen werden die Koordinaten
-als homogene Koordinaten interpretiert. Homogene Koordinaten besitzen eine vierte Komponente $w$, die bei der Anwendung
-der vorangegangenen Transformationen $1$ ist~(\cite{watt_de}, Kap. 1).
-Für die perspektivische Verzerrung wird auf die Koordinaten im Kamerakoordinatensystem eine \emph{Projektionsmatrix} angewendet,
-die als Besonderheit die $w$-Koordinate auf den Wert der $z$-Koordinate -- den Abstand von der Bildebene -- setzt.
-Werden nun die transformierten Koordinaten durch die $w$-Komponente dividiert so ist dies effektiv die perspektivische Verzerrung.
-Die Projektionsmatrix kann frei gewählt werden -- z.B. kann sie, durch Setzen der $w$-Koordinate auf $1$, auch orthographische
-Projektionen darstellen.
+Weiterhin müssen Modelle \emph{perspektivisch verzerrt} werden. 
+Stark vereinfacht gesagt werden auf die Kamera-Koordinaten eine \emph{Projektionsmatrix} angewendet, welche dazu führt,
+das bei der Projektion auf die Bildebene jede Koordinate durch ihre $z$-Komponente dividiert wird -- eine perspektivische Verzerrung.
+\footnote{Eine ausführliche Beschreibung findet sich in~\cite{watt_de}, Kap. 1.}
+% Bei den vorangegangenen Transformationen werden die Koordinaten
+% als homogene Koordinaten interpretiert. Homogene Koordinaten besitzen eine vierte Komponente $w$, die bei der Anwendung
+% der vorangegangenen Transformationen $1$ ist~(\cite{watt_de}, Kap. 1).
+% Für die perspektivische Verzerrung wird auf die Koordinaten im Kamerakoordinatensystem eine \emph{Projektionsmatrix} angewendet,
+% die als Besonderheit die $w$-Koordinate auf den Wert der $z$-Koordinate -- den Abstand von der Bildebene -- setzt.
+% Werden nun die transformierten Koordinaten durch die $w$-Komponente dividiert so ist dies effektiv die perspektivische Verzerrung.
+% Die Projektionsmatrix kann frei gewählt werden -- z.B. kann sie, durch Setzen der $w$-Koordinate auf $1$, auch orthographische
+% Projektionen darstellen.
 
 \subsection{Texturen}
 
-\newglossaryentry{Textur}{name={Textur},plural={Textures},description={Bilddaten, bei der Fragmentverarbeitung ausgelesen. Typischerweise auf Oberfläche von Modellen "`gespannt"'}}
+\newglossaryentry{Textur}{name={Textur},plural={Texturen},description={Bilddaten, bei der Fragmentverarbeitung ausgelesen. Typischerweise auf Oberfläche von Modellen "`gespannt"'}}
 Zur Simulation von detaillierten Oberflächen werden \emph{\glspl{Textur}} verwendet. Im Regelfall sind dies zweidimensionale
 Bilder. Einem jeden Dreieck eines Modells ist ein (ebenfalls dreieckiger) Ausschnitt auf einer Textur zugeordnet. 
 Die Zuordnung findet über \emph{Texturkoordinaten} statt, d.h. jedem Vertex ist ein weiteres Zahlenpaar zugeordnet,
@@ -339,13 +325,13 @@ berechnet. Der Farbwert der Textur an dieser Position wird ausgelesen und dient 
 
 \newglossaryentry{Shading}{name={Shading},description={Berechnung der Farbe eines beleuchteten Punktes auf einer 3D-Oberfläche}}
 Bei der visuellen Wahrnehmung spielt die Interaktion von wahrgenommen Oberflächen mit Lichtquellen eine wichtige
-Rolle. Die Helligkeit einer Oberfläche variiert mit Abstand und Lage bezüglich einer Lichtquelle. 
-Aus Helligkeitsunterschieden können auf Objekteigenschaften wie Drehung, Größe und Form sowie auf Oberflächeneigenschaften
-wie deren Struktur geschlossen werden. Bei der Computergrafik ist die Berechnung der Beleuchtung einer Oberfläche
-entsprechend wichtig: soll die Realität nachgeahmt werden, so sind Beleuchtungsberechnungen gewünscht, die möglichst
-nah die Ergebnisse der in der Realität stattfindenden physikalischen Vorgänge nachbilden. Bei Anwendungen wie die
-Konstruktion eines Bauteils werden dagegen Berechnungen verwendet, die nicht physikalisch korrekt sind, aber dafür
-die dreidimensionale Form einfach erkennen lassen.
+Rolle. Aus Helligkeitsunterschieden, die aus Variationen von Abstand und Lage zu einer Lichtquelle
+herrühren, können auf Objekteigenschaften wie Drehung, Größe und Form sowie auf Oberflächeneigenschaften
+wie deren Struktur geschlossen werden.
+Bei der Computergrafik ist die Berechnung der Beleuchtung einer Oberfläche
+entsprechend wichtig. Es variiert aber nach Anwendungsfall, ob die Beleuchtung die in der Realität stattfindenden physikalischen Vorgänge
+nachbilden soll, oder aber ob diese nicht physikalisch korrekt sein, aber dafür
+eine dreidimensionale Form einfach erkennen lassen soll.
 
 In der bisherigen Beschreibung der Darstellung von Oberflächen wurde die Berechnung der Beleuchtung einer
 Oberfläche ausgelassen. Diese Berechnung wird \emph{\gls{Shading}} (übersetzt "`Schattierung"') genannt~(\cite{watt_de}, S. 146, 198).
@@ -354,7 +340,7 @@ Beim Shading wird eine \emph{Lichtintensität}, d.h. die Intensität des reflekt
 Oberfläche berechnet.
 
 Um das reflektierte Licht zu berechnen wird mindestens der Oberflächenpunkt im Raum sowie die Lage der Oberfläche
--- dargestellt durch eine \emph{Normale} der Oberfläche an dem gegebenen Punkt -- benötigt.
+-- als \emph{Oberflächenormale} an dem gegebenen Punkt -- benötigt.
 
 % TODO Bilder
 Es gibt verschiedene Strategien zur Berechnung von Lichtintensitäten. Die einfachste ist die Berechnung der Lichtintensität
@@ -369,6 +355,7 @@ Trotzdem haben Objekte bei Verwendung dieser Methode ein charakteristisches Auss
 Die aufwändigste Methode ist das Berechnen der Intensität für jedes dargestellte Pixel ("`Phong Shading"'), wobei
 nur per Vertex verfügbare Werte über das Dreieck linear interpoliert werden (analog zur eigentlichen Intensität beim
 Gouraud-Shading). Der Aufwand wird aber damit belohnt, dass keine Facetten und wenig Kanten sichtbar sind.
+\footnote{Ein Vergleich der verschiedenen Interpolationsarten findet sich auch in~\cite{watt_de}, Kap. 18.}
 % @@@ Kanten sichtbar an Umriss
 
 \section{Aufbau Hardware}
@@ -382,26 +369,26 @@ Gouraud-Shading). Der Aufwand wird aber damit belohnt, dass keine Facetten und w
   \label{fig:3d_pipeline}
 \end{figure}
 
-Die Ausgabe der Grafik soll in der Regel auf einem Computermonitor erfolgen - also als Rastergrafik auf einer zweidimensionalen Fläche.
+Die Ausgabe der Grafik soll in der Regel als Rastergrafik auf einem Computermonitor, also auf einer zweidimensionalen Fläche, erfolgen.
 Demgegenüber besitzen 3D-Modelle per Definition Koordinaten in einem dreidimensionalen Raum, deren Komponenten potentiell
-aus der Menge der reellen Zahlen stammen. Es muss also eine Herunterrechnung, oder Projektion, vorgenommen werden. 
+aus der Menge der reellen Zahlen stammen. Es muss also eine \emph{Projektion} vorgenommen werden. 
 
-Diese Projektion wird nach der Vertexverarbeitung durchgeführt. Da auf alle Vertices die gleichen
-Berechnungen angewendet werden, werden diese zur Geschwindigkeitssteigerung in Hardware in der Regel parallel 
-auf mehreren Recheneinheiten ausgeführt. 
-Des weiteren rechnen die benutzten Recheneinheiten im Allgemeinen mit Vektoren.
+Diese Projektion wird nach der Vertexverarbeitung durchgeführt. Auf alle Vertices werden die gleichen
+Berechnungen angewendet, diese werden in Hardware in der Regel parallel 
+auf mehreren Recheneinheiten ausgeführt. Die Recheneinheiten rechnen im Allgemeinen mit Vektoren.
 Die Vertexverarbeitung berechnet mehrere Werte pro Vertex. Minimal muss die Vertex-Koordinate in das Kamerakoordinatensystem
-abgebildet werden. In der Regel werden aber weitere Werte berechnet ("`Vertexattribute"'), die als Eingabe der späteren Fragmentverarbeitung dienen.
+abgebildet werden.
+\newglossaryentry{Vertexattribut}{name={Vertexattribut},plural={Vertexattribute},description={Weitere, jedem Vertex zugeordnete Werte}}
+In der Regel werden aber weitere Werte berechnet ("`\glspl{Vertexattribut}"'), die als Eingabe der späteren Fragmentverarbeitung dienen.
 
 Auf der neuesten Generation von Grafikkarten (GeForce 8) % etwas zu GraKa-Generationen sagen
 ist ein weiterer Verarbeitungsschritt verfügbar, die "`Geometrieverarbeitung"'\footnote{engl. geometry shader}. 
 Diese hat die Besonderheit, neue Dreiecke
-mit beliebigen Koordinaten erzeugen zu können. Betrachtet man die Verarbeitungsschritte eines Modells auf der
-Grafikkarte ohne Geometrieeinheit, so bemerkt man, dass diese "`statisch"' bezüglich der Vertices sind, da nur existierende
-Werte manipuliert werden können. Gleiches gilt für Dreiecksdaten. Das \emph{Erzeugen} von Vertices kann auf diesen Grafikkarten
+mit beliebigen Koordinaten erzeugen zu können: 
+auf eineer Grafikkarte ohne Geometrieeinheit sind alle Verarbeitungsschurtte "`statisch"' bezüglich der Vertices -- nur existierende
+Werte können manipuliert werden. Gleiches gilt für Dreiecksdaten. Das \emph{Erzeugen} von Vertices kann auf diesen Grafikkarten
 also nur durch die CPU erfolgen, woraufhin die Daten zur GPU übertragen werden.
-
- Steht aber der Schritt der Geometrieverarbeitung zur Verfügung, kann die GPU selbst Vertices und Dreiecke erzeugen
+Im Schritt der Geometrieverarbeitung kann aber die GPU selbst Vertices und Dreiecke erzeugen
 und auch entfernen. Dieser Schritt erlaubt die Implementierung von Algorithmen auf der Grafikkarte, die viel 
 Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, erfordern.
 
@@ -409,7 +396,7 @@ Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, 
 Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in das \emph{Kamerakoordinatensystem}\footnote{Betrachter befindet sich am
 Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rasterbild mit Hilfe einer einfachen linearen Projektion
 abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
-gezeichnet werden. Dies geschieht durch Rasterung der Dreiecke. Um die Farbe eines berechneten 
+gezeichnet werden. Dies geschieht durch Rasterung\footnote{siehe auch~\cite{watt_de}, Abschn. 6.4} der Dreiecke. Um die Farbe eines berechneten 
 \emph{\gls{Fragment}s}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
 Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment genau einem Pixel entspricht.} zu 
 bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
@@ -417,7 +404,7 @@ durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der
 berechnet. In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
 und mit den Vertexattributen durch Operationen kombiniert (z.B. Multiplikation, um eine beleuchtete Oberfläche zu simulieren).
 Wie bei den Vertex-Berechnungen werden auch bei den Fragment-Berechnungen die gleichen Berechnungen auf eine Vielzahl
-von Fragmenten zur gleichen Zeit angewendet. Auch die Fragment-Berechnungen erfolgen parallel auf mehreren Vektorrecheneinheiten.
+von Fragmenten gleichzeitig angewendet und erfolgt parallel auf mehreren Vektorrecheneinheiten.
 
 \begin{figure}[h]
   \centering
