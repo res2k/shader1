@@ -1280,12 +1280,12 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und \emph{Fragmentprogramm} auf.
 Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}
 \footnote{Siehe Abschnitte \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz}},
-in der diese Operation ausgeführt wird, zugeordnet werden: mit \emph{Vertexfrequenz}, oder per Vertex, berechnete Operationen werden dem Vertexprogramm zugeordnet.
-Analog werden mit \emph{Fragmentfrequenz}, oder per Fragment, berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
+in der diese Operation ausgeführt wird, zuordnen: mit \emph{Vertexfrequenz} (per Vertex) berechnete Operationen werden dem Vertexprogramm zugeordnet.
+Analog werden mit \emph{Fragmentfrequenz} (per Fragment) berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
 und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
 
-\paragraph{Operanden:} Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche die höchste ist, in der einer der Operatoren
-vorliegt. So muss z.B. eine Verknüpfung von zwei Werten per Fragment ausgeführt werden, wenn einer der Operatoren per Fragment berechnet wurde.
+\paragraph{Operanden:} Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche dem Maximum der Operanden-Frequenzen
+entspricht. So muss z.B. eine Addition von zwei Werten per Fragment ausgeführt werden, wenn einer der Summanden per Fragment berechnet wurde.
 % DIes ist darin begründet, dass Werte nur vom Vertex- zum Fragmentprogramm, aber nicht zurück, übertragen werden können. ... \ref{}
 
 \paragraph{Operation:} Eine Berechnung kann per Vertex ausgeführt werden, wenn beide Eingaben per Vertex vorliegen, und
@@ -1312,14 +1312,14 @@ vorzugeben.
 "`Echte"' Konstanten werden vom Splitter auch als "`per Mesh"' betrachtet.
 
 Für jedes Register wird verfolgt, für welche Frequenzen es vorliegt, im Wesentlichen also in welchem Teilprogramm es berechnet wird.
-Dabei kann ein Register in mehreren Frequenzen verfügbar sein, wenn es im Vertex-Programm berechnet wurde, aber später als
-an das Fragmentprogramm zu Übertragen markiert wird (Abschnitt~\ref{schnittstelle}).
+Dabei kann ein Register in mehreren Frequenzen verfügbar sein, wenn es im Vertex-Programm berechnet wurde, aber später 
+zur Übertragung an das Fragmentprogramm markiert wird (Abschnitt~\ref{schnittstelle}).
 
 Der Splitter kategorisiert auch Operationen und Werte als "`per Mesh"', generiert jedoch \emph{kein} separates Programm.
 Stattdessen werden per-Mesh-Operationen sowohl vom Vertex- als auch vom Fragmentprogramm ausgeführt. Zwei Annahmen
 liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen mit uniformen Werten allein vorgenommen werden, es also kein
-Nachteil durch eine mehrfache Ausführung in Vertex- und Fragmentprogramm entsteht. Darüber hinaus können auch durch, so die zweite Annahme,
-weitere Optimierungsschritte wie Dead Code Elimination einige Operationen auf uniformen Werten entfernt werden.
+Nachteil durch eine mehrfache Ausführung in Vertex- und Fragmentprogramm entsteht. Die zweite Annahme ist,
+dass durch weitere Optimierungsschritte wie Dead Code Elimination einige Operationen auf uniformen Werten entfernt werden.
 
 % Eingaben: Uniform oder per Vertex; Fragmentfreq. nur Eingaben von VP
 
@@ -1363,10 +1363,10 @@ können (siehe auch~\ref{split_builtins}). % Zweistelliges Äquivalent für "lin
 
 Da Rechenoperationen auf Vektoren komponentweise ausgeführt werden,  ist die "`Interpolierbarkeit"' ohne weiteres auch auf Vektoroperationen anwendbar.
 
-Die geforderte Linearität von $g(x)$ führt dazu, dass bloss Operationen auf \texttt{float}-Werten problemlos interpolierbar sind:
-bei der Interpolation von Integer-Werten können nicht-Integer-Werte als Zwischenergebnisse entstehen,
-die (zwangsweise) gerundet\footnote{Oder Nachkommastelle abgeschnitten usw.} werden müssen. Diese Rundung
-ist aber keine stetige Funktion und deshalb nicht interpolierbar.
+Die geforderte Linearität von $g(x)$ führt dazu, dass bloss Operationen auf \texttt{float}-Werten problemlos interpolierbar sind.
+Integer-Werte sind nicht interpolierbar, da bei deren Interpolation nicht-Integer-Werte als Zwischenergebnisse entstehen können.
+Diese müssen (zwangsweise) gerundet\footnote{Oder Nachkommastelle abgeschnitten usw.} werden -- diese Rundung
+ist aber keine stetige Funktion.
 
 Zu Beachten ist, dass Interpolierbarkeit nur Relevanz hat, wenn entschieden wird, ob eine Operation, bei der mindestens ein Operand
 nur per Vertex (oder höher) vorliegt, auch per Vertex ausgeführt werden kann.
@@ -1392,13 +1392,13 @@ ist wieder eine lineare Funktion, Addition und Subtraktion sind also uneingeschr
 
 Multiplikation und Division sind interpolierbar, wenn mindestens ein Operand höchstens per Mesh gegeben ist.
 Sind beide Operanden per Vertex gegeben, so ist eine Multiplikation oder Division keine lineare,
-sondern eine \emph{quadratische} Funktion. Da per Mesh gegebene Operanden sind praktisch als
+sondern eine \emph{quadratische} Funktion. Da per Mesh gegebene Operanden praktisch als
 konstant betrachtet werden können ist die Multiplikation oder Division mit einem per Mesh gegebenen
 Operanden eine lineare Funktion und interpolierbar.
 
-Modulo ist nicht interpolierbar da es keine stetige Funktion ist.
+Die Modulo-Operation ist unstetig und daher nicht interpolierbar.
 
-\paragraph{Logische Ausdrücke, Vergleichsoperationen:} Diese sind nicht interpolierbar da keine stetigen Funktionen.
+\paragraph{Logische Ausdrücke, Vergleichsoperationen:} Diese Operationen sind ebenfalls unstetig und somit nicht interpolierbar.
 
 \paragraph{Unäre Ausdrücke:} Negation ist offentsichtlich interpolierbar.
 
@@ -1407,18 +1407,27 @@ Logisches NICHT ist, wie die anderen logischen Ausdrücke, nicht interpolierbar.
 Bitweises invertieren ist nur für Integer-Werte sinnvoll und damit nicht interpolierbar.
 
 \paragraph{Eingebaute Funktionen:} \label{split_builtins}
-Skalarprodukt, Vektorprodukt und Matrixmultiplikation lassen sich alle mit arithmetischen Basisoperationen darstellen;
-vor allem eine Multiplikation ist in allen drei "`enthalten"'. Damit ergeben sich die gleichen Beschränkungen:
+Skalarprodukt, Vektorprodukt und Matrixmultiplikation lassen sich alle mit arithmetischen Basisoperationen darstellen.
+Da in diesen Darstellungen jeweils auch die Multiplikation enthalten ist, ergeben sich die oben genannten Beschränkungen:
 diese Operationen sind nur interpolierbar, wenn mindesten ein Operand per Mesh gegeben ist.
 
 Potenzierung ist im Allgemeinen keine stetige Funktion und damit nicht interpolierbar.
 
 Die Berechnung von "`Normalisierung"' und "`Euklidische Länge"' erfordert das Ziehen einer Wurzel bzw. Potenzieren mit $\frac{1}{2}$.
-Damit sind diese Funktionen auch nicht interpolierbar.
+Damit sind diese Funktionen ebenfalls nicht interpolierbar.
 
 Minimum und Maximum sind im Allgemeinen keine stetigen Funktion und damit nicht interpolierbar.
 
 Die Texturfunktionen sind prinzipbedingt nicht interpolierbar.
+
+\subsection{Flusskontrolle}
+
+Neben mathematischen Ausdrücken kann ein aufzuspaltendes Programm auch Operationen der Flusskontrolle enthalten,
+die ebenso auf mehrere Ausgabeprogramme aufgespaltet werden müssen.
+
+Grundsätzlich richten sich die Ausführungsfrequenzen von den Ablaufsteuerungsoperationen nach den Frequenzen der 
+"`eingebetteten"' Operationen. Im Gegensatz zu "`einfachen"' Operationen wird eine Ablaufsteuerungsoperationen meist
+in mehrere oder alle Ausgabeprogramme übernommen, allerdings mit anderen "`eingebetteten"' Operationen.
 
 \paragraph{Sequenzschachtelung:} Eine Sequenzschachtelungsoperation wird prinzipiell zu allen generierten Teilprogrammen hinzugefügt,
 allerdings mit unterschiedlichen Sequenzen. Diese sind selbst das Ergebnis einer Aufspaltung der ursprünglichen Sequenz.
@@ -1429,15 +1438,15 @@ und einem bool'scher Bedingungswert, nach dessen Wert abhängig verzweigt wird.
 Die beiden eingeschachtelten Verzweigungssequenzen werden selbst aufgespalten.
 
 Der bool'scher Bedingungswert kann entweder per Mesh oder per Fragment vorliegen: per Mesh, wenn er eine per-Mesh-Eingabe ist bzw. allein aus
-per-Mesh-Eingaben berechnet wurde. Per Fragment, wenn er aus Werten anderer Frequenzen berechnet wurde. Per Vertex ist nicht
-möglich, da auf Grund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen diese immer per Fragment berechnet werden.
+per-Mesh-Eingaben berechnet wurde. Per Fragment, wenn er aus Werten anderer Frequenzen berechnet wurde.
+Aufgrund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen kann ein Bedingungswert nicht per Vertex vorliegen.
 
 Selbst wenn der Bedingungswert nur per Fragment vorliegt, kann die Verzweigungsoperation nicht allein per Fragment ausgeführt werden:
 die Aufspaltung der Verzweigungsblöcke kann auch in per Mesh bzw. per Vertex auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
-eingeschachtelte Sequenzen, d.h. keine Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
+eingeschachtelte Sequenzen, d.h. ohne Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
 die Vertexteile beider Verzweigungsblöcke ausgeführt. Zwischenergebnisse müssen an das Fragmentprogramm übertragen und dort ausgewählt werden.
 
-Von den Verzweigungsblöcken beschriebene Register sind immer nur in der selben Frequenz wie der Bedingungswert verfügbar:
+Von den Verzweigungsblöcken beschriebene Register sind immer nur in der selben Frequenz wie das Register des Bedingungswerts verfügbar:
 Selbst wenn beide Verzweigungen bloss per-Vertex-Operationen ausführen, sind durch die Auswahl nach einer per-Fragment-Bedingung
 die berechneten Wert nur per Fragment verfügbar.
 
@@ -1466,7 +1475,7 @@ Ausführen von "`echten"' Schleifen ist also nur komplett per Mesh oder per Frag
 \paragraph{Funktionsaufruf:} Der Rumpf einer Funktion ist eine Sequenz, kann also prinzipiell in einen per-Vertex- und einen per-Fragment-Teil aufgespalten werden.
 Das Hauptproblem besteht dabei darin, dass die Frequenzen der Funktionsparameter je nach Aufruf variieren können.
 
-Dies wurde gelöst, in dem für eine Funktion bei der Aufspaltung mehrere Varianten generiert werden: bei einem Funktionsaufruf
+Dies wird gelöst, in dem für eine Funktion bei der Aufspaltung mehrere Varianten generiert werden: bei einem Funktionsaufruf
 wird die Funktion aufgespalten, mit den jeweiligen Verfügbarkeiten der übergebenen aktuellen Parameter. Wird die gleiche Funktion
 nochmals aufgerufen, aber mit einer anderen "`Signatur"' von Verfügbarkeiten, so wird die Funktion in neue Varianten aufgespalten usw.
 
@@ -1476,14 +1485,16 @@ einer Variation bestimmt werden.
 Das Übertragen von Werten vom per-Vertex- zum per-Fragment-Teil einer Funktionsvariation geschieht über generierte Ausgabe- bzw.
 Eingabeparameter; die eigentliche Übertragung geschieht schlussendlich in der Eintrittsfunktion.
 
-Rekursionen müssen besonders behandelt werden: um die korrekten Verfügbarkeiten der Ausgabeparameter zu bestimmen
+%Rekursionen müssen besonders behandelt werden:
+Für Rekursionen ergibt sich folgendes Problem:
+um die korrekten Verfügbarkeiten der Ausgabeparameter zu bestimmen
 muss eine Funktion zunächst aufgespalten werden. Im Falle einer Rekursion wird möglicherweise aber genau die angetroffene
 Variante gerade selbst aufgespalten -- die Verfügbarkeiten sind also noch nicht bekannt, der Versuch einer Aufspaltung der
 angetroffenen Variante würde über kurz oder lang zum exakt selben Problem führen.
 
-Die Auflösung ist, dass rekursive Funktionen besonders behandelt werden: im Wesentlichen wird, bei einem festgestelltem
-rekursiven Aufruf, konservativ angenommen, die Ausgabeparameter sind nur per Fragment verfügbar. Damit kann der Rumpf
-einer rekursiven Funktion aufgespalten werden.
+Dieses Problem wird vermieden, in dem rekursive Funktionen besonders behandelt werden: im Wesentlichen wird angenommen,
+dass bei einem festgestelltem rekursiven Aufruf die Ausgabeparameter nur per Fragment verfügbar sind.
+Mit dieser konservativen Annahme kann der Rumpf einer rekursiven Funktion aufgespalten werden.
 
 % Behandlung von: arithm. Ausdr., Logik, Vergl, Unäre Ausdr., Verzweigungen, Schleifen, Funktionen
 
