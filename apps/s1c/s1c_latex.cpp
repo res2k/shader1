@@ -178,8 +178,6 @@ int main (const int argc, const char* const argv[])
 
     for (int f = 0; f < splitter::freqNum; f++)
     {
-      if (f > 0) std::cout << "\\vspace{0.5em}" << std::endl;
-      
       prog = opt.ApplyOptimizations (splitter.GetOutputProgram (f));
       codegen::LatexGenerator codegen;
       codegen::StringsArrayPtr progOutput (codegen.Generate (prog));
@@ -189,20 +187,24 @@ int main (const int argc, const char* const argv[])
 	std::cout << progOutput->Get (i) << std::endl;
       }
       
-      if ((f < splitter::freqFragment)
-	&& (!splitter.GetOutputProgram (f)->GetTransferValues().empty()))
+      if (f < splitter::freqFragment)
       {
-	std::cout << "\\sOtransfer{" << std::endl;
-	const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram (f)->GetTransferValues();
-	for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
-	    transferVal != transferValues.end();
-	    ++transferVal)
+	if (!splitter.GetOutputProgram (f)->GetTransferValues().empty())
 	{
-	  std::string str;
-	  transferVal->second.toUTF8String (str);
-	  std::cout << "\\sOreg{" << codegen::LatexGenerator::LatexEscape (str) << "}\\ ";
+	  std::cout << "\\sOtransfer{" << std::endl;
+	  const intermediate::Program::TransferValues& transferValues = splitter.GetOutputProgram (f)->GetTransferValues();
+	  for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
+	      transferVal != transferValues.end();
+	      ++transferVal)
+	  {
+	    std::string str;
+	    transferVal->second.toUTF8String (str);
+	    std::cout << "\\sOreg{" << codegen::LatexGenerator::LatexEscape (str) << "}\\ ";
+	  }
+	  std::cout << std::endl << "}" << std::endl;
 	}
-	std::cout << std::endl << "}" << std::endl;
+	else if (f >= splitter::freqVertex)
+	  std::cout << "\\vspace{0.5em}" << std::endl;
       }
     }
   }
