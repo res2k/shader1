@@ -54,8 +54,9 @@ werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt 
 \Gnt{ausdruck}:\label{ausdruck}\\
 \hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gopt{\Galt{\Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} \Gor{}\Gnt{asdr\_suffix\_zuweisung}{\scriptsize (\ref{asdr_suffix_zuweisung})} }}\\
 
-Der Ausdruck höchster Präzedenz ist eine Zuweisung, auf welche einfach in der Regel für
-allgemeine Ausdrücke verwiesen wird.
+Der Ausdruck höchster Präzedenz ist die Zuweisung.
+%, auf welche einfach in der Regel für
+%allgemeine Ausdrücke verwiesen wird.
 
 
 \subsubsection{Zuweisung}\label{Zuweisung}
@@ -86,7 +87,7 @@ Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 \hspace*{1cm}\Gt{[}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{]}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\\
 
 \emph{Basisausdrücke} sind die Ausdrücke niedrigster Präzedenz. Dies sind neben Bezeichnern
-für Variablen, Konstanten, und Funktionsaufrufe auch Funktionsaufrufe und geschachtelte Ausdrücke.
+für Variablen und Konstanten auch Funktionsaufrufe und geschachtelte Ausdrücke.
 Weiterhin können Zugriffe auf Attribute (siehe \Gnt{attribut}{\scriptsize (\ref{attribut})}) bzw. Arrayelemente spezifiziert werden.
 
 
@@ -133,7 +134,7 @@ Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet
 % TODO Mod bei floats?
 
 Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
-zu einem dazu zuweisungskompatiblen Typ sein.
+dazu zuweisungskompatiblen Typ sein.
 
 Sind beide Operanden vom Typ \kw{unsigned int}, so ist der Typ des ausgewerteten Ausdrucks \kw{unsigned int}.
 
@@ -186,17 +187,17 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 \Gnt{asdr\_vergleich}:\label{asdr_vergleich}\\
 \hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gclosure{\Galt{\Gt{>}\Gor{}\Gt{>=}\Gor{}\Gt{<}\Gor{}\Gt{<=}}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} }\\
 
-\op{>} gibt an ob der linke Operand größer als der rechte Operand ist.
+\op{>} wertet aus ob der linke Operand größer als der rechte Operand ist.
 
-\op{>=} gibt an ob der linke Operand größer oder gleich dem rechten Operanden ist.
+\op{>=} wertet aus ob der linke Operand größer oder gleich dem rechten Operanden ist.
 
-\op{<} gibt an ob der linke Operand kleiner als der rechte Operand ist.
+\op{<} wertet aus ob der linke Operand kleiner als der rechte Operand ist.
 
-\op{<=} gibt an ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
+\op{<=} wertet aus ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
 
-\op{==} gibt an ob der linke Operand gleich dem der rechte Operand ist.
+\op{==} wertet aus ob der linke Operand gleich dem rechten Operand ist.
 
-\op{!=} gibt an ob der linke Operand nicht gleich dem rechten Operanden ist.
+\op{!=} wertet aus ob der linke Operand nicht gleich dem rechten Operanden ist.
 
 Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
 dazu zuweisungskompatiblen Typ sein.
@@ -332,17 +333,17 @@ des Basistyps.
 Vektorkonstruktoren sind besondere, vorgegebene Funktionen, die gleiche Bezeichner wie Vektortypen haben
 (siehe auch \Gnt{funktion\_aufruf}{\scriptsize (\ref{funktion_aufruf})}).
 
-Wird ein Vektor aus einem \emph{Basisausdruck} konstruiert, so haben alle Komponenten diesen Wert.
+Wird ein Vektor aus \emph{einem} Basisausdruck konstruiert, so haben alle Komponenten diesen Wert.
 Der \emph{Basisausdruck} muss als Typ einen Basistyp besitzen.
 
-Wird ein Vektor aus mehreren Basis- oder Vektorausdrücken oder einem Vektorausdruck konstruiert,
+Wird ein Vektor aus \emph{mehreren} Basis- oder Vektorausdrücken oder einem Vektorausdruck konstruiert,
 so wird der ersten Komponente der Wert des ersten Basisausdrucks bzw. der ersten Vektorausdruckskomponente zugewiesen,
 der zweiten Komponente der Wert des nächsten Basisausdrucks bzw. der nächsten Vektorausdruckskomponente usw.
 Allen Komponenten muss ein Wert zugewiesen werden. Die Anzahl aller Basisausdrücke und Komponenten der Vektorausdrücke
 zusammen muss exakt der Komponentenanzahl entsprechen.
 Alle verwendeten Vektortypen müssen vom gleichen Basistyp wie der zu konstruierende Vektor sein.
 
-\begin{lstlisting}
+\begin{lstlisting}[basicstyle=\ttfamily\small,lineskip=-11pt]
 float3 a = float3 (1.0);           // a = (1.0, 1.0, 1.0)
 float3 b = float3 (1.0, 2.0, 3.0);
 float4 c = float4 (b, 0.5);        // c = (1.0, 2.0, 3.0, 0.5)
@@ -356,7 +357,7 @@ float3 d = float3 (1.0, 2.0);      // Fehler
 
 \paragraph{Vektorattribute}\label{Vektorattribute}
 Einzelne Komponenten können entweder mit Array-Syntax oder den Attributen \attr{x},
-\attr{y}, \attr{z}, \attr{w}, \attr{r}, \attr{g}, \attr{b}, \attr{a} angesprochen
+\attr{y}, \attr{z}, \attr{w} bzw. \attr{r}, \attr{g}, \attr{b}, \attr{a} angesprochen
 werden. \attr{x}/\attr{r} spezifiert die erste Komponente,
 \attr{y}/\attr{g} die zweite Komponente, \attr{z}/\attr{b} die dritte Komponente,
 \attr{w}/\attr{a} die vierte Komponente. Ansprechen einer nicht existierenden Komponente
@@ -367,7 +368,7 @@ Das Ergebnis eines Swizzles ist vom Typ eines Vektors des Basistyps, mit der Anz
 entsprechend der Anzahl der Komponenten im "`Swizzle"'. Die erste Komponente des Wertes entspricht
 der Komponente des Ursprungsvektors, die an erster Stelle des Swizzles identifiziert wird, usw.
 
-\begin{lstlisting}[basicstyle=\ttfamily\small]
+\begin{lstlisting}[basicstyle=\ttfamily\small,lineskip=-11pt]
 float4 sampleVec = float4 (1.0, 2.0, 3.0, 4.0);
 float  a = sampleVec.x;    // a = 1.0
 float2 b = sampleVec.wz;   // b = (4.0, 3.0)
@@ -401,7 +402,7 @@ float  g = b.z;            // Fehler (Komponente existiert nicht)
 \hspace*{1cm}\Galt{\Gt{bool1x4}\Gor{}\Gt{bool2x4}\Gor{}\Gt{bool3x4}\Gor{}\Gt{bool4x4}}\\
 
 Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher Typ oder Fließkommatyp.
-Der Basistyp wird von einer Zeichenkette der Form $N$\kw{x}$M$ gefolgt. $N$ und
+Dem Basistyp folgt eine Zeichenkette der Form $N$\kw{x}$M$. $N$ und
 $M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive annehmen,
 und geben die Spalten- und Zeilenzahl
 der Matrix an. Ein Matrixtyp spezifiziert eine  $N \times M$-Matrix von Werten des Basistyps.
@@ -709,7 +710,7 @@ Dieser Ablauf wird wiederholt bis eine Auswertung der \emph{Schleifenbedingung} 
 Die Bedingung wird ausgewertet. Ist das Ergebnis \kw{true}, so werden die Kommandos des Schleifenblocks
 ausgeführt. Dieser Ablauf wird wiederholt bis eine Auswertung der Bedingung das Ergebnis \kw{false} hat.
 
-Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie der Bedingung.
+%Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie der Bedingung.
 
 \subsection{Lexikalische Einheiten}\label{Lexikalische Einheiten}
 
@@ -768,8 +769,10 @@ Lexikalische Einheiten können mit einem oder mehreren Zeichen der Unicode-Kateg
 \hspace*{1cm}\Gt{.}\Gspace\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}\\
 \Gnt{Num\_Float\_Exp}:\label{Num_Float_Exp}\\
 \hspace*{1cm}\Galt{\Gt{e}\Gor{}\Gt{E}}\Gspace\Gnt{Digits\_Dec\_Sign}{\scriptsize (\ref{Digits_Dec_Sign})}\\
+\Gnt{Num\_Float\_Mantissa}:\label{Num_Float_Mantissa}\\
+\hspace*{1cm}\Galt{\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}\Gspace\Galt{\Gt{.}\Gor{}\Gnt{Digits\_Dec\_Frac}{\scriptsize (\ref{Digits_Dec_Frac})}}\Gor{}\Gnt{Digits\_Dec\_Frac}{\scriptsize (\ref{Digits_Dec_Frac})}}\\
 \Gnt{Num\_Float}:\label{Num_Float}\\
-\hspace*{1cm}\Galt{\Gnt{Digits\_Dec}{\scriptsize (\ref{Digits_Dec})}\Gspace\Gopt{\Galt{\Gt{.}\Gor{}\Gnt{Digits\_Dec\_Frac}{\scriptsize (\ref{Digits_Dec_Frac})}}}\Gor{}\Gnt{Digits\_Dec\_Frac}{\scriptsize (\ref{Digits_Dec_Frac})}}\Gspace\Gopt{\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})}}\\
+\hspace*{1cm}\Gnt{Num\_Float\_Mantissa}{\scriptsize (\ref{Num_Float_Mantissa})}\Gspace\Gopt{\Gnt{Num\_Float\_Exp}{\scriptsize (\ref{Num_Float_Exp})}}\\
 \Gnt{Digit\_Hex}:\label{Digit_Hex}\\
 \hspace*{1cm}\Galt{\Gnt{Digit\_Dec}{\scriptsize (\ref{Digit_Dec})}\Gor{}\Grange{A}{F}\Gor{}\Grange{a}{f}}\\
 \Gnt{Digits\_Hex}:\label{Digits_Hex}\\
