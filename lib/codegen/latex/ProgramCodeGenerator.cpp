@@ -18,6 +18,8 @@ namespace s1
       
       for (size_t i = 0; i < prog->GetNumFunctions(); i++)
       {
+	if (i > 0) resultStrings->AddString ("\\vspace{0.5em}");
+	  
 	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
 	FunctionCodeGenerator funcGen;
 	resultStrings->AddStrings (*(funcGen.Generate (func)));

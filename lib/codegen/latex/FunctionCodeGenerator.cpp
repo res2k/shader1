@@ -32,7 +32,10 @@ namespace s1
       resultStrings->AddString ("\\sOfunc{");
       {
 	std::string identifier;
-	func->GetOriginalIdentifier().toUTF8String (identifier);
+	if (func->IsEntryFunction())
+	  func->GetOriginalIdentifier().toUTF8String (identifier);
+	else
+	  func->GetIdentifier().toUTF8String (identifier);
 	
 	{
 	  std::string funcDecl ("\\sOfunchead{");
@@ -55,12 +58,12 @@ namespace s1
 	  paramImports.insert (param->identifier);
 	  
 	  std::string paramStr ("{");
-	  paramStr.append (TypeString (param->type));
+	  paramStr.append (LatexEscape (TypeString (param->type)));
 	  paramStr.append ("}{");
 	  {
 	    std::string paramIdent;
 	    param->identifier.toUTF8String (paramIdent);
-	    paramStr.append (paramIdent);
+	    paramStr.append (LatexEscape (paramIdent));
 	  }
 	  paramStr.append ("}");
 	  
