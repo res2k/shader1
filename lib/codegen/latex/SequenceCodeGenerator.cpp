@@ -485,8 +485,17 @@ namespace s1
 	  Sequence::IdentifierToRegMap::const_iterator expName = identToRegID_exp.find (exp->first);
 	  if (expName == identToRegID_exp.end()) continue;
 	  
+	  std::string outRegStr (owner->GetOutputRegisterName (expName->second));
+	  // HACK to output only one name of 'while' register pairs
+	  size_t sepPos = outRegStr.find ('/');
+	  if (sepPos != std::string::npos)
+	  {
+	    size_t openBracket = outRegStr.find ('{');
+	    outRegStr.erase (openBracket+1, sepPos-openBracket);
+	  }
+	  
 	  std::string nestStr ("\\sOnestmapOut{");
-	  nestStr.append (owner->GetOutputRegisterName (expName->second));
+	  nestStr.append (outRegStr);
 	  nestStr.append ("}{");
 	  nestStr.append (codegen.GetOutputRegisterName (exp->second));
 	  nestStr.append ("}");
