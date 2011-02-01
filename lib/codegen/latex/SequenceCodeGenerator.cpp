@@ -545,14 +545,24 @@ namespace s1
 								      const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 								      const intermediate::SequenceOpPtr& seqOpBody)
     {
-      #if 0
+      // Looped regs: make the written reg names show up as "first run/second run"
       for (size_t i = 0; i < loopedRegs.size(); i++)
       {
-	// Before entering, copy original registers to their writeable counterparts
-	EmitAssign (loopedRegs[i].second,
-		    owner->GetOutputRegisterName (loopedRegs[i].first).c_str());
+	std::string latexName;// (NameToCgIdentifier (regPtr->GetName()));
+	loopedRegs[i].first->GetName().toUTF8String (latexName);
+	std::string outStr ("\\sOreg{");
+	outStr.append (LatexEscape (latexName));
+	outStr.append ("/");
+	latexName.clear();
+	loopedRegs[i].second->GetName().toUTF8String (latexName);
+	outStr.append (LatexEscape (latexName));
+	outStr.append ("}");
+	owner->seenRegisters[loopedRegs[i].second] = outStr;
+
+	std::string typeStr (TypeString (loopedRegs[i].second->GetOriginalType()));
+	RegisterNameSet& nameSet = owner->registerSets[typeStr];
+	nameSet.insert (loopedRegs[i].second->GetName());
       }
-      #endif
       
       std::string whileLine ("\\sOwhile{");
       whileLine.append (owner->GetOutputRegisterName (conditionReg));
@@ -564,7 +574,17 @@ namespace s1
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
-      target->AddString ("\\sOreturn{}");
+      std::string line;
+      line.append ("\\sOreturn{");
+      ParamHelper params (line, " \\sOcomma ");
+      for (std::vector<RegisterPtr>::const_iterator outParam (outParamVals.begin());
+	   outParam != outParamVals.end();
+	   ++outParam)
+      {
+	params.Add (owner->GetOutputRegisterName (*outParam));
+      }
+      line.append ("}");
+      target->AddString (line);
     }
     
     void LatexGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const UnicodeString& funcIdent,
@@ -574,10 +594,10 @@ namespace s1
       std::string line;
       std::string function;
       funcIdent.toUTF8String (function);
-      line.append (" \\sOfunccall{");
-      line.append (function);
+      line.append ("\\sOcall{");
+      line.append (LatexEscape (function));
       line.append ("}{");
-      ParamHelper params (line, ", ");
+      ParamHelper params (line, " \\sOcomma ");
       for (std::vector<RegisterPtr>::const_iterator inParam (inParams.begin());
 	   inParam != inParams.end();
 	   ++inParam)

@@ -61,8 +61,7 @@
 \newcommand\sOnestseq[1]{& \sOnestseqbox{#1}}
 \newcommand\sObranch[3]{& \mathtt{if}\ #1\mathtt{:}\\& \indent\sOnestwrap{#2}\\& \mathtt{else:}\\& \indent\sOnestwrap{#3}}
 \newcommand\sOwhile[2]{& \mathtt{while}\ #1\mathtt{:}\\& \indent\sOnestwrap{#2}}
-\newcommand\sOcall[2]{& \mathtt{call}\ \mathtt{void}\ #1 \sOcomma #2}
-\newcommand\sOcallret[3]{& \mathtt{call}\ #1 \sOcomma #2 \sOcomma #3}
+\newcommand\sOcall[2]{& \mathtt{call}\ \mathtt{#1} \sOcomma #2}
 \newcommand\sOreturn[1]{\sOopNull{return}{#1}}
 \newcommand\sOreturnvoid{\sOopNoResult{return}}
 
