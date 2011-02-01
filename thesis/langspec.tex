@@ -1,5 +1,6 @@
-Dieses Kapitel beschreibt konkret eine Ein-Programm-Shadingsprache und geht zuerst auf Eckpunkte der Syntax und danach
-auf allgemeinere Aspekte (z.B. wie die Mischung von Operationen verschiedener Berechnungsfrequenzen in verschiedenen Ausführungszweigen) ein.
+Dieses Kapitel beschreibt konkret eine Ein-Programm-Shadingsprache.
+Zuerst wird auf Eckpunkte der Syntax eingegangen, danach kommen
+allgemeinere Aspekte (z.B. wie die Mischung von Operationen verschiedener Berechnungsfrequenzen in verschiedenen Ausführungszweigen) zur Sprache.
 
 \section{Anforderungen an die Sprache}
 
@@ -7,12 +8,12 @@ Auf höherer Ebene soll die Sprache folgenden Anforderungen erfüllen:
 \begin{itemize}
 \item \emph{C-ähnliche Syntax}: Um ein schnelles Einarbeiten und Verständnis zu ermöglichen soll sich die Syntax an den verbreiteten
 Shadingsprachen Cg, DirectX HLSL und OpenGL GLSL orientieren. Diese wiederum sind C-verwandt.
-Weitere syntaktische Anleihen können auch von passenden Stellen der anderen besprochenen  Shadingsprachen übernommen werden.
+Weitere syntaktische Anleihen können auch von passenden Stellen aus anderen Shadingsprachen übernommen werden.
 \item \emph{Moderne Entwicklungen berücksichtigen}: Die neuesten der C-ähnlichen Sprachen sind Java und C\#. Wenn angebracht sollen
 Konzepte aus diesen übernommen werden.
 \item \emph{Vereinfachungen für Shading}: Die Sprache soll Elemente besitzen, die das Erstellen von Shading-Programmen
 vereinfachen. \item \emph{Keine Bindung an bestimmte Architektur}: Die Sprache selbst soll keine bestimmte darunterliegende Hardwarearchitektur
-vorraussetzen; auch keine Architektur-Klasse wie z.B. "`Graphikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
+vorraussetzen; auch keine Architektur-Klasse wie z.B. "`Grafikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
 Auch soll die Sprache insgesamt weniger hardwarenah als C sein.
 \end{itemize}
 
@@ -29,14 +30,14 @@ Bei einer regulären Zuweisung ist dies bei C nicht möglich, soll aber in der n
 \item \emph{Zeichensatz}: ANSI C basiert auf dem ASCII-Zeichensatz. % TODO Ref
 Mit Unicode gibt es es einen Zeichensatz, der alle weltweit geschriebenen Sprachen umfasst; dieser
 hat auch in den Definitionen von Programmiersprachen Einzug gehalten % TODO Ref C#
-und erlaubt z.B. Bezeichner in der Muttersprache des Programmierers zu deklarieren.
+und erlaubt z.B. Bezeichner aus anderen Sprachen als Englisch zu deklarieren.
 Aus technischer Sicht gibt es keinen Grund, nicht Unicode als Basis für den Zeichensatz zu benutzen.
 \item \emph{Überdeckung von Bezeichnern}: Bei C\# können Bezeichner nicht andere Bezeichner überdecken. Dies
-verhindert eine Klasse von Fehlern, bei der durch Überdeckung nicht die Variable benutzt wird, die der
+verhindert eine Klasse von Fehlern, bei der durch Überdeckung eine andere Variable benutzt wird, als der
 Programmierer angenommen hat. Das Verbot der Überdeckung soll übernommen werden.
 \item \emph{Shadingspezifische Elemente}: Es sollen Vektor- und Matrixtypen vorhanden sein.
 \item \emph{Keine Bindung an bestimmte Architektur}: Cg besitzt syntaktische Elemente, um bestimmte Variablen an
-von der Graphikhardware bereitgestellte Werte zu binden. Auch gibt es einen Mechanismus zur Überladung von Funktionen
+von der Grafikhardware bereitgestellte Werte zu binden. Auch gibt es einen Mechanismus zur Überladung von Funktionen
 für verschiedene Zielhardware. Solche Elemente sollen \emph{nicht} in der neuen Sprache enthalten sein.
 \item \emph{Maschinenferne}: Dynamische Verweise und 
 Zeiger werden nicht unterstützt. Statische Verweise (z.B. für Ausgabevariablen bei Funktionen) sollten aber unterstützt
@@ -118,12 +119,15 @@ zugewiesene Frequenz angenommen werden.
 der in dem Ausdruck enthaltenen Teilausdrücke sowie der verwendeten Verknüpfung ab.
 Die Abschnitte~\ref{splitter_Berechnungsfrequenzen} und~\ref{Interpolierbarkeit} beschreiben wie die Berechnungsfrequenz eines Ausdrucks bestimmt werden kann.
 
-\subsection{Spezialregeln für Berechnungsfrequenzen von Ausdrücken}
+%\subsection{Spezialregeln für Berechnungsfrequenzen von Ausdrücken}
 
-\paragraph{Manuelle Bestimmung:}
-Bei einigen Ausdrücken kann eine Frequenz nicht automatisch abgeleitet werden, insbesondere bei Eingabeparametern aus der
-Umgebung. Es wird davon ausgegangen, dass die umgebende Anwendung dem Compiler mitteilt, mit welcher Frequenz ein Eingabeparameter
-von der Anwendung geändert wird.\\
+%\paragraph{Manuelle Bestimmung:}
+%Bei einigen Ausdrücken kann eine Frequenz nicht automatisch abgeleitet werden, insbesondere bei Eingabeparametern aus der
+%Umgebung. 
+\paragraph{Programmeingaben:}
+Bei Eingabeparametern aus der Umgebung kann eine Frequenz nicht automatisch abgeleitet werden.
+Es wird davon ausgegangen, dass die umgebende Anwendung dem Compiler mitteilt, mit welcher Frequenz ein Eingabeparameter
+geändert wird.\\
 
 % Die Beschaffenheit der Daten beim Shading erlaubt
 % weitere
