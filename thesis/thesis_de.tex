@@ -36,7 +36,7 @@
 
 % define the title
 \author{Frank Richter 68278\\frank.richter@gmail.com}
-\title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Graphikkarten \normalfont}
+\title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Grafikkarten \normalfont}
 \date{\today}
 
 \makeglossaries
@@ -103,6 +103,7 @@
 \fancyfoot[R]{\footnotesize \thepage{}}
 \renewcommand{\headrulewidth}{0pt}
 %\setlength{\headheight}{24pt}
+%\setlength{\parskip}{0pt plus 1pt}
 
 % generates the title
 
@@ -123,15 +124,25 @@
 
 \section{Zielstellung}
 
-In der Echtzeit-3D-Graphik werden für 3D-Objekte überwiegend Dreiecksnetze\footnote{engl. ``triangle mesh'' und kürzer ``mesh''; siehe z.B. \cite{watt_de}}
-verwendet. Dies spiegelt sich in dem Aufbau von 3D-Graphikprozessoren~("`GPU"') wie auch
-den Programmierschnittstellen~(\cite{glspec4}, \cite{dx10}) wieder. Insbesondere bei der Programmierung der GPU müssen
-separate Vertex- und Fragmentprogramme % Ref oder Erklärung was Vertex/Fragment
-erstellt werden. Diese Aufteilung sowie die Definition der "`Schnittstelle"' zwischen den Verarbeitungseinheiten muss vom Programmierer manuell vorgenommen werden.
+In der Echtzeit-3D-Grafik werden 3D-Objekte überwiegend aus Dreiecken aufgebaut, welche für die Darstellung
+auf einem Bildschirm gerastert werden.
 
-Ziel dieser Arbeit ist es, einen Compiler zu entwickeln, der die Aufteilung in Vertex- und Fragmentprogramme (und auch Schnittstellendefinition)
-automatisch vornimmt,
+\newglossaryentry{GPU}{name={GPU},description={``Graphics Processing Unit'', auf Darstellung von 3D-Grafik spezialisierte Prozessoren}}
+Diese groben Arbeitsschritte spiegeln sich in dem Aufbau von 3D-Grafikprozessoren~("`\gls{GPU}"'),
+deren Programmierschnittstellen~(\cite{glspec4}, \cite{dx10}), und, da GPUs programmierbar sind,
+auch in den auf den Grafikprozessoren laufenden Programmen wieder.
+
+GPU-Programme  kommen sowohl während der Verarbeitung von Dreiecken (bzw. deren Eckpunkten -- "`Vertexverarbeitung"') 
+und der Berechnung der Rasterbildpunkte ("`Fragmentverarbeitung"') zum Einsatz.
+Allerdings muss der Programmier die Aufteilung von Berechnungen gemäss dieser Verarbeitungsschritte sowie die Definition der "`Schnittstelle"'
+zwischen den beteiligten Verarbeitungseinheiten manuell vornehmen.
+
+Ziel dieser Arbeit ist es, einen Compiler zu entwickeln, der die Aufteilung in Programme für die Vertex- und Fragmentverarbeitung
+(und die entsprechended Schnittstellendefinition) automatisch vornimmt,
 ohne dass der Programmierer explizit angeben muss, auf welcher der Funktionseinheiten ein bestimmter Befehl ausgeführt wird.
+Berücksichtigt werden müssen, dass Vertex- und Fragmentprogramme verschiedene Eingaben annehmen.
+Auch muss bei der Auftrennung das Verhaltens der "`Schnittstelle"' zwischen den Verarbeitungseinheiten --
+diese Schnittstelle nimmt selbst Interpolationen vor -- beachtet werden.
 %Die Programme sollen in der in Abschnitt~\ref{langspec} spezifizierten Sprache formuliert werden.
 %Die Implementierung des Compilers wird in Abschnitt~\ref{implementation} beschrieben.
 
@@ -139,7 +150,7 @@ ohne dass der Programmierer explizit angeben muss, auf welcher der Funktionseinh
 
 \section{Gliederung}
 
-Zuerst wird eine Einführung in Grundlagen der 3D-Graphik vorgenommen. Diese sind nötig um die Absicht und Besonderheit des entwickelten Compilers zu verstehen.
+Zuerst wird eine Einführung in Grundlagen der 3D-Grafik vorgenommen. Diese sind nötig um die Absicht und Besonderheit des entwickelten Compilers zu verstehen.
 Auch in den weiteren Kapiteln vorkommende, fachspezifische Begriffe werden dort erklärt. Insbesondere das für die Arbeit des Compilers essentielle Konzept
 der Berechnugsfrequenzen wird dort einführend erläutert.
 
@@ -149,7 +160,10 @@ Unter Berücksichtigung dieser Anforderungen und der speziellen Aspekte wird die
 
 Im darauf folgenden Kapitel wird schliesslich auf die Implementierung des Compilers selbst eingegangen. Insbesondere werden die verwendete Zwischencoderepräsentation
 für die Weitergabe des Programmen zwischen den verschiedenen Arbeitsschritten des Compilers sowie das eigentliche "`Ziel"' dieser Arbeit,
-die Komponente zur Auftrennung eines Programms, beschrieben.
+die Komponente zur Auftrennung eines Programms, beschrieben. Auch der umgesetzte Generator für die Programm-Ausgabe sowie vorgenommene Optimierungen
+werden erläutert.
+
+% Abschluss?
 
 \chapter{Einführung 3D-Grafik}
 
@@ -176,7 +190,7 @@ darzustellen.
 
 Beispiele hierfür sind Konstruktionszeichnungen und Computerspiele. Diese stehen auch für verschiedene Anforderungen,
 die trotzdem unter "`Echtzeitdarstellung"' fallen: Konstruktionszeichnungen müssen meist mit sehr großen Datenmengen 
-agieren, aber trotzdem die Verzögerungen geringstmöglich halten, wobei geringfügig wahrnehmbare Pausen toleriert
+agieren, aber trotzdem die Verzögerungen geringstmöglich halten, wobei noch wahrnehmbare Pausen toleriert
 werden. Bildraten ab 15 Bildern/Sekunde werden als "`interaktiv"' bezeichnet. % TODO Ref?
 Computerspiele hingegen haben strengere Anforderungen: um die Illusion von Bewegung zu erzeugen ist es hier nötig,
  mindestens 25 Bilder in einer Sekunde\footnote{Es wird in der Regel die höchstmögliche Anzahl von Bildern pro Sekunde 
@@ -204,13 +218,16 @@ einfach berechnet werden, sondern werden meist approximiert.\footnote{Siehe auch
 
 Die Geschwindigkeit und Einfachheit des Rasterns ist jedoch vorteilhaft für die Echtzeitgrafik und ist dort die praktisch
 ausschließlich verwendete Variante. % TODO Intel-Ray Tracer
-Vor allem ist spezielle Hardware verfügbar welche die Rasterung stark beschleunigt. % TODO siehe Aufbau Hardware
-Ray Tracing findet vor allem bei der Vorberechnung von Grafiken statt. Allerdings wird dort zunächst auch Rasterung eingesetzt,
-gemischt mit Ray Tracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
+Vor allem ist spezielle, die Rasterung stark beschleunigende Hardware verfügbar. % TODO siehe Aufbau Hardware
+
+Ray Tracing dagegen findet vor allem bei der Vorberechnung von 3D-Grafiken statt.
+%Allerdings wird dort zunächst auch Rasterung eingesetzt,
+%gemischt mit Ray Tracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
 
 \section{Grundlegende Strukturen}
 
 \subsection{Modelle}
+\label{tri_mesh}
 
 Dreidimensionale Objekte ("`\emph{Modelle}"') einer Szene können auf verschiedene Arten repräsentiert werden~(\cite{watt_de}, S. 45-47). 
 
@@ -228,7 +245,7 @@ Um ein passgenaues Abschließen der Dreiecke zu sichern teilen sich in der Regel
 Vertex\footnote{Selten haben zwei Ecken in \emph{einem} Dreieck das selbe Vertex -- dies führt zu "`degenerierten"' Dreiecken}. 
 Der Vorteil von Dreiecksnetzen ist deren Einfachheit. Insbesondere das Rastern von Dreiecken kann mit wenig Aufwand
 implementiert werden. Auch können Oberflächen beliebig genau angenähert werden. Diese Eigenschaften sind aber auch
-nachteilig: einige Oberflächen \emph{müssen} angenähert werden. So z.B. kann eine Kugel nicht perfekt durch ein Dreiecksnetz
+nachteilig: einige Oberflächen \emph{müssen} angenähert werden. So kann z.B. eine Kugel nicht perfekt durch ein Dreiecksnetz
 abgebildet werden. 
 
 % Bild Drahtgitter
@@ -242,7 +259,7 @@ abgebildet werden.
 
 Hervorzuheben ist, dass auf die Berechnung von 3D-Grafiken spezialisierte Hardware 
 ausschließlich mit Dreiecksdaten arbeiten -- die Hardware kann eigentlich nichts anderes zeichnen. Wegen der Einfachheit der Darstellung
-können aber sehr viele Dreiecke in einer Sekunde gezeichnet werden. 
+können aber sehr viele Dreiecke in einer Sekunde ausgegeben werden. 
 
 Andere Arten der Modelldarstellung, wie die \emph{implizite Darstellung}\footnote{Beschreibung eines Objekts durch eine Formel,
 z.B. $x^2 + y^2 + z^2 = r^2$ für eine Kugel -- siehe~\cite{watt_de}, Abschn. 2.4}, \emph{Voxelgrafiken}\footnote{Voxel: ``volumetric pixel'' --
@@ -318,7 +335,7 @@ Bilder. Einem jeden Dreieck eines Modells ist ein (ebenfalls dreieckiger) Aussch
 Die Zuordnung findet über \emph{Texturkoordinaten} statt, d.h. jedem Vertex ist ein weiteres Zahlenpaar zugeordnet,
 welches einen Punkt auf der Textur angibt.
 Beim Rendering wird nun der durch diese Koordinaten beschriebene Texturausschnitt auf die Oberfläche des Dreiecks 
-"`gespannt"': für jedes gerenderte Pixel des Dreiecks wird die Position des zugehörigen Texturepixels (``texel'')
+"`gespannt"': für jedes gerenderte Pixel des Dreiecks wird die Position des zugehörigen Textur-Pixels (``texel'')
 berechnet. Der Farbwert der Textur an dieser Position wird ausgelesen und dient als Farbwert des gerenderten Pixels~(\cite{watt_de}, S. 160).
 
 \subsection{Shading}
@@ -373,26 +390,34 @@ Die Ausgabe der Grafik soll in der Regel als Rastergrafik auf einem Computermoni
 Demgegenüber besitzen 3D-Modelle per Definition Koordinaten in einem dreidimensionalen Raum, deren Komponenten potentiell
 aus der Menge der reellen Zahlen stammen. Es muss also eine \emph{Projektion} vorgenommen werden. 
 
-Diese Projektion wird nach der Vertexverarbeitung durchgeführt. Auf alle Vertices werden die gleichen
-Berechnungen angewendet, diese werden in Hardware in der Regel parallel 
-auf mehreren Recheneinheiten ausgeführt. Die Recheneinheiten rechnen im Allgemeinen mit Vektoren.
-Die Vertexverarbeitung berechnet mehrere Werte pro Vertex. Minimal muss die Vertex-Koordinate in das Kamerakoordinatensystem
+Diese Projektion wird mit den Ausgaben der Vertexverarbeitung durchgeführt. Bei der Vertexverarbeitung werden auf alle Vertices die gleichen
+Berechnungen angewendet. Diese werden in der Hardware in der Regel parallel 
+auf mehreren Recheneinheiten ausgeführt. Im Allgemeinen wird dort mit Vektoren gerechnet.
+Die Vertexverarbeitung kann mehrere Werte pro Vertex berechnen, aber minimal muss die Vertex-Koordinate in das Kamerakoordinatensystem
 abgebildet werden.
 \newglossaryentry{Vertexattribut}{name={Vertexattribut},plural={Vertexattribute},description={Weitere, jedem Vertex zugeordnete Werte}}
 In der Regel werden aber weitere Werte berechnet ("`\glspl{Vertexattribut}"'), die als Eingabe der späteren Fragmentverarbeitung dienen.
 
-Auf der neuesten Generation von Grafikkarten (GeForce 8) % etwas zu GraKa-Generationen sagen
+\newglossaryentry{Shadingsprache}{name={Shadingsprache},plural={Shadingsprachen},description={Sprachen zur Programmierung von Vertex- und Fragmentverarbeitung auf GPUs}}
+Die beiden Verarbeitungsschritte der "`Vertexverarbeitung'' und "`Fragmentverarbeitung"' sind auf modernen GPUs
+\emph{programmierbar} -- die vorgenommenen Berechnungen werden also durch von einem Programmierer bereitgestellte
+Programme bestimmt. Die GPUs selbst, als Mikroprozessoren, verarbieten in einem Binärcode vorliegende Programme; dieser Code
+wird jedoch von den Programmierschnittstellen "`versteckt"' und Programme werden in einer Hochsprache gegeben\footnote{GLSL bei OpenGL, HLSL bei DirectX}.
+Die Sprachen werden "`\glspl{Shadingsprache}"' genannt.
+
+Auf der neuesten Generation von GPUs (GeForce 8) % etwas zu GraKa-Generationen sagen
 ist ein weiterer Verarbeitungsschritt verfügbar, die "`Geometrieverarbeitung"'\footnote{engl. geometry shader}. 
 Diese hat die Besonderheit, neue Dreiecke
 mit beliebigen Koordinaten erzeugen zu können: 
-auf eineer Grafikkarte ohne Geometrieeinheit sind alle Verarbeitungsschurtte "`statisch"' bezüglich der Vertices -- nur existierende
-Werte können manipuliert werden. Gleiches gilt für Dreiecksdaten. Das \emph{Erzeugen} von Vertices kann auf diesen Grafikkarten
+auf eineer Grafikkarte ohne Geometrieeinheit sind alle Verarbeitungsschritte "`statisch"' bezüglich der Vertices -- nur existierende
+Werte können manipuliert werden. Gleiches gilt für Dreiecksdaten. Das \emph{Erzeugen} von Vertices kann bei diesen Grafikkarten
 also nur durch die CPU erfolgen, woraufhin die Daten zur GPU übertragen werden.
-Im Schritt der Geometrieverarbeitung kann aber die GPU selbst Vertices und Dreiecke erzeugen
+Im Schritt der Geometrieverarbeitung kann die GPU aber selbst Vertices und Dreiecke erzeugen
 und auch entfernen. Dieser Schritt erlaubt die Implementierung von Algorithmen auf der Grafikkarte, die viel 
 Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, erfordern.
 
 \newglossaryentry{Fragment}{name={Fragment},description={Ergebnis der Rasterung eines Dreiecks}}
+\label{rasterung}
 Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in das \emph{Kamerakoordinatensystem}\footnote{Betrachter befindet sich am
 Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rasterbild mit Hilfe einer einfachen linearen Projektion
 abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
@@ -401,10 +426,7 @@ gezeichnet werden. Dies geschieht durch Rasterung\footnote{siehe auch~\cite{watt
 Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment genau einem Pixel entspricht.} zu 
 bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
 durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der Drei\-ecks\-eck\-punk\-te  
-berechnet. In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
-und mit den Vertexattributen durch Operationen kombiniert (z.B. Multiplikation, um eine beleuchtete Oberfläche zu simulieren).
-Wie bei den Vertex-Berechnungen werden auch bei den Fragment-Berechnungen die gleichen Berechnungen auf eine Vielzahl
-von Fragmenten gleichzeitig angewendet und erfolgt parallel auf mehreren Vektorrecheneinheiten.
+berechnet. Abbildung~\ref{fig:triraster} zeigt schematisch die Rasterung eines Dreiecks mit einem interpolierten Vertexattribut.
 
 \begin{figure}[h]
   \centering
@@ -418,8 +440,12 @@ von Fragmenten gleichzeitig angewendet und erfolgt parallel auf mehreren Vektorr
   \label{fig:triraster}
 \end{figure}
 
+In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
+und mit den Vertexattributen durch Operationen kombiniert (z.B. Multiplikation, um eine beleuchtete Oberfläche zu simulieren).
+Wie bei den Vertex-Berechnungen werden auch bei den Fragment-Berechnungen die gleichen Berechnungen auf eine Vielzahl
+von Fragmenten gleichzeitig angewendet und erfolgt parallel auf mehreren Vektorrecheneinheiten.
 
-%Alle Verarbeitungseinheiten sind auf aktueller Graphikhardware programmierbar.
+%Alle Verarbeitungseinheiten sind auf aktueller Grafikhardware programmierbar.
 \section{Berechnungsfrequenzen}
 \label{berechnungsfrequenz_locker}
 
@@ -432,10 +458,10 @@ Zu Beobachten ist, dass diese verschiedenen Daten in ihrer "`Veränderlichkeit"'
 \begin{itemize}
 \item Die verwendeten Transformationen gelten für das ganze 3D-Modell, verändern sich also \emph{per Mesh}.
 \item Vertexdaten, wie Position im Objektkoordinatensystem oder Oberflächennormale, sind \emph{per Vertex}
-unterschiedlich. Vor allem berechnete Vertexattribute, die Fragmentverarbeitung verwendet werden, werden
+verschieden. Vor allem berechnete Vertexattribute, die bei der Fragmentverarbeitung verwendet werden, werden
 bloss per Vertex berechnet -- die eigentliche Eingabe der Fragmentverarbeitung wird aus den per-Vertex-Werten
 interpoliert.
-\item Texturdaten werden in der Fragmentverarbeitung ausgelesen, ein so bestimmter Wert ändert sich \emph{per Fragment}.
+\item Texturdaten werden in der Fragmentverarbeitung ausgelesen, solch ausgelesene Werte ändern sich \emph{per Fragment}.
 \end{itemize}
 
 Aus diesen Beobachtungen leitet sich das Konzept der \emph{Berechnungsfrequenz}\footnote{Zuerst beschrieben in \cite{stanford_rtsl}.} ab.
@@ -444,10 +470,10 @@ dies passiert. Je "`höher"' die Frequenz, desto häufiger muss ein Wert potenti
 \begin{itemize}
 \item Die theoretisch niedrigste Frequenz besitzen Verknüpfungen statischer Konstanten -- solche Ergebnisse müssen nur ein einziges Mal berechnet werden.
 \item Die für 3D-Grafik nächsthöhere, relevante Frequenz ist die "`Meshfrequenz"': Transformationen werden in der Regel per Mesh spezifiziert,
-eine Verknüpfung von zwei Transformationen muss nur einmal für ein Modell berechnet werden; auf die gesamte Ausführung einer Anwendung
-müssen aber solche Transformation aber praktisch öfter als ein einziges Mal berechnet werden.
-\item Als nächste Frequenz folgt die "`Vertexfrequenz"' für Werte, die von Vertexdaten abhängen. Augenscheinliches Beispiel sind Abbildungen
-wie vom Objektkoordinatensystem in das Kamerakoordinatensystem. Da ein Modell in der Praxis mehr als ein Vertex besitzt,
+eine Verknüpfung von zwei Transformationen muss nur einmal für ein Modell berechnet werden; über die gesamte Ausführungszeit einer Anwendung gesehen
+müssen solche Transformation aber praktisch öfter als ein einziges Mal berechnet werden.
+\item Als nächste Frequenz folgt die "`Vertexfrequenz"' für Werte, die von Vertexdaten abhängen. Augenscheinliches Beispiel sind
+vom Objektkoordinatensystem in das Kamerakoordinatensystem abgebildete Modellkoordinaten. Da ein Modell in der Praxis mehr als ein Vertex besitzt,
 ist ersichtlich, das Berechnungen in Vertexfrequenz öfter ausgeführt werden als solche mit Meshfrequenz.
 \item Die höchstmögliche Frequenz ist die der "`Fragmentfrequenz"' für Werte, die per Fragment berechnet werden müssen.
 Dies sind zum Beispiel aus Vertexdaten berechnete Werte, die sich nicht sinnvoll interpolieren lassen, oder Werte aus Texturen,
@@ -486,7 +512,7 @@ bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und
 
 \section{Zusammenfassung}
 
-Bei der Echtzeit-3D-Graphik werden von der Graphikhardware als Dreiecksnetze vorliegende 3D-Modelle dargestellt.
+Bei der Echtzeit-3D-Grafik werden von der Grafikhardware als Dreiecksnetze vorliegende 3D-Modelle dargestellt.
 Diese Modelle bestehen aus \emph{``Vertices''}, die die Eckpunkte von Dreiecken bilden. Bei der Darstellung eines
 Modelles wird zuerst die \emph{Vertexverarbeitung} vorgenommen; dabei werden die Raumkoordinaten der Vertices transformiert
 und weitere Berechnungen auf den Vertices zugeordneten Daten vorgenommen ("`Vertexattribute"').
@@ -498,6 +524,10 @@ wie das "`aufziehen"' von \emph{Texturen} (Bilddaten) auf das 3D-Modell.
 Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Fragmentverarbeitung"' sind beide programmierbar, die Ausgabe des Compilers
 soll ein Programm-Paar aus Vertex- und Fragmentprogramm sein.
 
+Aus den Verarbeitungsschritten der Echtzeit-3D-Grafik wurde das Konzept der \emph{Berechnungsfrequenz} abgeleitet:
+diese sagt aus, auf welche Verarbeitungseinheit eine Operation eines GPU-Programms ausgeführt werden muss.
+Die Berechnungsfrequenz wird vom Compiler verwendet werden, um zu bestimmen,
+in welches Ausgabeprogramm (Vertex- oder Fragmentprogramm) eine Operation ausgegeben werden muss.
 
 \chapter{Sprachspezifikation}
 \label{langspec}
@@ -524,14 +554,14 @@ Der Aufbau entspricht grösstenteils der Compiler-Standardarchitektur (Abbildung
 eine Repräsentation des Programms in einem \emph{Zwischencode}. Auf dieser Zwischencoderepräsentation werden im "`Middle-End"' % Ref wo das gesagt wird, oder besseres Wort
 Optimierungen vorgenommen. Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischencoderepräsentation der tatsächliche Zielcode generiert.
 
-Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP}. Hier wird für jeden Befehl der Zwischencoderepräsentation untersucht, mit
+Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP}. Hier wird in der Zwischencoderepräsentation untersucht, mit
 welcher Berechnungsfrequenz~(siehe \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz})
 \footnote{Für "`Meshfrequenz"' wird kein Programm generiert, sie spielt aber eine Rolle bei der Aufspaltung. Generell ist das Konzept der Aufspaltung auch auf weitere Frequenzen erweiterbar.}
 jeder Befehl des Programms ausgeführt werden muss - mit anderen Worten,
-es wird untersucht, welche Befehle auf der Vertex-Einheit oder der Fragment-Einheit ausgeführt werden müssen. Mit diesen Informationen kann
+es wird untersucht, welche Befehle auf der Vertex-Einheit und welche auf der Fragment-Einheit ausgeführt werden müssen. Mit diesen Informationen kann
 das Programm entsprechend in ein Vertex- und ein Fragment-Programm aufgeteilt werden. Da zur Laufzeit auch ein "`Übergeben"' von Ausgaben
-des Vertexprogramms an Eingaben des Fragmentprogramms stattfindet wird auch eine den Vertex-Ausgaben zu Fragment-Eingaben
-abbildende "`Schnittstelle"' generiert.
+des Vertexprogramms an Eingaben des Fragmentprogramms stattfindet wird auch eine "`Schnittstelle"' generiert, die die Vertex-Ausgaben auf Fragment-Eingaben
+abbildet.
 
 Die Programme werden vom Aufspalter in Zwischencode ausgegeben und können noch einmal optimiert werden. % Irgendein besonderer Vorteil?
 Abschließend werden ein Fragment- und ein Vertexprogramm im gewünschten Zielcode ausgegeben\footnote{Diese Implementierung benutzt den
@@ -580,6 +610,8 @@ werden müssten -- wird im generierten Token vermerkt, ob es sich um einen Vekto
 Dazu überprüft der Scanner, ob ein Bezeichner den angegebenen Muster für Vektor- bzw. Matrixschlüsselwörtern entspricht.
 Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfalls vermerkt.
 
+Abbildung~\ref{fig:LexerToken} stellt die vom Scanner gesammelten Daten als Strukturdefinition dar.
+
 \begin{figure}[h]
    \centering
   \lstinputlisting[language=C++]{snips/LexerToken.txt}
@@ -594,7 +626,7 @@ Weiterhin werden bereits $N$ bzw. $M$ aus den Bezeichnern extrahiert und ebenfal
 
 
 Weiterhin schreibt die Spezifikation vor, dass zwei Bezeicher als identisch betrachtet werden, wenn sie kanonisch äquivalent im Sinne von Unicode sind.
-Zu diesem Zweck werden alle Bezeichner vom Scanner nach einer von Unicode vorgegebenen Form normalisiert~(\cite{unicode}, Annex \#15).
+Der Scanner speichert zu diesem Zweck alle Bezeichner in einer normalisierten Form. Diese ist vom Unicode-Standard vorgegeben:~\cite{unicode}, Annex \#15.
 
 \section{Parser}
 
@@ -623,7 +655,7 @@ Der Aufbau spiegelt im Wesentlichen die Struktur der Regeln wieder -- viele habe
 An einigen Stellen der Grammatik gibt es Mehrdeutigkeiten.
 Werden beim Parsen eines \rulelink{programm_statements} die Tokens \glq\texttt{typ BEZEICHNER}\grq~(\ref{typ}, \ref{BEZEICHNER})  erkannt,
 so kann es sich entweder um die Regel \rulelink{funktion_definition} oder um \rulelink{dekl_var} handeln.
-Andere Fälle von Mehrdeutigkeiten sind \rulelink{dekl_var} oder \rulelink{kommando} in \rulelink{block},
+Andere Fälle von Mehrdeutigkeiten sind \rulelink{dekl_var} oder \rulelink{kommando} in \rulelink{block} und
 \rulelink{funktion_aufruf} oder \rulelink{BEZEICHNER} in \rulelink{asdr_basis}.
 
 Solche Mehrdeutigkeiten lassen sich entweder in der Implementierung des Parsers oder durch Abändern der Grammatik lösen.
@@ -807,9 +839,9 @@ Repräsentation betrachtet. Aus SafeTSA und SIMPLE stammen deshalb grundsätzlic
 Anzumerken ist, dass die Shadingsprache keine zufälligen Speicherzugriffe oder Zeiger/Referenzen erlaubt.
 Im Umfang ist sie teilweise beschränkt -- es gibt keine Strukturtypen --, besitzt aber als "`Eigenheit"' Vektortypen.
 LLVM, SafeTSA und SIMPLE wurden für "`Maschinen"' entwickelt, die die Verwendung von Zeigern erlauben. Entsprechend
-stellen sie Lösungen für Probleme, wie die Aliasing\footnote{Zugriff auf ein Datum über mehrere verschiedene Zeiger}-Analyse oder typsichere Speicherzugriffe, bereit, die mit
-der hier spezifizierten Shadingsprache nicht vorkommen. Insofern sind diese Repräsentationen hier nicht
-mit ihren vollständigen Fähigkeiten beschrieben.
+stellen sie Lösungen für Probleme, wie die Aliasing\footnote{Zugriff auf ein Datum über mehrere verschiedene Zeiger}-Analyse
+oder typsichere Speicherzugriffe, bereit, die mit der hier spezifizierten Shadingsprache nicht vorkommen. Die genannten Repräsentationen sind hier nicht
+mit ihren vollständigen Fähigkeiten in Hinsicht auf diese Aspekte beschrieben.
 
 \subsection{Aufbau}
 
@@ -832,7 +864,7 @@ für Ausdrücke zugrunde liegt. Der gewünschte einfache Aufbau äußert sich da
 in einer einfachen Reihung gespeichert werden -- ohne Sprungmarken oder ähnliches. Verzweigungen und Schleifen werden
 durch "`komplexe"' Befehle realisiert (die intern wiederum Reihungen von Befehlen enthalten).
 
-Das "`Grundelement"' der Zwischencoderepräsentation ist eine "`Sequenzen"'. Eine Sequenz besteht aus "`Operationen"',
+Das "`Grundelement"' der Zwischencoderepräsentation ist eine "`Sequenz"'. Eine Sequenz besteht aus "`Operationen"',
 die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt getrennte Registersätze, ein Satz für jeden verwendeten Typ. 
 Der Aufbau einer Sequenz ist in Abbildung~\ref{fig:ir_sequence} schematisch dargestellt.
 
@@ -867,7 +899,7 @@ zugegriffen werden.
 Stattdessen werden zu eingeschachtelten Blöcken eine Zuordnung zwischen Registern aus dem umgebenden Block
 ("`extern"') und
 Registern des eingeschachtelten Blockes ("`lokal"') gespeichert.
-Wie genau die Abbildung von Werten von "`externen"' an "`lokale"' Register statfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
+Wie genau die Abbildung von Werten von "`externen"' an "`lokale"' Register stattfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
 das Verhalten muss bloss einem "`umleiten"' von Lese- oder Schreibzugriffen von den angegebenen lokalen auf die zugeordneten externen
 Registern entsprechen.
 %Wie genau die Übergabe von Werten von "`externen"' an "`lokale"' Register statfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
@@ -922,7 +954,7 @@ auf spezielle Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden g
 "`eigene"' Register zugewiesen. Im Prinzip sind "`globale"' Variablen bloss "`versteckte"' lokale Variablen in
 der Eintrittsfunktion.
 
-Damit müssen globale Variablen nicht besonders von Optimierungsschritten u.ä. berücksichtigt werden.
+Damit müssen globale Variablen von Optimierungsschritten u.ä. nicht besonders berücksichtigt werden.
 Insbesondere müssen keine "`Seiteneffekte"' von Funktionen ermittelt werden: manipuliert eine Funktion eine "`globale"' Variable,
 so erhält sie in der Zwischencoderepräsentation bloss einen weiteren Ausgabeparameter.
 Betrachtet man den Aufruf dieser Funktion so wird nur eine weitere Variable beschrieben.
@@ -937,7 +969,7 @@ von solchen Verarbeitungsschritten korrekt behandelt.
 %Soll ein Register in einem eingeschachteltem Block gelesen oder beschrieben werden, 
 
 \paragraph{Behandlung von Arrays:}
-Arrays werden als "`ein"' Wert behandelt. D.h. eine Zuweisungsoperation kopiert immer ein ganzes Array.
+Arrays werden als "`ein"' Wert behandelt -- eine Zuweisungsoperation kopiert immer ein ganzes Array.
 Das Lesen einzelner Elemente geschieht mit Hilfe der Operation "`Extraktion eines Arrayelements"' ($\mathtt{getelem}$).
 
 Zum Schreiben eines Elements gibt es die Operation "`Änderung eines Arrayelements"' ($\mathtt{setelem}$):
@@ -948,7 +980,7 @@ dort wird am gegebenen Index der zu schreibende Wert abgelegt.
 Dieser Ansatz wurde gewählt, weil er sehr gut in das "`SSA-Prinzip"' passt.
 Bei der direkten Umsetzung eines Zugriffs auf Array-Elemente (Ausdrücke wie eine Zuweisung "`$a[i] = x$"') ist es schwierig, sicherzustellen, dass
 jedes Element von $a$ wie verlangt nur einmal beschrieben wird (insbesondere bei Schleifen); es
-müsste für jedes Array-Element individuell "`verfolgt' werden, ob es beschrieben wurde.
+müsste für jedes Array-Element individuell "`verfolgt"' werden, ob es beschrieben wurde.
 Ein solches Verfolgen wird weiterhin schwieriger, sobald die Array-Größe nicht bekannt ist
 -- die spezifizierte Sprache sieht dies vor. Das betrachten eines Arrays als "`einen"' Wert macht es hingegen einfach,
 die Bedingung "`nur eine Zuweisung"' einzuhalten und zu überprüfen.
@@ -964,68 +996,97 @@ Register durch die Arrayoperationen hindurch verfolgen, oder sogar ein Array auf
 Dieser Abschnitt zählt alle möglichen Operationen in einer Sequenz auf. Eine Operation greift für die Eingabe auf kein, ein oder mehrere
 \emph{Quellregister} zu. Hat die Operation ein Ergebnis, wird dieses in ein \emph{Zielregister} geschrieben. 
 
+Für jede Operation wird ein einfaches Beispielprogramm gegeben; diesem wird der generierte Zwischencode gegenüber gestellt.
+
 %Unter vielen Operationen ist das Verhalten in Pseudo-Code angegeben. Dabei steht $d$ für das Zielregister einer Operation.
 %Die Quellregister werden durch $s$, $t$, \dots bezeichnet. 
 
+\newpage
 \subsubsection{Einfache Operationen}
 
 \newcommand\SeqOpSample[2]{
-  \begin{figure}[!h]
+  %\begin{figure}[!h]
+  \renewcommand{\baselinestretch}{1.0}\normalsize
+  \emph{Beispiel und Zwischencode:}\\
+  \makebox[\textwidth]{
     \centering
     \begin{minipage}{7cm}\lstinputlisting{s1source/#1.s1}\end{minipage}
     \begin{minipage}{8cm}\include{s1latex/#1}\end{minipage}
-    \caption{#2.}
+    %\caption{#2.}
     \label{fig:ir_example_#1}
-  \end{figure}
+  %\end{figure}
+  }
+  \renewcommand{\baselinestretch}{1.50}\normalsize
 }
 \newcommand\SeqOpSampleStacked[2]{
-  \begin{figure}[!h]
-    \centering
+  %\begin{figure}[!h]
+  \vspace*{1em}
+  \emph{Beispiel und Zwischencode:}
+  \vspace*{-1em}
+  \renewcommand{\baselinestretch}{1.0}\normalsize
+  %\makebox[\textwidth]{
+    \begin{center}
     \begin{minipage}{7cm}\lstinputlisting{s1source/#1.s1}\end{minipage}
-    \include{s1latex/#1}
-    \caption{#2.}
+    \begin{minipage}{\textwidth}\include{s1latex/#1}\end{minipage}
+    %\caption{#2.}
     \label{fig:ir_example_#1}
-  \end{figure}
+    \end{center}
+    \vspace*{-1em}
+  %\end{figure}
+  %}
+  \renewcommand{\baselinestretch}{1.50}\normalsize
 }
 
 \paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
 %\\\hspace*{1cm}$d \gets s$
+
 \SeqOpSample{assign}{Zuweisungsoperation}
+
 
 \paragraph{Konstantenoperation:} Diese weist dem Zielregister eine Bool'sche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
 Fließkommakonstante zu.
+
 %\\\hspace*{1cm}$d \gets \mathrm{Konstante}$
 \SeqOpSample{const}{Konstantenoperation}
 
+
 \paragraph{Typumwandlungsoperation:} Liest das Eingaberegister, wandelt dessen Wert in den Ziel-Typ und schreibt den umgewandelten Wert in das Zielregister.
 Kann zwischen Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerten umwandeln.
+
 %\\\hspace*{1cm}$d \gets s\ \mathrm{als}\ \mathrm{"`Ziel-Typ``}$
 \SeqOpSample{cast}{Typumwandlungsoperation}
+
 
 % Eventuell Tabelle (Operation|Verknüpfung|Eing-Typ|Ausg-Typ) statt Prosa?
 \paragraph{Arithmetische Operation:} Die Inhalte zweier Eingaberegister 
 werden durch eine arithmetische Operation verknüpft und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
+
 %\\\hspace*{1cm}$d \gets s + t$
 %\\\hspace*{1cm}$d \gets s - t$
 %\\\hspace*{1cm}$d \gets s * t$
 %\\\hspace*{1cm}$d \gets s / t$
 \SeqOpSample{arith}{Arithmetikoperationen}
 
+
 \paragraph{Vergleichsoperation:} Die Inhalte zweier Eingaberegister 
 werden miteinander verglichen (gleich, ungleich, größer, größer gleich, kleiner oder kleiner gleich) und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.
 Das Zielregister muss vom Typ Boolean sein.
+
 %\\\hspace*{1cm}$d \gets s = t$
 %\\\hspace*{1cm}$d \gets s < t$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 \SeqOpSample{compare}{Vergleichsoperationen}
 
+
 \paragraph{Logische Operation:} Die Inhalte zweier Eingaberegister werden durch logisch UND oder logisch ODER verknüpft und das Ergebnis in das Zielregister geschrieben.
 Die Eingaberegister und das Zielregister müssen vom Typ Boolean sein.
+
 %\\\hspace*{1cm}$d \gets s \land t$
 %\\\hspace*{1cm}$d \gets s \lor t$
 \SeqOpSample{logic}{Logische Operationen}
+
 
 \paragraph{Unäre Operation:} Unäre Operationen sind Negation, Logisches NICHT und bitweise Invertierung.
 Negation negiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
@@ -1034,10 +1095,12 @@ Logisches NICHT invertiert den Wert des Eingaberegisters und schreibt das Ergebn
 Die Eingabe- und das Zielregister müssen vom gleichen Typ Boolean sein.\\
 Bitweise Invertiertung wird auf das Eingaberegister angewendet und schreibt das Ergebnis in das Zielregister.
 Die Eingabe- und das Zielregister müssen von einem Integer-Typ (vorzeichenlos oder vorzeichenbehaftet) sein.
+
 %\\\hspace*{1cm}$d \gets \neg s$
 %\\\hspace*{1cm}$d \gets -s$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
 \SeqOpSample{unary}{Unäre Operationen}
+
 
 \subsubsection{Vektor- und Matrix-Operationen}
 
@@ -1046,13 +1109,17 @@ den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Vektorkom
 %\\\hspace*{1cm}$d \gets (s)$
 %\\\hspace*{1cm}$d \gets (s, t)$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+
 \SeqOpSample{makevec}{Vektor-Erstellung}
+
 
 \paragraph{Extraktion einer Vektorkomponente:} Nimmt neben einem Eingaberegister auch eine Integer-Konstante $N$ im Bereich $0 \dots 3$ entgegen.
 Das Eingaberegister muss von einem Vektortyp sein. Das Zielregister muss vom Basistyp des Vektors sein.
 Aus dem Eingabevektor wird die Komponente Nummer $N$ extrahiert und in das Zielregister geschrieben.
 %\\\hspace*{1cm}$d \gets s_N$
+
 \SeqOpSample{vecextract}{Extraktion einer Vektorkomponente}
+
 
 \paragraph{Matrix-Erstellung:} Nimmt als Eingabe ein bis sechzehn Register, je nach den Dimensionen des Zielregisters. Die Eingaberegister müssen alle
 den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Elementen im Zielregister zugeordnet: zuerst das Element der ersten Spalte in der ersten Zeile,
@@ -1060,6 +1127,7 @@ als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
 %\\\hspace*{1cm}$d \gets \left(s\right)$
 %\\\hspace*{1cm}$d \gets \left(\begin{array}{cc}s&t\\u&v\end{array}\right)$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+
 \SeqOpSampleStacked{makematrix}{Matrix-Erstellung}
 
 \subsubsection{Array-Operationen}
@@ -1067,13 +1135,17 @@ als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
 \paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays.
 Die Eingaberegister müssen alle den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
 %\\\hspace*{1cm}$d \gets (s, t, \dots)$
+
 \SeqOpSampleStacked{makearray}{Array-Erstellung}
+
 
 \paragraph{Extraktion eines Arrayelements:} Verwendet zwei Eingaberegister: ein Arrayregister sowie als Index ein Register mit einem vorzeichenlosen Integer.
 Aus dem Array wird das Element mit dem gegebenen Index extrahiert und in das Zielregister geschrieben.
 Das Zielregister muss den Basistyp des Array-Registers besitzen.
 %\\\hspace*{1cm}$d \gets s[t]$
+
 \SeqOpSampleStacked{arrayextract}{Extraktion eines Arrayelements}
+
 
 \paragraph{Änderung eines Arrayelements:} Verwendet drei Eingaberegister: neben einem Arrayregister und dem Indexregister (vorzeichenloser Integer)
 weiterhin ein Register mit vom Basistyps des Arrays (der "`neue Wert"').
@@ -1096,9 +1168,11 @@ for element = 0 to Array.length-1
 
 \SeqOpSampleStacked{arraychange}{Änderung eines Arrayelements}
 
+
 \paragraph{Arraylänge:} Nimmt im Eingaberegister ein Array entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
 die Anzahl der Elemente des Arrays.
 %\\\hspace*{1cm}$d \gets |s|$
+
 \SeqOpSampleStacked{arraylen}{Arraylänge}
 
 \subsubsection{Komplexe Operationen}
@@ -1116,7 +1190,7 @@ eingeschachtelten Sequenz zu Registern der umgebenden Sequenz vorgenommen.
 Eine Sequenzschachtelung gilt als \emph{eine} Operation in der umgebenden Sequenz. Solange die Zuordnung von "`exportierten"' Namen der
 eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wird kein Register verwendet, das bereits beschrieben wurde), bleibt die Register-Zuweisungs-Bedingung erfüllt.
 
-\SeqOpSampleStacked{nest_seq}{Sequenzschachtelung}
+\SeqOpSampleStacked{nest_seq}{Sequenzschachtelung (Rahmen symbolisiert eingeschachtelte Sequenz)}
 
 \paragraph{Verzweigung:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind zwei Sequenzen (eine ``if''- und eine ``else''-Sequenz) sowie ein Register vom
 Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird die ``if''-Sequenz ausgeführt, sonst die ``else''-Sequenzen. Es müssen immer beide Sequenzen
@@ -1127,10 +1201,10 @@ gegeben werden, Sequenzen können aber leer sein.
 %Ein Register kann in beiden Blöcken beschrieben werden (z.B. wenn im Quellcode eine Variable von einer Bedingung abhängig unterschiedliche Werte zugewiesen wurden).
 %Eine Verzweigung gilt als \emph{eine} Operation in der umgebenden Sequenz. D.h. auch wenn ein Register in beiden Blöcken beschrieben wird, wird es,
 %von der umgebenden Sequenz aus gesehen, bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
-Ein beschriebenes "`exportiertes"' Register muss in beiden Untersequenzen beschrieben werden. (Problematisch ist der Fall, wenn in einer Verzweigung
-in nur einer Sequenz ein Register beschrieben wird. Bei Ausführung des "`anderen"' Pfades entweder zur Laufzeit das Register einen undefinierten Wert besitzen, oder
-es müsste anderweitig überschrieben werden, was die Register-Zuweisungs-Bedingung verletzt. In der "`anderen"' Sequenz muss eine Zuweisung vom alten
-Wert vorgenommen werden.)
+Ein beschriebenes "`exportiertes"' Register muss in beiden Untersequenzen beschrieben werden: würde in einer Verzweigung
+in nur einer Sequenz ein Register beschrieben werden, würde bei Ausführung des "`anderen"' Pfades entweder zur Laufzeit das Register einen undefinierten Wert besitzen, oder
+es müsste anderweitig überschrieben werden, was die Register-Zuweisungs-Bedingung verletzt. Um diese Probleme zu vermeiden wird verlangt,
+dass in der "`anderen"' Sequenz eine Zuweisung (typischerweise vom "`alten"' Wert der dem Register entsprechenden Variable) vorgenommen werden muss.
 
 Da eine Verzweigung als \emph{eine} Operation in der umgebenden Sequenz gilt, wird ein Register, auch wenn es in beiden Blöcken beschrieben wird, 
 von der umgebenden Sequenz aus gesehen bloß von einer Operation beschrieben (eben der Verzweigung). Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
@@ -1162,12 +1236,12 @@ Werte, die sich von Schleifendurchlauf zu Schleifendurchlauf ändern, werden äh
 Register im Schleifenkörper zugeordnet werden. Die Schleifenoperation selber erhält eine Abbildung von einem Paar "`externer"' Register
 (Wert vor der ersten Ausführung sowie Wert nach einer Ausführung) zu den lokalen Registern als weitere Eingabe.
 Durch diese Verwendung von Paaren von Eingaben ist es möglich, Werte in einem Schleifendurchlauf zu beschreiben
-und im nächsten Durchlauf wieder als Eingabe für eine Operation zu verwenden. (Angenommen sei ein Quellcode wie 
-\texttt{int i = 0; while (...) \{ i = i + 1; \}}. Ohne Registerpaare müsste bei \texttt{i = i + 1} entweder Eingabe-\texttt{i}
-wie auch Ergebnis-\texttt{i} auf das gleiche Register umgesetzt werden, welches entsprend mehrfach zugewiesen wird, oder aber verschiedene Register, wobei
-Eingabe-\texttt{i} immer den anfänglichen Wert \texttt{0} besitzen würde. Registerpaare erlauben es, das im ersten Durchlauf
+und im nächsten Durchlauf wieder als Eingabe für eine Operation zu verwenden: bei ein Quellcode wie 
+\texttt{int i = 0; while (...) \{ i = i + 1; \}} müssten, ohne Registerpaare, bei \texttt{i = i + 1} entweder Eingabe-\texttt{i}
+wie auch Ergebnis-\texttt{i} auf das gleiche Register umgesetzt werden -- welches entsprend mehrfach zugewiesen wird -- oder aber verschiedene Register, wobei
+Eingabe-\texttt{i} immer den anfänglichen Wert \texttt{0} besitzen würde. Registerpaare erlauben es, dass im ersten Durchlauf
 der anfängliche Wert \texttt{0} für Eingabe-\texttt{i} verwendet wird, in anschliessenden Durchläufen aber der Wert des Ergebnis-\texttt{i}
-des letzten Durchlaufs.)
+des letzten Durchlaufs.
 
 %Durch die Verwendung eines
 %Paares von Eingaben wird die Verwendung der $\phi$-Funktion vermieden.
@@ -1179,6 +1253,8 @@ Damit bleibt die Register-Zuweisungs-Bedingung erfüllt.
 
 Es gibt keine spezielle Operation für \texttt{for}-Schleifen, diese werden auf \texttt{while}-Schleifen abgebildet.
 %\\\hspace*{1cm}$\mathrm{while}\ s\ \mathrm{do}\ \mathit{Block}$
+
+\SeqOpSampleStacked{while}{Schleife}
 
 \subsubsection{Funktions-Operationen}
 
@@ -1192,10 +1268,16 @@ vorher eine Funktionsbeschreibung übergeben worden sein, die durch den Bezeichn
 %\\\hspace*{1cm}$d \gets \mathrm{Funktion}\ (s, \dots)$
 %\\\hspace*{1cm}$\mathrm{Funktion}\ (s, \dots)$
 
+\emph{Beispiel siehe nächster Absatz.}
+
+
 \paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Es wird eine Liste von Registern entgegengenommen. Diese
 werden, der Position nach, den Ausgabeparametern der Funktion zugewiesen.
 %\\\hspace*{1cm}$\mathrm{return}\ s$
 %\\\hspace*{1cm}$\mathrm{return}$
+
+\SeqOpSampleStacked{funccall}{Funktionsaufruf und -rücksprung}
+
 
 \paragraph{Vordefinierte Funktion:} Diese Operation sammelt den Zugriff auf vordefinierte Funktionen (siehe~\ref{builtins})
 und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
@@ -1203,6 +1285,9 @@ und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegiste
 %\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
 %\\\hspace*{1cm}$d \gets s \cdot t$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
+
+\SeqOpSampleStacked{funcbuiltin}{Vordefinierte Funktion}
+
 
 %$\phi$-Funktion: diese konkrete Zwischencoderepräsentation eines compilierten Programmes enthält nicht die bei SSAs wesentliche $\phi$-Funktion.
 
@@ -1277,7 +1362,7 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 \label{Auftrennung}
 
 % High-Level Arbeitsweise
-Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und \emph{Fragmentprogramm} auf.
+Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und ein \emph{Fragmentprogramm} auf.
 Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}
 \footnote{Siehe Abschnitte \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz}},
 in der diese Operation ausgeführt wird, zuordnen: mit \emph{Vertexfrequenz} (per Vertex) berechnete Operationen werden dem Vertexprogramm zugeordnet.
@@ -1285,11 +1370,12 @@ Analog werden mit \emph{Fragmentfrequenz} (per Fragment) berechnete Operationen 
 und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
 
 \paragraph{Operanden:} Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche dem Maximum der Operanden-Frequenzen
-entspricht. So muss z.B. eine Addition von zwei Werten per Fragment ausgeführt werden, wenn einer der Summanden per Fragment berechnet wurde.
+entspricht (eine Operation seltener auszuführen, als sich die Operanden ändern könnten, ist offensichtlich nicht sinnvoll).
+So muss z.B. eine Addition von zwei Werten per Fragment ausgeführt werden, wenn einer der Summanden per Fragment berechnet wurde.
 % DIes ist darin begründet, dass Werte nur vom Vertex- zum Fragmentprogramm, aber nicht zurück, übertragen werden können. ... \ref{}
 
 \paragraph{Operation:} Eine Berechnung kann per Vertex ausgeführt werden, wenn beide Eingaben per Vertex vorliegen, und
-sofern die Operation das Kriterium der \emph{Interpolierbarkeit} (Abschnitt~\ref{Interpolierbarkeit}) erfüllt.
+sofern die Operation das Kriterium der \emph{Interpolierbarkeit} (beschrieben in Abschnitt~\ref{Interpolierbarkeit}) erfüllt.
 
 \subsection{Berechnungsfrequenzen}
 \label{splitter_Berechnungsfrequenzen}
@@ -1302,24 +1388,24 @@ Vertex- und Fragmentfrequenz.
 Per-Mesh-Eingaben sind Eingaben, die sich nicht während aufeinanderfolgenden Ausführungen eines Programmes
 ändern, und können daher als \emph{konstant} angesehen werden. Deren Werte stammen aus der umgebenden Anwendung.
 
-Per-Vertex-Eingaben sind den verschiedenen Vertices zugeordnete Eingaben . % TODO Verw. auf Vertexdaten
+Per-Vertex-Eingaben sind den verschiedenen Vertices zugeordnete Eingaben. % TODO Verw. auf Vertexdaten
 Auch diese sind Anwendungsdaten.
 
 Per-Fragment-Eingaben sind die interpolierten Ausgaben des Vertexprogramms (siehe Abschnitt~\ref{schnittstelle} unten). 
-Insbesondere besitzt Graphikhardware keinen Mechanismus, der der Anwendung erlauben würden, direkt per-Fragment-Eingaben
+Insbesondere besitzt Grafikhardware keinen Mechanismus, der der Anwendung erlauben würden, direkt per-Fragment-Eingaben
 vorzugeben.
 
 "`Echte"' Konstanten werden vom Splitter auch als "`per Mesh"' betrachtet.
 
-Für jedes Register wird verfolgt, für welche Frequenzen es vorliegt, im Wesentlichen also in welchem Teilprogramm es berechnet wird.
+Für jedes Register wird verfolgt, für welche Frequenzen es vorliegt, im Wesentlichen also in welchem Teilprogramm es berechnet werden muss.
 Dabei kann ein Register in mehreren Frequenzen verfügbar sein, wenn es im Vertex-Programm berechnet wurde, aber später 
 zur Übertragung an das Fragmentprogramm markiert wird (Abschnitt~\ref{schnittstelle}).
 
 Der Splitter kategorisiert auch Operationen und Werte als "`per Mesh"', generiert jedoch \emph{kein} separates Programm.
 Stattdessen werden per-Mesh-Operationen sowohl vom Vertex- als auch vom Fragmentprogramm ausgeführt. Zwei Annahmen
-liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen mit uniformen Werten allein vorgenommen werden, es also kein
+liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen allein mit per Mesh vorliegenden Werten vorgenommen werden, es also kein
 Nachteil durch eine mehrfache Ausführung in Vertex- und Fragmentprogramm entsteht. Die zweite Annahme ist,
-dass durch weitere Optimierungsschritte wie Dead Code Elimination einige Operationen auf uniformen Werten entfernt werden.
+dass durch weitere Optimierungsschritte wie Dead Code Elimination einige per-Mesh-Operationen entfernt werden.
 
 % Eingaben: Uniform oder per Vertex; Fragmentfreq. nur Eingaben von VP
 
@@ -1341,14 +1427,15 @@ entsprechende Abbildung in der Zieldarstellung.
 % Kriterium: Interpolation
 
 Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Operationen per Fragment ausgeführt (siehe Abschnitt~\ref{formulierte_frequenz}).
-Die vom Splitter zu lösende Problem ist die Bestimmung von Operationen, die per Vertex ausgeführt werden können.
+Das vom Splitter zu lösende Problem ist damit die Bestimmung von Operationen, die per Vertex ausgeführt werden können.
 Das Hauptkriterium diese Entscheidung ist die \emph{Interpolierbarkeit} einer Operation.
 
 \newcommand\lerp{\mathrm{lerp}}
-Vom Vertexprogramm ausgegebene Werte werden, bevor sie wieder dem Fragmentprogramm als Eingabe dienen, \emph{linear interpoliert}: % TODO: Verw. auf Erklärung/Interpolatoren
+Vom Vertexprogramm ausgegebene Werte werden, bevor sie wieder dem Fragmentprogramm als Eingabe dienen, \emph{linear interpoliert} (siehe Abschnitt~\ref{rasterung}):
+% TODO: Verw. auf Erklärung/Interpolatoren
 Eine lineare Interpolation -- "`$\lerp$"' -- zwischen zwei Werten $a$ und $b$ mit Faktor $f$ ($0 \le f \le 1$) wird durch $\lerp(a, b, f) = a \cdot (1-f) + b \cdot f$ berechnet.
 Soll ein Wert $x$ vom Vertex- and das Fragmentprogramm übergeben werden, so gibt das Vertexprogramm per Vertex verschiedene Werte aus - $x_1, x_2$ usw.
-Das Fragmentprogramm erhält als Eingabe das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$ (wobei $f$ von der Graphikhardware berechnet wird
+Das Fragmentprogramm erhält als Eingabe das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$ (wobei $f$ von der Grafikhardware berechnet wird
 und per Fragment variiert)\footnote{Tatsächlich muss bei der Rasterung von Dreiecken zwischen drei Werten interpoliert werden. Dieser Abschnitt betrachtet konkret
 bloss Interpolation zwischen zwei Werten, die Ergebnisse gelten aber auch bei Interpolation zwischen drei Werten.}.
 
@@ -1385,6 +1472,7 @@ per Vertex ausgeführt werden.
 % Beispiel?
 
 % Stichwort: Linearkombination?
+\subsubsection{Einfache Operationen}
 
 \paragraph{Arithmetische Operationen:} Die Summe oder Differenz von zwei linearen Funktionen
 ist wieder eine lineare Funktion, Addition und Subtraktion sind also uneingeschränkt interpolierbar.
@@ -1392,15 +1480,15 @@ ist wieder eine lineare Funktion, Addition und Subtraktion sind also uneingeschr
 
 Multiplikation und Division sind interpolierbar, wenn mindestens ein Operand höchstens per Mesh gegeben ist.
 Sind beide Operanden per Vertex gegeben, so ist eine Multiplikation oder Division keine lineare,
-sondern eine \emph{quadratische} Funktion. Da per Mesh gegebene Operanden praktisch als
-konstant betrachtet werden können ist die Multiplikation oder Division mit einem per Mesh gegebenen
-Operanden eine lineare Funktion und interpolierbar.
+sondern eine \emph{quadratische} Funktion, und damit nicht interpolierbar. Per Mesh gegebene Operanden können aber praktisch als
+konstant betrachtet werden, die Multiplikation oder Division mit einem per Mesh gegebenen
+Operanden ist also eine lineare Funktion und damit interpolierbar.
 
 Die Modulo-Operation ist unstetig und daher nicht interpolierbar.
 
 \paragraph{Logische Ausdrücke, Vergleichsoperationen:} Diese Operationen sind ebenfalls unstetig und somit nicht interpolierbar.
 
-\paragraph{Unäre Ausdrücke:} Negation ist offentsichtlich interpolierbar.
+\paragraph{Unäre Ausdrücke:} Negation ist offensichtlich interpolierbar.
 
 Logisches NICHT ist, wie die anderen logischen Ausdrücke, nicht interpolierbar.
 
@@ -1420,7 +1508,7 @@ Minimum und Maximum sind im Allgemeinen keine stetigen Funktion und damit nicht 
 
 Die Texturfunktionen sind prinzipbedingt nicht interpolierbar.
 
-\subsection{Flusskontrolle}
+\subsubsection{Flusskontrolle}
 
 Neben mathematischen Ausdrücken kann ein aufzuspaltendes Programm auch Operationen der Flusskontrolle enthalten,
 die ebenso auf mehrere Ausgabeprogramme aufgespaltet werden müssen.
@@ -1503,11 +1591,15 @@ Mit dieser konservativen Annahme kann der Rumpf einer rekursiven Funktion aufges
 % 'Trivial': Zuweisung, Konstante, Typumwandlung, Vektor-Erstellung/-Extraktion, [Array-Erstellung/-Extraktion/-Änderung/-Länge,?]
 % 
 
-\paragraph{Array-Operationen:} Array-Operationen sind nur interpolierbar, wenn die Länge des Arrays \emph{statisch konstant}
-(und nicht per Mesh) bekannt ist und bei der Array-Extraktion bzw. -Änderung der verwendete Index höchstens per Mesh
+\subsubsection{Array-Operationen}
+
+Array-Operationen sind nur interpolierbar, wenn die Länge des Arrays \emph{statisch konstant}
+(und nicht per Mesh) bekannt ist und bei der Array-Extraktion bzw. \mbox{-Än}\-de\-rung der verwendete Index höchstens per Mesh
 verfügbar ist.
 
-\paragraph{Andere Operationen:} Zuweisungen, Konstantenoperationen, Typumwandlung, die Erstellung eines Vektors sowie
+\subsubsection{Andere Operationen}
+
+Zuweisungen, Konstantenoperationen, Typumwandlung, die Erstellung eines Vektors sowie
 die Extraktion einer Komponente können trivialerweise mit derjenigen Frequenz berechnet werden, die der höchsten Frequenz
 aller Eingaben entspricht.
 
@@ -1518,12 +1610,14 @@ Ein einfaches Beispiel soll die Ausgabe des Auftrenners demonstrieren.
 \subsubsection{Eingabeprogramm}
 
 Als Eingabe dient das einfache Shading-Programm aus Abbildung~\ref{fig:simple_s1}.
-Es berechnet eine Beleuchtungsintensität für eine Lichtquelle mit konstanter Richtung des Lichteinfalls (also eine Lichtquelle im
-Unendlichen) und gegebener Farbe. Diese Beleuchtungsintensität, addiert zur ``ambient''-Farbe (eine Annäherung von "`Streulicht"')
-wird dann mit einer aus einer Texture ausgelesenen Oberflächenfarbe moduliert.
+Es basiert auf dem Beispiel in Abbildung~\ref{fig:simple_cg} -- dessen Vertex- und Fragment-Teil wurden hier zusammengeführt.
+
+Das Programm berechnet eine Beleuchtungsintensität für eine Lichtquelle mit konstanter Richtung des Lichteinfalls (also eine Lichtquelle im
+Unendlichen) und gegebener Farbe. Diese Beleuchtungsintensität mit der ``ambient''-Farbe (eine Annäherung von "`Streulicht"')
+zu einer Gesamtintensität addiert. Diese wird dann mit einer aus einer Textur ausgelesenen Oberflächenfarbe moduliert.
 
 In der Abbildung wurde (manuell) markiert, in welchen Frequenzen die Eingabeparameter vorliegen,
-sowie die Frequenz, in der die einzelnen Ausdrücke ausgeführt werden sollen.
+sowie die Frequenz, in der die einzelnen Ausdrücke ausgeführt werden müssten.
 
 % Beispiele
 \begin{figure}[ht]
@@ -1635,61 +1729,6 @@ und reduziert die Sichtbarkeit der Facettierungen.
 
 % Force figures to appear before section
 \clearpage
-\section{Code-Generator}
-
-Der \emph{Code-Generator} übersetzt ein in der Zwischencoderepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
-Diese "`Darstellung"' kann wieder eine Hochsprache sein, prinzipiell kann ein Code-Generator aber auch Assembler-Quelltext oder eine
-Binärcodierung ausgeben.
-
-\subsection{Eingaben und Aufgaben}
-
-Der \emph{Code-Generator} erhält als Eingabe eine Liste von Funktionsbeschreibungen.
-Eine Funktionsbeschreibung besteht aus dem eindeutigen Bezeichner, einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern)
-und einer Sequenz mit den eigentlichen Operationen. Eine Funktion aus der Liste ist als "`Eintrittsfunktion"' markiert.
-
-\begin{figure}[h]
-   \centering
-  \includegraphics{ir_program}
-  \caption{Zusammensetzung eines Programms in der Zwischencoderepräsentation}
-  \label{fig:ir_program}
-\end{figure}
-
-Die Aufgaben des Code-Generators bestehen aus:
-\begin{itemize}
-\item Nötige Umformungen für die Zieldarstellung -- z.B. Schleifen ausrollen oder ``inlining'' von Funktionen.
-\item Übertragung der Funktionsbeschreibungen in eine entsprechende Deklaration in der Zieldarstellung.
-\item Übersetzung der Sequenzoperationen in die Zieldarstellung. 
-\item Dabei Ressourcenallokation, wenn nötig (z.B. begrenzte Registerzahl in der Zieldarstellung).
-\item Generierung von "`Schnittstellen-Anweisungen"' wie z.B. bei der Übergabe von Parametern an Funktionen
-oder die Behandlung von Werten "`vor dem ersten Durchlauf, nach dem ersten Durchlauf"' wie sie bei Schleifen
-auftreten.
-\end{itemize}
-
-\subsection{Generator für Cg}
-
-In der vorliegenden Implementierung wurde als Zieldarstellung die Sprache Cg~(\cite{cgpaper}, \cite{cg_home}) gewählt.
-
-Cg als Hochsprache kennt selbst Konstrukte wie Funktionen und Schleifen. Umformungen durch den Codegenerator
-sind also nicht nötig.
-
-Jede Funktion wird also direkt auf eine Cg-Funktion abgebildet.
-
-Jedem Register der Zwischencoderepräsentation wird eine Variable zugeordnet -- eine Re\-gis\-ter\-al\-lo\-ka\-tion ist unnötig, diese wird später vom Cg-Compiler selbst vorgenommen.
-"`Einfache"' Sequenzoperation (arithmetische Operationen u.ä.) lassen sich trivialerweise auf ein einzelnes Statement in Cg übertragen. 
-Weiterhin werden die meisten eingebauten Funktionen und Attribute direkt von Cg unterstützt (Ausnahme ist das Matrix-Attribut \texttt{inverted}).
-
-Kompliziertere Operationen -- Verzweigungen, Schleifen, Funktionsaufrufe -- resultieren in mehreren Statements, obwohl es sich bei dem
-zusätzlichen "`Aufwand"' meist nur um Zuweisungen zwischen Variablen handelt, wie z.B. die Auswahl des Bedingungsregisters basierend zwischen
-den Wert vor und nach dem ersten Schleifendurchlauf.
-
-Die spezifizierte Sprache unterstützt Zeichenketten aus Unicode-Buchstaben und -Ziffern als Bezeichner;
-Cg nur eine Untermenge von ASCII. Für die Ausgabe als Cg-Code werden Zeichen ausserhalb von ASCII in eine Darstellung in der von Cg akzeptieren
-Zeichenmenge umgewandelt\footnote{Als Kodierung wurde Punycode~(\cite{rfc3492}) gewählt da dies die aus ASCII bestehenden Teile eines Bezeichners
-gut lesbar lässt.}.
-
-% Original-Schnipsel und Generator-Output
-
-\newpage
 \section{Optimierer}
 
 \newcommand\OptSample[2]{
@@ -1716,15 +1755,15 @@ gut lesbar lässt.}.
 }
 
 Die Aufgabe eines \emph{Optimierers} ist es, ein gegebenes Programm so umzuschreiben, dass es zur Laufzeit
-schnellstmöglich ausgeführt wird. Im allgemeinen erstrecken sich mögliche Optimierungen von Vereinfachungen,
+schnellstmöglich ausgeführt wird. Im Allgemeinen erstrecken sich mögliche Optimierungen von Vereinfachungen,
 wie ein Entfernen von unbenötigten Operationen und ein Berechnen von Ausdrücken zur Kompilierzeit,
 bis hin zu komplexen Umsortierungen oder Zusammenfassung von Operationen, z.B. um ``multiply-add''-Operation
 besser auszunutzen.
 
 Ein Optimierer, der Redundanzen u.ä. entfernt, erlaubt als Nebeneffekt auch, dass die vorhergehenden Arbeitsschritte
 eines Compilers -- im vorliegenden Compiler insbesondere der Splitter --
-nicht selbst optimalen Zwischencode erzeugen müssen. Die Implementierung jener Arbeitsschritte kann damit
-vereinfacht werden.
+nicht selbst optimalen Zwischencode erzeugen müssen. Die Implementierungen jener Arbeitsschritte kann damit
+einfacher gehalten werden.
 
 \subsection{Aufbau}
 
@@ -1743,7 +1782,7 @@ voneinander angewendet.
 
 % mehrere Stufen
 Die einzelnen Sequenzenoptimierungen werden nacheinander angewendet. Bei Bedarf kann eine
-Optimierung mehrmals angewendet werden - z.B. kann das ``Constant Folding'' einen Ausführungszweig
+Optimierung mehrmals angewendet werden -- z.B. kann das ``Constant Folding'' einen Ausführungszweig
 einer Verzweigung auswählen; in diesem Fall wird ein erneutes ``Block Inlining'' veranlasst,
 um die dadurch eingefügte Sequenzschachtelungsoperation zu vereinfachen.
 % bei Bedarf mehrere Durchgänge -> z.B. erneutes BI when CF einen Branch o.ä. "geinlined" hat
@@ -1839,14 +1878,73 @@ Zuweisung entfernt.
 \OptSampleStacked{dce}{Dead Code Elimination: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert;
 Zwischencoderepräsentation nach Aufspaltung in Vertex- und Fragmentprogramme}
 
+\clearpage
+\section{Code-Generator}
+
+Der \emph{Code-Generator} übersetzt ein in der Zwischencoderepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
+Diese "`Darstellung"' kann wieder eine Hochsprache sein, prinzipiell kann ein Code-Generator aber auch Assembler-Quelltext oder eine
+Binärcodierung ausgeben.
+
+\subsection{Eingaben und Aufgaben}
+
+Der \emph{Code-Generator} erhält als Eingabe eine Liste von Funktionsbeschreibungen.
+Eine Funktionsbeschreibung besteht aus dem eindeutigen Bezeichner, einer Liste von Parametern (getrennt nach Ein- und Ausgabeparametern)
+und einer Sequenz mit den eigentlichen Operationen. Eine Funktion aus der Liste ist als "`Eintrittsfunktion"' markiert.
+
+\begin{figure}[h]
+   \centering
+  \includegraphics{ir_program}
+  \caption{Zusammensetzung eines Programms in der Zwischencoderepräsentation}
+  \label{fig:ir_program}
+\end{figure}
+
+\newpage
+Die Aufgaben des Code-Generators bestehen aus:
+\begin{itemize}
+\item Nötige Umformungen für die Zieldarstellung -- z.B. Schleifen ausrollen oder ``inlining'' von Funktionen.
+\item Übertragung der Funktionsbeschreibungen in eine entsprechende Deklaration in der Zieldarstellung.
+\item Übersetzung der Sequenzoperationen in die Zieldarstellung. 
+\item Dabei Ressourcenallokation, wenn nötig (z.B. begrenzte Registerzahl in der Zieldarstellung).
+\item Generierung von "`Schnittstellen-Anweisungen"' wie z.B. bei der Übergabe von Parametern an Funktionen
+oder die Behandlung von Werten "`vor dem ersten Durchlauf, nach dem ersten Durchlauf"' wie sie bei Schleifen
+auftreten.
+\end{itemize}
+
+\subsection{Generator für Cg}
+
+\renewcommand{\baselinestretch}{1.40}\normalsize
+In der vorliegenden Implementierung wurde als Zieldarstellung die Sprache Cg~(\cite{cgpaper}, \cite{cg_home}) gewählt.
+
+Cg als Hochsprache kennt selbst Konstrukte wie Funktionen und Schleifen. Umformungen durch den Codegenerator
+sind also nicht nötig.
+
+Jede Funktion wird also direkt auf eine Cg-Funktion abgebildet.
+
+Jedem Register der Zwischencoderepräsentation wird eine Variable zugeordnet -- eine Re\-gis\-ter\-al\-lo\-ka\-tion ist unnötig, diese wird später vom Cg-Compiler selbst vorgenommen.
+"`Einfache"' Sequenzoperation (arithmetische Operationen u.ä.) lassen sich auf einen einzelnen Cg-Befehl übertragen. 
+Weiterhin werden die meisten eingebauten Funktionen und Attribute direkt von Cg unterstützt (Ausnahme ist das Matrix-Attribut \texttt{inverted}).
+
+Kompliziertere Operationen -- Verzweigungen, Schleifen, Funktionsaufrufe -- resultieren in mehreren Statements, obwohl es sich bei dem
+zusätzlichen "`Aufwand"' meist nur um Zuweisungen zwischen Variablen handelt, wie z.B. die Auswahl des Bedingungsregisters basierend zwischen
+den Wert vor und nach dem ersten Schleifendurchlauf.
+
+Die spezifizierte Sprache unterstützt Zeichenketten aus Unicode-Buchstaben und -Ziffern als Bezeichner;
+Cg nur eine Untermenge von ASCII. Für die Ausgabe als Cg-Code werden Bezeichner in eine Darstellung in der akzeptieren
+Zeichenmenge umgewandelt\footnote{Als Kodierung wurde Punycode~(\cite{rfc3492}) gewählt da dies die aus ASCII bestehenden Teile eines Bezeichners
+gut lesbar lässt.}.
+
+% Original-Schnipsel und Generator-Output
+\renewcommand{\baselinestretch}{1.50}\normalsize
+
+\newpage
 \section{Zusammenfassung}
 
-Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur dafür; die Abweichnung ist der Verarbeitungsschritt der "`Auftrennung"' in mehrere
+Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur; die Abweichnung ist der Verarbeitungsschritt der "`Auftrennung"' in mehrere
 Programme.
 
-Die Auftrennung nutzt dabei Eigenschaften von Graphikhardware aus, deren Aufbau auf den Ablauf des Echtzeit-3D-Renderings abgestimmt ist.
-Speziell werden Operationen in der Vertex- statt Fragmentverarbeitung ausgeführt sofern das Ergebnis zur ursprünglichen Operation mathematisch äquivalent ist,
-nachdem die von der Graphikhardware vorgenommen Interpolation von Ausgaben der Vertexverarbeitung angewendet wurde.
+Die Auftrennung nutzt dabei Eigenschaften von Grafikhardware aus, deren Aufbau auf den Ablauf des Echtzeit-3D-Renderings abgestimmt ist.
+Speziell werden Operationen in der Vertex- statt Fragmentverarbeitung ausgeführt, sofern das Ergebnis zur ursprünglichen Operation mathematisch äquivalent ist
+(unter Berücksichtigung der von der Grafikhardware vorgenommen Interpolation von Ausgaben der Vertexverarbeitung).
 
 Auch hervorzuheben ist die verwendete Zwischencoderepräsentation, die als Übergabeformat zwischen allen Verarbeitungsschritten von der
 semantischen Analyse bis zur Codegenerierung dient. Weiterhin ist sie darauf ausgerichtet, die Implementierung von Optimierungsschritten
@@ -1861,25 +1959,35 @@ Die übersetzte Sprache ist eine zwar vergleichsweise einfache, aber trotzdem pr
 Shadingsprache, die es erlaubt, Shadingprogramme zu schreiben, ohne den Hardwareaufbau aus verschiedenen Funktionseinheiten
 berücksichtigen zu müssen.
 
-Der in Abschnitt~\ref{Auftrennung} beschriebene Auftrenner arbeitet konservativ in dem Sinne dass eine Operation nur in das Ausgabe-Vertex-Programm
+Der in Abschnitt~\ref{Auftrennung} beschriebene Auftrenner arbeitet konservativ in dem Sinne, dass eine Operation nur in das Ausgabe-Vertex-Programm
 "`verschoben"' wird wenn das Ergebnis mathematisch äquivalent zu einer Berechnung im Ausgabe-Fragment-Programm wäre.
 Praktisch sollen aber manchmal bewusst Operationen durch eine per-Vertex-Berechnung approximiert werden (aus Geschwindigkeitsgründen
 bei komplexen oder oftmals verwendeten Programmen). Die Sprache sollte deswegen noch um ein Schlüsselwort o.ä. erweitert werden
 welches ein manuelles Bestimmen der Berechnungseinheit für eine Operation erlaubt.
 
-Eine weitere Erweiterung, um das Erstellen von komplexeren Programmen zu vereinfachen, wäre das Hinzufügen von Verbundtypen zur Sprache.
+Die anderen Shadingsprachen wie Cg, GLSL usw. noch weitere "`Komfortfunktionen"' für oft verwendete
+Berechnungen (z.B. für die lineare Interpolation von Werten oder Vektoren), die zwar prinzipiell mit den vorhandenen Operationen
+oder eingebauten Funktionen nachgebildet werden können; ein zur Verfügung stellen als eingebaute Funktion wäre jedoch komfortabler.
+
+Die in vielen Programmiersprachen vorhandenen Verbundtypen wäre eine sinnvolle Erweiterung 
+um das Erstellen von komplexeren Programmen zu vereinfachen. Auch praktisch nützlich wären die von anderen Shadingsprachen meist bereitgestellten
+Typen mit unterschiedlichen Genauigkeiten (wie ``half'' oder ``double precision''-Fließkommazahlen). Diese lassen den Programmierer, je nach Anforderungen,
+zwischen Genauigkeit und Berechnungsgeschwindigkeit abwägen. 
 
 Denkbar ist es auch, den Compiler so zu erweitern, dass Programme aus "`üblichen"' Shadingsprachen mit getrennten Vertex- und Fragmentprogrammen
 -- wie Cg -- akzeptiert werden. Die Ausgabe des Compilers wären ein funktional äquivalente Vertex- und Fragment-Programme,
 allerdings potentiell mit einer besseren Verteilung von Operationen auf Verarbeitungseinheiten.
 
-Bei der Implementierung besteht praktisch das grösste Verbesserungspotential im Aufspalter. Die Behandlung von Funktionen ist relativ
-kompliziert. Rekursiven Funktionen, aber auch Schleifen, werden nur im Fragment-Programm ausgeführt - dies stellt zwar ein korrektes
+Bei der Implementierung besteht noch Verbesserungspotential im Aufspalter. 
+Vor allem rekursive Funktionen werden nur im Fragment-Programm ausgeführt - dies stellt zwar ein korrektes
 Ergebnis sicher, ist aber nicht in allen Fällen die optimale Lösung.
 
-Der Compiler selbst nimmt in der vorliegenden Implementierung noch keine Optimierungsschritte vor. In Anbetracht der bewussten Ausrichtung
-der Zwischencoderepräsentation auf möglichst einfache Optimierungen sowie die bei der Implementierung gemachten Annahmen (z.B. im Aufspalter) über das
-Vorhandensein von Optimierungsschritten wäre es der nächste sinnvolle Schritte, diese Optimierungsschritte tatsächlich umzusetzen.
+%Der Compiler selbst nimmt in der vorliegenden Implementierung noch keine Optimierungsschritte vor. In Anbetracht der bewussten Ausrichtung
+%der Zwischencoderepräsentation auf möglichst einfache Optimierungen sowie die bei der Implementierung gemachten Annahmen (z.B. im Aufspalter) über das
+%Vorhandensein von Optimierungsschritten wäre es der nächste sinnvolle Schritte, diese Optimierungsschritte tatsächlich umzusetzen.
+
+Zur weiteren praktischen Verwendung des Compilers ist eine Integration in eine "'3D-Engine"' (also Bibliothek für 3D-Visualisierungen), wie es einige
+unter Open-Source-Lizenzen gibt, anstrebenswert.
 
 \cleardoublepage
 \appendix

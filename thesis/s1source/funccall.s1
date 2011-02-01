@@ -1,0 +1,9 @@
+float sqr (float x)
+{
+  return x*x;
+}
+
+void main (float a)
+{
+  float b = sqr (a);
+}

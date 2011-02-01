@@ -1,0 +1,4 @@
+void main (sampler2D tex, float2 coord)
+{
+  float4 color = tex2D (tex, coord);
+}
