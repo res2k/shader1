@@ -1,0 +1,11 @@
+\sOfunc{
+\sOfunchead{main}
+\sOfuncinparams{\sOparamIn{sampler2D}{tex}{\sOreg{m\_tex\_B0}}\sOparamIn{float2}{coord}{\sOreg{m\_coord\_B0}}}
+\sOfuncregset{float2}{\sOsetreg{m\_coord\_B0}}
+\sOfuncregset{float4}{\sOsetreg{v\_color}}
+\sOfuncregset{sampler2D}{\sOsetreg{m\_tex\_B0}}
+\sOfuncbody{
+\sOstmt{\sObuiltintexTwoD{\sOreg{v\_color}}{\sOreg{m\_tex\_B0}}{\sOreg{m\_coord\_B0}}}
+}
+}
+

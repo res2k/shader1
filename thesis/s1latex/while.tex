@@ -1,0 +1,22 @@
+\sOfunc{
+\sOfunchead{main}
+\sOfuncinparams{\sOparamIn{unsigned\ int}{x}{\sOreg{m\_x\_B0}}}
+\sOfuncregset{bool}{\sOsetreg{v\_\$cond1}\sOsetreg{v\_\$cond1.1}}
+\sOfuncregset{unsigned\ int}{\sOsetreg{m\_x\_B0}\sOsetreg{v\_i}\sOsetreg{v\_i.1}}
+\sOfuncbody{
+\sOstmt{\sOassign{\sOreg{v\_i}}{\sOconst{0}}}
+\sOstmt{\sOcmplt{\sOreg{v\_\$cond1}}{\sOreg{v\_i}}{\sOreg{m\_x\_B0}}}
+\sOwhile{\sOreg{v\_\$cond1/v\_\$cond1.1}}{
+\sOnestseq{
+\sOnestmapIn{\sOreg{v\_i/v\_i.1}}{\sOreg{m\_i\_B0}}
+\sOnestmapIn{\sOreg{m\_x\_B0}}{\sOreg{m\_x\_B1}}
+  \sOstmt{\sOassign{\sOreg{i\_tmp0}}{\sOconst{1}}}
+  \sOstmt{\sOadd{\sOreg{m\_i\_B0.1}}{\sOreg{m\_i\_B0}}{\sOreg{i\_tmp0}}}
+  \sOstmt{\sOcmplt{\sOreg{m\_\$cond1\_B0}}{\sOreg{m\_i\_B0.1}}{\sOreg{m\_x\_B1}}}
+\sOnestmapOut{\sOreg{v\_\$cond1.1}}{\sOreg{m\_\$cond1\_B0}}
+\sOnestmapOut{\sOreg{v\_i.1}}{\sOreg{m\_i\_B0.1}}
+}
+}
+}
+}
+

@@ -1,0 +1,21 @@
+\sOfunc{
+\sOfunchead{sqr\$1F}
+\sOfuncinparams{\sOparamIn{float}{x}{\sOreg{m\_x\_B0}}}
+\sOfuncoutparams{\sOparamOut{float}{\$retval}{\sOreg{v\_\$retval1}}}
+\sOfuncregset{float}{\sOsetreg{m\_x\_B0}\sOsetreg{v\_\$retval1}}
+\sOfuncbody{
+\sOstmt{\sOmul{\sOreg{v\_\$retval1}}{\sOreg{m\_x\_B0}}{\sOreg{m\_x\_B0}}}
+\sOreturn{\sOreg{v\_\$retval1}}
+}
+}
+
+\vspace{0.5em}
+\sOfunc{
+\sOfunchead{main}
+\sOfuncinparams{\sOparamIn{float}{a}{\sOreg{m\_a\_B0}}}
+\sOfuncregset{float}{\sOsetreg{m\_a\_B0}\sOsetreg{v\_b}}
+\sOfuncbody{
+\sOcall{sqr\$1F}{\sOreg{m\_a\_B0} \sOcomma \sOreg{v\_b}}
+}
+}
+
