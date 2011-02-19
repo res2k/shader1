@@ -84,6 +84,8 @@ namespace s1
     
     /// Return current character
     UChar32 operator* () const;
+  private:
+    UnicodeStream (const UnicodeStream& other); // forbidden
   };
   
 } // namespace s1
