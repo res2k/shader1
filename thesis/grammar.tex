@@ -52,7 +52,7 @@ werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt 
 
 \subsection{Ausdrücke}\label{Ausdruecke}
 \Gnt{ausdruck}:\label{ausdruck}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gopt{\Galt{\Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} \Gor{}\Gnt{asdr\_suffix\_zuweisung}{\scriptsize (\ref{asdr_suffix_zuweisung})} }}\\
+\hspace*{1cm}\Galt{\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gor{}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \Gor{}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} }\\
 
 Der Ausdruck höchster Präzedenz ist die Zuweisung.
 %, auf welche einfach in der Regel für
@@ -60,20 +60,19 @@ Der Ausdruck höchster Präzedenz ist die Zuweisung.
 
 
 \subsubsection{Zuweisung}\label{Zuweisung}
-\Gnt{asdr\_suffix\_zuweisung}:\label{asdr_suffix_zuweisung}\\
-\hspace*{1cm}\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\Gnt{asdr\_zuweisung}:\label{asdr_zuweisung}\\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
-Ein Zuweisungsausdruck setzt sich aus einem \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} (der "`linken Seite"') sowie einem
-direkt folgenden \Gnt{asdr\_suffix\_zuweisung}{\scriptsize (\ref{asdr_suffix_zuweisung})} (die "`rechte Seite"') zusammen.
+Ein Zuweisungsausdruck setzt sich aus einer "`linken Seite"', einer Variable oder einem Arrayelement
+bzw. einem Swizzle-Attribut (siehe \ref{Vektorattribute}) davon, sowie
+einer "`rechten Seite"', dem direkt folgenden, zuzuweisenden \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}, zusammen.
+
 Dem Ausdruck der linken Seite wird der Wert des Ausdrucks
-auf der rechten Seite zugewiesen. Der Ausdruck auf der linken Seite muss eine Variable oder ein Arrayelement
-bzw. von diesen ein Swizzle-Attribut (siehe \ref{Vektorattribute}) bezeichnen.
+auf der rechten Seite zugewiesen.
 
 Der Typ des zugewiesenen Ausdrucks muss zuweisungskompatibel (siehe unten) zur linken Seite der Zuweisung sein.
 
 Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
-
-\emph{Anfang des Zuweisungsausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
 
 \subsubsection{Basisausdruck}\label{Basisausdruck}
 \Gnt{asdr\_basis}:\label{asdr_basis}\\
@@ -164,11 +163,11 @@ Ist der Operand von einem Fließkommatyp, so ist der Typ des unären Ausdrucks v
 \op{!} logisch invertiert den Operanden. Der Operand muss vom Typ \kw{bool} sein. Der Typ des unären Ausdrucks ist vom Typ \kw{bool}.
 
 \subsubsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
-\Gnt{asdr\_suffix\_ternaer}:\label{asdr_suffix_ternaer}\\
-\hspace*{1cm}\Gt{?}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{:}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+\Gnt{asdr\_ternaer}:\label{asdr_ternaer}\\
+\hspace*{1cm}\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{?}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{:}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
 
-Ein ternärer Ausdruck setzt sich aus einem \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} (der "`Bedingung"') sowie einem
-direkt folgenden \Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} zusammen.
+Ein ternärer Ausdruck setzt sich aus einem \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} (der "`Bedingung"') sowie zwei weiteren
+Ausdrücken, dem \emph{Wahr-Ausdruck} und dem \emph{Falsch-Ausdruck}, zusammen.
 Die \emph{Bedingung} muss ein boolescher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
 so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Wahr-Ausdrucks}.
@@ -177,8 +176,6 @@ ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 \emph{Wahr-} und \emph{Falsch-Ausdruck} müssen vom gleichen Typ sein.
-
-\emph{Anfang des ternären Ausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}.}
 
 
 \subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
@@ -269,7 +266,8 @@ Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
 \hspace*{1cm}\Gnt{typ\_sampler}{\scriptsize (\ref{typ_sampler})} \\
 \hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 \Gnt{typ}:\label{typ}\\
-\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
+\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \\
+\hspace*{1cm}\Gnt{typ\_array}{\scriptsize (\ref{typ_array})} \\
 \subsubsection{Boolescher Typ}\label{Boolescher Typ}
 \Gnt{typ\_bool}:\label{typ_bool}\\
 \hspace*{1cm}\Gt{bool}\\
@@ -474,10 +472,11 @@ Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{
 
 
 \subsubsection{Arraytypen}\label{Arraytypen}
-\Gnt{typ\_suffix\_array}:\label{typ_suffix_array}\\
-\hspace*{1cm}\Gt{[}\Gspace\Gt{]}\Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
+\Gnt{typ\_array}:\label{typ_array}\\
+\hspace*{1cm}\Gnt{typ}{\scriptsize (\ref{typ})} \Gspace\Gt{[}\Gspace\Gt{]}\\
 
-Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch \Gnt{typ}{\scriptsize (\ref{typ})}).
+Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch \Gnt{typ}{\scriptsize (\ref{typ})};
+insbesondere ist der Basistyp nicht auf \Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} beschränkt sondern kann selbst ein Arraytyp sein).
 Die Anzahl der Elemente in individuellen Variablen oder Konstanten eines Arraytyps
 ergibt sich aus der Anzahl der Elemente des zugewiesenen Array-Wertes.
 

@@ -72,27 +72,28 @@ Der Ausdruck höchster Präzedenz ist die Zuweisung.
 /** \alt-merge-on */
 
 ausdruck
-	: asdr_logisch_oder (asdr_suffix_ternaer | asdr_suffix_zuweisung)?
+	: asdr_logisch_oder
+	| asdr_zuweisung
+	| asdr_ternaer
 	;
 /** \alt-merge-off */
 	
 /** \subsection Zuweisung
 
-Ein Zuweisungsausdruck setzt sich aus einem +ausdruck+ (der "`linken Seite"') sowie einem
-direkt folgenden +asdr_suffix_zuweisung+ (die "`rechte Seite"') zusammen.
+Ein Zuweisungsausdruck setzt sich aus einer "`linken Seite"', einer Variable oder einem Arrayelement
+bzw. einem Swizzle-Attribut (siehe \ref{Vektorattribute}) davon, sowie 
+einer "`rechten Seite"', dem direkt folgenden, zuzuweisenden +ausdruck+, zusammen.
+
 Dem Ausdruck der linken Seite wird der Wert des Ausdrucks
-auf der rechten Seite zugewiesen. Der Ausdruck auf der linken Seite muss eine Variable oder ein Arrayelement
-bzw. von diesen ein Swizzle-Attribut (siehe \ref{Vektorattribute}) bezeichnen.
+auf der rechten Seite zugewiesen.
 
 Der Typ des zugewiesenen Ausdrucks muss zuweisungskompatibel (siehe unten) zur linken Seite der Zuweisung sein.
 
 Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
-
-\emph{Anfang des Zuweisungsausdrucks siehe +ausdruck+.}
 */
 
-asdr_suffix_zuweisung
-	: '=' ausdruck
+asdr_zuweisung
+	: BEZEICHNER attribut_liste_oder_array_element? '=' ausdruck
 	;
 
 /** \subsection Basisausdruck
@@ -200,8 +201,8 @@ asdr_unaer
 	
 /** \subsection Ternärer Ausdruck
 
-Ein ternärer Ausdruck setzt sich aus einem +ausdruck+ (der "`Bedingung"') sowie einem
-direkt folgenden +asdr_suffix_ternaer+ zusammen.
+Ein ternärer Ausdruck setzt sich aus einem +ausdruck+ (der "`Bedingung"') sowie zwei weiteren
+Ausdrücken, dem \emph{Wahr-Ausdruck} und dem \emph{Falsch-Ausdruck}, zusammen.
 Die \emph{Bedingung} muss ein boolescher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
 so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Wahr-Ausdrucks}.
@@ -211,12 +212,10 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 \emph{Wahr-} und \emph{Falsch-Ausdruck} müssen vom gleichen Typ sein.
 
-\emph{Anfang des ternären Ausdrucks siehe +ausdruck+.}
-
 */
 
-asdr_suffix_ternaer
-	: '?' ausdruck ':' ausdruck
+asdr_ternaer
+	: ausdruck '?' ausdruck ':' ausdruck
 	;
 
 /** \subsection Vergleichsoperatoren
@@ -334,7 +333,7 @@ typ_basis
 	;
 
 typ
-	: typ_basis typ_suffix_array?
+	: typ_basis | typ_array
 	;
 
 /** \subsection Boolescher Typ
@@ -602,7 +601,8 @@ Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{
 
 /** \subsection Arraytypen
 
-Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch +typ+).
+Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch +typ+;
+insbesondere ist der Basistyp nicht auf +typ_basis+ beschränkt sondern kann selbst ein Arraytyp sein).
 Die Anzahl der Elemente in individuellen Variablen oder Konstanten eines Arraytyps
 ergibt sich aus der Anzahl der Elemente des zugewiesenen Array-Wertes.
 
@@ -613,8 +613,8 @@ undefiniert.
 
 */
 
-typ_suffix_array
-	: '[' ']' typ_suffix_array?
+typ_array
+	: typ '[' ']'
 	;
 /**
 \subsubsection Arraykonstruktoren

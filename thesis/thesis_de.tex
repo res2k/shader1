@@ -676,7 +676,10 @@ Bei der Lösung von Mehrdeutigkeiten durch Abändern der Grammatik muss eine Reg
 die mit der mehrdeutigen Token-Sequenz beginnt. Dahinter werden als Alternativen neue Regeln angefügt,
 die aus den "`Resttokens"' der ursprünglich mehrdeutigen Regeln bestehen müssen. % Hier ne Ref wäre vllt gut
 
-Allerdings wird damit die Lesbarkeit der Grammatik eingeschränkt; nur für die Regel \rulelink{ausdruck} wurde dieser Ansatz verfolgt.
+Allerdings würde damit die Lesbarkeit der Grammatik eingeschränkt. Für die Regel \rulelink{ausdruck} dieser Ansatz verfolgt,
+die Spezifikation der Grammatik in Kapitel~\ref{langspec} dahingehend aber \emph{nicht} geändert.
+Stattdessen sind die in der Implementierung des Parser verwendeten "`Variationen"' der Grammatik in Anhang~\ref{grammar_fixes} beschrieben.
+
 Für die anderen Regeln wurde das "`Vorausschauen"' von Tokens gewählt, da es in diesen Fällen einfach zu implementieren war
 und die Grammatik besser lesbar bleibt.
 
@@ -2090,6 +2093,70 @@ unter Open-Source-Lizenzen gibt, anstrebenswert.
 
 \cleardoublepage
 \appendix
+
+\chapter[Anhang]{}
+%\phantomsection
+%\pdfbookmark[1]{Anhang}{myPDFappendixLabel}
+
+\section{Vom Parser verwendete Grammatik-Regeln}
+\label{grammar_fixes}
+
+Die in Kapitel~\ref{langspec} angegebene Grammatik enthält Mehrdeutigkeiten und eignet sich in dieser Form nicht direkt zur Implementierung;
+sie wurde vor allem auf Verständlichkeit hin ausgerichtet.
+
+Der im Compiler implementierte Parser basiert auf Varianten der Regeln, die um Mehrdeutigkeiten bereinigt wurden.
+Bereinigte Versionen der Regeln, die damit von der Grammatik in Kapitel~\ref{langspec} abweichen, sind hier aufgeführt. 
+
+\subsection{Ausdrücke}
+\Gnt{ausdruck}:\label{ORIG_ausdruck}\\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gspace\Gopt{\Galt{\Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} \Gor{}\Gnt{asdr\_suffix\_zuweisung}{\scriptsize (\ref{asdr_suffix_zuweisung})} }}\\
+
+Der Ausdruck höchster Präzedenz ist die Zuweisung.
+%, auf welche einfach in der Regel für
+%allgemeine Ausdrücke verwiesen wird.
+
+
+\subsubsection{Zuweisung}
+\Gnt{asdr\_suffix\_zuweisung}:\label{asdr_suffix_zuweisung}\\
+\hspace*{1cm}\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+
+Ein Zuweisungsausdruck setzt sich aus einem \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} (der "`linken Seite"') sowie einem
+direkt folgenden \Gnt{asdr\_suffix\_zuweisung}{\scriptsize (\ref{asdr_suffix_zuweisung})} (die "`rechte Seite"') zusammen.
+Dem Ausdruck der linken Seite wird der Wert des Ausdrucks
+auf der rechten Seite zugewiesen. Der Ausdruck auf der linken Seite muss eine Variable oder ein Arrayelement
+bzw. von diesen ein Swizzle-Attribut (siehe \ref{Vektorattribute}) bezeichnen.
+
+Der Typ des zugewiesenen Ausdrucks muss zuweisungskompatibel (siehe unten) zur linken Seite der Zuweisung sein.
+
+Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
+
+\emph{Anfang des Zuweisungsausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ORIG_ausdruck})}.}
+
+\subsubsection{Ternärer Ausdruck}\label{Ternaerer Ausdruck}
+\Gnt{asdr\_suffix\_ternaer}:\label{asdr_suffix_ternaer}\\
+\hspace*{1cm}\Gt{?}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{:}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+
+Ein ternärer Ausdruck setzt sich aus einem \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} (der "`Bedingung"') sowie einem
+direkt folgenden \Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} zusammen.
+Die \emph{Bedingung} muss ein boolescher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
+so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
+Ausdrucks ergibt sich zu dem Wert des \emph{Wahr-Ausdrucks}.
+Ergibt sich die \emph{Bedingung} zu \kw{false}, so wird der \emph{Falsch-Ausdruck} (dem \kw{:} folgend)
+ausgewertet, und der Wert des ternären
+Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
+
+\emph{Wahr-} und \emph{Falsch-Ausdruck} müssen vom gleichen Typ sein.
+
+\emph{Anfang des ternären Ausdrucks siehe \Gnt{ausdruck}{\scriptsize (\ref{ORIG_ausdruck})}.}
+
+\subsection{Typen}
+
+\Gnt{typ}:\label{typ}\\
+\hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
+
+\subsubsection{Arraytypen}
+\Gnt{typ\_suffix\_array}:\label{typ_suffix_array}\\
+\hspace*{1cm}\Gt{[}\Gspace\Gt{]}\Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
 
 \printglossaries
 
