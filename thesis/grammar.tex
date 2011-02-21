@@ -169,7 +169,7 @@ Ist der Operand von einem Fließkommatyp, so ist der Typ des unären Ausdrucks v
 
 Ein ternärer Ausdruck setzt sich aus einem \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} (der "`Bedingung"') sowie einem
 direkt folgenden \Gnt{asdr\_suffix\_ternaer}{\scriptsize (\ref{asdr_suffix_ternaer})} zusammen.
-Die \emph{Bedingung} muss ein boole'scher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
+Die \emph{Bedingung} muss ein boolescher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
 so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Wahr-Ausdrucks}.
 Ergibt sich die \emph{Bedingung} zu \kw{false}, so wird der \emph{Falsch-Ausdruck} (dem \kw{:} folgend)
@@ -228,7 +228,7 @@ Beide Operanden müssen vom Typ \kw{bool} sein.
 \op{||} logisch ODER-verknüpft die Operanden.
 
 
-\subsubsection{Boole'sche Werte}\label{Boole'sche Werte}
+\subsubsection{Boolesche Werte}\label{Boolesche Werte}
 \Gnt{asdr\_konst\_bool}:\label{asdr_konst_bool}\\
 \hspace*{1cm}\Galt{\Gt{true}\Gor{}\Gt{false}}\\
 
@@ -270,11 +270,11 @@ Arrayattribute werden in \ref{Arrayattribute} beschrieben.\\
 \hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\\
 \Gnt{typ}:\label{typ}\\
 \hspace*{1cm}\Gnt{typ\_basis}{\scriptsize (\ref{typ_basis})} \Gspace\Gopt{\Gnt{typ\_suffix\_array}{\scriptsize (\ref{typ_suffix_array})} }\\
-\subsubsection{Boole'scher Typ}\label{Boole'scher Typ}
+\subsubsection{Boolescher Typ}\label{Boolescher Typ}
 \Gnt{typ\_bool}:\label{typ_bool}\\
 \hspace*{1cm}\Gt{bool}\\
 
-Der Typ \kw{bool} spezifiziert den boole'schen Typ mit den möglichen Werten
+Der Typ \kw{bool} spezifiziert den booleschen Typ mit den möglichen Werten
 \kw{true} (wahr) oder \kw{false} (unwahr).
 
 
@@ -322,7 +322,7 @@ Der Typ \kw{float} spezifiziert Fließkommazahlen.
 % "normalized"?
 
 
-Der \emph{Basistyp} eines Vektors ist ein Integer-, Boole'scher oder Fließkommatyp.
+Der \emph{Basistyp} eines Vektors ist ein Integer-, Boolescher oder Fließkommatyp.
 Die Zahl $N$ nach dem Basistyp ist vom Typ
 Ganzzahl, kann Werte zwischen 1 und 4 inklusive annehmen, und gibt die Komponentenanzahl an.
  Ein Vektortyp spezifiziert ein $N$-Tupel von Werten
@@ -401,7 +401,7 @@ float  g = b.z;            // Fehler (Komponente existiert nicht)
 \hspace*{1cm}\Galt{\Gt{bool1x3}\Gor{}\Gt{bool2x3}\Gor{}\Gt{bool3x3}\Gor{}\Gt{bool4x3}}\\
 \hspace*{1cm}\Galt{\Gt{bool1x4}\Gor{}\Gt{bool2x4}\Gor{}\Gt{bool3x4}\Gor{}\Gt{bool4x4}}\\
 
-Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher Typ oder Fließkommatyp.
+Der \emph{Basistyp} einer Matrix ist ein Integer-, Boolescher Typ oder Fließkommatyp.
 Dem Basistyp folgt eine Zeichenkette der Form $N$\kw{x}$M$. $N$ und
 $M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive annehmen,
 und geben die Spalten- und Zeilenzahl
@@ -479,7 +479,7 @@ Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{
 
 Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch \Gnt{typ}{\scriptsize (\ref{typ})}).
 Die Anzahl der Elemente in individuellen Variablen oder Konstanten eines Arraytyps
-ergibt sich aus der Anzahl der Element des zugewiesenen Array-Wertes.
+ergibt sich aus der Anzahl der Elemente des zugewiesenen Array-Wertes.
 
 Elemente einer Array-Variable oder -Konstante können mit \ident{Bezeichner[}$\mathit{Index}$\ident{]} angesprochen
 werden. Das erste Element wird mit dem Wert $0$ für $\mathit{Index}$ angesprochen.
@@ -677,7 +677,7 @@ Der Typ des initialen Ausdrucks muss zuweisungskompatibel zum Typ der Konstante 
 \Gnt{verzweigung}:\label{verzweigung}\\
 \hspace*{1cm}\Gt{if}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\Gspace\Gopt{\Gt{else}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}}\\
 
-\glq\Gnt{ausdruck}\grq{} ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+\glq\Gnt{ausdruck}\grq{} ist ein boolescher Ausdruck, die \emph{Bedingung}.
 
 Wenn die Bedingung zu \kw{true} ausgewertet wird, werden die Kommandos des ersten Blockes (\emph{Wahr-Block}) ausgeführt,
 ansonsten die Kommandos des Blockes im \kw{else}-Zweig (\emph{Falsch-Block}).
@@ -705,7 +705,7 @@ Dieser Ablauf wird wiederholt bis eine Auswertung der \emph{Schleifenbedingung} 
 \Gnt{schleife\_while}:\label{schleife_while}\\
 \hspace*{1cm}\Gt{while}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 
-\glq\Gnt{ausdruck}\grq ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+\glq\Gnt{ausdruck}\grq ist ein boolescher Ausdruck, die \emph{Bedingung}.
 
 Die Bedingung wird ausgewertet. Ist das Ergebnis \kw{true}, so werden die Kommandos des Schleifenblocks
 ausgeführt. Dieser Ablauf wird wiederholt bis eine Auswertung der Bedingung das Ergebnis \kw{false} hat.

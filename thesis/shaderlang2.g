@@ -202,7 +202,7 @@ asdr_unaer
 
 Ein ternärer Ausdruck setzt sich aus einem +ausdruck+ (der "`Bedingung"') sowie einem
 direkt folgenden +asdr_suffix_ternaer+ zusammen.
-Die \emph{Bedingung} muss ein boole'scher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
+Die \emph{Bedingung} muss ein boolescher Ausdruck sein. Ergibt sich dieser Ausdruck zu \kw{true},
 so wird der \emph{Wahr-Ausdruck} (dem \kw{?} folgend) ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Wahr-Ausdrucks}.
 Ergibt sich die \emph{Bedingung} zu \kw{false}, so wird der \emph{Falsch-Ausdruck} (dem \kw{:} folgend)
@@ -280,7 +280,7 @@ asdr_logisch_und
 
 // Bitweise op.?
 
-/**\subsection Boole'sche Werte
+/**\subsection Boolesche Werte
 
 \kw{true} (wahr) und \kw{false} (unwahr) sind Werte vom Typ \kw{bool} (siehe +typ_bool+).
 
@@ -337,9 +337,9 @@ typ
 	: typ_basis typ_suffix_array?
 	;
 
-/** \subsection Boole'scher Typ
+/** \subsection Boolescher Typ
 
-Der Typ \kw{bool} spezifiziert den boole'schen Typ mit den möglichen Werten
+Der Typ \kw{bool} spezifiziert den booleschen Typ mit den möglichen Werten
 \kw{true} (wahr) oder \kw{false} (unwahr).
 
 */
@@ -385,7 +385,7 @@ typ_num
 % "normalized"?
 
 
-Der \emph{Basistyp} eines Vektors ist ein Integer-, Boole'scher oder Fließkommatyp. 
+Der \emph{Basistyp} eines Vektors ist ein Integer-, Boolescher oder Fließkommatyp. 
 Die Zahl $N$ nach dem Basistyp ist vom Typ
 Ganzzahl, kann Werte zwischen 1 und 4 inklusive annehmen, und gibt die Komponentenanzahl an.
  Ein Vektortyp spezifiziert ein $N$-Tupel von Werten 
@@ -475,7 +475,7 @@ float  g = b.z;            // Fehler (Komponente existiert nicht)
 
 /** \subsection Matrixtypen
 
-Der \emph{Basistyp} einer Matrix ist ein Integer-, Boole'scher Typ oder Fließkommatyp. 
+Der \emph{Basistyp} einer Matrix ist ein Integer-, Boolescher Typ oder Fließkommatyp. 
 Dem Basistyp folgt eine Zeichenkette der Form $N$\kw{x}$M$. $N$ und
 $M$ sind vom Typ Ganzzahl, können jeweils Werte zwischen 1 und 4 inklusive annehmen,
 und geben die Spalten- und Zeilenzahl
@@ -604,7 +604,7 @@ Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{
 
 Der Typ der Elemente im Arraytyp wird durch den \emph{Basistyp} spezifiziert (siehe auch +typ+).
 Die Anzahl der Elemente in individuellen Variablen oder Konstanten eines Arraytyps
-ergibt sich aus der Anzahl der Element des zugewiesenen Array-Wertes.
+ergibt sich aus der Anzahl der Elemente des zugewiesenen Array-Wertes.
 
 Elemente einer Array-Variable oder -Konstante können mit \ident{Bezeichner[}$\mathit{Index}$\ident{]} angesprochen
 werden. Das erste Element wird mit dem Wert $0$ für $\mathit{Index}$ angesprochen. 
@@ -846,7 +846,7 @@ dekl_konst_bzch_init
 
 /** \subsection Verzweigungen
 
-\glq\Gnt{ausdruck}\grq{} ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+\glq\Gnt{ausdruck}\grq{} ist ein boolescher Ausdruck, die \emph{Bedingung}.
 
 Wenn die Bedingung zu \kw{true} ausgewertet wird, werden die Kommandos des ersten Blockes (\emph{Wahr-Block}) ausgeführt,
 ansonsten die Kommandos des Blockes im \kw{else}-Zweig (\emph{Falsch-Block}).
@@ -880,7 +880,7 @@ schleife_for
 
 /** \subsection \kw{while}-Schleifen
 
-\glq\Gnt{ausdruck}\grq ist ein boole'scher Ausdruck, die \emph{Bedingung}.
+\glq\Gnt{ausdruck}\grq ist ein boolescher Ausdruck, die \emph{Bedingung}.
 
 Die Bedingung wird ausgewertet. Ist das Ergebnis \kw{true}, so werden die Kommandos des Schleifenblocks
 ausgeführt. Dieser Ablauf wird wiederholt bis eine Auswertung der Bedingung das Ergebnis \kw{false} hat.

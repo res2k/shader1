@@ -4,7 +4,7 @@ allgemeinere Aspekte (z.B. wie die Mischung von Operationen verschiedener Berech
 
 \section{Anforderungen an die Sprache}
 
-Auf höherer Ebene soll die Sprache folgenden Anforderungen erfüllen:
+Auf höherer Ebene soll die Sprache folgende Anforderungen erfüllen:
 \begin{itemize}
 \item \emph{C-ähnliche Syntax}: Um ein schnelles Einarbeiten und Verständnis zu ermöglichen soll sich die Syntax an den verbreiteten
 Shadingsprachen Cg, DirectX HLSL und OpenGL GLSL orientieren. Diese wiederum sind C-verwandt.
@@ -13,7 +13,7 @@ Weitere syntaktische Anleihen können auch von passenden Stellen aus anderen Sha
 Konzepte aus diesen übernommen werden.
 \item \emph{Vereinfachungen für Shading}: Die Sprache soll Elemente besitzen, die das Erstellen von Shading-Programmen
 vereinfachen. \item \emph{Keine Bindung an bestimmte Architektur}: Die Sprache selbst soll keine bestimmte darunterliegende Hardwarearchitektur
-vorraussetzen; auch keine Architektur-Klasse wie z.B. "`Grafikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
+voraussetzen; auch keine Architektur-Klasse wie z.B. "`Grafikprozessoren"'\footnote{Sinnvollerweise wird eine von-Neumann-Architektur minimal vorausgesetzt.}.
 Auch soll die Sprache insgesamt weniger hardwarenah als C sein.
 \end{itemize}
 
@@ -25,7 +25,7 @@ Aus diesen Anforderungen leiten sich die folgenden spezifischen Kriterien ab:
 \item \emph{Syntax}: Die Syntax soll im Wesentlichen auf C basieren. Es sollen Elemente ausgelassen werden, die eher 
 unintuitiv sind und selten praktisch verwendet werden, wie die Oktalnotation bei Integerliteralen.
 Syntaxerweiterungen sollten Inkonsistenzen oder Auslassungen betreffen - so gibt es bei C z.B. 
-nur bei der Definition einer Array-Variable die Möglichkeit, dieser mehrere Element auf einmal zuzuweisen.
+nur bei der Definition einer Array-Variable die Möglichkeit, dieser mehrere Elemente auf einmal zuzuweisen.
 Bei einer regulären Zuweisung ist dies bei C nicht möglich, soll aber in der neuen Sprache ermöglicht werden.
 \item \emph{Zeichensatz}: ANSI C basiert auf dem ASCII-Zeichensatz. % TODO Ref
 Mit Unicode gibt es es einen Zeichensatz, der alle weltweit geschriebenen Sprachen umfasst; dieser
@@ -51,8 +51,8 @@ werden.
 \subsection{Programmumgebung}
 
 Ein Shadingprogramm läuft praktisch immer im Kontext einer Anwendung, die Parameter direkt oder indirekt (wie
-Vertexdaten) an das Shaderprogramm übergibt.
-Bei den Parametern der Hauptfunktion des Shaderprogramms, welche von diesem selbst nicht definiert werden,
+Vertexdaten) an das Shadingprogramm übergibt.
+Bei den Parametern der Hauptfunktion des Shadingprogramms, welche von diesem selbst nicht definiert werden,
 wird deshalb davon ausgegangen, das diese von der umgebenden Anwendung spezifiziert werden.
 
 \subsection{Definition Berechnungsfrequenz}
@@ -72,7 +72,7 @@ Die höchstmögliche Frequenz besitzen Ausdrücke, die bei jeder Auswertung eine
 Bei Shadingsprachen sind folgende speziellen Berechnungsfrequenzen vorhanden:
 \begin{itemize}
 \item \emph{Mesh-Frequenz}: Ausdruck ist konstant während der Darstellung eines Dreiecksnetzes, aber nicht zwischen
-verschiedenen Dreiecksnetzes oder Darstellungsläufen. %\emph{(Beispiel: Position in Weltkoordinaten.)}
+verschiedenen Dreiecksnetzen oder Darstellungsläufen. %\emph{(Beispiel: Position in Weltkoordinaten.)}
 \item \emph{Vertex-Frequenz}: Ausdruck ändert sich von Vertex zu Vertex. %\emph{(Beispiel: Texturkoordinaten.)}
 \item \emph{Fragment-Frequenz}: Ausdruck ändert sich von Fragment zu Fragment. %\emph{(Beispiel: Aus Textur gelesener Wert.)}
 \end{itemize}

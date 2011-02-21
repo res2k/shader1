@@ -542,7 +542,7 @@ in welches Ausgabeprogramm (Vertex- oder Fragmentprogramm) eine Operation ausgeg
 
 In diesem Kapitel wird auf die Implementierung des Compilers selbst eingegangen. 
 Neben Scanner und Parser werden vor allem die verwendete Zwischencoderepräsentation
-für die Weitergabe des Programmen zwischen den verschiedenen Arbeitsschritten des Compilers 
+für die Weitergabe des Programms zwischen den verschiedenen Arbeitsschritten des Compilers 
 sowie die Komponente zur Auftrennung eines Programms -- das eigentliche "`Ziel"' dieser Arbeit -- beschrieben.
 
 \section{Compiler-Aufbau}
@@ -713,7 +713,7 @@ Die Ausgabe des ``semantic handlers'' ist eine Zwischencoderepräsentation des P
 % entsprechend ein ein Funktionsaufruf, der Aufruf eines Typ-Konstruktors, oder ein ungültiger Ausdruck.
 
 Verglichen mit dem "`klassischen"' Ansatz der semantischen Verarbeitung -- Parser erzeugt Abstract Syntax Tree (AST) als ersten Schritt,
-Semantische Analyse erzeugt Zwischencoderepräsentation im zweiten Schritt -- finden sich kleine Teile der semantischen
+semantische Analyse erzeugt Zwischencoderepräsentation im zweiten Schritt -- finden sich kleine Teile der semantischen
 Analyse im Parser; die Erstellung eines ASTs wird übergangen, der ``semantic handler'' nimmt mit den vom
 Parser übergebenen Informationen die restliche semantische Analyse vor und erzeugt sofort eine Zwischencoderepräsentation (beschrieben in Abschnitt~\ref{zcr}).
 
@@ -740,13 +740,13 @@ einen ``semantic handler'' zu schreiben der genau dies tut.
 % \end{figure}
 
 \paragraph{Fehlerbehandlung:}
-In der Implementierung wird die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung wird über \emph{Ausnahmen}
+In der Implementierung wird die Fehlerbehandlung bei der syntaktischen wie auch semantischen Verarbeitung über \emph{Ausnahmen}
 realisiert. Die Parser-Komponente selbst fängt dabei Ausnahmen ab, um zu gewährleisten, dass möglichst viel eines
 Programms verarbeitet wird, um möglichst viele potentielle Fehler aufzudecken (wie in \cite{wirth_compiler} empfohlen):
 tritt z.B. eine Ausnahme während der Verarbeitung eines Block-Kommandos auf, setzt der Parser die
 Verarbeitung nach dem nächsten Semikolon -- also mit dem nächsten Kommando -- fort (sofern kein Ende
 des Blockes festgestellt wird).
-Die abgefangen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt zur Fehlerbehandlung
+Die abgefangenen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt zur Fehlerbehandlung
 übergeben um eine Nachricht für den Benutzer darzustellen.
 
 % \paragraph{Implementierung \texttt{SemanticHandler}:}
@@ -852,7 +852,7 @@ Bei der Gestaltung der \emph{Zwischencoderepräsentation} sollten folgende Rahme
 \begin{itemize}
 \item \emph{Eignung als Zwischenrepräsentation zwischen verschiedenen Arbeitsschritten des Compilers}.
 Um die Komplexität des Compilers und den damit verbundenen Implementierungsaufwand klein zu halten
-sollte \emph{ein} Format zur Zwischenrepräsentation für den Compiler-internen Austausch verwendet werden.
+sollte \emph{ein} Format zur Zwischenrepräsentation für den compilerinternen Austausch verwendet werden.
 (Andere Compiler verwenden verschiedene Formate zwischen Verarbeitungsschritten, siehe z.B.~\cite{SIMPLE}.)
 \item Dies schliesst auch \emph{Eignung für Optimierungen} ein. Es sollten also genug Information enthalten sein,
 um verschiedene Optimierungsalgorithmen umzusetzen. Idealerweise sollte die Zwischencoderepräsentation
@@ -903,7 +903,7 @@ Stattdessen werden zu eingeschachtelten Blöcken eine Zuordnung zwischen Registe
 ("`extern"') und
 Registern des eingeschachtelten Blockes ("`lokal"') gespeichert.
 Wie genau die Abbildung von Werten von "`externen"' an "`lokale"' Register stattfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
-das Verhalten muss bloss einem "`umleiten"' von Lese- oder Schreibzugriffen von den angegebenen lokalen auf die zugeordneten externen
+das Verhalten muss einem "`umleiten"' von Lese- oder Schreibzugriffen von den angegebenen lokalen auf die zugeordneten externen
 Registern entsprechen.
 %Wie genau die Übergabe von Werten von "`externen"' an "`lokale"' Register statfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
 %das Verhalten muss jedoch semantisch äquivalent zu einem Kopieren der externen Eingaberegister in lokale Register Anfang des Blockes
@@ -954,12 +954,12 @@ Parametern auch entsprechend verschiedene Register zugeordnet.
 Echte globale Variablen sind nicht vorgesehen. Sie werden nachgebildet, in dem in einer Funktion gelesene globale Variablen
 auf spezielle, "`versteckte"' Eingabeparameter abgebildet werden. Geschriebene globale Variablen werden
 auf spezielle Ausgabeparameter abgebildet. Nur in der Eintrittsfunktion werden globalen Variablen tatsächlich
-"`eigene"' Register zugewiesen. Im Prinzip sind "`globale"' Variablen bloss "`versteckte"' lokale Variablen in
+"`eigene"' Register zugewiesen. Im Prinzip sind "`globale"' Variablen "`versteckte"' lokale Variablen in
 der Eintrittsfunktion.
 
 Damit müssen globale Variablen von Optimierungsschritten u.ä. nicht besonders berücksichtigt werden.
 Insbesondere müssen keine "`Seiteneffekte"' von Funktionen ermittelt werden: manipuliert eine Funktion eine "`globale"' Variable,
-so erhält sie in der Zwischencoderepräsentation bloss einen weiteren Ausgabeparameter.
+so erhält sie in der Zwischencoderepräsentation einen weiteren Ausgabeparameter.
 Betrachtet man den Aufruf dieser Funktion so wird nur eine weitere Variable beschrieben.
 
 Optimierungsschritte wie Constant Propagation oder Dead Code Elimination. aber auch der Auftrennungs-Schritt werden vereinfacht,
@@ -1046,7 +1046,7 @@ Für jede Operation wird ein einfaches Beispielprogramm gegeben; diesem wird der
 \SeqOpSample{assign}{Zuweisungsoperation}
 
 
-\paragraph{Konstantenoperation:} Diese weist dem Zielregister eine Bool'sche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
+\paragraph{Konstantenoperation:} Diese weist dem Zielregister eine Boolesche, Integer- (vorzeichenlos oder vorzeichenbehaftet) oder
 Fließkommakonstante zu.
 
 %\\\hspace*{1cm}$d \gets \mathrm{Konstante}$
@@ -1091,7 +1091,8 @@ Die Eingaberegister und das Zielregister müssen vom Typ Boolean sein.
 \SeqOpSample{logic}{Logische Operationen}
 
 
-\paragraph{Unäre Operation:} Unäre Operationen sind Negation, Logisches NICHT und bitweise Invertierung.
+\paragraph{Unäre Operation:} Unäre Operationen sind Negation, logisches NICHT und bitweise Invertierung.
+
 Negation negiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
 Die Eingabe- und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.\\
 Logisches NICHT invertiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
@@ -1135,7 +1136,7 @@ als nächstes das Element der zweiten Spalte in der ersten Zeile, usw.
 
 \subsubsection{Array-Operationen}
 
-\paragraph{Array-Erstellung:} Nimmt als Eingabe eine Variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays.
+\paragraph{Array-Erstellung:} Nimmt als Eingabe eine variable Anzahl von Registern, die Anzahl der Eingaberegister bestimmt die Länge des Arrays.
 Die Eingaberegister müssen alle den Basistyp des Zielregisters besitzen. Sie werden der Reihe nach den Array-Elementen im Zielregister zugeordnet.
 %\\\hspace*{1cm}$d \gets (s, t, \dots)$
 
@@ -1151,7 +1152,7 @@ Das Zielregister muss den Basistyp des Array-Registers besitzen.
 
 
 \paragraph{Änderung eines Arrayelements:} Verwendet drei Eingaberegister: neben einem Arrayregister und dem Indexregister (vorzeichenloser Integer)
-weiterhin ein Register mit vom Basistyps des Arrays (der "`neue Wert"').
+weiterhin ein Register vom Basistyps des Arrays (der "`neue Wert"').
 Aus dem Eingabearray werden alle Elemente \emph{außer} das Element des gegebenen Indexes in das Zielarray kopiert;
 dort wird stattdessen der "`neue Wert"' abgelegt. Das Zielregister muss den Typ des Arrayregisters besitzen.
 %\\\hspace*{1cm}$d \gets (x | x = s[i]\ \mathrm{f"ur\ alle}\ i \neq t, u\ \mathrm{sonst})$
@@ -1216,7 +1217,7 @@ von der umgebenden Sequenz aus gesehen bloß von einer Operation beschrieben (eb
 
 %Um die SSA-Bedingungen zu erfüllen, aber
 
-Abbildung~\ref{fig:ir_seq_branch} zeigt Schematisch eine Verzweigungsoperation in einer Sequenz.
+Abbildung~\ref{fig:ir_seq_branch} zeigt schematisch eine Verzweigungsoperation in einer Sequenz.
 Zuerst wird der Bedingungswert \texttt{Z} berechnet. Die Verzweigungsoperation selbst enthält dazu noch
 Verweise auf die ``if''- und ``else''-Sequenzen, zu denen es jeweils Zuordnungen von "`importierten"' und "`exportierten"' 
 Namen der umgebenden Sequenz zu Registern der verwiesenen Sequenz gibt.
@@ -1274,7 +1275,7 @@ vorher eine Funktionsbeschreibung übergeben worden sein, die durch den Bezeichn
 \emph{Beispiel siehe nächster Absatz.}
 
 
-\paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Es wird eine Liste von Registern entgegengenommen. Diese
+\paragraph{Funktionsrücksprung:} Damit wird die Funktion verlassen. Es wird eine Liste von Registern entgegen genommen. Diese
 werden, der Position nach, den Ausgabeparametern der Funktion zugewiesen.
 %\\\hspace*{1cm}$\mathrm{return}\ s$
 %\\\hspace*{1cm}$\mathrm{return}$
@@ -1284,7 +1285,7 @@ werden, der Position nach, den Ausgabeparametern der Funktion zugewiesen.
 
 \paragraph{Vordefinierte Funktion:} Diese Operation sammelt den Zugriff auf vordefinierte Funktionen (siehe~\ref{builtins})
 und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
-und ein Zielregister für den Rückgabewert entgegengenommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
+und ein Zielregister für den Rückgabewert entgegen genommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
 %\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
 %\\\hspace*{1cm}$d \gets s \cdot t$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$
