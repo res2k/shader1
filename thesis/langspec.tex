@@ -136,7 +136,9 @@ Das Ergebnis ist undefiniert wenn \ident{v} die Länge $0$ hat.
 
 \texttt{float length (\emph{<VektorN>} v);}
 
-\ident{length} gibt die euklidische Länge des Vektors \ident{v} zurück.
+\ident{length} berechnet für den Vektor \ident{v} die euklidische Länge
+$|v| = \sqrt{\sum{{v_c}^2}}$ ($c$: Vektorkomponenten, also z.B. $x$, $y$, $z$ bei $N = 3$).
+
 \ident{\emph{<VektorN>}} muss dabei ein Vektor eines numerischen Typs sein.
 
 \subsubsection{Texturfunktionen}
