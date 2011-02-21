@@ -1367,21 +1367,101 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 
 % High-Level Arbeitsweise
 Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und ein \emph{Fragmentprogramm} auf.
-Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz}
-\footnote{Siehe Abschnitte \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz}},
-in der diese Operation ausgeführt wird, zuordnen: mit \emph{Vertexfrequenz} (per Vertex) berechnete Operationen werden dem Vertexprogramm zugeordnet.
-Analog werden mit \emph{Fragmentfrequenz} (per Fragment) berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
-und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
+Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz} (siehe unten),
+in der diese Operation ausgeführt wird, zuordnen. Diese bestimmt, in welche Programme eine Operation ausgegeben wird.
 
-\paragraph{Operanden:} Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche dem Maximum der Operanden-Frequenzen
-entspricht (eine Operation seltener auszuführen, als sich die Operanden ändern könnten, ist offensichtlich nicht sinnvoll).
-So muss z.B. eine Addition von zwei Werten per Fragment ausgeführt werden, wenn einer der Summanden per Fragment berechnet wurde.
-% DIes ist darin begründet, dass Werte nur vom Vertex- zum Fragmentprogramm, aber nicht zurück, übertragen werden können. ... \ref{}
+\subsection{Definition Berechnungsfrequenz}
+\label{Berechnungsfrequenz}
 
-\paragraph{Operation:} Eine Berechnung kann per Vertex ausgeführt werden, wenn beide Eingaben per Vertex vorliegen, und
-sofern die Operation das Kriterium der \emph{Interpolierbarkeit} (beschrieben in Abschnitt~\ref{Interpolierbarkeit}) erfüllt.
+Aus den Beobachtungen in Abschnitt~\ref{berechnungsfrequenz_locker} lässt sich formulieren:
+Die \emph{Berechnungsfrequenz eines Ausdrucks} beschreibt, wie oft sich der Wert des gegebenen Ausdrucks, auf alle Ausführungen eines
+Programmes gesehen, ändert.
 
-\subsection{Berechnungsfrequenzen}
+Die kleinstmögliche Frequenz besitzen statische Konstanten.
+
+Die höchstmögliche Frequenz besitzen Ausdrücke, die bei jeder Auswertung einen anderen Wert liefern.
+\emph{(Beispiel: Werte aus einer externen Datenquelle.)}
+
+\subsection{Berechnungsfrequenzen bei Shading}
+
+Bei Shadingsprachen sind folgende speziellen Berechnungsfrequenzen vorhanden:
+\begin{itemize}
+\item \emph{Mesh-Frequenz}: Ausdruck ist konstant während der Darstellung eines Dreiecksnetzes, aber nicht zwischen
+verschiedenen Dreiecksnetzen oder Darstellungsläufen. %\emph{(Beispiel: Position in Weltkoordinaten.)}
+\item \emph{Vertex-Frequenz}: Ausdruck ändert sich von Vertex zu Vertex. %\emph{(Beispiel: Texturkoordinaten.)}
+\item \emph{Fragment-Frequenz}: Ausdruck ändert sich von Fragment zu Fragment. %\emph{(Beispiel: Aus Textur gelesener Wert.)}
+\end{itemize}
+
+Als Besonderheit kommt hinzu, dass aus Daten mit \emph{Vertex-Frequenz} durch lineare Interpolation Daten mit
+\emph{Fragment-Frequenz} gewonnen werden. %\emph({Beispiel: für Auslesen einer Textur verwendete Koordinaten)}
+%Dies führt dazu, dass Ausdrücke, die nach den folgenden Regeln
+%eigentlich Fragment-Frequenz besitzen müssten, Vertex-Frequenz besitzen, unter der Bedingung, dass
+%das Ergebnis einer linearen Interpolation des Gesamtausdrucks äquivalent zum Ergebnis bei linearer
+%Interpolation aller Teilausdrücke (mit jeweils immer gleicher Gewichtung) ist.
+Dies erlaubt, gewisse Ausdrücke per Vertex statt per Fragment auszuführen. Details zu diesem Aspekt finden sich in
+Abschnitt~\ref{Interpolierbarkeit}.
+
+\subsection{Formulierte Frequenz}
+\label{formulierte_frequenz}
+
+Zwar soll die Berechnungsfrequenz von Operationen soweit möglich automatisch bestimmt werden, trotzdem muss eine Frequenz
+gewählt werden, in der alle Operationen vorerst formuliert werden.
+
+Betrachtet man eine "`niedrige"' Frequenz wie die Vertex-Frequenz, so erkennt man, dass sich damit Berechnungen einer höheren
+Frequenz (also Fragmente) schlecht darstellen lassen. Betrachtet man allerdings Berechnungen mit Fragment-Frequenz, so lassen sich
+unter Umständen Berechnungen niedrigerer Frequenz ableiten.
+Shaderprogramme sollten also grundsätzlich in "`Fragment-Frequenz"' formuliert werden.
+
+\subsection{Bestimmung der Berechnungsfrequenz}
+
+\paragraph{Variablen:} Variablen besitzen eine zugeordnete Berechnungsfrequenz, die angibt wie oft sich der enthaltene Wert ändert.
+Diese Frequenz entspricht der Frequenz des zuletzt zugewiesenen Ausdrucks (oder undefiniert wenn noch keine Zuweisung stattfand).
+
+\paragraph{Arrays:} %Ist die Größe eines Arrays statisch bekannt kann jedes Element als einzelne Variable gesehen werden
+%(und entsprechend jedem Element eine eigene Berechnungsfrequenz zugeordnet werden).
+%Ist die Größe eines Arrays nicht statisch bekannt, so muss für alle Elemente die höchste, irgendeinem Element möglicherweise zugewiesene
+%Frequenz angenommen werden -- 
+Wird auf Elemente eines Arrays nur mit statisch bekannten Indizes zugegriffen kann jedes Element als einzelne Variable gesehen werden
+(und entsprechend jedem Element eine eigene Berechnungsfrequenz zugeordnet werden).
+Da beim Zugriff mit nicht statisch bekannten Indizes jedoch nicht bestimmt werden kann, welche Berechnungsfrequenz ein
+Element hat (da ja auch nicht bekannt ist, auf welche Elemente genau zugegriffen wird), so muss für alle Elemente die höchste, irgendeinem Element möglicherweise
+zugewiesene Frequenz angenommen werden.
+
+%\paragraph{Ausdrücke:} Die Berechnungsfrequenz eines Wertes eines Ausdrucks ergibt sich aus der kleinsten gemeinsamen Frequenz
+%der in dem Ausdruck enthaltenen Teilausdrücke \emph{nach} möglicher Anwendung von Umformungen zur Vereinfachung/Optimierung --
+%sofern keine \emph{Spezialregeln} greifen (siehe Unten).
+\paragraph{Ausdrücke:} Die Berechnungsfrequenz eines Wertes eines Ausdrucks hängt von der grössten gemeinsamen Frequenz
+der in dem Ausdruck enthaltenen Teilausdrücke sowie der verwendeten Verknüpfung ab.
+Die Abschnitte~\ref{splitter_Berechnungsfrequenzen} und~\ref{Interpolierbarkeit} beschreiben wie die Berechnungsfrequenz eines Ausdrucks bestimmt werden kann.
+
+%\subsection{Spezialregeln für Berechnungsfrequenzen von Ausdrücken}
+
+%\paragraph{Manuelle Bestimmung:}
+%Bei einigen Ausdrücken kann eine Frequenz nicht automatisch abgeleitet werden, insbesondere bei Eingabeparametern aus der
+%Umgebung. 
+\paragraph{Programmeingaben:}
+Bei Eingabeparametern aus der Umgebung kann eine Frequenz nicht automatisch abgeleitet werden.
+Es wird davon ausgegangen, dass die umgebende Anwendung dem Compiler mitteilt, mit welcher Frequenz ein Eingabeparameter
+geändert wird.\\
+
+% Die Beschaffenheit der Daten beim Shading erlaubt
+% weitere
+%einige
+% Spezialfälle:
+% \paragraph{Lineare Operationen:} Vertexattribute werden über die Fragmente eines Dreiecks linear interpoliert; deswegen ist es
+% erlaubt, lineare Operationen auf Vertex-Frequenz zu vollziehen, wenn alle Operatoren mit Vertex-Frequenz oder darunter
+% berechnet wurden.
+
+% \paragraph{Spezielle Eigenschaften:} "`Spezialwissen"' über mögliche Werte kann benutzt werden, um die Frequenz eines
+% Ausdrucks zu bestimmen, insbesondere wenn diese niedriger als die normalerweise bestimme Frequenz wäre.
+% \begin{itemize}
+% \item \emph{Einheitsvektoren:} Einheitsvektoren werden oft in Shadingprogrammen benutzt. Einheitsvektoren können aber 
+% nicht linear interpoliert werden, da dies einen Verlust der Einheitslänge zur Folge haben kann. Trotzdem kann es effizienter
+% sein, einen Einheitsvektor mit Vertex-Frequenz zu berechnen, über die Fragmente linear zu interpolieren und per Fragment
+% zu normalisieren, als den Vektor vollständig mit Fragment-Frequenz zu berechnen.
+% \end{itemize}
+
+\subsection{Berechnungsfrequenzen in der Aufspaltung}
 \label{splitter_Berechnungsfrequenzen}
 % Welche Frequenzen?
 
@@ -1405,6 +1485,20 @@ Für jedes Register wird verfolgt, für welche Frequenzen es vorliegt, im Wesent
 Dabei kann ein Register in mehreren Frequenzen verfügbar sein, wenn es im Vertex-Programm berechnet wurde, aber später 
 zur Übertragung an das Fragmentprogramm markiert wird (Abschnitt~\ref{schnittstelle}).
 
+%: mit \emph{Vertexfrequenz} (per Vertex) berechnete Operationen werden dem Vertexprogramm zugeordnet.
+%Analog werden mit \emph{Fragmentfrequenz} (per Fragment) berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
+%und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
+
+Die Frequenzen, in denen ein Register vorliegt, beeinflusst, in welcher Frequenz Operationen ausgeführt werden,
+die das Register als Operand verwenden: Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche dem Maximum der Operanden-Frequenzen
+entspricht (eine Operation seltener auszuführen, als sich die Operanden ändern könnten, ist offensichtlich nicht sinnvoll).
+So muss z.B. eine Addition von zwei Werten per Fragment ausgeführt werden, wenn einer der Summanden per Fragment berechnet wurde.
+% DIes ist darin begründet, dass Werte nur vom Vertex- zum Fragmentprogramm, aber nicht zurück, übertragen werden können. ... \ref{}
+
+Vorraussetzung für die Ausführung einer Berechnung per Vertex ist damit, dass beide Eingaben per Vertex vorliegen.
+(Darüber hinaus muss die Operation das Kriterium der \emph{Interpolierbarkeit}, beschrieben in Abschnitt~\ref{Interpolierbarkeit}), erfüllen).
+
+\subsubsection{Ausgegebene Programme}
 Der Splitter kategorisiert auch Operationen und Werte als "`per Mesh"', generiert jedoch \emph{kein} separates Programm.
 Stattdessen werden per-Mesh-Operationen sowohl vom Vertex- als auch vom Fragmentprogramm ausgeführt. Zwei Annahmen
 liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen allein mit per Mesh vorliegenden Werten vorgenommen werden, es also kein
