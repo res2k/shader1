@@ -1010,6 +1010,9 @@ Für jede Operation wird ein einfaches Beispielprogramm gegeben; diesem wird der
 \newpage
 \subsubsection{Einfache Operationen}
 
+Bei den Textdarstellungen der eifachen Operationen ist das erste Argument das Zielregister der Operation, alle nachfolgenden
+Argumente sind die Eingaberegister.
+
 \newcommand\SeqOpSample[2]{
   %\begin{figure}[!h]
   \renewcommand{\baselinestretch}{1.0}\normalsize
@@ -1154,7 +1157,8 @@ Das Zielregister muss den Basistyp des Array-Registers besitzen.
 
 
 \paragraph{Änderung eines Arrayelements:} Verwendet drei Eingaberegister: neben einem Arrayregister und dem Indexregister (vorzeichenloser Integer)
-weiterhin ein Register vom Basistyps des Arrays (der "`neue Wert"').
+weiterhin ein Register vom Basistyps des Arrays (der "`neue Wert"').\\
+Das Zielregister muss den gleichen Typ wie das Arrayregister besitzen.\\
 Aus dem Eingabearray werden alle Elemente \emph{außer} das Element des gegebenen Indexes in das Zielarray kopiert;
 dort wird stattdessen der "`neue Wert"' abgelegt. Das Zielregister muss den Typ des Arrayregisters besitzen.
 %\\\hspace*{1cm}$d \gets (x | x = s[i]\ \mathrm{f"ur\ alle}\ i \neq t, u\ \mathrm{sonst})$
@@ -1285,9 +1289,9 @@ werden, der Position nach, den Ausgabeparametern der Funktion zugewiesen.
 \SeqOpSampleStacked{funccall}{Funktionsaufruf und -rücksprung}
 
 
-\paragraph{Vordefinierte Funktion:} Diese Operation sammelt den Zugriff auf vordefinierte Funktionen (siehe~\ref{builtins})
-und arbeitet analog zu Funktionsaufrufen. Es wird eine Konstante, welche die Funktion identifiziert, eine Liste Eingabe-Register 
-und ein Zielregister für den Rückgabewert entgegen genommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
+\paragraph{Vordefinierte Funktion:} Diese Operationen führen vordefinierte Funktionen (siehe~\ref{builtins}) aus
+und arbeiten analog zu Funktionsaufrufen. Es wird ein Zielregister für den Rückgabewert%, eine Konstante, welche die Funktion identifiziert
+und eine Liste Eingabe-Register entgegen genommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
 %\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
 %\\\hspace*{1cm}$d \gets s \cdot t$
 %\\\hspace*{1cm}$\phantom{d \gets}\vdots$

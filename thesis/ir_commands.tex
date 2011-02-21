@@ -65,18 +65,19 @@
 \newcommand\sOreturn[1]{\sOopNull{return}{#1}}
 \newcommand\sOreturnvoid{\sOopNoResult{return}}
 
-\newcommand\sObuiltindot[3]{\sOopTwo{dot}{#1}{#2}{#3}}
-\newcommand\sObuiltincross[3]{\sOopTwo{cross}{#1}{#2}{#3}}
-\newcommand\sObuiltinmul[3]{\sOopTwo{mmul}{#1}{#2}{#3}}
-\newcommand\sObuiltinnormalize[2]{\sOopOne{norm}{#1}{#2}}
-\newcommand\sObuiltinlength[2]{\sOopOne{vlen}{#1}{#2}}
-\newcommand\sObuiltinmin[3]{\sOopTwo{min}{#1}{#2}{#3}}
-\newcommand\sObuiltinmax[3]{\sOopTwo{max}{#1}{#2}{#3}}
-\newcommand\sObuiltinpow[3]{\sOopTwo{pow}{#1}{#2}{#3}}
-\newcommand\sObuiltintexOneD[3]{\sOopTwo{tex\ 1D}{#1}{#2}{#3}}
-\newcommand\sObuiltintexTwoD[3]{\sOopTwo{tex\ 2D}{#1}{#2}{#3}}
-\newcommand\sObuiltintexThreeD[3]{\sOopTwo{tex\ 3D}{#1}{#2}{#3}}
-\newcommand\sObuiltintexCUBE[3]{\sOopTwo{tex\ CUBE}{#1}{#2}{#3}}
+\newcommand\sObuiltin[4]{\sOopTwo{#1}{#2}{#3}{#4}}
+\newcommand\sObuiltindot[3]{\sObuiltin{dot}{#1}{#2}{#3}}
+\newcommand\sObuiltincross[3]{\sObuiltin{cross}{#1}{#2}{#3}}
+\newcommand\sObuiltinmul[3]{\sObuiltin{mmul}{#1}{#2}{#3}}
+\newcommand\sObuiltinnormalize[2]{\sObuiltin{norm}{#1}{#2}}
+\newcommand\sObuiltinlength[2]{\sObuiltin{vlen}{#1}{#2}}
+\newcommand\sObuiltinmin[3]{\sObuiltin{min}{#1}{#2}{#3}}
+\newcommand\sObuiltinmax[3]{\sObuiltin{max}{#1}{#2}{#3}}
+\newcommand\sObuiltinpow[3]{\sObuiltin{pow}{#1}{#2}{#3}}
+\newcommand\sObuiltintexOneD[3]{\sObuiltin{tex1D}{#1}{#2}{#3}}
+\newcommand\sObuiltintexTwoD[3]{\sObuiltin{tex2D}{#1}{#2}{#3}}
+\newcommand\sObuiltintexThreeD[3]{\sObuiltin{tex3D}{#1}{#2}{#3}}
+\newcommand\sObuiltintexCUBE[3]{\sObuiltin{texCUBE}{#1}{#2}{#3}}
 
 
 \newcommand\sOtransfer[1]{\begin{displaymath}\begin{array}{rl}\mathrm{"Ubertragene\ Register:} & #1\end{array}\end{displaymath}}
