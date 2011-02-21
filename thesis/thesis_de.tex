@@ -1094,9 +1094,8 @@ Die Eingaberegister und das Zielregister müssen vom Typ Boolean sein.
 \SeqOpSample{logic}{Logische Operationen}
 
 
-\paragraph{Unäre Operation:} Unäre Operationen sind Negation, logisches NICHT und bitweise Invertierung.
-
-Negation negiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
+\paragraph{Unäre Operation:} Unäre Operationen sind Vorzeichenumkehrung, logisches NICHT und bitweise Invertierung.\\
+Die Vorzeichenumkehrung kehrt das Vorzeichen des Wertes des Eingaberegisters um und schreibt das Ergebnis in das Zielregister.
 Die Eingabe- und das Zielregister müssen vom gleichen Typ sein -- Integer- (vorzeichenlos oder vorzeichenbehaftet) und Fließkommawerte.\\
 Logisches NICHT invertiert den Wert des Eingaberegisters und schreibt das Ergebnis in das Zielregister.
 Die Eingabe- und das Zielregister müssen vom gleichen Typ Boolean sein.\\
@@ -1590,7 +1589,7 @@ Die Modulo-Operation ist unstetig und daher nicht interpolierbar.
 
 \paragraph{Logische Ausdrücke, Vergleichsoperationen:} Diese Operationen sind ebenfalls unstetig und somit nicht interpolierbar.
 
-\paragraph{Unäre Ausdrücke:} Negation ist offensichtlich interpolierbar.
+\paragraph{Unäre Ausdrücke:} Vorzeichenumkehrung ist offensichtlich interpolierbar.
 
 Logisches NICHT ist, wie die anderen logischen Ausdrücke, nicht interpolierbar.
 
