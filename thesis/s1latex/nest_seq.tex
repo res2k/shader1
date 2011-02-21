@@ -1,11 +1,17 @@
 \sOfunc{
 \sOfunchead{main}
-\sOfuncregset{float}{\sOsetreg{v\_x}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp3}\sOsetreg{v\_x}\sOsetreg{v\_y}\sOsetreg{v\_y.1}}
 \sOfuncbody{
+\sOstmt{\sOassign{\sOreg{v\_x}}{\sOconst{1}}}
 \sOnestseq{
-  \sOstmt{\sOassign{\sOreg{m\_x\_B0}}{\sOconst{1}}}
-\sOnestmapOut{\sOreg{v\_x}}{\sOreg{m\_x\_B0}}
+\sOnestmapIn{\sOreg{v\_x}}{\sOreg{m\_x\_B0}}
+  \sOstmt{\sOassign{\sOreg{v\_z}}{\sOconst{2}}}
+  \sOstmt{\sOadd{\sOreg{m\_y\_B0}}{\sOreg{m\_x\_B0}}{\sOreg{v\_z}}}
+\sOnestmapOut{\sOreg{v\_y}}{\sOreg{m\_y\_B0}}
+}
+\sOstmt{\sOassign{\sOreg{i\_tmp3}}{\sOconst{0.5}}}
+\sOstmt{\sOmul{\sOreg{v\_y.1}}{\sOreg{v\_y}}{\sOreg{i\_tmp3}}}
 }
 }
-}
+
 

@@ -1,7 +1,9 @@
 void main ()
 {
-  float x;
+  float x = 1.0, y;
   {
-    x = 1.0;
+    float z = 2.0;
+    y = x + z;
   }
+  y = y*0.5;
 }
