@@ -1388,8 +1388,9 @@ Bei Shadingsprachen sind folgende speziellen Berechnungsfrequenzen vorhanden:
 \begin{itemize}
 \item \emph{Mesh-Frequenz}: Ausdruck ist konstant während der Darstellung eines Dreiecksnetzes, aber nicht zwischen
 verschiedenen Dreiecksnetzen oder Darstellungsläufen. %\emph{(Beispiel: Position in Weltkoordinaten.)}
-\item \emph{Vertex-Frequenz}: Ausdruck ändert sich von Vertex zu Vertex. %\emph{(Beispiel: Texturkoordinaten.)}
-\item \emph{Fragment-Frequenz}: Ausdruck ändert sich von Fragment zu Fragment. %\emph{(Beispiel: Aus Textur gelesener Wert.)}
+\item \emph{Vertex-Frequenz}: Ausdruck ist von per-Vertex vorliegenden Werten abhänging, hat also unterschiedliche Werte bei unterschiedlichen Vertices. %\emph{(Beispiel: Texturkoordinaten.)}
+\item \emph{Fragment-Frequenz}: Ausdruck ist von anderen, per Fragment zu berechnenden Ausdrücken abhänging,
+hat also unterschiedliche Werte für unterschiedliche Fragmente. %\emph{(Beispiel: Aus Textur gelesener Wert.)}
 \end{itemize}
 
 Als Besonderheit kommt hinzu, dass aus Daten mit \emph{Vertex-Frequenz} durch lineare Interpolation Daten mit
