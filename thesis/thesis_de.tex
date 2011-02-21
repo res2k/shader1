@@ -1027,7 +1027,7 @@ Argumente sind die Eingaberegister.
   }
   \renewcommand{\baselinestretch}{1.50}\normalsize
 }
-\newcommand\SeqOpSampleStacked[2]{
+\newcommand\SeqOpSampleStackedSeparate[3]{
   %\begin{figure}[!h]
   \vspace*{1em}
   \emph{Beispiel und Zwischencode:}
@@ -1036,7 +1036,7 @@ Argumente sind die Eingaberegister.
   %\makebox[\textwidth]{
     \begin{center}
     \begin{minipage}{7cm}\lstinputlisting{s1source/#1.s1}\end{minipage}
-    \begin{minipage}{\textwidth}\include{s1latex/#1}\end{minipage}
+    \begin{minipage}{\textwidth}\include{s1latex/#2}\end{minipage}
     %\caption{#2.}
     \label{fig:ir_example_#1}
     \end{center}
@@ -1045,6 +1045,7 @@ Argumente sind die Eingaberegister.
   %}
   \renewcommand{\baselinestretch}{1.50}\normalsize
 }
+\newcommand\SeqOpSampleStacked[2]{\SeqOpSampleStackedSeparate{#1}{#1}{#2}}
 
 \paragraph{Zuweisungsoperation:} Kopiert Inhalt eines Registers in ein anderes.
 %\\\hspace*{1cm}$d \gets s$
@@ -1176,7 +1177,7 @@ for element = 0 to Array.length-1
 }
 \end{lstlisting}
 
-\SeqOpSampleStacked{arraychange}{Änderung eines Arrayelements}
+\SeqOpSampleStackedSeparate{arraychange}{arraychange_fixed}{Änderung eines Arrayelements}
 
 
 \paragraph{Arraylänge:} Nimmt im Eingaberegister ein Array entgegen. Schreibt in das Zielregister, welches vom Typ "`vorzeichenloser Integer"' sein muss,
