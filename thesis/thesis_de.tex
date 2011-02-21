@@ -1188,20 +1188,20 @@ die Anzahl der Elemente des Arrays.
 
 \subsubsection{Komplexe Operationen}
 
-\paragraph{Sequenzschachtelung:} Eine Operation, die auf eine weitere, eingeschachtelte Sequenz verweist, welche beim Ausführen der Operation abgearbeitet wird.
+\paragraph{Sequenzschachtelung:} Eine Operation, die auf eine weitere, innere Sequenz verweist, welche beim Ausführen der Operation abgearbeitet wird.
 Neben dem Verweis auf eine Sequenz werden auch Listen von "`importierten"' und "`exportierten"' Namen zu der Operation gespeichert.
-Jedem Namen ist weiterhin ein Register in der eingeschachtelten Sequenz zugeordnet.
+Jedem Namen ist weiterhin ein Register in der inneren Sequenz zugeordnet.
 
 Für den Zugriff auf Register der "`umgebenden"' Sequenz wird von dieser 
 beim Einfügen der Operation eine Zuordnung von "`importierten"' und "`exportierten"' Namen der
-eingeschachtelten Sequenz zu Registern der umgebenden Sequenz vorgenommen. 
+inneren Sequenz zu Registern der umgebenden Sequenz vorgenommen. 
 %Diese Zuordnung wird benutzt, um vor der Abarbeitung der eingeschachtelten Sequenz Registerwerte von der umgebenden in die eingeschachtelte Sequenz zu kopieren.
 %Nach der Abarbeitung erfolgt ein Kopieren in die umgekehrte Richtung.
 
 Eine Sequenzschachtelung gilt als \emph{eine} Operation in der umgebenden Sequenz. Solange die Zuordnung von "`exportierten"' Namen der
 eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wird kein Register verwendet, das bereits beschrieben wurde), bleibt die Register-Zuweisungs-Bedingung erfüllt.
 
-\SeqOpSampleStacked{nest_seq}{Sequenzschachtelung (Rahmen symbolisiert eingeschachtelte Sequenz)}
+\SeqOpSampleStacked{nest_seq}{Sequenzschachtelung (Rahmen symbolisiert innere Sequenz)}
 
 \paragraph{Verzweigung:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind zwei Sequenzen (eine ``if''- und eine ``else''-Sequenz) sowie ein Register vom
 Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird die ``if''-Sequenz ausgeführt, sonst die ``else''-Sequenzen. Es müssen immer beide Sequenzen
@@ -1626,10 +1626,10 @@ in mehrere oder alle Ausgabeprogramme übernommen, allerdings mit anderen "`eing
 \paragraph{Sequenzschachtelung:} Eine Sequenzschachtelungsoperation wird prinzipiell zu allen generierten Teilprogrammen hinzugefügt,
 allerdings mit unterschiedlichen Sequenzen. Diese sind selbst das Ergebnis einer Aufspaltung der ursprünglichen Sequenz.
 
-\paragraph{Verzweigung:} Eine Verzweigung besteht konzeptionell aus zwei eingeschachtelten Sequenzen (für die jeweiligen Verzweigungsblöcke)
+\paragraph{Verzweigung:} Eine Verzweigung besteht konzeptionell aus zwei inneren Sequenzen (für die jeweiligen Verzweigungsblöcke)
 und einem bool'scher Bedingungswert, nach dessen Wert abhängig verzweigt wird.
 
-Die beiden eingeschachtelten Verzweigungssequenzen werden selbst aufgespalten.
+Die beiden inneren Verzweigungssequenzen werden selbst aufgespalten.
 
 Der bool'scher Bedingungswert kann entweder per Mesh oder per Fragment vorliegen: per Mesh, wenn er eine per-Mesh-Eingabe ist bzw. allein aus
 per-Mesh-Eingaben berechnet wurde. Per Fragment, wenn er aus Werten anderer Frequenzen berechnet wurde.
@@ -1637,14 +1637,14 @@ Aufgrund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen kann 
 
 Selbst wenn der Bedingungswert nur per Fragment vorliegt, kann die Verzweigungsoperation nicht allein per Fragment ausgeführt werden:
 die Aufspaltung der Verzweigungsblöcke kann auch in per Mesh bzw. per Vertex auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
-eingeschachtelte Sequenzen, d.h. ohne Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
+innere Sequenzen, d.h. ohne Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
 die Vertexteile beider Verzweigungsblöcke ausgeführt. Zwischenergebnisse müssen an das Fragmentprogramm übertragen und dort ausgewählt werden.
 
 Von den Verzweigungsblöcken beschriebene Register sind immer nur in der selben Frequenz wie das Register des Bedingungswerts verfügbar:
 Selbst wenn beide Verzweigungen bloss per-Vertex-Operationen ausführen, sind durch die Auswahl nach einer per-Fragment-Bedingung
 die berechneten Wert nur per Fragment verfügbar.
 
-\paragraph{Schleife:} Eine Schleifenoperation besteht aus einer eingeschachtelten Sequenz (dem Schleifenrumpf) sowie
+\paragraph{Schleife:} Eine Schleifenoperation besteht aus einer inneren Sequenz (dem Schleifenrumpf) sowie
 einem bool'scher Bedingungswert, der Schleifenbedingung.
 
 Wie bei der Verzweigung kann der bool'scher Bedingungswert nur entweder per Mesh oder per Fragment vorliegen.
@@ -1897,7 +1897,7 @@ um die dadurch eingefügte Sequenzschachtelungsoperation zu vereinfachen.
 
 % 'entfernt' Block-Seqop.
 Das \emph{Block Inlining} ersetzt alle Sequenzschachtelungsoperationen einer Sequenz durch
-die in der eingeschachtelten Sequenz enthaltenen Operationen. Dabei werden die von den
+die in der inneren Sequenz enthaltenen Operationen. Dabei werden die von den
 Operationen verwendeten bzw. veränderten Register angepasst: Register, die einem importiertem
 oder exportiertem Namen zugeordnet sind, werden durch ihre Gegenstücke in der umgebenden
 Sequenz ersetzt. Andere Register werden umbenannt um Kollisionen zu vermeiden.
