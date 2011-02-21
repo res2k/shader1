@@ -522,7 +522,7 @@ Matrixkonstruktoren sind besondere, vorgegebene Funktionen die gleiche Bezeichne
 %+Typ-Matrix+ entsprechen.
 %+Asdr-Basis+ muss als Typ einen Matrix-Typ besitzen.
 
-Eine Matrix wird aus einem oder mehreren Vektorausdrücken konstruiert. Den Zeilen werden
+Eine Matrix wird aus einem oder mehreren Vektorausdrücken zeilenweise konstruiert. Den Zeilen werden
 jeweils die Werte der Vektorausdrücke zugewiesen. Die Komponentenanzahl der Vektoren muss dabei
 $N$ sein. Die Anzahl der gegebenen Vektoren muss $M$ sein.
 
