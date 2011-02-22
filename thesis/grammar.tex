@@ -701,7 +701,9 @@ einer Anweisung sein.)
 
 \subsubsection{\kw{for}-Schleifen}\label{$_backslash$kw__for__-Schleifen}
 \Gnt{schleife\_for}:\label{schleife_for}\\
-\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\hspace*{1cm}\Gt{for}\Gspace\Gt{(}\Gspace\Gnt{schleife\_for\_kopf}{\scriptsize (\ref{schleife_for_kopf})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\Gnt{schleife\_for\_kopf}:\label{schleife_for_kopf}\\
+\hspace*{1cm}\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\Gspace\Gt{;}\Gspace\Gopt{\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} }\\
 
 Der erste Ausdruck ist die \emph{Initialisierung}. Der zweite Ausdruck ist die \emph{Schleifenbedingung}. Der dritte Ausdruck ist der \emph{Zählausdruck}.
 
@@ -718,9 +720,7 @@ Wie bei Verzweigungsblöcken muss auch der Schleifenblock ein "`echter"' Block s
 
 \subsubsection{\kw{while}-Schleifen}\label{$_backslash$kw__while__-Schleifen}
 \Gnt{schleife\_while}:\label{schleife_while}\\
-\hspace*{1cm}\Gt{while}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gnt{schleife\_while\_block}{\scriptsize (\ref{schleife_while_block})} \\
-\Gnt{schleife\_while\_block}:\label{schleife_while_block}\\
-\hspace*{1cm}\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
+\hspace*{1cm}\Gt{while}\Gspace\Gt{(}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \Gspace\Gt{)}\Gspace\Gt{\{}\Gspace\Gnt{block}{\scriptsize (\ref{block})} \Gspace\Gt{\}}\\
 
 \glq\Gnt{ausdruck}\grq ist ein boolescher Ausdruck, die \emph{Bedingung}.
 

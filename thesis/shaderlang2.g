@@ -881,12 +881,17 @@ Die \emph{Schleifenbedingung} wird ausgewertet. Ist das Ergebnis \kw{true}, so w
 und anschließend der \emph{Zählausdruck} ausgeführt. 
 Dieser Ablauf wird wiederholt bis eine Auswertung der \emph{Schleifenbedingung} das Ergebnis \kw{false} hat.
 
+Wie bei Verzweigungsblöcken muss auch der Schleifenblock ein "`echter"' Block sein.
+
 %Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie 
 %der \emph{Initialisierung}, der \emph{Schleifenbedingung} und des \emph{Zählausdrucks}.
 */
 
 schleife_for
-	:	'for' '(' ausdruck? ';' ausdruck? ';' ausdruck? ')' '{' block '}'
+	:	'for' '(' schleife_for_kopf ')' '{' block '}'
+	;
+schleife_for_kopf
+	:	 ausdruck? ';' ausdruck? ';' ausdruck?
 	;
 
 /** \subsection \kw{while}-Schleifen
