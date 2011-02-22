@@ -471,7 +471,11 @@ Dimensionalität müssen in Shadingprogrammen verschiedenartig angesprochen werd
 dies bedingt die mehrfachen Samplertypen, die jeweils einen speziellen Texturtyp
 reflektieren.
 
-Texturen werden über spezielle vordefinierte Funktionen ausgelesen (siehe~\ref{Texturfunktionen}).
+Samplertypen sind \emph{undurchsichtig} - Samplerwerte können auf der "`rechten Seite"' in
+Zuweisungen zu Variablen exakt gleichen Samplertyps, als Funktionsparameter usw. verwendet werden,
+aber nicht in Verknüpfungsoperationen u.ä.:
+Samplerwerte können im Wesentlich nur mit den vordefinierten Texturfunktionen (\ref{Texturfunktionen})
+zum Auslesen von Texturdaten sinnvoll verwendet werden.
 
 
 \subsubsection{Arraytypen}\label{Arraytypen}
