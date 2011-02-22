@@ -52,27 +52,15 @@ werden, wobei der Rückgabewert der Funktion auf den Wert des Ausdrucks gesetzt 
 
 \subsection{Ausdrücke}\label{Ausdruecke}
 \Gnt{ausdruck}:\label{ausdruck}\\
-\hspace*{1cm}\Galt{\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \Gor{}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \Gor{}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} }\\
+\hspace*{1cm}\Gnt{asdr\_basis}{\scriptsize (\ref{asdr_basis})} \\
+\hspace*{1cm}\Gnt{asdr\_zuweisung}{\scriptsize (\ref{asdr_zuweisung})} \\
+\hspace*{1cm}\Gnt{asdr\_logisch\_oder}{\scriptsize (\ref{asdr_logisch_oder})} \\
+\hspace*{1cm}\Gnt{asdr\_ternaer}{\scriptsize (\ref{asdr_ternaer})} \\
 
 Der Ausdruck höchster Präzedenz ist die Zuweisung.
 %, auf welche einfach in der Regel für
 %allgemeine Ausdrücke verwiesen wird.
 
-
-\subsubsection{Zuweisung}\label{Zuweisung}
-\Gnt{asdr\_zuweisung}:\label{asdr_zuweisung}\\
-\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
-
-Ein Zuweisungsausdruck setzt sich aus einer "`linken Seite"', einer Variable oder einem Arrayelement
-bzw. einem Swizzle-Attribut (siehe \ref{Vektorattribute}) davon, sowie
-einer "`rechten Seite"', dem direkt folgenden, zuzuweisenden \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}, zusammen.
-
-Dem Ausdruck der linken Seite wird der Wert des Ausdrucks
-auf der rechten Seite zugewiesen.
-
-Der Typ des zugewiesenen Ausdrucks muss zuweisungskompatibel (siehe unten) zur linken Seite der Zuweisung sein.
-
-Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 
 \subsubsection{Basisausdruck}\label{Basisausdruck}
 \Gnt{asdr\_basis}:\label{asdr_basis}\\
@@ -89,6 +77,21 @@ Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 für Variablen und Konstanten auch Funktionsaufrufe und geschachtelte Ausdrücke.
 Weiterhin können Zugriffe auf Attribute (siehe \Gnt{attribut}{\scriptsize (\ref{attribut})}) bzw. Arrayelemente spezifiziert werden.
 
+
+\subsubsection{Zuweisung}\label{Zuweisung}
+\Gnt{asdr\_zuweisung}:\label{asdr_zuweisung}\\
+\hspace*{1cm}\Gnt{BEZEICHNER}{\scriptsize (\ref{BEZEICHNER})}\Gspace\Gopt{\Gnt{attribut\_liste\_oder\_array\_element}{\scriptsize (\ref{attribut_liste_oder_array_element})} }\Gspace\Gt{=}\Gspace\Gnt{ausdruck}{\scriptsize (\ref{ausdruck})} \\
+
+Ein Zuweisungsausdruck setzt sich aus einer "`linken Seite"', einer Variable oder einem Arrayelement
+bzw. einem Swizzle-Attribut (siehe \ref{Vektorattribute}) davon, sowie
+einer "`rechten Seite"', dem direkt folgenden, zuzuweisenden \Gnt{ausdruck}{\scriptsize (\ref{ausdruck})}, zusammen.
+
+Dem Ausdruck der linken Seite wird der Wert des Ausdrucks
+auf der rechten Seite zugewiesen.
+
+Der Typ des zugewiesenen Ausdrucks muss zuweisungskompatibel (siehe unten) zur linken Seite der Zuweisung sein.
+
+Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 
 \paragraph{Zuweisungskompatibilität}\label{Zuweisungskompatibilitaet}
 
@@ -113,6 +116,53 @@ Stelle der Vektoren (\attr{x} mit \attr{x}, \attr{y} mit \attr{y}, $\dots$). Zwe
 die gleiche Komponentenanzahl besitzen.
 
 Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet, und an\-schließend die Verknüpfung angewendet.
+
+\subsubsection{Logische Operatoren}\label{Logische Operatoren}
+\Gnt{asdr\_logisch\_oder}:\label{asdr_logisch_oder}\\
+\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gclosure{\Gt{||}\Gspace\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} }\\
+\Gnt{asdr\_logisch\_und}:\label{asdr_logisch_und}\\
+\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gspace\Gclosure{\Gt{\&\&}\Gspace\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} }\\
+
+%  "!" - unäres NOT
+
+Beide Operanden müssen vom Typ \kw{bool} sein.
+
+\op{\&\&} logisch UND-verknüpft die Operanden.
+
+\op{||} logisch ODER-verknüpft die Operanden.
+
+
+\subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
+\Gnt{asdr\_gleichheit}:\label{asdr_gleichheit}\\
+\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gclosure{\Galt{\Gt{!=}\Gor{}\Gt{==}}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} }\\
+\Gnt{asdr\_vergleich}:\label{asdr_vergleich}\\
+\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gclosure{\Galt{\Gt{>}\Gor{}\Gt{>=}\Gor{}\Gt{<}\Gor{}\Gt{<=}}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} }\\
+
+\op{>} wertet aus ob der linke Operand größer als der rechte Operand ist.
+
+\op{>=} wertet aus ob der linke Operand größer oder gleich dem rechten Operanden ist.
+
+\op{<} wertet aus ob der linke Operand kleiner als der rechte Operand ist.
+
+\op{<=} wertet aus ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
+
+\op{==} wertet aus ob der linke Operand gleich dem rechten Operand ist.
+
+\op{!=} wertet aus ob der linke Operand nicht gleich dem rechten Operanden ist.
+
+Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
+dazu zuweisungskompatiblen Typ sein.
+
+Sind beide Operanden vom Typ \kw{unsigned int} oder \kw{int}, so findet ein Vergleich von Ganzzahlwerten statt.
+
+Ist ein Operand vom Typ \kw{int} und ein Operand vom Typ \kw{int}, \kw{unsigned int} oder
+verlustfrei zuweisungskompatibel zu \kw{int} oder \kw{unsigned int}, so findet ein Vergleich von Ganzzahlwerten statt.
+
+Ist ein Operand von einem Fließkommatyp und ein Operand von einem Integer- oder Fließkommatyp
+oder zuweisungskompatibel zu dem Fließkommatyp des anderen Operanden,
+so findet ein Vergleich von Fließkommawerten statt.
+%Die Präzision entspricht der höheren Präzision der beiden Operanden.
+
 
 \paragraph{Arithmetische Operatoren}\label{Arithmetische Operatoren}
 ~\\
@@ -176,53 +226,6 @@ ausgewertet, und der Wert des ternären
 Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 
 \emph{Wahr-} und \emph{Falsch-Ausdruck} müssen vom gleichen Typ sein.
-
-
-\subsubsection{Vergleichsoperatoren}\label{Vergleichsoperatoren}
-\Gnt{asdr\_gleichheit}:\label{asdr_gleichheit}\\
-\hspace*{1cm}\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} \Gspace\Gclosure{\Galt{\Gt{!=}\Gor{}\Gt{==}}\Gspace\Gnt{asdr\_vergleich}{\scriptsize (\ref{asdr_vergleich})} }\\
-\Gnt{asdr\_vergleich}:\label{asdr_vergleich}\\
-\hspace*{1cm}\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} \Gspace\Gclosure{\Galt{\Gt{>}\Gor{}\Gt{>=}\Gor{}\Gt{<}\Gor{}\Gt{<=}}\Gspace\Gnt{asdr\_add}{\scriptsize (\ref{asdr_add})} }\\
-
-\op{>} wertet aus ob der linke Operand größer als der rechte Operand ist.
-
-\op{>=} wertet aus ob der linke Operand größer oder gleich dem rechten Operanden ist.
-
-\op{<} wertet aus ob der linke Operand kleiner als der rechte Operand ist.
-
-\op{<=} wertet aus ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
-
-\op{==} wertet aus ob der linke Operand gleich dem rechten Operand ist.
-
-\op{!=} wertet aus ob der linke Operand nicht gleich dem rechten Operanden ist.
-
-Beide Operanden müssen von einem Integer- oder Fließkommatyp (\Gnt{typ\_num}{\scriptsize (\ref{typ_num})}) oder einem
-dazu zuweisungskompatiblen Typ sein.
-
-Sind beide Operanden vom Typ \kw{unsigned int} oder \kw{int}, so findet ein Vergleich von Ganzzahlwerten statt.
-
-Ist ein Operand vom Typ \kw{int} und ein Operand vom Typ \kw{int}, \kw{unsigned int} oder
-verlustfrei zuweisungskompatibel zu \kw{int} oder \kw{unsigned int}, so findet ein Vergleich von Ganzzahlwerten statt.
-
-Ist ein Operand von einem Fließkommatyp und ein Operand von einem Integer- oder Fließkommatyp
-oder zuweisungskompatibel zu dem Fließkommatyp des anderen Operanden,
-so findet ein Vergleich von Fließkommawerten statt.
-%Die Präzision entspricht der höheren Präzision der beiden Operanden.
-
-
-\subsubsection{Logische Operatoren}\label{Logische Operatoren}
-\Gnt{asdr\_logisch\_oder}:\label{asdr_logisch_oder}\\
-\hspace*{1cm}\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} \Gspace\Gclosure{\Gt{||}\Gspace\Gnt{asdr\_logisch\_und}{\scriptsize (\ref{asdr_logisch_und})} }\\
-\Gnt{asdr\_logisch\_und}:\label{asdr_logisch_und}\\
-\hspace*{1cm}\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} \Gspace\Gclosure{\Gt{\&\&}\Gspace\Gnt{asdr\_gleichheit}{\scriptsize (\ref{asdr_gleichheit})} }\\
-
-%  "!" - unäres NOT
-
-Beide Operanden müssen vom Typ \kw{bool} sein.
-
-\op{\&\&} logisch UND-verknüpft die Operanden.
-
-\op{||} logisch ODER-verknüpft die Operanden.
 
 
 \subsubsection{Boolesche Werte}\label{Boolesche Werte}

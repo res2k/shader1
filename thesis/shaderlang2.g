@@ -69,15 +69,28 @@ Der Ausdruck höchster Präzedenz ist die Zuweisung.
 
 */
 
-/** \alt-merge-on */
-
 ausdruck
-	: asdr_logisch_oder
+	: asdr_basis
 	| asdr_zuweisung
+	| asdr_logisch_oder
 	| asdr_ternaer
 	;
-/** \alt-merge-off */
+
+/** \subsection Basisausdruck
+
+\emph{Basisausdrücke} sind die Ausdrücke niedrigster Präzedenz. Dies sind neben Bezeichnern
+für Variablen und Konstanten auch Funktionsaufrufe und geschachtelte Ausdrücke. 
+Weiterhin können Zugriffe auf Attribute (siehe +attribut+) bzw. Arrayelemente spezifiziert werden.
+
+ */
+
+asdr_basis
+	: (('(' ausdruck ')') | asdr_konst_bool | (typ '(')=> funktion_aufruf | BEZEICHNER | NUMERIC) attribut_liste_oder_array_element?
+	;
 	
+attribut_liste_oder_array_element
+	: (('.' attribut) | ('[' ausdruck ']'))  attribut_liste_oder_array_element? ;
+
 /** \subsection Zuweisung
 
 Ein Zuweisungsausdruck setzt sich aus einer "`linken Seite"', einer Variable oder einem Arrayelement
@@ -95,21 +108,6 @@ Ein Zuweisungsausdruck selbst hat den Wert der linken Seite nach der Zuweisung.
 asdr_zuweisung
 	: BEZEICHNER attribut_liste_oder_array_element? '=' ausdruck
 	;
-
-/** \subsection Basisausdruck
-
-\emph{Basisausdrücke} sind die Ausdrücke niedrigster Präzedenz. Dies sind neben Bezeichnern
-für Variablen und Konstanten auch Funktionsaufrufe und geschachtelte Ausdrücke. 
-Weiterhin können Zugriffe auf Attribute (siehe +attribut+) bzw. Arrayelemente spezifiziert werden.
-
- */
-
-asdr_basis
-	: (('(' ausdruck ')') | asdr_konst_bool | (typ '(')=> funktion_aufruf | BEZEICHNER | NUMERIC) attribut_liste_oder_array_element?
-	;
-	
-attribut_liste_oder_array_element
-	: (('.' attribut) | ('[' ausdruck ']'))  attribut_liste_oder_array_element? ;
 
 /** \subsubsection Zuweisungskompatibilität
 
@@ -135,8 +133,71 @@ Stelle der Vektoren (\attr{x} mit \attr{x}, \attr{y} mit \attr{y}, $\dots$). Zwe
 die gleiche Komponentenanzahl besitzen.
 
 Bei der Auswertung wird zunächst der linke, dann der rechte Operand ausgewertet, und an\-schließend die Verknüpfung angewendet.
+*/
 
-\subsubsection Arithmetische Operatoren
+/** \subsection Logische Operatoren
+
+%  "!" - unäres NOT
+
+Beide Operanden müssen vom Typ \kw{bool} sein.
+
+\op{\&\&} logisch UND-verknüpft die Operanden.
+
+\op{||} logisch ODER-verknüpft die Operanden.
+
+*/
+
+asdr_logisch_oder
+	: asdr_logisch_und ('||' asdr_logisch_und)* ;
+	
+asdr_logisch_und
+	: asdr_gleichheit ('&&' asdr_gleichheit)* ;
+
+// Bitweise op.?
+
+
+/** \subsection Vergleichsoperatoren
+
+\op{>} wertet aus ob der linke Operand größer als der rechte Operand ist.
+
+\op{>=} wertet aus ob der linke Operand größer oder gleich dem rechten Operanden ist.
+
+\op{<} wertet aus ob der linke Operand kleiner als der rechte Operand ist.
+
+\op{<=} wertet aus ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
+
+\op{==} wertet aus ob der linke Operand gleich dem rechten Operand ist.
+
+\op{!=} wertet aus ob der linke Operand nicht gleich dem rechten Operanden ist.
+
+Beide Operanden müssen von einem Integer- oder Fließkommatyp (+typ_num+) oder einem
+dazu zuweisungskompatiblen Typ sein.
+
+Sind beide Operanden vom Typ \kw{unsigned int} oder \kw{int}, so findet ein Vergleich von Ganzzahlwerten statt.
+
+Ist ein Operand vom Typ \kw{int} und ein Operand vom Typ \kw{int}, \kw{unsigned int} oder
+verlustfrei zuweisungskompatibel zu \kw{int} oder \kw{unsigned int}, so findet ein Vergleich von Ganzzahlwerten statt.
+
+Ist ein Operand von einem Fließkommatyp und ein Operand von einem Integer- oder Fließkommatyp
+oder zuweisungskompatibel zu dem Fließkommatyp des anderen Operanden,
+so findet ein Vergleich von Fließkommawerten statt.
+%Die Präzision entspricht der höheren Präzision der beiden Operanden.
+
+*/
+
+/** \alt-merge-on */
+
+asdr_gleichheit
+	: asdr_vergleich (('!='|'==') asdr_vergleich)*
+	;
+
+asdr_vergleich
+	: asdr_add (('>' | '>=' | '<' | '<=') asdr_add)*
+	;
+
+/** \alt-merge-off */
+	
+/**\subsubsection Arithmetische Operatoren
 
 \op{\plus} addiert rechten und linken Operanden.
 
@@ -217,67 +278,6 @@ Ausdrucks ergibt sich zu dem Wert des \emph{Falsch-Ausdrucks}.
 asdr_ternaer
 	: ausdruck '?' ausdruck ':' ausdruck
 	;
-
-/** \subsection Vergleichsoperatoren
-
-\op{>} wertet aus ob der linke Operand größer als der rechte Operand ist.
-
-\op{>=} wertet aus ob der linke Operand größer oder gleich dem rechten Operanden ist.
-
-\op{<} wertet aus ob der linke Operand kleiner als der rechte Operand ist.
-
-\op{<=} wertet aus ob der linke Operand kleiner oder gleich dem rechten Operanden ist.
-
-\op{==} wertet aus ob der linke Operand gleich dem rechten Operand ist.
-
-\op{!=} wertet aus ob der linke Operand nicht gleich dem rechten Operanden ist.
-
-Beide Operanden müssen von einem Integer- oder Fließkommatyp (+typ_num+) oder einem
-dazu zuweisungskompatiblen Typ sein.
-
-Sind beide Operanden vom Typ \kw{unsigned int} oder \kw{int}, so findet ein Vergleich von Ganzzahlwerten statt.
-
-Ist ein Operand vom Typ \kw{int} und ein Operand vom Typ \kw{int}, \kw{unsigned int} oder
-verlustfrei zuweisungskompatibel zu \kw{int} oder \kw{unsigned int}, so findet ein Vergleich von Ganzzahlwerten statt.
-
-Ist ein Operand von einem Fließkommatyp und ein Operand von einem Integer- oder Fließkommatyp
-oder zuweisungskompatibel zu dem Fließkommatyp des anderen Operanden,
-so findet ein Vergleich von Fließkommawerten statt.
-%Die Präzision entspricht der höheren Präzision der beiden Operanden.
-
-*/
-
-/** \alt-merge-on */
-
-asdr_gleichheit
-	: asdr_vergleich (('!='|'==') asdr_vergleich)*
-	;
-
-asdr_vergleich
-	: asdr_add (('>' | '>=' | '<' | '<=') asdr_add)*
-	;
-
-/** \alt-merge-off */
-	
-/** \subsection Logische Operatoren
-
-%  "!" - unäres NOT
-
-Beide Operanden müssen vom Typ \kw{bool} sein.
-
-\op{\&\&} logisch UND-verknüpft die Operanden.
-
-\op{||} logisch ODER-verknüpft die Operanden.
-
-*/
-
-asdr_logisch_oder
-	: asdr_logisch_und ('||' asdr_logisch_und)* ;
-	
-asdr_logisch_und
-	: asdr_gleichheit ('&&' asdr_gleichheit)* ;
-
-// Bitweise op.?
 
 /**\subsection Boolesche Werte
 
