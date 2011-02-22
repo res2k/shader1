@@ -385,10 +385,9 @@ typ_num
 
 
 Der \emph{Basistyp} eines Vektors ist ein Integer-, Boolescher oder Fließkommatyp. 
-Die Zahl $N$ nach dem Basistyp ist vom Typ
-Ganzzahl, kann Werte zwischen 1 und 4 inklusive annehmen, und gibt die Komponentenanzahl an.
- Ein Vektortyp spezifiziert ein $N$-Tupel von Werten 
-des Basistyps.
+
+Die Zahl $N$ nach dem Basistyp muss eine Ganzzahl mit Wert zwischen 1 und 4 inklusive sein und gibt die Anzahl der Vektorkomponenten an.
+Werte von Vektortypen sind damit $N$-Tupel von Werten des Basistyps.
 */
 
 typ_vektor
