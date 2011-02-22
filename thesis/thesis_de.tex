@@ -763,6 +763,7 @@ Die abgefangenen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt 
 
 % Zuordnung Variable <-> akt. Register in Symboltabelle
 
+\newpage
 \section{Zwischencoderepräsentation}
 \label{zcr}
 
@@ -772,13 +773,13 @@ Die abgefangenen Ausnahmen werden jedoch nicht verworfen, sondern an ein Objekt 
 
 \subsection{Vorlagen der Zwischencoderepräsentation}
 
-Als Vorlagen für die hier vorgestellte Zwischencoderepräsentation dienten das ``LLVM Instruction Set''~(\cite{LLVM:CGO04}),
-SafeTSA~(\cite{SafeTSA}) und ``SIMPLE'' des McCAT Compiler-Projektes~(\cite{SIMPLE}).
+Als Vorlagen für die hier vorgestellte Zwischencoderepräsentation dienten das ``LLVM Instruction Set'',
+SafeTSA und ``SIMPLE'' des McCAT Compiler-Projektes.
 
 % "Inspirationen": LLVM, Amme's SSA, GIMPLE/SIMPLE
 
 %Das \emph{LLVM Instruction Set} (hier kurz ``LLVM'') 
-\paragraph{LLVM}: LLVM ist ein \emph{Framework} für Compiler. Insbesondere will es ermöglichen, Optimierungen
+\paragraph{LLVM}~\cite{LLVM:CGO04}: LLVM ist ein \emph{Framework} für Compiler. Insbesondere will es ermöglichen, Optimierungen
 eines Programms über dessen ganzen "`Lebenszyklus"' (inklusive Link- und Laufzeit) zu ermöglichen.
 
 Das \emph{LLVM Instruction Set} ist der ausgegebene "`Objektcode"'. Das Programm wird -- ähnlich Maschinen-
@@ -806,7 +807,7 @@ Die Instruktionen sind in SSA-Form.
 
 % expliziter Kontrollfluss == keine GOTOs, sondern "Verweise" auf Blöcke/nächsten Schritt
 
-\paragraph{SafeTSA:} Eine Art Objektcode, hauptsächlich zur Benutzung
+\paragraph{SafeTSA}~\cite{SafeTSA}: Eine Art Objektcode, hauptsächlich zur Benutzung
 als "`mobiler"' Code, d.h. zur Übertragung von Programmcode über Netzwerke wie das Internet.
 Das Design von SafeTSA ist inhärent sicher. Bösartige Manipulationen von Programmen, die zu
 problematischem Verhalten wie die Benutzung von undefinierten Werten oder Aliasing von Werten
@@ -824,7 +825,7 @@ spezifischen Registersatz zugreifen. Verschiedene Instruktionsblöcke besitzen e
 % - Registersätze per Basisblock
 % - 
 
-\paragraph{SIMPLE:} Als "`echte"' Compiler-Zwischencoderepräsentation für einen C-Compiler entwickelt
+\paragraph{SIMPLE}~\cite{SIMPLE}: Als "`echte"' Compiler-Zwischencoderepräsentation für einen C-Compiler entwickelt
 stellt sie Programme auf sehr hoher Ebene dar. Ausdrücke sind nicht in der SSA-Form, allerdings
 "`vereinfacht"' auf zwei Operanden und einfache Strukturzugriffe. Symboltabelle und Typinformationen
 sind erhalten. Typumwandlung, und andere in C implizite Verhalten, müssen explizit ausgedrückt werden.
