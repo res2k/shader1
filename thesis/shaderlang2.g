@@ -857,6 +857,14 @@ ansonsten die Kommandos des Blockes im \kw{else}-Zweig (\emph{Falsch-Block}).
 Der \kw{else}-Zweig ist optional.
 
 %Die Berechnungsfrequenz der Verzweigung ist die kleinste gemeinsame Frequenz der Blöcke sowie der Bedingung.
+
+Im Gegensatz zu vielen C-artigen Sprachen erfordert die Syntax für \emph{Wahr-Block} und \emph{Falsch-Block}
+"`echte"' Blöcke (und nicht, wie sonst üblich, eine einzelne Anweisung +kommando+ die eine Blockanweisung sein kann). 
+Diese Anforderung wurde davon motiviert, eine Art Fehler zu vermeiden: die "`Erweiterung"' eines aus einer einzelnen
+Anweisung bestehenden Verzweigungszweiges"' mit einer weiteren Anweisung, allerdings ohne die einzelne, ursprüngliche
+Anweisung in einen Block einzufassen. (Das Ergebnis dieses Fehlers kann eine nicht gewollte, unbedingte Ausführung
+einer Anweisung sein.)
+
 */
 
 verzweigung
@@ -887,6 +895,8 @@ schleife_for
 
 Die Bedingung wird ausgewertet. Ist das Ergebnis \kw{true}, so werden die Kommandos des Schleifenblocks
 ausgeführt. Dieser Ablauf wird wiederholt bis eine Auswertung der Bedingung das Ergebnis \kw{false} hat.
+
+Wie bei Verzweigungsblöcken muss auch der Schleifenblock ein "`echter"' Block sein.
 
 %Die Berechnungsfrequenz der Schleife ist die kleinste gemeinsame Frequenz des Schleifenblockes sowie der Bedingung.
 */
