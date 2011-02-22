@@ -1356,26 +1356,28 @@ und eine Liste Eingabe-Register entgegen genommen. Die Eingaberegister werden wi
 
 Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, Abbildung~\ref{fig:ir_sample_gen} die generierte Zwischencoderepräsentation.
 
-\begin{figure}[h]
+\begin{figure}[hp]
    \centering
   \lstinputlisting{s1source/sample_minimal.s1}
   \caption{Quelltext eines Programms.}
   \label{fig:ir_sample_src}
 \end{figure}
-\begin{figure}[h]
+\begin{figure}[hp]
    \centering
   \input{s1latex/sample_minimal.tex}
   \caption{Zu~\ref{fig:ir_sample_src} generierte Zwischencoderepräsentation.}
   \label{fig:ir_sample_gen}
 \end{figure}
 
+\newpage
 \section{Auftrennung}
 \label{Auftrennung}
 
 % High-Level Arbeitsweise
 Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und ein \emph{Fragmentprogramm} auf.
 Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz} (siehe unten),
-in der diese Operation ausgeführt wird, zuordnen. Diese bestimmt, in welche Programme eine Operation ausgegeben wird.
+in der diese Operation ausgeführt wird, zuordnen.
+Diese bestimmt die eigentliche "`Auftrennung"', also in welche Teilprogramme eine Operation ausgegeben wird.
 
 \subsection{Definition Berechnungsfrequenz}
 \label{Berechnungsfrequenz}
