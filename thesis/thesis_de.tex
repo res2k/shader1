@@ -554,12 +554,14 @@ sowie die Komponente zur Auftrennung eines Programms -- das eigentliche "`Ziel"'
 \end{figure}
 
 Der Aufbau entspricht grösstenteils der Compiler-Standardarchitektur (Abbildung~\ref{fig:structure}): das \emph{Front-End} generiert nach Syntax- und Semantikanalyse
-eine Repräsentation des Programms in einem \emph{Zwischencode}. Auf dieser Zwischencoderepräsentation werden im "`Middle-End"' % Ref wo das gesagt wird, oder besseres Wort
-Optimierungen vorgenommen. Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischencoderepräsentation der tatsächliche Zielcode generiert.
+eine Repräsentation des Programms in einem \emph{Zwischencode}.
+Ein "`\emph{Middle-End}"' verarbeitet diese Zwischencoderepräsentation weiter, unter anderem werden Optimierungen vorgenommen.
+Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischencoderepräsentation der tatsächliche Zielcode generiert.
 
-Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP}. Hier wird in der Zwischencoderepräsentation untersucht, mit
-welcher Berechnungsfrequenz~(siehe \ref{berechnungsfrequenz_locker} und \ref{Berechnungsfrequenz})
-\footnote{Für "`Meshfrequenz"' wird kein Programm generiert, sie spielt aber eine Rolle bei der Aufspaltung. Generell ist das Konzept der Aufspaltung auch auf weitere Frequenzen erweiterbar.}
+Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP} des "`Middle-Ends"'. Hier wird in der Zwischencoderepräsentation untersucht, mit
+welcher Berechnungsfrequenz~(siehe \ref{berechnungsfrequenz_locker} und
+\ref{Berechnungsfrequenz})\footnote{Für "`Meshfrequenz"' wird kein Programm generiert, sie spielt aber eine Rolle bei der Aufspaltung.
+    Generell ist das Konzept der Aufspaltung auch auf weitere Frequenzen erweiterbar.}
 jeder Befehl des Programms ausgeführt werden muss - mit anderen Worten,
 es wird untersucht, welche Befehle auf der Vertex-Einheit und welche auf der Fragment-Einheit ausgeführt werden müssen. Mit diesen Informationen kann
 das Programm entsprechend in ein Vertex- und ein Fragment-Programm aufgeteilt werden. Da zur Laufzeit auch ein "`Übergeben"' von Ausgaben
@@ -676,7 +678,7 @@ Bei der Lösung von Mehrdeutigkeiten durch Abändern der Grammatik muss eine Reg
 die mit der mehrdeutigen Token-Sequenz beginnt. Dahinter werden als Alternativen neue Regeln angefügt,
 die aus den "`Resttokens"' der ursprünglich mehrdeutigen Regeln bestehen müssen. % Hier ne Ref wäre vllt gut
 
-Allerdings würde damit die Lesbarkeit der Grammatik eingeschränkt. Für die Regel \rulelink{ausdruck} dieser Ansatz verfolgt,
+Allerdings würde damit die Lesbarkeit der Grammatik eingeschränkt. Für die Regel \rulelink{ausdruck} wurde bei der Implementierung dieser Ansatz verfolgt,
 die Spezifikation der Grammatik in Kapitel~\ref{langspec} dahingehend aber \emph{nicht} geändert.
 Stattdessen sind die in der Implementierung des Parser verwendeten "`Variationen"' der Grammatik in Anhang~\ref{grammar_fixes} beschrieben.
 
@@ -726,8 +728,9 @@ Insbesondere Optimierungen sind in der gewählten Zwischencoderepräsentation (Z
 einem AST. Auch werden in der ZCR wichtige semantische Informationen, wie Typen von Werten, Funktionssignaturen etc. gespeichert,
 es tritt also kein Informationsverlust im Vergleich zu einem AST auf.
 
-Weiterhin wurde die Implementierung so gestaltet, dass die Komponent des ``semantic handler'' relativ einfach austauschbar ist.
-Sollte also notwendig werden, dass der Compiler einen AST des Programms erstellt, so wäre es prinzipiell möglich,
+Weiterhin wurde die Implementierung so gestaltet, dass die Komponent des ``semantic handler'' relativ einfach austauschbar ist:
+aus "`Parser-Sicht"' ist die interne Arbeitsweise und Art der Ausgabe des ``semantic handler'' irrelevant.
+Sollte also notwendig werden, dass der Compiler einen AST des Programms erstellen soll, so wäre es prinzipiell möglich,
 einen ``semantic handler'' zu schreiben der genau dies tut.
 
 % Die Idee hinter dem \verb+SemanticHandler+ ist eine möglichst vollständige Trennung zwischen syntaktischer
