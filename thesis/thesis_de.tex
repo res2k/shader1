@@ -861,11 +861,14 @@ Bei der Gestaltung der \emph{Zwischencoderepräsentation} sollten folgende Rahme
 Um die Komplexität des Compilers und den damit verbundenen Implementierungsaufwand klein zu halten
 sollte \emph{ein} Format zur Zwischenrepräsentation für den compilerinternen Austausch verwendet werden.
 (Andere Compiler verwenden verschiedene Formate zwischen Verarbeitungsschritten, siehe z.B.~\cite{SIMPLE}.)
-\item Dies schliesst auch \emph{Eignung für Optimierungen} ein. Es sollten also genug Information enthalten sein,
-um verschiedene Optimierungsalgorithmen umzusetzen. Idealerweise sollte die Zwischencoderepräsentation
-diese Umsetzung von Optimierungen möglichst unterstützen und vereinfachen.
+\item Dies schliesst auch \emph{Eignung für Auftrennung} und \emph{Eignung für Optimierungen} ein.\\
+Die Auftrennung sollte mit möglichst feiner "`Granularität"' passieren - bei komplexen Ausdrücken soll es möglich sein,
+dass verschiedene Teilausdrücke in verschiedene Teilprogramme ausgegeben werden können.\\
+Es sollten auch genug Information enthalten sein, um verschiedene Optimierungsalgorithmen umzusetzen.
+Idealerweise sollte die Zwischencoderepräsentation sowohl die Umsetzung der Aufspaltung als auch 
+der Optimierungen möglichst unterstützen und vereinfachen.
 % \item Eignung als Ausgabe für Auftrenner?
-\item Auch der \emph{Aufbau} sollte möglichst \emph{einfach} sein, damit Programme in der Zwischencoderepräsentation 
+\item Dafür sollte der \emph{Aufbau} möglichst \emph{einfach} sein, damit Programme in der Zwischencoderepräsentation 
 unkompliziert traversiert und manipuliert werden können.
 \end{itemize}
 
@@ -874,11 +877,20 @@ für Ausdrücke zugrunde liegt. Der gewünschte einfache Aufbau äußert sich da
 in einer einfachen Reihung gespeichert werden -- ohne Sprungmarken oder ähnliches. Verzweigungen und Schleifen werden
 durch "`komplexe"' Befehle realisiert (die intern wiederum Reihungen von Befehlen enthalten).
 
+Eine Auftrennung auf der Ebene der Befehle der Zwischencoderepräsentation ermöglicht es, bei komplexen Ausdrücke u.ä.
+für einzelne Rechenschritte zu entscheiden, in welches Teilprogramm die Ausgabe erfolgen soll.
+Damit wurde die gewünschte "`Granularität"' -- Aufteilung von Teilausdrücken -- erreicht.
+
 Das "`Grundelement"' der Zwischencoderepräsentation ist eine "`Sequenz"'. Eine Sequenz besteht aus "`Operationen"',
 die auf "`Registern"' arbeiten. Register sind \emph{typisiert}, es gibt getrennte Registersätze, ein Satz für jeden verwendeten Typ. 
 Der Aufbau einer Sequenz ist in Abbildung~\ref{fig:ir_sequence} schematisch dargestellt.
 
 Die in Operationen gespeicherte Registeridentifikation verweist auf den zugehörigen Registersatz, Typinformationen bleiben also erhalten.
+Verwendet werden diese Informationen bei der Aufspaltung\footnote{Die "`Aufteilbarkeit"' einer Operation hängt teilweise von den Datentypen der Operanden ab,
+siehe~\ref{Interpolierbarkeit}},
+Optimierung\footnote{Speziell beim Constant Folding.} und
+Codegenerierung\footnote{Insbesondere da die gewählte Zielsprache -- Cg -- selbst eine Hochsprache ist.},
+und ein Abspeichern der Registertypen "`entlastet"' diese Komponenten von der Bestimmung des Typs eines Registerinhalts.
 % Satz teil von Register-ID
 %Jedes Register besitzt ausserdem einen Namen; dieser wird aber nur verwendet, um generierten Code lesbarer zu machen.
 
@@ -896,8 +908,23 @@ Im Gegensatz zu einer "`reinen"' SSA-Form gibt es jedoch keine $\phi$-Operation.
 gespeichert: soll z.B. bei einer Verzweigung eine Variable in einem Zweig verändert werden, so werden in beiden Zweigen Zuweisungen zum
 entsprechenden Register generiert. Ein Zweig enthält die Zuweisung des neuen Wertes, der andere die Zuweisung des alten Wertes.
 
-Anzumerken ist, dass dieses Auflösen nicht die oben gegebenen "`Register-Zuweisungs-Bedingung"' verletzt, da Verzweigungen und Schleifen
-jeweils als \emph{eine} Operation in der Sequenz, in der sie verwendet werden, gelten.
+Gewählt wurde dieser Ansatz, um Transformationen von Programmen, insbesondere das Entfernen einzelner Operationen, zu vereinfachen:
+Das spätere "`Aufspalten"' eines Programms ist praktisch eine Erzeugung von mehreren Ausgabeprogrammen aus einem Eingabeprogramm,
+wobei Operationen des Eingabeprogramms teils kopiert, teils ausgelassen werden. Durch ein Auflösen der $\phi$-Operationen können
+komplexe Operationen (Sequenzschachtelungen, Verzweigungen, Schleifen)
+%durch eine einfache Kopie der Operation in mehrere Programme vervielfältigt werden, ohne dass später folgende Operationen betrachtet werden müssten -- 
+trivial aus einem Ausgabeprogramm ausgelassen werden, ohne dass später folgende Operationen betrachtet werden müssten -- 
+bei expliziten $\phi$-Operationen müsste zumindest für diese noch überprüft
+werden, ob sie noch gültig sind (d.h. die Verzweigung o.ä., auf die sich eine $\phi$-Operation bezieht, existiert noch im Ausgabeprogramm).
+
+%Anzumerken ist, dass dieses Auflösen nicht die oben gegebenen "`Register-Zuweisungs-Bedingung"' verletzt, da Verzweigungen und Schleifen
+%jeweils als \emph{eine} Operation in der Sequenz, in der sie verwendet werden, gelten.
+Anzumerken ist, dass Sequenzschachtelungen, Verzweigungen und Schleifen in der Sequenz als \emph{eine} Operation gespeichert
+werden (welche auf die inneren Sequenzen selbst nur Verweisen). Damit verletzt dieses Auflösen nicht die oben gegebenen "`Register-Zuweisungs-Bedingung"'.
+(Bei Verzweigungen wird einem Register, auch wenn ihm in beiden Zweigsequenzen ein Wert zugewiesen wird, zur Laufzeit nur einmal
+ein Wert zugewiesen, da nur eine Zweigsequenz ausgeführt wird.
+Wertzuweisungen in Schleifenblöcken kann man als Zuweisungen an "`temporäre"' Register betrachten, wobei die Zuweisung an
+das tatsächliche Zielregister erst einmalig nach dem letzten Schleifendurchlauf stattfindet.)
 
 Die Sichtbarkeit von Registern ist auf die Sequenz, in der sie deklariert wurden, beschränkt.
 %Insbesondere können auf diese nicht implizit
@@ -912,6 +939,13 @@ Registern des eingeschachtelten Blockes ("`lokal"') gespeichert.
 Wie genau die Abbildung von Werten von "`externen"' an "`lokale"' Register stattfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
 das Verhalten muss einem "`umleiten"' von Lese- oder Schreibzugriffen von den angegebenen lokalen auf die zugeordneten externen
 Registern entsprechen.
+
+Damit wird sichergestellt, dass für eine Sequenz alle Informationen zu von den Operationen verwendeten Registern vorhanden sind.
+Verarbeitungsschritte, die die Verwendung oder Inhalte von Registern betrachten können, wegen garantierter "`lokaler"' Definition
+von Registern, Gültigkeitsbereiche u.ä. ignorieren; Sequenzen können unabhängig voneinander betrachtet und bearbeitet werden,
+da ein Verwalten von "`umgebenden"' Sequenzen, um möglicherweise Informationen von dort verwendeten Registern zu erhalten,
+nicht nötig ist.
+
 %Wie genau die Übergabe von Werten von "`externen"' an "`lokale"' Register statfindet ist ein Implementierungsdetail, dass dem Generator obliegt;
 %das Verhalten muss jedoch semantisch äquivalent zu einem Kopieren der externen Eingaberegister in lokale Register Anfang des Blockes
 %und analog am Ende zu einem zurückkopieren von lokalen Registern in die externen Ausgaberegister sein.
