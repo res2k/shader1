@@ -545,9 +545,14 @@ namespace s1
     RegisterPtr IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
 										      bool writeable)
     {
-      bool doImport = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
+      bool isFromOutside = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
+      bool doImport = isFromOutside
+		      && ((innerScope->GetLevel() != Function) || !name->isOutputParam)
+		      && !writeable;
+      bool doExport = isFromOutside
+		      && writeable;
       
-      if (doImport && writeable && name->varConstant)
+      if (doExport && name->varConstant)
       {
 	throw Exception (AssignmentTargetIsNotAnLValue);
       }
@@ -558,8 +563,8 @@ namespace s1
 	  after; the first request is satisfied as the constant may have to be loaded somewhere */
       if (!reg)
       {
-	nameReg.isImported = doImport;
-	if (doImport)
+	nameReg.isImported = isFromOutside;
+	if (isFromOutside)
 	{
 	  UnicodeString importName (name->identifier);
 	  /* Add a suffix derived from the "distance" of this block's scope to the scope
@@ -575,7 +580,7 @@ namespace s1
 	  }
 	  reg = handler->AllocateRegister (*sequence, name->valueType, Imported,
 					  importName);
-	  if (!writeable) sequence->SetImport (reg, name->identifier);
+	  if (doImport) sequence->SetImport (reg, name->identifier);
 	}
 	else
 	{
@@ -596,7 +601,7 @@ namespace s1
 	  sequence->SetIdentifierRegister (name->identifier, reg);
 	}
       }
-      if (doImport && writeable)
+      if (doExport)
       {
 	sequence->SetExport (name->identifier, reg);
 	exportedNames.insert (name);
