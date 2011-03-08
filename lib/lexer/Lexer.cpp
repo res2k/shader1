@@ -5,6 +5,7 @@
 #include "base/UnicodeStreamInvalidCharacterException.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <unicode/uchar.h>
 #include <unicode/normlzr.h>
 
@@ -443,7 +444,7 @@ KEYWORDS
 #undef KEYWORD
 
     case Invalid:		return "<Invalid>";
-    case EOF:			return "<EOF>";
+    case EndOfFile:		return "<EOF>";
     case Unknown:		return "<Unknown>";
     case Identifier:		return "<Identifier>";
     case Numeric:		return "<Numeric>";

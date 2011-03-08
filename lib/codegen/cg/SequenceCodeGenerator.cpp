@@ -6,6 +6,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <sstream>
+#include <stdio.h>
 
 namespace s1
 {

@@ -2,6 +2,8 @@
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Exception.h"
 
+#include <stdio.h>
+
 namespace s1
 {
   namespace parser
