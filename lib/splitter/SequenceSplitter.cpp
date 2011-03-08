@@ -1175,18 +1175,36 @@ namespace s1
       AvailabilityMap::const_iterator avail = regAvailability.find (reg);
       if (avail == regAvailability.end())
       {
-	int defaultFreq = GetDefaultFrequencyForType (reg->GetOriginalType());
+	// Availability not given, guess.
+	bool isImported = false;
+	
+	BOOST_FOREACH(const intermediate::Sequence::IdentRegPair& imp, inputSeq->GetImports())
+	{
+	  if (imp.second == reg)
+	  {
+	    isImported = true;
+	    break;
+	  }
+	}
+	// Imported regs: guess from type.
+	// Local regs: assume uniform
+	int defaultFreq = isImported ? GetDefaultFrequencyForType (reg->GetOriginalType()) : isImported;
 	
 	unsigned int defaultAvail = 1 << defaultFreq;
 	regAvailability[reg] = defaultAvail;
 	
-	const char* const defFreqName[freqNum] = { "uniform",  "vertex", "fragment" };
-	const UnicodeString& regName = reg->GetName();
-	std::string regNameStr;
-	regName.toUTF8String (regNameStr);
-	// FIXME: use a special 'warning' mechanism for this
-	std::cerr << "Register " << regNameStr << " has no associated availability, using '"
-	  << defFreqName[defaultFreq] << "'" << std::endl;
+	/* Also, stay silent on local regs.
+	 * (Probably just an undefined value anyway. Acceptable to be silent.) */
+	if (isImported)
+	{
+	  const char* const defFreqName[freqNum] = { "uniform",  "vertex", "fragment" };
+	  const UnicodeString& regName = reg->GetName();
+	  std::string regNameStr;
+	  regName.toUTF8String (regNameStr);
+	  // FIXME: use a special 'warning' mechanism for this
+	  std::cerr << "Register " << regNameStr << " has no associated availability, using '"
+	    << defFreqName[defaultFreq] << "'" << std::endl;
+	}
 	return defaultAvail;
       }
       return avail->second;
