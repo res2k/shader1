@@ -156,11 +156,28 @@ namespace s1
       
       /**\name Scope
        * @{ */
+      
+      /**
+       * Levels of scope.
+       * Not all declarations are allowed in all levels.
+       */
+      enum ScopeLevel      
+      { 
+	/// Builtin functions (and possibly variables+types)
+	Builtin,
+	/// Global functions, variables and types
+	Global,
+	/// Function-local variables and types
+	Function
+      };
+      
       /**
        * Scope object, managing visibility of identifiers.
        */
       struct Scope
       {
+	/// Get level of the scope.
+	virtual ScopeLevel GetLevel() const = 0;
 	/**
 	 * Add a variable or constant.
 	 * \param type Type of variable.
@@ -214,19 +231,6 @@ namespace s1
       };
       typedef boost::shared_ptr<Scope> ScopePtr;
       
-      /**
-       * Levels of scope.
-       * Not all declarations are allowed in all levels.
-       */
-      enum ScopeLevel      
-      { 
-	/// Builtin functions (and possibly variables+types)
-	Builtin,
-	/// Global functions, variables and types
-	Global,
-	/// Function-local variables and types
-	Function
-      };
       /**
        * Create a scope.
        * \param parentScope Parent scope. If given, identifiers will be checked against the parent

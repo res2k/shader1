@@ -138,6 +138,7 @@ namespace s1
       public:
 	CommonScope (CommonSemanticsHandler* handler,
 		     const boost::shared_ptr<CommonScope>& parent, ScopeLevel level);
+	ScopeLevel GetLevel() const { return level; }
 	
 	NamePtr AddVariable (TypePtr type,
 	  const UnicodeString& identifier,

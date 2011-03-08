@@ -24,6 +24,7 @@ public:
   public:
     TestScope (TestSemanticsHandler* handler,
 	       const boost::shared_ptr<TestScope>& parent, ScopeLevel level);
+    ScopeLevel GetLevel() const { return level; }
     
     NamePtr AddVariable (TypePtr type,
       const UnicodeString& identifier,

@@ -49,6 +49,7 @@ namespace s1
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
 		 const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
 		 const TypePtr& funcReturnType);
+      ScopeLevel GetLevel() const { return level; }
       
       NamePtr AddVariable (TypePtr type,
 	const UnicodeString& identifier,
