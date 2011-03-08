@@ -159,8 +159,10 @@ namespace s1
       typedef boost::unordered_map<RegisterPtr, std::string> RegistersToIDMap;
       RegistersToIDMap seenRegisters;
       
-      std::string GetOutputRegisterName (const RegisterPtr& reg,
-					 const std::string& initializer = std::string());
+      std::string GetOutputRegisterName (const RegisterPtr& reg);
+      bool GetOutputRegisterName (const RegisterPtr& reg,
+				  std::string& name,
+				  const std::string& initializer);
     public:
       SequenceCodeGenerator (const intermediate::Sequence& seq,
 			     ImportedNameResolver* nameRes,

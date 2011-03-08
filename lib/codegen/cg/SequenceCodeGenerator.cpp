@@ -65,12 +65,15 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const RegisterPtr& destination,
 									 const char* value)
     {
-      std::string targetName (owner->GetOutputRegisterName (destination));
-      std::string line (targetName);
-      line.append (" = ");
-      line.append (value);
-      line.append (";");
-      target->AddString (line);
+      std::string targetName;
+      if (!owner->GetOutputRegisterName (destination, targetName, value))
+      {
+	std::string line (targetName);
+	line.append (" = ");
+	line.append (value);
+	line.append (";");
+	target->AddString (line);
+      }
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const char* destination,
@@ -267,7 +270,8 @@ namespace s1
 	elements.Add (owner->GetOutputRegisterName (*source));
       }
       elementsStr.append (" }");
-      owner->GetOutputRegisterName (destination, elementsStr);
+      std::string dummy;
+      owner->GetOutputRegisterName (destination, dummy, elementsStr);
     }
 			  
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractArrayElement (const RegisterPtr& destination,
@@ -641,12 +645,23 @@ namespace s1
       return strings;
     }
     
-    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr,
-									   const std::string& initializer)
+    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr)
+    {
+      std::string cgName;
+      GetOutputRegisterName (regPtr, cgName, std::string ());
+      return cgName;
+    }
+
+    bool CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr,
+								    std::string& name,
+								    const std::string& initializer)
     {
       RegistersToIDMap::iterator regIt = seenRegisters.find (regPtr);
       if (regIt != seenRegisters.end())
-	return regIt->second;
+      {
+	name = regIt->second;
+	return false;
+      }
       
       std::string cgName (NameToCgIdentifier (regPtr->GetName()));
       seenRegisters[regPtr] = cgName;
@@ -665,7 +680,8 @@ namespace s1
       declLine.append (";");
       strings->AddString (declLine);
       
-      return cgName;
+      name = cgName;
+      return true;
     }
   } // namespace codegen
 } // namespace s1
