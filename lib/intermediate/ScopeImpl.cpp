@@ -56,7 +56,8 @@ namespace s1
       NamePtr newName (new NameImpl (shared_from_this(), param.identifier, 
 				     boost::shared_static_cast<TypeImpl> (param.type),
 				     param.defaultValue,
-				     param.dir == dirIn));
+				     param.dir == dirIn,
+				     param.dir == dirOut));
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
       

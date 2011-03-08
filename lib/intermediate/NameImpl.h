@@ -24,6 +24,8 @@ namespace s1
       ExpressionPtr varValue;
       // Distinguish between variable/constant
       bool varConstant;
+      // Output parameter
+      bool isOutputParam;
       
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
 		const UnicodeString& identifier, NameType type,
@@ -32,9 +34,9 @@ namespace s1
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
 		const UnicodeString& identifier,
 		const boost::shared_ptr<TypeImpl>& typeOfName,
-		ExpressionPtr value, bool constant)
+		ExpressionPtr value, bool constant, bool isOutputParam = false)
 	: ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),
-	  varValue (value), varConstant (constant) {}
+	  varValue (value), varConstant (constant), isOutputParam (isOutputParam) {}
       
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
