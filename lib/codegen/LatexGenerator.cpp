@@ -4,6 +4,8 @@
 
 #include "latex/ProgramCodeGenerator.h"
 
+#include <stdio.h>
+
 namespace s1
 {
   namespace codegen

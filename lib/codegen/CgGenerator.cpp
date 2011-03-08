@@ -5,6 +5,7 @@
 #include "cg/ProgramCodeGenerator.h"
 
 #include <limits>
+#include <stdio.h>
 #include <unicode/schriter.h>
 
 namespace s1
