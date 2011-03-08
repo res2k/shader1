@@ -5,8 +5,13 @@
 #include "lexer/LexerErrorHandler.h"
 #include "parser/ErrorHandler.h"
 
-class ErrorHandler : public s1::LexerErrorHandler,
-		     public s1::parser::ErrorHandler
+namespace s1
+{
+namespace compiler
+{
+  
+class ErrorHandler : public LexerErrorHandler,
+		     public parser::ErrorHandler
 {
 public:
   /**\name s1::LexerErrorHandler
@@ -25,5 +30,8 @@ public:
   
   void IntermediateError (s1::intermediate::ErrorCode code);
 };
+
+} // namespace compiler
+} // namespace s1
 
 #endif // __ERRORHANDLER_H__

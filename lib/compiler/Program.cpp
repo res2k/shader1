@@ -1,16 +1,17 @@
 #include "base/common.h"
 
+#include "compiler/Options.h"
 #include "compiler/Program.h"
 
 #include "base/UnicodeStream.h"
-#include "compiler/Options.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 #include "optimize/Optimizer.h"
 #include "parser/Parser.h"
 #include "splitter/ProgramSplitter.h"
+
+#include "ErrorHandler.h"
 
 #include <boost/foreach.hpp>
 
@@ -22,12 +23,11 @@ namespace s1
 			      UnicodeStream* inputStream)
    : compilerOptions (compilerOptions)
   {
-    LexerErrorHandler lexerErrorHandler; // TODO: real error handler
-    Lexer lexer (*inputStream, lexerErrorHandler);
+    compiler::ErrorHandler errorHandler; // TODO: real error handler
+    Lexer lexer (*inputStream, errorHandler);
     
     //intermediateHandler.SetEntryFunction (entryName);
-    parser::ErrorHandler parserErrorHandler; // TODO: real error handler
-    Parser parser (lexer, intermediateHandler, parserErrorHandler);
+    Parser parser (lexer, intermediateHandler, errorHandler);
     parser.Parse ();
   }
 

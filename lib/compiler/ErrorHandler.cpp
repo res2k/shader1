@@ -4,8 +4,11 @@
 
 #include <iostream>
 
-using namespace s1;
-
+namespace s1
+{
+namespace compiler
+{
+  
 void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encounteredToken,
 			       Lexer::TokenType expectedToken)
 {
@@ -71,3 +74,6 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   std::cerr << errorStr;
   std::cerr << std::endl;
 }
+
+} // namespace compiler
+} // namespace s1
