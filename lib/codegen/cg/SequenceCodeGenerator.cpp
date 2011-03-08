@@ -584,37 +584,45 @@ namespace s1
 									    intermediate:: BuiltinFunction what,
 									    const std::vector<RegisterPtr>& inParams)
     {
-      std::string line;
-      if (destination)
-      {
-	line.append (owner->GetOutputRegisterName (destination));
-	line.append (" = ");
-      }
+      std::string exprStr;
       switch (what)
       {
-      case intermediate::dot:		line.append ("dot");		break;
-      case intermediate::cross:		line.append ("cross");		break;
-      case intermediate::normalize:	line.append ("normalize");	break;
-      case intermediate::length:	line.append ("length");		break;
-      case intermediate::mul:		line.append ("mul");		break;
-      case intermediate::tex1D:		line.append ("tex1D");		break;
-      case intermediate::tex2D:		line.append ("tex2D");		break;
-      case intermediate::tex3D:		line.append ("tex3D");		break;
-      case intermediate::texCUBE:	line.append ("texCUBE");	break;
-      case intermediate::min:		line.append ("min");		break;
-      case intermediate::max:		line.append ("max");		break;
-      case intermediate::pow:		line.append ("pow");		break;
+      case intermediate::dot:		exprStr.append ("dot");		break;
+      case intermediate::cross:		exprStr.append ("cross");	break;
+      case intermediate::normalize:	exprStr.append ("normalize");	break;
+      case intermediate::length:	exprStr.append ("length");	break;
+      case intermediate::mul:		exprStr.append ("mul");		break;
+      case intermediate::tex1D:		exprStr.append ("tex1D");	break;
+      case intermediate::tex2D:		exprStr.append ("tex2D");	break;
+      case intermediate::tex3D:		exprStr.append ("tex3D");	break;
+      case intermediate::texCUBE:	exprStr.append ("texCUBE");	break;
+      case intermediate::min:		exprStr.append ("min");		break;
+      case intermediate::max:		exprStr.append ("max");		break;
+      case intermediate::pow:		exprStr.append ("pow");		break;
       }
-      line.append (" (");
-      ParamHelper params (line);
+      exprStr.append (" (");
+      ParamHelper params (exprStr);
       for (std::vector<RegisterPtr>::const_iterator inParam (inParams.begin());
 	   inParam != inParams.end();
 	   ++inParam)
       {
 	params.Add (owner->GetOutputRegisterName (*inParam));
       }
-      line.append (");");
-      target->AddString (line);
+      exprStr.append (")");
+
+      std::string destName;
+      if (!destination || !owner->GetOutputRegisterName (destination, destName, exprStr))
+      {
+	std::string line;
+	if (destName.empty())
+	{
+	  line.append (destName);
+	  line.append (" = ");
+	}
+	line.append (exprStr);
+	line.append (";");
+	target->AddString (line);
+      }
     }
     
     //-----------------------------------------------------------------------
