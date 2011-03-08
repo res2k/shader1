@@ -127,7 +127,19 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterPtr& destination,
 									  bool value)
     {
-      EmitAssign (destination, value ? "true" : "false");
+      const char* valueStr = value ? "true" : "false";
+      
+      RegistersToIDMap::iterator regIt = owner->seenRegisters.find (destination);
+      if (regIt != owner->seenRegisters.end())
+      {
+	// Register has a name, emit assign
+	EmitAssign (destination, valueStr);
+      }
+      else
+      {
+	// Set 'name' of register to constant value...
+	owner->seenRegisters[destination] = valueStr;
+      }
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstInt (const RegisterPtr& destination,
@@ -135,7 +147,18 @@ namespace s1
     {
       std::stringstream valueStrStream;
       valueStrStream << value;
-      EmitAssign (destination, valueStrStream.str().c_str());
+      
+      RegistersToIDMap::iterator regIt = owner->seenRegisters.find (destination);
+      if (regIt != owner->seenRegisters.end())
+      {
+	// Register has a name, emit assign
+	EmitAssign (destination, valueStrStream.str().c_str());
+      }
+      else
+      {
+	// Set 'name' of register to constant value...
+	owner->seenRegisters[destination] = valueStrStream.str();
+      }
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstUInt (const RegisterPtr& destination,
@@ -143,7 +166,18 @@ namespace s1
     {
       std::stringstream valueStrStream;
       valueStrStream << value;
-      EmitAssign (destination, valueStrStream.str().c_str());
+      
+      RegistersToIDMap::iterator regIt = owner->seenRegisters.find (destination);
+      if (regIt != owner->seenRegisters.end())
+      {
+	// Register has a name, emit assign
+	EmitAssign (destination, valueStrStream.str().c_str());
+      }
+      else
+      {
+	// Set 'name' of register to constant value...
+	owner->seenRegisters[destination] = valueStrStream.str();
+      }
     }
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstFloat (const RegisterPtr& destination,
@@ -151,7 +185,18 @@ namespace s1
     {
       std::stringstream valueStrStream;
       valueStrStream << value;
-      EmitAssign (destination, valueStrStream.str().c_str());
+      
+      RegistersToIDMap::iterator regIt = owner->seenRegisters.find (destination);
+      if (regIt != owner->seenRegisters.end())
+      {
+	// Register has a name, emit assign
+	EmitAssign (destination, valueStrStream.str().c_str());
+      }
+      else
+      {
+	// Set 'name' of register to constant value...
+	owner->seenRegisters[destination] = valueStrStream.str();
+      }
     }
 			      
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpAssign (const RegisterPtr& destination,
