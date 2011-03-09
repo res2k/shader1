@@ -1139,7 +1139,7 @@ namespace s1
 	    RegisterPtr reg (*it);
 	    unsigned int avail = regAvailability[reg];
 
-	    if (LowestFreq (avail) == freqUniform)
+	    if ((avail == 0) || (LowestFreq (avail) == freqUniform))
 	      transferRegs[f].erase (it);
 	    else
 	      ++it;
