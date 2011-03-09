@@ -715,21 +715,27 @@ namespace s1
       std::vector<RegisterPtr> allInputs;
       allInputs.push_back (conditionReg);
       {
+	const Sequence::IdentifierToRegMap& identToRegs (ifBlock->GetImportIdentToRegs());
 	const Sequence::RegisterImpMappings& seqImports (ifBlock->GetSequence()->GetImports());
 	for (Sequence::RegisterImpMappings::const_iterator imports = seqImports.begin();
 	     imports != seqImports.end();
 	     ++imports)
 	{
-	  allInputs.push_back (parent.inputSeq->GetIdentifierRegister (imports->first));
+	  Sequence::IdentifierToRegMap::const_iterator regIt (identToRegs.find (imports->first));
+	  assert (regIt != identToRegs.end());
+	  allInputs.push_back (regIt->second);
 	}      
       }
       {
+	const Sequence::IdentifierToRegMap& identToRegs (elseBlock->GetImportIdentToRegs());
 	const Sequence::RegisterImpMappings& seqImports (elseBlock->GetSequence()->GetImports());
 	for (Sequence::RegisterImpMappings::const_iterator imports = seqImports.begin();
 	     imports != seqImports.end();
 	     ++imports)
 	{
-	  allInputs.push_back (parent.inputSeq->GetIdentifierRegister (imports->first));
+	  Sequence::IdentifierToRegMap::const_iterator regIt (identToRegs.find (imports->first));
+	  assert (regIt != identToRegs.end());
+	  allInputs.push_back (regIt->second);
 	}      
       }
       
