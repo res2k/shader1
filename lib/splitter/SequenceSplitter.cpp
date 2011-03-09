@@ -1002,7 +1002,7 @@ namespace s1
 							intermediate::BuiltinFunction what,
 							const std::vector<RegisterPtr>& inParams)
     {
-      bool lerpSafe;
+      bool lerpSafe = false;
       switch (what)
       {
       case intermediate::dot:
