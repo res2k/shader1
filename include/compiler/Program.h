@@ -26,12 +26,14 @@ namespace s1
     intermediate::ProgramPtr intermediateProg;
     
     boost::unordered_map<UnicodeString, unsigned int> freqFlagMap;
+    boost::unordered_map<UnicodeString, size_t> arraySizeMap;
     intermediate::ProgramPtr splitProgs[splitter::freqNum];
     
     void SetProgramOutputParameters ();
   public:
     void SetInputParameterFrequencyFlags (const UnicodeString& param,
 					  unsigned int frequencyFlags);
+    void SetInputArrayParameterSize (const UnicodeString& param, size_t size);
     void SetEntryFunctionName (const UnicodeString& name);
     
     Compiler::Backend::ProgramPtr GetCompiledProgram (const Compiler::BackendPtr& backend,

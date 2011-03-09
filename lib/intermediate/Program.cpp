@@ -37,6 +37,16 @@ namespace s1
     {
       return outputParams;
     }
+
+    void Program::SetParameterArraySize (const UnicodeString& name, size_t size)
+    {
+      paramArraySizes[name] = size;
+    }
+    
+    const Program::ParameterArraySizes& Program::GetParameterArraySizes () const
+    {
+      return paramArraySizes;
+    }
     
     int Program::GetTargetFrequency (ParameterTarget target)
     {

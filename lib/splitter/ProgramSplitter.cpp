@@ -373,6 +373,18 @@ namespace s1
 	  outputPrograms[f]->SetOutputParameter (outParam->first, outParam->second);
 	}
       }
+      {
+	const intermediate::Program::ParameterArraySizes& progArraySizes = inputProgram->GetParameterArraySizes ();
+	for (intermediate::Program::ParameterArraySizes::const_iterator paramArraySize = progArraySizes.begin();
+	     paramArraySize != progArraySizes.end();
+	     ++paramArraySize)
+	{
+	  for (int f = 0; f < freqNum; f++)
+	  {
+	    outputPrograms[f]->SetParameterArraySize (paramArraySize->first, paramArraySize->second);
+	  }
+	}
+      }
   
       for (size_t i = 0; i < inputProgram->GetNumFunctions(); i++)
       {

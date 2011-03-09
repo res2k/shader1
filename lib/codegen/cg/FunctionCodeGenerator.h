@@ -41,6 +41,7 @@ namespace s1
     public:
       StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
 				const intermediate::Program::OutputParameters& output,
+				const intermediate::Program::ParameterArraySizes& paramArraySizes,
 				bool doTransfer,
 				int frequency);
     };

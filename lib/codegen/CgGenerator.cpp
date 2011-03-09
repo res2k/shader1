@@ -29,7 +29,8 @@ namespace s1
     }
     
     std::string CgGenerator::TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
-					   std::string& identifierSuffix)
+					   std::string& identifierSuffix,
+					   const std::string& sizeStr)
     {
       identifierSuffix = "";
       std::string typeStr;
@@ -62,7 +63,7 @@ namespace s1
 	{
 	  std::string newSuffix;
 	  std::string typeStr (TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix));
-	  identifierSuffix = newSuffix + "[]";
+	  identifierSuffix = newSuffix + "[" + sizeStr + "]";
 	  return typeStr;
 	}
 	break;

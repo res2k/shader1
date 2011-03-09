@@ -40,11 +40,16 @@ namespace s1
       void SetOutputParameter (const UnicodeString& name, ParameterTarget target);
       const OutputParameters& GetOutputParameters () const;
       
+      typedef boost::unordered_map<UnicodeString, size_t> ParameterArraySizes;
+      void SetParameterArraySize (const UnicodeString& name, size_t size);
+      const ParameterArraySizes& GetParameterArraySizes () const;
+      
       // @@@ Actualls, should perhaps better be in splitter ...
       static int GetTargetFrequency (ParameterTarget target);
     private:
       TransferValues transferValues;
       OutputParameters outputParams;
+      ParameterArraySizes paramArraySizes;
     };
   } // namespace intermediate
 } // namespace s1

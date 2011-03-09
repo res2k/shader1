@@ -48,6 +48,9 @@ namespace s1
 						       func->IsEntryFunction()
 							 ? prog->GetOutputParameters()
 							 : intermediate::Program::OutputParameters(),
+						       func->IsEntryFunction()
+							 ? prog->GetParameterArraySizes()
+							 : intermediate::Program::ParameterArraySizes(),
 						       transferValues.size() > 0,
 						       frequency)));
 	resultStrings->AddString (std::string ());

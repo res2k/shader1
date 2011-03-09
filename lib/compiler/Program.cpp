@@ -80,6 +80,12 @@ namespace s1
   {
     freqFlagMap[param] = frequencyFlags;
   }
+
+  void Compiler::Program::SetInputArrayParameterSize (const UnicodeString& param,
+						      size_t size)
+  {
+    arraySizeMap[param] = size;
+  }
   
   void Compiler::Program::SetEntryFunctionName (const UnicodeString& name)
   {
@@ -94,6 +100,12 @@ namespace s1
     {
       intermediateProg = intermediateHandler.GetProgram();
       SetProgramOutputParameters ();
+      
+      typedef std::pair<UnicodeString, size_t> ParamArraySizePair;
+      BOOST_FOREACH(ParamArraySizePair paramArraySize, arraySizeMap)
+      {
+	intermediateProg->SetParameterArraySize (paramArraySize.first, paramArraySize.second);
+      }
       
       optimize::Optimizer opt;
       opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));

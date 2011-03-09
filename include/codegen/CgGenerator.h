@@ -21,7 +21,8 @@ namespace s1
       /**\name Code generation helper functions
        * @{ */
       static std::string TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
-				       std::string& identifierSuffix);
+				       std::string& identifierSuffix,
+				       const std::string& sizeStr = std::string());
       static std::string NameToCgIdentifier (const UnicodeString& str);
       /** @} */
     protected:

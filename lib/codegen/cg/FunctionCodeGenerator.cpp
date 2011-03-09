@@ -8,6 +8,7 @@
 
 #include <boost/make_shared.hpp>
 #include <string>
+#include <sstream>
 
 namespace s1
 {
@@ -25,6 +26,7 @@ namespace s1
 	  
     StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
 								  const intermediate::Program::OutputParameters& output,
+								  const intermediate::Program::ParameterArraySizes& paramArraySizes,
 								  bool doTransfer,
 								  int frequency)
     {
@@ -53,9 +55,20 @@ namespace s1
 	{
 	  paramImports.insert (param->identifier);
 	  
+	  std::string sizeStr;
+	  {
+	    intermediate::Program::ParameterArraySizes::const_iterator paramSize (paramArraySizes.find (param->identifier));
+	    if (paramSize != paramArraySizes.end())
+	    {
+	      std::stringstream valueStrStream;
+	      valueStrStream << paramSize->second;
+	      sizeStr = valueStrStream.str();
+	    }
+	  }
+	  
 	  std::string typeSuffix;
 	  std::string paramStrBase;
-	  paramStrBase.append (TypeToCgType (param->type, typeSuffix));
+	  paramStrBase.append (TypeToCgType (param->type, typeSuffix, sizeStr));
 	  paramStrBase.append (" ");
 
 	  if (param->dir & parser::SemanticsHandler::Scope::dirIn)
