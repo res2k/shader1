@@ -740,7 +740,7 @@ namespace s1
       }
       
       // Propagate condition and all sequence inputs to highest frequency
-      unsigned int combinedFreqs = ComputeCombinedFreqs (allInputs);
+      ComputeCombinedFreqs (allInputs);
       int highestFreq = ComputeHighestFreq (allInputs);
       unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
       
@@ -767,10 +767,6 @@ namespace s1
       
       for (int f = 0; f < freqNum; f++)
       {
-	//if (!newSeqOps[f]) continue;
-	//if ((commonFreqs & (1 << f)) == 0) continue;
-	if ((combinedFreqs & (1 << f)) == 0) continue;
-	// @@@ Should be possible to emit branches to VP even if condition is FP
 	assert(newIfOps[f] != 0);
 	assert(newElseOps[f] != 0);
 	
