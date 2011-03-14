@@ -541,7 +541,7 @@ namespace s1
 	  }
 	  else
 	  {
-	    regName = parent.GetTransferIdent ();
+	    regName = parent.GetTransferIdent (reg->GetName());
 	    newReg = parent.AllocateRegister (reg->GetOriginalType(), regName);
 	    transferRegsMap[reg] = std::make_pair (newReg, regName);
 	    
@@ -1221,9 +1221,10 @@ namespace s1
       return avail->second;
     }
 
-    UnicodeString SequenceSplitter::GetTransferIdent ()
+    UnicodeString SequenceSplitter::GetTransferIdent (const UnicodeString& origName)
     {
-      UnicodeString transferIdent ("transfer$");
+      UnicodeString transferIdent (origName);
+      transferIdent.append ("$tf");
       UChar transferSuffix[charsToFormatUint + 1];
       u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (UChar),
 		  "%u", transferIdentNum++);

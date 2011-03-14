@@ -185,7 +185,7 @@ namespace s1
       void SetRegAvailability (const RegisterPtr& regID, unsigned int freqFlags)
       { regAvailability[regID] = freqFlags; }
       
-      UnicodeString GetTransferIdent ();
+      UnicodeString GetTransferIdent (const UnicodeString& origName = UnicodeString());
       
       /// Allocate register in all output sequences
       RegisterPtr AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
