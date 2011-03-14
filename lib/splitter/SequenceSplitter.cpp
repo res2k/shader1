@@ -877,6 +877,42 @@ namespace s1
       /* @@@ Force highest frequency to cover the case where a looped reg gets a higher
 	 frequency after a loop */
       unsigned int combinedFreqs = ComputeCombinedFreqs (allInputs);
+      int highestFreq = HighestFreq (combinedFreqs);
+      
+      /* Generating per vertex code for loops is problematic,
+       * so hack to avoid that */
+      if (highestFreq == freqVertex) highestFreq = freqFragment;
+      std::vector<RegisterPtr> allImports;
+      {
+	const Sequence::IdentifierToRegMap& identToRegs (body->GetImportIdentToRegs());
+	const Sequence::RegisterImpMappings& seqImports (body->GetSequence()->GetImports());
+	for (Sequence::RegisterImpMappings::const_iterator imports = seqImports.begin();
+	     imports != seqImports.end();
+	     ++imports)
+	{
+	  Sequence::IdentifierToRegMap::const_iterator regIt (identToRegs.find (imports->first));
+	  assert (regIt != identToRegs.end());
+
+	  RegisterPtr reg (regIt->second);
+	  for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
+	      loopedReg != loopedRegs.end();
+	      ++loopedReg)
+	  {
+	    if (loopedReg->second == reg)
+	    {
+	      reg = loopedReg->first;
+	      break;
+	    }
+	  }      
+	  
+	  PromoteRegister (reg, highestFreq);
+	  /* Force registers to be available on uniform and/or fragment freq,
+	   * but not vertex freq - forces no loop ops to be put into vertex freq */
+	  unsigned int avail = parent.GetRegAvailability (reg);
+	  avail &= ~freqFlagV;
+	  parent.SetRegAvailability (reg, avail);
+	}      
+      }
       
       // Output branch op to frequencies supported by condition and all sequence inputs
       SequenceOpPtr newOps[freqNum];
