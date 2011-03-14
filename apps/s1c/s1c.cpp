@@ -24,6 +24,8 @@ int main (const int argc, const char* const argv[])
   bool doSplit = true;
   typedef boost::unordered_map<std::string, unsigned int> ParamMap;
   ParamMap paramFlags;
+  typedef boost::unordered_map<std::string, size_t> ParamArraySizeMap;
+  ParamArraySizeMap paramArraySizes;
   
   Compiler compiler;
   Compiler::OptionsPtr compilerOpts = compiler.CreateOptions();
@@ -58,6 +60,25 @@ int main (const int argc, const char* const argv[])
       argNum++;
       if (argNum < argc)
 	paramFlags[argv[argNum]] |= splitter::freqFlagU;
+    }
+    else if (strcmp (arg, "--param-size") == 0)
+    {
+      argNum++;
+      std::string paramStr;
+      int arraySize = -1;
+      if (argNum < argc)
+	paramStr = argv[argNum];
+      argNum++;
+      if (argNum < argc)
+      {
+	char dummy;
+	if (sscanf (argv[argNum], "%d%c", &arraySize, &dummy) != 1)
+	  arraySize = -1;
+      }
+      if (!paramStr.empty() && (arraySize > 0))
+      {
+	paramArraySizes[paramStr] = arraySize;
+      }
     }
     else if (strcmp (arg, "--entry") == 0)
     {
@@ -133,6 +154,12 @@ int main (const int argc, const char* const argv[])
 	++paramFlag)
   {
     compilerProg->SetInputParameterFrequencyFlags (paramFlag->first.c_str(), paramFlag->second);
+  }
+  for (ParamArraySizeMap::const_iterator paramSize = paramArraySizes.begin();
+	paramSize != paramArraySizes.end();
+	++paramSize)
+  {
+    compilerProg->SetInputArrayParameterSize (paramSize->first.c_str(), paramSize->second);
   }
 
   if (doSplit)
