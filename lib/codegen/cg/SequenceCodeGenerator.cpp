@@ -361,7 +361,18 @@ namespace s1
       std::string sourceName (owner->GetOutputRegisterName (source));
       sourceName.append (".");
       sourceName.append (compStr[comp]);
-      EmitAssign (destination, sourceName.c_str());
+      
+      RegistersToIDMap::iterator regIt = owner->seenRegisters.find (destination);
+      if (regIt != owner->seenRegisters.end())
+      {
+	// Register has a name, emit assign
+	EmitAssign (destination, sourceName.c_str());
+      }
+      else
+      {
+	// Set 'name' of register to constant value...
+	owner->seenRegisters[destination] = sourceName.c_str();
+      }
     }
     
 
