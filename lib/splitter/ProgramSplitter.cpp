@@ -443,6 +443,15 @@ namespace s1
 	
 	splitter.PerformSplit();
 	
+	for (size_t i = 0; i < outputPrograms[freqUniform]->GetNumFunctions(); i++)
+	{
+	  intermediate::ProgramFunctionPtr func = outputPrograms[freqUniform]->GetFunction (i);
+	  if (func->IsEntryFunction()) continue;
+	  outputPrograms[freqVertex]->AddFunction (func);
+	  /* FIXME: really, should also emit to FP... but that generates invalid Cg with the current
+	  * (single source) codegen */
+	}
+
 	UnicodeString funcVName ("vertex_");
 	//funcVName.append (func->GetIdentifier());
 	funcVName.append ("main");
