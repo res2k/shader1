@@ -1146,15 +1146,6 @@ namespace s1
       
       for (int f = 0; f < freqNum; f++)
       {
-	// Mark all regs that are transferred 'in' as imported
-	if (f > 0)
-	{
-	  BOOST_FOREACH(const RegisterPtr& reg, transferRegs[f-1])
-	  {
-	    outputSeq[f]->SetImport (reg, UnicodeString ());
-	  }
-	}
-	
 	intermediate::Sequence::RegisterSet keepRegs;
 	if (f > 0)
 	  keepRegs.insert (transferRegs[f-1].begin(), transferRegs[f-1].end());
