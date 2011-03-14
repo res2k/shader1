@@ -195,7 +195,7 @@ namespace s1
 	  for (int f = 0; f < freqNum; f++)
 	  {
 	    intermediate::SequencePtr seq (seqSplit.GetOutputSequence (f));
-	    if (!(seq->GetNumOps() > 0) || (extraParams[f].size() > 0))
+	    if (!((seq->GetNumOps() > 0) || (extraParams[f].size() > 0)))
 	      continue;
 	    
 	    static const char* const freqPrefix[freqNum] = { "uniform_", "vertex_", "fragment_" };
