@@ -64,8 +64,9 @@ namespace s1
 	splitFunctions[decoratedIdent] = newFunc;
 	
 	intermediate::ProgramFunctionPtr progFunc = FindProgramFunction (originalIdent);
-	  
-	SequenceSplitter seqSplit (*this, false);
+	
+	// FIXME: it's rather desireable to also emit 'uniform' functions
+	SequenceSplitter seqSplit (*this, true);
 	seqSplit.SetInputSequence (progFunc->GetBody());
 	
 	bool isRecursive = CheckFuncRecursive (progFunc);
