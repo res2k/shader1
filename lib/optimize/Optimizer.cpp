@@ -51,7 +51,7 @@ namespace s1
 	    usedRegs.insert (exp->second);	  
 	  }
 	}
-	// Also, als transferred regs must be considered 'used'
+	// Also, all transferred regs must be considered 'used'
 	BOOST_FOREACH(const intermediate::ProgramFunction::TransferMappingPair& tmp, func->GetTransferMappings())
 	{
 	  usedRegs.insert (tmp.second);
