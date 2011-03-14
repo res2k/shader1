@@ -136,7 +136,7 @@ namespace s1
     {
       BOOST_FOREACH(const IdentRegPair& imp, imports)
       {
-	this->imports.push_back (imp);
+	SetImport (imp.second, imp.first);
       }
     }
     
