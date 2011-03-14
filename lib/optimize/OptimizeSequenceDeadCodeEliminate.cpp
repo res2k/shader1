@@ -19,7 +19,7 @@ namespace s1
       
       if (seqChanged)
       {
-	outputSeq->CleanUnusedImportsExports();
+	outputSeq->CleanUnusedImportsExports (usedRegistersSeed);
 	return opsRemoved;
       }
       else
