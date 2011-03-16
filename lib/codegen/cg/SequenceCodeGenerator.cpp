@@ -625,7 +625,7 @@ namespace s1
       if (!destination || !owner->GetOutputRegisterName (destination, destName, exprStr))
       {
 	std::string line;
-	if (destName.empty())
+	if (!destName.empty())
 	{
 	  line.append (destName);
 	  line.append (" = ");
