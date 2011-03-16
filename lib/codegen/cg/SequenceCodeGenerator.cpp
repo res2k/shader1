@@ -663,7 +663,9 @@ namespace s1
 	{
 	  std::string parentID = nameRes->GetImportedNameIdentifier (import->first);
 	  if (parentID.size() > 0)
-	    visitor.EmitAssign (import->second, parentID.c_str());
+	  {
+	    seenRegisters[import->second] = parentID.c_str();
+	  }
 	  /* else: no ID, value is undefined; leave undefined in this block, too */
 	}
       }
@@ -675,13 +677,11 @@ namespace s1
 	{
 	  std::string transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
 	  transferIdent.append (CgGenerator::NameToCgIdentifier (transfer->first));
-	  visitor.EmitAssign (transfer->second, transferIdent.c_str());
+	  seenRegisters[transfer->second] = transferIdent.c_str();
 	}
       }
-      
-      // Generate code for actual operations
-      seq.Visit (visitor);
-      
+      typedef std::pair<std::string, RegisterPtr> EndAssignmentPair;
+      std::vector<EndAssignmentPair> endAssignments;
       // Generate transfer ops
       {
 	for (intermediate::ProgramFunction::TransferMappings::const_iterator transfer = transferOut.begin();
@@ -690,7 +690,13 @@ namespace s1
 	{
 	  std::string transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
 	  transferIdent.append (CgGenerator::NameToCgIdentifier (transfer->first));
-	  visitor.EmitAssign (transferIdent.c_str(), transfer->second);
+	  RegistersToIDMap::iterator regIt = seenRegisters.find (transfer->second);
+	  if (regIt == seenRegisters.end())
+	    // Register has no name yet, override variable name with transfer value name
+	    seenRegisters[transfer->second] = transferIdent.c_str();
+	  else
+	    // Assign at end
+	    endAssignments.push_back (std::make_pair (transferIdent, transfer->second));
 	}
       }
       // 'Export' variables to outer scope
@@ -702,10 +708,27 @@ namespace s1
 	{
 	  std::string parentID = nameRes->GetExportedNameIdentifier (exportVar->first);
 	  if (parentID.size() > 0)
-	    visitor.EmitAssign (parentID.c_str(), exportVar->second);
+	  {
+	    RegistersToIDMap::iterator regIt = seenRegisters.find (exportVar->second);
+	    if (regIt == seenRegisters.end())
+	      // Register has no name yet, override variable name with output value name
+	      seenRegisters[exportVar->second] = parentID.c_str();
+	    else
+	      // Assign at end
+	      endAssignments.push_back (std::make_pair (parentID, exportVar->second));
+	  }
 	  /* else: no ID, value is undefined; no assign */
 	}
       }
+      
+      // Generate code for actual operations
+      seq.Visit (visitor);
+      
+      BOOST_FOREACH(const EndAssignmentPair& assignment, endAssignments)
+      {
+	visitor.EmitAssign (assignment.first.c_str(), assignment.second);
+      }
+      
       return strings;
     }
     
