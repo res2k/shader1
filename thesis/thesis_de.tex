@@ -2060,24 +2060,52 @@ Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Oper
 Das vom Splitter zu lösende Problem ist damit die Bestimmung von Operationen, die per Vertex ausgeführt werden können.
 Das Hauptkriterium diese Entscheidung ist die \emph{Interpolierbarkeit} einer Operation.
 
-\newcommand\lerp{\mathrm{lerp}}
-Vom Vertexprogramm ausgegebene Werte werden, bevor sie wieder dem Fragmentprogramm als Eingabe dienen, \emph{linear interpoliert} (siehe Abschnitt~\ref{rasterung}):
-% TODO: Verw. auf Erklärung/Interpolatoren
-Eine lineare Interpolation -- "`$\lerp$"' -- zwischen zwei Werten $a$ und $b$ mit Faktor $f$ ($0 \le f \le 1$) wird durch $\lerp(a, b, f) = a \cdot (1-f) + b \cdot f$ berechnet.
-Soll ein Wert $x$ vom Vertex- and das Fragmentprogramm übergeben werden, so gibt das Vertexprogramm per Vertex verschiedene Werte aus - $x_1, x_2$ usw.
-Das Fragmentprogramm erhält als Eingabe das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$ (wobei $f$ von der Grafikhardware berechnet wird
-und per Fragment variiert)\footnote{Tatsächlich muss bei der Rasterung von Dreiecken zwischen drei Werten interpoliert werden. Dieser Abschnitt betrachtet konkret
-bloss Interpolation zwischen zwei Werten, die Ergebnisse gelten aber auch bei Interpolation zwischen drei Werten.}.
+\subsubsection{Praktische Grundlage}
 
-Eine per Fragment ausgeführte Rechenoperation $g(x)$, mit einem aus Ausgaben des Vertexprogramms interpoliertem $x$ -- also $x = \lerp(x_1, x_2, f)$ --
-kann auch per Fragment ausgeführt werden, wenn eine Interpolation des Ergebnisses der per Vertex berechneten Rechenoperation zum gleichen Endergebnis führt:
-es muss $g(\lerp(x_1, x_2, f)) = \lerp (g(x_1), g(x_2), f)$ gelten. Augenscheinlich muss $g$ eine lineare Funktion sein.
+Die praktische Grundlage der Interpolierbarkeit ist die in Abschnitt~\ref{hw_steps} beschriebene lineare Interpolation von Ausgaben
+von Vertexberechnungen, um die Interpolationsergebnisse als Eingabe der Pixelberechnungen zu nutzen.
+
+Das Kriterium "`Interpolierbarkeit"' beschreibt, welche während einer Pixelberechnung vorgenommenen Operationen
+auch während einer Vertexberechnung vorgenommen werden und anschliessend interpoliert werden können, ohne dass sich das Ergebnis ändert.
+
+\subsubsection{Ableitung und Definition}
+\newcommand\lerp{\mathrm{lerp}}
+Vom Vertexprogramm ausgegebene Werte werden, bevor sie wieder dem Pixelprogramm als Eingabe dienen, \emph{linear interpoliert}: % (siehe Abschnitt~\ref{rasterung}):
+% TODO: Verw. auf Erklärung/Interpolatoren
+Eine lineare Interpolation -- die Funktion sei "`$\lerp$"' genannt -- zwischen zwei Werten $a$ und $b$ mit Faktor $f$ ($0 \le f \le 1$) wird durch $\lerp(a, b, f) = a \cdot (1-f) + b \cdot f$ berechnet.
+Der Faktor $f$ "`gewichtet"' zwischen den beiden Werten, wobei der Faktor $0$ den Wert $a$ unverändert zurückgibt ($\lerp(a, b, 0) = a$)
+und dementsprechend der Faktor $1$ den Wert $b$ unverändert zurückgibt ($\lerp(a, b, 1) = b$).
+
+Angenommen, ein Wert soll $x$ von der Vertex- an die Pixelberechnung übergeben werden.
+Die Ergebnisse der Vertexberechnung sind verschiedene Werte für verschiedene Vertices, ein Wert $x_1$ für das erste Vertex, ein Wert $x_2$ für das zweite Vertex usw.
+
+Die Eingabe für die Pixelverarbeitung ist das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$\footnote{Tatsächlich muss bei der Rasterung von Dreiecken zwischen drei Werten interpoliert werden. Dieser Abschnitt betrachtet konkret
+bloss Interpolation zwischen zwei Werten, die Ergebnisse gelten aber auch bei Interpolation zwischen drei Werten.}.
+$f$ wird von der Grafikhardware berechnet und variiert mit jedem Pixel. (Für das Pixel, auf das das erste Vertex abgebildet wurde, ist $f = 0$; für das Pixel,
+auf das das zweite Vertex abgebildet wurde, ist $f = 1$; Pixel zwischen diesen "`Randpixeln"' haben entsprechend Werte von $f$ dazwischen).
+
+Betrachtet sei eine Rechenoperation $\alpha = g(x)$, die während der Pixelberechnung ausgeführt wird.
+$x$ sei dabei eine Ausgabe der Vertexberechnung, also aus Ausgaben $x_1$ und $x_2$ der Vertexberechnung für zwei verschiedene Vertices interpoliert -- $x = \lerp(x_1, x_2, f)$
+mit beliebigem $f$. Ein Berechnen der Operation während der Pixelberechnung entspricht einem Berechnen von $\alpha_1 = g(\lerp(x_1, x_2, f))$.
+Ein Berechnen der Operation während der Vertexberechnung und anschliessende Interpolation entspricht einem Berechnen von $\alpha_2 = \lerp (g(x_1), g(x_2), f)$.
+Die Operation $g(x)$ kann auch in der Vertexberechnung ausgeführt werden, wenn das Ergebnis dieser Berechnung interpoliert werden kann ohne
+das Endergebnis in der Pixelberechnung zu verändern, also $\alpha_1 = \alpha_2$ für beliebige $f$ gilt.
+
+Also sei $g(x)$ \emph{interpolierbar} genannt, wenn $g(\lerp(x_1, x_2, f)) = \lerp (g(x_1), g(x_2), f)$ gilt. 
+
+Augenscheinlich muss $g$ eine lineare Funktion sein.
+
+%\begin{defn}
+%Eine Funktion $g(x)$ wird \emphalt{interpolierbar} genannt, wenn für ein $x = \lerp(x_1, x_2, f)$ gilt:
+%$g(\lerp(x_1, x_2, f)) = \lerp (g(x_1), g(x_2), f)$.
+%\end{defn}
 
 Für binäre Rechenoperationen lautet die Bedingung $\lerp (g (x_1, y_1), g (x_2, y_2), f) = g (\lerp (x_1, x_2, f), \lerp (y_1, y_2, f))$.
 Rechenoperationen mit mehr Operanden müssen nicht betrachtet werden, da die Shadingsprache höchstens
 binäre Rechenoperationen vorsieht bzw. "`komplexere"' Rechenoperationen auf binäre Operationen heruntergebrochen werden
 können (siehe auch~\ref{split_builtins}). % Zweistelliges Äquivalent für "lineare Funktion"?
 
+\subsubsection{Allgemein}
 Da Rechenoperationen auf Vektoren komponentweise ausgeführt werden,  ist die "`Interpolierbarkeit"' ohne weiteres auch auf Vektoroperationen anwendbar.
 
 Die geforderte Linearität von $g(x)$ führt dazu, dass bloss Operationen auf \texttt{float}-Werten problemlos interpolierbar sind.
@@ -2085,12 +2113,12 @@ Integer-Werte sind nicht interpolierbar, da bei deren Interpolation nicht-Intege
 Diese müssen (zwangsweise) gerundet\footnote{Oder Nachkommastelle abgeschnitten usw.} werden -- diese Rundung
 ist aber keine stetige Funktion.
 
-Zu Beachten ist, dass Interpolierbarkeit nur Relevanz hat, wenn entschieden wird, ob eine Operation, bei der mindestens ein Operand
-nur per Vertex (oder höher) vorliegt, auch per Vertex ausgeführt werden kann.
-Operationen allein auf Konstanten oder (praktisch konstanten) per-Mesh-Eingaben sind immer auch per Vertex ausführbar - das Ergebnis
+Zu Beachten ist, dass Interpolierbarkeit nur Relevanz für die Entscheidung hat, ob eine Operation, bei der mindestens ein Operand in der Vertexberechnung
+berechnet wurde bzw. Wert eines Vertexattributes ist, während der Vertex- statt der Pixelberechnung ausgeführt werden kann.
+Operationen allein auf Konstanten oder (praktisch konstanten) Objektattributen sind immer auch in der Vertexberechnung ausführbar - das Ergebnis
 einer solchen Operation kann nicht zwischen den Berechnungen für verschieden Vertices variieren. Insbesondere können damit
-auch Operation auf Integer-Werten, oder Operationen, die nachfolgend als "`nicht interpolierbar"' klassifiziert werden,
-per Vertex ausgeführt werden.
+auch Operationen auf Integer-Werten, oder Operationen, die nachfolgend als "`nicht interpolierbar"' klassifiziert werden,
+in der Vertexberechnung ausgeführt werden.
 
 % Konkreter: Ausgabe VP: x_1, x_2, ...
 % Eingabe FP: lerp (x_1, x_2, f) - implizit
@@ -2102,7 +2130,7 @@ per Vertex ausgeführt werden.
 % Beispiel?
 
 % Stichwort: Linearkombination?
-\subsubsection{Einfache Operationen}
+\subsubsection{Interpolierbarkeit einfacher Operationen}
 
 \paragraph{Arithmetische Operationen:} Die Summe oder Differenz von zwei linearen Funktionen
 ist wieder eine lineare Funktion, Addition und Subtraktion sind also uneingeschränkt interpolierbar.
@@ -2138,7 +2166,30 @@ Minimum und Maximum sind im Allgemeinen keine stetigen Funktion und damit nicht 
 
 Die Texturfunktionen sind prinzipbedingt nicht interpolierbar.
 
-\subsubsection{Flusskontrolle}
+\subsection{Ablauf der Auftrennung}
+\label{auftrennung_ablauf}
+
+\subsubsection{Prinzipieller Ablauf}
+%Kern: auf Sequenzen 
+% für Register gespeichert, in welchen Prog. berechnet
+% für jede Sequenzop. entschieden, welche Ausgabeprogramme
+% Sonderbehandlung: Verzw., Schleifen
+% Funktionen: generiert mehrere Varianten einer Funktion, abh. davon, wie Parameter vorliegen
+
+%Bei der eigentlichen Auftrennung eines Programms 
+Die Auftrennung wird auf des Basis von Sequenzen vorgenommen. Für jede Sequenzoperation wird nacheinander
+entschieden, in welchen Ausgabeprogrammen es berechnet sie kopiert werden soll. Für das Ergebnisregister
+wird vermerkt, in welchen Ausgabeprogrammen es berechnet wurde -- diese Information wird für
+die "`Auftrennung"' nachfolgender Operationen verwendet.
+
+Die Auftrennung beginnt mit der Eintrittsfunktion des Programms. Für deren Eingabeparameter muss bereits bekannt und gegeben
+sein, in welchen Ausgabeprogrammen sie verwendet werden können.
+
+\subsubsection{Auftrennung einfacher Operationen}
+
+Für einfache Operationen entscheidet die oben genannte "`Interpolierbarkeit"', in welche Ausgabeprogramme eine Operation ausgegeben wird.
+
+\subsubsection{Auftrennung von Flusskontrolloperationen}
 
 Neben mathematischen Ausdrücken kann ein aufzuspaltendes Programm auch Operationen der Flusskontrolle enthalten,
 die ebenso auf mehrere Ausgabeprogramme aufgespaltet werden müssen.
@@ -2221,11 +2272,13 @@ Mit dieser konservativen Annahme kann der Rumpf einer rekursiven Funktion aufges
 % 'Trivial': Zuweisung, Konstante, Typumwandlung, Vektor-Erstellung/-Extraktion, [Array-Erstellung/-Extraktion/-Änderung/-Länge,?]
 % 
 
-\subsubsection{Array-Operationen}
+\subsubsection{Auftrennung von Array-Operationen}
 
 Array-Operationen sind nur interpolierbar, wenn die Länge des Arrays \emph{statisch konstant}
 (und nicht per Mesh) bekannt ist und bei der Array-Extraktion bzw. \mbox{-Än}\-de\-rung der verwendete Index höchstens per Mesh
-verfügbar ist.
+verfügbar ist. Dementsprechend können Array-Operationen nur in der Vertexberechnung ausgeführt werden,
+wenn wenigstens auch dass Array, mit dem gearbeitet wird, eine statisch konstante Länge besitzt.
+Bei Änderungen von Arrayelement muss ausserdem der zugewiesene Wert in der Vertexberechnung berechnet worden sein.
 
 \subsubsection{Andere Operationen}
 
