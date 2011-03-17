@@ -6,6 +6,7 @@
 \usepackage[T1]{fontenc}
 %\usepackage[]{amsfonts}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{colortbl}
 %\usepackage{mathptmx}
@@ -43,6 +44,8 @@
 \date{\today}
 
 \makeglossaries
+
+\newtheorem{defn}{Definition}
 
 \begin{document}
 
@@ -123,6 +126,12 @@
 \newcommand\fcite[1]{\footnote{\cite{#1}}}
 \newcommand\fciteX[2]{\footnote{\cite{#1}, #2}}
 
+\newcommand\emphalt[1]{\textbf{#1}}
+
+\newcommand\freqPerMesh[1]{\framebox{#1}}
+\newcommand\freqPerVert[1]{\colorbox{SpringGreen}{\textcolor{Black}{#1}}}
+\newcommand\freqPerFrag[1]{\colorbox{BlueViolet}{\textcolor{White}{#1}}}
+
 \chapter{Einleitung}
 
 \section{Zielstellung}
@@ -131,7 +140,7 @@ In der Echtzeit-3D-Grafik werden 3D-Objekte überwiegend aus Dreiecken aufgebaut
 auf einem Bildschirm gerastert werden.
 
 \newglossaryentry{GPU}{name={GPU},description={``Graphics Processing Unit'', auf Darstellung von 3D-Grafik spezialisierte Prozessoren}}
-Diese groben Arbeitsschritte spiegeln sich in dem Aufbau von 3D-Grafikprozessoren~("`\gls{GPU}"'),
+Diese groben Arbeitsschritte spiegeln sich in dem Aufbau von 3D-Grafikprozessoren~(``\gls{GPU}'', ``Graphics Processing Unit''),
 deren Programmierschnittstellen~(\cite{glspec4}, \cite{dx10}), und, da GPUs programmierbar sind,
 auch in den auf den Grafikprozessoren laufenden Programmen wieder.
 
@@ -170,217 +179,162 @@ werden erläutert.
 
 \chapter{Einführung 3D-Grafik}
 
-Als "`3D-Grafik"' wird die Berechnung zweidimensionaler Bilder aus dreidimensionalen Daten (die sog. "`\emph{Szene}"')
- bezeichnet.
-Anwendung findet sie in vielen Bereichen: Visualisierung abstrakter mathematischer Formeln, Darstellung
-von geologischen Profilen, digitales Erstellen von Konstruktionszeichnungen, Spezialeffekte in Filmen und
-Rundgänge durch künstliche Szenarien in Computerspielen. 
+Dieses Kapitel beschreibt den Ablauf der Berechnung einer 3D-Grafik in Echtzeit.
+Das Augenmerk liegt vor allem darauf, Grundlagen der Grafikkartenprogrammierung -- und damit verbundenen
+Besonderheiten der verwendeten Sprache -- zu erklären, Zweck des entwickelten Compilers, dessen "`Zielhardware"' Grafikkarten sind,
+zu verdeutlichen, und Gründe für dessen Funktionsweise zu liefern.
 
-\section{Vorberechnete 3D-Grafik und Echtzeit-3D-Grafik}
+Diese Einführung erfasst nur einen kleinen Ausschnitt des Themengebietes "`3D-Grafik"' und seiner Unterkategorie
+"`Echtzeit-3D-Grafik"'. Selbst die ausgewählten Sachverhalte werden nur vereinfacht dargestellt.
+Eine umfassende Einführung sowie viele weitere Aspekte des Themenkomplexes "`3D-Grafik"' bietet zum Beispiel~\cite{watt_de}.
 
-Die Berechnung von 3D-Grafiken wird als \emph{Rendering} bezeichnet. Bei den Anwendungen für das Rendering
-von 3D-Grafiken ist eine wichtige Untergruppe die der \emph{Echtzeitgrafik}, die sich durch besondere Anforderungen
-an die Berechnungszeit abgrenzt.
+\section{Echtzeit-3D-Grafik}
 
-\emph{"`Vorberechnete"'} 3D-Grafiken kommen vor allem zur Anwendung, wenn fast realitätsnahe Bilder gewünscht sind.
-Für deren hohe Bildauflösungen und komplexe Berechnungen werden lange Renderingzeiten (Minuten bis Stunden) in Kauf
-genommen. Beispiele 
-für vorberechnete Grafiken sind computergenerierte Spezialeffekte in Filmen bzw. komplette Kinofilme aus dem Computer.
+Um "`Echtzeit-3D-Grafik"' handelt es sich, wenn eine 3D-Grafik mit dynamischen Komponenten (Animation, Änderung der Betrachterposition)
+dargestellt werden soll, typischerweise verbunden mit einer Manipulation durch einen menschlichen Benutzer
+(der z.B. die Betrachterposition kontrolliert). Unter anderem Szenarien von "`virtuellen Realitäten"' fallen darunter (z.B. Computerspiele).
+Das "`Echtzeit"' im Namen bedeutet, dass die dargestellte Grafik mit möglichst geringer, idealerweise nicht wahrnehmbarer
+Verzögerung dargestellt wird. Das vom Kino bekannte Prinzip, dass mit einem schnellen Bildwechsel aus statischen Bildern die Illusion von Bewegung
+erzeugt werden kann, findet genau so auch der Echtzeit-3D-Grafik Anwendung: Computerspiele stellen typischerweise 30 oder 60 Bilder
+pro Sekunde dar um Animationen überzeugend darzustellen. Dabei wird jedes dieser Bilder neu berechnet --
+eine der Herausforderungen der Echtzeit-3D-Grafik ist also, für tendenziell immer komplexer werdende Szenarien Bilder in wenigen
+Millisekunden zu berechnen.
 
-Dagegen fordert \emph{Echtzeitgrafik} Bildberechnungen, die nur Bruchteile einer Sekunde benötigen, um
-dynamische Daten mit geringen bis keinen wahrnehmbaren Verzögerungen in einer 3D-Grafik 
-darzustellen.
+\section{3D-Objekte und Szenen}
+\label{objects}
 
-Beispiele hierfür sind Konstruktionszeichnungen und Computerspiele. Diese stehen auch für verschiedene Anforderungen,
-die trotzdem unter "`Echtzeitdarstellung"' fallen: Konstruktionszeichnungen müssen meist mit sehr großen Datenmengen 
-agieren, aber trotzdem die Verzögerungen geringstmöglich halten, wobei noch wahrnehmbare Pausen toleriert
-werden. Bildraten ab 15 Bildern/Sekunde werden als "`interaktiv"' bezeichnet. % TODO Ref?
-Computerspiele hingegen haben strengere Anforderungen: um die Illusion von Bewegung zu erzeugen ist es hier nötig,
- mindestens 25 Bilder in einer Sekunde\footnote{Es wird in der Regel die höchstmögliche Anzahl von Bildern pro Sekunde 
-angestrebt um alle Bewegungen möglichst flüssig darzustellen.} darzustellen. Überzeugende Bewegungsdarstellung und
-geringe Latenzen bei Aktionen des Spielers sind von höchster Wichtigkeit; dafür werden aber, im Vergleich zur
-Verwendung vorberechneter 3D-Grafiken, reduzierte Details in Kauf genommen.
+In einer Echtzeit-3D-Grafik darzustellende Objekte ("`Modelle"') werden als \emph{Dreiecksnetz} gespeichert.
+Dieses besteht aus einer Menge \emph{Eckpunkte} (``Vertex'' bzw. ``Vertices'')
+sowie von diesen aufgespannte \emph{Dreiecke}.
 
-\section{Renderingmethoden}
+\begin{defn}
+Ein \emph{3D-Modell} wird als \emphalt{Dreiecksnetz} gespeichert.
+Zu diesen Dreiecken wird eine Menge von \emph{Eckpunkten} gespeichert.
+\end{defn}
 
-Die zu rendernden zweidimensionalen Bilder werden in fast allen Fällen als Rastergrafiken gespeichert\footnote{Es gibt
-auch Renderer, die Vektorgrafiken erzeugen können.}: für jedes Pixel der Rastergrafik muss aus den gegebenen dreidimensionalen
-Daten ein Farbwert berechnet werden. Die beiden hauptsächlich verwendeten Methoden sind Ray Tracing und Rasterung.
+\begin{defn}
+Ein \emphalt{Vertex} ist ein Eckpunkt eines Dreiecksnetzes.
+\end{defn}
 
-Beim \emph{Ray Tracing} wird für jeden Bildpunkt ausgehend ein Strahl in die dreidimensionale Szene nachverfolgt. 
-Die Farbe des Bildpixels wird aus dem "`Licht"', welches von der Oberfläche des zuerst "`getroffenen"' Objekts reflektiert wird,
-berechnet. Dieses reflektierte Licht wird entweder durch eine Annäherung oder durch weiteres, rekursives
-Nachverfolgen von Strahlen bestimmt. 
-Vorteile des Ray Tracings sind die einfache Unterstützung von Schatten und Effekten wie spiegelnde
-Oberflächen und Lichtbrechung; Nachteil ist der nötige Rechenaufwand.
-\footnote{Ray Tracing ist detailliert in~\cite{watt_de}, Kap. 12, beschrieben.}
+Zu jedem Eckpunkt ist dessen \emph{Position}, eine Koordinate im dreidimensionalen Raum, gespeichert.
+Praktisch sind zu jedem Eckpunkt auch noch weitere Daten gespeichert ("`Vertexattribute"'),
+die bei der Berechnung der Oberflächenerscheinung des Objekts eine Rolle spielen.
+Typischerweise verwendete Vertexattribute sind eine Oberflächennormale (bestehend aus drei Werten)
+sowie Koordinaten für ein Oberflächen-"`Muster"'\footnote{siehe Abschnitt~\ref{surface_and_shading}} (zwei Werte).
+(Man kann sich vorstellen, dass ein Verbundtyp die Vertexattribute definiert; die Menge der Vertices eines Modells wäre
+eine Reihung von Werten dieses Typs, und ein Element enthält entsprechtend die Attributwerte für ein Vertex.)
 
-Beim \emph{Rastern} werden die Daten hingegen auf die Bildpixel projiziert und Farbwerte für diese Pixel berechnet.
-Während dies weniger rechenintensiv als Ray Tracing ist können jedoch Effekte wie Spiegelungen und Schatten nicht so
-einfach berechnet werden, sondern werden meist approximiert.\footnote{Siehe auch~\cite{watt_de}, Kap. 4.}
-
-Die Geschwindigkeit und Einfachheit des Rasterns ist jedoch vorteilhaft für die Echtzeitgrafik und ist dort die praktisch
-ausschließlich verwendete Variante. % TODO Intel-Ray Tracer
-Vor allem ist spezielle, die Rasterung stark beschleunigende Hardware verfügbar. % TODO siehe Aufbau Hardware
-
-Ray Tracing dagegen findet vor allem bei der Vorberechnung von 3D-Grafiken statt.
-%Allerdings wird dort zunächst auch Rasterung eingesetzt,
-%gemischt mit Ray Tracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
-
-\section{Grundlegende Strukturen}
-
-\subsection{Modelle}
-\label{tri_mesh}
-
-Dreidimensionale Objekte ("`\emph{Modelle}"') einer Szene können auf verschiedene Arten repräsentiert werden~(\cite{watt_de}, S. 45-47). 
-
-\newglossaryentry{Dreiecksnetz}{name={Dreiecksnetz},description={3D-Modell, Menge von Eckpunkten (Vertices) und Dreiecken}}
-\newglossaryentry{Vertex}{name={Vertex},plural={Vertices},description={Eckpunkt eines Dreiecksnetzes. Mehrzahl: Vertices}}
-Die einfachste Form der Darstellung ist die des \emph{\gls{Dreiecksnetz}es} (engl. ``triangle mesh'' und kürzer ``mesh'').
- Diese bestehen aus einer Menge von Eckpunkten,
-als \emph{\glspl{Vertex}} bezeichnet, sowie einer Menge von Dreiecken, wobei deren Ecken aus der Menge der Vertices stammen.
-Einem Vertex ist mindestens eine Position im Raum, meist aber auch weitere Daten, die für die Oberflächendarstellung und
-\mbox{-schattierung} verwendet werden,  zugeordnet~(\cite{watt_de}, S. 50).
-Analog sind auch Dreiecken neben Referenzen zu den Eckvertices weitere Daten wie z.B. eine Oberflächenfarbe zugeordnet.
-
-
-Um ein passgenaues Abschließen der Dreiecke zu sichern teilen sich in der Regel Ecken mehrerer Dreiecke ein
-Vertex\footnote{Selten haben zwei Ecken in \emph{einem} Dreieck das selbe Vertex -- dies führt zu "`degenerierten"' Dreiecken}. 
-Der Vorteil von Dreiecksnetzen ist deren Einfachheit. Insbesondere das Rastern von Dreiecken kann mit wenig Aufwand
-implementiert werden. Auch können Oberflächen beliebig genau angenähert werden. Diese Eigenschaften sind aber auch
-nachteilig: einige Oberflächen \emph{müssen} angenähert werden. So kann z.B. eine Kugel nicht perfekt durch ein Dreiecksnetz
-abgebildet werden. 
-
-% Bild Drahtgitter
 \begin{figure}[h]
   \centering
-  \includegraphics[width=10cm]{drahtgitter}
-  \caption{Ein 3D-Würfel mit schattierten Seiten, als Drahtgittermodell und eine Aufteilung in Dreiecke. Die Vertices
-  sind die Eckpunkte des Würfels.}
-  \label{fig:wirecube}
+  \includegraphics[width=10cm]{mesh_wireframe_thick}
+  \caption{"`Drahtgitter"'-Darstellung eines 3D-Objektes. Die einzelnen Eckpunkte und Dreiecke sind gut erkennbar.}
+  \label{fig:wireframe_teapot}
 \end{figure}
 
-Hervorzuheben ist, dass auf die Berechnung von 3D-Grafiken spezialisierte Hardware 
-ausschließlich mit Dreiecksdaten arbeiten -- die Hardware kann eigentlich nichts anderes zeichnen. Wegen der Einfachheit der Darstellung
-können aber sehr viele Dreiecke in einer Sekunde ausgegeben werden. 
+\begin{defn}
+\emphalt{Vertexattribute} beschreiben die zu einem Vertex gespeicherten Daten. Es ist immer mindestens
+ein Attribut "`Raumkoordinate"' vorhanden, es können aber eine beliebige Anzahl von Attributen verwendet werden.
 
-Andere Arten der Modelldarstellung, wie die \emph{implizite Darstellung}\footnote{Beschreibung eines Objekts durch eine Formel,
-z.B. $x^2 + y^2 + z^2 = r^2$ für eine Kugel -- siehe~\cite{watt_de}, Abschn. 2.4}, \emph{Voxelgrafiken}\footnote{Voxel: ``volumetric pixel'' --
-Analog zu Bildern sind dies dreidimensionale Raster, an dessen Rasterpunkte Farbwerte o.ä. gespeichert werden -- siehe~\cite{watt_de}, Abschn. 4.4}
-und \emph{Patches}\footnote{Einfach gesagt, gekrümmte Vierecke -- durch mathematische Formeln beschriebene Oberflächen -- siehe~\cite{watt_de}, Kap. 3}
-finden in der Echtzeit-3D-Grafik kaum Verwendung, da sie -- im Vergleich zu Dreiecksnetzen -- aufwändig in der Darstellung sind.
+%Die Anzahl der Attribute ist also beliebig, aber für jedes Vertex in einem 3D-Modell gleich.
+In einem 3D-Modell besitzt jedes Vertex die gleichen Attribute, aber verschiedene Attribut\emph{werte}.
+\end{defn}
 
-So müssen auf 3D-Grafik-Hardware gekrümmte Oberflächen (wie Kugeln, Patches) unter Verwendung von Dreiecken visualisiert werden:
-die Oberfläche wird mit einer hohen Anzahl von Dreiecken angenähert.
+Selten wird ein alleinstehendes 3D-Objekt dargestellt -- stattdessen wird praktisch immer mit aus mehreren Objekten
+bestehenden 3D-"`\emph{Szenen}"' gearbeitet. In solchen Szenen ist es auch nicht unüblich, das selbe Objekt mehrfach,
+aber an unterschiedlichen Position \mbox{und/oder} mit unterschiedlichen Drehungen darzustellen (z.B. eine Küchen-Szene mit identischem
+Geschirr an verschiedenen Stellen). 3D-Objekte müssen also positioniert usw. werden. Dazu dienen \emph{Transformationen}
+(Abbildungen). Ein 3D-Objektes wird mit einer Transformation transformiert, indem diese auf die Raumkoordinate jedes Vertices
+des Modells angewendet wird.
+%(In der 3D-Grafik sind verschiedene "`Räume"' definiert, und man arbeitet mit Abbildungen zwischen diesen Räumen,)
 
-%Auch zum Umrechnen von Voxel-Daten existieren Algorithmen, um daraus Dreiecksdaten zu erzeugen. % TODO Ref Marching cubes, Slides
-Auch Voxel-Daten müssen dort durch Dreiecksdaten angenähert werden,
-entweder als Dreiecksnetz einer Oberfläche (``marching cubes''-Algorithmus,~\cite{watt_de} Abschn. 13.3.1)
-oder durch Benutzung von Schnittflächen~(\cite{watt_de} Abschn. 13.6).
+\begin{defn}
+\emphalt{Transformationen} sind Abbildungen von Raumkoordinaten auf Raumkoordinaten und dienen dazu,
+3D-Objekte zu verschieben, zu rotieren oder zu skalieren.
 
-% TODO Skizze Rendering-Pipeline?
+Eine Transformation wird auf ein Objekt angewendet, indem auf die Raumkoordinaten aller Vertices dieselbe Transformation angewendet wird.
+\end{defn}
 
-\subsection{Räume, Transformationen und Kamera}
 
-In praktischen Anwendungen wird selten ein einziges Modell statisch dargestellt. In der Regel müssen mehrere Modelle
-gleichzeitig dargestellt werden (z.B. zusammengesetztes Bauteil), wobei die Modelle
-in bestimmter Weise zueinander positioniert dargestellt werden müssen. Weiterhin soll ein "`Bewegen"' im Raum --
-also die Betrachtung von beliebigen Punkten aus -- möglich sein. Dieser "`Blickpunkt"' des Betrachters ist die \emph{Kamera}.
+Eine der bestimmenden Gründe, warum Echtzeit-3D-Grafik eingesetzt wird, ist die Möglichkeit eines "`freien Bewegens"' durch
+eine Szene (z.B. könnte die beispielhafte Küche Teil einer "`virtuellen Hausbesichtigung"' sein).
+Mit anderen Worten, der Blickpunkt und die Blickrichtung des Betrachters, oder auch \emph{Kamera}, soll veränderbar sein.
+Auch dies wird unter Verwendung einer Transformation realisiert.
 
-Zu diesem Zweck werden verschiedene \emph{virtuelle Räume} definiert~(\cite{watt_de}, S. 166ff).
- So gibt es für jedes Modell ein \emph{Objektkoordinatensystem}\footnote{engl. ``object space''},
-in dem sich alle Koordinaten des Modells befinden. 
-Die Positionierung verschiedener Modelle zueinander wird im \emph{Weltkoordinatensystem}\footnote{engl. ``world space''} vorgenommen. 
-Dazu wird jedem Modell eine \emph{Transformation} zugewiesen, welche Koordinaten aus dem Objekt- in das
-Weltkoordinatensystem überführt. 
+Transformationen bilden weiterhin die Grundlage der für Echtzeit-3D-Szenen typischen Dynamik von Szenen; Objekte werden animiert,
+in dem die für die Positionierung verwendete Transformation über die Zeit verändert wird.
 
-Eine Transformation wendet Verschiebungen, Skalierungen und Rotationen an. Als Repräsentation von Transformationen
-verwendet man Matrizen\footnote{Genauer: $4 \times 4$-Matrizen -- die dreidimensionalen Koordinaten des Modells werden
-in homogene Koordinaten überführt. Die Verwendung von homogenen Koordinaten
-erlaubt das Darstellen von Verschiebungen in der Matrix.}, % Ref Watt (DE)
-jede Koordinate wird dann mit der Transformationsmatrix multipliziert. Mehrere Transformationen können angewendet werden, indem 
-die entsprechenden Matrizen der Teiltransformationen in der gewünschten Reihenfolge zu der Gesamtmatrix konkateniert werden~(\cite{watt_de}, Kap. 1).
+Schliesslich wird eine 3D-Szene in der Regel auf einem zweidimensionalen Ausgabegerät -- typischerweise einem Computermonitor --
+dargestellt. Es muss also eine Herrunterrechnung auf die zweidimensionale Fläche, eine \emph{Projektion}, vorgenommen werden;
+dabei muss, für korrekten räumlichen Eindruck, die \emph{perspektivische Verzerrung} berücksichtigt werden.
+Auch diese Projektion und Verzerrung werden grundsätzlich durch Transformationen realisiert\footnote{Mit Besonderheiten bei der perspektivischen Verzerrung}.
+Als letzten Schritt müssen die -- jetzt auf einer zweidimensionalen Fläche vorliegenden -- Dreiecke der Objekte
+in Monitor-Pixel "`umgewandelt"', also \emph{gerastert}, werden. Für jedes dieser Pixel wird schliesslich die Farbe bestimmt,
+mit der es auf dem Monitor dargestellt wird\footnote{Streng genommen werden diese Berechnungen nicht für Pixel sonder für \emph{Fragmente} vorgenommen --
+ein Pixel kann mehrere Fragmente "`überdecken"', z.B. zum Zwecke der Kantenglättung. Zur Anschaulichkeit und Verständlichkeit ist es jedoch
+ausreichend, über "`Pixel"' zu reden.}.
 
-Die Übersetzung eines Dreiecksnetz-Modells in das Weltkoordinatensystem erfordert nur die Anwendung der Transformationsmatrix
-auf die Koordinaten aller Vertices.
+\section{Darstellung und Beleuchtung von Oberflächen}
+\label{surface_and_shading}
 
-% TODO Hier Skizze 
-Die Position des Betrachters wird durch das \emph{Kamerakoordinatensystem}\footnote{engl. ``eye space'' oder ``camera space''}
- bestimmt. Dies ist so definiert, dass der "`Blickpunkt"' am Koordinatenursprung des Systems liegt
-und die "`Blickrichtung"' einer gegebenen Achse entspricht. 
-Durch eine weitere Transformation werden Welt-Koordinaten in Kamera-Koordinaten
-überführt. Dies erlaubt eine beliebige Positionierung des Betrachters in der Szene und eine beliebige Blickrichtung.
-Die zugrundeliegenden Prinzipien sind die selben wie bei der Transformation aus dem Objektkoordinatensystem.
+Beleuchtung und Schattenwurf von 3D-Objekten geben einem menschlichen Betrachter wichtige Hinweise zur Form
+einzelner Objekte sowie zur Positionierung von Objekten zueinander. Aus Lichtreflektionen der Oberfläche -- Art, Farbe und Zusammenspiel
+mit Strukturen und Mustern -- lassen sich Materialeigenschaft und damit das dargestellte Material ableiten.
 
-Der Blickpunkt ist ein Punkt in einem \emph{dreidimensionalem} Raum, eine Szene wird jedoch auf einem
-\emph{zweidimensionalem} Bild dargestellt -- die "`verlorene"' Dimension ist die Tiefe.
-Daher wird eine \emph{Bildebene} in geringem Abstand zum Betrachter gesetzt,
-welche als "`Projektionsfläche"' der Szene dient.
+Beleuchtungs- und Oberflächenberechnungen (``\emph{Shading}'') sind bei der Darstellung von 3D-Objekten also äusserst wichtig.
+Allerdings können diese auch Zeitaufwendig sein, insbesondere da in der Echtzeit-3D-Grafik die Szenen in der Regel
+immer auch eine dynamische Komponente haben. Insbesondere Beleuchtungsberechnungen hängen von der Kameraposition
+und/oder der Objektposition ab und müssen, wenn die Kamera oder Objekte sich bewegen, für jedes darzustellende Bild
+neu berechnet werden. Aus der Anforderung der Echtzeit-3D-Grafik, für eine überzeugende Bewegungsdarstellung
+Bilder genügend schnell zu berechnen, ergibt sich auch für die Beleuchtungs- und Oberflächenberechnung, dass diese
+möglichst schnell von statten gehen soll.
 
-Weiterhin müssen Modelle \emph{perspektivisch verzerrt} werden. 
-Stark vereinfacht gesagt werden auf die Kamera-Koordinaten eine \emph{Projektionsmatrix} angewendet, welche dazu führt,
-das bei der Projektion auf die Bildebene jede Koordinate durch ihre $z$-Komponente dividiert wird -- eine perspektivische Verzerrung.
-\footnote{Eine ausführliche Beschreibung findet sich in~\cite{watt_de}, Kap. 1.}
-% Bei den vorangegangenen Transformationen werden die Koordinaten
-% als homogene Koordinaten interpretiert. Homogene Koordinaten besitzen eine vierte Komponente $w$, die bei der Anwendung
-% der vorangegangenen Transformationen $1$ ist~(\cite{watt_de}, Kap. 1).
-% Für die perspektivische Verzerrung wird auf die Koordinaten im Kamerakoordinatensystem eine \emph{Projektionsmatrix} angewendet,
-% die als Besonderheit die $w$-Koordinate auf den Wert der $z$-Koordinate -- den Abstand von der Bildebene -- setzt.
-% Werden nun die transformierten Koordinaten durch die $w$-Komponente dividiert so ist dies effektiv die perspektivische Verzerrung.
-% Die Projektionsmatrix kann frei gewählt werden -- z.B. kann sie, durch Setzen der $w$-Koordinate auf $1$, auch orthographische
-% Projektionen darstellen.
+Grundsätzlich wird ein Farbwert pro Rasterpunkt benötigt. Dabei wird aus der Koordinate des Rasterpunktes die ursprüngliche Koordinate
+im dreidimensionalen Raum berechnet. Für diesen Punkt in Raum können dann Oberflächeneigenschaften bestimmt werden
+(z.B. Farbe) und zusammen mit Informationen über vorhandene Lichtquellen kann die vom Betracher wahrgenommene 
+"`Lichtreflektion"' berechnet werden.
 
-\subsection{Texturen}
+Eine Berechnung für jeden Rasterpunkt ist zwar genau, aber in manchen Fällen zu aufwändig. Eine Annäherung ist,
+solche Beleuchtungs- und Oberflächenberechnungen nur für die Eckpunkte des Dreiecks zu berechnen und das Ergebnis
+dieser Berechnung linear über das Dreieck zu \emph{interpolieren}.
 
-\newglossaryentry{Textur}{name={Textur},plural={Texturen},description={Bilddaten, bei der Fragmentverarbeitung ausgelesen. Typischerweise auf Oberfläche von Modellen "`gespannt"'}}
-Zur Simulation von detaillierten Oberflächen werden \emph{\glspl{Textur}} verwendet. Im Regelfall sind dies zweidimensionale
-Bilder. Einem jeden Dreieck eines Modells ist ein (ebenfalls dreieckiger) Ausschnitt auf einer Textur zugeordnet. 
-Die Zuordnung findet über \emph{Texturkoordinaten} statt, d.h. jedem Vertex ist ein weiteres Zahlenpaar zugeordnet,
-welches einen Punkt auf der Textur angibt.
-Beim Rendering wird nun der durch diese Koordinaten beschriebene Texturausschnitt auf die Oberfläche des Dreiecks 
-"`gespannt"': für jedes gerenderte Pixel des Dreiecks wird die Position des zugehörigen Textur-Pixels (``texel'')
-berechnet. Der Farbwert der Textur an dieser Position wird ausgelesen und dient als Farbwert des gerenderten Pixels~(\cite{watt_de}, S. 160).
+\begin{figure}[h]
+  \centering
+  (a) \includegraphics[scale=0.8]{triraster1}
+  \qquad
+  (b) \includegraphics[scale=0.8]{triraster2}
+  %\qquad
+  %(c) \includegraphics[scale=0.8]{triraster3}
+  \caption{Rasterung eines Dreiecks:}
+  \small (a) Nach Transformation in das Koordinatensystem des Monitors.\\
+  (b) Vom Dreieck überlagerte Pixel.
+  %(c) Ein Eckpunktattribut "`Grauwert"', über die Pixel interpoliert.
+  \label{fig:triraster}
+\end{figure}
 
-\subsection{Shading}
+Für eine überzeugende Darstellung einer Oberfläche sind deren Details wichtig, z.B. feine Muster in der Oberflächenfarbe.
+Es liegt nahe, jedem Eckpunkt eines Dreiecks eine Farbe zuzuweisen; aber oftmals sollen die darzustellenden Details kleiner als die Dreiecke, aus denen
+ein Modell aufgebaut wurde, sein.
+Zu diesem Zweck werden zweidimensionale Bilder\footnote{"`Texturen"'}
+über die Oberfläche "`gelegt"'. Dazu wird eine Abbildung auf die 3D-Raumkoordinate auf angewendet um eine 2D-Bildkoordinate,
+an der das Bild ausgelesen wird, zu erhalten. Z.B. kann ein "`Blatt Papier"' durch zwei Dreiecke dargestellt werden, aber die Verwendung
+eines Oberflächenbildes erlaubt es Text usw. darzustellen, was weit detaillierter ist, als es eine einfache Färbung der Dreieckseckpunkte erlauben würde.
 
-\newglossaryentry{Shading}{name={Shading},description={Berechnung der Farbe eines beleuchteten Punktes auf einer 3D-Oberfläche}}
-Bei der visuellen Wahrnehmung spielt die Interaktion von wahrgenommen Oberflächen mit Lichtquellen eine wichtige
-Rolle. Aus Helligkeitsunterschieden, die aus Variationen von Abstand und Lage zu einer Lichtquelle
-herrühren, können auf Objekteigenschaften wie Drehung, Größe und Form sowie auf Oberflächeneigenschaften
-wie deren Struktur geschlossen werden.
-Bei der Computergrafik ist die Berechnung der Beleuchtung einer Oberfläche
-entsprechend wichtig. Es variiert aber nach Anwendungsfall, ob die Beleuchtung die in der Realität stattfindenden physikalischen Vorgänge
-nachbilden soll, oder aber ob diese nicht physikalisch korrekt sein, aber dafür
-eine dreidimensionale Form einfach erkennen lassen soll.
+An diesem Beispiel erkennt man, dass man nicht immer alle Teile von Beleuchtungs- und Oberflächenberechnungen für jeden Eckpunkt berechnen und
+dann linear interpolieren kann -- dementsprechen lassen sich diese Teile nur sinnvoll berechnen, wenn die Rechnung für jeden Pixel individuell vorgenommen wird.
 
-In der bisherigen Beschreibung der Darstellung von Oberflächen wurde die Berechnung der Beleuchtung einer
-Oberfläche ausgelassen. Diese Berechnung wird \emph{\gls{Shading}} (übersetzt "`Schattierung"') genannt~(\cite{watt_de}, S. 146, 198).
-% Begr. Shading: , Schattierung: Watt (DE) 146, 198 -> Ergebnis ist "Intensität"
-Beim Shading wird eine \emph{Lichtintensität}, d.h. die Intensität des reflektierten Lichts, für Punkte auf der
-Oberfläche berechnet.
+Andererseits gibt es bei der Dreiecksdarstellung auch Arbeitsschritte, die nur für jeden Eckpunkt berechnet werden können -- die Transformation eines
+Dreiecks vor der Rasterung zum Beispiel: eine Berechnung für jeden Pixel ist schlicht unmöglich, da das Dreieck noch gar nicht gerastert wurde.
 
-Um das reflektierte Licht zu berechnen wird mindestens der Oberflächenpunkt im Raum sowie die Lage der Oberfläche
--- als \emph{Oberflächenormale} an dem gegebenen Punkt -- benötigt.
+In der Praxis werden praktisch immer "`Mischformen"' bei der Beleuchtungs- und Oberflächenberechnungen verwendet: einige Werte oder
+Zwischenergebnisse werden für jeden Eckpunkt berechnet; diese werden dann, bevor sie als Eingabe für eine für ein Pixel auszuführende
+Berechnung dienen, interpoliert.
+%(sofern dies sinnvoll ist, oder zumindest einem Betrachter nicht auffällt)
 
-% TODO Bilder
-Es gibt verschiedene Strategien zur Berechnung von Lichtintensitäten. Die einfachste ist die Berechnung der Lichtintensität
-eines Punktes des Dreiecks und die Verwendung dieses Wertes für das komplette Dreieck. Dieser Ansatz, ``flat shading'',
-ist zwar schnell, hat aber eine sehr "`facettierte"' und kaum realistische Objektdarstellung zur Folge.
-% TODO Ref auf Methoden
+\section{Verarbeitungsschritte auf der Grafikhardware}
+\label{hw_steps}
 
-Wird die Intensität für jedes Vertex berechnet und dann über das Dreieck linear interpoliert ("`Gouraud-Shading"') so ist
-das Ergebnis bereits weniger facettiert, allerdings mit Mehraufwand für Intensitätsberechnung und Interpolation verbunden.
-Trotzdem haben Objekte bei Verwendung dieser Methode ein charakteristisches Aussehen, besonders die Kanten von Dreiecken lassen sich leicht erkennen.
-
-Die aufwändigste Methode ist das Berechnen der Intensität für jedes dargestellte Pixel ("`Phong Shading"'), wobei
-nur per Vertex verfügbare Werte über das Dreieck linear interpoliert werden (analog zur eigentlichen Intensität beim
-Gouraud-Shading). Der Aufwand wird aber damit belohnt, dass keine Facetten und wenig Kanten sichtbar sind.
-\footnote{Ein Vergleich der verschiedenen Interpolationsarten findet sich auch in~\cite{watt_de}, Kap. 18.}
-% @@@ Kanten sichtbar an Umriss
-
-\section{Aufbau Hardware}
-
-\subsection{Ablauf Echtzeit-Rendering}
+Moderne Grafikchips (genannt ``Graphics Processing Unit'', kurz ``GPU'') sind auf Echtzeit-Darstellung von 3D-Grafiken spezialisierte Hardware.
+Deren logischer Aufbaum, schematisch Abbildung~\ref{fig:3d_pipeline} dargestellt, ist auf die Darstellung von Dreiecksnetzen ausgerichtet. 
 
 \begin{figure}[h]
   \centering
@@ -389,129 +343,300 @@ Gouraud-Shading). Der Aufwand wird aber damit belohnt, dass keine Facetten und w
   \label{fig:3d_pipeline}
 \end{figure}
 
-Die Ausgabe der Grafik soll in der Regel als Rastergrafik auf einem Computermonitor, also auf einer zweidimensionalen Fläche, erfolgen.
-Demgegenüber besitzen 3D-Modelle per Definition Koordinaten in einem dreidimensionalen Raum, deren Komponenten potentiell
-aus der Menge der reellen Zahlen stammen. Es muss also eine \emph{Projektion} vorgenommen werden. 
+Der erste Schritt bei der Darstellung
+eines 3D-Objekts die Ausführung der für jedes Vertex erforderlichen Berechnungen("`Vertexverarbeitung"').
+Dies sind immer mindestens die Anwendung der Transformationen für ein Objekt auf die individuellen Raumkoordinaten der Eckpunkte;
+in der Regel werden auch, wie oben genannte, Teile der Beleuchtungs- und Oberflächenberechnung vorgenommen.
 
-Diese Projektion wird mit den Ausgaben der Vertexverarbeitung durchgeführt. Bei der Vertexverarbeitung werden auf alle Vertices die gleichen
-Berechnungen angewendet. Diese werden in der Hardware in der Regel parallel 
-auf mehreren Recheneinheiten ausgeführt. Im Allgemeinen wird dort mit Vektoren gerechnet.
-Die Vertexverarbeitung kann mehrere Werte pro Vertex berechnen, aber minimal muss die Vertex-Koordinate in das Kamerakoordinatensystem
-abgebildet werden.
-\newglossaryentry{Vertexattribut}{name={Vertexattribut},plural={Vertexattribute},description={Weitere, jedem Vertex zugeordnete Werte}}
-In der Regel werden aber weitere Werte berechnet ("`\glspl{Vertexattribut}"'), die als Eingabe der späteren Fragmentverarbeitung dienen.
+Die Ergebnisse der Vertexberechnungen sind eine Pixelkoordinate sowie weitere "`Zwischenergebnisse"' der Beleuchtungs- und Oberflächenberechnung.
+Analog zu Vertexattributen liefert jede Vertexberechnung die gleiche Anzahl von Ergebnis"`variablen"', aber deren \emph{Werte} unterscheiden sich
+von Vertex zu Vertex.
 
-\newglossaryentry{Shadingsprache}{name={Shadingsprache},plural={Shadingsprachen},description={Sprachen zur Programmierung von Vertex- und Fragmentverarbeitung auf GPUs}}
-Die beiden Verarbeitungsschritte der "`Vertexverarbeitung'' und "`Fragmentverarbeitung"' sind auf modernen GPUs
-\emph{programmierbar} -- die vorgenommenen Berechnungen werden also durch von einem Programmierer bereitgestellte
+Die Pixelkoordinaten der Vertices eines Dreiecks werden von einer speziellen Funktionseinheit verwendet, das Dreieck zu Rastern.
+Ausgegeben werden alle Pixel, die vom Dreieck überdeckt werden. 
+%Auch die Interpolation der weiteren Ausgaben der Eckpunktberechnungen -- die "`Zwischenergebnisse"' -- wird von dieser Funktionseinheit vorgenommen.
+
+Aus den Ausgaben der Vertexberechnungen -- die oben erwähnten "`Zwischenergebnisse"' -- werden die Eingaben für die Pixelberechnungen abgeleitet.
+Dies geschieht durch \emph{lineare Interpolation} zwischen den Ergebniswerten der Vertexberechnung für die drei Vertices, aus denen das gerade gerasterte
+Dreieck besteht. Interpoliert wird auf der Ebene von Ergebnis"`variablen"' -- die Werte der ersten Ergebnis"`variablen"' für jeden Eckpunkt wird bestimmt,
+zwischen diesen drei Werten wird interpoliert; daraufhin werden die Werte der zweiten Ergebnis"`variablen"' für jeden Eckpunkt bestimmt
+und diese interpoliert; usw. Die Gewichtungsfaktoren für die Interpolation bestimmen sich aus der Position des Pixels, für deren Berechnungen
+die Eingaben interpoliert werden, auf dem gerasterten Dreieck. Die Faktoren werden von der Funktionseinheit zur Rasterung der Dreiecke mitberechnet.
+
+Abbildung~\ref{fig:interp_simple} zeigt für einen einfachen Fall (horizontale Pixel-Reihe) die Gewichtungsfaktoren für die Ergebnis"`variablen"'
+zweier Eckpunkte eines Dreiecks. Erkennbar ist, dass die Gewichtungsfaktoren des ersten Eckpunkts abnehmen je näher man
+dem zweiten Eckpunkt kommt; umgekehrt steigern sich dessen Gewichtungsfaktoren in dessen Richtung.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.8]{interp_simple}
+  \caption{Gewichtungsfaktoren für die Interpolation zwischen Attributwerten zweier Vertices.}
+  \small Oberer Faktor wird auf Werte des linken, unterer auf Werte des rechten Vertices angewendet.\\
+  Gewichtungsfaktor für drittes Vertex kann vernachlässigt werden (ist $0$ für alle gezeigten Pixel).
+  \label{fig:interp_simple}
+\end{figure}
+
+Abbildung~\ref{fig:triraster_lerp} zeigt beispielhaft das Ergebnis einer Interpolation für ein Pixel im Dreieck aus Abbildung~\ref{fig:triraster}.
+Im Bild (a) ist das Beispielpixel hervorgehoben. $v_1$, $v_2$ und $v_3$ sind die Eckpunkte des Dreiecks.
+$f_1$, $f_2$ und $f_3$ sind die Gewichtungsfaktoren für die Ausgaben der Vertexberechnungen.
+In Bild (b) wurden diese Faktoren auf eine Ergebnis"`variable"' Grauwert angewendet. Die Dreieckseckpunkte wurden mit den Werten
+dieser Ergebnis"`variable"' beschriftet. Für das Beispielpixel wurde der interpolierte Grauwert angegeben.
+
+\begin{figure}[h]
+  (a) \includegraphics[scale=0.8]{triraster_lerp}
+  \qquad
+  (b) \includegraphics[scale=0.8]{triraster_values}
+  \caption{(a) Gewichtungsfaktoren für die Interpolation der Ausgaben der Vertexberechnungen für ein Dreieck.}
+  \small (b) Für jeden Eckpunkt vorliegenden Werte und Interpolationsergebnis für einen Grauwert.
+  \label{fig:triraster_lerp}
+\end{figure}
+
+% Interpolation: linear; zwischen Werten der Dreieckseckpunkte; Gewichtungsfaktor(en) von Position des Pixels auf Dreieck abhängig
+% + Bild
+
+\begin{defn}
+Die Eingaben der Ausgaben der Vertexberechnungen werden aus den der Vertexberechnung durch \emphalt{lineare Interpolation}
+abgeleitet.
+
+Interpoliert wird zwischen den Ausgaben der Vertexberechnungen für die Eckpunkte des gerasterten Dreiecks.
+Die Gewichtungsfaktoren für die Interpolation bestimmen sich aus der Position des Pixels im Dreieck.
+\end{defn}
+
+Schliesslich werden die für jeden Pixel vorzunehmenden Berechnungen ausgeführt\footnote{"`Pixelverarbeitung"'}.
+Ausgabe dieses Schrittes ist ein Farbwert\footnote{Eigentlich ein Farbwert (Rot-Grün-Blau-Tripel) sowie eine Deckkraft ("`Alpha"'), für die Darstellung von transparenten Oberflächen}
+der für die Darstellung des Pixels auf dem Monitor verwendet wird.
+
+Tatsächlich sind den Pixelberechnungen nur die interpolierten Ausgaben der Vertexberechnung zugänglich -- auf für jedes Vertex vorliegenden
+Eingaben oder Berechnungsergebnisse kann nicht einzeln zugegriffen werden (d.h. bei der Pixelberechnung können nicht Werte wie
+"`Position des ersten Dreieckseckpunktes"' ausgelesen werden).
+
+Die Vertex- wie auch Pixelberechnungen sind unabhängig -- d.h. die für einen Punkt oder Pixel ausgeführten Berechnungen hängen
+nicht von den Werten anderer Eckpunkte oder Pixel ab. (Tatsächlich wird so ein "`Zugriff"' auf andere Eckpunkte oder Pixel gar nicht erst erlaubt.)
+Dies macht die Eckpunkt- und Pixelberechnungen gut parallelisierbar -- die jeweiligen Funktionseinheiten der GPUs sind dementsprechend aufgebaut:
+sie führen gleichzeitig die Berechnungen für mehrere Eckpunkte und Pixel aus.
+Dazu kommt, das Eckpunkt- und Pixelberechnungen -- dem Wesen von 3D-Objekten geschuldet -- viel mit Vektoren arbeiten. Die Recheneinheiten
+der Grafikkarten sind also in der Regel Vektoreinheiten.
+
+\newglossaryentry{Shadingsprache}{name={Shadingsprache},plural={Shadingsprachen},description={Sprachen zur Programmierung von Eckpunkt- und Pixelberechnungen auf GPUs}}
+Eine wichtige Eigenschaft ist die \emph{Programmierbarkeit} von Eckpunkt- und Pixelberechnungen
+-- die vorgenommenen Berechnungen werden also durch von einem Programmierer bereitgestellte
 Programme bestimmt. Die GPUs selbst, als Mikroprozessoren, verarbieten in einem Binärcode vorliegende Programme; dieser Code
 wird jedoch von den Programmierschnittstellen "`versteckt"' und Programme werden in einer Hochsprache gegeben\footnote{GLSL bei OpenGL, HLSL bei DirectX}.
 Die Sprachen werden "`\glspl{Shadingsprache}"' genannt.
 
-Auf der neuesten Generation von GPUs (GeForce 8) % etwas zu GraKa-Generationen sagen
-ist ein weiterer Verarbeitungsschritt verfügbar, die "`Geometrieverarbeitung"'\footnote{engl. geometry shader}. 
-Diese hat die Besonderheit, neue Dreiecke
-mit beliebigen Koordinaten erzeugen zu können: 
-auf eineer Grafikkarte ohne Geometrieeinheit sind alle Verarbeitungsschritte "`statisch"' bezüglich der Vertices -- nur existierende
-Werte können manipuliert werden. Gleiches gilt für Dreiecksdaten. Das \emph{Erzeugen} von Vertices kann bei diesen Grafikkarten
-also nur durch die CPU erfolgen, woraufhin die Daten zur GPU übertragen werden.
-Im Schritt der Geometrieverarbeitung kann die GPU aber selbst Vertices und Dreiecke erzeugen
-und auch entfernen. Dieser Schritt erlaubt die Implementierung von Algorithmen auf der Grafikkarte, die viel 
-Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, erfordern.
+Vertex- und Pixelverarbeitung sind zwei logisch getrennte Verarbeitungsschritte, nehmen verschiedenartige Eingabedaten entgegen und
+werden auf zwei logisch verschiedenenen Funktionseinheiten vorgenommen. Dies bedeutet auch, dass man zur Programmierung einer GPU
+im Allgemeinen zwei Programme -- eines, das die Schritte der Vertexverarbeitung beschreibt ("`Vertexprogramm"'),
+ein anderes für die Beschreibung der Pixelverarbeitung ("`Pixelprogramm"')
+-- sowie eine "`Schnittstellendefinition"' (Ausgaben der Vertexverarbeitung bzw. Eingaben für die Pixelverarbeitung) erstellen.
+Dabei muss darauf geachtet werden, dass diese drei Teile aufeinander abgestimmt sind. Eine unpassende Schnittstellendefinition etwa
+führt meist zur falschen Interpretation der Eingaben der Pixelverarbeitung und damit zu unbrauchbaren Ergebnissen.
 
-\newglossaryentry{Fragment}{name={Fragment},description={Ergebnis der Rasterung eines Dreiecks}}
-\label{rasterung}
-Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in das \emph{Kamerakoordinatensystem}\footnote{Betrachter befindet sich am
-Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rasterbild mit Hilfe einer einfachen linearen Projektion
-abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
-gezeichnet werden. Dies geschieht durch Rasterung\footnote{siehe auch~\cite{watt_de}, Abschn. 6.4} der Dreiecke. Um die Farbe eines berechneten 
-\emph{\gls{Fragment}s}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
-Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment genau einem Pixel entspricht.} zu 
-bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
-durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der Drei\-ecks\-eck\-punk\-te  
-berechnet. Abbildung~\ref{fig:triraster} zeigt schematisch die Rasterung eines Dreiecks mit einem interpolierten Vertexattribut.
+\section{Daten eines 3D-Objektes}
+\label{object_data}
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.8]{triraster1}
-  \qquad
-  \includegraphics[scale=0.8]{triraster2}
-  \qquad
-  \includegraphics[scale=0.8]{triraster3}
-  \caption{Rasterung eines Dreiecks: 1. Nach Transformation in das Koordinatensystem des Monitors.
-  2. Vom Dreieck überlagerte Fragmente. 3. Ein Vertexattribut "`Grauwert"', über die Fragmente interpoliert.}
-  \label{fig:triraster}
-\end{figure}
+Bei der Darstellung von 3D-Objekten verwendete Daten, Eingabedaten wie auch Zwischenergebnisse von Berechnungen,
+liegen in verschieder "`Granularität"' vor:
 
-In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
-und mit den Vertexattributen durch Operationen kombiniert (z.B. Multiplikation, um eine beleuchtete Oberfläche zu simulieren).
-Wie bei den Vertex-Berechnungen werden auch bei den Fragment-Berechnungen die gleichen Berechnungen auf eine Vielzahl
-von Fragmenten gleichzeitig angewendet und erfolgt parallel auf mehreren Vektorrecheneinheiten.
-
-%Alle Verarbeitungseinheiten sind auf aktueller Grafikhardware programmierbar.
-\section{Berechnungsfrequenzen}
-\label{berechnungsfrequenz_locker}
-
-Für das Rendering eines 3D-Modells werden verschiedenartige Daten benötigt. So zuerst das Modell selbst, als Dreiecksnetz. Dazu
-eine Reihe von Transformationen zur Abbildung zwischen Koordinatensystemen -- Objekt zu Welt, Welt zu Kamera und schliesslich
-eine Projektion von Koordinaten im Kameraraum auf Bildschirmpixel. Typischerweise kommen noch weitere, vom Shading verwendete Daten --
-wie eine Oberflächennormale, per Vertex definiert, und eine Textur -- hinzu.
-
-Zu Beobachten ist, dass diese verschiedenen Daten in ihrer "`Veränderlichkeit"' variieren:
 \begin{itemize}
-\item Die verwendeten Transformationen gelten für das ganze 3D-Modell, verändern sich also \emph{per Mesh}.
-\item Vertexdaten, wie Position im Objektkoordinatensystem oder Oberflächennormale, sind \emph{per Vertex}
-verschieden. Vor allem berechnete Vertexattribute, die bei der Fragmentverarbeitung verwendet werden, werden
-bloss per Vertex berechnet -- die eigentliche Eingabe der Fragmentverarbeitung wird aus den per-Vertex-Werten
-interpoliert.
-\item Texturdaten werden in der Fragmentverarbeitung ausgelesen, solch ausgelesene Werte ändern sich \emph{per Fragment}.
+\item Einige Eingabedaten liegen für das \emph{Objekt} vor.
+Dies sind vor allem die Transformationen -- verschiedene Objekte haben verschiedene Transformationen,
+aber es wäre in der Regel unnötig, jedem Eckpunkt ein einem Dreiecksnetz eine Transformation zuzuweisen.
+Auch einige "`Material"'eigenschaften -- z.B. ein auf die Oberfläche gelegtes Bild -- variieren typischerweise von Objekt zu Objekt:
+es kann dabei von "`Objektattributen"' gesprochen werden.
+\item Für jedes \emph{Vertex} liegen natürlich die Raumkoordinaten der Vertices vor, aber auch 
+die Werte der Vertexattribute -- wie u.a. die Oberflächennormale (bei Beleuchtungsberechnungen verwendet).
+\item Für jedes \emph{Pixel} können \emph{Eingabe}daten nicht sinnvoll vorliegen -- schliesslich ist ja nicht bekannt, wie ein Dreieck
+schlussendlich gerastert wird. Allerdings liegen Zwischenergebnisse von Berechnungen per Pixel vor -- die  interpolierten Ausgaben der
+Eckpunktberechnung sowie Berechnungen in der Pixelverarbeitung selbst, wie das Auslesen eines Bildes
+zur Färbung der Oberfläche.
 \end{itemize}
 
-Aus diesen Beobachtungen leitet sich das Konzept der \emph{Berechnungsfrequenz}\footnote{Zuerst beschrieben in \cite{stanford_rtsl}.} ab.
-Die Berechnungsfrequenz eines Wertes sagt aus, wie oft dieser berechnet werden müsste bzw. in welchem Verarbeitungsschritt
-dies passiert. Je "`höher"' die Frequenz, desto häufiger muss ein Wert potentiell berechnet werden:
-\begin{itemize}
-\item Die theoretisch niedrigste Frequenz besitzen Verknüpfungen statischer Konstanten -- solche Ergebnisse müssen nur ein einziges Mal berechnet werden.
-\item Die für 3D-Grafik nächsthöhere, relevante Frequenz ist die "`Meshfrequenz"': Transformationen werden in der Regel per Mesh spezifiziert,
-eine Verknüpfung von zwei Transformationen muss nur einmal für ein Modell berechnet werden; über die gesamte Ausführungszeit einer Anwendung gesehen
-müssen solche Transformation aber praktisch öfter als ein einziges Mal berechnet werden.
-\item Als nächste Frequenz folgt die "`Vertexfrequenz"' für Werte, die von Vertexdaten abhängen. Augenscheinliches Beispiel sind
-vom Objektkoordinatensystem in das Kamerakoordinatensystem abgebildete Modellkoordinaten. Da ein Modell in der Praxis mehr als ein Vertex besitzt,
-ist ersichtlich, das Berechnungen in Vertexfrequenz öfter ausgeführt werden als solche mit Meshfrequenz.
-\item Die höchstmögliche Frequenz ist die der "`Fragmentfrequenz"' für Werte, die per Fragment berechnet werden müssen.
-Dies sind zum Beispiel aus Vertexdaten berechnete Werte, die sich nicht sinnvoll interpolieren lassen, oder Werte aus Texturen,
-deren Zweck es ja ist, mehr Details zu ermöglichen, als es Vertexdaten allein zulassen würden.
-Ein gerastertes Dreieck überspannt in der Regel mehrere Fragmente; aus diesem Grund werden per Fragment auszuführende Operationen
-öfters berechnet als per Vertex.
-\end{itemize}
+Je nachdem, auf welchen Eingabedaten eine Berechnung operiert, muss diese verschieden oft ausgeführt werden.
+Berechnungen, die auf für jedes \emph{Pixel} vorliegenden Daten beruhen, müssen für jedes Pixel ausgeführt werden;
+demgegenüber müssen Berechnungen, die von für jedes \emph{Vertex} vorliegenden Daten abhängen,
+auch nur für jedes \emph{Vertex} ausgeführt werden.
 
-Eine höhere Berechnungsfrequenz korrespondiert prinzipiell mit einer weiter hinten liegenden Verarbeitungsstufe in der Renderingpipeline.
-Statische und Meshfrequenz sind praktisch sogar noch vor der Verarbeitung auf der GPU angesiedelt. Berechnungen in Vertexfrequenz (oder "`per Vertex"')
-entsprechen Berechnungen auf der Vertexeinheit, analog werden Berechnungen in Fragmentfrequenz (oder "`per Fragment) auf der Fragmenteinheit ausgeführt.
+Nun treten praktisch viel mehr Pixel- als Vertex-Berechnungen auf -- Abbildung~\ref{fig:triraster} zeigt beispielhaft,
+dass ein durch \emph{drei} Vertices definiertes Dreieck eine \emph{Vielzahl} von Pixeln überdeckt wird.
 
-Abbildung~\ref{fig:simple_cg} zeigt ein Programm-Paar für eine einfache Shadingberechnung in Cg. Die verschiedenen auftretenden Berechnungsfrequenzen
-sind dabei farbig markiert. 
+Eine Folge daraus ist, dass es erstrebenswert ist, möglichst viele Berechnungen nur für jedes Vertex vorzunehmen, deren Ergebnisse interpolieren zu lassen
+und nur für Pixel auszurechnen, was wirklich nötig ist: da, auf die gesamte Darstellung einer 3D-Grafik gesehen,
+in der Regel viel weniger Berechnungen vertexweise als pixelweise ausgeführt werden, verringert eine Berechnung für jedes Vertex statt für jedes Pixel
+den gesamten Berechnungsaufwand.
 
-Die Nützlichkeit von Berechnungsfrequenzen besteht in der Verwendbarkeit als Werkzeug zur Optimierung des Renderings von 3D-Modellen.
-Bei der Echtzeitgrafik ist ein grundsätzliches Bestreben, zum Zwecke schnellerem Renderings Operationen so selten wie möglich auszuführen.
-Wird eine Operation, für die eine Berechnung per Vertex ausreichend wäre, auf der Fragmenteinheit ausgeführt, so bedeutet dies
-eine Verschwendung von Rechenleistung. Bestimmt man nun für eine Beschreibung, wie ein Modell in den verschiedenen Renderingschritten zu
-verarbeiten ist, die Frequenz jeder Operation, mit der diese ausgeführt werden muss, so können die Operationen optimal auf die
-Verarbeitungseinheiten verteilt werden, ohne dass Rechenleistung verschwendet wird.
+\section{Beispiel}
 
-Programme in der hier beschriebenen Shadingsprache sind genau solche Beschreibungen der Verarbeitungsschritte; der implementierte Compiler
-bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und spaltet das Eingabeprogramm entsprechend auf.
+%An einem beispielhaften Shadingprogramms -- geschrieben in Cg -- sollen einige der genannten allgemeinen Konzepte 
+%Um einige der genannten allgemeinen Konzepte  sowie die Funktionsweise von 3D-Grafikhardware
 
-\newcommand\freqPerMesh[1]{\framebox{#1}}
-\newcommand\freqPerVert[1]{\colorbox{SpringGreen}{\textcolor{Black}{#1}}}
-\newcommand\freqPerFrag[1]{\colorbox{BlueViolet}{\textcolor{White}{#1}}}
+Ein Shadingprogramm, geschrieben in Cg, soll als praktisches Beispiel der Programmierbarkeit von 3D-Grafikhardware.
+Es soll gezeigt werden, wie die Funktionsweise von 3D-Grafikhardware sowie einige Konzepte, die in den vorherigen
+Abschnitten genannt wurden, sich in Shadingprogrammen äussern. Das Beispielprogramm ist in Abbildung~\ref{fig:simple_cg} aufgelistet.
+
 \begin{figure}[hp]
   \input{simple_cg}
   \caption{Ein Programm-Paar in Cg.}
-  \centering
-  \small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+  %\centering
+  %\small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
   \label{fig:simple_cg}
 \end{figure}
+
+\subsection{Programmaufbau}
+
+Das Beispielprogramm ist zwar als \emph{ein} Quelltext gegeben, trotzdem sind die Programme für die Vertexberechnungen
+und Pixelberechnungen logisch getrennt -- in diesem Fall, in dem sie durch zwei getrennte Funktionen definiert wurden
+(\verb+vertex_main+ für die Vertexberechnungen bzw. \verb+pixel_main+ für die Pixelberechnungen).
+% VertexOutput: Vertexausgaben, "Schnittstelle" Vertexausgaben->Pixeleingaben
+
+Der Strukturtyp \verb+VertexOutput+ beschreibt die Ergebnisse der für jedes Vertex vorgenommenen Berechnungen.
+Gleichzeitig dient er als Typ eines Eingabeparameter des Programms für die Pixelberechnungen, dient also damit
+auch als "`Schnittstellenbeschreibung"' zwischen Vertex- und Pixelprogrammen. Insbesondere sei daran errinnert
+dass diese Ergebnisse der Vertexberechnungen vor der Eingabe an das Pixelprogramm interpoliert werden.
+
+\subsection{Eingaben und Ausgaben}
+
+% verschiedene Eingabedaten, für ganzes Objekt wie auch jedes Vertex vorliegend
+Das Beispielprogramm benutzt verschiedenartige Eingaben, sowohl Objektattribute wie auch Werte von Vertexattributen.
+
+Zu den Objektattributen (\freqPerMesh{im Quelltext umrandet}), also sich innerhalb eines 3D-Objekts nicht verändernde Werte,
+gehört zunächst eine \emph{Transformation} (\verb+ModelViewProj+). Es wird erwartet, dass die verschiedenen typischen Transformationen
+(Objektposition und -rotation, Betrachterposition und -blickrichtung, perspektivische Projektion) zu einer einzigen Transformation konkateniert wurden.
+
+\verb+LightColor+, \verb+LightDirObj+ sind Eigenschaften einer Lichtquelle (Farbe bzw. Richtung, aus der Licht scheint);
+\verb+Texture+ (Eingabe des Pixelprogramms) ist ein "`Muster"', aus welchem die Oberflächenfarbe abgeleitet wird.
+Diese Objektattribute bestimmen also Beleuchtung und Aussehen der Oberfläche.
+
+% ModelViewProj, LightColor, LightDirObj, Texture: Objektattribute
+% Position, TexCoord, Normal: jedes Vertex
+
+Vertexattribute (\freqPerVert{hell hinterlegt}) sind \verb+Position+ (Raumkoordinate), \verb+TexCoord+ (2D-Koordinate auf dem Oberflächenmuster)
+und \verb+Normal+ (Oberflächennormale).
+
+Die Eingabe \verb+interpolatedVertexOutput+ des Pixelprogramms sind als "`für jedes Pixel vorliegend"' (\freqPerFrag{dunkel hinterlegt}) markiert.
+Wie verträgt sich das mit der in Abschnitt~\ref{object_data} Aussage, gemachten Aussage, Eingabedaten könnten nicht sinnvoll für jedes
+Pixel vorliegen? Die für jedes Pixel vorliegenden Eingabeparameter des Pixelprogramms sind keine "`direkten"' Eingaben,
+wie sie etwa die Werte der Objekt- oder Vertexattribute sind, sondern \emph{abgeleitete} Eingaben --
+aus den Ergebnissen der Vertexberechnung interpolierte Werte.
+
+% vorher: Pixeleingaben "nicht sinnvoll", hier Pixel-Eingaben? -> interpoliert
+Zwei Ausgaben haben eine besondere Bedeutung: \verb+output.Position+ des Vertexprogramms und \verb+outColor+ des Pixelprogramms.
+\verb+output.Position+ ist die in Monitorkoordinaten transformierte Position eines Vertices. Die Rasterung der Dreiecke wird anhand dieser
+Positionen der Dreieckseckpunkte vorgenommen. (In Cg markiert \verb+: POSITION+ die besondere "`Rolle"' dieses Ausgabewertes des Vertexprogramms.)
+
+Die zweite "`besondere"' Ausgabe ist der Ausgabeparameter \verb+outColor+ des Pixelprogramms. Durch diesen wird die auf dem Monitor
+darzustellende Pixelfarbe bestimmt. (\verb+: COLOR+ ist die Cg-Syntax, um den Parameter als "`Pixelfarbe"' zu kennzeichnen.)
+Darüber hinaus wären weitere Ausgaben nicht sinnvoll (so kann ein Monitorpixel nur einen Farbwert besitzen).
+
+\subsection{Berechnungen}
+
+% Programm ist kurz
+% setzt beleuchtete, gemusterte Oberfläche um
+% Lichtberechnung unter Ausnutzung von Interpolation
+
+Das Beispielprogramm ist zwar kurz, setzt aber einige der in den Abschnitten~\ref{objects} und~\ref{surface_and_shading} genannten Konzepte um.
+
+So wird auf das dargestellte Objekt eine \emph{Transformation}(\verb+ModelViewProj+) angewendet und das Ergebnis als Ausgabekoordinate --
+also als Bildschirmkoordinate für ein Vertex -- verwendet (Zuweisung von \verb+output.Position+).
+
+Als einfache Oberflächen- und Beleuchtungsberechnung wird für jedes Vertex ein Beleuchtungswert berechnet, diese werden über die Bildschirmpixel
+der Dreiecke interpoliert, und schliesslich noch mit einem Oberflächenmuster "`eingefärbt"'.
+
+Der Beleuchtungswert ist die Ausgabe \verb+output.litColor+. Die Beleuchtungsintensität für die gegebenene Lichtrichtung abhängig von der Oberflächenrichtung
+(\verb+dot (...)+-Operation) wird mit der Lichtfarbe (\verb+LightColor+) multipliziert, woraus sich die "`Beleuchtung"' der Oberfläche an dem
+Vertex, für den die Vertexberechnungen vorgenommen werden, ergibt. \verb+ambient+ ist eine Annäherung von "`indirektem Licht"' und wird
+zu der Gesamtbeleuchtung addiert\footnote{Solche Annäherungen werden verwendet, um schattierte Bereiche aufzuhellen, was von
+menschlichen Betrachtern u.U. als "`besser aussehend"' wahrgenommen wird.}.
+
+Die Interpolation dieses Beleuchtungswertes wird nicht explizit angegeben -- diese wird implizit von der Grafik-Hardware während der Dreiecksrasterung
+vorgenommen. Das Pixelprogramm "`sieht"' nur den aus den Ergebnissen der Vertexberechnungen interpolierten Eingabewert.
+
+Der Eingabeparameter \verb+TexCoord+ wird von Vertexprogramm unverändert wieder ausgegeben (Zuweisung zu \verb+output.TexCoord+) --
+ein kann Pixelprogramm keine Werte von Vertexattributen als Eingaben annehmen, alle solchen Eingaben müssen also im Vertexprogramm
+explizit "`durchgeschleift"' werden. Dabei ist zu beachten, dass, wie alle Ausgaben der Vertexberechnung, auch zwischen \verb+output.TexCoord+-Werten
+von mehreren Vertices interpoliert wird, bevor es als Eingabe für das Pixelprogramm dient.
+
+Schliesslich wird, im Pixelprogramm, die Oberfläche mit einem "`Muster"' versehen. Der Farbwert des Musters, \verb+surface+, wird aus dem Bild \verb+Texture+
+an den Koordinaten \verb+interpolatedVertexOutput.TexCoord+ ausgelesen (\verb+tex2D (...)+-Operation).
+Die implizite Interpolation von \verb+interpolatedVertexOutput.TexCoord+ ist also wünschenswert, da dadurch die Bildkoordinaten,
+und damit die ausgelesene Musterfarbe, über die Dreieckspixel variieren. (Ohne eine solche Variation -- also nur ein Auslesen an einigen wenigen verschiedenen Koordinaten --
+wäre die Darstellung des Musters nicht sehr detailliert.)
+
+Die Einfärbung der Oberflächenfarbe mit dem Beleuchtungswert wird durch eine einfache Multiplikation der Oberflächenfarbe mit
+dem Beleuchtungswert erreicht. Damit ergibt sich die ausgegebene Pixelfarbe (\verb+outColor+).
+
+\subsection{Darstellung}
+
+Abbildung~\ref{fig:simple_cg_images} zeigt ein 3D-Modell, welches mit dem Beispielprogramm aus Abbildung~\ref{fig:simple_cg} dargestellt wurde.
+Zur Verdeutlichung des Einflusses der verschiedenen Verarbeitungsschritte wurde nicht nur das Endergebnis, sondern auch einige Zwischenergebnisse
+visualisiert. Abbildung~\ref{fig:simple_cg_images_large} zeigt vergrösserte Ausschnitte der Bilder aus Abbildung~\ref{fig:simple_cg}.
+
+Bild (a) stellt das 3D-Modell in Drahtgitterdarstellung da. Dies lässt erkennen, wo sich die Vertices des Modells befinden.
+
+Bild (b) zeigt die Anteile der Berechnungen mit  "`Objektattributen"' (speziell wurde der Wert von \verb+ambient+ ausgegeben).
+
+Bild (c) nimmt die Ergebnisse der Vertexberechnungen hinzu (\verb+output.litColor+). In der Vergrösserung lässt sich die Interpolation
+dieses, als Ausgaben der Vertexberechnungen vorliegenden, Wertes über die Pixel der Dreiecke erkennen.
+
+Bild (d) zeigt das Ergebnis der "`kompletten"' Berechnung (\verb+outColor+). Gut erkennbar sind die Details aus dem Oberflächenmuster,
+wodurch jedes Pixel quasi eine individuelle Farbe erhält: diese Details "`maskieren"' die Interpolation des Beleuchtungswertes, diese ist
+praktisch nicht auszumachen.
+
+\begin{figure}[h]
+  \centering
+  (a) \includegraphics[width=2.5cm]{mesh_wireframe_thin}\qquad
+  (b) \includegraphics[width=2.5cm]{simple_s1_mesh}\qquad
+  (c) \includegraphics[width=2.5cm]{simple_s1_vert}\qquad
+  (d) \includegraphics[width=2.5cm]{simple_s1_frag}
+  \caption{3D-Modell, mit Programm aus \ref{fig:simple_cg} dargestellt}
+  \small (a): Drahgitterdarstellung\\
+  (b): Nur die Anteile aus den Objektattributen\\
+  (c): Anteile aus Vertexberechnungen hinzugenommen\\
+  (d): Anteile aus Pixelberechnungen hinzugenommen
+  \label{fig:simple_cg_images}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  (a) \includegraphics[width=2.5cm]{simple_s1_crop_large_wire}\qquad
+  (b) \includegraphics[width=2.5cm]{simple_s1_crop_large_mesh}\qquad
+  (c) \includegraphics[width=2.5cm]{simple_s1_crop_large_vert}\qquad
+  (d) \includegraphics[width=2.5cm]{simple_s1_crop_large_frag}
+  \caption{Vergrösserungen aus Abbildung~\ref{fig:simple_cg_images}}
+  \label{fig:simple_cg_images_large}
+\end{figure}
+
+\section{Auswirkungen auf Sprache und Compiler}
+
+% Compilerziel: Eingabe _ein_ Programm
+Ziel des Compilers soll es sein, als Eingabe \emph{ein} Shadingprogramm -- mit einer Hauptfunktion usw., nicht nur "`ein Quelltext"' -- entgegenzunehmen
+und daraus Programme zu erzeugen, die für die programmierbaren Grafikchip-Einheiten zur Vertex- bzw. Pixelverarbeitung genutzt werden können.
+
+% Erwähnung "Domänen"/"Frequenzen"/etc. -> klären, in Operationen auf welchen Daten man Prog. formuliert (hier Pixel)
+Shadingprogramme arbeiten mit verschiedenen Daten (Objektattribute, Werte von Vertexattributen, abgeleitete Eingaben der Pixelverarbeitung)
+und bestehen aus zwei Teilprogrammen, die mit Vertex- und Pixelverarbeitung auf verschiedene "`Klassen"' von Berechnungen vornehmen.
+Für die zu übersetzende Shadingsprache muss also entschieden werden, in welcher der "`Klassen"' sie formuliert werden soll --
+in diesem Fall sollen Programme so formuliert werden, als würden sie grundsätzlich für jedes Pixel ausgeführt werden.
+
+% Ausgabe: zwei Programme (Vertex, Pixel)
+% Prog.-Ausg.: Vertexkoord., Pixelkoord.
+% Berechnung+Verwendung von Werten in versch. Programmen handhaben
+% Implizite Interpolation berücksichtigen
+
+Der Compiler muss also dann für jeden Ausdruck entscheiden, ob er während der Pixelverarbeitung ausgeführt werden muss
+oder während der Vertexverarbeitung ausgeführt werden soll.
+Dabei ist zu berücksichtigen, dass einige Operationen nur in einem der Verarbeitungsschritte sinnvoll sind -- z.B. sollte ein Auslesen
+eines Bildes zur Anwendung eines Oberflächenmusters sinnvollerweise in der Pixelverarbeitung vorgenommen werden.
+
+Da einige Operation in der Vertex-, andere in der Pixelverarbeitung ausgeführt werden sollen, müssen bei komplexeren
+Ausdrücken Zwischenergebnisse von der Vertex- zur Pixelverarbeitung übergeben werden. Es muss also die "`Schnittstelle"'
+zwischen den Verarbeitungseinheiten generiert werden.
+
+Auch muss die von der Grafikhardware vorgenommene implizite Interpolation von Ergebnissen der Vertexverarbeitung in Betracht
+gezogen werden. D.h. der Compiler muss die Operationen des Programms so aufteilen, dass die Interpolation bei der Übergabe
+von Werten von der Vertex- zur Pixelverarbeitung nicht die Berechnungen des Programms "`verfälscht"'. (Würde z.B. der Ausdruck 
+$x^2$ in der Vertexberechnung berechnet und interpoliert in der Pixelverarbeitung verwendet werden, so käme dies einer
+lineare Approximation einer quadratischen Kurve gleich -- der Wert des Ausdruck wäre ungenauer, also "`verfälscht"'.)
 
 \section{Zusammenfassung}
 
@@ -519,18 +644,377 @@ Bei der Echtzeit-3D-Grafik werden von der Grafikhardware als Dreiecksnetze vorli
 Diese Modelle bestehen aus \emph{``Vertices''}, die die Eckpunkte von Dreiecken bilden. Bei der Darstellung eines
 Modelles wird zuerst die \emph{Vertexverarbeitung} vorgenommen; dabei werden die Raumkoordinaten der Vertices transformiert
 und weitere Berechnungen auf den Vertices zugeordneten Daten vorgenommen ("`Vertexattribute"').
-Als nächsten Schritt der Darstellung werden Dreiecke bei der \emph{Rasterung} auf Fragmente (im Wesentlichen Pixel) des Ausgabegerätes abgebildet.
-Bei dieser \emph{Fragmentverarbeitung} dienen als Eingaben die Ausgaben der Vertexverarbeitung, allerdings \emph{interpoliert}.
+Als nächsten Schritt der Darstellung werden Dreiecke bei der \emph{Rasterung} auf Pixel des Ausgabegerätes abgebildet.
+Bei dieser \emph{Pixelverarbeitung} dienen als Eingaben die Ausgaben der Vertexverarbeitung, allerdings \emph{interpoliert}.
 Es werden weitere Berechnung vorgenommen, um Details hinzuzufügen, für die eine Berechnung per Vertex zu "`grob"' wäre,
-wie das "`aufziehen"' von \emph{Texturen} (Bilddaten) auf das 3D-Modell.
+wie das "`aufziehen"' von Bilddaten auf das 3D-Modell.
 
-Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Fragmentverarbeitung"' sind beide programmierbar, die Ausgabe des Compilers
-soll ein Programm-Paar aus Vertex- und Fragmentprogramm sein.
+Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Pixelverarbeitung"' sind beide programmierbar, die Ausgabe des Compilers
+soll ein Programm-Paar aus Vertex- und Pixelprogramm sein.
 
-Aus den Verarbeitungsschritten der Echtzeit-3D-Grafik wurde das Konzept der \emph{Berechnungsfrequenz} abgeleitet:
-diese sagt aus, auf welche Verarbeitungseinheit eine Operation eines GPU-Programms ausgeführt werden muss.
-Die Berechnungsfrequenz wird vom Compiler verwendet werden, um zu bestimmen,
-in welches Ausgabeprogramm (Vertex- oder Fragmentprogramm) eine Operation ausgegeben werden muss.
+% Aus den Verarbeitungsschritten der Echtzeit-3D-Grafik wurde das Konzept der \emph{Berechnungsfrequenz} abgeleitet:
+% diese sagt aus, auf welche Verarbeitungseinheit eine Operation eines GPU-Programms ausgeführt werden muss.
+% Die Berechnungsfrequenz wird vom Compiler verwendet werden, um zu bestimmen,
+% in welches Ausgabeprogramm (Vertex- oder Fragmentprogramm) eine Operation ausgegeben werden muss.
+
+% Als "`3D-Grafik"' wird die Berechnung zweidimensionaler Bilder aus dreidimensionalen Daten (die sog. "`\emph{Szene}"')
+%  bezeichnet.
+% Anwendung findet sie in vielen Bereichen: Visualisierung abstrakter mathematischer Formeln, Darstellung
+% von geologischen Profilen, digitales Erstellen von Konstruktionszeichnungen, Spezialeffekte in Filmen und
+% Rundgänge durch künstliche Szenarien in Computerspielen. 
+
+% \section{Vorberechnete 3D-Grafik und Echtzeit-3D-Grafik}
+
+% Die Berechnung von 3D-Grafiken wird als \emph{Rendering} bezeichnet. Bei den Anwendungen für das Rendering
+% von 3D-Grafiken ist eine wichtige Untergruppe die der \emph{Echtzeitgrafik}, die sich durch besondere Anforderungen
+% an die Berechnungszeit abgrenzt.
+
+% \emph{"`Vorberechnete"'} 3D-Grafiken kommen vor allem zur Anwendung, wenn fast realitätsnahe Bilder gewünscht sind.
+% Für deren hohe Bildauflösungen und komplexe Berechnungen werden lange Renderingzeiten (Minuten bis Stunden) in Kauf
+% genommen. Beispiele 
+% für vorberechnete Grafiken sind computergenerierte Spezialeffekte in Filmen bzw. komplette Kinofilme aus dem Computer.
+
+% Dagegen fordert \emph{Echtzeitgrafik} Bildberechnungen, die nur Bruchteile einer Sekunde benötigen, um
+% dynamische Daten mit geringen bis keinen wahrnehmbaren Verzögerungen in einer 3D-Grafik 
+% darzustellen.
+
+% Beispiele hierfür sind Konstruktionszeichnungen und Computerspiele. Diese stehen auch für verschiedene Anforderungen,
+% die trotzdem unter "`Echtzeitdarstellung"' fallen: Konstruktionszeichnungen müssen meist mit sehr großen Datenmengen 
+% agieren, aber trotzdem die Verzögerungen geringstmöglich halten, wobei noch wahrnehmbare Pausen toleriert
+% werden. Bildraten ab 15 Bildern/Sekunde werden als "`interaktiv"' bezeichnet. % TODO Ref?
+% Computerspiele hingegen haben strengere Anforderungen: um die Illusion von Bewegung zu erzeugen ist es hier nötig,
+%  mindestens 25 Bilder in einer Sekunde\footnote{Es wird in der Regel die höchstmögliche Anzahl von Bildern pro Sekunde 
+% angestrebt um alle Bewegungen möglichst flüssig darzustellen.} darzustellen. Überzeugende Bewegungsdarstellung und
+% geringe Latenzen bei Aktionen des Spielers sind von höchster Wichtigkeit; dafür werden aber, im Vergleich zur
+% Verwendung vorberechneter 3D-Grafiken, reduzierte Details in Kauf genommen.
+
+% \section{Renderingmethoden}
+
+% Die zu rendernden zweidimensionalen Bilder werden in fast allen Fällen als Rastergrafiken gespeichert\footnote{Es gibt
+% auch Renderer, die Vektorgrafiken erzeugen können.}: für jedes Pixel der Rastergrafik muss aus den gegebenen dreidimensionalen
+% Daten ein Farbwert berechnet werden. Die beiden hauptsächlich verwendeten Methoden sind Ray Tracing und Rasterung.
+
+% Beim \emph{Ray Tracing} wird für jeden Bildpunkt ausgehend ein Strahl in die dreidimensionale Szene nachverfolgt. 
+% Die Farbe des Bildpixels wird aus dem "`Licht"', welches von der Oberfläche des zuerst "`getroffenen"' Objekts reflektiert wird,
+% berechnet. Dieses reflektierte Licht wird entweder durch eine Annäherung oder durch weiteres, rekursives
+% Nachverfolgen von Strahlen bestimmt. 
+% Vorteile des Ray Tracings sind die einfache Unterstützung von Schatten und Effekten wie spiegelnde
+% Oberflächen und Lichtbrechung; Nachteil ist der nötige Rechenaufwand.
+% \footnote{Ray Tracing ist detailliert in~\cite{watt_de}, Kap. 12, beschrieben.}
+
+% Beim \emph{Rastern} werden die Daten hingegen auf die Bildpixel projiziert und Farbwerte für diese Pixel berechnet.
+% Während dies weniger rechenintensiv als Ray Tracing ist können jedoch Effekte wie Spiegelungen und Schatten nicht so
+% einfach berechnet werden, sondern werden meist approximiert.\footnote{Siehe auch~\cite{watt_de}, Kap. 4.}
+
+% Die Geschwindigkeit und Einfachheit des Rasterns ist jedoch vorteilhaft für die Echtzeitgrafik und ist dort die praktisch
+% ausschließlich verwendete Variante. % TODO Intel-Ray Tracer
+% Vor allem ist spezielle, die Rasterung stark beschleunigende Hardware verfügbar. % TODO siehe Aufbau Hardware
+
+% Ray Tracing dagegen findet vor allem bei der Vorberechnung von 3D-Grafiken statt.
+%%Allerdings wird dort zunächst auch Rasterung eingesetzt,
+%%gemischt mit Ray Tracing wenn benötigt (z.B. reflektierende Oberflächen). % TODO Ref?
+
+% \section{Grundlegende Strukturen}
+
+% \subsection{Modelle}
+% \label{tri_mesh}
+
+% Dreidimensionale Objekte ("`\emph{Modelle}"') einer Szene können auf verschiedene Arten repräsentiert werden~(\cite{watt_de}, S. 45-47). 
+
+% \newglossaryentry{Dreiecksnetz}{name={Dreiecksnetz},description={3D-Modell, Menge von Eckpunkten (Vertices) und Dreiecken}}
+% \newglossaryentry{Vertex}{name={Vertex},plural={Vertices},description={Eckpunkt eines Dreiecksnetzes. Mehrzahl: Vertices}}
+% Die einfachste Form der Darstellung ist die des \emph{\gls{Dreiecksnetz}es} (engl. ``triangle mesh'' und kürzer ``mesh'').
+%  Diese bestehen aus einer Menge von Eckpunkten,
+% als \emph{\glspl{Vertex}} bezeichnet, sowie einer Menge von Dreiecken, wobei deren Ecken aus der Menge der Vertices stammen.
+% Einem Vertex ist mindestens eine Position im Raum, meist aber auch weitere Daten, die für die Oberflächendarstellung und
+% \mbox{-schattierung} verwendet werden,  zugeordnet~(\cite{watt_de}, S. 50).
+% Analog sind auch Dreiecken neben Referenzen zu den Eckvertices weitere Daten wie z.B. eine Oberflächenfarbe zugeordnet.
+
+
+% Um ein passgenaues Abschließen der Dreiecke zu sichern teilen sich in der Regel Ecken mehrerer Dreiecke ein
+% Vertex\footnote{Selten haben zwei Ecken in \emph{einem} Dreieck das selbe Vertex -- dies führt zu "`degenerierten"' Dreiecken}. 
+% Der Vorteil von Dreiecksnetzen ist deren Einfachheit. Insbesondere das Rastern von Dreiecken kann mit wenig Aufwand
+% implementiert werden. Auch können Oberflächen beliebig genau angenähert werden. Diese Eigenschaften sind aber auch
+% nachteilig: einige Oberflächen \emph{müssen} angenähert werden. So kann z.B. eine Kugel nicht perfekt durch ein Dreiecksnetz
+% abgebildet werden. 
+
+%%Bild Drahtgitter
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=10cm]{drahtgitter}
+%   \caption{Ein 3D-Würfel mit schattierten Seiten, als Drahtgittermodell und eine Aufteilung in Dreiecke. Die Vertices
+%   sind die Eckpunkte des Würfels.}
+%   \label{fig:wirecube}
+% \end{figure}
+
+% Hervorzuheben ist, dass auf die Berechnung von 3D-Grafiken spezialisierte Hardware 
+% ausschließlich mit Dreiecksdaten arbeiten -- die Hardware kann eigentlich nichts anderes zeichnen. Wegen der Einfachheit der Darstellung
+% können aber sehr viele Dreiecke in einer Sekunde ausgegeben werden. 
+
+% Andere Arten der Modelldarstellung, wie die \emph{implizite Darstellung}\footnote{Beschreibung eines Objekts durch eine Formel,
+% z.B. $x^2 + y^2 + z^2 = r^2$ für eine Kugel -- siehe~\cite{watt_de}, Abschn. 2.4}, \emph{Voxelgrafiken}\footnote{Voxel: ``volumetric pixel'' --
+% Analog zu Bildern sind dies dreidimensionale Raster, an dessen Rasterpunkte Farbwerte o.ä. gespeichert werden -- siehe~\cite{watt_de}, Abschn. 4.4}
+% und \emph{Patches}\footnote{Einfach gesagt, gekrümmte Vierecke -- durch mathematische Formeln beschriebene Oberflächen -- siehe~\cite{watt_de}, Kap. 3}
+% finden in der Echtzeit-3D-Grafik kaum Verwendung, da sie -- im Vergleich zu Dreiecksnetzen -- aufwändig in der Darstellung sind.
+
+% So müssen auf 3D-Grafik-Hardware gekrümmte Oberflächen (wie Kugeln, Patches) unter Verwendung von Dreiecken visualisiert werden:
+% die Oberfläche wird mit einer hohen Anzahl von Dreiecken angenähert.
+
+%%Auch zum Umrechnen von Voxel-Daten existieren Algorithmen, um daraus Dreiecksdaten zu erzeugen. % TODO Ref Marching cubes, Slides
+% Auch Voxel-Daten müssen dort durch Dreiecksdaten angenähert werden,
+% entweder als Dreiecksnetz einer Oberfläche (``marching cubes''-Algorithmus,~\cite{watt_de} Abschn. 13.3.1)
+% oder durch Benutzung von Schnittflächen~(\cite{watt_de} Abschn. 13.6).
+
+%%TODO Skizze Rendering-Pipeline?
+
+% \subsection{Räume, Transformationen und Kamera}
+
+% In praktischen Anwendungen wird selten ein einziges Modell statisch dargestellt. In der Regel müssen mehrere Modelle
+% gleichzeitig dargestellt werden (z.B. zusammengesetztes Bauteil), wobei die Modelle
+% in bestimmter Weise zueinander positioniert dargestellt werden müssen. Weiterhin soll ein "`Bewegen"' im Raum --
+% also die Betrachtung von beliebigen Punkten aus -- möglich sein. Dieser "`Blickpunkt"' des Betrachters ist die \emph{Kamera}.
+
+% Zu diesem Zweck werden verschiedene \emph{virtuelle Räume} definiert~(\cite{watt_de}, S. 166ff).
+%  So gibt es für jedes Modell ein \emph{Objektkoordinatensystem}\footnote{engl. ``object space''},
+% in dem sich alle Koordinaten des Modells befinden. 
+% Die Positionierung verschiedener Modelle zueinander wird im \emph{Weltkoordinatensystem}\footnote{engl. ``world space''} vorgenommen. 
+% Dazu wird jedem Modell eine \emph{Transformation} zugewiesen, welche Koordinaten aus dem Objekt- in das
+% Weltkoordinatensystem überführt. 
+
+% Eine Transformation wendet Verschiebungen, Skalierungen und Rotationen an. Als Repräsentation von Transformationen
+% verwendet man Matrizen\footnote{Genauer: $4 \times 4$-Matrizen -- die dreidimensionalen Koordinaten des Modells werden
+% in homogene Koordinaten überführt. Die Verwendung von homogenen Koordinaten
+% erlaubt das Darstellen von Verschiebungen in der Matrix.}, % Ref Watt (DE)
+% jede Koordinate wird dann mit der Transformationsmatrix multipliziert. Mehrere Transformationen können angewendet werden, indem 
+% die entsprechenden Matrizen der Teiltransformationen in der gewünschten Reihenfolge zu der Gesamtmatrix konkateniert werden~(\cite{watt_de}, Kap. 1).
+
+% Die Übersetzung eines Dreiecksnetz-Modells in das Weltkoordinatensystem erfordert nur die Anwendung der Transformationsmatrix
+% auf die Koordinaten aller Vertices.
+
+%%TODO Hier Skizze 
+% Die Position des Betrachters wird durch das \emph{Kamerakoordinatensystem}\footnote{engl. ``eye space'' oder ``camera space''}
+%  bestimmt. Dies ist so definiert, dass der "`Blickpunkt"' am Koordinatenursprung des Systems liegt
+% und die "`Blickrichtung"' einer gegebenen Achse entspricht. 
+% Durch eine weitere Transformation werden Welt-Koordinaten in Kamera-Koordinaten
+% überführt. Dies erlaubt eine beliebige Positionierung des Betrachters in der Szene und eine beliebige Blickrichtung.
+% Die zugrundeliegenden Prinzipien sind die selben wie bei der Transformation aus dem Objektkoordinatensystem.
+
+% Der Blickpunkt ist ein Punkt in einem \emph{dreidimensionalem} Raum, eine Szene wird jedoch auf einem
+% \emph{zweidimensionalem} Bild dargestellt -- die "`verlorene"' Dimension ist die Tiefe.
+% Daher wird eine \emph{Bildebene} in geringem Abstand zum Betrachter gesetzt,
+% welche als "`Projektionsfläche"' der Szene dient.
+
+% Weiterhin müssen Modelle \emph{perspektivisch verzerrt} werden. 
+% Stark vereinfacht gesagt werden auf die Kamera-Koordinaten eine \emph{Projektionsmatrix} angewendet, welche dazu führt,
+% das bei der Projektion auf die Bildebene jede Koordinate durch ihre $z$-Komponente dividiert wird -- eine perspektivische Verzerrung.
+% \footnote{Eine ausführliche Beschreibung findet sich in~\cite{watt_de}, Kap. 1.}
+%%Bei den vorangegangenen Transformationen werden die Koordinaten
+%%als homogene Koordinaten interpretiert. Homogene Koordinaten besitzen eine vierte Komponente $w$, die bei der Anwendung
+%%der vorangegangenen Transformationen $1$ ist~(\cite{watt_de}, Kap. 1).
+%%Für die perspektivische Verzerrung wird auf die Koordinaten im Kamerakoordinatensystem eine \emph{Projektionsmatrix} angewendet,
+%%die als Besonderheit die $w$-Koordinate auf den Wert der $z$-Koordinate -- den Abstand von der Bildebene -- setzt.
+%%Werden nun die transformierten Koordinaten durch die $w$-Komponente dividiert so ist dies effektiv die perspektivische Verzerrung.
+%%Die Projektionsmatrix kann frei gewählt werden -- z.B. kann sie, durch Setzen der $w$-Koordinate auf $1$, auch orthographische
+%%Projektionen darstellen.
+
+% \subsection{Texturen}
+
+% \newglossaryentry{Textur}{name={Textur},plural={Texturen},description={Bilddaten, bei der Fragmentverarbeitung ausgelesen. Typischerweise auf Oberfläche von Modellen "`gespannt"'}}
+% Zur Simulation von detaillierten Oberflächen werden \emph{\glspl{Textur}} verwendet. Im Regelfall sind dies zweidimensionale
+% Bilder. Einem jeden Dreieck eines Modells ist ein (ebenfalls dreieckiger) Ausschnitt auf einer Textur zugeordnet. 
+% Die Zuordnung findet über \emph{Texturkoordinaten} statt, d.h. jedem Vertex ist ein weiteres Zahlenpaar zugeordnet,
+% welches einen Punkt auf der Textur angibt.
+% Beim Rendering wird nun der durch diese Koordinaten beschriebene Texturausschnitt auf die Oberfläche des Dreiecks 
+% "`gespannt"': für jedes gerenderte Pixel des Dreiecks wird die Position des zugehörigen Textur-Pixels (``texel'')
+% berechnet. Der Farbwert der Textur an dieser Position wird ausgelesen und dient als Farbwert des gerenderten Pixels~(\cite{watt_de}, S. 160).
+
+% \subsection{Shading}
+
+% \newglossaryentry{Shading}{name={Shading},description={Berechnung der Farbe eines beleuchteten Punktes auf einer 3D-Oberfläche}}
+% Bei der visuellen Wahrnehmung spielt die Interaktion von wahrgenommen Oberflächen mit Lichtquellen eine wichtige
+% Rolle. Aus Helligkeitsunterschieden, die aus Variationen von Abstand und Lage zu einer Lichtquelle
+% herrühren, können auf Objekteigenschaften wie Drehung, Größe und Form sowie auf Oberflächeneigenschaften
+% wie deren Struktur geschlossen werden.
+% Bei der Computergrafik ist die Berechnung der Beleuchtung einer Oberfläche
+% entsprechend wichtig. Es variiert aber nach Anwendungsfall, ob die Beleuchtung die in der Realität stattfindenden physikalischen Vorgänge
+% nachbilden soll, oder aber ob diese nicht physikalisch korrekt sein, aber dafür
+% eine dreidimensionale Form einfach erkennen lassen soll.
+
+% In der bisherigen Beschreibung der Darstellung von Oberflächen wurde die Berechnung der Beleuchtung einer
+% Oberfläche ausgelassen. Diese Berechnung wird \emph{\gls{Shading}} (übersetzt "`Schattierung"') genannt~(\cite{watt_de}, S. 146, 198).
+%%Begr. Shading: , Schattierung: Watt (DE) 146, 198 -> Ergebnis ist "Intensität"
+% Beim Shading wird eine \emph{Lichtintensität}, d.h. die Intensität des reflektierten Lichts, für Punkte auf der
+% Oberfläche berechnet.
+
+% Um das reflektierte Licht zu berechnen wird mindestens der Oberflächenpunkt im Raum sowie die Lage der Oberfläche
+% -- als \emph{Oberflächenormale} an dem gegebenen Punkt -- benötigt.
+
+%%TODO Bilder
+% Es gibt verschiedene Strategien zur Berechnung von Lichtintensitäten. Die einfachste ist die Berechnung der Lichtintensität
+% eines Punktes des Dreiecks und die Verwendung dieses Wertes für das komplette Dreieck. Dieser Ansatz, ``flat shading'',
+% ist zwar schnell, hat aber eine sehr "`facettierte"' und kaum realistische Objektdarstellung zur Folge.
+%%TODO Ref auf Methoden
+
+% Wird die Intensität für jedes Vertex berechnet und dann über das Dreieck linear interpoliert ("`Gouraud-Shading"') so ist
+% das Ergebnis bereits weniger facettiert, allerdings mit Mehraufwand für Intensitätsberechnung und Interpolation verbunden.
+% Trotzdem haben Objekte bei Verwendung dieser Methode ein charakteristisches Aussehen, besonders die Kanten von Dreiecken lassen sich leicht erkennen.
+
+% Die aufwändigste Methode ist das Berechnen der Intensität für jedes dargestellte Pixel ("`Phong Shading"'), wobei
+% nur per Vertex verfügbare Werte über das Dreieck linear interpoliert werden (analog zur eigentlichen Intensität beim
+% Gouraud-Shading). Der Aufwand wird aber damit belohnt, dass keine Facetten und wenig Kanten sichtbar sind.
+% \footnote{Ein Vergleich der verschiedenen Interpolationsarten findet sich auch in~\cite{watt_de}, Kap. 18.}
+%%@@@ Kanten sichtbar an Umriss
+
+% \section{Aufbau Hardware}
+
+% \subsection{Ablauf Echtzeit-Rendering}
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics{3d_pipeline}
+%   \caption{Schematische Darstellung der 3D-Grafik-Pipeline}
+%   \label{fig:3d_pipeline}
+% \end{figure}
+
+% Die Ausgabe der Grafik soll in der Regel als Rastergrafik auf einem Computermonitor, also auf einer zweidimensionalen Fläche, erfolgen.
+% Demgegenüber besitzen 3D-Modelle per Definition Koordinaten in einem dreidimensionalen Raum, deren Komponenten potentiell
+% aus der Menge der reellen Zahlen stammen. Es muss also eine \emph{Projektion} vorgenommen werden. 
+
+% Diese Projektion wird mit den Ausgaben der Vertexverarbeitung durchgeführt. Bei der Vertexverarbeitung werden auf alle Vertices die gleichen
+% Berechnungen angewendet. Diese werden in der Hardware in der Regel parallel 
+% auf mehreren Recheneinheiten ausgeführt. Im Allgemeinen wird dort mit Vektoren gerechnet.
+% Die Vertexverarbeitung kann mehrere Werte pro Vertex berechnen, aber minimal muss die Vertex-Koordinate in das Kamerakoordinatensystem
+% abgebildet werden.
+% \newglossaryentry{Vertexattribut}{name={Vertexattribut},plural={Vertexattribute},description={Weitere, jedem Vertex zugeordnete Werte}}
+% In der Regel werden aber weitere Werte berechnet ("`\glspl{Vertexattribut}"'), die als Eingabe der späteren Fragmentverarbeitung dienen.
+
+% \newglossaryentry{Shadingsprache}{name={Shadingsprache},plural={Shadingsprachen},description={Sprachen zur Programmierung von Vertex- und Fragmentverarbeitung auf GPUs}}
+% Die beiden Verarbeitungsschritte der "`Vertexverarbeitung'' und "`Fragmentverarbeitung"' sind auf modernen GPUs
+% \emph{programmierbar} -- die vorgenommenen Berechnungen werden also durch von einem Programmierer bereitgestellte
+% Programme bestimmt. Die GPUs selbst, als Mikroprozessoren, verarbieten in einem Binärcode vorliegende Programme; dieser Code
+% wird jedoch von den Programmierschnittstellen "`versteckt"' und Programme werden in einer Hochsprache gegeben\footnote{GLSL bei OpenGL, HLSL bei DirectX}.
+% Die Sprachen werden "`\glspl{Shadingsprache}"' genannt.
+
+% Auf der neuesten Generation von GPUs (GeForce 8) % etwas zu GraKa-Generationen sagen
+% ist ein weiterer Verarbeitungsschritt verfügbar, die "`Geometrieverarbeitung"'\footnote{engl. geometry shader}. 
+% Diese hat die Besonderheit, neue Dreiecke
+% mit beliebigen Koordinaten erzeugen zu können: 
+% auf eineer Grafikkarte ohne Geometrieeinheit sind alle Verarbeitungsschritte "`statisch"' bezüglich der Vertices -- nur existierende
+% Werte können manipuliert werden. Gleiches gilt für Dreiecksdaten. Das \emph{Erzeugen} von Vertices kann bei diesen Grafikkarten
+% also nur durch die CPU erfolgen, woraufhin die Daten zur GPU übertragen werden.
+% Im Schritt der Geometrieverarbeitung kann die GPU aber selbst Vertices und Dreiecke erzeugen
+% und auch entfernen. Dieser Schritt erlaubt die Implementierung von Algorithmen auf der Grafikkarte, die viel 
+% Flexibilität bei der Verarbeitung von Modelldaten, speziell der Dreiecksdaten, erfordern.
+
+% \newglossaryentry{Fragment}{name={Fragment},description={Ergebnis der Rasterung eines Dreiecks}}
+% \label{rasterung}
+% Nach der Vertex- bzw. Geometrieverarbeitung stehen die Koordinaten in das \emph{Kamerakoordinatensystem}\footnote{Betrachter befindet sich am
+% Ursprung} transformiert zur Verfügung. Diese werden nun auf das Monitor-2D-Rasterbild mit Hilfe einer einfachen linearen Projektion
+% abgebildet. Damit erhält man die Eckpunkte der Dreiecke im Koordinatensystem des Monitors mit denen die Dreiecke selbst
+% gezeichnet werden. Dies geschieht durch Rasterung\footnote{siehe auch~\cite{watt_de}, Abschn. 6.4} der Dreiecke. Um die Farbe eines berechneten 
+% \emph{\gls{Fragment}s}\footnote{Ein Fragment ist ein Teil eines Pixels des Rasterbildes. Ein Pixel kann aus mehreren Fragmenten bestehen wenn 
+% Algorithmen zur Kantenglättung benutzt werden. Zum Verständnis reicht es jedoch aus, anzunehmen, dass ein Fragment genau einem Pixel entspricht.} zu 
+% bestimmen werden eine Reihe weiterer Rechnungen vorgenommen. Die Eingaben der Fragmentverarbeitung werden
+% durch perspektivisch korrekte lineare Interpolation aus den Vertexattributen der Drei\-ecks\-eck\-punk\-te  
+% berechnet. Abbildung~\ref{fig:triraster} zeigt schematisch die Rasterung eines Dreiecks mit einem interpolierten Vertexattribut.
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[scale=0.8]{triraster1}
+%   \qquad
+%   \includegraphics[scale=0.8]{triraster2}
+%   \qquad
+%   \includegraphics[scale=0.8]{triraster3}
+%   \caption{Rasterung eines Dreiecks: 1. Nach Transformation in das Koordinatensystem des Monitors.
+%   2. Vom Dreieck überlagerte Fragmente. 3. Ein Vertexattribut "`Grauwert"', über die Fragmente interpoliert.}
+%   \label{fig:triraster}
+% \end{figure}
+
+% In den meisten Fällen wird in der Fragmentverarbeitung eine Textur ausgelesen
+% und mit den Vertexattributen durch Operationen kombiniert (z.B. Multiplikation, um eine beleuchtete Oberfläche zu simulieren).
+% Wie bei den Vertex-Berechnungen werden auch bei den Fragment-Berechnungen die gleichen Berechnungen auf eine Vielzahl
+% von Fragmenten gleichzeitig angewendet und erfolgt parallel auf mehreren Vektorrecheneinheiten.
+
+%%Alle Verarbeitungseinheiten sind auf aktueller Grafikhardware programmierbar.
+% \section{Berechnungsfrequenzen}
+% \label{berechnungsfrequenz_locker}
+
+% Für das Rendering eines 3D-Modells werden verschiedenartige Daten benötigt. So zuerst das Modell selbst, als Dreiecksnetz. Dazu
+% eine Reihe von Transformationen zur Abbildung zwischen Koordinatensystemen -- Objekt zu Welt, Welt zu Kamera und schliesslich
+% eine Projektion von Koordinaten im Kameraraum auf Bildschirmpixel. Typischerweise kommen noch weitere, vom Shading verwendete Daten --
+% wie eine Oberflächennormale, per Vertex definiert, und eine Textur -- hinzu.
+
+% Zu Beobachten ist, dass diese verschiedenen Daten in ihrer "`Veränderlichkeit"' variieren:
+% \begin{itemize}
+% \item Die verwendeten Transformationen gelten für das ganze 3D-Modell, verändern sich also \emph{per Mesh}.
+% \item Vertexdaten, wie Position im Objektkoordinatensystem oder Oberflächennormale, sind \emph{per Vertex}
+% verschieden. Vor allem berechnete Vertexattribute, die bei der Fragmentverarbeitung verwendet werden, werden
+% bloss per Vertex berechnet -- die eigentliche Eingabe der Fragmentverarbeitung wird aus den per-Vertex-Werten
+% interpoliert.
+% \item Texturdaten werden in der Fragmentverarbeitung ausgelesen, solch ausgelesene Werte ändern sich \emph{per Fragment}.
+% \end{itemize}
+
+% Aus diesen Beobachtungen leitet sich das Konzept der \emph{Berechnungsfrequenz}\footnote{Zuerst beschrieben in \cite{stanford_rtsl}.} ab.
+% Die Berechnungsfrequenz eines Wertes sagt aus, wie oft dieser berechnet werden müsste bzw. in welchem Verarbeitungsschritt
+% dies passiert. Je "`höher"' die Frequenz, desto häufiger muss ein Wert potentiell berechnet werden:
+% \begin{itemize}
+% \item Die theoretisch niedrigste Frequenz besitzen Verknüpfungen statischer Konstanten -- solche Ergebnisse müssen nur ein einziges Mal berechnet werden.
+% \item Die für 3D-Grafik nächsthöhere, relevante Frequenz ist die "`Meshfrequenz"': Transformationen werden in der Regel per Mesh spezifiziert,
+% eine Verknüpfung von zwei Transformationen muss nur einmal für ein Modell berechnet werden; über die gesamte Ausführungszeit einer Anwendung gesehen
+% müssen solche Transformation aber praktisch öfter als ein einziges Mal berechnet werden.
+% \item Als nächste Frequenz folgt die "`Vertexfrequenz"' für Werte, die von Vertexdaten abhängen. Augenscheinliches Beispiel sind
+% vom Objektkoordinatensystem in das Kamerakoordinatensystem abgebildete Modellkoordinaten. Da ein Modell in der Praxis mehr als ein Vertex besitzt,
+% ist ersichtlich, das Berechnungen in Vertexfrequenz öfter ausgeführt werden als solche mit Meshfrequenz.
+% \item Die höchstmögliche Frequenz ist die der "`Fragmentfrequenz"' für Werte, die per Fragment berechnet werden müssen.
+% Dies sind zum Beispiel aus Vertexdaten berechnete Werte, die sich nicht sinnvoll interpolieren lassen, oder Werte aus Texturen,
+% deren Zweck es ja ist, mehr Details zu ermöglichen, als es Vertexdaten allein zulassen würden.
+% Ein gerastertes Dreieck überspannt in der Regel mehrere Fragmente; aus diesem Grund werden per Fragment auszuführende Operationen
+% öfters berechnet als per Vertex.
+% \end{itemize}
+
+% Eine höhere Berechnungsfrequenz korrespondiert prinzipiell mit einer weiter hinten liegenden Verarbeitungsstufe in der Renderingpipeline.
+% Statische und Meshfrequenz sind praktisch sogar noch vor der Verarbeitung auf der GPU angesiedelt. Berechnungen in Vertexfrequenz (oder "`per Vertex"')
+% entsprechen Berechnungen auf der Vertexeinheit, analog werden Berechnungen in Fragmentfrequenz (oder "`per Fragment) auf der Fragmenteinheit ausgeführt.
+
+% Abbildung~\ref{fig:simple_cg} zeigt ein Programm-Paar für eine einfache Shadingberechnung in Cg. Die verschiedenen auftretenden Berechnungsfrequenzen
+% sind dabei farbig markiert. 
+
+% Die Nützlichkeit von Berechnungsfrequenzen besteht in der Verwendbarkeit als Werkzeug zur Optimierung des Renderings von 3D-Modellen.
+% Bei der Echtzeitgrafik ist ein grundsätzliches Bestreben, zum Zwecke schnellerem Renderings Operationen so selten wie möglich auszuführen.
+% Wird eine Operation, für die eine Berechnung per Vertex ausreichend wäre, auf der Fragmenteinheit ausgeführt, so bedeutet dies
+% eine Verschwendung von Rechenleistung. Bestimmt man nun für eine Beschreibung, wie ein Modell in den verschiedenen Renderingschritten zu
+% verarbeiten ist, die Frequenz jeder Operation, mit der diese ausgeführt werden muss, so können die Operationen optimal auf die
+% Verarbeitungseinheiten verteilt werden, ohne dass Rechenleistung verschwendet wird.
+
+% Programme in der hier beschriebenen Shadingsprache sind genau solche Beschreibungen der Verarbeitungsschritte; der implementierte Compiler
+% bestimmt für jede Operation eines Programms die nötige Berechnungsfrequenz und spaltet das Eingabeprogramm entsprechend auf.
+
+% \begin{figure}[hp]
+%   \input{simple_cg}
+%   \caption{Ein Programm-Paar in Cg.}
+%   \centering
+%   \small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+%   \label{fig:simple_cg}
+% \end{figure}
+
+% \section{Zusammenfassung}
+
+% Bei der Echtzeit-3D-Grafik werden von der Grafikhardware als Dreiecksnetze vorliegende 3D-Modelle dargestellt.
+% Diese Modelle bestehen aus \emph{``Vertices''}, die die Eckpunkte von Dreiecken bilden. Bei der Darstellung eines
+% Modelles wird zuerst die \emph{Vertexverarbeitung} vorgenommen; dabei werden die Raumkoordinaten der Vertices transformiert
+% und weitere Berechnungen auf den Vertices zugeordneten Daten vorgenommen ("`Vertexattribute"').
+% Als nächsten Schritt der Darstellung werden Dreiecke bei der \emph{Rasterung} auf Fragmente (im Wesentlichen Pixel) des Ausgabegerätes abgebildet.
+% Bei dieser \emph{Fragmentverarbeitung} dienen als Eingaben die Ausgaben der Vertexverarbeitung, allerdings \emph{interpoliert}.
+% Es werden weitere Berechnung vorgenommen, um Details hinzuzufügen, für die eine Berechnung per Vertex zu "`grob"' wäre,
+% wie das "`aufziehen"' von \emph{Texturen} (Bilddaten) auf das 3D-Modell.
+
+% Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Fragmentverarbeitung"' sind beide programmierbar, die Ausgabe des Compilers
+% soll ein Programm-Paar aus Vertex- und Fragmentprogramm sein.
+
+% Aus den Verarbeitungsschritten der Echtzeit-3D-Grafik wurde das Konzept der \emph{Berechnungsfrequenz} abgeleitet:
+% diese sagt aus, auf welche Verarbeitungseinheit eine Operation eines GPU-Programms ausgeführt werden muss.
+% Die Berechnungsfrequenz wird vom Compiler verwendet werden, um zu bestimmen,
+% in welches Ausgabeprogramm (Vertex- oder Fragmentprogramm) eine Operation ausgegeben werden muss.
 
 \chapter{Sprachspezifikation}
 \label{langspec}
