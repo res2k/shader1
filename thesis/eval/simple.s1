@@ -1,0 +1,20 @@
+void main (in float4 Position,
+	   in float2 TexCoord,
+	   in float3 Normal,
+	   in float4x4 ModelViewProj,
+	   in float3 LightColor,
+	   in float3 LightDirObj,
+	   in sampler2D Texture,
+	   out float4 outPosition,
+	   out float4 outColor)
+{
+	outPosition = mul (ModelViewProj, Position);
+	
+	float3 ambient = float3 (0.4);
+	float3 litColor = LightColor * dot (LightDirObj, Normal);
+	litColor = litColor + ambient;
+	
+	float3 surface = tex2D (Texture, TexCoord).rgb;
+	outColor.rgb = surface * litColor;
+	outColor.a = 1;
+}

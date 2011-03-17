@@ -1,0 +1,56 @@
+struct V2F
+{
+  float3 i_tmp7_;
+  float3 v_N_;
+  float3 i_tmp16_;
+};
+
+void vertex_main_ (out V2F v2f, varying in float4 iposition_, varying in float3 inormal_, uniform in float4x4 imodelViewProj_, uniform in float3 iglobalAmbient_, uniform in float3 ilightColor_, uniform in float3 ilightPosition_, uniform in float3 ieyePosition_, uniform in float3 iKe_, uniform in float3 iKa_, uniform in float3 iKd_, uniform in float3 iKs_, uniform in float ishininess_, out float4 ooPosition_ : POSITION)
+{
+  ooPosition_ = mul (imodelViewProj_, iposition_);
+  float3 v_P_ = float3 (iposition_.x, iposition_.y, iposition_.z);
+  v2f.v_N_ = inormal_;
+  v2f.i_tmp7_ = ilightPosition_ - v_P_;
+  v2f.i_tmp16_ = ieyePosition_ - v_P_;
+}
+
+
+void fragment_main_ (in V2F v2f, uniform in float4x4 imodelViewProj_, uniform in float3 iglobalAmbient_, uniform in float3 ilightColor_, uniform in float3 ilightPosition_, uniform in float3 ieyePosition_, uniform in float3 iKe_, uniform in float3 iKa_, uniform in float3 iKd_, uniform in float3 iKs_, uniform in float ishininess_, out float4 ocolor_ : COLOR)
+{
+  float3 v_emissive_ = iKe_;
+  float3 v_ambient_ = iKa_ * iglobalAmbient_;
+  float3 i_tmp13_ = iKd_ * ilightColor_;
+  float3 i_tmp28_ = iKs_ * ilightColor_;
+  float3 i_tmp31_ = v_emissive_ + v_ambient_;
+  float4 m_color_B0_;
+  float3 v_L_ = normalize (v2f.i_tmp7_);
+  float i_tmp9_ = dot (v2f.v_N_, v_L_);
+  float v_diffuseLight_ = max (i_tmp9_, 0);
+  float3 i_tmp14_ = float3 (v_diffuseLight_, v_diffuseLight_, v_diffuseLight_);
+  float3 v_diffuse_ = i_tmp13_ * i_tmp14_;
+  float3 v_V_ = normalize (v2f.i_tmp16_);
+  float3 i_tmp18_ = v_L_ + v_V_;
+  float3 v_H_ = normalize (i_tmp18_);
+  float i_tmp20_ = dot (v2f.v_N_, v_H_);
+  float i_tmp23_ = max (i_tmp20_, 0);
+  float v_specularLight_ = pow (i_tmp23_, ishininess_);
+  bool c_tmp27_ = v_diffuseLight_ <= 0;
+  float v_specularLight1_1wa;
+  if (c_tmp27_)
+  {
+    v_specularLight1_1wa = 0;
+  }
+  else
+  {
+    v_specularLight1_1wa = v_specularLight_;
+  }
+  float3 i_tmp29_ = float3 (v_specularLight1_1wa, v_specularLight1_1wa, v_specularLight1_1wa);
+  float3 v_specular_ = i_tmp28_ * i_tmp29_;
+  float3 i_tmp32_ = i_tmp31_ + v_diffuse_;
+  float3 i_tmp33_ = i_tmp32_ + v_specular_;
+  float3 i_tmp34_ = i_tmp33_;
+  float4 m_color_B01_cqa = float4 (i_tmp34_.x, i_tmp34_.y, i_tmp34_.z, m_color_B0_.w);
+  ocolor_ = float4 (m_color_B01_cqa.x, m_color_B01_cqa.y, m_color_B01_cqa.z, 1);
+}
+
+

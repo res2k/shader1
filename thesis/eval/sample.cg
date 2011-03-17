@@ -1,0 +1,56 @@
+// Eingabe von Anwendung an Vertex-Programm
+struct app2vertex {
+	float4 Position : POSITION;
+	float2 TexCoord : TEXCOORD0;
+	float4 Normal : NORMAL;
+};
+
+// Von Vertex- an Fragmentprogramm uebergebene Daten
+struct vertex2fragment { 
+	float4 Hposition : POSITION;
+	float2 TexCoord;
+	float3 eyeNormal;
+	float3 vertToLight;
+};
+
+// Vertexprogramm
+vertex2fragment vertex_main (app2vertex IN,
+	uniform float4x4 ModelView : state.matrix.modelview,
+	uniform float4x4 ModelViewIT : state.matrix.modelview.invtrans,
+	uniform float4x4 ModelViewProj : state.matrix.mvp,
+	uniform float4 LightPos)
+{
+	vertex2fragment OUT;
+
+	// Transformierte Koordinaten
+	OUT.Hposition = mul (ModelViewProj, IN.Position);
+	
+	// Werte fuer Beleuchtungsberechnung
+	OUT.eyeNormal = mul (ModelViewIT, IN.Normal).xyz;
+	float3 eyeVertex = mul (ModelView, IN.Position).xyz;
+	OUT.vertToLight = LightPos.xyz - eyeVertex;
+	
+	// Weitergabe Texturkoordinaten
+	OUT.TexCoord = IN.TexCoord;
+	
+	return OUT;
+}
+
+// Fragmentprogramm
+// ("Texture" ist Eingabe von Anwendung)
+float4 fragment_main (in vertex2fragment IN,
+	uniform sampler2D Texture,
+	uniform float4 Attenuation,
+	uniform float3 LightColor) : COLOR
+{
+	// Beleuchtungsberechnung
+	float3 eyeNormal = normalize (IN.eyeNormal);
+	float d = length (IN.vertToLight);
+	float3 vertToLight = normalize (IN.vertToLight);
+        float att = 1.0 - (d/Attenuation.x);
+        
+	// Diffuse Beleuchtung
+	float3 litColor = LightColor * max(dot (eyeNormal, vertToLight), 0) * att;	
+	return tex2D (Texture, IN.TexCoord) * float4 (litColor, 1);
+}
+

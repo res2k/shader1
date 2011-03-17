@@ -1,0 +1,30 @@
+struct V2F
+{
+  float2 m_TexCoord_B0_;
+  float3 v_litColor1_cqa;
+};
+
+void vertex_main_ (out V2F v2f, varying in float4 iPosition_, varying in float2 iTexCoord_, varying in float3 iNormal_, uniform in float4x4 iModelViewProj_, uniform in float3 iLightColor_, uniform in float3 iLightDirObj_, out float4 ooutPosition_ : POSITION)
+{
+  float3 v_ambient_ = float3 (0.4, 0.4, 0.4);
+  ooutPosition_ = mul (iModelViewProj_, iPosition_);
+  float i_tmp3_ = dot (iLightDirObj_, iNormal_);
+  float3 i_tmp4_ = float3 (i_tmp3_, i_tmp3_, i_tmp3_);
+  float3 v_litColor_ = iLightColor_ * i_tmp4_;
+  v2f.v_litColor1_cqa = v_litColor_ + v_ambient_;
+  v2f.m_TexCoord_B0_ = iTexCoord_;
+}
+
+
+void fragment_main_ (in V2F v2f, uniform in float4x4 iModelViewProj_, uniform in float3 iLightColor_, uniform in float3 iLightDirObj_, varying in sampler2D iTexture_, out float4 ooutColor_ : COLOR)
+{
+  float4 m_outColor_B0_;
+  float4 i_tmp7_ = tex2D (iTexture_, v2f.m_TexCoord_B0_);
+  float3 v_surface_ = float3 (i_tmp7_.x, i_tmp7_.y, i_tmp7_.z);
+  float3 i_tmp12_ = v_surface_ * v2f.v_litColor1_cqa;
+  float3 i_tmp13_ = i_tmp12_;
+  float4 m_outColor_B01_dua = float4 (i_tmp13_.x, i_tmp13_.y, i_tmp13_.z, m_outColor_B0_.w);
+  ooutColor_ = float4 (m_outColor_B01_dua.x, m_outColor_B01_dua.y, m_outColor_B01_dua.z, 1);
+}
+
+

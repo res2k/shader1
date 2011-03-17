@@ -36,7 +36,7 @@
 \usepackage[plainpages=false,pdfpagelabels,colorlinks=true,urlcolor=black,pagecolor=black,citecolor=black,linkcolor=black]{hyperref}
 %\newcommand\url[1]{\texttt{#1}}
 
-\lstset{basicstyle=\ttfamily\small,lineskip=-0.5em,language={},tabsize=8,inputencoding=utf8/latin1}
+\lstset{basicstyle=\ttfamily\small,lineskip=-0.5em,language={},tabsize=8,inputencoding=utf8/latin1,numberstyle=\tiny}
 
 % define the title
 \author{Frank Richter 68278\\frank.richter@gmail.com}
@@ -2633,12 +2633,315 @@ Auch hervorzuheben ist die verwendete Zwischencoderepräsentation, die als Über
 semantischen Analyse bis zur Codegenerierung dient. Weiterhin ist sie darauf ausgerichtet, die Implementierung von Optimierungsschritten
 möglichst zu vereinfachen.
 
+\chapter{Evaluation}
+
+\newcounter{program}
+\newcommand\prglisting[3]{\refstepcounter{program}\label{#1}#3\vspace{-1.5em}\begin{center}{\small Programm \arabic{program}: #2}\end{center}}
+
+% zZ:
+% - Verhalten bei Prog. mit Viel Logik in VP
+% - Verhalten bei Prog. mit Viel Logik in FP
+% - Was mit Schleifen
+% - Was mit Arrays
+% - Was mit Funktionen
+
+In diesem Kapitel sollen Verhalten und Ausgabe des Compilers bewertet werden.
+
+Um möglichst praxisnahe Fälle zu betrachten wurden die Programme, anhand derer die Bewertungen vorgenommen werden,
+aus existierenen Cg-Programmen "`erstellt"'; dazu wurden die als separate Vertex- und Pixelprogramme vorliegenden
+Quellen in Programme der zu übersetzenden Shadingsprachen umgewandelt\footnote{Wegen der grossen syntaktischen Ähnlichkeiten
+konnte dies größtenteils durch Kopieren von Quelltextblöcken vorgenommen werden.} und anschliessen vom Compiler übersetzt.
+Die Ausgabe des Compilers, die "`generierten Programme"', sind wiederum Cg-Programme. Zur Überprüfung der syntaktischen Korrektheit wurden die
+generierten Programme mit dem Cg-Compiler \verb+cgc+ übersetzt (alle generierten Programme wurden fehlerfrei übersetzt,
+sind also syntaktisch korrekt). Schliesslich wurden, zur Effizienzbewertung, ursprüngliche
+wie auch generierte Cg-Programme mit dem Cg-Compiler in eine Assembler-artige Shadingsprache übersetzt und die jeweiligen Compiler-Ausgaben verglichen.
+
+Die Ausgabe-Programme des entwickelten Compilers können, da diese ja selbst Cg-Programme sind, mit der Eingabe prinzipiell direkt verglichen
+werden. Praktisch werden Vergleiche dadurch erschwert, dass die ausgebenen Programme prinzipbedingt drastisch anders formatiert sind, Variablen andere Namen als in den Eingabeprogrammen besitzen usw.
+
+Folgende Aspekt wurden im Vergleich von Eingabe- und Ausgabeprogrammen betrachtet:
+\begin{itemize}
+\item Grundsätzliche \emph{Semantische Äquivalenz} der beiden Programme. Diese ist von höchster Wichtigkeit.
+\item \emph{Effizienz} des Ausgabeprogrammes, Wirksamkeit von Optimierungen: das Ausgabeprogramm sollte keine unnötigen Operationen enthalten und
+es sollten möglichst wenige Werte vom Vertexprogramm ausgegeben werden.
+\end{itemize}
+
+Die meisten der verwendeten Eingabe-Cg-Programme stammen aus dem Buch ``The Cg Tutorial'' (\cite{cg_tutorial}).
+Die Programme wurden ausgewählt, da sie einerseits Einführungs-Charakter besitzen -- sie sind vergleichsweise einfach aufgebaut --
+aber andererseits ohne Weiteres praktisch einsetzbar sind.
+
+% C5E1v_basicLight
+% C5E2v_fragmentLighting , The C5E3f_basicLight
+% C5E4v_twoLights
+
+% Listings nummerieren
+% Zeilennummern
+
+\section{Beispielprogramm}
+
+Das erste betrachtete Programm ist das in der Einführung verwendete Beispielprogramm (Abbildung~\ref{fig:simple_cg}):
+es berechnet für jedes Vertex des Modells einen Beleuchtungswert; dieser wird über die Pixel des ausgebenen
+Dreiecke (implizit) interpoliert. Weiterhin wird für jedes Pixel eine "`Materialfarbe"' aus einem Oberflächenmuster gelesen und
+mit dem Beleuchtungswert moduliert.
+
+% Kurz: was es macht
+
+\prglisting{lst:example_cg}{Ursprüngliches Programm in Cg (Vertex- und Pixelprogramm)}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/simple.cg}}
+
+\prglisting{lst:example_s1}{Eingabeprogramm für den Compiler in der Shadingsprache}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/simple.s1}}
+
+\prglisting{lst:example_compiled}{Ausgabe des Compilers in Cg}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/simple_compiled.cg}}
+
+\subsubsection{Bewertung}
+\paragraph{Semantik:} Sowohl das ursprüngliche Cg-Programm wie auch die Ausgabe des Compilers sind semantisch
+äquivalent.
+
+In den Vertexprogrammen (Programme~\ref{lst:example_cg} und~\ref{lst:example_compiled}) werden die Ausgabeposition (\verb+output.Position+ bzw. \verb+ooutPosition_+) sowie 
+der Beleuchtungswert (\verb+output.litColor+ bzw. \verb+v_litColor1_cqa_+) berechnet. Die Zuweisung der Bildkoordinate des Musters
+(\verb+TexCoord+ bzw. \verb+iTexCoord_+) an eine Ausgabe des Vertexprogramms (\verb+output.TexCoord+ bzw. \verb+v2f.m_TexCoord_B0_+)
+wurde für das Ausgabeprogramm vom Compiler automatisch generiert. Die Ausgabe des generierten Vertexprogramms (die Struktur \verb+V2F+)
+entspricht der Ausgabe des ursprünglichen Programms~\ref{lst:example_cg} (die Struktur \verb+VertexOutput+), allerdings wird die transformierte
+Vertex-Koordinate beim generierten Vertexprogramm (\verb+vertex_main_+ in Programm~\ref{lst:example_compiled}) als Ausgabeparameter \verb+ooutPosition_+ anstatt als
+Element der Struktur \verb+V2F+ ausgegeben.
+
+Im ursprünglichen Pixelprogramm (\verb+pixel_main+ in Programm~\ref{lst:example_cg}) 
+wie auch generierten Pixelprogramm (\verb+fragment_main_+ in Programm~\ref{lst:example_compiled}) werden die gleichen Operationen vorgenommen:
+ein Auslesen eines Farbwertes aus dem Oberflächenmuster (\verb+surface+ bzw. \verb+v_surface_+)
+und eine Modulierung der Oberflächenfarbe mit dem Beleuchtungswert (\verb+outColor+ bzw. \verb+ooutColor_+).
+
+\paragraph{Effizienz:} Der generierte Cg-Code (Programm~\ref{lst:example_compiled}) enthält einige unnötige Zuweisungen.
+Diese werden von Eigenschaften der Zwischencoderepräsentation verursacht:
+Für eine ``Swizzle-Operation''\footnote{Auswahl/Umordnung von Vektorkomponenten, siehe Abschnitt~\ref{Vektorattribute}}
+werden mehrere Zwischencodeoperationen zum Extrahieren einzelner Komponenten generiert; mit diesen wird der Ergebnisvektor
+konstruiert. Zeile 17 im Eingabeprogramm~\ref{lst:example_s1} ist eine solche ``Swizzle-Operation'',
+Zeile 23 in Programm~\ref{lst:example_compiled} ist das Ergebnis der von dieser Operation verursachten Kombination von Zwischencodeoperationen.
+
+Die Zuweisung von Teilkomponenten eines Vektors (Zeile 19 im Eingabeprogramm~\ref{lst:example_s1}) trägt eine Schwäche des Compilers 
+bei solchen Zuweisungen zu Tage: die unveränderten Komponenten des zu verändernden Vektors werden extrahiert
+und bei der Konstruktion des Ergebnisvektors benutzt. Grundsätzlich nötig, um den Wert der unveränderten Komponenten
+zu erhalten, führt dieses Verhalten bei Vektoren mit undefinierten Komponenten dazu, dass undefinierte Werte für den neuen
+Ergebnisvektor verwendet werden. Im Ausgabeprogramm~\ref{lst:example_compiled}, Zeile 26, ist der Wert
+\verb+m_outColor_B0_.w+ ein solcher uninitialisierter Wert.
+
+Verwendung undefinierter Werte ist mindestens unnötig, aber auch störend: der Cg-Compiler mahnt solche Verwendung
+undefinierter Werte an.
+Vermieden könnte diese Verwendung werden, in dem der Compiler oder Code-Generator verfolgt, welche
+Register "`undefinierte"' Werte enthalten und mit Hilfe dieser Informationen den generierten Zwischencode bzw. Ausgabecode anpasst (z.B. Auslassung von Zuweisungen
+von undefinierten Werten oder ein Ersetzen von undefinierten Vektorkomponenten durch einen beliebigen Wert).
+
+Die Funktionen des generierten Programms werden mit Parametern deklariert, die von den Funktionen selbst nicht verwendet
+werden (z.B. Parameter \verb+iLightColor_+ der Funktion \verb+fragment_main_+). Dies ist ein Ergebnis der Aufspaltung, da bei
+dieser Eingabeparmeter von Funktionen einfach vollständig in alle Ausgabefunktionen kopiert werden. Abhilfe schaffen würde ein
+Optimierungsschritt, der für jeden Parameter einer Funktion überprüft, ob dieser tatsächlich verwendet wird und entsprechend
+unbenutzte Parameter entfernt.
+
+Praktisch führen die unnötigen Operationen allerdings nicht zu Nachteilen: der Cg-Compiler nimmt selbst Optimierungen
+auf zu übersetzenden Programmen vor; dadurch führt ein Übersetzen des Ursprungsprogramms
+sowie des generierten Programms mit dem Cg-Compiler zu identischen Ergebnisprogrammen.
+
+% Semantik: gleich
+% VP-Ausgabe: gleich
+% Operationen:
+% - einige unnötige Zuweisungen -> fehlende Optimierung
+% - Verwendung eines uninit. Wertes (m_outColor_B0_.w) -> Zwischencode-Generierung, könnte wegoptimiert werden
+
+\section{Einfache Beleuchtung für jedes Pixel}
+
+% Neue Syntax: if
+
+Dieses Programm berechnet nur einen Beleuchungswert und verwendet diesen als Oberflächenfarbe. Im Gegensatz zum
+vorherigen Programm wird diese Beleuchtungsberechnung im Pixelprogramm vorgenommen.
+Weiterhin ist die Beleuchtungsberechnung selbst komplexer.
+
+\prglisting{lst:fraglight_cg_vp}{Beleuchtungsberechnung im Pixelprogramm: Vertexprogramm}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E2v_fragmentLighting.cg}}
+
+\prglisting{lst:fraglight_cg_fp}{Beleuchtungsberechnung im Pixelprogramm: Pixelprogramm}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E3f_basicLight.cg}}
+
+Die Eingabe-Cg-Programme verwenden keine Struktur, um die Ausgaben des Vertexprogramms bzw. Eingaben
+des Pixelprogramms zu beschreiben, sondern eine explizite Zuordnung von Eingabe- bzw. Ausgabeparametern
+zu "`Plätzen"' für interpolierte Werte -- Schlüsselwörter wie \texttt{COLOR} oder \texttt{TEXCOORD0} sorgen dafür,
+dass eine interpolierte Ausgabe des Vertexprogramms dem Parameter des Pixelprogramms als Eingabe dient,
+der mit dem gleichen Schlüsselwort markiert wurde (z.B. ist die Vertexprogrammausgabe \texttt{objectPos}
+der Pixelprogrammeingabe \texttt{position} zugeordnet).
+
+\prglisting{lst:fraglight_s1}{Eingabeprogramm für Compiler in der Shadingsprache}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/fragmentLighting.s1}}
+
+\prglisting{lst:fraglight_compiled}{Ausgabe des Compilers in Cg}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/fragmentLighting_compiled.cg}}
+
+\subsubsection{Bewertung}
+\paragraph{Semantik:}
+%Sowohl das ursprüngliche Cg-Programm wie auch die Ausgabe des Compilers sind semantisch äquivalent.
+Das Vertexprogramm des generierten Cg-Programms (Funktion \verb+vertex_main_+ in Programm~\ref{lst:fraglight_compiled})
+ist ähnlich einfach wie das ursprüngliche Vertexprogramm~\ref{lst:fraglight_cg_vp}.
+Allerdings unterscheiden sich die Ausgaben des Vertexprogramms: im ursprünglichen Programm
+werden die Werte \verb+position+ und \verb+normal+ "`durchgeschleift"'. Im generierten Programm wird
+dies mit zwar \verb+inormal_+ getan, statt dem Wert \verb+iposition_+ oder \verb+v_P_+ werden aber
+Zwischenergebnisse von Berechnungen ausgegeben. Die Ursache dafür ist die Arbeitsweise des Aufspalters:
+Zwischenwerte werden als Ausgabe des Vertexprogramms bzw. Eingabe des Pixelprogramms markiert,
+sobald eine nicht interpolierbare Operation mit dem Zwischenwert vorgenommen wird.
+Die Subtraktionen auf Zeilen 30 und 35 im Programm~\ref{lst:fraglight_s1} sind interpolierbar, werden
+also in das Vertexprogramm ausgegeben. Die Funktion \verb+normalize+ allerdings nicht und 
+muss in das Pixelprogramm ausgegeben werden -- die Argumente von \verb+normalize+, Werte \verb+i_tmp7_+ und
+\verb+i_tmp16_+, werden also aus dem Vertexprogramm ausgegeben um als Eingabe des Pixelprogramms
+zu dienen.
+
+Im ursprünglichen Programm~\ref{lst:fraglight_cg_fp} hat die Verzweigung nur einen \verb+if+-Zweig; im generierten
+Programm~\ref{lst:fraglight_compiled} wurde ein \verb+else+-Zweig hinzugefügt: In der Zwischencoderepräsentation
+wurde der Variable \verb+specularLight+ des Eingabeprogramms wegen der Zuweisung ein neues Register zugeordnet;
+der hinzugefügte \verb+else+-Zweig stellt sicher, dass die Variable für dieses neue Register den "`alten"' Wert erhält,
+sollte die Bedingung für die Verzweigung nicht eingetreten sein.
+
+Generell finden sich alle Operationen der ursprünglichen Programme~\ref{lst:fraglight_cg_vp} und~\ref{lst:fraglight_cg_fp}
+auch im Ausgabeprogramm~\ref{lst:fraglight_compiled}, wenn auch, bedingt durch die Arbeitsweise des
+Compilers und Aufspalters, teilweise in anderer Reihenfolge und mit expliziten Zuweisungen von Zwischenwerten zu Variablen.
+
+\paragraph{Effizienz:}
+Wie im vorherigen Programm gibt es, aus den gleichen Gründen, wieder einige unnötige Zuweisungen,
+unbenutzte Funktionsparameter und eine Verwendung eines undefinierten Wertes.
+
+Im Vergleich zu den ursprünglichen Programmen~\ref{lst:fraglight_cg_vp} und~\ref{lst:fraglight_cg_fp}
+wurden zwei Operationen aus dem Pixel- in das Vertexprogramm "`verschoben"'; vergleicht man
+die Übersetzungsergebnisse des Cg-Compilers von ursprünglichem und generiertem Programm
+so enthält das Ergebnis-Vertexprogramm eine zusätzliche Operation,
+das Ergebnis-Pixelprogramm allerdings zwei Operationen weniger -- das vom Compiler generierte Programm
+ist also leicht effizienter.
+
+\section{Einfache Beleuchtung für jedes Vertex}
+
+Diese Programm verwendet die gleiche Beleuchtsberechnung wie im vorherigen Programm; allerdings soll die Berechnung,
+wie im ersten Beispielprogramm, für jedes Vertex berechnet werden und über die Ausgabepixel interpoliert werden.
+
+\prglisting{lst:vertlight_cg_vp}{Beleuchtungsberechnung für jedes Vertex: Vertexprogramm}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E1v_basicLight.cg}}
+
+\prglisting{lst:vertlight_cg_fp}{Beleuchtungsberechnung für jedes Vertex: Pixelprogramm}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C2E2f_passthru.cg}}
+
+Die Berechnungen zur Beleuchtung stimmen mit denen aus Programm~\ref{lst:vertlight_cg_fp} überein,
+finden sich aber hier im Vertexprogramm. Das Pixelprogramm gibt nur den Beleuchtungswert aus.
+
+\prglisting{lst:vertlight_s1}{Eingabeprogramm für Compiler in der Shadingsprache}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/basicLight.s1}}
+
+Dieses Programm ist mit dem Programm~\ref{lst:fraglight_s1} praktisch identisch.
+
+\prglisting{lst:vertlight_compiled}{Ausgabe des Compilers in Cg}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/basicLight_compiled.cg}}
+
+% Semantik: Beleuchtung in FP statt VP!
+\subsubsection{Bewertung}
+\paragraph{Semantik:}
+Im generierten Cg-Programm~\ref{lst:vertlight_compiled} findet sich die Beleuchtungsberechnung im
+Pixelprogramm, statt im Vertexprogramm wie es in den ursprünglichen Programmen~\ref{lst:vertlight_cg_vp}
+und~\ref{lst:vertlight_cg_fp} der Fall ist.
+
+Verantwortlich dafür ist die Arbeitsweise des Compilers. Wie in Abschnitt~\ref{formulierte_frequenz} beschrieben,
+werden die Eingabeprogramme so betrachtet, als würden sie Pixelberechnungen formulieren.
+Nur unter gewissen Bedingungen ("`Interpolierbarkeit"', siehe Abschnitt~\ref{Interpolierbarkeit}) werden
+Operationen in die Vertexberechnung verschoben. Diese Bedingungen sind im Eingabeprogramm nicht erfüllt --
+der Compiler muss also die Mehrzahl der Operationen in die Pixelberechnungen ausgeben.
+
+Um ein generiertes Programm zu erhalten, dass mit dem ursprünglichen Programmen übereinstimmt, wäre im Compiler ein Mechanismus
+(Schlüsselwort o.ä.) nötig, um explizit anzugeben, dass eine Programmoperation in der Vertex- statt in der Pixelberechnung ausgeführt werden soll.
+Der Splitter müsste entsprechend angepasst werden, um für solche markierte Operationen die "`Interpolierbarkeit"' als gegeben anzunehmen.
+
+Abgesehen davon, dass die Beleuchtungsberechnung vom Splitter in das "`falsche"' Teilprogramm ausgegeben wurde,
+stimmen die Operation selbst mit denen der ursprünglichen Programme überein.
+
+\paragraph{Effizienz:}
+Das Eingabeprogramm~\ref{lst:vertlight_s1} entspricht genau dem vorherigem Eingabeprogramm, dementsprechend treffen
+die dort gemachten Effizienzbetrachtungen auch hier zu.
+
+\section{Beleuchtung unter Verwendung zweier Lichtquellen}
+
+Dieses Programm verwendet die gleichen Beleuchtungsberechnung wie die vorherigen zwei Programmen,
+allerdings für zwei Lichtquellen.
+
+% Neue Syntax: Array, Funktionen
+
+\prglisting{lst:twolights_cg_vp}{Beleuchtung mit zwei Lichtquellen: Vertexprogramm}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E4v_twoLights.cg}}
+
+\prglisting{lst:twolights_cg_fp}{Beleuchtung mit zwei Lichtquellen: Pixelprogramm}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C2E2f_passthru.cg}}
+
+Die Beleuchtungsberechnung wurde in eine Funktion verschoben. Die Parameter der Lichtquellen werden als
+Arrays übergeben.
+
+\prglisting{lst:twolights_s1}{Eingabeprogramm für Compiler in der Shadingsprache}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/twoLights.s1}}
+
+Die die Shadingsprache keine Verbundtypen kennt mussten diese in einzelne Variablen "`ausgepackt"' werden.
+
+\prglisting{lst:twolights_compiled}{Ausgabe des Compilers in Cg}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/twoLights_compiled.cg}}
+
+\subsubsection{Bewertung}
+\paragraph{Semantik:}
+Auch in diesem Programm wird, wie im vorherigen Programm, der Grossteil der Berechnungen in das Pixelprogramm ausgegeben;
+Grund ist auch die Arbeitsweise des Compilers.
+
+Die Funktion \verb+C5E5_computeLighting+ des ursprünglichen Programms~\ref{lst:twolights_cg_vp} (Zeilen 20 bis 41)
+findet ihre Entsprechung im generierten Programm~\ref{lst:twolights_compiled} in der Funktion der Zeilen 53 bis 80.
+Diese Funktionen führen äquivalente Berechnungen durch, der "`Kern"' von ursprünglichem und generiertem Programm
+stimmen also überein. 
+
+Die Iterationen über die Lichtquellen sind im generierten Programm~\ref{lst:twolights_compiled} (Zeilen 92 bis 108)
+als \verb+while+-Schleife ausgeführt, es ist aber einfach erkennbar, dass diese genauso oft und mit den gleichen
+Werten für die Schleifenvariable \verb+i+ durchlaufen wird wie es im ursprünglichen Programm~\ref{lst:twolights_cg_vp} (Zeilen 67 bis 73)
+der Fall ist.
+
+\paragraph{Effizienz:}
+Auffällig im generierten Programm~\ref{lst:twolights_compiled} ist die leere, nicht verwendete Funktion der Zeilen 7 bis 9:
+hier hat der Splitter bei der Aufspaltung der Funktion \verb+C5E5_computeLighting+ des ursprünglichen Programms~\ref{lst:twolights_cg_vp}
+eine Variante der Funktion für die Verwendung bei der Vertexberechnung (erkennbar am Präfix "`\verb+vertex_+"' des Funktionsbezeichners) ausgegeben.
+Diese wurde aber letztendlich nicht verwendet: Grund dafür ist, dass die ursprüngliche Funktion in der Schleife verwendet wird;
+Schleifen werden aber, wie in Abschnitt~\ref{auftrennung_ablauf} beschrieben, nie in die Vertexberechnung ausgegeben --
+damit wird auch die Variante der Funktion für die Vertexberechnung nicht verwendet.
+
+Solche unnötigen Funktionen könnten durch einen zusätzlichen Optimierungsschritt verhindert werden, der untersucht, welche
+Funktionen eines Programms bzw. eines Teilprogramms tatsächlich verwendet werden und nicht verwendete Funktionen verwirft.
+
+Praktisch, nach einer Übersetzung des generierten Programms mit dem Cg-Compiler, folgen aus dieser "`überflüssigen"' Funktion keine Nachteile:
+der Cg-Compiler entfernt die nicht verwendete Funktion.
+
+Wie beim vorherigen Beispielprogramm finden sich auch hier die Berechnungen im generierten Programm~\ref{lst:twolights_compiled} 
+im Teilprogramm zur Pixelberechnung
+statt, wie im ursprünglichen Programm~\ref{lst:twolights_cg_vp}, in der Vertexberechnung. Grund ist auch hier die Arbeitsweise des
+Compilers. Damit ist auch die "`Lösung"' dieses Problems die Gleiche.
+
+\section{Zusammenfassung}
+
+Der Vergleich von "`realistischen"' Cg-Programmen mit der Ausgabe des Compilers, nachdem die Programme von Cg in die Shadingsprache
+übersetzt wurden, zeigt, dass die Übersetzung prinzipiell semantisch übereinstimmende Programme erzeugen kann.
+
+Eine Schwäche des Compilers ist dessen Korrektheit -- in dem Sinne, das Operationen nur für die Vertexberechnung ausgegeben werden,
+wenn eine Interpolation der Ergebnisse der Vertexberechnung die gleichen Ergebnisse wie eine Ausführung in der Pixelberechnung hätte.
+Damit wurden im direkten Vergleich bei einigen Programmen Operationen, die ursprünglich in der Vertexberechnung ausgeführt wurden,
+in die Pixelberechnungen "`verschoben"'.
+
+Weiterhin gibt es weiteren Bedarf für Optimierungen, von einer Entfernung nicht verwendeter Funktion über die Vermeidung unnötiger Zuweisungen
+hin zu einer Entfernung nicht verwendeter Funktionsparameter. Zwar hat eine Ausgabe in die Sprache Cg den Vorteil, dass der
+Cg-Compiler selbst noch Optimierungen vornimmt und damit die fehlenden Optimierungen des Shadingsprachen-Compilers dadurch wenig
+ins Gewicht fallen, bei anderen Zielsprachen muss dies aber nicht der Fall sein -- weitergehende Optimierungen wären in solchen Fällen vorteilhaft.
+
+% Ausgabe: äquivalent
+% mehr Optimierungsbedarf (Cg-Compiler optimiert, bei anderen Backends womöglich nicht)
+% mehr Kontrolle Vertex-/Pixelberechnung
+
 \chapter{Ausblick}
 
 % AST: nützlich, wenn FEs für anderen Sprachen, oder komplexer (Strukturen)
 % Manuelles spezifizieren von per-Vertex Ops // keyword 'interpolate'
 
-Die übersetzte Sprache ist eine zwar vergleichsweise einfache, aber trotzdem praktisch nutzbare
+Die übersetzte Sprache ist eine zwar vergleichsweise einfache, aber grundsätzlich praktisch nutzbare
 Shadingsprache, die es erlaubt, Shadingprogramme zu schreiben, ohne den Hardwareaufbau aus verschiedenen Funktionseinheiten
 berücksichtigen zu müssen.
 

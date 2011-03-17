@@ -1,0 +1,84 @@
+struct V2F
+{
+  float4 m_position_B0_;
+  float3 m_normal_B0_;
+};
+
+void vertex_C5E5_computeLighting1vF31vF31vF31vF31vF31F2vF32vF3002200_v5b4a (in float3 ilight_position_, in float3 ilight_color_, in float3 iP_, in float3 iN_, in float3 ieyePosition_, in float ishininess_, out float3 odiffuseResult_, out float3 ospecularResult_)
+{
+}
+
+void vertex_main_ (out V2F v2f, varying in float4 iposition_, varying in float3 inormal_, uniform in float4x4 imodelViewProj_, uniform in float3 ieyePosition_, uniform in float3 iglobalAmbient_, uniform in float3 ilights_position_[2], uniform in float3 ilights_color_[2], uniform in float3 imaterial_Ke_, uniform in float3 imaterial_Ka_, uniform in float3 imaterial_Kd_, uniform in float3 imaterial_Ks_, uniform in float imaterial_shininess_, out float4 ooPosition_ : POSITION)
+{
+  ooPosition_ = mul (imodelViewProj_, iposition_);
+  v2f.m_position_B0_ = iposition_;
+  v2f.m_normal_B0_ = inormal_;
+}
+
+
+void fragment_C5E5_computeLighting1vF31vF31vF31vF31vF31F2vF32vF3002200_z7b4a (in float3 ilight_position_, in float3 ilight_color_, in float3 iP_, in float3 iN_, in float3 ieyePosition_, in float ishininess_, out float3 odiffuseResult_, out float3 ospecularResult_)
+{
+  float3 i_tmp0_ = ilight_position_ - iP_;
+  float3 v_L_ = normalize (i_tmp0_);
+  float i_tmp2_ = dot (iN_, v_L_);
+  float v_diffuseLight_ = max (i_tmp2_, 0);
+  float3 i_tmp6_ = float3 (v_diffuseLight_, v_diffuseLight_, v_diffuseLight_);
+  odiffuseResult_ = ilight_color_ * i_tmp6_;
+  float3 i_tmp9_ = ieyePosition_ - iP_;
+  float3 v_V_ = normalize (i_tmp9_);
+  float3 i_tmp11_ = v_L_ + v_V_;
+  float3 v_H_ = normalize (i_tmp11_);
+  float i_tmp13_ = dot (iN_, v_H_);
+  float i_tmp16_ = max (i_tmp13_, 0);
+  float v_specularLight_ = pow (i_tmp16_, ishininess_);
+  bool c_tmp20_ = v_diffuseLight_ <= 0;
+  float v_specularLight1_1wa;
+  if (c_tmp20_)
+  {
+    v_specularLight1_1wa = 0;
+  }
+  else
+  {
+    v_specularLight1_1wa = v_specularLight_;
+  }
+  float3 i_tmp21_ = float3 (v_specularLight1_1wa, v_specularLight1_1wa, v_specularLight1_1wa);
+  ospecularResult_ = ilight_color_ * i_tmp21_;
+}
+
+void fragment_main_ (in V2F v2f, uniform in float4x4 imodelViewProj_, uniform in float3 ieyePosition_, uniform in float3 iglobalAmbient_, uniform in float3 ilights_position_[2], uniform in float3 ilights_color_[2], uniform in float3 imaterial_Ke_, uniform in float3 imaterial_Ka_, uniform in float3 imaterial_Kd_, uniform in float3 imaterial_Ks_, uniform in float imaterial_shininess_, out float4 ocolor_ : COLOR)
+{
+  float3 v_emissive_ = imaterial_Ke_;
+  float3 v_ambient_ = imaterial_Ka_ * iglobalAmbient_;
+  float3 v_diffuseSum_ = float3 (0, 0, 0);
+  float3 v_specularSum_ = float3 (0, 0, 0);
+  float3 i_tmp51_ = v_emissive_ + v_ambient_;
+  float4 m_color_B0_;
+  float3 v_diffuseSum1_0sa = v_diffuseSum_;
+  float3 v_specularSum1_dua = v_specularSum_;
+  int v_i1_xga = 0;
+  bool v_cond11_lja9h = true;
+  float3 v_diffuseLight_;
+  float3 v_specularLight_;
+  while (v_cond11_lja9h)
+  {
+    unsigned int x_tmp25_ = unsigned int (v_i1_xga);
+    float3 i_tmp24_ = ilights_position_[x_tmp25_];
+    unsigned int x_tmp27_ = unsigned int (v_i1_xga);
+    float3 i_tmp26_ = ilights_color_[x_tmp27_];
+    v_i1_xga = v_i1_xga + 1;
+    v_cond11_lja9h = v_i1_xga < 2;
+    float3 i_tmp28_ = float3 (v2f.m_position_B0_.x, v2f.m_position_B0_.y, v2f.m_position_B0_.z);
+    fragment_C5E5_computeLighting1vF31vF31vF31vF31vF31F2vF32vF3002200_z7b4a (i_tmp24_, i_tmp26_, i_tmp28_, v2f.m_normal_B0_, ieyePosition_, imaterial_shininess_, v_diffuseLight_, v_specularLight_);
+    v_diffuseSum1_0sa = v_diffuseSum1_0sa + v_diffuseLight_;
+    v_specularSum1_dua = v_specularSum1_dua + v_specularLight_;
+  }
+  float3 v_diffuse_ = imaterial_Kd_ * v_diffuseSum1_0sa;
+  float3 v_specular_ = imaterial_Ks_ * v_specularSum1_dua;
+  float3 i_tmp52_ = i_tmp51_ + v_diffuse_;
+  float3 i_tmp53_ = i_tmp52_ + v_specular_;
+  float3 i_tmp54_ = i_tmp53_;
+  float4 m_color_B01_cqa = float4 (i_tmp54_.x, i_tmp54_.y, i_tmp54_.z, m_color_B0_.w);
+  ocolor_ = float4 (m_color_B01_cqa.x, m_color_B01_cqa.y, m_color_B01_cqa.z, 1);
+}
+
+

@@ -1,0 +1,69 @@
+void C5E5_computeLighting(float3 light_position, 
+			  float3 light_color,
+                          float3 P,
+                          float3 N,
+                          float3 eyePosition,
+                          float  shininess,
+
+			  out float3 diffuseResult,
+			  out float3 specularResult) 
+{
+  // Compute the diffuse lighting
+  float3 L = normalize(light_position - P);
+  float diffuseLight = max(dot(N, L), 0);
+  diffuseResult = light_color * diffuseLight;
+
+  // Compute the specular lighting
+  float3 V = normalize(eyePosition - P);
+  float3 H = normalize(L + V);
+  float specularLight = pow(max(dot(N, H), 0), 
+                            shininess);
+  if (diffuseLight <= 0) { specularLight = 0; }
+  specularResult = light_color * specularLight;
+}
+
+void main(float4 position,
+          float3 normal,
+
+	  out float4 oPosition,
+	  out float4 color,
+
+	  float4x4 modelViewProj,
+	  float3   eyePosition,
+          float3   globalAmbient,
+          float3[] lights_position,
+          float3[] lights_color,
+	  float3 material_Ke,
+	  float3 material_Ka,
+	  float3 material_Kd,
+	  float3 material_Ks,
+	  float material_shininess)
+{
+  oPosition = mul(modelViewProj, position);
+
+  // Calculate emissive and ambient terms
+  float3 emissive = material_Ke;
+  float3 ambient = material_Ka * globalAmbient;
+
+  // Loop over diffuse and specular contributions for each light
+  float3 diffuseLight;
+  float3 specularLight;
+  float3 diffuseSum  = 0;
+  float3 specularSum = 0;
+  int i;
+  for (i = 0; i < 2; i = i + 1) {
+    C5E5_computeLighting(lights_position[i], lights_color[i],
+			 position.xyz, normal, 
+                         eyePosition, material_shininess,
+                         diffuseLight, specularLight);
+    diffuseSum = diffuseSum + diffuseLight;
+    specularSum = specularSum + specularLight;
+  }
+
+  // Now modulate diffuse and specular by material color
+  float3 diffuse = material_Kd * diffuseSum;
+  float3 specular = material_Ks * specularSum;
+
+  color.xyz = emissive + ambient + diffuse + specular;
+  color.w = 1;
+}

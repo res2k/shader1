@@ -1,0 +1,28 @@
+// Eingabe von Anwendung an Vertex-Programm
+struct app2vertex {
+	float4 Position : POSITION;
+};
+
+// Von Vertex- an Fragmentprogramm uebergebene Daten
+struct vertex2fragment { 
+	float4 Hposition : POSITION;
+};
+
+// Vertexprogramm
+vertex2fragment vertex_main (app2vertex IN,
+     uniform float4x4 ModelViewProj : state.matrix.mvp)
+{
+	vertex2fragment OUT;
+
+	// Transformierte Koordinaten
+	OUT.Hposition = mul (ModelViewProj, IN.Position);
+	
+	return OUT;
+}
+
+float4 fragment_main () : COLOR
+{
+	// Ausgabe: rot
+	return float4 (1, 0, 0, 1);
+}
+
