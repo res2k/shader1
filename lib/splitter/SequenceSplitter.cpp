@@ -804,12 +804,14 @@ namespace s1
       {
 	loopedRegFreqs[loopedReg.second] = parent.GetRegAvailability (loopedReg.first);
       }
+      ProgramSplitter dryRunProgSplit;
+      dryRunProgSplit.SetInputProgram (parent.progSplit.inputProgram);
       for (int n = 0; n < freqNum-1; n++)
       {
 	SequencePtr blockSequence (body->GetSequence());
 	const Sequence::IdentifierToRegMap& identToRegIDs_imp = body->GetImportIdentToRegs();
 	const Sequence::IdentifierToRegMap& identToRegIDs_exp = body->GetExportIdentToRegs();
-	SequenceSplitter blockSplitter (parent.progSplit, false);
+	SequenceSplitter blockSplitter (dryRunProgSplit, false);
 	blockSplitter.SetInputSequence (blockSequence);
 	
 	// Forward frequencies to subSeqSplitter

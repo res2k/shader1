@@ -348,6 +348,14 @@ namespace s1
       return recCheck.WasRecursionFound();
     }
     
+    ProgramSplitter::ProgramSplitter ()
+    {
+      for (int f = 0; f < freqNum; f++)
+      {
+	outputPrograms[f] = boost::make_shared<intermediate::Program> ();
+      }
+    }
+    
     void ProgramSplitter::SetInputProgram (const intermediate::ProgramPtr& program)
     {
       inputProgram = program;

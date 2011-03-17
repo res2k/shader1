@@ -65,6 +65,8 @@ namespace s1
       class RecursionChecker;
       bool CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func);
     public:
+      ProgramSplitter ();
+      
       void SetInputProgram (const intermediate::ProgramPtr& program);
       void SetInputFreqFlags (const UnicodeString& inpName, unsigned int flags);
       
