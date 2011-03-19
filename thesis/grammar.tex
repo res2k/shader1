@@ -22,7 +22,7 @@ Die Eintrittsfunktion muss den Rückgabetyp \kw{void} besitzen.
 
 Es müssen genau zwei Ausgabeparameter vom Typ \kw{float4}~(siehe \Gnt{typ\_vektor\_float}{\scriptsize (\ref{typ_vektor_float})}) deklariert werden.
 Der erste Ausgabeparameter nimmt die transformierte und projizierte Position entgegen.
-Der zweite Ausgabeparameter nimmt die auszugebende Fragmentfarbe entgegen.
+Der zweite Ausgabeparameter nimmt die auszugebende Pixelfarbe entgegen.
 
 Es können beliebig viele Eingabeparameter beliebigen Typs für die Eintrittsfunktion deklariert werden.
 Die Werte dieser Parameter entstammen der Programmumgebung.
@@ -470,7 +470,7 @@ Dimensionalität müssen in Shadingprogrammen verschiedenartig angesprochen werd
 dies bedingt die mehrfachen Samplertypen, die jeweils einen speziellen Texturtyp
 reflektieren.
 
-Samplertypen sind \emph{undurchsichtig} - Samplerwerte können auf der "`rechten Seite"' in
+Samplertypen sind \emph{undurchsichtig} -- Samplerwerte können auf der "`rechten Seite"' in
 Zuweisungen zu Variablen exakt gleichen Samplertyps, als Funktionsparameter usw. verwendet werden,
 aber nicht in Verknüpfungsoperationen u.ä.:
 Samplerwerte können im Wesentlich nur mit den vordefinierten Texturfunktionen (\ref{Texturfunktionen})
@@ -763,7 +763,7 @@ darf keine Ziffer sein.
 Der Unterteilung in Buchstaben und Ziffern liegen Unicode-Kategorien zugrunde (siehe~\cite{unicode}, Abschn. 4.5).
 % TODO Ref: Unicode-Standard - 5.1.0 4.1
 
-Zwei Bezeichner sind identisch wenn deren Zeichensequenzen \emph{kanonisch äquivalent} nach Unicode sind (siehe~\cite{unicode}, Kap. 3, Def. D70)
+Zwei Bezeichner sind identisch wenn deren Zeichensequenzen \emph{kanonisch äquivalent} nach Unicode sind (siehe~\cite{unicode}, Kap. 3, Def. D70)%
 \footnote{Verschiedene Glyphen können auf verschiedene Weisen in Unicode codiert werden: z.B. \emph{Ä}
 mit einem einzelnen Zeichen (\texttt{U\plus{}00C4} ``Latin capital letter A with diaresis'') oder als Kombination
 von zwei Zeichen (\texttt{U\plus{}0041} ``Latin capital letter A'' und \texttt{U\plus{}0308} ``Combining diaresis'').
