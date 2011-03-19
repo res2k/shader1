@@ -1,5 +1,8 @@
 void main(out float4 pos, out float4 color)
 {
-  pos = float4 (0.0);
-  color = float4 (1.0);
+  float a = 1.0, b = 2.0;
+  pos = float4 (a+b);
+  float c = a / b;
+  color = float4 (b);
+  float4 prod = pos*color*c;
 }
