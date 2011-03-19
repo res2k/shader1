@@ -461,6 +461,27 @@ namespace s1
       if (blockStrings->Size() > 0)
       {
 	target->AddString ("\\sOnestseq{");
+	for (SequenceCodeGenerator::RegisterSets::const_iterator regSet (codegen.registerSets.begin());
+	    regSet != codegen.registerSets.end();
+	    ++regSet)
+	{
+	  std::string regSetStr ("\\sOfuncregset{");
+	  regSetStr.append (LatexEscape (regSet->first));
+	  regSetStr.append ("}{");
+	  for (SequenceCodeGenerator::RegisterNameSet::const_iterator regs (regSet->second.begin());
+	      regs != regSet->second.end();
+	      ++regs)
+	  {
+	    std::string regStr;
+	    regs->toUTF8String (regStr);
+	    regSetStr.append ("\\sOsetreg{");
+	    regSetStr.append (LatexEscape (regStr));
+	    regSetStr.append ("}");
+	  }
+	  regSetStr.append ("}");
+	  target->AddString (regSetStr);
+	}
+	
 	const Sequence::RegisterImpMappings& seqImports = seq->GetImports();
 	for (Sequence::RegisterImpMappings::const_iterator imp = seqImports.begin();
 	     imp != seqImports.end();
