@@ -23,7 +23,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="419.27949"
+     inkscape:cx="419.99378"
      inkscape:cy="746.41462"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -545,7 +545,7 @@
        style="fill:#ffffff;stroke:#000000;stroke-width:0.35399999999999998;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1" />
     <text
        xml:space="preserve"
-       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Nimbus Sans L;-inkscape-font-specification:Nimbus Sans L;font-stretch:normal;font-variant:normal"
        x="401.07144"
        y="210.57648"
        id="text3050"
@@ -554,40 +554,40 @@
          id="tspan3052"
          x="401.07144"
          y="210.57648"
-         style="font-size:15px">v<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
+         style="font-size:15px;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">v<tspan
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
    id="tspan4792">1</tspan></tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3054"
        y="329.50507"
        x="270.00003"
-       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Nimbus Sans L;-inkscape-font-specification:Nimbus Sans L;font-stretch:normal;font-variant:normal"
        xml:space="preserve"><tspan
-         style="font-size:15px"
+         style="font-size:15px;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
          y="329.50507"
          x="270.00003"
          id="tspan3056"
          sodipodi:role="line">v<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
    id="tspan4794">2</tspan></tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text3058"
        y="297.36218"
        x="448.57141"
-       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Nimbus Sans L;-inkscape-font-specification:Nimbus Sans L;font-stretch:normal;font-variant:normal"
        xml:space="preserve"><tspan
-         style="font-size:15px"
+         style="font-size:15px;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
          y="297.36218"
          x="448.57141"
          id="tspan3060"
          sodipodi:role="line">v<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
    id="tspan4796">3</tspan></tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:100%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       style="font-size:15px;font-style:normal;font-weight:normal;text-align:center;line-height:100%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Nimbus Sans L;-inkscape-font-specification:Nimbus Sans L;font-stretch:normal;font-variant:normal"
        x="469.94699"
        y="212.71933"
        id="text3081"
@@ -596,22 +596,22 @@
          id="tspan3083"
          x="469.94699"
          y="212.71933"
-         style="font-size:15px;text-align:start;line-height:100%;text-anchor:start">f<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
+         style="font-size:15px;text-align:start;line-height:100%;text-anchor:start;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">f<tspan
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
    id="tspan4800">1</tspan>: 0,375</tspan><tspan
          sodipodi:role="line"
          x="469.94699"
          y="227.71933"
          id="tspan3085"
-         style="font-size:15px;text-align:start;line-height:100%;text-anchor:start">f<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
+         style="font-size:15px;text-align:start;line-height:100%;text-anchor:start;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">f<tspan
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
    id="tspan4804">2</tspan>: 0,25</tspan><tspan
          sodipodi:role="line"
          x="469.94699"
          y="242.71933"
          id="tspan3087"
-         style="font-size:15px;text-align:start;line-height:100%;text-anchor:start">f<tspan
-   style="font-size:65.00091553%;baseline-shift:sub"
+         style="font-size:15px;text-align:start;line-height:100%;text-anchor:start;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">f<tspan
+   style="font-size:65.00091553000000033%;baseline-shift:sub;-inkscape-font-specification:Nimbus Sans L;font-family:Nimbus Sans L;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
    id="tspan4808">3</tspan>: 0,375</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1.41732283;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Lstart);stroke-miterlimit:4;stroke-dasharray:none"
