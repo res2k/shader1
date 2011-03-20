@@ -5,9 +5,9 @@
       TokenType typeOrID;
       // Originale Zeichenkette des Tokens
       UnicodeString tokenString;
-      // Art (Normal, Vektor oder Matrix) von Typ-Schlüsselwörtern
+      // Art (Normal, Vektor, Matrix) von Typ-Schlüsselwörtern
       TypeClassification typeClass;
-      // Für Vektoren: Komponentanzahl; Für Matrizen: Anzahl Spalten
+      // Für Vektoren: Komponentanzahl; Für Matrizen: Spaltenzahl
       int dimension1;
       // Für Matrizen: Anzahl Zeilen
       int dimension2;

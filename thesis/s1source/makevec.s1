@@ -1,4 +1,5 @@
-void main (int a, int b)
+void main (int a,
+	   int b)
 {
   int2 x = int2 (a, b);
 }

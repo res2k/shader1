@@ -1,3 +1,4 @@
+{\small%
 \texttt{void main (\freqPerVert{in float4 Position},}\\
 \texttt{\hspace*{1cm}	   \freqPerVert{in float2 TexCoord},}\\
 \texttt{\hspace*{1cm}	   \freqPerVert{in float3 Normal},}\\
@@ -12,5 +13,6 @@
 \texttt{\hspace*{1cm}	float3 ambient = \freqPerMesh{float3 (0.4)};}\\
 \texttt{\hspace*{1cm}	float3 diffuse = \freqPerVert{LightColor * dot (LightDirObj, Normal)};}\\
 \texttt{\hspace*{1cm}	float3 litColor = \freqPerVert{diffuse + ambient};}\\
-\texttt{\hspace*{1cm}	outColor = \freqPerFrag{tex2D (Texture, TexCoord)} * \freqPerVert{float4 (litColor, 1.0)};}\\
-\texttt{\}}\\
+\texttt{\hspace*{1cm}	outColor = \freqPerFrag{tex2D (Texture, TexCoord)}}\\
+\texttt{\hspace*{2cm}	* \freqPerVert{float4 (litColor, 1.0)};}\\
+\texttt{\}}}\\

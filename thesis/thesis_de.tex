@@ -1,6 +1,6 @@
 \documentclass[twoside,a4paper,fleqn,12pt]{book}
 \usepackage{fancyhdr,a4wide,graphicx}
-\usepackage[paper=a4paper,left=20mm,right=20mm,top=25mm,bottom=25mm]{geometry}
+\usepackage[paper=a4paper,left=30mm,right=20mm,top=30mm,bottom=25mm]{geometry}
 \pagestyle{fancy}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -39,7 +39,7 @@
 \lstset{basicstyle=\ttfamily\small,lineskip=-0.5em,language={},tabsize=8,inputencoding=utf8/latin1,numberstyle=\tiny}
 
 % define the title
-\author{Frank Richter 68278\\frank.richter@gmail.com}
+\author{Frank Richter\\Matrikel 68278\\frank.richter@gmail.com}
 \title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Grafikkarten \normalfont}
 \date{\today}
 
@@ -60,8 +60,9 @@
 \newcommand\btxeditionlong{Auflage}
 \bibliographystyle{mystyle}
 
-% Zeilenabstand 1.5
-\renewcommand{\baselinestretch}{1.50}\normalsize
+% Zeilenabstand
+\newcommand\defltbaselinestretch[0]{\renewcommand{\baselinestretch}{1.42}}
+\defltbaselinestretch\normalsize
 
 % Helvetica für Section-Titel
 \allsectionsfont{\usefont{OT1}{phv}{b}{n}\selectfont}
@@ -103,10 +104,17 @@
 \mbox{}
 
 % ---------- Fancyheader ---------- %
-\fancyhead[L]{}
-\fancyhead[R]{}
-\fancyfoot[C]{\today}
-\fancyfoot[R]{\footnotesize \thepage{}}
+\fancypagestyle{plain}{ %
+\fancyhf{} % remove everything
+\fancyhead[LE,RO]{\footnotesize \thepage{}}
+\renewcommand{\headrulewidth}{0pt} % remove lines as well
+\renewcommand{\footrulewidth}{0pt}}
+
+\fancyhead[CLR]{}
+\fancyhead[LE,RO]{\footnotesize \thepage{}}
+\fancyhead[CE]{\footnotesize \leftmark}
+\fancyhead[CO]{\footnotesize \rightmark}
+\fancyfoot[C]{}
 \renewcommand{\headrulewidth}{0pt}
 %\setlength{\headheight}{24pt}
 %\setlength{\parskip}{0pt plus 1pt}
@@ -601,10 +609,11 @@ praktisch nicht auszumachen.
 
 \begin{figure}[h]
   \centering
-  (a) \includegraphics[width=5cm]{mesh_wireframe_thin}\qquad
-  (b) \includegraphics[width=5cm]{simple_s1_mesh}\\
-  (c) \includegraphics[width=5cm]{simple_s1_vert}\qquad
-  (d) \includegraphics[width=5cm]{simple_s1_frag}
+  (a) \includegraphics[width=6cm]{mesh_wireframe_thin}\qquad
+  (b) \includegraphics[width=6cm]{simple_s1_mesh}\\
+  \vspace{1em}
+  (c) \includegraphics[width=6cm]{simple_s1_vert}\qquad
+  (d) \includegraphics[width=6cm]{simple_s1_frag}
   \caption{3D-Modell, mit Programm aus \ref{fig:simple_cg} dargestellt}
   \small (a): Drahgitterdarstellung\\
   (b): Nur die Anteile aus den Objektattributen\\
@@ -615,10 +624,11 @@ praktisch nicht auszumachen.
 
 \begin{figure}[h]
   \centering
-  (a) \includegraphics[width=5cm]{simple_s1_crop_large_wire}\qquad
-  (b) \includegraphics[width=5cm]{simple_s1_crop_large_mesh}\\
-  (c) \includegraphics[width=5cm]{simple_s1_crop_large_vert}\qquad
-  (d) \includegraphics[width=5cm]{simple_s1_crop_large_frag}
+  (a) \includegraphics[width=6cm]{simple_s1_crop_large_wire}\qquad
+  (b) \includegraphics[width=6cm]{simple_s1_crop_large_mesh}\\
+  \vspace{1em}
+  (c) \includegraphics[width=6cm]{simple_s1_crop_large_vert}\qquad
+  (d) \includegraphics[width=6cm]{simple_s1_crop_large_frag}
   \caption{Vergrößerungen aus Abbildung~\ref{fig:simple_cg_images}}
   \label{fig:simple_cg_images_large}
 \end{figure}
@@ -1562,12 +1572,12 @@ Argumente sind die Eingaberegister.
   \makebox[\textwidth]{
     \centering
     \begin{minipage}{7cm}\lstinputlisting{s1source/#1.s1}\end{minipage}
-    \begin{minipage}{8cm}\include{s1latex/#1}\end{minipage}
+    \hspace{-2cm}\begin{minipage}{8cm}\include{s1latex/#1}\end{minipage}
     %\caption{#2.}
     \label{fig:ir_example_#1}
   %\end{figure}
   }
-  \renewcommand{\baselinestretch}{1.50}\normalsize
+  \defltbaselinestretch\normalsize
 }
 \newcommand\SeqOpSampleStackedSeparate[3]{
   %\begin{figure}[!h]
@@ -1585,7 +1595,7 @@ Argumente sind die Eingaberegister.
     \vspace*{-1em}
   %\end{figure}
   %}
-  \renewcommand{\baselinestretch}{1.50}\normalsize
+  \defltbaselinestretch\normalsize
 }
 \newcommand\SeqOpSampleStacked[2]{\SeqOpSampleStackedSeparate{#1}{#1}{#2}}
 
@@ -2406,7 +2416,7 @@ sowie die Frequenz, in der die einzelnen Ausdrücke ausgeführt werden müssten.
   \input{simple_s1}
   \caption{Ein Programm in der Shading-Sprache.}
   \centering
-  \small Markierung der Operationen bzw. Werte gibt an, mit welcher Frequenz diese ausgeführt bzw. berechnet wurden.
+  \small Markierung der Operationen bzw. Werte gibt an, mit in welchem Berechnungsschritt diese ausgeführt bzw. berechnet werden.
   (\freqPerMesh{Objekt}, \freqPerVert{Vertex}, \freqPerFrag{Pixel})
   \label{fig:simple_s1}
 \end{figure}
@@ -2490,19 +2500,34 @@ die Operationen selbst bleiben aber in diesem Fall wegen nicht vorgenommener Opt
   \label{fig:simple_s1_split_fp}
 \end{figure}
 
-Abbildung~\ref{fig:simple_s1_images} visualisiert die Anteile der Berechnungen der verschiedenen Berechnungsfrequenzen
+% Abbildung~\ref{fig:simple_s1_images} visualisiert die Anteile der Berechnungen der verschiedenen Berechnungsfrequenzen
+% an der finalen Pixelfarbe. Dafür wurde mit Hilfe des Compilers das Eingabeprogramm in ein Vertex- und Pixelprogramm
+% in der Shadingsprache Cg übersetzt. Diese wurden für die Visualisierung der Anteil der Objektberechnungen bzw. Vertexberechnungen leicht bearbeitet
+% um eben diese Anteile auszugeben. Die Bilder selbst wurden mit Hilfe eines kurzen, selbstgeschriebenen Programms erstellt,
+% dass ein 3D-Dreiecksmodel mit Oberflächenmuster unter Verwendung der Shadingprogramme darstellt.
+
+% Das erste Bild zeigt den Anteil der Objektberechnung (\texttt{ambient}) und zeigt dementsprechend eine durchgängige Färbung.
+
+% Im zweiten Bild zeigt wurde der Anteil der Vertexberechnung (\texttt{litColor}) hinzugenommen. Es ist deutlich erkennbar,
+% dass die Farbe über das Modell stark variiert und damit eine Beleuchtung aus der rechten oberen Richtung suggeriert.
+%Allerdings sind auch Facettierungen von der Vertexberechnung erkennbar (am deutlichsten auf dem Ausguss oder dem Henkel).
+
+% Im dritten Bild wurde schliesslich auch der Anteil der Pixelberechnung hinzugenommen. Die Farbveränderung aus der "`Beleuchtung"'
+% ist noch klar erkennbar, aber das Auslesen einer Oberflächenfarbe aus einer Textur fügt weitere visuelle Details hinzu.
+%und reduziert die Sichtbarkeit der Facettierungen.
+
+Abbildung~\ref{fig:simple_s1_images} visualisiert die Anteile der Berechnungen der verschiedenen Berechnungsschritte
 an der finalen Pixelfarbe. Dafür wurde mit Hilfe des Compilers das Eingabeprogramm in ein Vertex- und Pixelprogramm
-in der Shadingsprache Cg übersetzt. Diese wurden für die Visualisierung der Anteil der Objektberechnungen bzw. Vertexberechnungen leicht bearbeitet
-um eben diese Anteile auszugeben. Die Bilder selbst wurden mit Hilfe eines kurzen, selbstgeschriebenen Programms erstellt,
-dass ein 3D-Dreiecksmodel mit Oberflächenmuster unter Verwendung der Shadingprogramme darstellt.
+in der Shadingsprache Cg übersetzt. Diese Ausgabeprogramme sind semantisch äquivalent zum Beispielprogramm aus
+Abbildung~\ref{fig:simple_cg} -- dementsprechend sind auch die Bilder identisch zu denen in Abbildung~\ref{fig:simple_cg_images}.
 
-Das erste Bild zeigt den Anteil der Objektberechnung (\texttt{ambient}) und zeigt dementsprechend eine durchgängige Färbung.
+Abbildung~\ref{fig:simple_s1_images}(a) zeigt den Anteil der Objektberechnung (\texttt{ambient}) und zeigt dementsprechend eine durchgängige Färbung.
 
-Im zweiten Bild zeigt wurde der Anteil der Vertexberechnung (\texttt{litColor}) hinzugenommen. Es ist deutlich erkennbar,
+Abbildung~\ref{fig:simple_s1_images}(b) zeigt wurde der Anteil der Vertexberechnung (\texttt{litColor}) hinzugenommen. Es ist deutlich erkennbar,
 dass die Farbe über das Modell stark variiert und damit eine Beleuchtung aus der rechten oberen Richtung suggeriert.
 %Allerdings sind auch Facettierungen von der Vertexberechnung erkennbar (am deutlichsten auf dem Ausguss oder dem Henkel).
 
-Im dritten Bild wurde schliesslich auch der Anteil der Pixelberechnung hinzugenommen. Die Farbveränderung aus der "`Beleuchtung"'
+Im Abbildung~\ref{fig:simple_s1_images}(c) wurde schließlich auch der Anteil der Pixelberechnung hinzugenommen. Die Farbveränderung aus der "`Beleuchtung"'
 ist noch klar erkennbar, aber das Auslesen einer Oberflächenfarbe aus einer Textur fügt weitere visuelle Details hinzu.
 %und reduziert die Sichtbarkeit der Facettierungen.
 
@@ -2703,7 +2728,7 @@ auftreten.
 
 \subsection{Generator für Cg}
 
-\renewcommand{\baselinestretch}{1.40}\normalsize
+%\renewcommand{\baselinestretch}{1.40}\normalsize
 In der vorliegenden Implementierung wurde als Zieldarstellung die Sprache Cg~(\cite{cgpaper}, \cite{cg_home}) gewählt.
 
 Cg als Hochsprache kennt selbst Konstrukte wie Funktionen und Schleifen. Umformungen durch den Codegenerator
@@ -2725,9 +2750,9 @@ Zeichenmenge umgewandelt\footnote{Als Kodierung wurde Punycode~(\cite{rfc3492}) 
 gut lesbar lässt.}.
 
 % Original-Schnipsel und Generator-Output
-\renewcommand{\baselinestretch}{1.50}\normalsize
+%\defltbaselinestretch\normalsize
 
-\newpage
+%\newpage
 \section{Zusammenfassung}
 
 Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur; die Abweichnung ist der Verarbeitungsschritt der "`Auftrennung"' in mehrere

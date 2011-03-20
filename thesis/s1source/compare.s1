@@ -1,4 +1,5 @@
-void main (float x, float y)
+void main (float x,
+	   float y)
 {
   bool a = x == y;
   bool b = x != y;
