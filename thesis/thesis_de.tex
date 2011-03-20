@@ -136,8 +136,30 @@ Betreuer: Prof. Dr. habil. Wolfram Amme}
 
 % generates the title
 
-% ---------- table of contents ---------- %
+\thispagestyle{empty}
 \newpage
+\chapter*{Zusammenfassung}
+
+In dieser Arbeit wurde eine Sprache zur Programmierung von Grafikprozessoren sowie ein diese Sprache übersetzender
+Compiler entwickelt.
+
+Schwerpunkt ist die Besonderheit des Compiler, mehrerer Ausgabeprogramme aus einem Eingabeprogramm zu erzeugen.
+Die verschiedenen Ausgabeprogramme zielen dabei auf verschiedene Funktionseinheiten
+eines Grafikprozessors ab. Die Aufspaltung in die Ausgabeprogramme wird so vorgenommen, das im
+Zusammenspiel der verschiedenen Programme auf den verschiedenen Funktionseinheiten die Semantik
+des Eingabeprogramms umgesetzt wird. Für die Aufspaltung selbst wurden Kriterien entworfen, die
+den speziellen Aufbau und Datenfluss auf Grafikprozessoren berücksichtigen und ausnutzen.
+
+Die entwickelte Programmiersprache ist eine Hochsprache, die in wesentlichen Zügen auf der
+Sprache Cg basiert, im Vergleich aber signifikant vereinfacht wurde und in der syntaktisch bewusste einige
+eigene Wege eingeschlagen wurden.
+
+\thispagestyle{empty}
+\newpage
+\mbox{}
+\thispagestyle{empty}
+\newpage
+% ---------- table of contents ---------- %
 \pagenumbering{roman}
 %\addcontentsline{toc}{section}{Inhaltsverzeichnis}
 \pdfbookmark[1]{Inhaltsverzeichnis}{myPDFtocLabel}
@@ -168,6 +190,21 @@ Ziel dieser Arbeit ist es, eine Sprache und einen Compiler zum Zweck der Program
 GPUs sind aus verschiedenen Funktionseinheiten aufgebaut;
 Sprache und Compiler sollen die GPU-Programmierung vereinfachen, in dem die Aufteilung eines Programms in mehrere Teilprogramme
 für verschiedene Funktionseinheiten automatisch vorgenommen wird.
+
+Weiterhin soll die entwickelte Sprache die Programmierung von GPUs syntaktisch unterstützen, wie es auch
+bei es auch bei existierend Sprachen zu diesem Zweck üblich ist: durch Vektortypen, Unterstützung von Verknüpfungen
+u.ä. von ganzen Vektoren sowie vordefinierte Funktionen für typische Vektoroperationen.
+
+
+Der entwickelte Compiler soll einer modularen Standardarchitektur folgen: ein "`Front-End"' soll Eingaben übernehmen
+und das Programm in eine interne Darstellung überführen, auf welcher ein "`Kern"' weitere Arbeitsschritte vornimmt;
+abschliessend soll ein "`Back-End"' das Programm in eine Zieldarstellung ausgeben. Die vorgenommenen "`Arbeitsschritte"'
+sollen nicht nur der typische Optimierungsschritt sein, sondern in diesem speziellen Compiler auch die "`Aufspaltung"'
+des Programms in die Teile für die verschiedenen GPU-Funktionseinheiten vornehmen.
+
+Für die interne Darstellung des zu übersetzenden Programms soll eine Zwischencoderepräsentation entworfen werden,
+auf der die nötigen Arbeitsschritte -- also "`Aufspaltung"' und Optimierungen -- vorgenommen werden können
+und aus der die Ausgabe in die Zieldarstellung generiert werden kann.
 
 % In der Echtzeit-3D-Grafik werden 3D-Objekte überwiegend aus Dreiecken aufgebaut, welche für die Darstellung
 % auf einem Bildschirm gerastert werden.
