@@ -238,8 +238,10 @@ Millisekunden zu berechnen.
 \section{3D-Objekte und Szenen}
 \label{objects}
 
-In einer Echtzeit-3D-Grafik darzustellende Objekte ("`Modelle"') werden als \emph{Dreiecksnetz} gespeichert.
-Dieses besteht aus einer Menge \emph{Eckpunkte} (``Vertex'' bzw. ``Vertices'')
+\newglossaryentry{Dreiecksnetz}{name={Dreiecksnetz},description={3D-Modell, Menge von Eckpunkten (Vertices) und Dreiecken}}
+\newglossaryentry{Vertex}{name={Vertex},plural={Vertices},description={Eckpunkt eines Dreiecksnetzes. Mehrzahl: Vertices}}
+In einer Echtzeit-3D-Grafik darzustellende Objekte ("`Modelle"') werden als \emph{\gls{Dreiecksnetz}} gespeichert.
+Dieses besteht aus einer Menge \emph{Eckpunkte} (``\gls{Vertex}'' bzw. ``Vertices'')
 sowie von diesen aufgespannte \emph{Dreiecke}.
 
 \begin{defn}
@@ -251,13 +253,15 @@ Zu diesen Dreiecken wird eine Menge von \emph{Eckpunkten} gespeichert.
 Ein \emphalt{Vertex} ist ein Eckpunkt eines Dreiecksnetzes.
 \end{defn}
 
+\newglossaryentry{Vertexattribut}{name={Vertexattribut},plural={Vertexattribute},description={Beschreibt weitere Daten, die jedem Vertex eines 3D-Modells zugeordnet sind. %
+Attributtypen sind Vektoren mit ein bis vier Komponenten}}
 Zu jedem Eckpunkt ist dessen \emph{Position}, eine Koordinate im dreidimensionalen Raum, gespeichert.
-Praktisch sind zu jedem Eckpunkt auch noch weitere Daten gespeichert ("`Vertexattribute"'),
+Praktisch sind zu jedem Eckpunkt auch noch weitere Daten gespeichert ("`\glspl{Vertexattribut}"'),
 die bei der Berechnung der Oberflächenerscheinung des Objekts eine Rolle spielen.
-Typischerweise verwendete Vertexattribute sind eine Oberflächennormale (bestehend aus drei Werten)
-sowie Koordinaten für ein Oberflächen-"`Muster"'\footnote{siehe Abschnitt~\ref{surface_and_shading}} (zwei Werte).
+Typischerweise verwendete Vertexattribute sind eine Oberflächennormale (als Vektor mit drei Komponenten)
+sowie Koordinaten für ein Oberflächen-"`Muster"'\footnote{siehe Abschnitt~\ref{surface_and_shading}} (als Vektor mit zwei Komponenten).
 (Man kann sich vorstellen, dass ein Verbundtyp die Vertexattribute definiert; die Menge der Vertices eines Modells wäre
-eine Reihung von Werten dieses Typs, und ein Element enthält entsprechtend die Attributwerte für ein Vertex.)
+eine Reihung von Werten dieses Typs, und ein Element enthält entsprechend die Attributwerte für ein Vertex.)
 
 \begin{figure}[h]
   \centering
@@ -266,9 +270,12 @@ eine Reihung von Werten dieses Typs, und ein Element enthält entsprechtend die 
   \label{fig:wireframe_teapot}
 \end{figure}
 
+\newglossaryentry{Vertexattributwert}{name={Vertexattributwert},plural={Vertexattributwerte},description={Werte von Vertexattributen. Jedem Vertex ist für jedes Attribut ein Wert zugeordnet}}
+\glsadd{Vertexattributwert} 
 \begin{defn}
 \emphalt{Vertexattribute} beschreiben die zu einem Vertex gespeicherten Daten. Es ist immer mindestens
 ein Attribut "`Raumkoordinate"' vorhanden, es können aber eine beliebige Anzahl von Attributen verwendet werden.
+Attributtypen sind Vektoren mit ein bis vier Komponenten.
 
 %Die Anzahl der Attribute ist also beliebig, aber für jedes Vertex in einem 3D-Modell gleich.
 In einem 3D-Modell besitzt jedes Vertex die gleichen Attribute, aber verschiedene Attribut\emph{werte}.
@@ -282,8 +289,10 @@ Geschirr an verschiedenen Stellen). 3D-Objekte müssen also positioniert usw. we
 des Modells angewendet wird.
 %(In der 3D-Grafik sind verschiedene "`Räume"' definiert, und man arbeitet mit Abbildungen zwischen diesen Räumen,)
 
+\newglossaryentry{Transformation}{name={Transformation},plural={Transformationen},description={%
+Auf Raumkoordinaten von 3D-Modellen angewendete Abbildungen. Ermöglichen Verschiebungen, Rotation, Skalierung von Modellen}}
 \begin{defn}
-\emphalt{Transformationen} sind Abbildungen von Raumkoordinaten auf Raumkoordinaten und dienen dazu,
+\emphalt{\glspl{Transformation}} sind Abbildungen von Raumkoordinaten auf Raumkoordinaten und dienen dazu,
 3D-Objekte zu verschieben, zu rotieren oder zu skalieren.
 
 Eine Transformation wird auf ein Objekt angewendet, indem auf die Raumkoordinaten aller Vertices dieselbe Transformation angewendet wird.
@@ -315,7 +324,8 @@ Beleuchtung und Schattenwurf von 3D-Objekten geben einem menschlichen Betrachter
 einzelner Objekte sowie zur Positionierung von Objekten zueinander. Aus Lichtreflektionen der Oberfläche -- Art, Farbe und Zusammenspiel
 mit Strukturen und Mustern -- lassen sich Materialeigenschaften und damit das dargestellte Material ableiten.
 
-Beleuchtungs- und Oberflächenberechnungen (``\emph{Shading}'') sind bei der Darstellung von 3D-Objekten also äusserst wichtig.
+\newglossaryentry{Shading}{name={Shading},description={Berechnung der Farbe eines beleuchteten Punktes auf einer 3D-Oberfläche}}
+Beleuchtungs- und Oberflächenberechnungen (``\emph{\gls{Shading}}'') sind bei der Darstellung von 3D-Objekten also äusserst wichtig.
 Allerdings können diese auch Zeitaufwendig sein, insbesondere da in der Echtzeit-3D-Grafik die Szenen in der Regel
 immer auch eine dynamische Komponente haben. Insbesondere Beleuchtungsberechnungen hängen von der Kameraposition
 und/oder der Objektposition ab und müssen, wenn die Kamera oder Objekte sich bewegen, für jedes darzustellende Bild
@@ -349,7 +359,8 @@ dieser Berechnung linear über die Pixel des Dreiecks zu \emph{interpolieren}.
 Für eine überzeugende Darstellung einer Oberfläche sind deren Details wichtig, z.B. feine Muster in der Oberflächenfarbe.
 Es liegt nahe, jedem Eckpunkt eines Dreiecks eine Farbe zuzuweisen; aber oftmals sollen die darzustellenden Details kleiner als die Dreiecke, aus denen
 ein Modell aufgebaut wurde, sein.
-Zu diesem Zweck werden zweidimensionale Bilder\footnote{"`Texturen"'}
+\newglossaryentry{Textur}{name={Textur},plural={Texturen},description={Bilddaten, bei der Pixelverarbeitung ausgelesen. Typischerweise auf Oberfläche von Modellen "`gespannt"'}}
+Zu diesem Zweck werden zweidimensionale Bilder\footnote{"`\glspl{Textur}"'}
 über die Oberfläche "`gelegt"'. Dazu wird eine Abbildung auf die 3D-Raumkoordinate auf angewendet um eine 2D-Bildkoordinate,
 an der das Bild ausgelesen wird, zu erhalten. Z.B. kann ein "`Blatt Papier"' durch zwei Dreiecke dargestellt werden, aber die Verwendung
 eines Oberflächenbildes erlaubt es Text usw. darzustellen, was weit detaillierter ist, als es eine einfache Färbung der Dreieckseckpunkte erlauben würde.
@@ -378,8 +389,9 @@ Deren logischer Aufbaum, schematisch Abbildung~\ref{fig:3d_pipeline} dargestellt
   \label{fig:3d_pipeline}
 \end{figure}
 
+\newglossaryentry{Vertexberechnungen}{name={Vertexberechnungen},description={Arbeitsschritt der Grafikhardware. Berechnungen, die für jedes Vertex des dargestellten 3D-Modells vorgenommen werden}}
 Der erste Schritt bei der Darstellung
-eines 3D-Objekts die Ausführung der für jedes Vertex erforderlichen Berechnungen ("`Vertexverarbeitung"').
+eines 3D-Objekts die Ausführung der für jedes Vertex erforderlichen Berechnungen ("`\gls{Vertexberechnungen}"').
 Dies sind immer mindestens die Anwendung der Transformationen für ein Objekt auf die individuellen Raumkoordinaten der Eckpunkte;
 in der Regel werden auch, wie oben genannte, Teile der Beleuchtungs- und Oberflächenberechnung vorgenommen.
 
@@ -387,6 +399,8 @@ Die Ergebnisse der Vertexberechnungen sind eine Pixelkoordinate sowie weitere "`
 Analog zu Vertexattributen liefert jede Vertexberechnung die gleiche Anzahl von Ergebnis"`variablen"', aber deren \emph{Werte} unterscheiden sich
 von Vertex zu Vertex.
 
+\newglossaryentry{Rasterung}{name={Rasterung},description={Arbeitsschritt der Grafikhardware. Bestimmt Monitorpixel, die von einem Dreieck überdeckt werden}}
+\glsadd{Rasterung}
 Die Pixelkoordinaten der Vertices eines Dreiecks werden von einer speziellen Funktionseinheit verwendet um das Dreieck zu rastern:
 ausgegeben werden alle Pixel, die vom Dreieck überdeckt werden. 
 %Auch die Interpolation der weiteren Ausgaben der Eckpunktberechnungen -- die "`Zwischenergebnisse"' -- wird von dieser Funktionseinheit vorgenommen.
@@ -429,15 +443,18 @@ dieser Ergebnis"`variable"' beschriftet. Für das Beispielpixel wurde der interp
 % Interpolation: linear; zwischen Werten der Dreieckseckpunkte; Gewichtungsfaktor(en) von Position des Pixels auf Dreieck abhängig
 % + Bild
 
+\newglossaryentry{Interpolation}{name={Interpolation},description={Arbeitsschritt der Grafikhardware. Interpoliert zwischen Ausgaben der Vertexberechnungen,
+Interpolationsergebnisse dienen als Eingaben für Pixelberechnungen}}
 \begin{defn}
-Die Eingaben der Pixelberechnungen werden aus den Ausgaben der Vertexberechnungen durch \emphalt{lineare Interpolation}
+Die Eingaben der Pixelberechnungen werden aus den Ausgaben der Vertexberechnungen durch \emphalt{lineare \gls{Interpolation}}
 abgeleitet.
 
 Interpoliert wird zwischen den Ausgaben der Vertexberechnungen für die Eckpunkte des gerasterten Dreiecks.
 Die Gewichtungsfaktoren für die Interpolation bestimmen sich aus der Position des Pixels im Dreieck.
 \end{defn}
 
-Schliesslich werden die für jeden Pixel vorzunehmenden Berechnungen ausgeführt\footnote{"`Pixelverarbeitung"'}.
+\newglossaryentry{Pixelberechnungen}{name={Pixelberechnungen},description={Arbeitsschritt der Grafikhardware. Berechnungen, die für jedes gerasterte Pixel eines Dreiecks vorgenommen werden}}
+Schliesslich werden die für jeden Pixel vorzunehmenden Berechnungen ausgeführt\footnote{"`\gls{Pixelberechnungen}"'}.
 Ausgabe dieses Schrittes ist ein Farbwert\footnote{Eigentlich ein Farbwert (Rot-Grün-Blau-Tripel) sowie eine Deckkraft ("`Alpha"'), für die Darstellung von transparenten Oberflächen}
 der für die Darstellung des Pixels auf dem Monitor verwendet wird.
 
@@ -477,12 +494,13 @@ führt meist zu einer falschen Interpretation der Eingaben der Pixelverarbeitung
 Bei der Darstellung von 3D-Objekten verwendete Daten, Eingabedaten wie auch Zwischenergebnisse von Berechnungen,
 liegen in verschieder "`Granularität"' vor:
 
+\newglossaryentry{Objektattribut}{name={Objektattribut},plural={Objektattribute},description={Einem 3D-Modell zugeordnete Eigenschaften (z.B. Transformationen, Material)}}
 \begin{itemize}
 \item Einige Eingabedaten liegen für das \emph{Objekt} vor.
 Dies sind vor allem die Transformationen -- verschiedene Objekte haben verschiedene Transformationen,
 aber es wäre in der Regel unnötig, jedem Eckpunkt ein einem Dreiecksnetz eine Transformation zuzuweisen.
 Auch einige "`Material"'eigenschaften -- z.B. ein auf die Oberfläche gelegtes Bild -- variieren typischerweise von Objekt zu Objekt.
-Es kann bei diesen Daten von "`Objektattributen"' gesprochen werden.
+Es kann bei diesen Daten von "`\glspl{Objektattribut}n"' gesprochen werden.
 \item Für jedes \emph{Vertex} liegen natürlich die Raumkoordinaten der Vertices vor, aber auch 
 die Werte der Vertexattribute -- wie u.a. die Oberflächennormale (bei Beleuchtungsberechnungen verwendet).
 \item Für jedes \emph{Pixel} können \emph{Eingabe}daten nicht sinnvoll vorliegen -- schliesslich ist ja nicht bekannt, wie ein Dreieck
