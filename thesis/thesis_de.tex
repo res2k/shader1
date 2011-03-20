@@ -376,7 +376,7 @@ Zwischenergebnisse werden für jeden Eckpunkt berechnet; diese werden dann, bevo
 Berechnung dienen, interpoliert.
 %(sofern dies sinnvoll ist, oder zumindest einem Betrachter nicht auffällt)
 
-\section{Verarbeitungsschritte auf der Grafikhardware}
+\section{Verarbeitungsschritte auf 3D-Grafikprozessoren}
 \label{hw_steps}
 
 Moderne Grafikchips (genannt ``Graphics Processing Unit'', kurz ``GPU'') sind auf Echtzeit-Darstellung von 3D-Grafiken spezialisierte Hardware.
@@ -389,7 +389,7 @@ Deren logischer Aufbaum, schematisch Abbildung~\ref{fig:3d_pipeline} dargestellt
   \label{fig:3d_pipeline}
 \end{figure}
 
-\newglossaryentry{Vertexberechnungen}{name={Vertexberechnungen},description={Arbeitsschritt der Grafikhardware. Berechnungen, die für jedes Vertex des dargestellten 3D-Modells vorgenommen werden}}
+\newglossaryentry{Vertexberechnungen}{name={Vertexberechnungen},description={Arbeitsschritt der GPU. Berechnungen, die für jedes Vertex des dargestellten 3D-Modells vorgenommen werden}}
 Der erste Schritt bei der Darstellung
 eines 3D-Objekts die Ausführung der für jedes Vertex erforderlichen Berechnungen ("`\gls{Vertexberechnungen}"').
 Dies sind immer mindestens die Anwendung der Transformationen für ein Objekt auf die individuellen Raumkoordinaten der Eckpunkte;
@@ -399,7 +399,7 @@ Die Ergebnisse der Vertexberechnungen sind eine Pixelkoordinate sowie weitere "`
 Analog zu Vertexattributen liefert jede Vertexberechnung die gleiche Anzahl von Ergebnis"`variablen"', aber deren \emph{Werte} unterscheiden sich
 von Vertex zu Vertex.
 
-\newglossaryentry{Rasterung}{name={Rasterung},description={Arbeitsschritt der Grafikhardware. Bestimmt Monitorpixel, die von einem Dreieck überdeckt werden}}
+\newglossaryentry{Rasterung}{name={Rasterung},description={Arbeitsschritt der GPU. Bestimmt Monitorpixel, die von einem Dreieck überdeckt werden}}
 \glsadd{Rasterung}
 Die Pixelkoordinaten der Vertices eines Dreiecks werden von einer speziellen Funktionseinheit verwendet um das Dreieck zu rastern:
 ausgegeben werden alle Pixel, die vom Dreieck überdeckt werden. 
@@ -443,7 +443,7 @@ dieser Ergebnis"`variable"' beschriftet. Für das Beispielpixel wurde der interp
 % Interpolation: linear; zwischen Werten der Dreieckseckpunkte; Gewichtungsfaktor(en) von Position des Pixels auf Dreieck abhängig
 % + Bild
 
-\newglossaryentry{Interpolation}{name={Interpolation},description={Arbeitsschritt der Grafikhardware. Interpoliert zwischen Ausgaben der Vertexberechnungen,
+\newglossaryentry{Interpolation}{name={Interpolation},description={Arbeitsschritt der GPU. Interpoliert zwischen Ausgaben der Vertexberechnungen,
 Interpolationsergebnisse dienen als Eingaben für Pixelberechnungen}}
 \begin{defn}
 Die Eingaben der Pixelberechnungen werden aus den Ausgaben der Vertexberechnungen durch \emphalt{lineare \gls{Interpolation}}
@@ -453,7 +453,7 @@ Interpoliert wird zwischen den Ausgaben der Vertexberechnungen für die Eckpunkt
 Die Gewichtungsfaktoren für die Interpolation bestimmen sich aus der Position des Pixels im Dreieck.
 \end{defn}
 
-\newglossaryentry{Pixelberechnungen}{name={Pixelberechnungen},description={Arbeitsschritt der Grafikhardware. Berechnungen, die für jedes gerasterte Pixel eines Dreiecks vorgenommen werden}}
+\newglossaryentry{Pixelberechnungen}{name={Pixelberechnungen},description={Arbeitsschritt der GPU. Berechnungen, die für jedes gerasterte Pixel eines Dreiecks vorgenommen werden}}
 Schliesslich werden die für jeden Pixel vorzunehmenden Berechnungen ausgeführt\footnote{"`\gls{Pixelberechnungen}"'}.
 Ausgabe dieses Schrittes ist ein Farbwert\footnote{Eigentlich ein Farbwert (Rot-Grün-Blau-Tripel) sowie eine Deckkraft ("`Alpha"'), für die Darstellung von transparenten Oberflächen}
 der für die Darstellung des Pixels auf dem Monitor verwendet wird.
@@ -528,8 +528,8 @@ den gesamten Berechnungsaufwand.
 %An einem beispielhaften Shadingprogramms -- geschrieben in Cg -- sollen einige der genannten allgemeinen Konzepte 
 %Um einige der genannten allgemeinen Konzepte  sowie die Funktionsweise von 3D-Grafikhardware
 
-Ein Shadingprogramm, geschrieben in Cg, soll als praktisches Beispiel der Programmierbarkeit von 3D-Grafikhardware dienen.
-Es soll gezeigt werden, wie die Funktionsweise von 3D-Grafikhardware sowie einige Konzepte, die in den vorherigen
+Ein Shadingprogramm, geschrieben in Cg, soll als praktisches Beispiel der Programmierbarkeit von 3D-Grafikprozessoren dienen.
+Es soll gezeigt werden, wie die Funktionsweise von GPUs sowie einige Konzepte, die in den vorherigen
 Abschnitten genannt wurden, sich in Shadingprogrammen äussern. Das Beispielprogramm ist in Abbildung~\ref{fig:simple_cg} aufgelistet.
 
 \begin{figure}[hp]
@@ -606,7 +606,7 @@ Vertex, für den die Vertexberechnungen vorgenommen werden, ergibt. \verb+ambien
 zu der Gesamtbeleuchtung addiert\footnote{Solche Annäherungen werden verwendet, um schattierte Bereiche aufzuhellen, was von
 menschlichen Betrachtern u.U. als "`besser aussehend"' wahrgenommen wird.}.
 
-Die Interpolation dieses Beleuchtungswertes wird nicht explizit angegeben -- diese wird implizit von der Grafik-Hardware während der Dreiecksrasterung
+Die Interpolation dieses Beleuchtungswertes wird nicht explizit angegeben -- diese wird implizit von der GPU während der Dreiecksrasterung
 vorgenommen. Das Pixelprogramm "`sieht"' nur den aus den Ergebnissen der Vertexberechnungen interpolierten Eingabewert.
 
 Der Eingabeparameter \verb+TexCoord+ wird von Vertexprogramm unverändert wieder ausgegeben (Zuweisung zu \verb+output.TexCoord+) --
@@ -700,7 +700,7 @@ praktisch nicht auszumachen.
 
 \section{Zusammenfassung}
 
-Bei der Echtzeit-3D-Grafik werden von der Grafikhardware als Dreiecksnetze vorliegende 3D-Modelle dargestellt.
+Bei der Echtzeit-3D-Grafik werden von der GPU als Dreiecksnetze vorliegende 3D-Modelle dargestellt.
 Diese Modelle bestehen aus \emph{``Vertices''}, die die Eckpunkte von Dreiecken bilden. Bei der Darstellung eines
 Modelles wird zuerst die \emph{Vertexverarbeitung} vorgenommen; dabei werden die Raumkoordinaten der Vertices transformiert
 und weitere Berechnungen auf den Vertices zugeordneten Daten vorgenommen ("`Vertexattribute"').
@@ -1987,7 +1987,7 @@ zwischen den Verarbeitungseinheiten generiert werden.
 Dabei ist zu beachten, dass nur Werte vom Vertex- zum Pixelprogramm übertragen werden können; % @@@ Eher nicht hier
 eine Übertragung in die andere Richtung ist nicht möglich.
 
-Auch muss die von der Grafikhardware vorgenommene implizite Interpolation von Ergebnissen der Vertexverarbeitung in Betracht
+Auch muss die von der GPU vorgenommene implizite Interpolation von Ergebnissen der Vertexverarbeitung in Betracht
 gezogen werden. D.h. der Compiler muss die Operationen des Programms so aufteilen, dass die Interpolation bei der Übergabe
 von Werten von der Vertex- zur Pixelverarbeitung nicht die Berechnungen des Programms "`verfälscht"'. (Würde z.B. der Ausdruck 
 $x^2$ in der Vertexberechnung berechnet und interpoliert in der Pixelverarbeitung verwendet werden, so käme dies einer
@@ -2145,7 +2145,7 @@ Werte von Vertexattributen sind den verschiedenen Vertices zugeordnete Eingaben.
 Auch diese sind Anwendungsdaten.
 
 Eingaben der Pixelberechnung sind die interpolierten Ausgaben des Vertexprogramms (siehe Abschnitt~\ref{schnittstelle} unten). 
-Insbesondere besitzt Grafikhardware keinen Mechanismus, der der Anwendung erlauben würden, direkt Eingaben für jedes Pixel
+Insbesondere besitzen GPUs keinen Mechanismus, der der Anwendung erlauben würden, direkt Eingaben für jedes Pixel
 vorzugeben.
 
 "`Echte"', statische Konstanten werden vom Splitter als "`Objekteingaben"' betrachtet.
@@ -2218,7 +2218,7 @@ Die Ergebnisse der Vertexberechnung sind verschiedene Werte für verschiedene Ve
 
 Die Eingabe für die Pixelverarbeitung ist das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$\footnote{Tatsächlich muss bei der Rasterung von Dreiecken zwischen drei Werten interpoliert werden. Dieser Abschnitt betrachtet konkret
 bloss Interpolation zwischen zwei Werten, die Ergebnisse gelten aber auch bei Interpolation zwischen drei Werten.}.
-$f$ wird von der Grafikhardware berechnet und variiert mit jedem Pixel. (Für das Pixel, auf das das erste Vertex abgebildet wurde, ist $f = 0$; für das Pixel,
+$f$ wird von der GPU berechnet und variiert mit jedem Pixel. (Für das Pixel, auf das das erste Vertex abgebildet wurde, ist $f = 0$; für das Pixel,
 auf das das zweite Vertex abgebildet wurde, ist $f = 1$; Pixel zwischen diesen "`Randpixeln"' haben entsprechend Werte von $f$ dazwischen -- siehe Abbildung~\ref{fig:interp_simple}).
 
 Betrachtet sei eine Rechenoperation $\alpha = g(x)$, die während der Pixelberechnung ausgeführt wird.
@@ -2791,9 +2791,9 @@ gut lesbar lässt.}.
 Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur; die Abweichnung ist der Verarbeitungsschritt der "`Auftrennung"' in mehrere
 Programme.
 
-Die Auftrennung nutzt dabei Eigenschaften von Grafikhardware aus, deren Aufbau auf den Ablauf des Echtzeit-3D-Renderings abgestimmt ist.
+Die Auftrennung nutzt dabei Eigenschaften von GPUs aus, deren Aufbau auf den Ablauf des Echtzeit-3D-Renderings abgestimmt ist.
 Speziell werden Operationen in der Vertex- statt Pixelberechnung ausgeführt, sofern das Ergebnis zur ursprünglichen Operation mathematisch äquivalent ist
-(unter Berücksichtigung der von der Grafikhardware vorgenommen Interpolation von Ausgaben der Vertexberechnung).
+(unter Berücksichtigung der von der GPU vorgenommen Interpolation von Ausgaben der Vertexberechnung).
 
 Auch hervorzuheben ist die verwendete Zwischencoderepräsentation, die als Übergabeformat zwischen allen Verarbeitungsschritten von der
 semantischen Analyse bis zur Codegenerierung dient. Weiterhin ist sie darauf ausgerichtet, die Implementierung von Optimierungsschritten
