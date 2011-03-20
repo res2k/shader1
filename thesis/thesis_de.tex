@@ -208,8 +208,8 @@ dargestellt werden soll, typischerweise verbunden mit einer Manipulation durch e
 Das "`Echtzeit"' im Namen bedeutet, dass die dargestellte Grafik mit möglichst geringer, idealerweise nicht wahrnehmbarer
 Verzögerung dargestellt wird. Das vom Kino bekannte Prinzip, dass mit einem schnellen Bildwechsel aus statischen Bildern die Illusion von Bewegung
 erzeugt werden kann, findet genau so auch der Echtzeit-3D-Grafik Anwendung: Computerspiele stellen typischerweise 30 oder 60 Bilder
-pro Sekunde dar um Animationen überzeugend darzustellen. Dabei wird jedes dieser Bilder neu berechnet --
-eine der Herausforderungen der Echtzeit-3D-Grafik ist also, für tendenziell immer komplexer werdende Szenarien Bilder in wenigen
+pro Sekunde dar um Animationen überzeugend zu präsentieren. Dabei wird jedes dieser Bilder neu berechnet --
+eine der Herausforderungen der Echtzeit-3D-Grafik ist also, für komplexe Szenarien Bilder in wenigen
 Millisekunden zu berechnen.
 
 \section{3D-Objekte und Szenen}
@@ -290,7 +290,7 @@ ausreichend, über "`Pixel"' zu reden.}.
 
 Beleuchtung und Schattenwurf von 3D-Objekten geben einem menschlichen Betrachter wichtige Hinweise zur Form
 einzelner Objekte sowie zur Positionierung von Objekten zueinander. Aus Lichtreflektionen der Oberfläche -- Art, Farbe und Zusammenspiel
-mit Strukturen und Mustern -- lassen sich Materialeigenschaft und damit das dargestellte Material ableiten.
+mit Strukturen und Mustern -- lassen sich Materialeigenschaften und damit das dargestellte Material ableiten.
 
 Beleuchtungs- und Oberflächenberechnungen (``\emph{Shading}'') sind bei der Darstellung von 3D-Objekten also äusserst wichtig.
 Allerdings können diese auch Zeitaufwendig sein, insbesondere da in der Echtzeit-3D-Grafik die Szenen in der Regel
@@ -300,14 +300,14 @@ neu berechnet werden. Aus der Anforderung der Echtzeit-3D-Grafik, für eine übe
 Bilder genügend schnell zu berechnen, ergibt sich auch für die Beleuchtungs- und Oberflächenberechnung, dass diese
 möglichst schnell von statten gehen soll.
 
-Grundsätzlich wird ein Farbwert pro Rasterpunkt benötigt. Dabei wird aus der Koordinate des Rasterpunktes die ursprüngliche Koordinate
+Grundsätzlich wird ein Farbwert pro Rasterpunkt benötigt. Dazu wird aus der Koordinate des Rasterpunktes die ursprüngliche Koordinate
 im dreidimensionalen Raum berechnet. Für diesen Punkt in Raum können dann Oberflächeneigenschaften bestimmt werden
 (z.B. Farbe) und zusammen mit Informationen über vorhandene Lichtquellen kann die vom Betracher wahrgenommene 
 "`Lichtreflektion"' berechnet werden.
 
 Eine Berechnung für jeden Rasterpunkt ist zwar genau, aber in manchen Fällen zu aufwändig. Eine Annäherung ist,
 solche Beleuchtungs- und Oberflächenberechnungen nur für die Eckpunkte des Dreiecks zu berechnen und das Ergebnis
-dieser Berechnung linear über das Dreieck zu \emph{interpolieren}.
+dieser Berechnung linear über die Pixel des Dreiecks zu \emph{interpolieren}.
 
 \begin{figure}[h]
   \centering
@@ -356,7 +356,7 @@ Deren logischer Aufbaum, schematisch Abbildung~\ref{fig:3d_pipeline} dargestellt
 \end{figure}
 
 Der erste Schritt bei der Darstellung
-eines 3D-Objekts die Ausführung der für jedes Vertex erforderlichen Berechnungen("`Vertexverarbeitung"').
+eines 3D-Objekts die Ausführung der für jedes Vertex erforderlichen Berechnungen ("`Vertexverarbeitung"').
 Dies sind immer mindestens die Anwendung der Transformationen für ein Objekt auf die individuellen Raumkoordinaten der Eckpunkte;
 in der Regel werden auch, wie oben genannte, Teile der Beleuchtungs- und Oberflächenberechnung vorgenommen.
 
@@ -364,8 +364,8 @@ Die Ergebnisse der Vertexberechnungen sind eine Pixelkoordinate sowie weitere "`
 Analog zu Vertexattributen liefert jede Vertexberechnung die gleiche Anzahl von Ergebnis"`variablen"', aber deren \emph{Werte} unterscheiden sich
 von Vertex zu Vertex.
 
-Die Pixelkoordinaten der Vertices eines Dreiecks werden von einer speziellen Funktionseinheit verwendet, das Dreieck zu Rastern.
-Ausgegeben werden alle Pixel, die vom Dreieck überdeckt werden. 
+Die Pixelkoordinaten der Vertices eines Dreiecks werden von einer speziellen Funktionseinheit verwendet um das Dreieck zu rastern:
+ausgegeben werden alle Pixel, die vom Dreieck überdeckt werden. 
 %Auch die Interpolation der weiteren Ausgaben der Eckpunktberechnungen -- die "`Zwischenergebnisse"' -- wird von dieser Funktionseinheit vorgenommen.
 
 Aus den Ausgaben der Vertexberechnungen -- die oben erwähnten "`Zwischenergebnisse"' -- werden die Eingaben für die Pixelberechnungen abgeleitet.
@@ -407,7 +407,7 @@ dieser Ergebnis"`variable"' beschriftet. Für das Beispielpixel wurde der interp
 % + Bild
 
 \begin{defn}
-Die Eingaben der Ausgaben der Vertexberechnungen werden aus den der Vertexberechnung durch \emphalt{lineare Interpolation}
+Die Eingaben der Pixelberechnungen werden aus den Ausgaben der Vertexberechnungen durch \emphalt{lineare Interpolation}
 abgeleitet.
 
 Interpoliert wird zwischen den Ausgaben der Vertexberechnungen für die Eckpunkte des gerasterten Dreiecks.
@@ -422,27 +422,31 @@ Tatsächlich sind den Pixelberechnungen nur die interpolierten Ausgaben der Vert
 Eingaben oder Berechnungsergebnisse kann nicht einzeln zugegriffen werden (d.h. bei der Pixelberechnung können nicht Werte wie
 "`Position des ersten Dreieckseckpunktes"' ausgelesen werden).
 
-Die Vertex- wie auch Pixelberechnungen sind unabhängig -- d.h. die für einen Punkt oder Pixel ausgeführten Berechnungen hängen
-nicht von den Werten anderer Eckpunkte oder Pixel ab. (Tatsächlich wird so ein "`Zugriff"' auf andere Eckpunkte oder Pixel gar nicht erst erlaubt.)
+Die Vertex- wie auch Pixelberechnungen sind unabhängig -- d.h. die für ein Vertex oder Pixel ausgeführten Berechnungen hängen
+nicht von den Werten anderer Vertices oder Pixel ab. (Tatsächlich wird ein "`Zugriff"' auf andere Vertices oder Pixel gar nicht erlaubt.)
 Dies macht die Eckpunkt- und Pixelberechnungen gut parallelisierbar -- die jeweiligen Funktionseinheiten der GPUs sind dementsprechend aufgebaut:
-sie führen gleichzeitig die Berechnungen für mehrere Eckpunkte und Pixel aus.
+sie führen gleichzeitig die Berechnungen für mehrere Vertices und Pixel aus.
 Dazu kommt, das Eckpunkt- und Pixelberechnungen -- dem Wesen von 3D-Objekten geschuldet -- viel mit Vektoren arbeiten. Die Recheneinheiten
 der Grafikkarten sind also in der Regel Vektoreinheiten.
 
 \newglossaryentry{Shadingsprache}{name={Shadingsprache},plural={Shadingsprachen},description={Sprachen zur Programmierung von Eckpunkt- und Pixelberechnungen auf GPUs}}
-Eine wichtige Eigenschaft ist die \emph{Programmierbarkeit} von Eckpunkt- und Pixelberechnungen
+Eine wichtige Eigenschaft ist die \emph{Programmierbarkeit} von Vertex- und Pixelberechnungen
 -- die vorgenommenen Berechnungen werden also durch von einem Programmierer bereitgestellte
-Programme bestimmt. Die GPUs selbst, als Mikroprozessoren, verarbieten in einem Binärcode vorliegende Programme; dieser Code
+Programme bestimmt. 
+
+Die GPUs selbst, als Mikroprozessoren, verarbeiten in einem Binärcode vorliegende Programme; dieser Code
 wird jedoch von den Programmierschnittstellen "`versteckt"' und Programme werden in einer Hochsprache gegeben\footnote{GLSL bei OpenGL, HLSL bei DirectX}.
 Die Sprachen werden "`\glspl{Shadingsprache}"' genannt.
 
 Vertex- und Pixelverarbeitung sind zwei logisch getrennte Verarbeitungsschritte, nehmen verschiedenartige Eingabedaten entgegen und
-werden auf zwei logisch verschiedenenen Funktionseinheiten vorgenommen. Dies bedeutet auch, dass man zur Programmierung einer GPU
-im Allgemeinen zwei Programme -- eines, das die Schritte der Vertexverarbeitung beschreibt ("`Vertexprogramm"'),
+werden auf zwei logisch verschiedenenen Funktionseinheiten vorgenommen. 
+Die beiden hauptsächlich verwendetet Programmierschnittstellen für GPUs -- OpenGL (\cite{glspec4}) und DirectX (\cite{dx10}) -- spiegeln 
+den Aufbau der 3D-Grafikprozessoren wider und erfordern, dass für jede Funktionseinheit explizit ein passendes Programm bereitgestellt werden muss:
+zur Programmierung einer GPU müssen zwei Programme -- eines, das die Schritte der Vertexverarbeitung beschreibt ("`Vertexprogramm"'),
 ein anderes für die Beschreibung der Pixelverarbeitung ("`Pixelprogramm"')
--- sowie eine "`Schnittstellendefinition"' (Ausgaben der Vertexverarbeitung bzw. Eingaben für die Pixelverarbeitung) erstellen.
-Dabei muss darauf geachtet werden, dass diese drei Teile aufeinander abgestimmt sind. Eine unpassende Schnittstellendefinition etwa
-führt meist zur falschen Interpretation der Eingaben der Pixelverarbeitung und damit zu unbrauchbaren Ergebnissen.
+-- sowie eine "`Schnittstellendefinition"' (Ausgaben der Vertexverarbeitung bzw. Eingaben für die Pixelverarbeitung) erstellt werden.
+Dabei muss darauf geachtet werden, dass diese drei Teile aufeinander abgestimmt sind: eine unpassende Schnittstellendefinition etwa
+führt meist zu einer falschen Interpretation der Eingaben der Pixelverarbeitung und damit zu unbrauchbaren Ergebnissen.
 
 \section{Daten eines 3D-Objektes}
 \label{object_data}
@@ -454,27 +458,28 @@ liegen in verschieder "`Granularität"' vor:
 \item Einige Eingabedaten liegen für das \emph{Objekt} vor.
 Dies sind vor allem die Transformationen -- verschiedene Objekte haben verschiedene Transformationen,
 aber es wäre in der Regel unnötig, jedem Eckpunkt ein einem Dreiecksnetz eine Transformation zuzuweisen.
-Auch einige "`Material"'eigenschaften -- z.B. ein auf die Oberfläche gelegtes Bild -- variieren typischerweise von Objekt zu Objekt:
-es kann dabei von "`Objektattributen"' gesprochen werden.
+Auch einige "`Material"'eigenschaften -- z.B. ein auf die Oberfläche gelegtes Bild -- variieren typischerweise von Objekt zu Objekt.
+Es kann bei diesen Daten von "`Objektattributen"' gesprochen werden.
 \item Für jedes \emph{Vertex} liegen natürlich die Raumkoordinaten der Vertices vor, aber auch 
 die Werte der Vertexattribute -- wie u.a. die Oberflächennormale (bei Beleuchtungsberechnungen verwendet).
 \item Für jedes \emph{Pixel} können \emph{Eingabe}daten nicht sinnvoll vorliegen -- schliesslich ist ja nicht bekannt, wie ein Dreieck
 schlussendlich gerastert wird. Allerdings liegen Zwischenergebnisse von Berechnungen per Pixel vor -- die  interpolierten Ausgaben der
-Eckpunktberechnung sowie Berechnungen in der Pixelverarbeitung selbst, wie das Auslesen eines Bildes
+Eckpunktberechnung sowie Berechnungen in der Pixelverarbeitung selbst, z.B. das Auslesen eines Bildes
 zur Färbung der Oberfläche.
 \end{itemize}
 
-Je nachdem, auf welchen Eingabedaten eine Berechnung operiert, muss diese verschieden oft ausgeführt werden.
-Berechnungen, die auf für jedes \emph{Pixel} vorliegenden Daten beruhen, müssen für jedes Pixel ausgeführt werden;
-demgegenüber müssen Berechnungen, die von für jedes \emph{Vertex} vorliegenden Daten abhängen,
+Je nachdem, auf welchen Eingabedaten bzw. Operanden eine Berechnung operiert, muss diese verschieden oft ausgeführt werden.
+Berechnungen, die Operanden verwenden, die in der \emph{Pixelverarbeitung} bestimmt wurden (z.B. aus einem Oberflächenmuster ausgelesene Farbe),
+müssen für jedes Pixel ausgeführt werden;
+demgegenüber müssen Berechnungen, die von Daten abhängen, die bloss für jedes \emph{Vertex} vorliegen (z.B. Raumkoordinate)
 auch nur für jedes \emph{Vertex} ausgeführt werden.
 
 Nun treten praktisch viel mehr Pixel- als Vertex-Berechnungen auf -- Abbildung~\ref{fig:triraster} zeigt beispielhaft,
 dass ein durch \emph{drei} Vertices definiertes Dreieck eine \emph{Vielzahl} von Pixeln überdeckt wird.
 
-Eine Folge daraus ist, dass es erstrebenswert ist, möglichst viele Berechnungen nur für jedes Vertex vorzunehmen, deren Ergebnisse interpolieren zu lassen
-und nur für Pixel auszurechnen, was wirklich nötig ist: da, auf die gesamte Darstellung einer 3D-Grafik gesehen,
-in der Regel viel weniger Berechnungen vertexweise als pixelweise ausgeführt werden, verringert eine Berechnung für jedes Vertex statt für jedes Pixel
+Eine Folge daraus ist, dass es erstrebenswert ist, möglichst viele Berechnungen in der Vertexverarbeitung vorzunehmen, deren Ergebnisse interpolieren zu lassen
+und nur in der Pixelverarbeitung auszurechnen, was wirklich nur dort ausgerechnet werden kann: da, auf die gesamte Darstellung einer 3D-Grafik gesehen,
+in der Regel viel weniger Berechnungen vertexweise als pixelweise ausgeführt werden, verringert die Ausführung einer Operation in der Vertexverarbeitung statt in der Pixelverarbeitung
 den gesamten Berechnungsaufwand.
 
 \section{Beispiel}
@@ -482,7 +487,7 @@ den gesamten Berechnungsaufwand.
 %An einem beispielhaften Shadingprogramms -- geschrieben in Cg -- sollen einige der genannten allgemeinen Konzepte 
 %Um einige der genannten allgemeinen Konzepte  sowie die Funktionsweise von 3D-Grafikhardware
 
-Ein Shadingprogramm, geschrieben in Cg, soll als praktisches Beispiel der Programmierbarkeit von 3D-Grafikhardware.
+Ein Shadingprogramm, geschrieben in Cg, soll als praktisches Beispiel der Programmierbarkeit von 3D-Grafikhardware dienen.
 Es soll gezeigt werden, wie die Funktionsweise von 3D-Grafikhardware sowie einige Konzepte, die in den vorherigen
 Abschnitten genannt wurden, sich in Shadingprogrammen äussern. Das Beispielprogramm ist in Abbildung~\ref{fig:simple_cg} aufgelistet.
 
@@ -503,7 +508,7 @@ und Pixelberechnungen logisch getrennt -- in diesem Fall, in dem sie durch zwei 
 
 Der Strukturtyp \verb+VertexOutput+ beschreibt die Ergebnisse der für jedes Vertex vorgenommenen Berechnungen.
 Gleichzeitig dient er als Typ eines Eingabeparameter des Programms für die Pixelberechnungen, dient also damit
-auch als "`Schnittstellenbeschreibung"' zwischen Vertex- und Pixelprogrammen. Insbesondere sei daran errinnert
+auch als "`Schnittstellenbeschreibung"' zwischen Vertex- und Pixelprogrammen. Insbesondere sei daran erinnert
 dass diese Ergebnisse der Vertexberechnungen vor der Eingabe an das Pixelprogramm interpoliert werden.
 
 \subsection{Eingaben und Ausgaben}
@@ -526,7 +531,7 @@ Vertexattribute (\freqPerVert{hell hinterlegt}) sind \verb+Position+ (Raumkoordi
 und \verb+Normal+ (Oberflächennormale).
 
 Die Eingabe \verb+interpolatedVertexOutput+ des Pixelprogramms sind als "`für jedes Pixel vorliegend"' (\freqPerFrag{dunkel hinterlegt}) markiert.
-Wie verträgt sich das mit der in Abschnitt~\ref{object_data} Aussage, gemachten Aussage, Eingabedaten könnten nicht sinnvoll für jedes
+Wie verträgt sich das mit der in Abschnitt~\ref{object_data} gemachten Aussage, Eingabedaten könnten nicht sinnvoll für jedes
 Pixel vorliegen? Die für jedes Pixel vorliegenden Eingabeparameter des Pixelprogramms sind keine "`direkten"' Eingaben,
 wie sie etwa die Werte der Objekt- oder Vertexattribute sind, sondern \emph{abgeleitete} Eingaben --
 aus den Ergebnissen der Vertexberechnung interpolierte Werte.
@@ -534,10 +539,10 @@ aus den Ergebnissen der Vertexberechnung interpolierte Werte.
 % vorher: Pixeleingaben "nicht sinnvoll", hier Pixel-Eingaben? -> interpoliert
 Zwei Ausgaben haben eine besondere Bedeutung: \verb+output.Position+ des Vertexprogramms und \verb+outColor+ des Pixelprogramms.
 \verb+output.Position+ ist die in Monitorkoordinaten transformierte Position eines Vertices. Die Rasterung der Dreiecke wird anhand dieser
-Positionen der Dreieckseckpunkte vorgenommen. (In Cg markiert \verb+: POSITION+ die besondere "`Rolle"' dieses Ausgabewertes des Vertexprogramms.)
+Positionen der Dreieckseckpunkte vorgenommen. (In Cg markiert ``\verb+: POSITION+'' die besondere "`Rolle"' dieses Ausgabewertes des Vertexprogramms.)
 
 Die zweite "`besondere"' Ausgabe ist der Ausgabeparameter \verb+outColor+ des Pixelprogramms. Durch diesen wird die auf dem Monitor
-darzustellende Pixelfarbe bestimmt. (\verb+: COLOR+ ist die Cg-Syntax, um den Parameter als "`Pixelfarbe"' zu kennzeichnen.)
+darzustellende Pixelfarbe bestimmt. (``\verb+: COLOR+'' ist die Cg-Syntax, um den Parameter als "`Pixelfarbe"' zu kennzeichnen.)
 Darüber hinaus wären weitere Ausgaben nicht sinnvoll (so kann ein Monitorpixel nur einen Farbwert besitzen).
 
 \subsection{Berechnungen}
@@ -564,7 +569,7 @@ Die Interpolation dieses Beleuchtungswertes wird nicht explizit angegeben -- die
 vorgenommen. Das Pixelprogramm "`sieht"' nur den aus den Ergebnissen der Vertexberechnungen interpolierten Eingabewert.
 
 Der Eingabeparameter \verb+TexCoord+ wird von Vertexprogramm unverändert wieder ausgegeben (Zuweisung zu \verb+output.TexCoord+) --
-ein kann Pixelprogramm keine Werte von Vertexattributen als Eingaben annehmen, alle solchen Eingaben müssen also im Vertexprogramm
+ein Pixelprogramm kann keine Werte von Vertexattributen als Eingaben annehmen, alle solchen Eingaben müssen also im Vertexprogramm
 explizit "`durchgeschleift"' werden. Dabei ist zu beachten, dass, wie alle Ausgaben der Vertexberechnung, auch zwischen \verb+output.TexCoord+-Werten
 von mehreren Vertices interpoliert wird, bevor es als Eingabe für das Pixelprogramm dient.
 
@@ -581,13 +586,13 @@ dem Beleuchtungswert erreicht. Damit ergibt sich die ausgegebene Pixelfarbe (\ve
 
 Abbildung~\ref{fig:simple_cg_images} zeigt ein 3D-Modell, welches mit dem Beispielprogramm aus Abbildung~\ref{fig:simple_cg} dargestellt wurde.
 Zur Verdeutlichung des Einflusses der verschiedenen Verarbeitungsschritte wurde nicht nur das Endergebnis, sondern auch einige Zwischenergebnisse
-visualisiert. Abbildung~\ref{fig:simple_cg_images_large} zeigt vergrösserte Ausschnitte der Bilder aus Abbildung~\ref{fig:simple_cg}.
+visualisiert. Abbildung~\ref{fig:simple_cg_images_large} zeigt vergrößerte Ausschnitte der Bilder aus Abbildung~\ref{fig:simple_cg}.
 
 Bild (a) stellt das 3D-Modell in Drahtgitterdarstellung da. Dies lässt erkennen, wo sich die Vertices des Modells befinden.
 
 Bild (b) zeigt die Anteile der Berechnungen mit  "`Objektattributen"' (speziell wurde der Wert von \verb+ambient+ ausgegeben).
 
-Bild (c) nimmt die Ergebnisse der Vertexberechnungen hinzu (\verb+output.litColor+). In der Vergrösserung lässt sich die Interpolation
+Bild (c) nimmt die Ergebnisse der Vertexberechnungen hinzu (\verb+output.litColor+). In der Vergrößerung lässt sich die Interpolation
 dieses, als Ausgaben der Vertexberechnungen vorliegenden, Wertes über die Pixel der Dreiecke erkennen.
 
 Bild (d) zeigt das Ergebnis der "`kompletten"' Berechnung (\verb+outColor+). Gut erkennbar sind die Details aus dem Oberflächenmuster,
@@ -596,10 +601,10 @@ praktisch nicht auszumachen.
 
 \begin{figure}[h]
   \centering
-  (a) \includegraphics[width=2.5cm]{mesh_wireframe_thin}\qquad
-  (b) \includegraphics[width=2.5cm]{simple_s1_mesh}\qquad
-  (c) \includegraphics[width=2.5cm]{simple_s1_vert}\qquad
-  (d) \includegraphics[width=2.5cm]{simple_s1_frag}
+  (a) \includegraphics[width=5cm]{mesh_wireframe_thin}\qquad
+  (b) \includegraphics[width=5cm]{simple_s1_mesh}\\
+  (c) \includegraphics[width=5cm]{simple_s1_vert}\qquad
+  (d) \includegraphics[width=5cm]{simple_s1_frag}
   \caption{3D-Modell, mit Programm aus \ref{fig:simple_cg} dargestellt}
   \small (a): Drahgitterdarstellung\\
   (b): Nur die Anteile aus den Objektattributen\\
@@ -610,45 +615,45 @@ praktisch nicht auszumachen.
 
 \begin{figure}[h]
   \centering
-  (a) \includegraphics[width=2.5cm]{simple_s1_crop_large_wire}\qquad
-  (b) \includegraphics[width=2.5cm]{simple_s1_crop_large_mesh}\qquad
-  (c) \includegraphics[width=2.5cm]{simple_s1_crop_large_vert}\qquad
-  (d) \includegraphics[width=2.5cm]{simple_s1_crop_large_frag}
-  \caption{Vergrösserungen aus Abbildung~\ref{fig:simple_cg_images}}
+  (a) \includegraphics[width=5cm]{simple_s1_crop_large_wire}\qquad
+  (b) \includegraphics[width=5cm]{simple_s1_crop_large_mesh}\\
+  (c) \includegraphics[width=5cm]{simple_s1_crop_large_vert}\qquad
+  (d) \includegraphics[width=5cm]{simple_s1_crop_large_frag}
+  \caption{Vergrößerungen aus Abbildung~\ref{fig:simple_cg_images}}
   \label{fig:simple_cg_images_large}
 \end{figure}
 
-\section{Auswirkungen auf Sprache und Compiler}
+% \section{Auswirkungen auf Sprache und Compiler}
 
 % Compilerziel: Eingabe _ein_ Programm
-Ziel des Compilers soll es sein, als Eingabe \emph{ein} Shadingprogramm -- mit einer Hauptfunktion usw., nicht nur "`ein Quelltext"' -- entgegenzunehmen
-und daraus Programme zu erzeugen, die für die programmierbaren Grafikchip-Einheiten zur Vertex- bzw. Pixelverarbeitung genutzt werden können.
+% Ziel des Compilers soll es sein, als Eingabe \emph{ein} Shadingprogramm -- mit einer Hauptfunktion usw., nicht nur "`ein Quelltext"' -- entgegenzunehmen
+% und daraus Programme zu erzeugen, die für die programmierbaren Grafikchip-Einheiten zur Vertex- bzw. Pixelverarbeitung genutzt werden können.
 
 % Erwähnung "Domänen"/"Frequenzen"/etc. -> klären, in Operationen auf welchen Daten man Prog. formuliert (hier Pixel)
-Shadingprogramme arbeiten mit verschiedenen Daten (Objektattribute, Werte von Vertexattributen, abgeleitete Eingaben der Pixelverarbeitung)
-und bestehen aus zwei Teilprogrammen, die mit Vertex- und Pixelverarbeitung auf verschiedene "`Klassen"' von Berechnungen vornehmen.
-Für die zu übersetzende Shadingsprache muss also entschieden werden, in welcher der "`Klassen"' sie formuliert werden soll --
-in diesem Fall sollen Programme so formuliert werden, als würden sie grundsätzlich für jedes Pixel ausgeführt werden.
+% Shadingprogramme arbeiten mit verschiedenen Daten (Objektattribute, Werte von Vertexattributen, abgeleitete Eingaben der Pixelverarbeitung)
+% und bestehen aus zwei Teilprogrammen, die mit Vertex- und Pixelverarbeitung auf verschiedene "`Klassen"' von Berechnungen vornehmen.
+% Für die zu übersetzende Shadingsprache muss also entschieden werden, in welcher der "`Klassen"' sie formuliert werden soll --
+% in diesem Fall sollen Programme so formuliert werden, als würden sie grundsätzlich für jedes Pixel ausgeführt werden.
 
 % Ausgabe: zwei Programme (Vertex, Pixel)
 % Prog.-Ausg.: Vertexkoord., Pixelkoord.
 % Berechnung+Verwendung von Werten in versch. Programmen handhaben
 % Implizite Interpolation berücksichtigen
 
-Der Compiler muss also dann für jeden Ausdruck entscheiden, ob er während der Pixelverarbeitung ausgeführt werden muss
-oder während der Vertexverarbeitung ausgeführt werden soll.
-Dabei ist zu berücksichtigen, dass einige Operationen nur in einem der Verarbeitungsschritte sinnvoll sind -- z.B. sollte ein Auslesen
-eines Bildes zur Anwendung eines Oberflächenmusters sinnvollerweise in der Pixelverarbeitung vorgenommen werden.
+% Der Compiler muss also dann für jeden Ausdruck entscheiden, ob er während der Pixelverarbeitung ausgeführt werden muss
+% oder während der Vertexverarbeitung ausgeführt werden soll.
+% Dabei ist zu berücksichtigen, dass einige Operationen nur in einem der Verarbeitungsschritte sinnvoll sind -- z.B. sollte ein Auslesen
+% eines Bildes zur Anwendung eines Oberflächenmusters sinnvollerweise in der Pixelverarbeitung vorgenommen werden.
 
-Da einige Operation in der Vertex-, andere in der Pixelverarbeitung ausgeführt werden sollen, müssen bei komplexeren
-Ausdrücken Zwischenergebnisse von der Vertex- zur Pixelverarbeitung übergeben werden. Es muss also die "`Schnittstelle"'
-zwischen den Verarbeitungseinheiten generiert werden.
+% Da einige Operation in der Vertex-, andere in der Pixelverarbeitung ausgeführt werden sollen, müssen bei komplexeren
+% Ausdrücken Zwischenergebnisse von der Vertex- zur Pixelverarbeitung übergeben werden. Es muss also die "`Schnittstelle"'
+% zwischen den Verarbeitungseinheiten generiert werden.
 
-Auch muss die von der Grafikhardware vorgenommene implizite Interpolation von Ergebnissen der Vertexverarbeitung in Betracht
-gezogen werden. D.h. der Compiler muss die Operationen des Programms so aufteilen, dass die Interpolation bei der Übergabe
-von Werten von der Vertex- zur Pixelverarbeitung nicht die Berechnungen des Programms "`verfälscht"'. (Würde z.B. der Ausdruck 
-$x^2$ in der Vertexberechnung berechnet und interpoliert in der Pixelverarbeitung verwendet werden, so käme dies einer
-lineare Approximation einer quadratischen Kurve gleich -- der Wert des Ausdruck wäre ungenauer, also "`verfälscht"'.)
+% Auch muss die von der Grafikhardware vorgenommene implizite Interpolation von Ergebnissen der Vertexverarbeitung in Betracht
+% gezogen werden. D.h. der Compiler muss die Operationen des Programms so aufteilen, dass die Interpolation bei der Übergabe
+% von Werten von der Vertex- zur Pixelverarbeitung nicht die Berechnungen des Programms "`verfälscht"'. (Würde z.B. der Ausdruck 
+% $x^2$ in der Vertexberechnung berechnet und interpoliert in der Pixelverarbeitung verwendet werden, so käme dies einer
+% lineare Approximation einer quadratischen Kurve gleich -- der Wert des Ausdruck wäre ungenauer, also "`verfälscht"'.)
 
 \section{Zusammenfassung}
 
@@ -661,8 +666,9 @@ Bei dieser \emph{Pixelverarbeitung} dienen als Eingaben die Ausgaben der Vertexv
 Es werden weitere Berechnung vorgenommen, um Details hinzuzufügen, für die eine Berechnung per Vertex zu "`grob"' wäre,
 wie das "`aufziehen"' von Bilddaten auf das 3D-Modell.
 
-Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Pixelverarbeitung"' sind beide programmierbar, die Ausgabe des Compilers
-soll ein Programm-Paar aus Vertex- und Pixelprogramm sein.
+Die Verarbeitungsschritte "`Vertexverarbeitung"' und "`Pixelverarbeitung"' sind beide programmierbar, 
+jedoch nur getrennt -- ein Programmier muss also für jede der Funktionseinheiten ein eigenes Programm schreiben.
+%die Ausgabe des Compilers soll ein Programm-Paar aus Vertex- und Pixelprogramm sein.
 
 % Aus den Verarbeitungsschritten der Echtzeit-3D-Grafik wurde das Konzept der \emph{Berechnungsfrequenz} abgeleitet:
 % diese sagt aus, auf welche Verarbeitungseinheit eine Operation eines GPU-Programms ausgeführt werden muss.
@@ -1054,18 +1060,20 @@ eine Repräsentation des Programms in einem \emph{Zwischencode}.
 Ein "`\emph{Middle-End}"' verarbeitet diese Zwischencoderepräsentation weiter, unter anderem werden Optimierungen vorgenommen.
 Im letzten Schritt wird im \emph{Back-End} aus der optimierten Zwischencoderepräsentation der tatsächliche Zielcode generiert.
 
-Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/FP} des "`Middle-Ends"'. Hier wird in der Zwischencoderepräsentation untersucht, mit
-welcher Berechnungsfrequenz~(siehe \ref{berechnungsfrequenz_locker} und
-\ref{Berechnungsfrequenz})\footnote{Für "`Meshfrequenz"' wird kein Programm generiert, sie spielt aber eine Rolle bei der Aufspaltung.
-    Generell ist das Konzept der Aufspaltung auch auf weitere Frequenzen erweiterbar.}
-jeder Befehl des Programms ausgeführt werden muss - mit anderen Worten,
-es wird untersucht, welche Befehle auf der Vertex-Einheit und welche auf der Fragment-Einheit ausgeführt werden müssen. Mit diesen Informationen kann
-das Programm entsprechend in ein Vertex- und ein Fragment-Programm aufgeteilt werden. Da zur Laufzeit auch ein "`Übergeben"' von Ausgaben
-des Vertexprogramms an Eingaben des Fragmentprogramms stattfindet wird auch eine "`Schnittstelle"' generiert, die die Vertex-Ausgaben auf Fragment-Eingaben
-abbildet.
+Besonderheit dieses Compilers ist der Schritt \emph{Auftrennung VP/PP} des "`Middle-Ends"'. Hier wird in der Zwischencoderepräsentation untersucht,
+% mit welcher Berechnungsfrequenz~(siehe \ref{berechnungsfrequenz_locker} und
+% \ref{Berechnungsfrequenz})\footnote{Für "`Meshfrequenz"' wird kein Programm generiert, sie spielt aber eine Rolle bei der Aufspaltung.
+%     Generell ist das Konzept der Aufspaltung auch auf weitere Frequenzen erweiterbar.}
+% jeder Befehl des Programms ausgeführt werden muss - mit anderen Worten,
+% es wird untersucht, 
+welche Operationen während der Vertexberechnung und welche während der Pixelberechnung ausgeführt werden müssen. Mit diesen Informationen kann
+das Programm entsprechend in ein Vertex- und ein Pixelprogramm aufgeteilt werden. Da zur Laufzeit auch ein "`Übergeben"' von Ausgaben
+des Vertexprogramms an Eingaben des Pixelprogramms stattfindet (die implizite Interpolation von Ausgaben der Vertexberechnung), wird auch eine "`Schnittstelle"' generiert,
+die die Ausgaben der Vertexberechnungen auf Eingaben 
+der Pixelberechnungen abbildet.
 
-Die Programme werden vom Aufspalter in Zwischencode ausgegeben und können noch einmal optimiert werden. % Irgendein besonderer Vorteil?
-Abschließend werden ein Fragment- und ein Vertexprogramm im gewünschten Zielcode ausgegeben\footnote{Diese Implementierung benutzt den
+Die Programme werden vom Aufspalter in Zwischencode ausgegeben und noch einmal optimiert. % Irgendein besonderer Vorteil?
+Abschließend werden ein Vertex- und ein Pixelprogramm im gewünschten Zielcode ausgegeben\footnote{Diese Implementierung benutzt den
 gleichen Generator für beide Programme, prinzipiell könnten diese jedoch mit verschiedenen Generatoren ausgegeben werden.}.
 
 \section{Implementierungsdetails}
@@ -1081,7 +1089,7 @@ Gründe dafür sind:
 \end{itemize}
  
 Um eine Wiederverwendung des Compilers zu vereinfachen wurde dieser im Wesentlichen als eine \emph{Bibliothek} realisiert;
-eine "`Kommandozeilenversion"' des Compilers setzt auch auf diese Bibliothek auf.
+eine Kommandozeilenversion des Compilers setzt auch auf diese Bibliothek auf.
  
 Zur Sicherstellung der fortwährend korrekten Funktionsweise aller Module des Compilers wurden entwicklungsbegleitend 
 jeweils \emph{Tests} der Module geschrieben (Black-Box und White-Box); Ausführen der Tests war regelmässiger Teil des Entwicklungsprozesses.
@@ -1384,7 +1392,7 @@ Der Aufbau einer Sequenz ist in Abbildung~\ref{fig:ir_sequence} schematisch darg
 Die in Operationen gespeicherte Registeridentifikation verweist auf den zugehörigen Registersatz, Typinformationen bleiben also erhalten.
 Verwendet werden diese Informationen bei der Aufspaltung\footnote{Die "`Aufteilbarkeit"' einer Operation hängt teilweise von den Datentypen der Operanden ab,
 siehe~\ref{Interpolierbarkeit}},
-Optimierung\footnote{Speziell beim Constant Folding.} und
+Optimierung\footnote{Speziell bei der Konstantenfaltung.} und
 Codegenerierung\footnote{Insbesondere da die gewählte Zielsprache -- Cg -- selbst eine Hochsprache ist.},
 und ein Abspeichern der Registertypen "`entlastet"' diese Komponenten von der Bestimmung des Typs eines Registerinhalts.
 % Satz teil von Register-ID
@@ -1499,7 +1507,7 @@ Insbesondere müssen keine "`Seiteneffekte"' von Funktionen ermittelt werden: ma
 so erhält sie in der Zwischencoderepräsentation einen weiteren Ausgabeparameter.
 Betrachtet man den Aufruf dieser Funktion so wird nur eine weitere Variable beschrieben.
 
-Optimierungsschritte wie Constant Propagation oder Dead Code Elimination. aber auch der Auftrennungs-Schritt werden vereinfacht,
+Optimierungsschritte wie Konstantenfaltung oder die Entfernung unnötiger Operationen, aber auch der Auftrennungs-Schritt werden vereinfacht,
 da nur "`lokale"' Variablen berücksichtigt werden müssen; gleichzeitig werden als global deklarierte Variablen
 von solchen Verarbeitungsschritten korrekt behandelt.
 
@@ -1738,7 +1746,7 @@ eingeschaltelten Sequenz zu Registern der umgebenden Sequenz korrekt ist (es wir
 \SeqOpSampleStacked{nest_seq}{Sequenzschachtelung (Rahmen symbolisiert innere Sequenz)}
 
 \paragraph{Verzweigung:} Eine auf der Sequenzschachtelung basierende Operation. Eingaben sind zwei Sequenzen (eine ``if''- und eine ``else''-Sequenz) sowie ein Register vom
-Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird die ``if''-Sequenz ausgeführt, sonst die ``else''-Sequenzen. Es müssen immer beide Sequenzen
+Typ Boolean mit dem Wert der Bedingung. Ist dieser "`wahr"', wird die ``if''-Sequenz ausgeführt, sonst die ``else''-Sequenz. Es müssen immer beide Sequenzen
 gegeben werden, Sequenzen können aber leer sein.
 %Soll ein Register in einer Verzweigung beschrieben werden, so muss dies immer in \emph{beiden} Blöcken geschehen, da ansonsten je nach Ausführungspfad ein
 %Register undefinierte Wert
@@ -1825,7 +1833,7 @@ werden, der Position nach, den Ausgabeparametern der Funktion zugewiesen.
 
 
 \paragraph{Vordefinierte Funktion:} Diese Operationen führen vordefinierte Funktionen (siehe~\ref{builtins}) aus
-und arbeiten analog zu Funktionsaufrufen. Es wird ein Zielregister für den Rückgabewert%, eine Konstante, welche die Funktion identifiziert
+und arbeiten analog zu Funktionsaufrufen. Es wird ein Zielregister für den Rückgabewert %, eine Konstante, welche die Funktion identifiziert
 und eine Liste Eingabe-Register entgegen genommen. Die Eingaberegister werden wieder der Position nach auf die Funktionsparameter abgebildet.
 %\\\hspace*{1cm}$d \gets \mathrm{pow}(s, t)$
 %\\\hspace*{1cm}$d \gets s \cdot t$
@@ -1907,76 +1915,150 @@ Abbildung~\ref{fig:ir_sample_src} zeigt ein einfaches Programm in der Sprache, A
 \section{Auftrennung}
 \label{Auftrennung}
 
-% High-Level Arbeitsweise
-Der "`\emph{Splitter}"' trennt ein als Zwischencoderepräsentation vorliegendes Programm in ein \emph{Vertex-} und ein \emph{Fragmentprogramm} auf.
-Die Entscheidung wird für individuelle Sequenzoperationen getroffen. Jeder Operation lässt sich eine \emph{Berechnungsfrequenz} (siehe unten),
-in der diese Operation ausgeführt wird, zuordnen.
-Diese bestimmt die eigentliche "`Auftrennung"', also in welche Teilprogramme eine Operation ausgegeben wird.
+% Compilerziel: Eingabe _ein_ Programm
+Ziel des Compilers soll es sein, als Eingabe \emph{ein} Shadingprogramm -- mit einer Hauptfunktion usw., nicht nur "`ein Quelltext"' -- entgegenzunehmen
+und daraus Programme zu erzeugen, die für die programmierbaren Grafikchip-Einheiten zur Vertex- bzw. Pixelverarbeitung genutzt werden können.
 
-\subsection{Definition Berechnungsfrequenz}
+Diese Aufgabe wird vom "`\emph{Splitter}"' wahrgenommen.
+Er trennt ein als Zwischencoderepräsentation vorliegendes Programm in zwei Ausgabeprogramme, ein \emph{Vertex-} und ein \emph{Pixelprogramm}, auf.
+%Die Entscheidung wird für individuelle Sequenzoperationen getroffen: 
+
+% Erwähnung "Domänen"/"Frequenzen"/etc. -> klären, in Operationen auf welchen Daten man Prog. formuliert (hier Pixel)
+
+% Ausgabe: zwei Programme (Vertex, Pixel)
+% Prog.-Ausg.: Vertexkoord., Pixelkoord.
+% Berechnung+Verwendung von Werten in versch. Programmen handhaben
+% Implizite Interpolation berücksichtigen
+
+Es muss für jede individuelle Sequenzoperation entschieden werden, ob diese während der Pixelverarbeitung ausgeführt werden muss
+oder während der Vertexverarbeitung ausgeführt werden kann.
+Dabei ist zu berücksichtigen, dass einige Operationen nur in einem der Verarbeitungsschritte sinnvoll sind -- z.B. sollte ein Auslesen
+eines Bildes zur Anwendung eines Oberflächenmusters sinnvollerweise in der Pixelverarbeitung vorgenommen werden.
+
+Die Entscheidung, in welchem der beiden Ausgabeprogramm eine Sequenzoperationen ausgeführt werden soll,
+wird mit Hilfe von "`Berechnungsfrequenzen"' (siehe unten), die sich jeder Operation zuordnen lassen, getroffen.
+
+Da einige Operation in der Vertex-, andere in der Pixelverarbeitung ausgeführt werden sollen, müssen bei komplexeren
+Ausdrücken Zwischenergebnisse von der Vertex- zur Pixelverarbeitung übergeben werden. Es muss also die "`Schnittstelle"'
+zwischen den Verarbeitungseinheiten generiert werden.
+Dabei ist zu beachten, dass nur Werte vom Vertex- zum Pixelprogramm übertragen werden können; % @@@ Eher nicht hier
+eine Übertragung in die andere Richtung ist nicht möglich.
+
+Auch muss die von der Grafikhardware vorgenommene implizite Interpolation von Ergebnissen der Vertexverarbeitung in Betracht
+gezogen werden. D.h. der Compiler muss die Operationen des Programms so aufteilen, dass die Interpolation bei der Übergabe
+von Werten von der Vertex- zur Pixelverarbeitung nicht die Berechnungen des Programms "`verfälscht"'. (Würde z.B. der Ausdruck 
+$x^2$ in der Vertexberechnung berechnet und interpoliert in der Pixelverarbeitung verwendet werden, so käme dies einer
+lineare Approximation einer quadratischen Kurve gleich -- der Wert des Ausdruck wäre ungenauer, also "`verfälscht"'.)
+
+Dies wird durch eine Überprüfung auf "`Interpolierbarkeit"' (siehe Abschnitt~\ref{Interpolierbarkeit}) einer Operation erreicht.
+
+% High-Level Arbeitsweise
+%Diese bestimmt die eigentliche "`Auftrennung"', also in welche Teilprogramme eine Operation ausgegeben wird.
+
+\subsection{Berechnungsfrequenzen}
+%\subsection{Definition Berechnungsfrequenz}
 \label{Berechnungsfrequenz}
 
-Aus den Beobachtungen in Abschnitt~\ref{berechnungsfrequenz_locker} lässt sich formulieren:
-Die \emph{Berechnungsfrequenz eines Ausdrucks} beschreibt, wie oft sich der Wert des gegebenen Ausdrucks, auf alle Ausführungen eines
-Programmes gesehen, ändert.
+% Begriff gewählt weil: "Häufigkeit" auf Zeit der Objekt-Darstellung gesehen
+% Frequenz für Operationen; Werte "liegen für Objekt-/Vertex-/Pixel-Berechnungen vor"
 
-Die kleinstmögliche Frequenz besitzen statische Konstanten.
+In Abschnitt~\ref{object_data} wurde aufgezählt, welche Arten von Daten bei der Darstellung eines 3D-Objektes auftreten.
+Dabei wurde zwischen Daten unterschieden, die zwischen verschiedenen Objekten variieren, Daten, die zwischen verschiedenen
+Vertices eines Objekt variieren, und Daten, die zwischen verschiedenen Pixeln eines gerasterten Dreiecks variieren.
+Auch wurde dargelegt, dass Berechnungen auf den verschiedenen Arten von Daten verschieden häufig sind --
+es treten in der Regel mehr Pixelberechnungen als Vertexberechnungen und mehr Vertexberechnungen als Objektberechnungen auf.
+
+Aus diesen Beobachtungen lässt sich der Begriff der "`Berechnungsfrequenz"'\footnote{Verwendet und benannt wurden Berechnungsfrequenzen zuerst in \cite{stanford_rtsl}}
+formulieren. 
+
+\begin{defn}
+Die \emphalt{Berechnungsfrequenz eines Ausdrucks} beschreibt, wie oft sich der Wert des gegebenen Ausdrucks, auf alle Ausführungen eines
+Programmes gesehen, ändert.
+\end{defn}
+
+Der Term "`Frequenz"' wird verwendet, da man die Anzahl der ausgeführten Berechnungen auf eine Zeiteinheit bezogen -- hier die "`Lebenszeit"' eines Programmes
+-- betrachtet. Zwar sind sowohl die Berechnungsanzahl wie auch die "`Lebenszeit"' abstrakte Größen, lassen trotzdem aber
+Vergleiche zu: zur Veranschaulichung sei die Zeiteinheiten das einmalige Darstellen eines 3D-Objektes.
+Die Frequenz einer in der Vertexberechnung ausgeführten Operation ist niedriger als die Frequenz einer in der Pixelberechnung ausgeführten Operation, 
+da bei der Darstellung des Objekts in der Regel mehr Pixelberechnungen als Vertexberechnungen vorgenommen werden.
+Dieses Verhältnis bleibt auch erhalten, wenn man verschiedene Zeiteinheiten wählt -- sei dies zwei 3D-Objekte, zehn 3D-Objekte oder  $N$ 3D-Objekte.
+
+Die kleinstmögliche Frequenz besitzen also statische Konstanten.
 
 Die höchstmögliche Frequenz besitzen Ausdrücke, die bei jeder Auswertung einen anderen Wert liefern.
-\emph{(Beispiel: Werte aus einer externen Datenquelle.)}
+\emph{(Beispiel: Werte aus einer externen Datenquelle wie einem Zufallsgenerator.)}
 
-\subsection{Berechnungsfrequenzen bei Shading}
-
-Bei Shadingsprachen sind folgende speziellen Berechnungsfrequenzen vorhanden:
+%\subsection{Berechnungsfrequenzen bei Shading}
+Für die Berechnungen der Echtzeit-3D-Grafik sind vor allem folgende Berechnungsfrequenzen bedeutend:
 \begin{itemize}
-\item \emph{Mesh-Frequenz}: Ausdruck ist konstant während der Darstellung eines Dreiecksnetzes, aber nicht zwischen
-verschiedenen Dreiecksnetzen oder Darstellungsläufen. %\emph{(Beispiel: Position in Weltkoordinaten.)}
-\item \emph{Vertex-Frequenz}: Ausdruck ist von per-Vertex vorliegenden Werten abhänging, hat also unterschiedliche Werte bei unterschiedlichen Vertices. %\emph{(Beispiel: Texturkoordinaten.)}
-\item \emph{Fragment-Frequenz}: Ausdruck ist von anderen, per Fragment zu berechnenden Ausdrücken abhänging,
-hat also unterschiedliche Werte für unterschiedliche Fragmente. %\emph{(Beispiel: Aus Textur gelesener Wert.)}
+% \item \emph{Mesh-Frequenz}: Ausdruck ist konstant während der Darstellung eines Dreiecksnetzes, aber nicht zwischen
+% verschiedenen Dreiecksnetzen oder Darstellungsläufen. %\emph{(Beispiel: Position in Weltkoordinaten.)}
+% \item \emph{Vertex-Frequenz}: Ausdruck ist von per-Vertex vorliegenden Werten abhänging, hat also unterschiedliche Werte bei unterschiedlichen Vertices. %\emph{(Beispiel: Texturkoordinaten.)}
+% \item \emph{Fragment-Frequenz}: Ausdruck ist von anderen, per Fragment zu berechnenden Ausdrücken abhänging,
+% hat also unterschiedliche Werte für unterschiedliche Fragmente. %\emph{(Beispiel: Aus Textur gelesener Wert.)}
+\item \emph{Objekt-Frequenz}, also Berechnungen auf Objektattributen (Daten, die für das Objekt vorliegen)
+bzw. davon abgeleiteten Werten.
+\item \emph{Vertex-Frequenz}, also Berechnungen auf Werten von Vertexattributen (Daten, die von Vertex zu Vertex verschieden sind)
+bzw. davon abgeleiteten Werten.
+%\emph{(Beispiel: Texturkoordinaten.)}
+\item \emph{Pixel-Frequenz}, also Berechnungen auf Eingaben der Pixelberechnung bzw. davon abgeleiteten Werten.
 \end{itemize}
 
-Als Besonderheit kommt hinzu, dass aus Daten mit \emph{Vertex-Frequenz} durch lineare Interpolation Daten mit
-\emph{Fragment-Frequenz} gewonnen werden. %\emph({Beispiel: für Auslesen einer Textur verwendete Koordinaten)}
+%Als Besonderheit kommt hinzu, dass aus Daten mit \emph{Vertex-Frequenz} durch lineare Interpolation Daten mit
+%\emph{Fragment-Frequenz} gewonnen werden. %\emph({Beispiel: für Auslesen einer Textur verwendete Koordinaten)}
 %Dies führt dazu, dass Ausdrücke, die nach den folgenden Regeln
 %eigentlich Fragment-Frequenz besitzen müssten, Vertex-Frequenz besitzen, unter der Bedingung, dass
 %das Ergebnis einer linearen Interpolation des Gesamtausdrucks äquivalent zum Ergebnis bei linearer
 %Interpolation aller Teilausdrücke (mit jeweils immer gleicher Gewichtung) ist.
-Dies erlaubt, gewisse Ausdrücke per Vertex statt per Fragment auszuführen. Details zu diesem Aspekt finden sich in
-Abschnitt~\ref{Interpolierbarkeit}.
+%Dies erlaubt, gewisse Ausdrücke per Vertex statt per Fragment auszuführen. Details zu diesem Aspekt finden sich in
+%Abschnitt~\ref{Interpolierbarkeit}.
 
 \subsection{Formulierte Frequenz}
 \label{formulierte_frequenz}
 
+% Shadingprogramme arbeiten mit verschiedenen Daten (Objektattribute, Werte von Vertexattributen, abgeleitete Eingaben der Pixelverarbeitung)
+% und bestehen aus zwei Teilprogrammen, die mit Vertex- und Pixelverarbeitung auf verschiedene "`Klassen"' von Berechnungen vornehmen.
+% Für die zu übersetzende Shadingsprache muss also entschieden werden, in welcher der "`Klassen"' sie formuliert werden soll --
+% in diesem Fall sollen Programme so formuliert werden, als würden sie grundsätzlich für jedes Pixel ausgeführt werden.
+
+
 Zwar soll die Berechnungsfrequenz von Operationen soweit möglich automatisch bestimmt werden, trotzdem muss eine Frequenz
 gewählt werden, in der alle Operationen vorerst formuliert werden.
 
-Betrachtet man eine "`niedrige"' Frequenz wie die Vertex-Frequenz, so erkennt man, dass sich damit Berechnungen einer höheren
-Frequenz (also Fragmente) schlecht darstellen lassen. Betrachtet man allerdings Berechnungen mit Fragment-Frequenz, so lassen sich
+Betrachtet man eine "`niedrige"' Frequenz wie die Vertexfrequenz, so erkennt man, dass sich damit Berechnungen einer höheren
+Frequenz (also Pixel) schlecht darstellen lassen. Betrachtet man allerdings Berechnungen mit Pixelfrequenz, so lassen sich
 unter Umständen Berechnungen niedrigerer Frequenz ableiten.
-Shaderprogramme sollten also grundsätzlich in "`Fragment-Frequenz"' formuliert werden.
+Shadingprogramme sollten also grundsätzlich in "`Pixelfrequenz"' formuliert werden.
 
 \subsection{Bestimmung der Berechnungsfrequenz}
 
-\paragraph{Variablen:} Variablen besitzen eine zugeordnete Berechnungsfrequenz, die angibt wie oft sich der enthaltene Wert ändert.
-Diese Frequenz entspricht der Frequenz des zuletzt zugewiesenen Ausdrucks (oder undefiniert wenn noch keine Zuweisung stattfand).
+Die Berechnungsfrequenz ist zwar eine Eigenschaft von Operationen, allerdings muss zu Registern, Zwischenwerten u.ä. gespeichert
+werden, mit welcher Frequenz die zuweisende Operation ausgeführt wurde, da diese "`Zuweisungsfrequenz"' eines Wertes beeinflusst,
+mit welcher Frequenz eine Operation ausgeführt werden muss, die den Wert als Eingabe verwendet.
+
+\paragraph{Register:} %Variablen besitzen eine zugeordnete Berechnungsfrequenz, die angibt wie oft sich der enthaltene Wert ändert.
+%Diese Frequenz entspricht der Frequenz des zuletzt zugewiesenen Ausdrucks (oder undefiniert wenn noch keine Zuweisung stattfand).
+Zu jedem Register wird gespeichert, welche Frequenz die Operation hatte, die den Registerwert bestimmt hat (d.h. in welches der
+Ausgabeprogramme diese Operation ausgegeben wurde). 
 
 \paragraph{Arrays:} %Ist die Größe eines Arrays statisch bekannt kann jedes Element als einzelne Variable gesehen werden
 %(und entsprechend jedem Element eine eigene Berechnungsfrequenz zugeordnet werden).
 %Ist die Größe eines Arrays nicht statisch bekannt, so muss für alle Elemente die höchste, irgendeinem Element möglicherweise zugewiesene
 %Frequenz angenommen werden -- 
-Wird auf Elemente eines Arrays nur mit statisch bekannten Indizes zugegriffen kann jedes Element als einzelne Variable gesehen werden
-(und entsprechend jedem Element eine eigene Berechnungsfrequenz zugeordnet werden).
-Da beim Zugriff mit nicht statisch bekannten Indizes jedoch nicht bestimmt werden kann, welche Berechnungsfrequenz ein
-Element hat (da ja auch nicht bekannt ist, auf welche Elemente genau zugegriffen wird), so muss für alle Elemente die höchste, irgendeinem Element möglicherweise
-zugewiesene Frequenz angenommen werden.
+Wird auf Elemente eines Arrays nur mit statisch bekannten Indizes zugegriffen kann jedes Element als einzelnes Register gesehen werden
+(und entsprechend kann jedem Element zugeordnet werden, welche Frequenz die Operation hatte, die den Elementwert bestimmt hat).
+Da beim Zugriff mit nicht statisch bekannten Indizes jedoch nicht bestimmt werden kann, welche Berechnungsfrequenz 
+die Operation hatte, die einem Element einen Wert zugeweisen hat (da ja auch nicht bekannt ist, auf welche Elemente genau zugegriffen wird),
+so muss für alle Elemente die höchste, bei der Zuweisung irgendeines Elements möglicherweise verwendete Berechnungsfrequenz angenommen werden.
 
 %\paragraph{Ausdrücke:} Die Berechnungsfrequenz eines Wertes eines Ausdrucks ergibt sich aus der kleinsten gemeinsamen Frequenz
 %der in dem Ausdruck enthaltenen Teilausdrücke \emph{nach} möglicher Anwendung von Umformungen zur Vereinfachung/Optimierung --
 %sofern keine \emph{Spezialregeln} greifen (siehe Unten).
-\paragraph{Ausdrücke:} Die Berechnungsfrequenz eines Wertes eines Ausdrucks hängt von der grössten gemeinsamen Frequenz
-der in dem Ausdruck enthaltenen Teilausdrücke sowie der verwendeten Verknüpfung ab.
-Die Abschnitte~\ref{splitter_Berechnungsfrequenzen} und~\ref{Interpolierbarkeit} beschreiben wie die Berechnungsfrequenz eines Ausdrucks bestimmt werden kann.
+\paragraph{Ausdrücke:}
+Die notwendige Berechnungsfrequenz für einen Ausdrucks hängt von der grössten gemeinsamen Frequenz,
+in der die verwendeten Operanden berechnete wurden, sowie der verwendeten Verknüpfung ab.
+Die Abschnitte~\ref{splitter_Berechnungsfrequenzen} und~\ref{Interpolierbarkeit} beschreiben wie die Berechnungsfrequenz für einen Ausdrucks bestimmt werden kann.
+Diese Berechnungsfrequenz eines Ausdrucks wird, wie oben genannt, zu den Ergebnisregistern (sofern vorhanden) der Operation gespeichert.
 
 %\subsection{Spezialregeln für Berechnungsfrequenzen von Ausdrücken}
 
@@ -2009,55 +2091,55 @@ geändert wird.\\
 \label{splitter_Berechnungsfrequenzen}
 % Welche Frequenzen?
 
-Für die Aufspaltung relevante Frequenzen sind die Mesh-, % TODO Vergl. Nomenklatur mit Erklärung Freq.; "Freq." besser nicht überladen mit "Verarbeitungsschritt"
+Für die Aufspaltung relevante Frequenzen sind die Objekt-, % TODO Vergl. Nomenklatur mit Erklärung Freq.; "Freq." besser nicht überladen mit "Verarbeitungsschritt"
 % "Uniform" blöd
-Vertex- und Fragmentfrequenz.
+Vertex- und Pixelfrequenz.
 
-Per-Mesh-Eingaben sind Eingaben, die sich nicht während aufeinanderfolgenden Ausführungen eines Programmes
-ändern, und können daher als \emph{konstant} angesehen werden. Deren Werte stammen aus der umgebenden Anwendung.
+Werte von Objektattributen, also Eingaben, die sich nicht während aufeinanderfolgenden Ausführungen eines Programmes
+ändern, können als \emph{dynamische Konstanten} angesehen werden. Deren Werte stammen aus der umgebenden Anwendung.
 
-Per-Vertex-Eingaben sind den verschiedenen Vertices zugeordnete Eingaben. % TODO Verw. auf Vertexdaten
+Werte von Vertexattributen sind den verschiedenen Vertices zugeordnete Eingaben. % TODO Verw. auf Vertexdaten
 Auch diese sind Anwendungsdaten.
 
-Per-Fragment-Eingaben sind die interpolierten Ausgaben des Vertexprogramms (siehe Abschnitt~\ref{schnittstelle} unten). 
-Insbesondere besitzt Grafikhardware keinen Mechanismus, der der Anwendung erlauben würden, direkt per-Fragment-Eingaben
+Eingaben der Pixelberechnung sind die interpolierten Ausgaben des Vertexprogramms (siehe Abschnitt~\ref{schnittstelle} unten). 
+Insbesondere besitzt Grafikhardware keinen Mechanismus, der der Anwendung erlauben würden, direkt Eingaben für jedes Pixel
 vorzugeben.
 
-"`Echte"' Konstanten werden vom Splitter auch als "`per Mesh"' betrachtet.
+"`Echte"', statische Konstanten werden vom Splitter als "`Objekteingaben"' betrachtet.
 
-Für jedes Register wird verfolgt, für welche Frequenzen es vorliegt, im Wesentlichen also in welchem Teilprogramm es berechnet werden muss.
-Dabei kann ein Register in mehreren Frequenzen verfügbar sein, wenn es im Vertex-Programm berechnet wurde, aber später 
-zur Übertragung an das Fragmentprogramm markiert wird (Abschnitt~\ref{schnittstelle}).
+Für jedes Register wird verfolgt in welchen Teilprogrammen es berechnet wurde.
+Dabei kann ein Register in mehreren Teilprogrammen verfügbar sein, wenn es im Vertexprogramm berechnet wurde, aber später 
+zur Übertragung an das Pixelprogramm markiert wird (Abschnitt~\ref{schnittstelle}).
 
 %: mit \emph{Vertexfrequenz} (per Vertex) berechnete Operationen werden dem Vertexprogramm zugeordnet.
 %Analog werden mit \emph{Fragmentfrequenz} (per Fragment) berechnete Operationen dem Fragmentprogramm. Die Bestimmung der Berechnungsfrequenz hängt von der Operation selbst
 %und von den Frequenzen, mit denen die Operanden berechnet wurden, ab. 
 
-Die Frequenzen, in denen ein Register vorliegt, beeinflusst, in welcher Frequenz Operationen ausgeführt werden,
-die das Register als Operand verwenden: Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche dem Maximum der Operanden-Frequenzen
-entspricht (eine Operation seltener auszuführen, als sich die Operanden ändern könnten, ist offensichtlich nicht sinnvoll).
-So muss z.B. eine Addition von zwei Werten per Fragment ausgeführt werden, wenn einer der Summanden per Fragment berechnet wurde.
+Die Teilprogramme, in denen ein Register vorliegt, beeinflussen, in welchen Teilprogrammen Operationen ausgeführt werden können,
+die das Register als Operand verwenden: Eine Operation muss mindestens in derjenigen Frequenz ausgeführt werden, welche dem Maximum der Frequenzen
+entspricht, in denen die Operanden ausgeführt wurden: eine Operation seltener auszuführen, als sich die Operanden ändern könnten, ist offensichtlich nicht sinnvoll.
+So muss z.B. eine Addition von zwei Werten in der Pixelberechnung ausgeführt werden, wenn einer der Summanden in der Pixelberechnung berechnet wurde.
 % DIes ist darin begründet, dass Werte nur vom Vertex- zum Fragmentprogramm, aber nicht zurück, übertragen werden können. ... \ref{}
 
-Vorraussetzung für die Ausführung einer Berechnung per Vertex ist damit, dass beide Eingaben per Vertex vorliegen.
+Vorraussetzung für die Ausführung einer Operation in der Vertexberechnung ist damit, dass beide Operanden als Werte von Vertexattributeb vorliegen
+bzw. von solchen abgeleitet wurden.
 (Darüber hinaus muss die Operation das Kriterium der \emph{Interpolierbarkeit}, beschrieben in Abschnitt~\ref{Interpolierbarkeit}), erfüllen).
 
 \subsubsection{Ausgegebene Programme}
-Der Splitter kategorisiert auch Operationen und Werte als "`per Mesh"', generiert jedoch \emph{kein} separates Programm.
-Stattdessen werden per-Mesh-Operationen sowohl vom Vertex- als auch vom Fragmentprogramm ausgeführt. Zwei Annahmen
-liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen allein mit per Mesh vorliegenden Werten vorgenommen werden, es also kein
-Nachteil durch eine mehrfache Ausführung in Vertex- und Fragmentprogramm entsteht. Die zweite Annahme ist,
-dass durch weitere Optimierungsschritte wie Dead Code Elimination einige per-Mesh-Operationen entfernt werden.
+Der Splitter kategorisiert Operationen auch als "`in der Objektberechnung ausgeführt"', generiert jedoch \emph{kein} separates Programm
+für die Objektberechnung.
+Stattdessen werden Operationen der Objektberechnung sowohl vom Vertex- als auch vom Pixelprogramm ausgeführt. Zwei Annahmen
+liegen diesem Zugrunde: zuerst, dass nur relativ einfache Operationen in der Objektberechnung vorgenommen werden, es also kein
+Nachteil durch eine mehrfache Ausführung in Vertex- und Pixelprogramm entsteht. Die zweite Annahme ist,
+dass durch weitere Optimierungsschritte wie die "`Entfernung unnötiger Operationen"' einige Operationen der Objektberechnung entfernt werden.
 
 % Eingaben: Uniform oder per Vertex; Fragmentfreq. nur Eingaben von VP
 
-\subsection{Schnittstelle Vertex-/Fragmentprogramm}
+\subsection{Schnittstelle Vertex-/Pixelprogramm}
 \label{schnittstelle}
 
 Da ein Teil der Operationen des ursprünglichen Programms dem Vertexprogramm zugeordnet wird, ein anderer Teil aber dem
-Fragmentprogramm, müssen Ergebnisse des einen Programms zum anderen übertragen werden.
-Dabei ist zu beachten, dass nur Werte vom Vertex- zum Fragmentprogramm übertragen werden können; % @@@ Eher nicht hier
-eine Übertragung in die andere Richtung ist nicht möglich.
+Pixelprogramm, müssen Ergebnisse des einen Programms zum anderen übertragen werden.
 
 Stellt der Splitter die Notwendigkeit des Übertragens für einen Wert fest, wird das Register, welches den Wert enthält, aufgezeichnet.
 Diese Liste der zu übertragenden Werte ("`Schnittstelle"' in Abbildung~\ref{fig:structure}) wird später dem Codegenerator übergeben.
@@ -2068,8 +2150,8 @@ entsprechende Abbildung in der Zieldarstellung.
 \label{Interpolierbarkeit}
 % Kriterium: Interpolation
 
-Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Operationen per Fragment ausgeführt (siehe Abschnitt~\ref{formulierte_frequenz}).
-Das vom Splitter zu lösende Problem ist damit die Bestimmung von Operationen, die per Vertex ausgeführt werden können.
+Programme der Shadingsprache sind grundsätzlich so formuliert, als würden Operationen in der Pixelberechnung ausgeführt (siehe Abschnitt~\ref{formulierte_frequenz}).
+Das vom Splitter zu lösende Problem ist damit die Bestimmung von Operationen, die in der Vertexberechnung ausgeführt werden können.
 Das Hauptkriterium diese Entscheidung ist die \emph{Interpolierbarkeit} einer Operation.
 
 \subsubsection{Praktische Grundlage}
@@ -2085,8 +2167,8 @@ auch während einer Vertexberechnung vorgenommen werden und anschliessend interp
 Vom Vertexprogramm ausgegebene Werte werden, bevor sie wieder dem Pixelprogramm als Eingabe dienen, \emph{linear interpoliert}: % (siehe Abschnitt~\ref{rasterung}):
 % TODO: Verw. auf Erklärung/Interpolatoren
 Eine lineare Interpolation -- die Funktion sei "`$\lerp$"' genannt -- zwischen zwei Werten $a$ und $b$ mit Faktor $f$ ($0 \le f \le 1$) wird durch $\lerp(a, b, f) = a \cdot (1-f) + b \cdot f$ berechnet.
-Der Faktor $f$ "`gewichtet"' zwischen den beiden Werten, wobei der Faktor $0$ den Wert $a$ unverändert zurückgibt ($\lerp(a, b, 0) = a$)
-und dementsprechend der Faktor $1$ den Wert $b$ unverändert zurückgibt ($\lerp(a, b, 1) = b$).
+Der Faktor $f$ "`gewichtet"' zwischen den beiden Werten: der Faktor $0$ gibt also den Wert $a$ zurück ($\lerp(a, b, 0) = a$),
+der Faktor $1$ gibt den Wert $b$ zurück ($\lerp(a, b, 1) = b$).
 
 Angenommen, ein Wert soll $x$ von der Vertex- an die Pixelberechnung übergeben werden.
 Die Ergebnisse der Vertexberechnung sind verschiedene Werte für verschiedene Vertices, ein Wert $x_1$ für das erste Vertex, ein Wert $x_2$ für das zweite Vertex usw.
@@ -2094,7 +2176,7 @@ Die Ergebnisse der Vertexberechnung sind verschiedene Werte für verschiedene Ve
 Die Eingabe für die Pixelverarbeitung ist das Ergebnis einer implizierten, bei der Rasterung berechneten Interpolation $\lerp(x_1, x_2, f)$\footnote{Tatsächlich muss bei der Rasterung von Dreiecken zwischen drei Werten interpoliert werden. Dieser Abschnitt betrachtet konkret
 bloss Interpolation zwischen zwei Werten, die Ergebnisse gelten aber auch bei Interpolation zwischen drei Werten.}.
 $f$ wird von der Grafikhardware berechnet und variiert mit jedem Pixel. (Für das Pixel, auf das das erste Vertex abgebildet wurde, ist $f = 0$; für das Pixel,
-auf das das zweite Vertex abgebildet wurde, ist $f = 1$; Pixel zwischen diesen "`Randpixeln"' haben entsprechend Werte von $f$ dazwischen).
+auf das das zweite Vertex abgebildet wurde, ist $f = 1$; Pixel zwischen diesen "`Randpixeln"' haben entsprechend Werte von $f$ dazwischen -- siehe Abbildung~\ref{fig:interp_simple}).
 
 Betrachtet sei eine Rechenoperation $\alpha = g(x)$, die während der Pixelberechnung ausgeführt wird.
 $x$ sei dabei eine Ausgabe der Vertexberechnung, also aus Ausgaben $x_1$ und $x_2$ der Vertexberechnung für zwei verschiedene Vertices interpoliert -- $x = \lerp(x_1, x_2, f)$
@@ -2148,10 +2230,13 @@ in der Vertexberechnung ausgeführt werden.
 ist wieder eine lineare Funktion, Addition und Subtraktion sind also uneingeschränkt interpolierbar.
 % @@@ Beweisen? Zumindest erläutern.
 
-Multiplikation und Division sind interpolierbar, wenn mindestens ein Operand höchstens per Mesh gegeben ist.
-Sind beide Operanden per Vertex gegeben, so ist eine Multiplikation oder Division keine lineare,
-sondern eine \emph{quadratische} Funktion, und damit nicht interpolierbar. Per Mesh gegebene Operanden können aber praktisch als
-konstant betrachtet werden, die Multiplikation oder Division mit einem per Mesh gegebenen
+Multiplikation und Division sind interpolierbar, wenn mindestens ein Operand höchstens in der Objektberechnung --
+also nicht in der Vertex- oder Pixelberechnung -- bestimmt wurde.
+Wurden beide Operanden in der Vertex- oder Pixelberechnung bestimmt, so ist eine Multiplikation oder Division keine lineare,
+sondern eine \emph{quadratische} Funktion\footnote{Ersichtlich durch ein Beispiel: seien $a$ und $b$ in der Vertex- und/oder Pixelberechnung bestimmt,
+also $a = \lerp(\dots, x, f)$ und $b = \lerp(\dots, y, f)$, so ist das Produkt $a \cdot b = \dots + \cdot f \cdot x \cdot f \cdot y = \dots  + f^2 \cdot x \cdot y$, also quadratisch.}, 
+und damit nicht interpolierbar. In der Objektberechnung bestimmte Operanden können aber praktisch als
+konstant betrachtet werden, die Multiplikation oder Division mit einem der Objektberechnung bestimmten 
 Operanden ist also eine lineare Funktion und damit interpolierbar.
 
 Die Modulo-Operation ist unstetig und daher nicht interpolierbar.
@@ -2167,7 +2252,7 @@ Bitweises invertieren ist nur für Integer-Werte sinnvoll und damit nicht interp
 \paragraph{Eingebaute Funktionen:} \label{split_builtins}
 Skalarprodukt, Vektorprodukt und Matrixmultiplikation lassen sich alle mit arithmetischen Basisoperationen darstellen.
 Da in diesen Darstellungen jeweils auch die Multiplikation enthalten ist, ergeben sich die oben genannten Beschränkungen:
-diese Operationen sind nur interpolierbar, wenn mindesten ein Operand per Mesh gegeben ist.
+diese Operationen sind nur interpolierbar, wenn mindesten ein Operand in der Objektberechnung bestimmt wurde.
 
 Potenzierung ist im Allgemeinen keine stetige Funktion und damit nicht interpolierbar.
 
@@ -2218,43 +2303,45 @@ und einem bool'scher Bedingungswert, nach dessen Wert abhängig verzweigt wird.
 
 Die beiden inneren Verzweigungssequenzen werden selbst aufgespalten.
 
-Der bool'scher Bedingungswert kann entweder per Mesh oder per Fragment vorliegen: per Mesh, wenn er eine per-Mesh-Eingabe ist bzw. allein aus
-per-Mesh-Eingaben berechnet wurde. Per Fragment, wenn er aus Werten anderer Frequenzen berechnet wurde.
-Aufgrund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen kann ein Bedingungswert nicht per Vertex vorliegen.
+Der bool'scher Bedingungswert kann entweder in der Objektberechnung oder in der Pixelberechnung bestimmt worden sein:
+in der Objektberechnung, wenn er ein Objektattribut ist bzw. allein aus
+Objektattributen berechnet wurde. In der Pixelberechnung, wenn er aus Werten berechnet wurden, die in anderen Berechnungsfrequenzen bestimmt wurden.
+Aufgrund der Nicht-Interpolierbarkeit von Vergleichs- und Logikoperationen kann ein Bedingungswert nicht in der Vertexberechnung bestimmt worden sein.
 
-Selbst wenn der Bedingungswert nur per Fragment vorliegt, kann die Verzweigungsoperation nicht allein per Fragment ausgeführt werden:
-die Aufspaltung der Verzweigungsblöcke kann auch in per Mesh bzw. per Vertex auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
-innere Sequenzen, d.h. ohne Verzweigung, zum Vertexprogramm hinzugefügt werden. Im Vertexprogramm werden also immer
-die Vertexteile beider Verzweigungsblöcke ausgeführt. Zwischenergebnisse müssen an das Fragmentprogramm übertragen und dort ausgewählt werden.
+Selbst wenn der Bedingungswert nur in der Pixelberechnung vorliegt, kann die Verzweigungsoperation nicht allein in der Pixelberechnung ausgeführt werden:
+die Aufspaltung der Verzweigungsblöcke kann auch in in der Objektberechnung bzw. der Vertexberechnung auszuführende Sequenzen resultieren. Diese müssen als "`normale"'
+innere Sequenzen, d.h. ohne Verzweigung, zu den Objekt- bzw. Vertexberechnungen hinzugefügt werden. In diesen Berechnungen werden also immer
+die Vertexteile beider Verzweigungsblöcke ausgeführt. Zwischenergebnisse müssen an das Pixelprogramm übertragen und dort ausgewählt werden.
 
-Von den Verzweigungsblöcken beschriebene Register sind immer nur in der selben Frequenz wie das Register des Bedingungswerts verfügbar:
-Selbst wenn beide Verzweigungen bloss per-Vertex-Operationen ausführen, sind durch die Auswahl nach einer per-Fragment-Bedingung
-die berechneten Wert nur per Fragment verfügbar.
+Von den Verzweigungsblöcken beschriebene Register sind immer nur in demselben Programm, in dem der Bedingungswerts bestimmt wurde, verfügbar:
+Selbst wenn beide Verzweigungen bloss Operationen für die Vertexberechnung enthalten, sind durch die Auswahl nach einer in der Pixelberechnung vorliegenden Bedingung
+die berechneten Wert in der Pixelberechnung verfügbar.
 
 \paragraph{Schleife:} Eine Schleifenoperation besteht aus einer inneren Sequenz (dem Schleifenrumpf) sowie
-einem bool'scher Bedingungswert, der Schleifenbedingung.
+einem booleschem Bedingungswert, der Schleifenbedingung.
 
-Wie bei der Verzweigung kann der bool'scher Bedingungswert nur entweder per Mesh oder per Fragment vorliegen.
+Wie bei der Verzweigung kann der boolescher Bedingungswert nur entweder in der Objektberechnung oder in der Pixelberechnung bestimmt worden sein.
 
 Bei der Bestimmung, in welcher Frequenz einzelne Operanden im Schleifenrumpf vorliegen,
-ergibt sich das Problem, dass die Frequenzen, in denen ein Register vorliegt, von der Anzahl der Schleifendurchläufe
-abhängt: z.B. kann eine Multiplikation eines Registers mit einem per Vertex vorliegendem Wert im ersten Durchlauf
-eine interpolierbare Operation sein, im zweiten Durchlauf aber nicht mehr, wenn dem Register ein bloss per Vertex
-verfügbarem Ergebnis aus dem vorherigen Durchlauf zugewiesen wurde.
+ergibt sich das Problem, dass die Teilprogramme, in denen ein Register verfügbar ist, von der Anzahl der Schleifendurchläufe
+abhängt: z.B. kann eine Multiplikation eines Registers mit einem in der Vertexberechnung vorliegendem Wert im ersten Durchlauf
+eine interpolierbare Operation sein, im zweiten Durchlauf aber nicht mehr, wenn dem Register ein bloss in der Vertexberechnung 
+verfügbares Ergebnis aus dem vorherigen Durchlauf zugewiesen wurde.
 Um eine "`stabile"' Verfügbarkeit von Registern, die von vorherigen Schleifendurchläufen abhängen, zu ermitteln,
-werden zwei Schleifendurchläufe\footnote{Zwei Durchläufe sind ausreichend, da die Verfügbarkeit eines Registers
-nach höchstens zwei Schritten bei der höchsten Frequenz liegt -- von Mesh auf Vertex bzw. von Vertex auf Fragment.}
+werden zwei Schleifendurchläufe\footnote{Zwei Durchläufe sind ausreichend, da ein Register
+nach höchstens zwei Schritten in der höchsten Frequenz verfügbar ist -- von Objekt auf Vertex bzw. von Vertex auf Pixel.}
 simuliert und die damit bestimmten Verfügbarkeiten für das Aufspalten des Schleifenrumpfes verwendet.
 
-Teile des Rumpfes können per Mesh oder per Vertex ausgeführt werden, wenn die Operationen nicht von vorhergegangenen Schleifendurchläufen
-abhängen. Ein per-Mesh- oder per-Vertex-Ausführen von Operationen, die eine solche Abhängigkeit besitzen, wäre problematisch: es müsste bekannt sein, wieviele Werte vom
-Mesh- bzw. Vertex-Teil zum Fragment-Teil übertragen werden sollen. Dies hängt von der Anzahl der Schleifendurchläufe ab,
-welche im Allgemeinen nicht zur Kompilierzeit bestimmt werden kann.
-Ausführen von "`echten"' Schleifen ist also nur komplett per Mesh oder per Fragment möglich.
+Teile des Rumpfes können in der Objektberechnung oder der Vertexberechnung ausgeführt werden, wenn die Operationen nicht von vorhergegangenen Schleifendurchläufen
+abhängen. Ein Ausführen von Operationen in der Objektberechnung oder der Vertexberechnung, die eine solche Abhängigkeit besitzen, wäre problematisch: es müsste bekannt sein, wieviele Werte vom
+Objekt- bzw. Vertexprogramm zum Pixelprogramm übertragen werden sollen. Dies hängt von der Anzahl der Schleifendurchläufe ab,
+welche im Allgemeinen nicht zur Übersetzungszeit bestimmt werden kann.
+Ausführen von "`echten"' Schleifen ist also nur komplett in der Objektberechnung oder der Pixelberechnung möglich.
 %Schleifenoperationen können also nur komplett per Mesh oder per Fragment ausgeführt werden.
 
-\paragraph{Funktionsaufruf:} Der Rumpf einer Funktion ist eine Sequenz, kann also prinzipiell in einen per-Vertex- und einen per-Fragment-Teil aufgespalten werden.
-Das Hauptproblem besteht dabei darin, dass die Frequenzen der Funktionsparameter je nach Aufruf variieren können.
+\paragraph{Funktionsaufruf:} Der Rumpf einer Funktion ist eine Sequenz,
+kann also prinzipiell in einen Teil für die Objektberechnung, einen Teil für die Vertexberechnung und einen Teil für die Pixelberechnung aufgespalten werden.
+Das Hauptproblem besteht dabei darin, dass die Verfügbarkeit der Funktionsparameter je nach Aufruf variieren können.
 
 Dies wird gelöst, in dem für eine Funktion bei der Aufspaltung mehrere Varianten generiert werden: bei einem Funktionsaufruf
 wird die Funktion aufgespalten, mit den jeweiligen Verfügbarkeiten der übergebenen aktuellen Parameter. Wird die gleiche Funktion
@@ -2263,7 +2350,7 @@ nochmals aufgerufen, aber mit einer anderen "`Signatur"' von Verfügbarkeiten, s
 Die Verfügbarkeiten von Ausgabeparametern hängen von den Verfügbarkeiten der Eingabeparameter ab, können aber nach dem Aufspalten
 einer Variation bestimmt werden.
 
-Das Übertragen von Werten vom per-Vertex- zum per-Fragment-Teil einer Funktionsvariation geschieht über generierte Ausgabe- bzw.
+Das Übertragen von Zwischenwerten einer Funktionsvariation vom Teil der Vertexberechnung zum Teil der Pixelberechnung geschieht über generierte Ausgabe- bzw.
 Eingabeparameter; die eigentliche Übertragung geschieht schlussendlich in der Eintrittsfunktion.
 
 %Rekursionen müssen besonders behandelt werden:
@@ -2274,7 +2361,7 @@ Variante gerade selbst aufgespalten -- die Verfügbarkeiten sind also noch nicht
 angetroffenen Variante würde über kurz oder lang zum exakt selben Problem führen.
 
 Dieses Problem wird vermieden, in dem rekursive Funktionen besonders behandelt werden: im Wesentlichen wird angenommen,
-dass bei einem festgestelltem rekursiven Aufruf die Ausgabeparameter nur per Fragment verfügbar sind.
+dass bei einem festgestelltem rekursiven Aufruf die Ausgabeparameter nur in der Pixelberechnung verfügbar sind.
 Mit dieser konservativen Annahme kann der Rumpf einer rekursiven Funktion aufgespalten werden.
 
 % Behandlung von: arithm. Ausdr., Logik, Vergl, Unäre Ausdr., Verzweigungen, Schleifen, Funktionen
@@ -2287,25 +2374,25 @@ Mit dieser konservativen Annahme kann der Rumpf einer rekursiven Funktion aufges
 \subsubsection{Auftrennung von Array-Operationen}
 
 Array-Operationen sind nur interpolierbar, wenn die Länge des Arrays \emph{statisch konstant}
-(und nicht per Mesh) bekannt ist und bei der Array-Extraktion bzw. \mbox{-Än}\-de\-rung der verwendete Index höchstens per Mesh
-verfügbar ist. Dementsprechend können Array-Operationen nur in der Vertexberechnung ausgeführt werden,
+bekannt (also auch kein Objektattribut) ist und bei der Array-Extraktion bzw. \mbox{-Än}\-de\-rung der verwendete Index 
+in der Objektberechnung verfügbar ist. Dementsprechend können Array-Operationen nur in der Vertexberechnung ausgeführt werden,
 wenn wenigstens auch dass Array, mit dem gearbeitet wird, eine statisch konstante Länge besitzt.
 Bei Änderungen von Arrayelement muss ausserdem der zugewiesene Wert in der Vertexberechnung berechnet worden sein.
 
 \subsubsection{Andere Operationen}
 
 Zuweisungen, Konstantenoperationen, Typumwandlung, die Erstellung eines Vektors sowie
-die Extraktion einer Komponente können trivialerweise mit derjenigen Frequenz berechnet werden, die der höchsten Frequenz
-aller Eingaben entspricht.
+die Extraktion einer Komponente können trivialerweise mit derjenigen Frequenz berechnet werden, die der höchsten
+der Frequenzen,  in denen die Eingaben berechnete wurden, entspricht.
 
 \subsection{Beispiel}
 
-Ein einfaches Beispiel soll die Ausgabe des Auftrenners demonstrieren.
+Ein einfaches Beispiel soll die Ausgabe des Splitters demonstrieren.
 
 \subsubsection{Eingabeprogramm}
 
 Als Eingabe dient das einfache Shading-Programm aus Abbildung~\ref{fig:simple_s1}.
-Es basiert auf dem Beispiel in Abbildung~\ref{fig:simple_cg} -- dessen Vertex- und Fragment-Teil wurden hier zusammengeführt.
+Es basiert auf dem Beispiel in Abbildung~\ref{fig:simple_cg} -- dessen Vertex- und Pixel-Teil wurden hier zusammengeführt.
 
 Das Programm berechnet eine Beleuchtungsintensität für eine Lichtquelle mit konstanter Richtung des Lichteinfalls (also eine Lichtquelle im
 Unendlichen) und gegebener Farbe. Diese Beleuchtungsintensität mit der ``ambient''-Farbe (eine Annäherung von "`Streulicht"')
@@ -2319,7 +2406,8 @@ sowie die Frequenz, in der die einzelnen Ausdrücke ausgeführt werden müssten.
   \input{simple_s1}
   \caption{Ein Programm in der Shading-Sprache.}
   \centering
-  \small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+  \small Markierung der Operationen bzw. Werte gibt an, mit welcher Frequenz diese ausgeführt bzw. berechnet wurden.
+  (\freqPerMesh{Objekt}, \freqPerVert{Vertex}, \freqPerFrag{Pixel})
   \label{fig:simple_s1}
 \end{figure}
 
@@ -2327,98 +2415,106 @@ sowie die Frequenz, in der die einzelnen Ausdrücke ausgeführt werden müssten.
 
 Die für die Ausdrücke anzuwendenen Aufspaltungsregeln sind:
 
-\paragraph{\texttt{outPosition}}: \texttt{Position} liegt per Vertex vor, der Gesamtausdruck muss daher mindestens per Vertex
-berechnet werden. \texttt{ModelViewProj} liegt per Mesh vor, die Matrixmultiplikation ist interpolierbar,
-der Gesamtausdruck kann daher auch höchstens per Vertex berechnet werden.
+\paragraph{\texttt{outPosition}}: \texttt{Position} liegt ist der Wert eines Vertexattributs vor, der Gesamtausdruck muss daher mindestens 
+in der Vertexberechnung berechnet werden. \texttt{ModelViewProj} ist ein Objektattribut, die Matrixmultiplikation ist interpolierbar,
+der Gesamtausdruck kann daher auch in der Vertexberechnung berechnet werden und muss nicht in der Pixelberechnung berechnet werden.
 
-\paragraph{\texttt{ambient}}: Konstante, liegt daher per Mesh vor.
+\paragraph{\texttt{ambient}}: Konstante, wird daher als Objektattribut betrachtet.
 
-\paragraph{\texttt{diffuse}}: Das Skalarprodukt zwischen \texttt{LightDirObj} und \texttt{Normal} muss, da \texttt{Normal} per Vertex vorliegt,
-mindestens per Vertex berechnet werden. \texttt{LightDirObj} liegt per Mesh vor, das Skalarprodukt ist also interpolierbar,
-kann daher auch höchstens per Vertex berechnet werden.
+\paragraph{\texttt{diffuse}}: Das Skalarprodukt zwischen \texttt{LightDirObj} und \texttt{Normal} muss, da \texttt{Normal} der Wert eines Vertexattributes ist,
+mindestens in der Vertexberechnung berechnet werden. \texttt{LightDirObj} ist ein Objektattribut, das Skalarprodukt ist also interpolierbar,
+kann daher auch in der Vertexberechnung berechnet werden und muss nicht in der Pixelberechnung berechnet werden.
 
-Ebenso ist die Multiplikation von \texttt{LightColor} und dem Skalarprodukt interpolierbar, der Gesamtausdruck kann also per Vertex
-berechnet werden.
+Ebenso ist die Multiplikation von \texttt{LightColor} und dem Skalarprodukt interpolierbar, der Gesamtausdruck kann also
+in der Vertexberechnung berechnet werden und muss nicht in der Pixelberechnung berechnet werden.
 
-\paragraph{\texttt{litColor}}: Da \texttt{diffuse} per Vertex vorliegt,\texttt{ambient} per Mesh, und weiterhin
-Additionen uneingeschränkt interpolierbar sind, kann der Gesamtausdruck per Vertex berechnet werden.
+\paragraph{\texttt{litColor}}: Da \texttt{diffuse} in der Vertexberechnung vorliegt, \texttt{ambient} ein Objektattribut ist, und weiterhin
+Additionen uneingeschränkt interpolierbar sind, kann der Gesamtausdruck in der Vertexberechnung berechnet werden und muss nicht in der Pixelberechnung berechnet werden.
 
-\paragraph{\texttt{outColor}}: Das Erstellen eines \texttt{float4}-Vektors aus \texttt{litColor} wirkt sich nicht 
-auf die Berechnungsfrequenz aus, der neue \texttt{float4}-Vektor liegt also per Vertex vor.
+\paragraph{\texttt{outColor}}: Da \texttt{litColor} in der Vertexberechnung bestimmt wurde wird
+auch das Erstellen eines \texttt{float4}-Vektors aus \texttt{litColor} in der Vertexberechnung vorgenommen.
 
-Das Auslesen der Textur mit \texttt{tex2D} kann nur per Fragment erfolgen. Damit muss auch die Multiplikation des Texturwertes mit
-dem \texttt{float4}-Vektor per Fragment erfolgen.
+Das Auslesen des Oberflächenmusters mit \texttt{tex2D} kann nur in der Pixelberechnung erfolgen. Damit muss auch die Multiplikation des Texturwertes mit
+dem \texttt{float4}-Vektor in der Pixelberechnung erfolgen.
 
 \subsubsection{Ausgabe}
 
-Abbildung~\ref{fig:simple_s1_split} enthält das Ergebnis nach Aufspaltung in Zwischencoderepräsentation.
+Abbildungen~\ref{fig:simple_s1_split_vp} und~\ref{fig:simple_s1_split_fp} enthalten das Ergebnis nach Aufspaltung in Zwischencoderepräsentation.
 (Vor oder nach der Aufspaltung wurden keine Optimierungen angewendet.)
 
 %Die erste Hälfte stellt das Vertexprogramm dar. Direkt Ergebnisse der Aufspaltung sind:
 Die Aufspaltung wirkt sich auf alle Aspekte der Programme aus:
 \begin{itemize}
 \item \emph{Eingabeparameter:} Im Vertexprogramm sind alle Eingabeparameter des Originalprogramms erhalten,
-auch \texttt{Texture}, welches nur im Fragmentprogramm ausgelesen wird.
+auch \texttt{Texture}, welches nur im Pixelprogramm ausgelesen wird.
 
-Bei den Eingabeparametern des Fragmentprogramms fehlen die per Vertex vorliegenden Eingaben -- diese werden
+Bei den Eingabeparametern des Pixelprogramms fehlen die als Werte von Vertexattributen vorliegenden Eingaben -- diese werden
 stattdessen vom Vertexprogramm weitergegeben ("`Übertragene Register"'). Allerdings gibt es auch
 hier "`unnötige"' Eingaben, wie \texttt{ModelViewProj}. 
 
 \item \emph{Ausgabeparameter:} Dies sind die vom jeweiligen Verarbeitungsschritt zu berechnenden Ausgaben --
-die projizierte Vertex-Position im Falle des Vertexprogramms bzw. die finale Fragmentfarbe im Falle des
-Fragmentprogramms.
+die projizierte Vertex-Position im Falle des Vertexprogramms bzw. die finale Pixelfarbe im Falle des
+Pixelprogramms.
 
-\item \emph{Übertragene Register:} Die "`Schnittstelle"' zwischen Vertex- und Fragmentprogramm.
-Dabei enthält $\sOreg{m\_TexCoord\_B0}$ den Wert des Eingabeparameters \texttt{TexCoord}, der per Vertex vorliegt,
-aber nur im Fragmentprogramm verwendet wird. $\sOreg{i\_tmp12}$ das Ergebnis der Beleuchtungsberechnung
+\item \emph{Übertragene Register:} Die "`Schnittstelle"' zwischen Vertex- und Pixelprogramm.
+Dabei enthält $\sOreg{m\_TexCoord\_B0}$ den Wert des Eingabeparameters \texttt{TexCoord}, der als Wert eines Vertexattributs vorliegt,
+aber nur im Pixelprogramm verwendet wird. $\sOreg{i\_tmp12}$ das Ergebnis der Beleuchtungsberechnung
 -- der rechte Faktor in der abschliessenden Multiplikation nach \texttt{outColor} --
-welches im Fragmentprogramm mit der ausgelesenen Texturfarbe multipliziert werden soll.
+welches im Pixelprogramm mit der aus dem Oberflächenmuster ausgelesenen Farbe multipliziert werden soll.
 
-Der Aufspalter hat diese Register zur Übertragung ausgewählt, da deren Werte nur per Vertex vorliegen,
-aber im Fragmentprogramm verwendet werden.
+Der Aufspalter hat diese Register zur Übertragung ausgewählt, da deren Werte in der Vertexberechnung bestimmt wurden,
+aber im Pixelprogramm verwendet werden.
 
-\item \emph{Operationen:} Der Splitter hat die per Vertex und per Fragment zu berechnenden Operationen
+\item \emph{Operationen:} Der Splitter hat die in der Vertexberechnung und per in der Pixelberechnung auszuführenden Operationen
 genau so aufgeteilt, wie es nach der manuellen Klassifizierung im Eingabeprogramm zu erwarten war.
-Die per Mesh zu berechnenden Operationen wurde, wie in Abschnitt~\ref{splitter_Berechnungsfrequenzen}
-beschrieben, sowohl in das Vertex- wie auch das Fragmentprogramm ausgegeben. In diesem Fall ist dies
-nur die Zuweisungen von $\sOreg{v\_ambient}$ und $\sOreg{i\_tmp11}$. Diese Werte werden im Fragment-Programm nicht verwendet,
+Die in der Objektberechnung zu berechnenden Operationen wurden, wie in Abschnitt~\ref{splitter_Berechnungsfrequenzen}
+beschrieben, sowohl in das Vertex- wie auch das Pixelprogramm ausgegeben. In diesem Fall ist dies
+nur die Zuweisungen von $\sOreg{v\_ambient}$ und $\sOreg{i\_tmp11}$. Diese Werte werden im Pixel-Programm nicht verwendet,
 die Operationen selbst bleiben aber in diesem Fall wegen nicht vorgenommener Optimierungen dort erhalten.
 
 \end{itemize}
 
 \begin{figure}[h!t]
   \centering
-  \input{simple_s1_split}
-  \caption{Programm aus \ref{fig:simple_s1} nach der Aufspaltung.}
+  \input{simple_s1_split_vp}
+  \caption{Vertexprogramm aus \ref{fig:simple_s1} nach der Aufspaltung.}
   %\small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
-  \label{fig:simple_s1_split}
+  \label{fig:simple_s1_split_vp}
+\end{figure}
+
+\begin{figure}[h!t]
+  \centering
+  \input{simple_s1_split_fp}
+  \caption{Pixelprogramm aus \ref{fig:simple_s1} nach der Aufspaltung.}
+  %\small Operationen und Werte sind von der Berechnungsfrequenz abhängig markiert (\freqPerMesh{Mesh}, \freqPerVert{Vertex}, \freqPerFrag{Fragment})
+  \label{fig:simple_s1_split_fp}
 \end{figure}
 
 Abbildung~\ref{fig:simple_s1_images} visualisiert die Anteile der Berechnungen der verschiedenen Berechnungsfrequenzen
-an der finalen Fragmentfarbe. Dafür wurde mit Hilfe des Compilers das Eingabeprogramm in ein Vertex- und Fragmentprogramm
-in der Shadingsprache Cg übersetzt. Diese wurden für die Visualisierung der per-Mesh- bzw. per-Vertex-Anteile leicht bearbeitet
+an der finalen Pixelfarbe. Dafür wurde mit Hilfe des Compilers das Eingabeprogramm in ein Vertex- und Pixelprogramm
+in der Shadingsprache Cg übersetzt. Diese wurden für die Visualisierung der Anteil der Objektberechnungen bzw. Vertexberechnungen leicht bearbeitet
 um eben diese Anteile auszugeben. Die Bilder selbst wurden mit Hilfe eines kurzen, selbstgeschriebenen Programms erstellt,
-dass ein texturiertes 3D-Dreiecksmodel unter Verwendung der Shadingprogramme darstellt.
+dass ein 3D-Dreiecksmodel mit Oberflächenmuster unter Verwendung der Shadingprogramme darstellt.
 
-Das erste Bild zeigt den per-Mesh-Anteil (\texttt{ambient}) und zeigt dementsprechend eine durchgängige Färbung.
+Das erste Bild zeigt den Anteil der Objektberechnung (\texttt{ambient}) und zeigt dementsprechend eine durchgängige Färbung.
 
-Im zweiten Bild zeigt wurde der per-Vertex-Anteil (\texttt{litColor}) hinzugenommen. Es ist deutlich erkennbar,
+Im zweiten Bild zeigt wurde der Anteil der Vertexberechnung (\texttt{litColor}) hinzugenommen. Es ist deutlich erkennbar,
 dass die Farbe über das Modell stark variiert und damit eine Beleuchtung aus der rechten oberen Richtung suggeriert.
-Allerdings sind auch Facettierungen von der per-Vertex-Berechnung erkennbar (am deutlichsten auf dem Ausguss oder dem Henkel).
+%Allerdings sind auch Facettierungen von der Vertexberechnung erkennbar (am deutlichsten auf dem Ausguss oder dem Henkel).
 
-Im dritten Bild wurde schliesslich auch der per-Fragment-Anteil hinzugenommen. Die Farbveränderung aus der "`Beleuchtung"'
-ist noch klar erkennbar, aber das Auslesen einer Oberflächenfarbe aus einer Textur fügt weitere visuelle Details hinzu
-und reduziert die Sichtbarkeit der Facettierungen.
+Im dritten Bild wurde schliesslich auch der Anteil der Pixelberechnung hinzugenommen. Die Farbveränderung aus der "`Beleuchtung"'
+ist noch klar erkennbar, aber das Auslesen einer Oberflächenfarbe aus einer Textur fügt weitere visuelle Details hinzu.
+%und reduziert die Sichtbarkeit der Facettierungen.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=8cm]{simple_s1_mesh}\\
-  \includegraphics[width=8cm]{simple_s1_vert}\\
-  \includegraphics[width=8cm]{simple_s1_frag}
+  (a) \includegraphics[width=4cm]{simple_s1_mesh}\qquad
+  (b) \includegraphics[width=4cm]{simple_s1_vert}\qquad
+  (c) \includegraphics[width=4cm]{simple_s1_frag}
   \caption{Programm aus \ref{fig:simple_s1}}
-  \small 1. nur per-Mesh-Anteil der Fragment-Farbe\\
-  2. mit zusätzlich per-Vertex-Anteil\\
-  3. vollständige Fragment-Farbe\\
+  \small (a) nur Anteil der Objektberechnungen an Pixelfarbe\\
+  (b) zusätzlich mit Anteil der Vertexberechnungen\\
+  (c) vollständige Pixelfarbe\\
   \label{fig:simple_s1_images}
 \end{figure}
 
@@ -2426,32 +2522,30 @@ und reduziert die Sichtbarkeit der Facettierungen.
 \clearpage
 \section{Optimierer}
 
-\newcommand\OptSample[2]{
+\newcommand\OptSampleStacked[4]{
   \begin{figure}[!h]
     \centering
-    \begin{minipage}{8cm}\lstinputlisting{s1source/opt_ex/#1.s1}\end{minipage}
-    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_unopt}\end{minipage}
-    \vspace{0.3em}
-    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_opt}\end{minipage}
+    \lstinputlisting{s1source/opt_ex/#1.s1}
     \caption{#2.}
-    \label{fig:ir_optex_#1}
+    \label{fig:ir_optex_#1_in}
   \end{figure}
-}
-\newcommand\OptSampleStacked[2]{
   \begin{figure}[!h]
     \centering
-    \begin{minipage}{8cm}\lstinputlisting{s1source/opt_ex/#1.s1}\end{minipage}
-    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_unopt}\end{minipage}\\
-    \vspace{0.3em}
-    \begin{minipage}{10cm}\include{s1latex/opt_ex/#1_opt}\end{minipage}
-    \caption{#2.}
-    \label{fig:ir_optex_#1}
+    \include{s1latex/opt_ex/#1_unopt}
+    \caption{#3.}
+    \label{fig:ir_optex_#1_unopt}
+  \end{figure}
+  \begin{figure}[!h]
+    \centering
+    \include{s1latex/opt_ex/#1_opt}
+    \caption{#4.}
+    \label{fig:ir_optex_#1_opt}
   \end{figure}
 }
 
 Die Aufgabe eines \emph{Optimierers} ist es, ein gegebenes Programm so umzuschreiben, dass es zur Laufzeit
 schnellstmöglich ausgeführt wird. Im Allgemeinen erstrecken sich mögliche Optimierungen von Vereinfachungen,
-wie ein Entfernen von unbenötigten Operationen und ein Berechnen von Ausdrücken zur Kompilierzeit,
+wie ein Entfernen von unbenötigten Operationen und ein Berechnen von Ausdrücken zur Übersetzungszeit,
 bis hin zu komplexen Umsortierungen oder Zusammenfassung von Operationen, z.B. um ``multiply-add''-Operation
 besser auszunutzen.
 
@@ -2468,7 +2562,7 @@ Der Optimierer im vorliegenden Compiler nimmt als Eingabe ein komplettes Program
 und liefert als Ausgabe entsprechend auch ein komplettes Programm.
 
 Das Arbeiten auf ganzen Programmen erlaubt es prinzipiell, funktionsübergreifende Optimierungen
-vorzunehmen, von einem entfernen unbenötigter Funktionen über Inlining bis zu einem entfernen
+vorzunehmen, von einem Entfernen unbenötigter Funktionen über ein Einbetten von Funktionsaufrufen bis zu einem Entfernen
 einzelner, nicht benötigter Funktionsparameter.
 
 Allerdings beschränken sich die implementierten, unten beschriebenen Optimierungen auf Sequenzen
@@ -2477,40 +2571,40 @@ voneinander angewendet.
 
 % mehrere Stufen
 Die einzelnen Sequenzenoptimierungen werden nacheinander angewendet. Bei Bedarf kann eine
-Optimierung mehrmals angewendet werden -- z.B. kann das ``Constant Folding'' einen Ausführungszweig
-einer Verzweigung auswählen; in diesem Fall wird ein erneutes ``Block Inlining'' veranlasst,
+Optimierung mehrmals angewendet werden -- z.B. kann die Konstantenfaltung einen Ausführungszweig
+einer Verzweigung auswählen; in diesem Fall wird eine erneute Blockauflösung veranlasst,
 um die dadurch eingefügte Sequenzschachtelungsoperation zu vereinfachen.
 % bei Bedarf mehrere Durchgänge -> z.B. erneutes BI when CF einen Branch o.ä. "geinlined" hat
 
-\subsection{Block Inlining}
+\subsection{Blockauflösung}
 
 % 'entfernt' Block-Seqop.
-Das \emph{Block Inlining} ersetzt alle Sequenzschachtelungsoperationen einer Sequenz durch
+Die \emph{Blockauflösung} ersetzt alle Sequenzschachtelungsoperationen einer Sequenz durch
 die in der inneren Sequenz enthaltenen Operationen. Dabei werden die von den
 Operationen verwendeten bzw. veränderten Register angepasst: Register, die einem importiertem
 oder exportiertem Namen zugeordnet sind, werden durch ihre Gegenstücke in der umgebenden
 Sequenz ersetzt. Andere Register werden umbenannt um Kollisionen zu vermeiden.
 
 % v.a. "Hilfsschritt" für andere Opt.
-Die vom Block Inlining vorgenommen Änderungen an einer Sequenz haben keine Auswirkungen auf das
+Die von der Blockauflösung vorgenommen Änderungen an einer Sequenz haben keine Auswirkungen auf das
 Laufzeitverhalten des Programms. Dieser Optimierungsschritt dient vor allem als "`Hilfsschritt"',
 um die Implementierungen anderer Optimierungsschritte zu vereinfachen: einerseits können
 Sequenzschachtelungsoperationen als "`nicht vorhanden"' angenommen werden, andererseits kann
-ein Inlining von Blöcken -- z.B. wegen der statischen Auswahl eines Verzweigungsblockes --
-einfach vorgenommen werden, da die nötige "`Hauptarbeit"' später vom Block-Inlining-Schritt
+ein Auflösen von Blöcken -- z.B. wegen der statischen Auswahl eines Verzweigungsblockes --
+einfach vorgenommen werden, da die nötige "`Hauptarbeit"' später vom Blockauflösungsschritt
 vorgenommen wird.
 
-Abbildung~\ref{fig:ir_optex_bi} vergleicht ein einfaches Programm vor und nach der Anwendung von Block Inlining.
+Abbildungen~\ref{fig:ir_optex_bi_in} bis~\ref{fig:ir_optex_bi_opt} vergleichen ein einfaches Programm vor und nach der Anwendung der Blockauflösung.
 
-\OptSampleStacked{bi}{Block Inlining: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert}
+\OptSampleStacked{bi}{Blockauflösung: Quellcode}{Blockauflösung: Zwischencoderepräsentation unoptimiert}{Blockauflösung: Zwischencoderepräsentation optimiert}
 
-\subsection{Constant Folding}
+\subsection{Konstantenfaltung}
 
 % Berechnung von konstanten Ausdrücken
 % (Cast, Arithmetische, Logische, Unäre, Vergleichsop., Builtins, Arraylänge, Array getelem)
 % Entfernung von Branches/Schleifen mit konst. Bedingung
-\emph{Constant Folding} berechnet das Ergebnis einer Sequenzoperation zur Kompilierzeit
-wenn alle Eingabeoperanden zur Kompilierzeit bekannte Konstanten sind. Berücksichtigt
+\emph{Konstantenfaltung} berechnet das Ergebnis einer Sequenzoperation zur Übersetzungszeit
+wenn alle Eingabeoperanden zur Übersetzungszeit bekannte Konstanten sind. Berücksichtigt
 werden Zuweisungs-, Cast-, arithmetische, logische, unäre und Vergleichsoperationen, alle eingebauten
 Funktionen (mit Ausnahme von Texturfunktionen) sowie die Operationen "`Arraylänge"' und
 "`Extraktion eines Arrayelements"'.
@@ -2521,7 +2615,7 @@ werden verworfen.
 
 % Fkt.weise: speichert für jedes Reg., ob konst., und wenn ja, dessen Wert;
 % Op. auf Konstanten zur Kompilierzeit berechnet
-In der Implementierung des Constant Folding wird eine Zuordnung zwischen Registern und konstanten
+In der Implementierung der Konstantenfaltung wird eine Zuordnung zwischen Registern und konstanten
 Werten verwendet; ist einem Register kein solcher Wert zugeordnet besitzt es keinen bekannten
 konstanten Wert. Eine solche Zuordnung wird erstellt, wenn eine Operationen ein konstantes
 Ergebnis hat. Dies sind zuvorderst Konstantenoperationen.
@@ -2531,16 +2625,16 @@ und die Operation durch eine einfache Konstantenoperation ersetzt.
 
 % Zukunft: Funktionen mit rein konstanten Argumenten
 
-Abbildung~\ref{fig:ir_optex_cf} vergleicht ein einfaches Programm vor und nach der Anwendung von Constant Folding.
+Abbildungen~\ref{fig:ir_optex_cf_in} bis~\ref{fig:ir_optex_cf_opt} vergleichen ein einfaches Programm vor und nach der Anwendung der Konstantenfaltung.
 Anzumerken ist, dass die Addition vom Compiler ausgerechnet und durch eine Konstantenoperation ersetzt
 wird; die Konstantenoperationen der Quelloperanden bleiben jedoch erhalten - deren Entfernung ist
-die Aufgabe der Dead Code Elimination, welche aber in diesem Beispiel nicht durchgeführt wurde.
+die Aufgabe der "`Entfernung unnötiger Operationen"', welche aber in diesem Beispiel nicht durchgeführt wurde.
 
-\OptSampleStacked{cf}{Constant Folding: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert}
+\OptSampleStacked{cf}{Konstantenfaltung: Quellcode}{Konstantenfaltung: Zwischencoderepräsentation unoptimiert}{Konstantenfaltung: Zwischencoderepräsentation optimiert}
 
-\subsection{Dead Code Elimination}
+\subsection{Entfernung unnötiger Operationen}
 
-\emph{Dead Code Elimination} entfernt unnötige Sequenzoperationen; eine Operation ist "`unnötig"',
+Die "`\emph{Entfernung unnötiger Operationen}"' entfernt unnötige Sequenzoperationen; eine Operation ist "`unnötig"',
 wenn keines der von ihr geschriebenen Register jemals benutzt wird.
 
 % entfernt Op., deren Ergebnis nie benutzt wird
@@ -2551,11 +2645,11 @@ zunächst überprüft, ob wenigstens eins der Ausgaberegister ein solches "`ausg
 Register ist. Ist dies nicht der Fall, wird die Operation verworfen. Andernfalls wird
 die Operation beibehalten und alle ihre Eingaberegister als "`ausgelesen"' markiert.
 
-Die Menge der "`ausgelesenen"' Register benötigt eine "`Saat"' von Registern, die als
-immer ausgelesen angenommen werden (sonst würden alle Operationen einer Sequenz verworfen
-werden). Dies sind immer die Ausgabeparameter der Funktion, die die Sequenz enthält.
+Die Menge der "`ausgelesenen"' Register benötigt eine anfängliche Menge von Registern, die als
+benutzt angenommen werden  -- ohne diese würden alle Operationen einer Sequenz verworfen
+werden. Dies sind immer die Ausgabeparameter der Funktion, die die zu optimierende Sequenz enthält.
 Für Sequenzen, die z.B. in Verzweigungen eingeschachtelt sind, dient die Menge der
-ausgelesenen Register der umgebenden Sequenz als Saat.
+ausgelesenen Register der umgebenden Sequenz als anfängliche Menge benutzter Register.
 
 % Fkt.weise: iteriert Operationen rückwärts
 % speichert zu jedem Reg., ob gelesen
@@ -2564,21 +2658,23 @@ ausgelesenen Register der umgebenden Sequenz als Saat.
 % verwirft Fkt.aufrufe, bei denen kein Ausgabereg. gelesen wurde
 % benötigt "Saat-Register" (Ausgabeparameter)
 
-Abbildung~\ref{fig:ir_optex_dce} vergleicht ein einfaches Programm vor und nach der Anwendung von Dead Code Elimination.
-Dargestellt sind die Zwischencoderepräsentationen nach der Aufspaltung des Programms.
-In den unoptimierten Programmen werden beide Ausgabeparameter sowohl in Vertex- als auch Fragmentprogramm
-beschrieben, obwohl jeweils nur einer tatsächlich verwendet wird. Aus den optimierten Programmen wurde die jeweils unnötige
-Zuweisung entfernt.
+Abbildungen~\ref{fig:ir_optex_dce_in} bis~\ref{fig:ir_optex_dce_opt} vergleichen ein einfaches Programm vor und nach der Anwendung der Entfernung unnötiger Operationen:
+die Ergebnisse einiger Operationen im Programm~\ref{fig:ir_optex_dce_in} werden offentsichtlich nicht verwendet.
+Im optimierten Ausgabeprogramm~\ref{fig:ir_optex_dce_opt} wurden diese Operationen entfernt, und nur die Berechnungen,
+die für die Werte der Ausgabeparameter nötig sind, sind erhalten.
+% Dargestellt sind die Zwischencoderepräsentationen nach der Aufspaltung des Programms.
+% In den unoptimierten Programmen werden beide Ausgabeparameter sowohl in Vertex- als auch Pixelprogramm
+% beschrieben, obwohl jeweils nur einer tatsächlich verwendet wird. Aus den optimierten Programmen wurde die jeweils unnötige
+% Zuweisung entfernt.
 
-\OptSampleStacked{dce}{Dead Code Elimination: Quellcode, Zwischencoderepräsentation unoptimiert und optimiert;
-Zwischencoderepräsentation nach Aufspaltung in Vertex- und Fragmentprogramme}
+\OptSampleStacked{dce}{Entfernung unnötiger Operationen: Quellcode}{Entfernung unnötiger Operationen: Zwischencoderepräsentation unoptimiert}{Entfernung unnötiger Operationen: Zwischencoderepräsentation optimiert}
 
 \clearpage
 \section{Code-Generator}
 
 Der \emph{Code-Generator} übersetzt ein in der Zwischencoderepräsentation vorliegendes Programm in eine \emph{Zieldarstellung}.
 Diese "`Darstellung"' kann wieder eine Hochsprache sein, prinzipiell kann ein Code-Generator aber auch Assembler-Quelltext oder eine
-Binärcodierung ausgeben.
+Binärformat ausgeben.
 
 \subsection{Eingaben und Aufgaben}
 
@@ -2596,10 +2692,10 @@ und einer Sequenz mit den eigentlichen Operationen. Eine Funktion aus der Liste 
 \newpage
 Die Aufgaben des Code-Generators bestehen aus:
 \begin{itemize}
-\item Nötige Umformungen für die Zieldarstellung -- z.B. Schleifen ausrollen oder ``inlining'' von Funktionen.
+\item Nötige Umformungen für die Zieldarstellung -- z.B. Schleifen ausrollen oder "`Einbettung"' von Funktionen.
 \item Übertragung der Funktionsbeschreibungen in eine entsprechende Deklaration in der Zieldarstellung.
 \item Übersetzung der Sequenzoperationen in die Zieldarstellung. 
-\item Dabei Ressourcenallokation, wenn nötig (z.B. begrenzte Registerzahl in der Zieldarstellung).
+\item Ressourcenallokation, wenn nötig (z.B. bei begrenzter Registerzahl in der Zieldarstellung).
 \item Generierung von "`Schnittstellen-Anweisungen"' wie z.B. bei der Übergabe von Parametern an Funktionen
 oder die Behandlung von Werten "`vor dem ersten Durchlauf, nach dem ersten Durchlauf"' wie sie bei Schleifen
 auftreten.
@@ -2638,8 +2734,8 @@ Grundsätzlich folgt der Aufbau des Compilers der Standardarchitektur; die Abwei
 Programme.
 
 Die Auftrennung nutzt dabei Eigenschaften von Grafikhardware aus, deren Aufbau auf den Ablauf des Echtzeit-3D-Renderings abgestimmt ist.
-Speziell werden Operationen in der Vertex- statt Fragmentverarbeitung ausgeführt, sofern das Ergebnis zur ursprünglichen Operation mathematisch äquivalent ist
-(unter Berücksichtigung der von der Grafikhardware vorgenommen Interpolation von Ausgaben der Vertexverarbeitung).
+Speziell werden Operationen in der Vertex- statt Pixelberechnung ausgeführt, sofern das Ergebnis zur ursprünglichen Operation mathematisch äquivalent ist
+(unter Berücksichtigung der von der Grafikhardware vorgenommen Interpolation von Ausgaben der Vertexberechnung).
 
 Auch hervorzuheben ist die verwendete Zwischencoderepräsentation, die als Übergabeformat zwischen allen Verarbeitungsschritten von der
 semantischen Analyse bis zur Codegenerierung dient. Weiterhin ist sie darauf ausgerichtet, die Implementierung von Optimierungsschritten
@@ -2661,12 +2757,12 @@ In diesem Kapitel sollen Verhalten und Ausgabe des Compilers bewertet werden.
 
 Um möglichst praxisnahe Fälle zu betrachten wurden die Programme, anhand derer die Bewertungen vorgenommen werden,
 aus existierenen Cg-Programmen "`erstellt"'; dazu wurden die als separate Vertex- und Pixelprogramme vorliegenden
-Quellen in Programme der zu übersetzenden Shadingsprachen umgewandelt\footnote{Wegen der grossen syntaktischen Ähnlichkeiten
+Quellen in Programme der zu übersetzenden Shadingsprache umgewandelt\footnote{Wegen der großen syntaktischen Ähnlichkeiten
 konnte dies größtenteils durch Kopieren von Quelltextblöcken vorgenommen werden.} und anschliessen vom Compiler übersetzt.
 Die Ausgabe des Compilers, die "`generierten Programme"', sind wiederum Cg-Programme. Zur Überprüfung der syntaktischen Korrektheit wurden die
 generierten Programme mit dem Cg-Compiler \verb+cgc+ übersetzt (alle generierten Programme wurden fehlerfrei übersetzt,
 sind also syntaktisch korrekt). Schliesslich wurden, zur Effizienzbewertung, ursprüngliche
-wie auch generierte Cg-Programme mit dem Cg-Compiler in eine Assembler-artige Shadingsprache übersetzt und die jeweiligen Compiler-Ausgaben verglichen.
+wie auch generierte Cg-Programme durch den Cg-Compiler in eine Assembler-artige Shadingsprache übersetzt und diese jeweiligen Ausgaben miteinander verglichen.
 
 Die Ausgabe-Programme des entwickelten Compilers können, da diese ja selbst Cg-Programme sind, mit der Eingabe prinzipiell direkt verglichen
 werden. Praktisch werden Vergleiche dadurch erschwert, dass die ausgebenen Programme prinzipbedingt drastisch anders formatiert sind, Variablen andere Namen als in den Eingabeprogrammen besitzen usw.
@@ -2692,30 +2788,30 @@ aber andererseits ohne Weiteres praktisch einsetzbar sind.
 \section{Beispielprogramm}
 
 Das erste betrachtete Programm ist das in der Einführung verwendete Beispielprogramm (Abbildung~\ref{fig:simple_cg}):
-es berechnet für jedes Vertex des Modells einen Beleuchtungswert; dieser wird über die Pixel des ausgebenen
+es berechnet für jedes Vertex des Modells einen Beleuchtungswert; dieser wird über die Pixel der ausgebenen
 Dreiecke (implizit) interpoliert. Weiterhin wird für jedes Pixel eine "`Materialfarbe"' aus einem Oberflächenmuster gelesen und
 mit dem Beleuchtungswert moduliert.
 
 % Kurz: was es macht
 
 \prglisting{lst:example_cg}{Ursprüngliches Programm in Cg (Vertex- und Pixelprogramm)}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/simple.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/simple.cg}}
 
 \prglisting{lst:example_s1}{Eingabeprogramm für den Compiler in der Shadingsprache}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/simple.s1}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/simple.s1}}
 
 \prglisting{lst:example_compiled}{Ausgabe des Compilers in Cg}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/simple_compiled.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/simple_compiled.cg}}
 
-\subsubsection{Bewertung}
+\subsubsection*{Bewertung}
 \paragraph{Semantik:} Sowohl das ursprüngliche Cg-Programm wie auch die Ausgabe des Compilers sind semantisch
 äquivalent.
 
-In den Vertexprogrammen (Programme~\ref{lst:example_cg} und~\ref{lst:example_compiled}) werden die Ausgabeposition (\verb+output.Position+ bzw. \verb+ooutPosition_+) sowie 
+In den Vertexprogrammen (\verb+vertex_main+ in Programm~\ref{lst:example_cg}, \verb+vertex_main_+ in Programm~\ref{lst:example_compiled}) werden die Ausgabeposition (\verb+output.Position+ bzw. \verb+ooutPosition_+) sowie 
 der Beleuchtungswert (\verb+output.litColor+ bzw. \verb+v_litColor1_cqa_+) berechnet. Die Zuweisung der Bildkoordinate des Musters
 (\verb+TexCoord+ bzw. \verb+iTexCoord_+) an eine Ausgabe des Vertexprogramms (\verb+output.TexCoord+ bzw. \verb+v2f.m_TexCoord_B0_+)
 wurde für das Ausgabeprogramm vom Compiler automatisch generiert. Die Ausgabe des generierten Vertexprogramms (die Struktur \verb+V2F+)
-entspricht der Ausgabe des ursprünglichen Programms~\ref{lst:example_cg} (die Struktur \verb+VertexOutput+), allerdings wird die transformierte
+entspricht der Ausgabe des ursprünglichen Programms~\ref{lst:example_cg} (dort die Struktur \verb+VertexOutput+), allerdings wird die transformierte
 Vertex-Koordinate beim generierten Vertexprogramm (\verb+vertex_main_+ in Programm~\ref{lst:example_compiled}) als Ausgabeparameter \verb+ooutPosition_+ anstatt als
 Element der Struktur \verb+V2F+ ausgegeben.
 
@@ -2726,9 +2822,9 @@ und eine Modulierung der Oberflächenfarbe mit dem Beleuchtungswert (\verb+outCo
 
 \paragraph{Effizienz:} Der generierte Cg-Code (Programm~\ref{lst:example_compiled}) enthält einige unnötige Zuweisungen.
 Diese werden von Eigenschaften der Zwischencoderepräsentation verursacht:
-Für eine ``Swizzle-Operation''\footnote{Auswahl/Umordnung von Vektorkomponenten, siehe Abschnitt~\ref{Vektorattribute}}
+Für eine ``Swizzle''-Operation\footnote{Auswahl/Umordnung von Vektorkomponenten, siehe Abschnitt~\ref{Vektorattribute}}
 werden mehrere Zwischencodeoperationen zum Extrahieren einzelner Komponenten generiert; mit diesen wird der Ergebnisvektor
-konstruiert. Zeile 17 im Eingabeprogramm~\ref{lst:example_s1} ist eine solche ``Swizzle-Operation'',
+konstruiert. Zeile 17 im Eingabeprogramm~\ref{lst:example_s1} ist eine solche ``Swizzle''-Operation,
 Zeile 23 in Programm~\ref{lst:example_compiled} ist das Ergebnis der von dieser Operation verursachten Kombination von Zwischencodeoperationen.
 
 Die Zuweisung von Teilkomponenten eines Vektors (Zeile 19 im Eingabeprogramm~\ref{lst:example_s1}) trägt eine Schwäche des Compilers 
@@ -2738,16 +2834,15 @@ zu erhalten, führt dieses Verhalten bei Vektoren mit undefinierten Komponenten 
 Ergebnisvektor verwendet werden. Im Ausgabeprogramm~\ref{lst:example_compiled}, Zeile 26, ist der Wert
 \verb+m_outColor_B0_.w+ ein solcher uninitialisierter Wert.
 
-Verwendung undefinierter Werte ist mindestens unnötig, aber auch störend: der Cg-Compiler mahnt solche Verwendung
-undefinierter Werte an.
+Verwendung undefinierter Werte ist mindestens unnötig, aber auch störend: der Cg-Compiler mahnt dies an.
 Vermieden könnte diese Verwendung werden, in dem der Compiler oder Code-Generator verfolgt, welche
-Register "`undefinierte"' Werte enthalten und mit Hilfe dieser Informationen den generierten Zwischencode bzw. Ausgabecode anpasst (z.B. Auslassung von Zuweisungen
+Register "`undefinierte"' Werte enthalten und mit Hilfe dieser Informationen den generierten Zwischencode bzw. Ausgabecode anpassen (z.B. durch Auslassung von Zuweisungen
 von undefinierten Werten oder ein Ersetzen von undefinierten Vektorkomponenten durch einen beliebigen Wert).
 
 Die Funktionen des generierten Programms werden mit Parametern deklariert, die von den Funktionen selbst nicht verwendet
-werden (z.B. Parameter \verb+iLightColor_+ der Funktion \verb+fragment_main_+). Dies ist ein Ergebnis der Aufspaltung, da bei
-dieser Eingabeparmeter von Funktionen einfach vollständig in alle Ausgabefunktionen kopiert werden. Abhilfe schaffen würde ein
-Optimierungsschritt, der für jeden Parameter einer Funktion überprüft, ob dieser tatsächlich verwendet wird und entsprechend
+werden (z.B. Parameter \verb+iLightColor_+ der Funktion \verb+fragment_main_+). Dies ist ein Ergebnis der Aufspaltung: diese
+kopiert die Eingabeparameter einer aufzuspaltenden Eingabefunktionen einfach vollständig in alle aufgespalteten Ausgabefunktionen. Abhilfe würde ein
+Optimierungsschritt schaffen, der für jeden Parameter einer Funktion überprüft, ob dieser tatsächlich verwendet wird und entsprechend
 unbenutzte Parameter entfernt.
 
 Praktisch führen die unnötigen Operationen allerdings nicht zu Nachteilen: der Cg-Compiler nimmt selbst Optimierungen
@@ -2769,10 +2864,10 @@ vorherigen Programm wird diese Beleuchtungsberechnung im Pixelprogramm vorgenomm
 Weiterhin ist die Beleuchtungsberechnung selbst komplexer.
 
 \prglisting{lst:fraglight_cg_vp}{Beleuchtungsberechnung im Pixelprogramm: Vertexprogramm}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E2v_fragmentLighting.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/C5E2v_fragmentLighting.cg}}
 
 \prglisting{lst:fraglight_cg_fp}{Beleuchtungsberechnung im Pixelprogramm: Pixelprogramm}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E3f_basicLight.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/C5E3f_basicLight.cg}}
 
 Die Eingabe-Cg-Programme verwenden keine Struktur, um die Ausgaben des Vertexprogramms bzw. Eingaben
 des Pixelprogramms zu beschreiben, sondern eine explizite Zuordnung von Eingabe- bzw. Ausgabeparametern
@@ -2782,12 +2877,12 @@ der mit dem gleichen Schlüsselwort markiert wurde (z.B. ist die Vertexprogramma
 der Pixelprogrammeingabe \texttt{position} zugeordnet).
 
 \prglisting{lst:fraglight_s1}{Eingabeprogramm für Compiler in der Shadingsprache}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/fragmentLighting.s1}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/fragmentLighting.s1}}
 
 \prglisting{lst:fraglight_compiled}{Ausgabe des Compilers in Cg}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/fragmentLighting_compiled.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/fragmentLighting_compiled.cg}}
 
-\subsubsection{Bewertung}
+\subsubsection*{Bewertung}
 \paragraph{Semantik:}
 %Sowohl das ursprüngliche Cg-Programm wie auch die Ausgabe des Compilers sind semantisch äquivalent.
 Das Vertexprogramm des generierten Cg-Programms (Funktion \verb+vertex_main_+ in Programm~\ref{lst:fraglight_compiled})
@@ -2805,9 +2900,9 @@ muss in das Pixelprogramm ausgegeben werden -- die Argumente von \verb+normalize
 zu dienen.
 
 Im ursprünglichen Programm~\ref{lst:fraglight_cg_fp} hat die Verzweigung nur einen \verb+if+-Zweig; im generierten
-Programm~\ref{lst:fraglight_compiled} wurde ein \verb+else+-Zweig hinzugefügt: In der Zwischencoderepräsentation
-wurde der Variable \verb+specularLight+ des Eingabeprogramms wegen der Zuweisung ein neues Register zugeordnet;
-der hinzugefügte \verb+else+-Zweig stellt sicher, dass die Variable für dieses neue Register den "`alten"' Wert erhält,
+Programm~\ref{lst:fraglight_compiled} wurde ein \verb+else+-Zweig hinzugefügt, da in der Zwischencoderepräsentation
+der Variable \verb+specularLight+ des Eingabeprogramms wegen der Zuweisung ein neues Register zugeordnet wurde,
+und der hinzugefügte \verb+else+-Zweig sicherstellt, dass dieses neue Register den "`alten"' Wert der Variable erhält,
 sollte die Bedingung für die Verzweigung nicht eingetreten sein.
 
 Generell finden sich alle Operationen der ursprünglichen Programme~\ref{lst:fraglight_cg_vp} und~\ref{lst:fraglight_cg_fp}
@@ -2831,30 +2926,30 @@ Diese Programm verwendet die gleiche Beleuchtsberechnung wie im vorherigen Progr
 wie im ersten Beispielprogramm, für jedes Vertex berechnet werden und über die Ausgabepixel interpoliert werden.
 
 \prglisting{lst:vertlight_cg_vp}{Beleuchtungsberechnung für jedes Vertex: Vertexprogramm}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E1v_basicLight.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/C5E1v_basicLight.cg}}
 
 \prglisting{lst:vertlight_cg_fp}{Beleuchtungsberechnung für jedes Vertex: Pixelprogramm}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C2E2f_passthru.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/C2E2f_passthru.cg}}
 
 Die Berechnungen zur Beleuchtung stimmen mit denen aus Programm~\ref{lst:vertlight_cg_fp} überein,
 finden sich aber hier im Vertexprogramm. Das Pixelprogramm gibt nur den Beleuchtungswert aus.
 
 \prglisting{lst:vertlight_s1}{Eingabeprogramm für Compiler in der Shadingsprache}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/basicLight.s1}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/basicLight.s1}}
 
 Dieses Programm ist mit dem Programm~\ref{lst:fraglight_s1} praktisch identisch.
 
 \prglisting{lst:vertlight_compiled}{Ausgabe des Compilers in Cg}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/basicLight_compiled.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/basicLight_compiled.cg}}
 
 % Semantik: Beleuchtung in FP statt VP!
-\subsubsection{Bewertung}
+\subsubsection*{Bewertung}
 \paragraph{Semantik:}
 Im generierten Cg-Programm~\ref{lst:vertlight_compiled} findet sich die Beleuchtungsberechnung im
 Pixelprogramm, statt im Vertexprogramm wie es in den ursprünglichen Programmen~\ref{lst:vertlight_cg_vp}
 und~\ref{lst:vertlight_cg_fp} der Fall ist.
 
-Verantwortlich dafür ist die Arbeitsweise des Compilers. Wie in Abschnitt~\ref{formulierte_frequenz} beschrieben,
+Verantwortlich dafür ist die Arbeitsweise des "`Splitters"'. Wie in Abschnitt~\ref{formulierte_frequenz} beschrieben,
 werden die Eingabeprogramme so betrachtet, als würden sie Pixelberechnungen formulieren.
 Nur unter gewissen Bedingungen ("`Interpolierbarkeit"', siehe Abschnitt~\ref{Interpolierbarkeit}) werden
 Operationen in die Vertexberechnung verschoben. Diese Bedingungen sind im Eingabeprogramm nicht erfüllt --
@@ -2862,7 +2957,7 @@ der Compiler muss also die Mehrzahl der Operationen in die Pixelberechnungen aus
 
 Um ein generiertes Programm zu erhalten, dass mit dem ursprünglichen Programmen übereinstimmt, wäre im Compiler ein Mechanismus
 (Schlüsselwort o.ä.) nötig, um explizit anzugeben, dass eine Programmoperation in der Vertex- statt in der Pixelberechnung ausgeführt werden soll.
-Der Splitter müsste entsprechend angepasst werden, um für solche markierte Operationen die "`Interpolierbarkeit"' als gegeben anzunehmen.
+Der Splitter müsste entsprechend angepasst werden, um für solche markierten Operationen die "`Interpolierbarkeit"' als gegeben anzunehmen.
 
 Abgesehen davon, dass die Beleuchtungsberechnung vom Splitter in das "`falsche"' Teilprogramm ausgegeben wurde,
 stimmen die Operation selbst mit denen der ursprünglichen Programme überein.
@@ -2879,25 +2974,26 @@ allerdings für zwei Lichtquellen.
 % Neue Syntax: Array, Funktionen
 
 \prglisting{lst:twolights_cg_vp}{Beleuchtung mit zwei Lichtquellen: Vertexprogramm}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C5E4v_twoLights.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/C5E4v_twoLights.cg}}
 
 \prglisting{lst:twolights_cg_fp}{Beleuchtung mit zwei Lichtquellen: Pixelprogramm}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/C2E2f_passthru.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/C2E2f_passthru.cg}}
 
 Die Beleuchtungsberechnung wurde in eine Funktion verschoben. Die Parameter der Lichtquellen werden als
 Arrays übergeben.
 
 \prglisting{lst:twolights_s1}{Eingabeprogramm für Compiler in der Shadingsprache}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/twoLights.s1}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/twoLights.s1}}
 
 Die die Shadingsprache keine Verbundtypen kennt mussten diese in einzelne Variablen "`ausgepackt"' werden.
+Die Größe der Eingabearrays wurde als Compiler-Option spezifiziert (hier nicht sichtbar).
 
 \prglisting{lst:twolights_compiled}{Ausgabe des Compilers in Cg}
-{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines]{eval/twoLights_compiled.cg}}
+{\lstinputlisting[basicstyle=\ttfamily\scriptsize,numbers=left,breaklines,xleftmargin=1cm]{eval/twoLights_compiled.cg}}
 
-\subsubsection{Bewertung}
+\subsubsection*{Bewertung}
 \paragraph{Semantik:}
-Auch in diesem Programm wird, wie im vorherigen Programm, der Grossteil der Berechnungen in das Pixelprogramm ausgegeben;
+Auch in diesem Programm wird, wie im vorherigen Programm, der Großteil der Berechnungen in das Pixelprogramm ausgegeben;
 Grund ist auch die Arbeitsweise des Compilers.
 
 Die Funktion \verb+C5E5_computeLighting+ des ursprünglichen Programms~\ref{lst:twolights_cg_vp} (Zeilen 20 bis 41)
@@ -2957,27 +3053,30 @@ Die übersetzte Sprache ist eine zwar vergleichsweise einfache, aber grundsätzl
 Shadingsprache, die es erlaubt, Shadingprogramme zu schreiben, ohne den Hardwareaufbau aus verschiedenen Funktionseinheiten
 berücksichtigen zu müssen.
 
-Der in Abschnitt~\ref{Auftrennung} beschriebene Auftrenner arbeitet konservativ in dem Sinne, dass eine Operation nur in das Ausgabe-Vertex-Programm
-"`verschoben"' wird wenn das Ergebnis mathematisch äquivalent zu einer Berechnung im Ausgabe-Fragment-Programm wäre.
-Praktisch sollen aber manchmal bewusst Operationen durch eine per-Vertex-Berechnung approximiert werden (aus Geschwindigkeitsgründen
+Die vom Compiler ausgegebenen Programme können grundsätzlich praktisch eingesetzt werden. Die Evaluation hat jedoch gezeigt,
+das der Compiler-"`Prototyp"' einigen Anwendungsfällen nicht gerecht wird:
+der in Abschnitt~\ref{Auftrennung} beschriebene "`Splitter"' arbeitet konservativ in dem Sinne, dass eine Operation nur in das Ausgabe-Vertexprogramm
+"`verschoben"' wird, wenn das Ergebnis mathematisch äquivalent zu einer Berechnung im Ausgabe-Pixelprogramm wäre.
+Praktisch sollen aber manchmal bewusst Ergebnisse approximiert werden, in dem Operationen während der Vertexberechnung ausgeführt werden
+(aus Geschwindigkeitsgründen
 bei komplexen oder oftmals verwendeten Programmen). Die Sprache sollte deswegen noch um ein Schlüsselwort o.ä. erweitert werden
 welches ein manuelles Bestimmen der Berechnungseinheit für eine Operation erlaubt.
 
-Die anderen Shadingsprachen wie Cg, GLSL usw. noch weitere "`Komfortfunktionen"' für oft verwendete
-Berechnungen (z.B. für die lineare Interpolation von Werten oder Vektoren), die zwar prinzipiell mit den vorhandenen Operationen
-oder eingebauten Funktionen nachgebildet werden können; ein zur Verfügung stellen als eingebaute Funktion wäre jedoch komfortabler.
-
-Die in vielen Programmiersprachen vorhandenen Verbundtypen wäre eine sinnvolle Erweiterung 
-um das Erstellen von komplexeren Programmen zu vereinfachen. Auch praktisch nützlich wären die von anderen Shadingsprachen meist bereitgestellten
-Typen mit unterschiedlichen Genauigkeiten (wie ``half'' oder ``double precision''-Fließkommazahlen). Diese lassen den Programmierer, je nach Anforderungen,
+Viele Programmiersprachen unterstützen Verbundtypen. Dies wäre eine sinnvolle Spracherweiterung 
+um das Erstellen von komplexeren Programmen zu vereinfachen. Auch praktisch nützlich wären die von anderen Shadingsprachen wie Cg, GLSL usw. meist bereitgestellten
+Typen mit unterschiedlichen Genauigkeiten (wie ``half''- oder ``double precision''-Fließkommazahlen). Diese lassen den Programmierer, je nach Anforderungen,
 zwischen Genauigkeit und Berechnungsgeschwindigkeit abwägen. 
 
-Denkbar ist es auch, den Compiler so zu erweitern, dass Programme aus "`üblichen"' Shadingsprachen mit getrennten Vertex- und Fragmentprogrammen
--- wie Cg -- akzeptiert werden. Die Ausgabe des Compilers wären ein funktional äquivalente Vertex- und Fragment-Programme,
-allerdings potentiell mit einer besseren Verteilung von Operationen auf Verarbeitungseinheiten.
+Auch bieten sie anderen Shadingsprachen noch weitere "`Komfortfunktionen"' für oft verwendete
+Berechnungen (z.B. für die lineare Interpolation von Werten oder Vektoren).  Diese können zwar prinzipiell mit den vorhandenen Operationen
+und eingebauten Funktionen nachgebildet werden. Ein zur Verfügung stellen als eingebaute Funktion wäre jedoch für Benutzer der Sprache komfortabler.
+
+Denkbar ist es auch, den Compiler so zu erweitern, dass Programme aus "`üblichen"' Shadingsprachen mit getrennten Vertex- und Pixelprogrammen
+-- wie Cg -- akzeptiert werden. Die Ausgabe des Compilers wären funktional äquivalente Vertex- und Pixelprogramme,
+allerdings mit einer potenziell besseren Verteilung von Operationen auf Verarbeitungseinheiten.
 
 Bei der Implementierung besteht noch Verbesserungspotential im Aufspalter. 
-Vor allem rekursive Funktionen werden nur im Fragment-Programm ausgeführt - dies stellt zwar ein korrektes
+Vor allem rekursive Funktionen werden nur im Pixelprogramm ausgeführt - dies stellt zwar ein korrektes
 Ergebnis sicher, ist aber nicht in allen Fällen die optimale Lösung.
 
 %Der Compiler selbst nimmt in der vorliegenden Implementierung noch keine Optimierungsschritte vor. In Anbetracht der bewussten Ausrichtung
