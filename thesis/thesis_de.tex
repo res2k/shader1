@@ -39,9 +39,16 @@
 \lstset{basicstyle=\ttfamily\small,lineskip=-0.5em,language={},tabsize=8,inputencoding=utf8/latin1,numberstyle=\tiny}
 
 % define the title
-\author{Frank Richter\\Matrikel 68278\\frank.richter@gmail.com}
 \title{\usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Grafikkarten \normalfont}
-\date{\today}
+% What a hack!
+\author{{\Large \textbf{Diplomarbeit}}\\
+\vspace{1em}\\
+{\large \textsc{Friedrich-Schiller-Universität Jena}}\\
+{\large Fakultät für Mathematik und Informatik}\\
+\vspace{1em}\\
+eingereicht von Frank Richter\thanks{Matrikel 68278, Kontakt: frank.richter@gmail.com}\\
+Betreuer: Prof. Dr. habil. Wolfram Amme}
+\date{\vspace{1em}\today}
 
 \makeglossaries
 
@@ -98,6 +105,14 @@
 % ---------- normal title ---------- %
 \titlepage
 \maketitle
+% \begin{titlepage}
+% \begin{center}
+% \setlength{\baselineskip}{2em}
+% {\huge \usefont{OT1}{phv}{b}{n}\selectfont Entwicklung eines Compilers für eine auf Cg basierende Sprache zur Programmierung von Grafikkarten \normalfont}
+% \vfill\today
+% \end{center}
+% \end{titlepage}
+
 \thispagestyle{empty}
 \newpage
 \thispagestyle{empty}
