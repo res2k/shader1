@@ -1,28 +1,19 @@
-\vspace{0.5em}
 \sOfunc{
 \sOfunchead{main}
-\sOfuncoutparams{\sOparamOut{float4}{pos}{\sOreg{m\_pos\_B0}}}
-\sOfuncregset{float}{\sOsetreg{i\_tmp0}\sOsetreg{i\_tmp2}}
-\sOfuncregset{float4}{\sOsetreg{m\_color\_B0}\sOsetreg{m\_pos\_B0}}
+\sOfuncoutparams{\sOparamOut{float4}{pos}{\sOreg{m\_pos\_B0}}\sOparamOut{float4}{color}{\sOreg{m\_color\_B0}}}
+\sOfuncregset{float}{\sOsetreg{i\_tmp2}\sOsetreg{v\_a}\sOsetreg{v\_b}\sOsetreg{v\_c}}
+\sOfuncregset{float4}{\sOsetreg{i\_tmp6}\sOsetreg{i\_tmp7}\sOsetreg{m\_color\_B0}\sOsetreg{m\_pos\_B0}\sOsetreg{v\_prod}}
 \sOfuncbody{
-\sOstmt{\sOassign{\sOreg{i\_tmp0}}{\sOconst{0}}}
-\sOstmt{\sOmakevec{\sOreg{m\_pos\_B0}}{\sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0}}}
-\sOstmt{\sOassign{\sOreg{i\_tmp2}}{\sOconst{1}}}
-\sOstmt{\sOmakevec{\sOreg{m\_color\_B0}}{\sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2}}}
+\sOstmt{\sOassign{\sOreg{v\_a}}{\sOconst{1}}}
+\sOstmt{\sOassign{\sOreg{v\_b}}{\sOconst{2}}}
+\sOstmt{\sOadd{\sOreg{i\_tmp2}}{\sOreg{v\_a}}{\sOreg{v\_b}}}
+\sOstmt{\sOmakevec{\sOreg{m\_pos\_B0}}{\sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2}}}
+\sOstmt{\sOdiv{\sOreg{v\_c}}{\sOreg{v\_a}}{\sOreg{v\_b}}}
+\sOstmt{\sOmakevec{\sOreg{m\_color\_B0}}{\sOreg{v\_b} \sOcomma \sOreg{v\_b} \sOcomma \sOreg{v\_b} \sOcomma \sOreg{v\_b}}}
+\sOstmt{\sOmul{\sOreg{i\_tmp6}}{\sOreg{m\_pos\_B0}}{\sOreg{m\_color\_B0}}}
+\sOstmt{\sOmakevec{\sOreg{i\_tmp7}}{\sOreg{v\_c} \sOcomma \sOreg{v\_c} \sOcomma \sOreg{v\_c} \sOcomma \sOreg{v\_c}}}
+\sOstmt{\sOmul{\sOreg{v\_prod}}{\sOreg{i\_tmp6}}{\sOreg{i\_tmp7}}}
 }
 }
 
-\vspace{0.5em}
-\sOfunc{
-\sOfunchead{main}
-\sOfuncoutparams{\sOparamOut{float4}{color}{\sOreg{m\_color\_B0}}}
-\sOfuncregset{float}{\sOsetreg{i\_tmp0}\sOsetreg{i\_tmp2}}
-\sOfuncregset{float4}{\sOsetreg{m\_color\_B0}\sOsetreg{m\_pos\_B0}}
-\sOfuncbody{
-\sOstmt{\sOassign{\sOreg{i\_tmp0}}{\sOconst{0}}}
-\sOstmt{\sOmakevec{\sOreg{m\_pos\_B0}}{\sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0} \sOcomma \sOreg{i\_tmp0}}}
-\sOstmt{\sOassign{\sOreg{i\_tmp2}}{\sOconst{1}}}
-\sOstmt{\sOmakevec{\sOreg{m\_color\_B0}}{\sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2} \sOcomma \sOreg{i\_tmp2}}}
-}
-}
 
