@@ -117,20 +117,18 @@ public:
     StringStringMap substMap;
     substMap["A"] = CgGenerator::NameToCgIdentifier (
       testBlockImpl->sequence->GetIdentifierRegister ("a")->GetName ());
-    substMap["A_in_block"] = CgGenerator::NameToCgIdentifier (
-      blockOp->GetSequence()->GetIdentifierRegister ("a")->GetName());
-    int l = 0;
-    TS_ASSERT_EQUALS(generateResult->Size(), 6);
+    TS_ASSERT_EQUALS(generateResult->Size(), 4);
+    unsigned int l = 0;
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
 		     StringSubstitute ("unsigned int $A;", substMap));
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
 		     StringSubstitute ("{", substMap));
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
-		     StringSubstitute ("  unsigned int $A_in_block;", substMap));
-    TS_ASSERT_EQUALS(generateResult->Get (l++),
-		     StringSubstitute ("  $A_in_block = 1;", substMap));
-    TS_ASSERT_EQUALS(generateResult->Get (l++),
-		     StringSubstitute ("  $A = $A_in_block;", substMap));
+		     StringSubstitute ("  $A = 1;", substMap));
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
 		     StringSubstitute ("}", substMap));
   }

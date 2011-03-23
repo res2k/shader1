@@ -77,6 +77,9 @@ public:
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
 								 TestSemanticsHandler::ExpressionPtr (),
 								 false);
+    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, UnicodeString ("b"),
+								 TestSemanticsHandler::ExpressionPtr (),
+								 false);
     // Create a simple expression "a = 1"
     TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
     TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("1.0"));
@@ -84,24 +87,29 @@ public:
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
+    // Create a simple expression "b = a"
+    TestSemanticsHandler::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB);
+    TestSemanticsHandler::ExpressionPtr assignExpr2 = semanticsHandler.CreateAssignExpression (exprB, exprA);
+    // Add to block
+    testBlock->AddExpressionCommand (assignExpr2);
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarA =
-      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varA);
+    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarB =
+      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varB);
       
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
+    TS_ASSERT_EQUALS(generateResult->Size(), 1);
+    if (generateResult->Size() < 1) return;
     std::string resultRegName (seqGen.GetOutputRegisterName (
-      testBlockImpl->GetRegisterForName (testVarA, false)));
+      testBlockImpl->GetRegisterForName (testVarB, false)));
     StringStringMap substMap;
     substMap["R0"] = resultRegName;
     TS_ASSERT_EQUALS(generateResult->Get (0),
-		     StringSubstitute ("float $R0;", substMap));
-    TS_ASSERT_EQUALS(generateResult->Get (1),
-		     StringSubstitute ("$R0 = 1;", substMap));
+		     StringSubstitute ("float $R0 = 1;", substMap));
   }
   
   void testExprArithVar (void)
@@ -156,16 +164,17 @@ public:
     substMap["A"] = varARegName;
     substMap["B"] = varBRegName;
     substMap["C"] = varCRegName;
-    int l = 0;
-    TS_ASSERT_EQUALS(generateResult->Size(), 4);
+    TS_ASSERT_EQUALS(generateResult->Size(), 3);
+    unsigned int l = 0;
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
 		     StringSubstitute ("float $A;", substMap));
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
 		     StringSubstitute ("float $B;", substMap));
+    if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
-		     StringSubstitute ("float $C;", substMap));
-    TS_ASSERT_EQUALS(generateResult->Get (l++),
-		     StringSubstitute ("$C = $A + $B;", substMap));
+		     StringSubstitute ("float $C = $A + $B;", substMap));
   }
   
 };
