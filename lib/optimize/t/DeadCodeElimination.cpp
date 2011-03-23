@@ -524,8 +524,12 @@ public:
     TS_ASSERT_EQUALS (codeEliminated, false);
     
     TestSequenceVisitor testVisitor;
-    TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
-    if (testVisitor.entries.size() < 1) return;
-    TS_ASSERT_EQUALS (testVisitor.entries[0].op, TestSequenceVisitor::opWhile);
+    newSeq->Visit (testVisitor);
+    TS_ASSERT_EQUALS (testVisitor.entries.size(), 2);
+    if (testVisitor.entries.size() < 2) return;
+    // Op1: condition variable assignment
+    TS_ASSERT_EQUALS (testVisitor.entries[0].op, TestSequenceVisitor::opAssignment);
+    // Op2: actual while loop
+    TS_ASSERT_EQUALS (testVisitor.entries[1].op, TestSequenceVisitor::opWhile);
   }
 };
