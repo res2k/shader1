@@ -8,20 +8,31 @@ if(CXXTEST_FOUND)
   enable_testing()
 endif()
 
-find_program(ICU_CONFIG icu-config)
-if(NOT ICU_CONFIG)
-  message(FATAL_ERROR "ICU is required.")
+if(ICU_PREFIX)
+  get_filename_component(ICU_PREFIX "${ICU_PREFIX}" ABSOLUTE)
+  find_package_message(ICU_PREFIX "Using user-specified ICU_PREFIX: ${ICU_PREFIX}" ${ICU_PREFIX})
+  set(ICU_FOUND ON)
+  # FIXME?: Those are the names for MSVC builds
+  set(ICU_LIBRARIES "-L${ICU_PREFIX}/lib -licuin -licuuc -licudt")
+  set(ICU_ICUIO_LIBRARIES "-licuio")
+  set(ICU_INCLUDE_DIRS "${ICU_PREFIX}/include")
+else()
+  find_program(ICU_CONFIG icu-config)
+  if(NOT ICU_CONFIG)
+    message(FATAL_ERROR "ICU is required. Make sure 'icu-config' is in PATH or set the cmake var ICU_PREFIX.")
+  endif()
+  find_package_message(ICU_CONFIG "icu-config: ${ICU_CONFIG}" ${ICU_CONFIG})
+  set(ICU_FOUND ON)
+  execute_process(COMMAND ${ICU_CONFIG} --ldflags
+		  OUTPUT_VARIABLE ICU_LIBRARIES)
+  string(STRIP "${ICU_LIBRARIES}" ICU_LIBRARIES)
+  execute_process(COMMAND ${ICU_CONFIG} --ldflags-icuio
+		  OUTPUT_VARIABLE ICU_ICUIO_LIBRARIES)
+  string(STRIP "${ICU_ICUIO_LIBRARIES}" ICU_ICUIO_LIBRARIES)
+  execute_process(COMMAND ${ICU_CONFIG} --cppflags-searchpath
+		  OUTPUT_VARIABLE ICU_INCLUDE_DIRS)
 endif()
-find_package_message(ICU_CONFIG "icu-config: ${ICU_CONFIG}" ${ICU_CONFIG})
-set(ICU_FOUND ON)
-execute_process(COMMAND ${ICU_CONFIG} --ldflags
-		OUTPUT_VARIABLE ICU_LIBRARIES)
-string(STRIP "${ICU_LIBRARIES}" ICU_LIBRARIES)
-execute_process(COMMAND ${ICU_CONFIG} --ldflags-icuio
-		OUTPUT_VARIABLE ICU_ICUIO_LIBRARIES)
-string(STRIP "${ICU_ICUIO_LIBRARIES}" ICU_ICUIO_LIBRARIES)
-execute_process(COMMAND ${ICU_CONFIG} --cppflags-searchpath
-		OUTPUT_VARIABLE ICU_INCLUDE_DIRS)
+include_directories(${ICU_INCLUDE_DIRS})
 
 SET(Boost_ADDITIONAL_VERSIONS "1.40" "1.40.0" "1.41" "1.41.0")
 find_package(Boost 1.35.0)
