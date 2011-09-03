@@ -31,6 +31,10 @@
 
 #include <unicode/ustdio.h>
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
+
 namespace s1
 {
   namespace splitter
@@ -42,7 +46,15 @@ namespace s1
     
     static inline int LowestFreq (unsigned int availabilityFlag)
     {
-      int f = __builtin_ffs (availabilityFlag) - 1;
+      int f;
+    #ifdef _MSC_VER
+      {
+	unsigned long index;
+	f = _BitScanForward (&index, availabilityFlag) ? index : -1;
+      }
+    #else
+      f = __builtin_ffs (availabilityFlag) - 1;
+    #endif
       // Sanity checks
       assert ((f >= 0) && (f < freqNum));
       return f;
@@ -51,7 +63,16 @@ namespace s1
     static inline int HighestFreq (unsigned int availabilityFlag)
     {
       assert (availabilityFlag != 0);
-      int f =  (CHAR_BIT * sizeof (unsigned int) - __builtin_clz (availabilityFlag) - 1);
+      int f;
+    #ifdef _MSC_VER
+      {
+	unsigned long index;
+	_BitScanReverse (&index, availabilityFlag);
+	f = index - 1;
+      }
+    #else
+      f = (CHAR_BIT * sizeof (unsigned int) - __builtin_clz (availabilityFlag) - 1);
+    #endif
       // Sanity checks
       assert ((f >= 0) && (f < freqNum));
       return f;

@@ -1,4 +1,4 @@
-#include <boost/cstdint.hpp>
+#include "base/common.h"
 
 #include "codegen/LatexGenerator.h"
 

@@ -1456,6 +1456,23 @@ namespace s1
 	  return pow (src1, src2);
 	}
       };
+      // Work around MSVC having multiple pow() overloads, but none for (unsigned) int
+      template<>
+      int FunctorPow::operator()<int> (int src1, int src2)
+      {
+        return pow (double (src1), double (src2));
+      }
+      template<>
+      unsigned int FunctorPow::operator()<unsigned int> (unsigned int src1, unsigned int src2)
+      {
+        return pow (double (src1), double (src2));
+      }
+      // May seem odd, but code for this is generated
+      template<>
+      bool FunctorPow::operator()<bool> (bool src1, bool src2)
+      {
+        return pow (float (int (src1)), float (int (src2)));
+      }
     }
     
     bool ConstantFolding::FoldingVisitor::HandleBuiltinPow (const RegisterPtr& destination,

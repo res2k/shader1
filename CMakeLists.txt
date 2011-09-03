@@ -12,9 +12,10 @@ if(ICU_PREFIX)
   get_filename_component(ICU_PREFIX "${ICU_PREFIX}" ABSOLUTE)
   find_package_message(ICU_PREFIX "Using user-specified ICU_PREFIX: ${ICU_PREFIX}" ${ICU_PREFIX})
   set(ICU_FOUND ON)
-  # FIXME?: Those are the names for MSVC builds
-  set(ICU_LIBRARIES "-L${ICU_PREFIX}/lib -licuin -licuuc -licudt")
-  set(ICU_ICUIO_LIBRARIES "-licuio")
+  # FIXME: Those are the names for MSVC builds
+  link_directories("${ICU_PREFIX}/lib")
+  set(ICU_LIBRARIES icuin icuuc icudt)
+  set(ICU_ICUIO_LIBRARIES icuio)
   set(ICU_INCLUDE_DIRS "${ICU_PREFIX}/include")
 else()
   find_program(ICU_CONFIG icu-config)
@@ -46,10 +47,18 @@ function(CxxCompilerFlagString flagvar flagstr)
   endif()
 endfunction()
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
-CxxCompilerFlagString (CXX_WARN_ALL "-Wall")
+if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+  # Annoying on MSVC; lots of warnings from inside Boost
+  CxxCompilerFlagString (CXX_WARN_ALL "-Wall")
+endif()
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARN_ALL}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
+
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+  # Silence more annoyances
+  add_definitions("-D_CRT_SECURE_NO_WARNINGS")
+endif()
 
 include_directories(include)
 
