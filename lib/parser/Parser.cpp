@@ -361,7 +361,7 @@ namespace s1
   {
     Expression expr;
     int beyondType = 0;
-    bool isType;
+    bool isType (false);
     if ((currentToken.typeOrID == Lexer::Identifier)
 	|| ((isType = IsType (scope, beyondType))
 	  && (Peek (beyondType).typeOrID == Lexer::ParenL)))
