@@ -2,7 +2,6 @@ set(compiler_sources
      BackendCg.h
      BackendCg.cpp
      Compiler.cpp
-     DeprotectCtor.h
      ErrorHandler.cpp
      ErrorHandler.h
      Options.cpp

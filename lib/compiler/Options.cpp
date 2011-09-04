@@ -2,18 +2,13 @@
 
 #include "compiler/Options.h"
 
-#include "DeprotectCtor.h"
+#include "base/make_shared.h"
 
 #include <string.h>
 #include <boost/make_shared.hpp>
 
 namespace s1
 {
-  Compiler::OptionsPtr Compiler::Options::Create ()
-  {
-    return boost::make_shared<DeprotectCtor<Options> > ();
-  }
-  
   Compiler::Options::Options ()
   {
     memset (optimizeFlags, 0, sizeof (optimizeFlags));

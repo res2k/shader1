@@ -3,7 +3,6 @@
 #include "BackendCg.h"
 
 #include "codegen/CgGenerator.h"
-#include "DeprotectCtor.h"
 
 #include <boost/make_shared.hpp>
 
@@ -40,7 +39,7 @@ namespace s1
       codegen::CgGenerator codegen;
       codegen::StringsArrayPtr outputProg (codegen.Generate (prog, freq));
       
-      return boost::make_shared<DeprotectCtor<CgProgram> > (FlattenStringArray (outputProg));
+      return make_shared<CgProgram> (FlattenStringArray (outputProg));
     }
     
     //-----------------------------------------------------------------------

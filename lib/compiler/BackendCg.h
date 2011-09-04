@@ -3,6 +3,8 @@
 
 #include "compiler/Backend.h"
 
+#include <base/make_shared.h>
+
 namespace s1
 {
   namespace compiler
@@ -13,7 +15,7 @@ namespace s1
       {
 	std::string programString;
       protected:
-	friend class BackendCg;
+	friend class make_shared<CgProgram>;
 	CgProgram (const std::string& programString) : programString (programString) {}
       public:
 	std::string GetProgramString ();

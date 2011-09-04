@@ -3,15 +3,15 @@
 
 #include "Compiler.h"
 
+#include <base/make_shared.h>
+
 namespace s1
 {
   class Compiler::Options
   {
   protected:
     friend class Compiler;
-    
-    static Compiler::OptionsPtr Create ();
-    
+    friend class make_shared<Options>;
     Options ();
   public:
     enum Optimization
