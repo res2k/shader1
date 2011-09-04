@@ -1,4 +1,12 @@
-file(GLOB base_sources *.h *.cpp ../include/base/*.h)
+set(base_sources
+    UnicodeStream.cpp
+    ../../include/base/common.h
+    ../../include/base/make_shared.h
+    ../../include/base/UnicodeStream.h
+    ../../include/base/UnicodeStreamEndOfInputException.h
+    ../../include/base/UnicodeStreamException.h
+    ../../include/base/UnicodeStreamInvalidCharacterException.h
+    )
 add_library(base ${base_sources})
 target_link_libraries(base ${ICU_LIBRARIES})
 
