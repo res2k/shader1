@@ -1190,7 +1190,7 @@ namespace s1
 	    unsigned int avail = regAvailability[reg];
 
 	    if ((avail == 0) || (LowestFreq (avail) == freqUniform))
-	      transferRegs[f].erase (it);
+	      it = transferRegs[f].erase (it);
 	    else
 	      ++it;
 	  }
