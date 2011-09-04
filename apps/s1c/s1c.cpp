@@ -127,8 +127,6 @@ int main (const int argc, const char* const argv[])
   Compiler::BackendPtr compilerBackend;
   if (strcasecmp (backendStr, "cg") == 0)
     compilerBackend = compiler.CreateBackendCg();
-  else if (strcasecmp (backendStr, "latex") == 0)
-    compilerBackend = compiler.CreateBackendLatex();
   else
   {
     std::cerr << "Invalid backend: " << backendStr << std::endl;

@@ -18,7 +18,6 @@ namespace s1
     typedef boost::shared_ptr<Backend> BackendPtr;
     
     BackendPtr CreateBackendCg ();
-    BackendPtr CreateBackendLatex ();
     
     class Program;
     typedef boost::shared_ptr<Program> ProgramPtr;

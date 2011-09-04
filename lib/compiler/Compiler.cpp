@@ -3,7 +3,6 @@
 #include "compiler/Compiler.h"
 
 #include "BackendCg.h"
-#include "BackendLatex.h"
 #include "base/UnicodeStream.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
@@ -21,11 +20,6 @@ namespace s1
   Compiler::BackendPtr Compiler::CreateBackendCg ()
   {
     return boost::make_shared<compiler::BackendCg> ();
-  }
-
-  Compiler::BackendPtr Compiler::CreateBackendLatex ()
-  {
-    return boost::make_shared<compiler::BackendLatex> ();
   }
 
   Compiler::ProgramPtr Compiler::CreateProgram (const OptionsPtr& compilerOptions,
