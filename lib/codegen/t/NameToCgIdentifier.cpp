@@ -1,4 +1,5 @@
 #include <cxxtest/TestSuite.h>
+#include "base/common.h"
 
 #include "codegen/CgGenerator.h"
 #include "../cg/SequenceCodeGenerator.h"

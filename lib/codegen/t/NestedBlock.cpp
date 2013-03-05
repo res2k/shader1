@@ -6,6 +6,7 @@
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 #include "../../intermediate/BlockImpl.h"
+#include "../../intermediate/NameImpl.h"
 
 #include "codegen/CgGenerator.h"
 #include "../cg/SequenceCodeGenerator.h"
