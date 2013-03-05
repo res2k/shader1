@@ -2,8 +2,6 @@
 
 #include "compiler/Options.h"
 
-#include "base/make_shared.h"
-
 #include <string.h>
 #include <boost/make_shared.hpp>
 

@@ -39,7 +39,7 @@ namespace s1
       codegen::CgGenerator codegen;
       codegen::StringsArrayPtr outputProg (codegen.Generate (prog, freq));
       
-      return make_shared<CgProgram> (FlattenStringArray (outputProg));
+      return ProgramPtr (new CgProgram (FlattenStringArray (outputProg)));
     }
     
     //-----------------------------------------------------------------------

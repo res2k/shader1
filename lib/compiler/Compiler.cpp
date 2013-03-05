@@ -3,7 +3,6 @@
 #include "compiler/Compiler.h"
 
 #include "BackendCg.h"
-#include "base/make_shared.h"
 #include "base/UnicodeStream.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
@@ -14,7 +13,7 @@ namespace s1
 {
   Compiler::OptionsPtr Compiler::CreateOptions ()
   {
-    return make_shared<Options> ();
+    return OptionsPtr (new Options);
   }
   
   Compiler::BackendPtr Compiler::CreateBackendCg ()
@@ -26,6 +25,6 @@ namespace s1
 						std::istream& input)
   {
     UnicodeStream uniStream (input, "utf-8");
-    return make_shared<Program> (compilerOptions, &uniStream);
+    return ProgramPtr (new Program (compilerOptions, &uniStream));
   }
 } // namespace s1

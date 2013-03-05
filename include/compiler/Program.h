@@ -17,7 +17,6 @@ namespace s1
   protected:
     friend class Compiler;
     
-    friend class make_shared<Program>;
     Program (const OptionsPtr& compilerOptions,
 	     UnicodeStream* inputStream);
     
