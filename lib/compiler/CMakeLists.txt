@@ -6,10 +6,10 @@ set(compiler_sources
      ErrorHandler.h
      Options.cpp
      Program.cpp
-     ../../include/compiler/Backend.h
-     ../../include/compiler/Compiler.h
-     ../../include/compiler/Options.h
-     ../../include/compiler/Program.h
+     ../../include/internal/compiler/Backend.h
+     ../../include/internal/compiler/Compiler.h
+     ../../include/internal/compiler/Options.h
+     ../../include/internal/compiler/Program.h
      )
 add_library(compiler ${compiler_sources})
 target_link_libraries(compiler lexer intermediate codegen optimize splitter)

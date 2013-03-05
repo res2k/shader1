@@ -3,8 +3,8 @@ add_library(codegen_cg ${codegen_cg_sources})
 set(codegen_sources
 	CgGenerator.cpp
 	StringsArray.cpp
-	../../include/codegen/CgGenerator.h
-	../../include/codegen/StringsArray.h)
+	../../include/internal/codegen/CgGenerator.h
+	../../include/internal/codegen/StringsArray.h)
 add_library(codegen ${codegen_sources})
 target_link_libraries(codegen codegen_cg intermediate)
 

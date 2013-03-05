@@ -1,5 +1,5 @@
-file(GLOB intermediate_sources *.h *.cpp ../include/intermediate/*.h 
-			       SequenceOp/*.h SequenceOp/*.cpp ../include/intermediate/SequenceOp/*.h)
+file(GLOB intermediate_sources *.h *.cpp ../include/internal/intermediate/*.h 
+			       SequenceOp/*.h SequenceOp/*.cpp ../include/internal/intermediate/SequenceOp/*.h)
 add_library(intermediate ${intermediate_sources})
 target_link_libraries(intermediate parser ${ICU_ICUIO_LIBRARIES})
 

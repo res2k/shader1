@@ -1,10 +1,10 @@
 set(base_sources
     UnicodeStream.cpp
-    ../../include/base/common.h
-    ../../include/base/UnicodeStream.h
-    ../../include/base/UnicodeStreamEndOfInputException.h
-    ../../include/base/UnicodeStreamException.h
-    ../../include/base/UnicodeStreamInvalidCharacterException.h
+    ../../include/internal/base/common.h
+    ../../include/internal/base/UnicodeStream.h
+    ../../include/internal/base/UnicodeStreamEndOfInputException.h
+    ../../include/internal/base/UnicodeStreamException.h
+    ../../include/internal/base/UnicodeStreamInvalidCharacterException.h
     )
 add_library(base ${base_sources})
 target_link_libraries(base ${ICU_LIBRARIES})

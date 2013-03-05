@@ -1,4 +1,4 @@
-file(GLOB parser_sources *.h *.cpp ../include/parser/*.h)
+file(GLOB parser_sources *.h *.cpp ../include/internal/parser/*.h)
 add_library(parser ${parser_sources})
 target_link_libraries(parser lexer)
 

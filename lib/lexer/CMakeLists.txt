@@ -1,4 +1,4 @@
-file(GLOB lexer_sources *.h *.cpp ../include/lexer/*.h)
+file(GLOB lexer_sources *.h *.cpp ../include/internal/lexer/*.h)
 add_library(lexer ${lexer_sources})
 target_link_libraries(lexer base)
 

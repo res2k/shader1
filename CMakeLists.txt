@@ -60,6 +60,7 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
+include_directories(include/internal)
 include_directories(include)
 
 add_subdirectory(lib)

@@ -1,4 +1,4 @@
-file(GLOB splitter_sources *.h *.cpp ../include/splitter/*.h)
+file(GLOB splitter_sources *.h *.cpp ../include/internal/splitter/*.h)
 add_library(splitter ${splitter_sources})
 
 if(CXXTEST_FOUND)
