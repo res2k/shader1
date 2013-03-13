@@ -1,7 +1,6 @@
 set(base_sources
     UnicodeStream.cpp
     ../../include/base/common.h
-    ../../include/base/make_shared.h
     ../../include/base/UnicodeStream.h
     ../../include/base/UnicodeStreamEndOfInputException.h
     ../../include/base/UnicodeStreamException.h
