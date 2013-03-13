@@ -8,15 +8,15 @@
 
 namespace s1
 {
-  class Compiler::Backend
+  class Compiler::Backend : public Object
   {
   public:
-    class Program
+    class Program : public Object
     {
     public:
       virtual std::string GetProgramString () = 0;
     };
-    typedef boost::shared_ptr<Program> ProgramPtr;
+    typedef boost::intrusive_ptr<Program> ProgramPtr;
     
     enum CompileTarget
     {

@@ -1,26 +1,28 @@
 #ifndef __COMPILER_COMPILER_H__
 #define __COMPILER_COMPILER_H__
 
-#include <boost/shared_ptr.hpp>
+#include "base/Object.h"
+
+#include <boost/intrusive_ptr.hpp>
 
 namespace s1
 {
   // "Friendly" class for compiler controls
-  class Compiler
+  class Compiler : public Object
   {
   public:
     class Options;
-    typedef boost::shared_ptr<Options> OptionsPtr;
+    typedef boost::intrusive_ptr<Options> OptionsPtr;
     
     OptionsPtr CreateOptions ();
     
     class Backend;
-    typedef boost::shared_ptr<Backend> BackendPtr;
+    typedef boost::intrusive_ptr<Backend> BackendPtr;
     
     BackendPtr CreateBackendCg ();
     
     class Program;
-    typedef boost::shared_ptr<Program> ProgramPtr;
+    typedef boost::intrusive_ptr<Program> ProgramPtr;
     
     ProgramPtr CreateProgram (const OptionsPtr& compilerOptions,
 			      std::istream& input);

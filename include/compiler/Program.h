@@ -12,7 +12,7 @@ namespace s1
 {
   class UnicodeStream;
   
-  class Compiler::Program
+  class Compiler::Program : public Object
   {
   protected:
     friend class Compiler;

@@ -18,7 +18,7 @@ namespace s1
   
   Compiler::BackendPtr Compiler::CreateBackendCg ()
   {
-    return boost::make_shared<compiler::BackendCg> ();
+    return BackendPtr (new compiler::BackendCg);
   }
 
   Compiler::ProgramPtr Compiler::CreateProgram (const OptionsPtr& compilerOptions,

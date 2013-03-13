@@ -5,13 +5,10 @@
 
 namespace s1
 {
-  class Compiler::Options
+  class Compiler::Options : public Object
   {
   protected:
     friend class Compiler;
-    
-    static Compiler::OptionsPtr Create ();
-    
     Options ();
   public:
     enum Optimization
