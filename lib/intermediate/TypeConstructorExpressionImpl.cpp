@@ -30,13 +30,13 @@ namespace s1
     {
       Sequence& seq (*(block.GetSequence()));
       
-      TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
+      TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
 	  
       for (ExpressionVector::const_iterator expr (params.begin());
 	   expr != params.end();
 	   ++expr)
       {
-	boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (*expr));
+	boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
 	TypeImplPtr exprType (exprImpl->GetValueType());
 	RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
 	postActions.push_back(std::make_pair<> (exprImpl, srcExprReg));
@@ -61,7 +61,7 @@ namespace s1
 	case TypeImpl::Vector:
 	  {
 	    // extract components
-	    TypeImplPtr exprCompType (boost::shared_static_cast<TypeImpl> (exprType->avmBase));
+	    TypeImplPtr exprCompType (boost::static_pointer_cast<TypeImpl> (exprType->avmBase));
 	    for (unsigned int c = 0; c < exprType->vectorDim; c++)
 	    {
 	      RegisterPtr compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
@@ -104,7 +104,7 @@ namespace s1
 	  
 	  RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
 	  ExpressionPtr srcExpr (params[0]);
-	  boost::shared_ptr<ExpressionImpl> srcExprImpl (boost::shared_static_cast<ExpressionImpl> (srcExpr));
+	  boost::shared_ptr<ExpressionImpl> srcExprImpl (boost::static_pointer_cast<ExpressionImpl> (srcExpr));
 	  RegisterPtr srcReg (srcExprImpl->AddToSequence (block, Intermediate, false));
 	  TypeImplPtr srcType (srcExprImpl->GetValueType());
 	  if (type->IsEqual (*srcType))
@@ -150,7 +150,7 @@ namespace s1
 	      throw Exception (TooFewTypeCtorArgs);
 	  }
 	  
-	  TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
+	  TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
 	  
 	  RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
 	  BasicType vecType;
@@ -189,13 +189,13 @@ namespace s1
 	  RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
 	  std::vector<RegisterPtr> srcRegs;
 	  
-	  TypeImplPtr targetBaseType (boost::shared_static_cast<TypeImpl> (type->avmBase));
+	  TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
 	  
 	  for (ExpressionVector::const_iterator expr (params.begin());
 	      expr != params.end();
 	      ++expr)
 	  {
-	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (*expr));
+	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
 	    TypeImplPtr exprType (exprImpl->GetValueType());
 	    RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
 	    

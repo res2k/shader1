@@ -54,7 +54,7 @@ namespace s1
       // TODO: Keep? Or allow params shadow global vars?
       CheckIdentifierUnique (param.identifier);
       NamePtr newName (new NameImpl (shared_from_this(), param.identifier, 
-				     boost::shared_static_cast<TypeImpl> (param.type),
+				     boost::static_pointer_cast<TypeImpl> (param.type),
 				     param.defaultValue,
 				     param.dir == dirIn,
 				     param.dir == dirOut));
@@ -70,7 +70,7 @@ namespace s1
     {
       CheckIdentifierUnique (identifier);
       NamePtr newName (new NameImpl (shared_from_this(), identifier, 
-				     boost::shared_static_cast<TypeImpl> (type), initialValue, constant));
+				     boost::static_pointer_cast<TypeImpl> (type), initialValue, constant));
       identifiers[identifier] = newName;
       newVars.push_back (newName);
       return newName;
@@ -80,7 +80,7 @@ namespace s1
     {
       CheckIdentifierUnique (identifier);
       NamePtr newName (new NameImpl (shared_from_this(), identifier, Name::TypeAlias, 
-				     boost::shared_static_cast<TypeImpl> (aliasedType)));
+				     boost::static_pointer_cast<TypeImpl> (aliasedType)));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -101,7 +101,7 @@ namespace s1
       
       ScopePtr funcScope;
       funcScope = handler->CreateScope (shared_from_this(), Function, returnType);
-      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::shared_static_cast<ScopeImpl> (funcScope));
+      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (funcScope));
       for (FunctionFormalParameters::const_iterator param (params.begin());
 	   param != params.end();
 	   ++param)
@@ -125,7 +125,7 @@ namespace s1
 	char dirStr[2] = { 0, 0 };
 	dirStr[0] = param->dir + '0';
 	decorationString.append (dirStr);
-	TypeImplPtr typeImpl (boost::shared_static_cast<TypeImpl> (param->type));
+	TypeImplPtr typeImpl (boost::static_pointer_cast<TypeImpl> (param->type));
 	decorationString.append (handler->GetTypeString (typeImpl));
 	identifierDecorated.append (decorationString.c_str());
       }
@@ -139,7 +139,7 @@ namespace s1
       
       if (handler->IsEntryFunction (identifier))
       {
-	boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (newBlock));
+	boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (newBlock));
 	blockImpl->GenerateGlobalVarInitialization();
       }	
       
@@ -160,7 +160,7 @@ namespace s1
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-	return boost::shared_static_cast<NameImpl> (ident->second);
+	return boost::static_pointer_cast<NameImpl> (ident->second);
       }
       if (parent)
 	return parent->ResolveIdentifierInternal (identifier);
@@ -193,7 +193,7 @@ namespace s1
 	   param != params.end();
 	   ++param)
       {
-	identifierDecorated.append (handler->GetTypeString (boost::shared_static_cast<TypeImpl> (param->type)).c_str());
+	identifierDecorated.append (handler->GetTypeString (boost::static_pointer_cast<TypeImpl> (param->type)).c_str());
       }
       funcInfo->identifier = identifierDecorated;
       funcInfo->returnType = builtin->GetReturnType();
@@ -213,7 +213,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
     IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const
     {
-      boost::shared_ptr<NameImpl> nameImpl (boost::shared_static_cast<NameImpl> (functionName));
+      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
       
       FunctionInfoVector vec;
       FunctionsMap::const_iterator funcIt = functions.find (nameImpl->identifier);
@@ -230,9 +230,9 @@ namespace s1
 	  size_t i = 0;
 	  for (; i < params.size(); i++)
 	  {
-	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
+	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[i]));
 	    TypeImplPtr paramType (exprImpl->GetValueType ());
-	    TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
+	    TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[i].type));
 	    // No exact type match? Skip
 	    if (!paramType->IsEqual (*formalParamType))
 	    {
@@ -268,9 +268,9 @@ namespace s1
 	    size_t i = 0;
 	    for (; i < params.size(); i++)
 	    {
-	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (params[i]));
+	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[i]));
 	      TypeImplPtr paramType (exprImpl->GetValueType ());
-	      TypeImplPtr formalParamType (boost::shared_static_cast<TypeImpl> ((*vecIt)->params[i].type));
+	      TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[i].type));
 	      bool match;
 	      if ((*vecIt)->params[i].dir & dirOut)
 		// Output parameters must _always_ match exactly

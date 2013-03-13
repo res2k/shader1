@@ -85,7 +85,7 @@ namespace s1
       // Assign ternary result to destination
       {
 	ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
-	boost::shared_ptr<ExpressionImpl> destNameExprImpl (boost::shared_static_cast<ExpressionImpl> (destNameExpr));
+	boost::shared_ptr<ExpressionImpl> destNameExprImpl (boost::static_pointer_cast<ExpressionImpl> (destNameExpr));
 	return destNameExprImpl->AddToSequence (block, Intermediate);
       }
     }

@@ -625,7 +625,7 @@ namespace s1
 								       RenamedBranchOutputs& outputs)
     {
       boost::shared_ptr<intermediate::SequenceOpBlock> newBlock (
-	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (blockOp));
+	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (blockOp));
       SequencePtr seq (newBlock->GetSequence());
       
       Sequence::RegisterExpMappings newExports;
@@ -676,7 +676,7 @@ namespace s1
 											       int f)
     {
       boost::shared_ptr<intermediate::SequenceOpBlock> newBlock (
-	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (blockOp));
+	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (blockOp));
       SequencePtr seq (newBlock->GetSequence());
       
       Sequence::IdentifierToRegMap newIdentToRegIDsImp (newBlock->GetImportIdentToRegs());
@@ -726,10 +726,10 @@ namespace s1
 						   const SequenceOpPtr& seqOpElse)
     {
       boost::shared_ptr<intermediate::SequenceOpBlock> ifBlock (
-	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpIf));
+	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpIf));
       assert (ifBlock);
       boost::shared_ptr<intermediate::SequenceOpBlock> elseBlock (
-	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpElse));
+	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpElse));
       assert (elseBlock);
       
       // Compute highest frequency of condition and all sequence inputs
@@ -814,7 +814,7 @@ namespace s1
 						  const SequenceOpPtr& seqOpBody)
     {
       boost::shared_ptr<intermediate::SequenceOpBlock> body (
-	boost::shared_dynamic_cast<intermediate::SequenceOpBlock> (seqOpBody));
+	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpBody));
       assert (body);
 
       /* Do a couple of "dry-run" splits to determine the required frequencies 

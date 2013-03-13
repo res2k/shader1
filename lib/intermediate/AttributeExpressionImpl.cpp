@@ -25,7 +25,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::GetValueType ()
     {
-      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (baseExpr));
+      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
       return handler->GetAttributeType (exprImpl->GetValueType(), attr);
     }
     
@@ -46,7 +46,7 @@ namespace s1
 	  if (asLvalue) return RegisterPtr ();
 	  
 	  RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
-	  boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (baseExpr));
+	  boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
 	  RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
 	  
 	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpGetArrayLength> (targetReg, exprValueReg));
@@ -76,7 +76,7 @@ namespace s1
 	  }
 	  else
 	  {
-	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (baseExpr));
+	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
 	    RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
 	    
 	    TypeImplPtr valueType (GetValueType());
@@ -85,7 +85,7 @@ namespace s1
 	    {
 	      // multi-component swizzle
 	      targetReg = handler->AllocateRegister (seq, valueType, classify);
-	      TypeImplPtr valueCompType (boost::shared_static_cast<TypeImpl> (valueType->avmBase));
+	      TypeImplPtr valueCompType (boost::static_pointer_cast<TypeImpl> (valueType->avmBase));
 	      std::vector<RegisterPtr> compRegs;
 	      for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
 	      {
@@ -136,7 +136,7 @@ namespace s1
       Sequence& seq (*(block.GetSequence()));
       
       // Generate assignment from register to actual target
-      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (baseExpr));
+      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
       
       RegisterPtr originalTarget (exprImpl->AddToSequence (block, Intermediate, false));
       exprImpl->AddToSequencePostAction (block, originalTarget, false);
@@ -146,7 +146,7 @@ namespace s1
 	throw Exception (SwizzledExpressionNotAnLValue);
       
       TypeImplPtr originalValueType (exprImpl->GetValueType());
-      TypeImplPtr originalValueCompType (boost::shared_static_cast<TypeImpl> (originalValueType->avmBase));
+      TypeImplPtr originalValueCompType (boost::static_pointer_cast<TypeImpl> (originalValueType->avmBase));
       TypeImplPtr valueType (GetValueType());
       
       unsigned int compDefined = 0;

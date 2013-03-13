@@ -29,8 +29,8 @@ namespace s1
       if (overloadSelected) return;
       overloadSelected = true;
       
-      boost::shared_ptr<NameImpl> nameImpl (boost::shared_static_cast<NameImpl> (functionName));
-      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::shared_static_cast<ScopeImpl> (ScopePtr (nameImpl->ownerScope)));
+      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
+      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (ScopePtr (nameImpl->ownerScope)));
       
       // Collect overload candidates
       ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName, params));
@@ -68,7 +68,7 @@ namespace s1
       for (size_t i = 0; i < actualParams.size(); i++)
       {
 	RegisterPtr reg1, reg2;
-	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
+	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
 	if (overload->params[i].dir & ScopeImpl::dirIn)
 	{
 	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
@@ -88,7 +88,7 @@ namespace s1
     {
       SelectOverload ();
 	
-      return boost::shared_static_cast<TypeImpl> (overload->returnType);
+      return boost::static_pointer_cast<TypeImpl> (overload->returnType);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
@@ -112,11 +112,11 @@ namespace s1
 	const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
 	if (param.dir & ScopeImpl::dirIn)
 	{
-	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
+	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
 	  boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
 	  RegisterPtr inReg (fetchedRegs[i].first);
 	  assert (inReg);
-	  boost::shared_ptr<TypeImpl> formalParamType (boost::shared_static_cast<TypeImpl> (param.type));
+	  boost::shared_ptr<TypeImpl> formalParamType (boost::static_pointer_cast<TypeImpl> (param.type));
 	  if (!paramExprType->IsEqual (*formalParamType))
 	  {
 	    RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequence()), formalParamType, Intermediate));
@@ -127,7 +127,7 @@ namespace s1
 	}
 	if (param.dir & ScopeImpl::dirOut)
 	{
-	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::shared_static_cast<ExpressionImpl> (actualParams[i]));
+	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
 	  RegisterPtr outReg (fetchedRegs[i].second);
 	  if (!outReg)
 	    throw Exception (ActualParameterNotAnLValue);
@@ -138,7 +138,7 @@ namespace s1
       if (overload->block)
       {
 	// Look for globals imported into function, add as parameters
-	boost::shared_ptr<BlockImpl> funcBlockImpl (boost::shared_static_cast<BlockImpl> (overload->block));
+	boost::shared_ptr<BlockImpl> funcBlockImpl (boost::static_pointer_cast<BlockImpl> (overload->block));
 	Sequence::RegisterImpMappings imports (funcBlockImpl->GetSequence()->GetImports());
 	for (Sequence::RegisterImpMappings::const_iterator imported (imports.begin());
 	    imported != imports.end();

@@ -25,7 +25,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::GetValueType()
     {
       boost::shared_ptr<TypeImpl> valueType =
-	boost::shared_static_cast<TypeImpl> (handler->CreateType (numberType));
+	boost::static_pointer_cast<TypeImpl> (handler->CreateType (numberType));
 	
       return valueType;
     }

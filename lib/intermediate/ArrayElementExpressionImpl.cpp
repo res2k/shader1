@@ -24,11 +24,11 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::GetValueType ()
     {
-      boost::shared_ptr<ExpressionImpl> exprImpl (boost::shared_static_cast<ExpressionImpl> (arrayExpr));
+      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
       TypeImplPtr exprType (exprImpl->GetValueType());
       if (exprType->typeClass != TypeImpl::Array)
 	throw Exception (NotAnArray);
-      return boost::shared_static_cast<TypeImpl> (exprType->avmBase);
+      return boost::static_pointer_cast<TypeImpl> (exprType->avmBase);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,
@@ -37,8 +37,8 @@ namespace s1
     {
       Sequence& seq (*(block.GetSequence()));
 
-      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::shared_static_cast<ExpressionImpl> (arrayExpr));
-      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::shared_static_cast<ExpressionImpl> (indexExpr));
+      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
+      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));
       
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
@@ -82,8 +82,8 @@ namespace s1
       
       Sequence& seq (*(block.GetSequence()));
       
-      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::shared_static_cast<ExpressionImpl> (arrayExpr));
-      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::shared_static_cast<ExpressionImpl> (indexExpr));
+      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
+      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       
       RegisterPtr arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));

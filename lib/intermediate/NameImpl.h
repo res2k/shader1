@@ -40,7 +40,7 @@ namespace s1
       
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
-      { return type == TypeAlias ? boost::shared_static_cast<Type> (valueType) : TypePtr (); }
+      { return type == TypeAlias ? boost::static_pointer_cast<Type> (valueType) : TypePtr (); }
     };
   } // namespace intermediate
 } // namespace s1

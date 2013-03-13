@@ -437,7 +437,7 @@ namespace s1
 									  ScopeLevel scopeLevel)
     {
       return ScopePtr (new CommonScope (this,
-	boost::shared_static_cast<CommonScope> (parentScope),
+	boost::static_pointer_cast<CommonScope> (parentScope),
 	scopeLevel));
     }
     

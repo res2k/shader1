@@ -48,14 +48,14 @@ namespace s1
       
       if (type1->typeClass == TypeImpl::Vector)
       {
-	baseType1 = boost::shared_static_cast<TypeImpl> (type1->avmBase);
+	baseType1 = boost::static_pointer_cast<TypeImpl> (type1->avmBase);
 	vectorDim1 = type1->vectorDim;
       }
       else
 	baseType1 = type1;
       if (type2->typeClass == TypeImpl::Vector)
       {
-	baseType2 = boost::shared_static_cast<TypeImpl> (type2->avmBase);
+	baseType2 = boost::static_pointer_cast<TypeImpl> (type2->avmBase);
 	vectorDim2 = type2->vectorDim;
       }
       else
@@ -79,12 +79,12 @@ namespace s1
       {
 	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
 	  type1,
-	  boost::shared_static_cast<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
+	  boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
       }
       else if ((vectorDim2 != 0) && (vectorDim1 == 0))
       {
 	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-	  boost::shared_static_cast<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
+	  boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
 	  type2);
       }
       else // (((vectorDim1 != 0) && (vectorDim2 != 0)) || ((vectorDim1 == 0) && (vectorDim2 == 0)))

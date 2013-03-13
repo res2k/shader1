@@ -32,18 +32,18 @@ namespace s1
     {
       char newCondName[sizeof (varConditionName) + charsToFormatInt + 1];
       snprintf (newCondName, sizeof (newCondName), "%s%d", varConditionName, 
-		boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+		boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
       varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
 										    UnicodeString (newCondName),
 										    ExpressionPtr(), false));
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
-      TypeImplPtr retTypeImpl (boost::shared_static_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
+      TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
       if (retTypeImpl // @@@ retTypeImpl == 0 happens in tests; but also in real life?
 	&& !handler->voidType->IsEqual (*retTypeImpl))
       {
 	char newRetValName[sizeof (varReturnValueName) + charsToFormatInt + 1];
 	snprintf (newRetValName, sizeof (newRetValName), "%s%d", varReturnValueName, 
-		  boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+		  boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
 	varReturnValue = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (retTypeImpl,
 											UnicodeString (newRetValName),
 											ExpressionPtr(), false));
@@ -66,8 +66,8 @@ namespace s1
       {
 	/*
 	ExpressionImpl* impl = static_cast<ExpressionImpl*> (returnValue.get());
-	TypeImplPtr retType (boost::shared_static_cast<TypeImpl> (
-	  boost::shared_static_cast<ScopeImpl> (innerScope)->GetFunctionReturnType()));
+	TypeImplPtr retType (boost::static_pointer_cast<TypeImpl> (
+	  boost::static_pointer_cast<ScopeImpl> (innerScope)->GetFunctionReturnType()));
 	  
 	RegisterID retValReg;
 	RegisterID exprTargetReg (impl->AddToSequence (*this, Intermediate));
@@ -124,8 +124,8 @@ namespace s1
 	elseBlock = handler->CreateBlock (GetInnerScope());
       }
       
-      boost::shared_ptr<BlockImpl> ifBlockImpl (boost::shared_static_cast<BlockImpl> (ifBlock));
-      boost::shared_ptr<BlockImpl> elseBlockImpl (boost::shared_static_cast<BlockImpl> (elseBlock));
+      boost::shared_ptr<BlockImpl> ifBlockImpl (boost::static_pointer_cast<BlockImpl> (ifBlock));
+      boost::shared_ptr<BlockImpl> elseBlockImpl (boost::static_pointer_cast<BlockImpl> (elseBlock));
       
       ifBlockImpl->FinishBlock();
       elseBlockImpl->FinishBlock();
@@ -269,7 +269,7 @@ namespace s1
 	AddExpressionCommand (condAssign);
       }
       
-      boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (loopBlock));
+      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (loopBlock));
       blockImpl->FinishBlock();
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
@@ -305,7 +305,7 @@ namespace s1
       
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
-      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
+      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::static_pointer_cast<BlockImpl> (loopBlock))));
       {
 	ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
 	ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
@@ -358,7 +358,7 @@ namespace s1
       
       ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
       
-      boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (loopBlock));
+      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (loopBlock));
       blockImpl->FinishBlock();
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
@@ -397,7 +397,7 @@ namespace s1
 	loopedRegs.push_back (std::make_pair (regIn, regOut));
       }
       
-      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::shared_static_cast<BlockImpl> (loopBlock))));
+      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::static_pointer_cast<BlockImpl> (loopBlock))));
       // Add "tail" expression to end of block
       if (tailImpl) tailImpl->AddToSequence (*newBlock);
       
@@ -429,12 +429,12 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::BlockImpl::FlushVariableInitializers()
     {
       // Get new variables ...
-      std::vector<NamePtr> newVars (boost::shared_static_cast<ScopeImpl>(innerScope)->FlushNewVars());
+      std::vector<NamePtr> newVars (boost::static_pointer_cast<ScopeImpl>(innerScope)->FlushNewVars());
       for (std::vector<NamePtr>::const_iterator varIt = newVars.begin();
 	   varIt != newVars.end();
 	   ++varIt)
       {
-	boost::shared_ptr<NameImpl> name (boost::shared_static_cast<NameImpl> (*varIt));
+	boost::shared_ptr<NameImpl> name (boost::static_pointer_cast<NameImpl> (*varIt));
 	// ... check if it has initialization value ...
 	if (name->varValue)
 	{
@@ -458,7 +458,7 @@ namespace s1
 	   global != globalVars.end();
 	   ++global)
       {
-	boost::shared_ptr<NameImpl> nameImpl (boost::shared_static_cast<NameImpl> (*global));
+	boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (*global));
 	if (nameImpl->varValue)
 	{
 	  // Synthesize an expression to assign the global with the default value
@@ -475,7 +475,7 @@ namespace s1
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
 										      const NameImplSet& loopNames)
     {
-      boost::shared_ptr<BlockImpl> blockImpl (boost::shared_static_cast<BlockImpl> (block));
+      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
@@ -532,7 +532,7 @@ namespace s1
       
       char newTernaryResultName[sizeof (varTernaryResultName) + charsToFormatInt + 1];
       snprintf (newTernaryResultName, sizeof (newTernaryResultName), "%s%d", varTernaryResultName, 
-		boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+		boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
       UnicodeString newVarName (newTernaryResultName);
       newVarName.append (typeStr.c_str());
       NameImplPtr newVar (boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
@@ -569,7 +569,7 @@ namespace s1
 	  UnicodeString importName (name->identifier);
 	  /* Add a suffix derived from the "distance" of this block's scope to the scope
 	    that defines 'name' in order to make local register name unique */
-	  int d = boost::shared_static_cast<ScopeImpl> (innerScope)->DistanceToScope (
+	  int d = boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (
 	    boost::shared_ptr<ScopeImpl> (name->ownerScope));
 	  if (d >= 0)
 	  {

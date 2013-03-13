@@ -106,7 +106,7 @@ namespace s1
     
     std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypePtr& type)
     {
-      return GetTypeString (boost::shared_static_cast<TypeImpl> (type));
+      return GetTypeString (boost::static_pointer_cast<TypeImpl> (type));
     }
  
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
@@ -259,7 +259,7 @@ namespace s1
       case Attribute::Unknown:
 	break;
       }
-      return boost::shared_static_cast<TypeImpl> (attrType);
+      return boost::static_pointer_cast<TypeImpl> (attrType);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
@@ -333,7 +333,7 @@ namespace s1
 	if (typeSource->typeClass == TypeImpl::Base)
 	{
 	  std::vector<RegisterPtr> srcVec;
-	  TypeImplPtr destBaseType (boost::shared_static_cast<TypeImpl> (typeDestination->avmBase));
+	  TypeImplPtr destBaseType (boost::static_pointer_cast<TypeImpl> (typeDestination->avmBase));
 	  RegisterPtr srcReg;
 	  if (!destBaseType->IsEqual (*(typeSource)))
 	  {
@@ -409,7 +409,7 @@ namespace s1
 	  blockImpl->FinishBlock();
 	  
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
-	  TypeImplPtr retTypeImpl (boost::shared_static_cast<TypeImpl> ((*funcIt)->returnType));
+	  TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
 	  if (!voidType->IsEqual (*retTypeImpl))
 	  {
 	    parser::SemanticsHandler::Scope::FunctionFormalParameter retParam;
@@ -478,7 +478,7 @@ namespace s1
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (NamePtr name)
     {
-      boost::shared_ptr<NameImpl> nameImpl (boost::shared_static_cast<NameImpl> (name));
+      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
       switch (nameImpl->GetType())
       {
       case Name::Variable:
@@ -582,7 +582,7 @@ namespace s1
     {
       return ExpressionPtr (
 	boost::make_shared<TypeConstructorExpressionImpl> (this,
-							   boost::shared_static_cast<TypeImpl> (type),
+							   boost::static_pointer_cast<TypeImpl> (type),
 							   params));
     }
     
@@ -591,7 +591,7 @@ namespace s1
 								 const TypePtr& funcReturnType)
     {
       ScopeImplPtr newScope (boost::make_shared<ScopeImpl> (this,
-							    boost::shared_static_cast<ScopeImpl> (parentScope),
+							    boost::static_pointer_cast<ScopeImpl> (parentScope),
 							    scopeLevel,
 							    funcReturnType));
       switch (scopeLevel)
