@@ -1,0 +1,58 @@
+/**\file
+ * Object base class for Shader1 Public API objects.
+ */
+#ifndef __S1_OBJECT_H__
+#define __S1_OBJECT_H__
+
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/facilities/empty.hpp>
+#include <boost/preprocessor/facilities/expand.hpp>
+#include <boost/preprocessor/list/fold_right.hpp>
+//#include "preprocessor.h"
+
+// Provide a pseudo-casting mechanism for public API types
+#define _S1TYPE_DECLARE_BODY(T, Body)       \
+struct T ## _Type_s                         \
+{                                           \
+  Body ()                                   \
+};                                          \
+typedef struct T ## _Type_s T ## _Type;     \
+struct T ## _s                              \
+{                                           \
+  union T ## _Bases                         \
+  {                                         \
+    _S1TYPE_ANCESTRY(T)			    \
+  } bases;                                  \
+};                                          \
+typedef struct T ## _s T
+
+#define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     state BOOST_PP_CAT(T, _Type) T;
+#define _S1TYPE_ANCESTRY(T)                                     \
+        BOOST_PP_LIST_FOLD_RIGHT(_S1TYPE_ANCESTRY_ENTRY,        \
+                                 BOOST_PP_EMPTY(),              \
+                                 BOOST_PP_EXPAND(BOOST_PP_CAT(S1TYPE_INFO_, T)))
+
+#define _S1TYPE_BODY_DUMMY()    void* reserved;
+#define _S1TYPE_BODY_EMPTY()
+
+#if defined(__cplusplus)
+#define S1TYPE_DECLARE(T)       _S1TYPE_DECLARE_BODY(T, _S1TYPE_BODY_EMPTY)
+#else
+#define S1TYPE_DECLARE(T)       _S1TYPE_DECLARE_BODY(T, _S1TYPE_BODY_DUMMY)
+#endif
+
+#define S1TYPE_INFO_s1_Object	(s1_Object, BOOST_PP_NIL)
+
+#if defined(__cplusplus) && defined(S1_BUILD)
+// Library-internal, s1_Object is declared empty
+_S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_EMPTY);
+#else
+/* Externally, s1_Object never appears empty.
+ * (This is important so the empty base class optimization can be employed
+ * to get the desired memory layout for the API classes.) */
+_S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_DUMMY);
+#endif
+
+#define S1TYPE_CAST(x, Type)	((Type*)(&((x)->bases.Type)))
+
+#endif // __S1_OBJECT_H__

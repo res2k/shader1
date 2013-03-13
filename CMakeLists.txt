@@ -61,7 +61,9 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
 endif()
 
 include_directories(include/internal)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 include_directories(include)
 
+add_subdirectory(include)
 add_subdirectory(lib)
 add_subdirectory(apps)
