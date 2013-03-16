@@ -8,7 +8,11 @@ public:
   void testCreateLibraryC (void)
   {
     // Make sure object declarations produce the expected memory layout
-    TS_ASSERT_EQUALS(sizeof(s1_Object), sizeof(s1_Library));
+    {
+      s1_Library* test_lib = (s1_Library*)0x100;
+      s1_Object* test_obj = S1TYPE_CAST(test_lib, s1_Object);
+      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_obj);
+    }
     // Check object creation
     s1_Library* lib;
     s1_ErrorCode err = s1_create_library (&lib);
@@ -34,7 +38,18 @@ public:
   void testCreateLibraryCXX (void)
   {
     // Make sure object declarations produce the expected memory layout
-    TS_ASSERT_EQUALS(sizeof(s1::Object), sizeof(s1::Library));
+    {
+      s1::Library* test_lib_cxx = (s1::Library*)0x100;
+      s1_Library* test_lib = test_lib_cxx;
+      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_lib_cxx);
+      s1::Object* test_obj_cxx = test_lib_cxx;
+      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_obj_cxx);
+      TS_ASSERT_EQUALS((void*)test_lib_cxx, (void*)test_obj_cxx);
+      s1_Object* test_obj = S1TYPE_CAST(test_lib, s1_Object);
+      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_obj);
+      TS_ASSERT_EQUALS((void*)test_lib_cxx, (void*)test_obj);
+      TS_ASSERT_EQUALS((void*)test_obj_cxx, (void*)test_obj);
+    }
     // Check object creation
     s1::Library::Pointer lib;
     s1_ErrorCode err = s1::Library::Create (lib);
