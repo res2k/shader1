@@ -44,7 +44,7 @@ public:
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
   {
     return ScopePtr (new TestScope (this,
-      boost::shared_static_cast<TestScope> (parentScope),
+      boost::static_pointer_cast<TestScope> (parentScope),
       scopeLevel));
   }
   
@@ -213,7 +213,7 @@ public:
 	  first = false;
 	
 	str.append (
-	  boost::shared_static_cast<TestExpressionBase> (*exprIt)->GetExprString());
+	  boost::static_pointer_cast<TestExpressionBase> (*exprIt)->GetExprString());
       }
     }
     
@@ -365,14 +365,14 @@ public:
 					      const ExpressionVector& params)
   {
     return ExpressionPtr (new TestExpressionFunction (
-      boost::shared_static_cast<TestName> (funcName), params));
+      boost::static_pointer_cast<TestName> (funcName), params));
   }
   
   ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
 						 const ExpressionVector& params)
   {
     return ExpressionPtr (new TestExpressionFunction (
-      boost::shared_static_cast<TestType> (type), params));
+      boost::static_pointer_cast<TestType> (type), params));
   }
     
   class TestBlock : public Block

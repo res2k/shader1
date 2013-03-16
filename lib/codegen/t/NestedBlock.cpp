@@ -105,7 +105,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
     
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
@@ -113,7 +113,7 @@ public:
     
     // First (and only) op in sequence is a block op
     boost::shared_ptr<s1::intermediate::SequenceOpBlock> blockOp (
-      boost::shared_static_cast<s1::intermediate::SequenceOpBlock> (testBlockImpl->sequence->GetOp (0)));
+      boost::static_pointer_cast<s1::intermediate::SequenceOpBlock> (testBlockImpl->sequence->GetOp (0)));
     
     StringStringMap substMap;
     substMap["A"] = CgGenerator::NameToCgIdentifier (

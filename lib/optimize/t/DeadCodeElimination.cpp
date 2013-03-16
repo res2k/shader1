@@ -67,7 +67,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -105,7 +105,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -145,7 +145,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -183,7 +183,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -234,7 +234,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -280,7 +280,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -344,7 +344,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
     testBlockImpl->FinishBlock();
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
@@ -410,7 +410,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -473,7 +473,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;
@@ -515,7 +515,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     s1::intermediate::RegisterSet usedRegs;

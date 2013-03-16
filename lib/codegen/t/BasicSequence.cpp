@@ -96,7 +96,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarB =
-      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varB);
+      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varB);
       
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
@@ -144,11 +144,11 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarA =
-      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varA);
+      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varA);
     boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarB =
-      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varB);
+      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varB);
     boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarC =
-      boost::shared_static_cast<TestSemanticsHandler::TestNameImpl> (varC);
+      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varC);
       
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);

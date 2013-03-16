@@ -23,7 +23,7 @@ public:
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
   {
     return ScopePtr (new SloppyScope (this,
-      boost::shared_static_cast<SloppyScope> (parentScope),
+      boost::static_pointer_cast<SloppyScope> (parentScope),
       scopeLevel));
   }
 };

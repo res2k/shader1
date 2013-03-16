@@ -39,19 +39,19 @@ public:
     TestSemanticsHandler semanticsHandler;
     
     TestTypePtr typeVoid;
-    TS_ASSERT_THROWS_NOTHING ((typeVoid = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeVoid = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Void))));
     TestTypePtr typeBool;
-    TS_ASSERT_THROWS_NOTHING ((typeBool = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeBool = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Bool))));
     TestTypePtr typeInt;
-    TS_ASSERT_THROWS_NOTHING ((typeInt = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeInt = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Int))));
     TestTypePtr typeUInt;
-    TS_ASSERT_THROWS_NOTHING ((typeUInt = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeUInt = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::UInt))));
     TestTypePtr typeFloat;
-    TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Float))));
     
     // Void - not even compatible to itself
@@ -182,19 +182,19 @@ public:
     TestSemanticsHandler semanticsHandler;
     
     TestTypePtr typeVoid;
-    TS_ASSERT_THROWS_NOTHING ((typeVoid = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeVoid = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Void))));
     TestTypePtr typeBool;
-    TS_ASSERT_THROWS_NOTHING ((typeBool = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeBool = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Bool))));
     TestTypePtr typeInt;
-    TS_ASSERT_THROWS_NOTHING ((typeInt = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeInt = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Int))));
     TestTypePtr typeUInt;
-    TS_ASSERT_THROWS_NOTHING ((typeUInt = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeUInt = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::UInt))));
     TestTypePtr typeFloat;
-    TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::shared_static_cast<TestType> (
+    TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (CommonSemanticsHandler::Float))));
     
     TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeBool),

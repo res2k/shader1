@@ -67,7 +67,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -110,7 +110,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -160,7 +160,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -216,7 +216,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -262,7 +262,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -311,7 +311,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -372,7 +372,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -449,7 +449,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -500,7 +500,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -568,7 +568,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -654,7 +654,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -711,7 +711,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -765,7 +765,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -818,7 +818,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -874,7 +874,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -928,7 +928,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -980,7 +980,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1040,7 +1040,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1108,7 +1108,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1165,7 +1165,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1228,7 +1228,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1285,7 +1285,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1348,7 +1348,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1418,7 +1418,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
@@ -1485,7 +1485,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::shared_static_cast<TestSemanticsHandler::TestBlockImpl> (block));
+      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
     s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeq, testBlockImpl->GetSequence());
