@@ -21,7 +21,7 @@ namespace s1
     /// Add a reference to the object. Returns new reference count.
     int AddRef ()
     {
-      return refCount++;
+      return ++refCount;
     }
     /// Release a reference to the object. Returns new reference count.
     int Release ()
