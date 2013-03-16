@@ -1,3 +1,4 @@
+add_definitions(-DS1_BUILD)
 add_subdirectory(base)
 add_subdirectory(lexer)
 add_subdirectory(parser)
