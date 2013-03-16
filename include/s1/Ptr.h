@@ -23,6 +23,7 @@ namespace s1
       s1_add_ref (static_cast<s1_Object*> (p));
     }
     Ptr (T* p, TakeReference) : obj (p) { }
+    Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
     ~Ptr()
     {
       if (obj) s1_release (static_cast<s1_Object*> (obj));
