@@ -32,6 +32,7 @@ else()
   string(STRIP "${ICU_ICUIO_LIBRARIES}" ICU_ICUIO_LIBRARIES)
   execute_process(COMMAND ${ICU_CONFIG} --cppflags-searchpath
 		  OUTPUT_VARIABLE ICU_INCLUDE_DIRS)
+  string(REGEX REPLACE "^-I" "" ICU_INCLUDE_DIRS "${ICU_INCLUDE_DIRS}")
 endif()
 include_directories(${ICU_INCLUDE_DIRS})
 
