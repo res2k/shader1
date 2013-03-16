@@ -147,9 +147,16 @@ namespace s1
 			 const TypeImplPtr& typeSource);
 			 
       ProgramPtr GetProgram ();
-      
+
+    #ifdef _MSC_VER
+    #  pragma warning(push)
+    #  pragma warning(disable : 4800)
+    #endif
       void SetEntryFunction (const UnicodeString& entryFunction) { this->entryFunction = entryFunction; }
       bool IsEntryFunction (const UnicodeString& entryFunction) const { return this->entryFunction == entryFunction; }
+    #ifdef _MSC_VER
+    #  pragma warning(pop)
+    #endif
       
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */

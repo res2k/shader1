@@ -150,7 +150,7 @@ namespace s1
       
       inStream.read (streamInBuffer, sizeof (streamInBuffer));
       streamInBufferPtr = streamInBuffer;
-      streamInBufferRemaining = inStream.gcount();
+      streamInBufferRemaining = size_t (inStream.gcount());
       
       if (streamInBufferRemaining == 0)
       {

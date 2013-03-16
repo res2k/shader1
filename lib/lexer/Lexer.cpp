@@ -418,7 +418,7 @@ KEYWORDS
       {
 	nextChar[LookAhead-1] = *inputChars;
       }
-      catch (UnicodeStreamInvalidCharacterException& e)
+      catch (UnicodeStreamInvalidCharacterException&)
       {
 	// Signal error handler ...
 	errorHandler.InputInvalidCharacter();

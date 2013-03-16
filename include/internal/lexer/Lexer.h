@@ -9,7 +9,7 @@
 
 namespace s1
 {
-  class LexerErrorHandler;
+  struct LexerErrorHandler;
   
   class Lexer
   {

@@ -4,6 +4,8 @@
 #ifndef __S1_LIBRARY_H__
 #define __S1_LIBRARY_H__
 
+#include "s1/warn_off.h"
+
 #include "s1/Error.h"
 #include "s1/Object.h"
 #include "s1/Ptr.h"
@@ -47,5 +49,7 @@ namespace s1
 } // namespace s1
 
 #endif // defined(__cplusplus)
+
+#include "s1/warn_on.h"
 
 #endif // __S1_LIBRARY_H__

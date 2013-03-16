@@ -441,6 +441,7 @@ namespace s1
       case Float: return floatType;
       }
       assert (false);
+      return TypePtr();
     }
     
     TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (SamplerType dim)
