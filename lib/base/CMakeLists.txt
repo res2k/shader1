@@ -1,4 +1,5 @@
 set(base_sources
+    Object.cpp
     UnicodeStream.cpp
     ../../include/internal/base/common.h
     ../../include/internal/base/UnicodeStream.h
