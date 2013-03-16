@@ -37,7 +37,7 @@ endif()
 include_directories(${ICU_INCLUDE_DIRS})
 
 SET(Boost_ADDITIONAL_VERSIONS "1.47" "1.47.0")
-find_package(Boost 1.35.0)
+find_package(Boost 1.35.0 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 include(CheckCXXCompilerFlag)
