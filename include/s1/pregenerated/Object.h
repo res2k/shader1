@@ -7,6 +7,37 @@
 #include "preprocessor.h"
 
 
+#if defined(_MSC_VER) && defined(__cplusplus)
+/* Unfortunately, empty unions don't have a size of 0 in MSVC,
+ * messing up the memory layout for the C++ wrappers.
+ * Workaround: Keep pseudo-structs empty, provide cast through
+ * helper method */
+
+/* Externally, s1_Object never appears empty.
+ * (This is important so the empty base class optimization can be employed
+ * to get the desired memory layout for the API classes.) */
+
+#define S1TYPE_CAST(x, Type)    (x->_S1BOOSTPP_CAT(cast_to_, Type)())
+
+#define _S1TYPE_CAST_MEMBER(d, state, T)                        \
+  state                                                         \
+  T* _S1BOOSTPP_CAT(cast_to_, T)()                              \
+  { return reinterpret_cast<T*> (this); }                       \
+  const T* _S1BOOSTPP_CAT(cast_to_, T)() const                  \
+  { return reinterpret_cast<const T*> (this); }
+#define _S1TYPE_MAKE_CAST_MEMBERS(T)                            \
+        _S1BOOSTPP_LIST_FOLD_RIGHT(_S1TYPE_CAST_MEMBER,         \
+                                 _S1BOOSTPP_EMPTY(),            \
+                                 _S1BOOSTPP_EXPAND(_S1BOOSTPP_CAT(S1TYPE_INFO_, T)))
+
+#define _S1TYPE_DECLARE_BODY(T, Body)       \
+struct T                                    \
+{                                           \
+  Body()                                    \
+  _S1TYPE_MAKE_CAST_MEMBERS(T)              \
+}
+
+#else // defined(_MSC_VER) && defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
 #define _S1TYPE_DECLARE_BODY(T, Body)       \
 struct T ## _Type_s                         \
@@ -29,6 +60,10 @@ typedef struct T ## _s T
                                  _S1BOOSTPP_EMPTY(),              \
                                  _S1BOOSTPP_EXPAND(_S1BOOSTPP_CAT(S1TYPE_INFO_, T)))
 
+#define S1TYPE_CAST(x, Type)    ((Type*)(&((x)->bases.Type)))
+
+#endif // defined(_MSC_VER) && defined(__cplusplus)
+
 #define _S1TYPE_BODY_DUMMY()    void* reserved;
 #define _S1TYPE_BODY_EMPTY()
 
@@ -49,8 +84,6 @@ _S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_EMPTY);
  * to get the desired memory layout for the API classes.) */
 _S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_DUMMY);
 #endif
-
-#define S1TYPE_CAST(x, Type)	((Type*)(&((x)->bases.Type)))
 
 /// Add a reference to the object. Returns new reference count.
 S1_API int s1_add_ref (s1_Object* obj);
