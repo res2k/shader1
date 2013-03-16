@@ -2,6 +2,9 @@
 #include <boost/cstdint.hpp>
 #include <boost/make_shared.hpp>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
