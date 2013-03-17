@@ -45,19 +45,20 @@ struct T                                                \
 #else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
 #define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
-struct T ## _Type_s                                     \
+struct BOOST_PP_CAT(T, _Type_s)                         \
 {                                                       \
   Body ()                                               \
 };                                                      \
-typedef struct T ## _Type_s T ## _Type;                 \
-struct T ## _s                                          \
+typedef struct BOOST_PP_CAT(T, _Type_s)                 \
+  BOOST_PP_CAT(T, _Type);                               \
+struct BOOST_PP_CAT(T, _s)                              \
 {                                                       \
-  union T ## _Bases                                     \
+  union BOOST_PP_CAT(T, _Bases)                         \
   {                                                     \
     _S1TYPE_ANCESTRY(TYPEINFO)			        \
   } bases;                                              \
 };                                                      \
-typedef struct T ## _s T
+typedef struct BOOST_PP_CAT(T, _s) T
 
 #define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     state BOOST_PP_CAT(T, _Type) T;
 #define _S1TYPE_ANCESTRY(TYPEINFO)                              \
