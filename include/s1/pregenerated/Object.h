@@ -20,68 +20,71 @@
 
 #define _S1TYPE_CAST_MEMBER(d, state, T)                        \
   state                                                         \
-  T* _S1BOOSTPP_CAT(cast_to_, T)()                              \
+  T* _S1BOOSTPP_CAT(cast_to_, T)()                                \
   { return reinterpret_cast<T*> (this); }                       \
-  const T* _S1BOOSTPP_CAT(cast_to_, T)() const                  \
+  const T* _S1BOOSTPP_CAT(cast_to_, T)() const                    \
   { return reinterpret_cast<const T*> (this); }
-#define _S1TYPE_MAKE_CAST_MEMBERS(T)                            \
-        _S1BOOSTPP_LIST_FOLD_RIGHT(_S1TYPE_CAST_MEMBER,         \
-                                 _S1BOOSTPP_EMPTY(),            \
-                                 _S1BOOSTPP_EXPAND(_S1BOOSTPP_CAT(S1TYPE_INFO_, T)))
+#define _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                     \
+        _S1BOOSTPP_LIST_FOLD_RIGHT(_S1TYPE_CAST_MEMBER,           \
+                                 _S1BOOSTPP_EMPTY(),              \
+                                 TYPEINFO)
 
-#define _S1TYPE_DECLARE_BODY(T, Body)       \
-struct T                                    \
-{                                           \
-  Body()                                    \
-  _S1TYPE_MAKE_CAST_MEMBERS(T)              \
+#define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
+struct T                                                \
+{                                                       \
+  Body()                                                \
+  _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                   \
 }
 
 #else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
-#define _S1TYPE_DECLARE_BODY(T, Body)       \
-struct T ## _Type_s                         \
-{                                           \
-  Body ()                                   \
-};                                          \
-typedef struct T ## _Type_s T ## _Type;     \
-struct T ## _s                              \
-{                                           \
-  union T ## _Bases                         \
-  {                                         \
-    _S1TYPE_ANCESTRY(T)			    \
-  } bases;                                  \
-};                                          \
+#define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
+struct T ## _Type_s                                     \
+{                                                       \
+  Body ()                                               \
+};                                                      \
+typedef struct T ## _Type_s T ## _Type;                 \
+struct T ## _s                                          \
+{                                                       \
+  union T ## _Bases                                     \
+  {                                                     \
+    _S1TYPE_ANCESTRY(TYPEINFO)			        \
+  } bases;                                              \
+};                                                      \
 typedef struct T ## _s T
 
 #define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     state _S1BOOSTPP_CAT(T, _Type) T;
-#define _S1TYPE_ANCESTRY(T)                                     \
+#define _S1TYPE_ANCESTRY(TYPEINFO)                              \
         _S1BOOSTPP_LIST_FOLD_RIGHT(_S1TYPE_ANCESTRY_ENTRY,        \
                                  _S1BOOSTPP_EMPTY(),              \
-                                 _S1BOOSTPP_EXPAND(_S1BOOSTPP_CAT(S1TYPE_INFO_, T)))
+                                 TYPEINFO)
 
 #define S1TYPE_CAST(x, Type)    ((Type*)(&((x)->bases.Type)))
 
 #endif // defined(__cplusplus)
 
+#define _S1TYPE_DECLARE_BODY(TYPEINFO, Body)        \
+  _S1TYPE_DECLARE_BODY1(TYPEINFO, _S1BOOSTPP_LIST_FIRST(TYPEINFO), Body)
+
 #define _S1TYPE_BODY_DUMMY()    void* reserved;
 #define _S1TYPE_BODY_EMPTY()
 
 #if defined(__cplusplus)
-#define S1TYPE_DECLARE(T)       _S1TYPE_DECLARE_BODY(T, _S1TYPE_BODY_EMPTY)
+#define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_EMPTY)
 #else
-#define S1TYPE_DECLARE(T)       _S1TYPE_DECLARE_BODY(T, _S1TYPE_BODY_DUMMY)
+#define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
 #endif
 
 #define S1TYPE_INFO_s1_Object	(s1_Object, _S1BOOSTPP_NIL)
 
 #if defined(__cplusplus) && defined(S1_BUILD)
 // Library-internal, s1_Object is declared empty
-_S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_EMPTY);
+_S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_EMPTY);
 #else
 /* Externally, s1_Object never appears empty.
  * (This is important so the empty base class optimization can be employed
  * to get the desired memory layout for the API classes.) */
-_S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_DUMMY);
+_S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_DUMMY);
 #endif
 
 /// Add a reference to the object. Returns new reference count.
