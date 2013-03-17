@@ -39,19 +39,20 @@ struct T                                                \
 #else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
 #define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
-struct T ## _Type_s                                     \
+struct _S1BOOSTPP_CAT(T, _Type_s)                         \
 {                                                       \
   Body ()                                               \
 };                                                      \
-typedef struct T ## _Type_s T ## _Type;                 \
-struct T ## _s                                          \
+typedef struct _S1BOOSTPP_CAT(T, _Type_s)                 \
+  _S1BOOSTPP_CAT(T, _Type);                               \
+struct _S1BOOSTPP_CAT(T, _s)                              \
 {                                                       \
-  union T ## _Bases                                     \
+  union _S1BOOSTPP_CAT(T, _Bases)                         \
   {                                                     \
     _S1TYPE_ANCESTRY(TYPEINFO)			        \
   } bases;                                              \
 };                                                      \
-typedef struct T ## _s T
+typedef struct _S1BOOSTPP_CAT(T, _s) T
 
 #define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     state _S1BOOSTPP_CAT(T, _Type) T;
 #define _S1TYPE_ANCESTRY(TYPEINFO)                              \
@@ -112,6 +113,8 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 #define s1_get_ref_count(Obj)   _s1_get_ref_count_actual (S1TYPE_CAST(Obj, s1_Object))
 
 #if defined(__cplusplus)
+#include "s1/warn_off.h"
+
 namespace s1
 {
   namespace cxxapi
@@ -176,6 +179,7 @@ namespace s1
 #endif // !defined(S1_BUILD)
 } // namespace s1
 
+#include "s1/warn_on.h"
 #endif // defined(__cplusplus)
 
 #endif // __S1_OBJECT_H__
