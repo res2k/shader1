@@ -119,7 +119,7 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 #define s1_get_ref_count(Obj)   _s1_get_ref_count_actual (S1TYPE_CAST(Obj, s1_Object))
 
 #if defined(__cplusplus)
-#include "s1/warn_off.h"
+//#include "s1/warn_off.h"
 
 namespace s1
 {
@@ -185,7 +185,7 @@ namespace s1
 #endif // !defined(S1_BUILD)
 } // namespace s1
 
-#include "s1/warn_on.h"
+//#include "s1/warn_on.h"
 #endif // defined(__cplusplus)
 
 #endif // __S1_OBJECT_H__
