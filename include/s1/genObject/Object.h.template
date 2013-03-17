@@ -13,16 +13,15 @@
 
 #include "defs.h"
 
-#if defined(_MSC_VER) && defined(__cplusplus)
-/* Unfortunately, empty unions don't have a size of 0 in MSVC,
- * messing up the memory layout for the C++ wrappers.
- * Workaround: Keep pseudo-structs empty, provide cast through
- * helper method */
-
-/* Externally, s1_Object never appears empty.
- * (This is important so the empty base class optimization can be employed
- * to get the desired memory layout for the API classes.) */
-
+#if defined(__cplusplus)
+/* C++ is tricky... externally, s1_Object should not appear empty.
+ * However, it's descendants are used in multiple inheritance and
+ * *must* be empty (lest the dummy member would figure into 
+ * C++ wrappers once for each derivation level).
+ * 
+ * Workaround: Keep pseudo-classes empty, and provide cast functionality
+ * through a helper method.
+ */
 #define S1TYPE_CAST(x, Type)    (x->_S1BOOSTPP_CAT(cast_to_, Type)())
 
 #define _S1TYPE_CAST_MEMBER(d, state, T)                        \
@@ -43,7 +42,7 @@ struct T                                    \
   _S1TYPE_MAKE_CAST_MEMBERS(T)              \
 }
 
-#else // defined(_MSC_VER) && defined(__cplusplus)
+#else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
 #define _S1TYPE_DECLARE_BODY(T, Body)       \
 struct T ## _Type_s                         \
@@ -68,7 +67,7 @@ typedef struct T ## _s T
 
 #define S1TYPE_CAST(x, Type)    ((Type*)(&((x)->bases.Type)))
 
-#endif // defined(_MSC_VER) && defined(__cplusplus)
+#endif // defined(__cplusplus)
 
 #define _S1TYPE_BODY_DUMMY()    void* reserved;
 #define _S1TYPE_BODY_EMPTY()
