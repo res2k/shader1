@@ -11,7 +11,7 @@
 #include "s1/Ptr.h"
 
 #define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
-S1TYPE_DECLARE(s1_Library);
+S1TYPE_DECLARE(S1TYPE_INFO_s1_Library);
 
 /**
  * Create a library object. A library object generally serves as a factory
