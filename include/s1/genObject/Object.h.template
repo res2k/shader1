@@ -122,25 +122,57 @@ namespace s1
 {
   namespace cxxapi
   {
-    class Object : public s1_Object
+    class ObjectBase
     {
     private:
+      // Dummy member
+      void* reserved;
+
       // Don't allow instantiation
-      Object ();
-      Object (const Object&);
-      ~Object ();
+      ObjectBase ();
+      ObjectBase (const ObjectBase&);
+      ObjectBase& operator=(const ObjectBase&);
+      ~ObjectBase ();
+    };
+    
+    template<typename ExtType, typename BaseClass>
+    class Rebadge : public BaseClass
+    {
+    public:
+      ExtType* Cpointer()
+      {
+        return reinterpret_cast<ExtType*> (this);
+      }
+      const ExtType* Cpointer() const
+      {
+        return reinterpret_cast<const ExtType*> (this);
+      }
+      template<typename Derived>
+      static Derived* FromC (ExtType* p)
+      {
+        return static_cast<Derived*> (reinterpret_cast<BaseClass*> (p));
+      }
+      template<typename Derived>
+      static const Derived* FromC (const ExtType* p)
+      {
+        return static_cast<Derived*> (reinterpret_cast<const BaseClass*> (p));
+      }
+    };
+
+    class Object : public Rebadge<s1_Object, ObjectBase>
+    {
     public:
       int AddRef()
       {
-        return s1_add_ref (this);
+        return s1_add_ref (Cpointer());
       }
       int Release()
       {
-        return s1_release (this);
+        return s1_release (Cpointer());
       }
       int GetRefCount()
       {
-        return s1_get_ref_count (this);
+        return s1_get_ref_count (Cpointer());
       }
     };
   } // namespace cxxapi

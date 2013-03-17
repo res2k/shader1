@@ -33,7 +33,7 @@ public:
     // Make sure object declarations produce the expected memory layout
     {
       cxxapi::TestA* test_a_cxx = (cxxapi::TestA*)0x100;
-      TestA* test_a = test_a_cxx;
+      TestA* test_a = test_a_cxx->Cpointer();
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_a_cxx);
       s1::Object* test_obj_cxx = test_a_cxx;
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj_cxx);
@@ -48,7 +48,7 @@ public:
       cxxapi::TestA* test_a_cxx = test_a2_cxx;
       TS_ASSERT_EQUALS((void*)test_a_cxx, (void*)test_a2_cxx);
       
-      TestA2* test_a2 = test_a2_cxx;
+      TestA2* test_a2 = test_a2_cxx->Cpointer();
       TS_ASSERT_EQUALS((void*)test_a2, (void*)test_a2_cxx);
       TestA* test_a = S1TYPE_CAST(test_a2, TestA);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_a2);
@@ -103,7 +103,7 @@ public:
     TS_ASSERT_EQUALS(rc, 1);
 
     TS_ASSERT_EQUALS(test_a->GetValue(), TEST_VAL_1);
-    TS_ASSERT_EQUALS(TestA_GetValue (test_a), TEST_VAL_1);
+    TS_ASSERT_EQUALS(TestA_GetValue (test_a->Cpointer()), TEST_VAL_1);
     
     {
       cxxapi::TestA::Pointer test2 (test_a);
@@ -141,9 +141,9 @@ public:
     TS_ASSERT_EQUALS(rc, 1);
 
     TS_ASSERT_EQUALS(test_a2->GetValue(), TEST_VAL_1);
-    TS_ASSERT_EQUALS(TestA_GetValue (test_a2), TEST_VAL_1);
+    TS_ASSERT_EQUALS(TestA_GetValue (S1TYPE_CAST(test_a2->Cpointer(), TestA)), TEST_VAL_1);
     TS_ASSERT_EQUALS(test_a2->GetValue2(), TEST_VAL_2);
-    TS_ASSERT_EQUALS(TestA2_GetValue2 (test_a2), TEST_VAL_2);
+    TS_ASSERT_EQUALS(TestA2_GetValue2 (test_a2->Cpointer()), TEST_VAL_2);
     
     {
       cxxapi::TestA2::Pointer test2 (test_a2);
