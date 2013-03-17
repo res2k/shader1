@@ -13,82 +13,84 @@
 
 #include "defs.h"
 
-#if defined(_MSC_VER) && defined(__cplusplus)
-/* Unfortunately, empty unions don't have a size of 0 in MSVC,
- * messing up the memory layout for the C++ wrappers.
- * Workaround: Keep pseudo-structs empty, provide cast through
- * helper method */
-
-/* Externally, s1_Object never appears empty.
- * (This is important so the empty base class optimization can be employed
- * to get the desired memory layout for the API classes.) */
-
-#define S1TYPE_CAST(x, Type)    (x->_S1BOOSTPP_CAT(cast_to_, Type)())
+#if defined(__cplusplus)
+/* C++ is tricky... externally, s1_Object should not appear empty.
+ * However, it's descendants are used in multiple inheritance and
+ * *must* be empty (lest the dummy member would figure into 
+ * C++ wrappers once for each derivation level).
+ * 
+ * Workaround: Keep pseudo-classes empty, and provide cast functionality
+ * through a helper method.
+ */
+#define S1TYPE_CAST(x, Type)    (x->BOOST_PP_CAT(cast_to_, Type)())
 
 #define _S1TYPE_CAST_MEMBER(d, state, T)                        \
   state                                                         \
-  T* _S1BOOSTPP_CAT(cast_to_, T)()                              \
+  T* BOOST_PP_CAT(cast_to_, T)()                                \
   { return reinterpret_cast<T*> (this); }                       \
-  const T* _S1BOOSTPP_CAT(cast_to_, T)() const                  \
+  const T* BOOST_PP_CAT(cast_to_, T)() const                    \
   { return reinterpret_cast<const T*> (this); }
-#define _S1TYPE_MAKE_CAST_MEMBERS(T)                            \
-        _S1BOOSTPP_LIST_FOLD_RIGHT(_S1TYPE_CAST_MEMBER,         \
-                                 _S1BOOSTPP_EMPTY(),            \
-                                 _S1BOOSTPP_EXPAND(_S1BOOSTPP_CAT(S1TYPE_INFO_, T)))
+#define _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                     \
+        BOOST_PP_LIST_FOLD_RIGHT(_S1TYPE_CAST_MEMBER,           \
+                                 BOOST_PP_EMPTY(),              \
+                                 TYPEINFO)
 
-#define _S1TYPE_DECLARE_BODY(T, Body)       \
-struct T                                    \
-{                                           \
-  Body()                                    \
-  _S1TYPE_MAKE_CAST_MEMBERS(T)              \
+#define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
+struct T                                                \
+{                                                       \
+  Body()                                                \
+  _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                   \
 }
 
-#else // defined(_MSC_VER) && defined(__cplusplus)
+#else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
-#define _S1TYPE_DECLARE_BODY(T, Body)       \
-struct T ## _Type_s                         \
-{                                           \
-  Body ()                                   \
-};                                          \
-typedef struct T ## _Type_s T ## _Type;     \
-struct T ## _s                              \
-{                                           \
-  union T ## _Bases                         \
-  {                                         \
-    _S1TYPE_ANCESTRY(T)			    \
-  } bases;                                  \
-};                                          \
+#define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
+struct T ## _Type_s                                     \
+{                                                       \
+  Body ()                                               \
+};                                                      \
+typedef struct T ## _Type_s T ## _Type;                 \
+struct T ## _s                                          \
+{                                                       \
+  union T ## _Bases                                     \
+  {                                                     \
+    _S1TYPE_ANCESTRY(TYPEINFO)			        \
+  } bases;                                              \
+};                                                      \
 typedef struct T ## _s T
 
 #define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     state BOOST_PP_CAT(T, _Type) T;
-#define _S1TYPE_ANCESTRY(T)                                     \
+#define _S1TYPE_ANCESTRY(TYPEINFO)                              \
         BOOST_PP_LIST_FOLD_RIGHT(_S1TYPE_ANCESTRY_ENTRY,        \
                                  BOOST_PP_EMPTY(),              \
-                                 BOOST_PP_EXPAND(BOOST_PP_CAT(S1TYPE_INFO_, T)))
+                                 TYPEINFO)
 
 #define S1TYPE_CAST(x, Type)    ((Type*)(&((x)->bases.Type)))
 
-#endif // defined(_MSC_VER) && defined(__cplusplus)
+#endif // defined(__cplusplus)
+
+#define _S1TYPE_DECLARE_BODY(TYPEINFO, Body)        \
+  _S1TYPE_DECLARE_BODY1(TYPEINFO, BOOST_PP_LIST_FIRST(TYPEINFO), Body)
 
 #define _S1TYPE_BODY_DUMMY()    void* reserved;
 #define _S1TYPE_BODY_EMPTY()
 
 #if defined(__cplusplus)
-#define S1TYPE_DECLARE(T)       _S1TYPE_DECLARE_BODY(T, _S1TYPE_BODY_EMPTY)
+#define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_EMPTY)
 #else
-#define S1TYPE_DECLARE(T)       _S1TYPE_DECLARE_BODY(T, _S1TYPE_BODY_DUMMY)
+#define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
 #endif
 
 #define S1TYPE_INFO_s1_Object	(s1_Object, BOOST_PP_NIL)
 
 #if defined(__cplusplus) && defined(S1_BUILD)
 // Library-internal, s1_Object is declared empty
-_S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_EMPTY);
+_S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_EMPTY);
 #else
 /* Externally, s1_Object never appears empty.
  * (This is important so the empty base class optimization can be employed
  * to get the desired memory layout for the API classes.) */
-_S1TYPE_DECLARE_BODY(s1_Object, _S1TYPE_BODY_DUMMY);
+_S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_DUMMY);
 #endif
 
 /// Add a reference to the object. Returns new reference count.
