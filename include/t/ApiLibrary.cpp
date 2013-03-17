@@ -2,7 +2,7 @@
 
 #include "s1/Library.h"
 
-class ApiObjectTestSuite : public CxxTest::TestSuite 
+class ApiLibraryTestSuite : public CxxTest::TestSuite 
 {
 public:
   void testCreateLibraryC (void)
