@@ -16,6 +16,8 @@ int TestA_GetValue (TestA* obj);
 TestA2* CreateTestA2 (int v, int v2);
 int TestA2_GetValue2 (TestA2* obj);
 
+#include "s1/warn_off.h"
+
 namespace cxxapi
 {
   class TestA : public ::TestA,
@@ -54,5 +56,7 @@ namespace cxxapi
     }
   };
 } // namespace cxxapi
+
+#include "s1/warn_on.h"
 
 #endif // __TESTOBJECT_H__
