@@ -7,12 +7,6 @@ class ApiLibraryTestSuite : public CxxTest::TestSuite
 public:
   void testCreateLibraryC (void)
   {
-    // Make sure object declarations produce the expected memory layout
-    {
-      s1_Library* test_lib = (s1_Library*)0x100;
-      s1_Object* test_obj = S1TYPE_CAST(test_lib, s1_Object);
-      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_obj);
-    }
     // Check object creation
     s1_Library* lib;
     s1_ErrorCode err = s1_create_library (&lib);
@@ -20,10 +14,6 @@ public:
     TS_ASSERT_DIFFERS(lib, (s1_Library*)0);
     int rc;
     rc = s1_get_ref_count(lib);
-    TS_ASSERT_EQUALS(rc, 1);
-    rc = s1_add_ref (lib);
-    TS_ASSERT_EQUALS(rc, 2);
-    rc = s1_release (lib);
     TS_ASSERT_EQUALS(rc, 1);
     rc = s1_release (lib);
     TS_ASSERT_EQUALS(rc, 0);
@@ -37,32 +27,12 @@ public:
 
   void testCreateLibraryCXX (void)
   {
-    // Make sure object declarations produce the expected memory layout
-    {
-      s1::Library* test_lib_cxx = (s1::Library*)0x100;
-      s1_Library* test_lib = test_lib_cxx;
-      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_lib_cxx);
-      s1::Object* test_obj_cxx = test_lib_cxx;
-      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_obj_cxx);
-      TS_ASSERT_EQUALS((void*)test_lib_cxx, (void*)test_obj_cxx);
-      s1_Object* test_obj = S1TYPE_CAST(test_lib, s1_Object);
-      TS_ASSERT_EQUALS((void*)test_lib, (void*)test_obj);
-      TS_ASSERT_EQUALS((void*)test_lib_cxx, (void*)test_obj);
-      TS_ASSERT_EQUALS((void*)test_obj_cxx, (void*)test_obj);
-    }
     // Check object creation
     s1::Library::Pointer lib;
     s1_ErrorCode err = s1::Library::Create (lib);
     TS_ASSERT(S1_SUCCESSFUL(err));
     TS_ASSERT_DIFFERS(lib, (s1::Library*)0);
     int rc;
-    rc = lib->GetRefCount();
-    TS_ASSERT_EQUALS(rc, 1);
-    {
-      s1::Library::Pointer lib2 (lib);
-      rc = lib->GetRefCount();
-      TS_ASSERT_EQUALS(rc, 2);
-    }
     rc = lib->GetRefCount();
     TS_ASSERT_EQUALS(rc, 1);
   }
