@@ -36,10 +36,47 @@ namespace s1
     {
       return refCount;
     }
+
+    /**\name Casts to externally visible instance layout
+     * Helper methods to cast instances of Object and descendants to the
+     * externally visible instance layout (i.e. the public API opaque
+     * objects).
+     * \tparam ExtType External type to cast to.
+     * @{ */
+    template<typename ExtType>
+    ExtType* DowncastEvil ()
+    {
+      return reinterpret_cast<ExtType*> (static_cast<s1_Object*> (this));
+    }
+    template<typename ExtType>
+    const ExtType* DowncastEvil () const
+    {
+      return reinterpret_cast<const ExtType*> (static_cast<const s1_Object*> (this));
+    }
+    /** @} */
   private:
     int refCount;
   };
 
+  /**\name Casts to externally visible instance layout
+   * Helper methods to cast objects in the externally visible instance layout
+   * (i.e. the public API opaque representation) to actually useable
+   * instances of Object or an descendant.
+   * \tparam IntType External type to cast to.
+   * \tparam ExtType External type to cast from. (Don't specify, let the compiler
+   *   deduce it.)
+   * @{ */
+  template<typename IntType, typename ExtType>
+  static inline IntType* EvilUpcast (ExtType* obj)
+  {
+    return static_cast<IntType*> (reinterpret_cast<s1_Object*> (obj));
+  }
+  template<typename IntType, typename ExtType>
+  static inline const IntType* EvilUpcast (const ExtType* obj)
+  {
+    return static_cast<const IntType*> (reinterpret_cast<const s1_Object*> (obj));
+  }
+  /** @} */
 
   static inline void intrusive_ptr_add_ref (Object* p)
   {

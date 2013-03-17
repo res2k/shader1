@@ -6,15 +6,15 @@
 
 int s1_add_ref (s1_Object* obj)
 {
-  return static_cast<s1::Object*> (obj)->AddRef();
+  return s1::EvilUpcast<s1::Object> (obj)->AddRef();
 }
 
 int s1_release (s1_Object* obj)
 {
-  return static_cast<s1::Object*> (obj)->Release();
+  return s1::EvilUpcast<s1::Object> (obj)->Release();
 }
 
 int s1_get_ref_count (s1_Object* obj)
 {
-  return static_cast<s1::Object*> (obj)->GetRefCount();
+  return s1::EvilUpcast<s1::Object> (obj)->GetRefCount();
 }
