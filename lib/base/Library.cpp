@@ -6,8 +6,7 @@
 
 namespace s1
 {
-  class Library : public s1_Library,
-                  public Object
+  class Library : public Object
   {
   public:
     Library() {}
@@ -23,6 +22,6 @@ s1_ErrorCode s1_create_library (s1_Library** out)
   s1::Library* new_lib (new (std::nothrow) s1::Library);
   if (!new_lib) return S1_E_OUT_OF_MEMORY;
   new_lib->AddRef();
-  *out = new_lib;
+  *out = new_lib->DowncastEvil<s1_Library> ();
   return S1_SUCCESS;
 }
