@@ -20,19 +20,19 @@ namespace s1
     Ptr () : obj (0) {}
     Ptr (T* p) : obj (p)
     {
-      s1_add_ref (static_cast<s1_Object*> (p));
+      s1_add_ref (p->Cpointer());
     }
     Ptr (T* p, TakeReference) : obj (p) { }
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
     ~Ptr()
     {
-      if (obj) s1_release (static_cast<s1_Object*> (obj));
+      if (obj) s1_release (obj->Cpointer());
     }
     
     void reset (T* p = 0)
     {
-      if (p) s1_add_ref (static_cast<s1_Object*> (p));
-      if (obj) s1_release (static_cast<s1_Object*> (obj));
+      if (p) s1_add_ref (p->Cpointer());
+      if (obj) s1_release (obj->Cpointer());
       obj = p;
     }
     /**
@@ -42,7 +42,7 @@ namespace s1
      */
     void take (T* p)
     {
-      if (obj) s1_release (static_cast<s1_Object*> (obj));
+      if (obj) s1_release (obj->Cpointer());
       obj = p;
     }
     T* get() const
