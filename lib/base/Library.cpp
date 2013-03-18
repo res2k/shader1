@@ -1,19 +1,8 @@
 #include "s1/Library.h"
 
-#include "base/Object.h"
+#include "base/Library.h"
 
 #include <new>
-
-namespace s1
-{
-  class Library : public Object
-  {
-  public:
-    Library() {}
-    
-    // TODO: Store stuff like memory allocator, global options etc... here
-  }; 
-}
 
 s1_ErrorCode s1_create_library (s1_Library** out)
 {

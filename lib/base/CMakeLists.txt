@@ -3,6 +3,8 @@ set(base_sources
     Object.cpp
     UnicodeStream.cpp
     ../../include/internal/base/common.h
+    ../../include/internal/base/Library.h
+    ../../include/internal/base/Object.h
     ../../include/internal/base/UnicodeStream.h
     ../../include/internal/base/UnicodeStreamEndOfInputException.h
     ../../include/internal/base/UnicodeStreamException.h
