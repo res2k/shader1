@@ -492,7 +492,7 @@ namespace s1
 						 const intermediate::SequencePtr& inputSeq,
 						 const intermediate::RegisterSet& usedRegistersSeed)
     {
-      bool seqChanged;
+      bool seqChanged (false);
       DeadCodeChecker checker (outputSeq, usedRegistersSeed, seqChanged);
       inputSeq->ReverseVisit (checker);
       return seqChanged;

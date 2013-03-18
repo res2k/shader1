@@ -123,7 +123,7 @@ namespace s1
     bool Inliner::InlineAllBlocks (const intermediate::SequencePtr& outputSeq,
 				   const intermediate::SequencePtr& inputSeq)
     {
-      bool haveInlined;
+      bool haveInlined (false);
       InlineBlockVisitor visitor (outputSeq, haveInlined);
       inputSeq->Visit (visitor);
       return haveInlined;

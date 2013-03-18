@@ -1588,7 +1588,7 @@ namespace s1
     bool ConstantFolding::FoldConstants (const intermediate::SequencePtr& outputSeq,
 					 const intermediate::SequencePtr& inputSeq)
     {
-      bool seqChanged;
+      bool seqChanged (false);
       FoldingVisitor visitor (outputSeq, seqChanged);
       inputSeq->Visit (visitor);
       return seqChanged;
