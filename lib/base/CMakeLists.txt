@@ -1,9 +1,11 @@
 set(base_sources
     Library.cpp
+    LibraryObject.cpp
     Object.cpp
     UnicodeStream.cpp
     ../../include/internal/base/common.h
     ../../include/internal/base/Library.h
+    ../../include/internal/base/LibraryObject.h
     ../../include/internal/base/Object.h
     ../../include/internal/base/UnicodeStream.h
     ../../include/internal/base/UnicodeStreamEndOfInputException.h
