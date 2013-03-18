@@ -18,7 +18,7 @@ int TestA2_GetValue2 (TestA2* obj);
 
 namespace cxxapi
 {
-  class TestA : public s1::cxxapi::Rebadge< ::TestA, s1::cxxapi::Object>
+  class TestA : public s1::cxxapi::Rebadge<TestA, ::TestA, s1::cxxapi::Object>
   {
   public:
     typedef s1::Ptr<TestA> Pointer;
@@ -26,7 +26,7 @@ namespace cxxapi
     static Pointer Create (int v)
     {
       ::TestA* p (CreateTestA (v));
-      return Pointer (FromC<TestA> (p), Pointer::TakeReference ());
+      return Pointer (FromC (p), Pointer::TakeReference ());
     }
     
     int GetValue ()
@@ -35,7 +35,7 @@ namespace cxxapi
     }
   };
 
-  class TestA2 : public s1::cxxapi::Rebadge< ::TestA2, TestA>
+  class TestA2 : public s1::cxxapi::Rebadge<TestA2, ::TestA2, TestA>
   {
   public:
     typedef s1::Ptr<TestA2> Pointer;
@@ -43,7 +43,7 @@ namespace cxxapi
     static Pointer Create (int v, int v2)
     {
       ::TestA2* p (CreateTestA2 (v, v2));
-      return Pointer (FromC<TestA2> (p), Pointer::TakeReference ());
+      return Pointer (FromC (p), Pointer::TakeReference ());
     }
     
     int GetValue2 ()
