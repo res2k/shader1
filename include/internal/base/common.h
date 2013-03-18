@@ -5,6 +5,7 @@
  * Common definitions
  */
 
+#include "base/config.h"
 #include <boost/cstdint.hpp> // must be include before any unicode/ headers to avoid macro conflict
 
 /* (sizeof(x)*25)/10+1 is an approximation of the number of characters
@@ -32,5 +33,7 @@ namespace boost
   #define snprintf    _snprintf
   #define strcasecmp  _stricmp
 #endif
+
+#include "nullptr.h"
 
 #endif // __BASE_COMMON_H__
