@@ -56,13 +56,23 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARN_ALL}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 
+CHECK_CXX_SOURCE_COMPILES(
+  "int main() { void* p = nullptr; return 0; }"
+  CXX_HAS_NULLPTR)
+if(NOT CXX_HAS_NULLPTR)
+endif()
+
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
   # Silence more annoyances
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
-include_directories(include/internal)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base)
+configure_file(include/internal/base/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base/config.h)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/internal)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+include_directories(include/internal)
 include_directories(include)
 
 add_subdirectory(include)

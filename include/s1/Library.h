@@ -24,7 +24,7 @@ namespace s1
 {
   namespace cxxapi
   {
-    class Library : public Rebadge<s1_Library, Object>
+    class Library : public Rebadge<Library, s1_Library, Object>
     {
     public:
       typedef Ptr<Library> Pointer;
@@ -35,7 +35,7 @@ namespace s1
         ErrorCode err = s1_create_library (&p);
         if (S1_SUCCESSFUL(err))
         {
-          lib.take (FromC<Library> (p));
+          lib.take (FromC (p));
         }
         return err;
       }

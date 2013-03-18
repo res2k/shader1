@@ -1,0 +1,7 @@
+#ifndef __BASE_CONFIG_H__
+#define __BASE_CONFIG_H__
+
+// C++ compiler has 'nullptr'
+#cmakedefine CXX_HAS_NULLPTR
+
+#endif // __BASE_CONFIG_H__
