@@ -64,13 +64,17 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
     
     class TestSequenceCodeGenerator : public SequenceCodeGenerator
     {
+      static const ProgramFunction::TransferMappings& EmptyMappings()
+      {
+        static const ProgramFunction::TransferMappings m;
+        return m;
+      }
     public:
       typedef SequenceCodeGenerator Superclass;
     
       TestSequenceCodeGenerator (const Sequence& seq, ImportedNameResolver* nameRes)
        : SequenceCodeGenerator (seq, nameRes,
-				ProgramFunction::TransferMappings(),
-				ProgramFunction::TransferMappings(),
+				EmptyMappings(), EmptyMappings(),
 				std::vector<std::string> ()) {}
        
       using Superclass::GetOutputRegisterName;
