@@ -132,7 +132,7 @@ namespace s1
       ~ObjectBase ();
     };
     
-    template<typename ExtType, typename BaseClass>
+    template<typename Derived, typename ExtType, typename BaseClass>
     class Rebadge : public BaseClass
     {
     public:
@@ -144,19 +144,17 @@ namespace s1
       {
         return reinterpret_cast<const ExtType*> (this);
       }
-      template<typename Derived>
       static Derived* FromC (ExtType* p)
       {
         return static_cast<Derived*> (reinterpret_cast<BaseClass*> (p));
       }
-      template<typename Derived>
       static const Derived* FromC (const ExtType* p)
       {
         return static_cast<Derived*> (reinterpret_cast<const BaseClass*> (p));
       }
     };
 
-    class Object : public Rebadge<s1_Object, ObjectBase>
+    class Object : public Rebadge<Object, s1_Object, ObjectBase>
     {
     public:
       int AddRef()
