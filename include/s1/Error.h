@@ -37,7 +37,18 @@ typedef unsigned int s1_ErrorCode;
 #define _S1_ERROR_COMP_BASE                     0u
 #define S1_E_FAILURE                            S1_MAKE_ERROR(_S1_ERROR_COMP_BASE, 0)
 #define S1_E_OUT_OF_MEMORY                      S1_MAKE_ERROR(_S1_ERROR_COMP_BASE, 1)
+/**\def S1_E_INVALID_ARG
+ * Some argument was invalid (e.g. a pointer was \NULL).
+ * \remarks You need to use the #S1_ERROR_EQUAL flag to check for this error code.
+ */
 #define S1_E_INVALID_ARG                        S1_MAKE_ERROR(_S1_ERROR_COMP_BASE, 2)
+/**\def S1_E_INVALID_ARG_N(N)
+ * A specific argument was invalid (e.g. a pointer was \NULL).
+ * \a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
+ * has index 0. But note that for functions taking an object instance as the first argument that
+ * argument is \em not included when counting the invalid argument number.
+ * (Note that passing an invalid object instance instead typically results in a crash.)
+ */
 #define S1_E_INVALID_ARG_N(N)                   S1_MAKE_ERROR_X(_S1_ERROR_COMP_BASE, 2, (N ## u) + 1)
 
 #if defined(__cplusplus)
