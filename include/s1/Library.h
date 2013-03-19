@@ -19,6 +19,12 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_Library);
  */
 S1_API s1_ErrorCode s1_create_library (s1_Library** out);
 
+/// Return the last error code set by a failed function
+// TODO: More docs on error handling, link
+S1_API s1_ErrorCode s1_library_get_last_error (s1_Library* lib);
+/// Reset the last error code (to #S1_SUCCESS)
+S1_API void s1_library_clear_last_error (s1_Library* lib);
+
 #if defined(__cplusplus)
 namespace s1
 {
@@ -38,6 +44,15 @@ namespace s1
           lib.take (FromC (p));
         }
         return err;
+      }
+      
+      ErrorCode GetLastError()
+      {
+        return s1_library_get_last_error (Cpointer());
+      }
+      void ClearLastError ()
+      {
+        s1_library_clear_last_error (Cpointer());
       }
     };
   } // namespace cxxapi
