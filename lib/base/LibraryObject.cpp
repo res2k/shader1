@@ -7,7 +7,7 @@
 
 s1_Library* s1_libraryobject_get_library (s1_LibraryObject* obj)
 {
-  if (!obj) return nullptr;
+  S1_ASSERT_MSG(obj, "NULL LibraryObject", nullptr);
   s1::LibraryObject* libObj (s1::EvilUpcast<s1::LibraryObject> (obj));
   return libObj->GetLibrary()->DowncastEvil<s1_Library> ();
 }

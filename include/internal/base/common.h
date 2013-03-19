@@ -34,6 +34,13 @@ namespace boost
   #define strcasecmp  _stricmp
 #endif
 
+// Debugging helpers
+#include <assert.h>
+#define S1_ASSERT_RET_VOID
+#define S1_ASSERT(x, ret)            { assert (x); return ret; }
+// TODO: Implement custom assertion messages
+#define S1_ASSERT_MSG(x, msg, ret)   S1_ASSERT(x, ret)
+
 #include "nullptr.h"
 
 #endif // __BASE_COMMON_H__
