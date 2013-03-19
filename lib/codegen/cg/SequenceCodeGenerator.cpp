@@ -478,9 +478,9 @@ namespace s1
       }
       
       SequenceIdentifiersToRegIDsNameResolver nameRes (owner, identToRegID_imp, identToRegID_exp);
+      intermediate::ProgramFunction::TransferMappings emptyMappings;
       SequenceCodeGenerator codegen (*seq, &nameRes,
-				     intermediate::ProgramFunction::TransferMappings (),
-				     intermediate::ProgramFunction::TransferMappings (),
+				     emptyMappings, emptyMappings,
 				     owner->outParams);
       StringsArrayPtr blockStrings (codegen.Generate());
       if (emitEmptyBlocks || (blockStrings->Size() > 0))

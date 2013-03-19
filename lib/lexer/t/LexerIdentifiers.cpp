@@ -91,7 +91,8 @@ public:
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
-    TS_ASSERT_EQUALS (token.tokenString, UnicodeString ("\xCE\xB1"));
+    TS_ASSERT_EQUALS (token.tokenString.length(), 1);
+    TS_ASSERT_EQUALS (token.tokenString[0], 0x3b1);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
