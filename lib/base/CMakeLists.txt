@@ -1,7 +1,4 @@
 set(base_sources
-    Library.cpp
-    LibraryObject.cpp
-    Object.cpp
     UnicodeStream.cpp
     ../../include/internal/base/common.h
     ../../include/internal/base/Library.h
