@@ -11,7 +11,7 @@
 #include <boost/preprocessor/list/for_each.hpp>
 //#include "preprocessor.h"
 
-#include "defs.h"
+//#include "s1/defs.h"
 
 #if defined(__cplusplus)
 /* C++ is tricky... externally, s1_Object should not appear empty.
