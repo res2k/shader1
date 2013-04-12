@@ -3,6 +3,7 @@ add_subdirectory(s1)
 if(CXXTEST_FOUND)
   file(GLOB api_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
   add_library(api_testlib ${api_testlib_sources})
+  add_dependencies(api_testlib generate_Object)
   set_property(TARGET api_testlib PROPERTY COMPILE_DEFINITIONS S1_BUILD)
 
   file(GLOB api_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.cpp)
