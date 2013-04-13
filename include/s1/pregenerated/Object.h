@@ -6,6 +6,7 @@
 
 #include "preprocessor.h"
 
+#include "s1/defs.h"
 
 #if defined(__cplusplus)
 /* C++ is tricky... externally, s1_Object should not appear empty.
@@ -72,8 +73,12 @@ typedef struct _S1BOOSTPP_CAT(T, _s) T
 
 #if defined(__cplusplus)
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_EMPTY)
+#define S1TYPE_DECLARE_FWD(TYPENAME)   struct TYPENAME;
 #else
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
+#define S1TYPE_DECLARE_FWD(TYPENAME)                    \
+  struct _S1BOOSTPP_CAT(TYPENAME, _s);                    \
+  typedef struct _S1BOOSTPP_CAT(T, _s) TYPENAME
 #endif
 
 #define S1TYPE_INFO_s1_Object	(s1_Object, _S1BOOSTPP_NIL)
@@ -136,6 +141,8 @@ namespace s1
     class Rebadge : public BaseClass
     {
     public:
+      typedef ExtType CType;
+
       ExtType* Cpointer()
       {
         return reinterpret_cast<ExtType*> (this);
