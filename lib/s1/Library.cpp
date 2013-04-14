@@ -3,6 +3,8 @@
 #include "base/common.h"
 #include "base/Library.h"
 
+#include "compiler/Options.h"
+
 #include <new>
 
 s1_ErrorCode s1_create_library (s1_Library** out)
@@ -27,4 +29,19 @@ void s1_library_clear_last_error (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library", S1_ASSERT_RET_VOID);
   s1::EvilUpcast<s1::Library> (lib)->SetLastError (S1_SUCCESS);
+}
+
+s1_Options* s1_options_create (s1_Library* obj)
+{
+  S1_ASSERT_MSG(obj, "NULL Library", nullptr);
+  s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
+  
+  s1::Compiler::OptionsPtr options (lib->GetCompiler().CreateOptions());
+  if (!options)
+  {
+    lib->SetLastError (S1_E_OUT_OF_MEMORY);
+    return nullptr;
+  }
+  options->AddRef();
+  return options->DowncastEvil<s1_Options> ();
 }

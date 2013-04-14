@@ -1,21 +1,24 @@
 #ifndef __COMPILER_OPTIONS_H__
 #define __COMPILER_OPTIONS_H__
 
+#include "s1/Options.h"
+
+#include "base/LibraryObject.h"
 #include "Compiler.h"
 
 namespace s1
 {
-  class Compiler::Options : public Object
+  class Compiler::Options : public LibraryObject
   {
   protected:
     friend class Compiler;
-    Options ();
+    Options (Library* lib);
   public:
     enum Optimization
     {
-      optBlockInlining,
-      optDeadCodeElimination,
-      optConstantFolding,
+      optBlockInlining = S1_OPT_BLOCK_INLINING,
+      optDeadCodeElimination = S1_OPT_DEAD_CODE_ELIMINATION,
+      optConstantFolding = S1_OPT_CONSTANT_FOLDING,
       
       numOptimizations
     };

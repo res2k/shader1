@@ -34,6 +34,7 @@ typedef unsigned int s1_ErrorCode;
 
 #define S1_SUCCESS                              _S1_MAKE_SUCCESS(0)
 
+// Error component: 'base' errors
 #define _S1_ERROR_COMP_BASE                     0u
 #define S1_E_FAILURE                            S1_MAKE_ERROR(_S1_ERROR_COMP_BASE, 0)
 #define S1_E_OUT_OF_MEMORY                      S1_MAKE_ERROR(_S1_ERROR_COMP_BASE, 1)
@@ -50,6 +51,13 @@ typedef unsigned int s1_ErrorCode;
  * (Note that passing an invalid object instance instead typically results in a crash.)
  */
 #define S1_E_INVALID_ARG_N(N)                   S1_MAKE_ERROR_X(_S1_ERROR_COMP_BASE, 2, (N ## u) + 1)
+
+// Error component: compiler options
+#define _S1_ERROR_COMP_COMPILEROPTIONS          1u
+/**\def S1_E_INVALID_OPTIMIZATION
+ * The optimization option was invalid.
+ */
+#define S1_E_INVALID_OPTIMIZATION               S1_MAKE_ERROR(_S1_ERROR_COMP_COMPILEROPTIONS, 0)
 
 #if defined(__cplusplus)
 namespace s1

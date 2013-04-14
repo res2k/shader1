@@ -1,16 +1,19 @@
 #ifndef __COMPILER_COMPILER_H__
 #define __COMPILER_COMPILER_H__
 
-#include "base/Object.h"
-
 #include <boost/intrusive_ptr.hpp>
 
 namespace s1
 {
+  class Library;
+
   // "Friendly" class for compiler controls
-  class Compiler : public Object
+  class Compiler
   {
+    Library* lib;
   public:
+    Compiler (Library* lib = nullptr) : lib (lib) {}
+
     class Options;
     typedef boost::intrusive_ptr<Options> OptionsPtr;
     

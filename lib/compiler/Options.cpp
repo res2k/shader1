@@ -7,7 +7,7 @@
 
 namespace s1
 {
-  Compiler::Options::Options ()
+  Compiler::Options::Options (Library* lib) : LibraryObject (lib)
   {
     memset (optimizeFlags, 0, sizeof (optimizeFlags));
   }

@@ -18,6 +18,8 @@
 #  define S1_NOTHROW
 #endif
 
+typedef int s1_bool;
+
 // TODO Later: dllexport/visibility declspec
 #define S1_DECLSPEC
 

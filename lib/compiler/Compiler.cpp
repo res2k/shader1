@@ -13,7 +13,7 @@ namespace s1
 {
   Compiler::OptionsPtr Compiler::CreateOptions ()
   {
-    return OptionsPtr (new Options);
+    return OptionsPtr (new Options (lib));
   }
   
   Compiler::BackendPtr Compiler::CreateBackendCg ()

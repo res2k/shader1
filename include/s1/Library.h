@@ -8,6 +8,7 @@
 
 #include "s1/Error.h"
 #include "s1/Object.h"
+#include "s1/Options_type.h"
 #include "s1/Ptr.h"
 
 #define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
@@ -24,6 +25,18 @@ S1_API s1_ErrorCode s1_create_library (s1_Library** out);
 S1_API s1_ErrorCode s1_library_get_last_error (s1_Library* lib);
 /// Reset the last error code (to #S1_SUCCESS)
 S1_API void s1_library_clear_last_error (s1_Library* lib);
+
+S1TYPE_DECLARE_FWD(s1_Options);
+/**
+ * Create a compiler options objects.
+ * \param lib Parent library.
+ * \returns The new compiler options objects.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of an error, \NULL is returned and the error status is saved in the library's
+ * last error code.
+ */
+S1_API s1_Options* s1_options_create (s1_Library* lib);
 
 #if defined(__cplusplus)
 namespace s1
@@ -53,6 +66,11 @@ namespace s1
       void ClearLastError ()
       {
         s1_library_clear_last_error (Cpointer());
+      }
+      
+      CPtr<s1_Options> CreateOptions ()
+      {
+        return CPtr<s1_Options> (s1_options_create (Cpointer()), CPtr<s1_Options>::TakeReference ());
       }
     };
   } // namespace cxxapi

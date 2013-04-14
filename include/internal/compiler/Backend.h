@@ -1,6 +1,8 @@
 #ifndef __COMPILER_BACKEND_H__
 #define __COMPILER_BACKEND_H__
 
+#include "base/Object.h"
+
 #include "Compiler.h"
 
 #include "intermediate/forwarddecl.h"
