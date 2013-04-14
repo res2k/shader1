@@ -37,7 +37,7 @@ namespace boost
 // Debugging helpers
 #include <assert.h>
 #define S1_ASSERT_RET_VOID
-#define S1_ASSERT(x, ret)            { assert (x); return ret; }
+#define S1_ASSERT(x, ret)            { assert (x); if (!(x)) { return ret; } }
 // TODO: Implement custom assertion messages
 #define S1_ASSERT_MSG(x, msg, ret)   S1_ASSERT(x, ret)
 
