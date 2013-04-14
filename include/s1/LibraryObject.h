@@ -6,7 +6,9 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/Library.h"
+#include "s1/Ptr.h"
+
+S1TYPE_DECLARE_FWD(s1_Library);
 
 #define S1TYPE_INFO_s1_LibraryObject   (s1_LibraryObject, S1TYPE_INFO_s1_Object)
 S1TYPE_DECLARE(S1TYPE_INFO_s1_LibraryObject);
@@ -27,9 +29,9 @@ namespace s1
     public:
       typedef Ptr<LibraryObject> Pointer;
 
-      Library* GetLibrary()
+      s1_Library* GetLibrary()
       {
-        return Library::FromC (s1_libraryobject_get_library (Cpointer()));
+        return s1_libraryobject_get_library (Cpointer());
       }
     };
   } // namespace cxxapi
