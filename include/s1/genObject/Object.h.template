@@ -78,8 +78,12 @@ typedef struct BOOST_PP_CAT(T, _s) T
 
 #if defined(__cplusplus)
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_EMPTY)
+#define S1TYPE_DECLARE_FWD(TYPENAME)   struct TYPENAME;
 #else
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
+#define S1TYPE_DECLARE_FWD(TYPENAME)                    \
+  struct BOOST_PP_CAT(TYPENAME, _s);                    \
+  typedef struct BOOST_PP_CAT(T, _s) TYPENAME
 #endif
 
 #define S1TYPE_INFO_s1_Object	(s1_Object, BOOST_PP_NIL)
