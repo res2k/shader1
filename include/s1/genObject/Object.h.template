@@ -146,6 +146,8 @@ namespace s1
     class Rebadge : public BaseClass
     {
     public:
+      typedef ExtType CType;
+
       ExtType* Cpointer()
       {
         return reinterpret_cast<ExtType*> (this);
