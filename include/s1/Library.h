@@ -26,7 +26,6 @@ S1_API s1_ErrorCode s1_library_get_last_error (s1_Library* lib);
 /// Reset the last error code (to #S1_SUCCESS)
 S1_API void s1_library_clear_last_error (s1_Library* lib);
 
-S1TYPE_DECLARE_FWD(s1_Options);
 /**
  * Create a compiler options objects.
  * \param lib Parent library.
