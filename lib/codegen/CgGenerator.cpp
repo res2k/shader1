@@ -182,7 +182,8 @@ namespace s1
       h = b = basic_str.size();
       std::string outStr (basic_str);
       outStr.append ("_");
-      while (h < size_t (str.length()))
+      const size_t num_str_chars (str.countChar32());
+      while (h < num_str_chars)
       {
 	// let m = the minimum {non-basic} code point >= n in the input
 	size_t m = INT32_MAX;
