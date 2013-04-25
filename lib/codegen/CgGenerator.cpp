@@ -166,7 +166,7 @@ namespace s1
 	// Valid Cg identifier character?
 	if (IsCgIdentifierChar (ch))
 	{
-	  char s[2] = {ch, 0};
+	  char s[2] = {char (ch), 0};
 	  basic_str.append (s);
 	}
       }
