@@ -3,9 +3,13 @@
 #include <fstream>
 #include <iostream>
 
-#include "compiler/Compiler.h"
-#include "compiler/Options.h"
-#include "compiler/Program.h"
+#include "s1/Backend.h"
+#include "s1/CompiledProgram.h"
+#include "s1/Error.h"
+#include "s1/Library.h"
+#include "s1/Options.h"
+
+#include <boost/unordered_map.hpp>
 
 #include <string.h>
 
@@ -21,14 +25,20 @@ int main (const int argc, const char* const argv[])
   const char* inputFileName = 0;
   const char* entryName = "main";
   const char* backendStr = "cg";
-  bool doSplit = true;
-  typedef boost::unordered_map<std::string, unsigned int> ParamMap;
+  typedef boost::unordered_map<std::string, s1_InputFrequency> ParamMap;
   ParamMap paramFlags;
   typedef boost::unordered_map<std::string, size_t> ParamArraySizeMap;
   ParamArraySizeMap paramArraySizes;
   
-  Compiler compiler;
-  Compiler::OptionsPtr compilerOpts = compiler.CreateOptions();
+  Ptr<Library> lib;
+  ErrorCode libErr (Library::Create (lib));
+  if (!S1_SUCCESSFUL(libErr))
+  {
+    // TODO: Print error code
+    return 2;
+  }
+  
+  Options::Pointer compilerOpts = lib->CreateOptions ();
   enum
   {
     // Optimization level compiler picks by default
@@ -36,7 +46,7 @@ int main (const int argc, const char* const argv[])
     // Optimization level compiler picks if optimization is requested, but no particular options (-O)s
     defaultEnableOptimizationLevel = 2
   };
-  compilerOpts->SetOptimizationLevel (defaultOptimizationLevel);
+  compilerOpts->SetOptLevel (defaultOptimizationLevel);
   
   //OptimizationFlags optFlags;
   int argNum = 1;
@@ -47,19 +57,13 @@ int main (const int argc, const char* const argv[])
     {
       argNum++;
       if (argNum < argc)
-	paramFlags[argv[argNum]] |= splitter::freqFlagV;
-    }
-    else if (strcmp (arg, "--param-fragment") == 0)
-    {
-      argNum++;
-      if (argNum < argc)
-	paramFlags[argv[argNum]] |= splitter::freqFlagF;
+	paramFlags[argv[argNum]] = S1_FREQ_VERTEX;
     }
     else if (strcmp (arg, "--param-uniform") == 0)
     {
       argNum++;
       if (argNum < argc)
-	paramFlags[argv[argNum]] |= splitter::freqFlagU;
+	paramFlags[argv[argNum]] = S1_FREQ_UNIFORM;
     }
     else if (strcmp (arg, "--param-size") == 0)
     {
@@ -86,19 +90,15 @@ int main (const int argc, const char* const argv[])
       if (argNum < argc)
 	entryName = argv[argNum];
     }
-    else if (strcmp (arg, "--nosplit") == 0)
-    {
-      doSplit = false;
-    }
     else if (strncmp (arg, "-O", 2) == 0)
     {
       const char* optStr = arg+2;
       if (!*optStr)
-	compilerOpts->SetOptimizationLevel (defaultEnableOptimizationLevel);
+	compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
       else if ((*optStr >= '0') && (*optStr <= '9'))
-	compilerOpts->SetOptimizationLevel (*optStr - '0');
+	compilerOpts->SetOptLevel (*optStr - '0');
       else
-	compilerOpts->SetOptimizationFlagFromStr (optStr);
+	compilerOpts->SetOptFlagFromStr (optStr);
     }
     else if (strcmp (arg, "--backend") == 0)
     {
@@ -124,12 +124,11 @@ int main (const int argc, const char* const argv[])
     return 1;
   }
   
-  Compiler::BackendPtr compilerBackend;
-  if (strcasecmp (backendStr, "cg") == 0)
-    compilerBackend = compiler.CreateBackendCg();
-  else
+  Backend::Pointer compilerBackend (lib->CreateBackend (backendStr));
+  if (!compilerBackend)
   {
     std::cerr << "Invalid backend: " << backendStr << std::endl;
+    return 2;
   }
   
   std::ifstream inputFile (inputFileName, std::ios_base::in | std::ios_base::binary);
@@ -144,37 +143,54 @@ int main (const int argc, const char* const argv[])
       inputFile.seekg (0);
     }
   }
-  Compiler::ProgramPtr compilerProg (compiler.CreateProgram (compilerOpts, inputFile));
-  compilerProg->SetEntryFunctionName (entryName);
+  std::string sourceStr;
+  {
+    inputFile.seekg (0, std::ios_base::end);
+    size_t fileSize (inputFile.tellg());
+    inputFile.seekg (0, std::ios_base::beg);
+    
+    sourceStr.reserve (fileSize);
+    while (fileSize > 0)
+    {
+      char buf[256];
+      inputFile.read (buf, sizeof (buf));
+      size_t nRead (inputFile.gcount());
+      if (nRead == 0) break;
+      sourceStr.append (buf, nRead);
+      fileSize -= nRead;
+    }
+    inputFile.close();
+  }
+  
+  Program::Pointer compilerProg (lib->CreateProgramFromString (sourceStr.c_str(), sourceStr.size()));
+  if (!compilerProg)
+  {
+    std::cerr << "Error creating program" << std::endl;
+    return 3;
+  }
+  compilerProg->SetEntryFunction (entryName);
+  compilerProg->SetOptions (compilerOpts);
   
   for (ParamMap::const_iterator paramFlag = paramFlags.begin();
 	paramFlag != paramFlags.end();
 	++paramFlag)
   {
-    compilerProg->SetInputParameterFrequencyFlags (paramFlag->first.c_str(), paramFlag->second);
+    compilerProg->SetInputFrequency (paramFlag->first.c_str(), paramFlag->second);
+    // TODO: Error checking
   }
   for (ParamArraySizeMap::const_iterator paramSize = paramArraySizes.begin();
 	paramSize != paramArraySizes.end();
 	++paramSize)
   {
-    compilerProg->SetInputArrayParameterSize (paramSize->first.c_str(), paramSize->second);
+    compilerProg->SetInputArraySize (paramSize->first.c_str(), paramSize->second);
+    // TODO: Error checking
   }
 
-  if (doSplit)
-  {
-    Compiler::Backend::ProgramPtr compiledVP (
-      compilerProg->GetCompiledProgram (compilerBackend, s1::Compiler::Backend::targetVP));
-    std::cout << compiledVP->GetProgramString () << std::endl;
-    Compiler::Backend::ProgramPtr compiledFP (
-      compilerProg->GetCompiledProgram (compilerBackend, s1::Compiler::Backend::targetFP));
-    std::cout << compiledFP->GetProgramString () << std::endl;
-  }
-  else
-  {
-    Compiler::Backend::ProgramPtr compiledProgram (
-      compilerProg->GetCompiledProgram (compilerBackend, s1::Compiler::Backend::targetUnsplit));
-    std::cout << compiledProgram->GetProgramString () << std::endl;
-  }
-  
+  CompiledProgram::Pointer compiledVP (
+    compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP));
+  std::cout << compiledVP->GetString() << std::endl;
+  CompiledProgram::Pointer compiledFP (
+    compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP));
+  std::cout << compiledFP->GetString () << std::endl;
   return 0;
 }
