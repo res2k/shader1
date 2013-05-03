@@ -11,6 +11,11 @@ namespace s1
   {
     memset (optimizeFlags, 0, sizeof (optimizeFlags));
   }
+  
+  Compiler::Options::Options (Library* lib, const Options& other) : LibraryObject (lib)
+  {
+    memcpy (optimizeFlags, other.optimizeFlags, sizeof (optimizeFlags));
+  }
 
   void Compiler::Options::SetOptimizationFlag (Optimization opt, bool enable)
   {

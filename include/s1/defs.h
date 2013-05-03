@@ -4,6 +4,8 @@
 #ifndef __S1_DEFS_H__
 #define __S1_DEFS_H__
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 #  define S1_EXTERN_C           extern "C"
 #  if defined(__GNUC__)

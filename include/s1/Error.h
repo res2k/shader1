@@ -59,6 +59,28 @@ typedef unsigned int s1_ErrorCode;
  */
 #define S1_E_INVALID_OPTIMIZATION               S1_MAKE_ERROR(_S1_ERROR_COMP_COMPILEROPTIONS, 0)
 
+// Error component: backend-related
+#define _S1_ERROR_COMP_BACKEND                  2u
+/**\def S1_E_UNKNOWN_BACKEND
+ * An unknown backend was requested.
+ */
+#define S1_E_UNKNOWN_BACKEND                    S1_MAKE_ERROR(_S1_ERROR_COMP_BACKEND, 0)
+/**\def S1_E_GENERATE_FAILED
+ * Program generation failed.
+ */
+#define S1_E_GENERATE_FAILED                    S1_MAKE_ERROR(_S1_ERROR_COMP_BACKEND, 1)
+
+// Error component: program-related
+#define _S1_ERROR_COMP_PROGRAM                  3u
+/**\def S1_E_INVALID_FREQUENCY
+ * An invalid input parameter frequency was given.
+ */
+#define S1_E_INVALID_FREQUENCY                  S1_MAKE_ERROR(_S1_ERROR_COMP_PROGRAM, 0)
+/**\def S1_E_UNKNOWN_PARAMETER
+ * A program input parameter is not known.
+ */
+#define S1_E_UNKNOWN_PARAMETER                  S1_MAKE_ERROR(_S1_ERROR_COMP_PROGRAM, 1)
+
 #if defined(__cplusplus)
 namespace s1
 {

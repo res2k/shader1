@@ -18,7 +18,7 @@ namespace s1
   
   Compiler::BackendPtr Compiler::CreateBackendCg ()
   {
-    return BackendPtr (new compiler::BackendCg);
+    return BackendPtr (new compiler::BackendCg (lib));
   }
 
   Compiler::ProgramPtr Compiler::CreateProgram (const OptionsPtr& compilerOptions,

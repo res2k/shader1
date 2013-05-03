@@ -1,7 +1,7 @@
 #ifndef __COMPILER_BACKEND_H__
 #define __COMPILER_BACKEND_H__
 
-#include "base/Object.h"
+#include "base/LibraryObject.h"
 
 #include "Compiler.h"
 
@@ -10,15 +10,19 @@
 
 namespace s1
 {
-  class Compiler::Backend : public Object
+  class Compiler::Backend : public LibraryObject
   {
   public:
-    class Program : public Object
+    class Program : public LibraryObject
     {
     public:
+      Program (Library* lib) : LibraryObject (lib) {}
+
       virtual std::string GetProgramString () = 0;
     };
     typedef boost::intrusive_ptr<Program> ProgramPtr;
+    
+    Backend (Library* lib) : LibraryObject (lib) {}
     
     enum CompileTarget
     {

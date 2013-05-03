@@ -10,7 +10,7 @@ namespace s1
 {
   namespace compiler
   {
-    BackendCg::BackendCg()
+    BackendCg::BackendCg (Library* lib) : Backend (lib)
     {
     }
     
@@ -39,7 +39,7 @@ namespace s1
       codegen::CgGenerator codegen;
       codegen::StringsArrayPtr outputProg (codegen.Generate (prog, freq));
       
-      return ProgramPtr (new CgProgram (FlattenStringArray (outputProg)));
+      return ProgramPtr (new CgProgram (GetLibrary(), FlattenStringArray (outputProg)));
     }
     
     //-----------------------------------------------------------------------

@@ -10,9 +10,6 @@ namespace s1
 {
   class Compiler::Options : public LibraryObject
   {
-  protected:
-    friend class Compiler;
-    Options (Library* lib);
   public:
     enum Optimization
     {
@@ -22,6 +19,9 @@ namespace s1
       
       numOptimizations
     };
+    
+    Options (Library* lib);
+    Options (Library* lib, const Options& other);
     
     void SetOptimizationFlag (Optimization opt, bool enable);
     bool GetOptimizationFlag (Optimization opt) const;

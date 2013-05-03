@@ -6,9 +6,11 @@
 
 #include "s1/warn_off.h"
 
+#include "s1/Backend_type.h"
 #include "s1/Error.h"
 #include "s1/Object.h"
 #include "s1/Options_type.h"
+#include "s1/Program_type.h"
 #include "s1/Ptr.h"
 
 #define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
@@ -36,6 +38,33 @@ S1_API void s1_library_clear_last_error (s1_Library* lib);
  * last error code.
  */
 S1_API s1_Options* s1_options_create (s1_Library* lib);
+
+/**
+ * Create a program object from a string.
+ * \param lib Parent library.
+ * \param source Program source code. Must be encoded in UTF-8.
+ * \param sourceSize Program source code size.
+ * \returns A new program object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of an error, \NULL is returned and the error status is saved in the library's
+ * last error code.
+ */
+S1_API s1_Program* s1_program_create_from_string (s1_Library* lib, const char* source,
+                                                  size_t sourceSize);
+
+/**
+ * Create a backend object.
+ * \param lib Parent library.
+ * \param backend Name of the backend to create.
+ *   Currently only <tt>"cg"</tt> is supported.
+ * \returns A new backend object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of an error, \NULL is returned and the error status is saved in the library's
+ * last error code.
+ */
+S1_API s1_Backend* s1_backend_create (s1_Library* lib, const char* backend);
 
 #if defined(__cplusplus)
 namespace s1
@@ -70,6 +99,17 @@ namespace s1
       CPtr<s1_Options> CreateOptions ()
       {
         return CPtr<s1_Options> (s1_options_create (Cpointer()), CPtr<s1_Options>::TakeReference ());
+      }
+      
+      CPtr<s1_Program> CreateProgramFromString (const char* source, size_t sourceSize)
+      {
+        return CPtr<s1_Program> (s1_program_create_from_string (Cpointer(), source, sourceSize),
+                                 CPtr<s1_Program>::TakeReference ());
+      }
+      CPtr<s1_Backend> CreateBackend (const char* backend)
+      {
+        return CPtr<s1_Backend> (s1_backend_create (Cpointer(), backend),
+                                 CPtr<s1_Backend>::TakeReference ());
       }
     };
   } // namespace cxxapi

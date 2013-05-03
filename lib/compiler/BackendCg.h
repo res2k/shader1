@@ -14,12 +14,13 @@ namespace s1
 	std::string programString;
       protected:
         friend class BackendCg;
-	CgProgram (const std::string& programString) : programString (programString) {}
+	CgProgram (Library* lib, const std::string& programString)
+          : Program (lib), programString (programString) {}
       public:
 	std::string GetProgramString ();
       };
     public:
-      BackendCg ();
+      BackendCg (Library* lib);
     
       ProgramPtr GenerateProgram (CompileTarget target,
 				  const intermediate::ProgramPtr& prog);
