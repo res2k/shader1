@@ -119,8 +119,6 @@ namespace s1
 
     switch (target)
     {
-    case Backend::targetUnsplit:
-      return backend->GenerateProgram (target, intermediateProg);
     case Backend::targetVP:
     case Backend::targetFP:
       {
