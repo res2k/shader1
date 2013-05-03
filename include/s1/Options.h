@@ -33,12 +33,13 @@ S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt
  * Query status of an optimization option.
  * \param options Compiler options object.
  * \param opt Optimization option to query.
- * \param enable Returns the optimization status.
- * \returns Whether querying the optimization flag succeeded.
- * In case of an error, the error status is saved in the library's
+ * \returns The optimization status.
+ * Note: in case querying the optimization flag failed \c false is returned
+ * as well. You can check whether an error occured or if the optimization is
+ * actually disabled by inspecting the library's
  * last error code.
  */
-S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt, s1_bool* enabled);
+S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt);
 
 /**
  * Enable/disable all optimizations for some "level" of optimizations.
@@ -111,13 +112,9 @@ namespace s1
        * In case of an error, the error status is saved in the library's
        * last error code.
        */
-      bool GetOptFlag (s1_Optimization opt, bool& enabled)
+      bool GetOptFlag (s1_Optimization opt)
       {
-        s1_bool ret_enabled;
-        bool ret (s1_options_get_opt_flag (Cpointer(), opt, &ret_enabled));
-        if (!ret) return false;
-        enabled = ret_enabled;
-        return true;
+        return s1_options_get_opt_flag (Cpointer(), opt);
       }
 
       /**

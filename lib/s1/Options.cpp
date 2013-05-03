@@ -17,22 +17,16 @@ s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt, s1_bo
   return true;
 }
 
-s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt, s1_bool* enabled)
+s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt)
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   if (int (opt) >= int (s1::Compiler::Options::numOptimizations))
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_OPTIMIZATION);
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
   }
-  if (!enabled)
-  {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_ARG_N(1));
-    return false;
-  }
-  *enabled = options_impl->GetOptimizationFlag ((s1::Compiler::Options::Optimization)opt);
-  return true;
+  bool enabled = options_impl->GetOptimizationFlag ((s1::Compiler::Options::Optimization)opt);
+  return options_impl->ReturnSuccess (enabled);
 }
 
 s1_bool s1_options_set_opt_level (s1_Options* options, int level)
