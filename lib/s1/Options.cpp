@@ -10,11 +10,10 @@ s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt, s1_bo
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   if (int (opt) >= int (s1::Compiler::Options::numOptimizations))
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_OPTIMIZATION);
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
   }
   options_impl->SetOptimizationFlag ((s1::Compiler::Options::Optimization)opt, enable);
-  return true;
+  return options_impl->ReturnSuccess();
 }
 
 s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt)
@@ -35,11 +34,10 @@ s1_bool s1_options_set_opt_level (s1_Options* options, int level)
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   if (level < 0)
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_ARG_N(0));
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
   options_impl->SetOptimizationLevel (level);
-  return true;
+  return options_impl->ReturnSuccess();
 }
     
 s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
@@ -49,29 +47,25 @@ s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   if (!flagStr)
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_ARG_N(0));
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
   if (!opt)
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_ARG_N(1));
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(1));
   }
   if (!flag)
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_ARG_N(2));
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(2));
   }
   s1::Compiler::Options::Optimization parsed_opt;
   bool parsed_flag;
   if (!options_impl->ParseOptimizationFlagString (flagStr, parsed_opt, parsed_flag))
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_OPTIMIZATION);
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
   }
   *opt = (s1_Optimization)parsed_opt;
   *flag = parsed_flag;
-  return true;
+  return options_impl->ReturnSuccess();
 }
 
 s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagStr)
@@ -80,13 +74,11 @@ s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagS
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   if (!flagStr)
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_ARG_N(0));
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
   if (!options_impl->SetOptimizationFlagFromStr (flagStr))
   {
-    options_impl->GetLibrary()->SetLastError (S1_E_INVALID_OPTIMIZATION);
-    return false;
+    return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
   }
-  return true;
+  return options_impl->ReturnSuccess();
 }
