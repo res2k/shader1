@@ -9,8 +9,36 @@
 #ifdef __cplusplus
 namespace s1
 {
-  /// Smart pointer for Shader1 C public API objects.
-  template<typename T>
+  namespace detail
+  {
+    /// CPtr<> reference handling trait: Add/release references
+    struct Counted
+    {
+      static void Ref (s1_Object* obj) { s1_add_ref (obj); }
+      static void Release (s1_Object* obj) { s1_release (obj); }
+    };
+    /**
+     * CPtr<> reference handling trait: Ignore references.
+     * \remarks This type is intended for optimization purposes, i.e.
+     *  in method arguments to avoid unnecessary s1_add_ref/s1_release calls.
+     *  Do not use this type to permanently store an object pointer!
+     */
+    struct Uncounted
+    {
+      static void Ref (s1_Object* obj) { }
+      static void Release (s1_Object* obj) { }
+    };
+  } // namespace detail
+
+  /**
+   * Smart pointer for Shader1 C public API objects.
+   * \tparam T C API object type (e.g. s1_Object).
+   * \tparam Ref Reference handling traits.
+   *  This can either be s1::detail::Counted or s1::detail::Uncounted.
+   *  However, be careful with s1::detail::Uncounted; it is intended
+   *  for method arguments only. Do not use when permanently storing an object pointer!
+   */
+  template<typename T, typename Ref = detail::Counted>
   class CPtr
   {
   private:
@@ -21,29 +49,20 @@ namespace s1
     CPtr () : obj (0) {}
     CPtr (T* p) : obj (p)
     {
-      s1_add_ref (S1TYPE_CAST (p, s1_Object));
+      if (p) Ref::Ref (S1TYPE_CAST (p, s1_Object));
     }
     CPtr (T* p, TakeReference) : obj (p) { }
-    CPtr (const CPtr& other) : obj (0) { reset (other.obj); }
+    template<typename OtherRef>
+    CPtr (const CPtr<T, OtherRef>& other) : obj (0) { reset (other.get()); }
     ~CPtr()
     {
-      if (obj) s1_release (S1TYPE_CAST (obj, s1_Object));
+      if (obj) Ref::Release (S1TYPE_CAST (obj, s1_Object));
     }
     
     void reset (T* p = 0)
     {
-      if (p) s1_add_ref (S1TYPE_CAST (p, s1_Object));
-      if (obj) s1_release (S1TYPE_CAST (obj, s1_Object));
-      obj = p;
-    }
-    /**
-     * Assume ownership of a pointer.
-     * Replaces the currently stored pointer. Properly releases reference of the
-     * old pointer, but does not add a reference to the new pointer!
-     */
-    void take (T* p)
-    {
-      if (obj) s1_release (S1TYPE_CAST (obj, s1_Object));
+      if (p) Ref::Ref (S1TYPE_CAST (p, s1_Object));
+      if (obj) Ref::Release (S1TYPE_CAST (obj, s1_Object));
       obj = p;
     }
     T* get() const
@@ -66,9 +85,10 @@ namespace s1
       return p;
     }
     
-    CPtr& operator= (const CPtr& other)
+    template<typename OtherRef>
+    CPtr& operator= (const CPtr<T, OtherRef>& other)
     {
-      reset (other.obj);
+      reset (other.get());
       return *this;
     }
 
@@ -103,8 +123,8 @@ namespace s1
     }
     Ptr (typename T::CType* p, TakeReference) : obj (T::FromC (p)) { }
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
-    template<typename T2>
-    Ptr (const CPtr<T2>& other) : obj (0) { reset (T::FromC (other)); }
+    template<typename T2, typename CPtrRef>
+    Ptr (const CPtr<T2, CPtrRef>& other) : obj (0) { reset (T::FromC (other)); }
     ~Ptr()
     {
       if (obj) s1_release (obj->Cpointer());
@@ -157,8 +177,8 @@ namespace s1
       reset (other.obj);
       return *this;
     }
-    template<typename T2>
-    Ptr& operator= (const CPtr<T2>& other)
+    template<typename T2, typename CPtrRef>
+    Ptr& operator= (const CPtr<T2, CPtrRef>& other)
     {
       reset (T::FromC (other));
       return *this;
@@ -169,9 +189,10 @@ namespace s1
       return *this;
     }
 
-    operator CPtr<typename T::CType> () const
+    template<typename CPtrRef>
+    operator CPtr<typename T::CType, CPtrRef> () const
     {
-      return CPtr<typename T::CType> (obj->Cpointer());
+      return CPtr<typename T::CType, CPtrRef> (obj->Cpointer());
     }
 
     T& operator* () const

@@ -128,7 +128,7 @@ namespace s1
        * In case of an error, the error status is saved in the library's
        * last error code.
        */
-      bool SetOptions (const CPtr<s1_Options>& options)
+      bool SetOptions (const CPtr<s1_Options, detail::Uncounted>& options)
       {
         return s1_program_set_options (Cpointer(), options);
       }
