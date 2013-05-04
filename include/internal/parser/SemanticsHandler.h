@@ -80,6 +80,8 @@ namespace s1
        * @{ */
       struct Name
       {
+        virtual ~Name() {}
+        
 	/// Type of name (function or variable/parameter)
 	enum NameType { Function, Variable, TypeAlias };
 	
@@ -96,6 +98,7 @@ namespace s1
        * @{ */
       struct Expression
       {
+        virtual ~Expression() {}
       };
       typedef boost::shared_ptr<Expression> ExpressionPtr;
       
@@ -176,6 +179,8 @@ namespace s1
        */
       struct Scope
       {
+        virtual ~Scope() {}
+
 	/// Get level of the scope.
 	virtual ScopeLevel GetLevel() const = 0;
 	/**
@@ -242,6 +247,8 @@ namespace s1
       
       struct Block
       {
+        virtual ~Block() {}
+
 	virtual ScopePtr GetInnerScope() = 0;
 	
 	virtual void AddExpressionCommand (ExpressionPtr expr) = 0;
