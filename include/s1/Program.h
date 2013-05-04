@@ -6,8 +6,8 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/Options_type.h"
-#include "s1/Program_type.h"
+#include "s1/fwd/Options_type.h"
+#include "s1/fwd/Program_type.h"
 
 /**
  * Set program compilation options.

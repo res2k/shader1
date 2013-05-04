@@ -6,7 +6,7 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/CompiledProgram_type.h"
+#include "s1/fwd/CompiledProgram_type.h"
 
 /**
  * Obtain the string of a generated program.

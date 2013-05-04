@@ -6,8 +6,8 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/Backend_type.h"
-#include "s1/CompiledProgram_type.h"
+#include "s1/fwd/Backend_type.h"
+#include "s1/fwd/CompiledProgram_type.h"
 #include "s1/Program.h"
 
 /// Target for backend program compilation

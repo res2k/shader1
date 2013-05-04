@@ -6,11 +6,11 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/Backend_type.h"
+#include "s1/fwd/Backend_type.h"
 #include "s1/Error.h"
 #include "s1/Object.h"
-#include "s1/Options_type.h"
-#include "s1/Program_type.h"
+#include "s1/fwd/Options_type.h"
+#include "s1/fwd/Program_type.h"
 #include "s1/Ptr.h"
 
 #define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
