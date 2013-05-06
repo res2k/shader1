@@ -8,5 +8,6 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
+  add_dependencies(doc_pubapi generate_Object)
   add_dependencies(docs doc_pubapi)
 endif(DOXYGEN_FOUND)

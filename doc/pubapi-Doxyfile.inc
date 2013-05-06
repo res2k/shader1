@@ -130,7 +130,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is
 # started.
 
-STRIP_FROM_PATH        = $(CMAKE_SOURCE_DIR)/include/
+STRIP_FROM_PATH        = $(CMAKE_SOURCE_DIR)/include/ ../include/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -668,7 +668,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = $(CMAKE_SOURCE_DIR)/include/s1
+INPUT                  = $(CMAKE_SOURCE_DIR)/include/s1 ../include/s1
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -700,7 +700,7 @@ RECURSIVE              = NO
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = $(CMAKE_SOURCE_DIR)/include/s1/fwd
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1586,8 +1586,12 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = __cplusplus    \
-                         S1_API=
+PREDEFINED             = __cplusplus            \
+                         DOXYGEN_RUN            \
+                         S1_API=                \
+                         S1_NS_CXXAPI_BEGIN=    \
+                         S1_NS_CXXAPI_END=      \
+                         S1_REBADGE(D,E,B)=B
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

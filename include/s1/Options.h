@@ -84,9 +84,8 @@ S1_API s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char
 #if defined(__cplusplus)
 namespace s1
 {
-  namespace cxxapi
-  {
-    class Options : public Rebadge<Options, s1_Options, LibraryObject>
+  S1_NS_CXXAPI_BEGIN
+    class Options : public S1_REBADGE(Options, s1_Options, LibraryObject)
     {
     public:
       typedef Ptr<Options> Pointer;
@@ -165,9 +164,9 @@ namespace s1
         return s1_options_set_opt_flag_from_str (Cpointer(), flagStr);
       }
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::Options Options;
 #endif // !defined(S1_BUILD)
 } // namespace s1

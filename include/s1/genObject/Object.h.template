@@ -125,10 +125,12 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 #if defined(__cplusplus)
 //#include "s1/warn_off.h"
 
+// Macro so it can be overridden for Doxygen
+#define S1_REBADGE(D, E, B)   B
+
 namespace s1
 {
-  namespace cxxapi
-  {
+  S1_NS_CXXAPI_BEGIN
     class ObjectBase
     {
     private:
@@ -141,7 +143,8 @@ namespace s1
       ObjectBase& operator=(const ObjectBase&);
       ~ObjectBase ();
     };
-    
+
+#if !defined(DOXYGEN_RUN)
     template<typename Derived, typename ExtType, typename BaseClass>
     class Rebadge : public BaseClass
     {
@@ -165,8 +168,9 @@ namespace s1
         return static_cast<Derived*> (reinterpret_cast<const BaseClass*> (p));
       }
     };
+#endif
 
-    class Object : public Rebadge<Object, s1_Object, ObjectBase>
+    class Object : public S1_REBADGE(Object, s1_Object, ObjectBase)
     {
     public:
       int AddRef()
@@ -182,9 +186,9 @@ namespace s1
         return s1_get_ref_count (Cpointer());
       }
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::Object Object;
 #endif // !defined(S1_BUILD)
 } // namespace s1

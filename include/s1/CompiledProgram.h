@@ -22,9 +22,8 @@ S1_API const char* s1_compiledprogram_get_string (s1_CompiledProgram* program);
 #if defined(__cplusplus)
 namespace s1
 {
-  namespace cxxapi
-  {
-    class CompiledProgram : public Rebadge<CompiledProgram, s1_CompiledProgram, LibraryObject>
+  S1_NS_CXXAPI_BEGIN
+    class CompiledProgram : public S1_REBADGE(CompiledProgram, s1_CompiledProgram, LibraryObject)
     {
     public:
       typedef Ptr<CompiledProgram> Pointer;
@@ -44,9 +43,9 @@ namespace s1
       }
 
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::CompiledProgram CompiledProgram;
 #endif // !defined(S1_BUILD)
 } // namespace s1

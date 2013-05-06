@@ -22,9 +22,8 @@ S1_API s1_Library* s1_libraryobject_get_library (s1_LibraryObject* obj);
 #if defined(__cplusplus)
 namespace s1
 {
-  namespace cxxapi
-  {
-    class LibraryObject : public Rebadge<LibraryObject, s1_LibraryObject, Object>
+  S1_NS_CXXAPI_BEGIN
+    class LibraryObject : public S1_REBADGE(LibraryObject, s1_LibraryObject, Object)
     {
     public:
       typedef Ptr<LibraryObject> Pointer;
@@ -34,9 +33,9 @@ namespace s1
         return s1_libraryobject_get_library (Cpointer());
       }
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::LibraryObject LibraryObject;
 #endif // !defined(S1_BUILD)
 } // namespace s1

@@ -114,9 +114,8 @@ S1_API size_t s1_program_get_input_array_size (s1_Program* program, const char* 
 #if defined(__cplusplus)
 namespace s1
 {
-  namespace cxxapi
-  {
-    class Program : public Rebadge<Program, s1_Program, LibraryObject>
+  S1_NS_CXXAPI_BEGIN
+    class Program : public S1_REBADGE(Program, s1_Program, LibraryObject)
     {
     public:
       typedef Ptr<Program> Pointer;
@@ -227,9 +226,9 @@ namespace s1
       }
 
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::Program Program;
 #endif // !defined(S1_BUILD)
 } // namespace s1

@@ -69,9 +69,8 @@ S1_API s1_Backend* s1_backend_create (s1_Library* lib, const char* backend);
 #if defined(__cplusplus)
 namespace s1
 {
-  namespace cxxapi
-  {
-    class Library : public Rebadge<Library, s1_Library, Object>
+  S1_NS_CXXAPI_BEGIN
+    class Library : public S1_REBADGE(Library, s1_Library, Object>)
     {
     public:
       typedef Ptr<Library> Pointer;
@@ -112,9 +111,9 @@ namespace s1
                                  CPtr<s1_Backend>::TakeReference ());
       }
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::Library Library;
 #endif // !defined(S1_BUILD)
 } // namespace s1

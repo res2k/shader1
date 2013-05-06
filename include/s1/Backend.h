@@ -37,9 +37,8 @@ S1_API s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
 #if defined(__cplusplus)
 namespace s1
 {
-  namespace cxxapi
-  {
-    class Backend : public Rebadge<Backend, s1_Backend, LibraryObject>
+  S1_NS_CXXAPI_BEGIN
+    class Backend : public S1_REBADGE(Backend, s1_Backend, LibraryObject)
     {
     public:
       typedef Ptr<Backend> Pointer;
@@ -59,9 +58,9 @@ namespace s1
                                          CPtr<s1_CompiledProgram>::TakeReference ());
       }
     };
-  } // namespace cxxapi
+  S1_NS_CXXAPI_END
 
-#if !defined(S1_BUILD)
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::Backend Backend;
 #endif // !defined(S1_BUILD)
 } // namespace s1

@@ -27,4 +27,8 @@ typedef int s1_bool;
 
 #define S1_API          S1_EXTERN_C S1_DECLSPEC S1_NOTHROW
 
+// Macro so it can be overridden for Doxygen
+#define S1_NS_CXXAPI_BEGIN    namespace cxxapi {
+#define S1_NS_CXXAPI_END      }
+
 #endif // __S1_DEFS_H__
