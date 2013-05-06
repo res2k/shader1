@@ -130,7 +130,7 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is
 # started.
 
-STRIP_FROM_PATH        = $(CMAKE_SOURCE_DIR)/include/ ../include/
+STRIP_FROM_PATH        = $(MERGED_HEADERS)
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -668,7 +668,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = $(CMAKE_SOURCE_DIR)/include/s1 ../include/s1
+INPUT                  = $(MERGED_HEADERS)/s1
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -700,7 +700,7 @@ RECURSIVE              = NO
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = $(CMAKE_SOURCE_DIR)/include/s1/fwd
+EXCLUDE                = $(MERGED_HEADERS)/s1/fwd
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
