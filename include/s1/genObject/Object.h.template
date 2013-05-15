@@ -126,7 +126,7 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 //#include "s1/warn_off.h"
 
 // Macro so it can be overridden for Doxygen
-#define S1_REBADGE(D, E, B)   B
+#define S1_REBADGE(D, E, B)   Rebadge<D, E, B>
 
 namespace s1
 {

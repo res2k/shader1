@@ -70,7 +70,7 @@ S1_API s1_Backend* s1_backend_create (s1_Library* lib, const char* backend);
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
-    class Library : public S1_REBADGE(Library, s1_Library, Object>)
+    class Library : public S1_REBADGE(Library, s1_Library, Object)
     {
     public:
       typedef Ptr<Library> Pointer;
