@@ -317,7 +317,7 @@ INLINE_GROUPED_CLASSES = NO
 # structs, classes, and unions are shown on a separate page (for HTML and Man
 # pages) or section (for LaTeX and RTF).
 
-INLINE_SIMPLE_STRUCTS  = NO
+INLINE_SIMPLE_STRUCTS  = YES
 
 # When TYPEDEF_HIDES_STRUCT is enabled, a typedef of a struct, union, or enum
 # is documented as struct, union, or enum with the name of the typedef. So
@@ -1558,7 +1558,7 @@ MACRO_EXPANSION        = YES
 # then the macro expansion is limited to the macros specified with the
 # PREDEFINED and EXPAND_AS_DEFINED tags.
 
-EXPAND_ONLY_PREDEF     = YES
+EXPAND_ONLY_PREDEF     = NO
 
 # If the SEARCH_INCLUDES tag is set to YES (the default) the includes files
 # pointed to by INCLUDE_PATH will be searched when a #include is found.
@@ -1586,11 +1586,11 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = __cplusplus            \
-                         DOXYGEN_RUN            \
-                         S1_API=                \
-                         S1_NS_CXXAPI_BEGIN=    \
-                         S1_NS_CXXAPI_END=      \
+PREDEFINED             = __cplusplus                            \
+                         DOXYGEN_RUN                            \
+                         S1_API=                                \
+                         S1_NS_CXXAPI_BEGIN=                    \
+                         S1_NS_CXXAPI_END=                      \
                          S1_REBADGE(D,E,B)=B
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
