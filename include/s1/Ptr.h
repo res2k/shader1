@@ -14,8 +14,10 @@ namespace s1
     /// CPtr<> reference handling trait: Add/release references
     struct Counted
     {
-      static void Ref (s1_Object* obj) { s1_add_ref (obj); }
-      static void Release (s1_Object* obj) { s1_release (obj); }
+      template<typename T>
+      static void Ref (T* obj) { s1_add_ref (CastToObject (obj)); }
+      template<typename T>
+      static void Release (T* obj) { s1_release (CastToObject (obj)); }
     };
     /**
      * CPtr<> reference handling trait: Ignore references.
@@ -25,8 +27,10 @@ namespace s1
      */
     struct Uncounted
     {
-      static void Ref (s1_Object* obj) { }
-      static void Release (s1_Object* obj) { }
+      template<typename T>
+      static void Ref (T* obj) { }
+      template<typename T>
+      static void Release (T* obj) { }
     };
   } // namespace detail
 
@@ -49,20 +53,20 @@ namespace s1
     CPtr () : obj (0) {}
     CPtr (T* p) : obj (p)
     {
-      if (p) Ref::Ref (S1TYPE_CAST (p, s1_Object));
+      if (p) Ref::Ref (p);
     }
     CPtr (T* p, TakeReference) : obj (p) { }
     template<typename OtherRef>
     CPtr (const CPtr<T, OtherRef>& other) : obj (0) { reset (other.get()); }
     ~CPtr()
     {
-      if (obj) Ref::Release (S1TYPE_CAST (obj, s1_Object));
+      if (obj) Ref::Release (obj);
     }
     
     void reset (T* p = 0)
     {
-      if (p) Ref::Ref (S1TYPE_CAST (p, s1_Object));
-      if (obj) Ref::Release (S1TYPE_CAST (obj, s1_Object));
+      if (p) Ref::Ref (p);
+      if (obj) Ref::Release (obj);
       obj = p;
     }
     T* get() const

@@ -40,7 +40,17 @@ struct T                                                \
 {                                                       \
   Body()                                                \
   _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                   \
-}
+};                                                      \
+namespace s1                                            \
+{                                                       \
+  namespace detail                                      \
+  {                                                     \
+    template<>                                          \
+    inline s1_Object* CastToObject<T> (T* x)            \
+    { return S1TYPE_CAST(x, s1_Object); }               \
+  }                                                     \
+}                                                       \
+enum {}
 
 #else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
@@ -87,6 +97,18 @@ typedef struct BOOST_PP_CAT(T, _s) T
 #endif
 
 #define S1TYPE_INFO_s1_Object	(s1_Object, BOOST_PP_NIL)
+
+#if defined(__cplusplus)
+struct s1_Object;
+namespace s1
+{
+  namespace detail
+  {
+    template<typename T>
+    static S1_FORCEINLINE s1_Object* CastToObject (T* x);
+  } // namespace cxxapi
+} // namespace s1
+#endif
 
 #if defined(__cplusplus) && defined(S1_BUILD)
 // Library-internal, s1_Object is declared empty

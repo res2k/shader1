@@ -20,6 +20,12 @@
 #  define S1_NOTHROW
 #endif
 
+#ifdef __GNUC__
+#  define S1_FORCEINLINE        __attribute__((always_inline))
+#else
+#  define S1_FORCEINLINE
+#endif
+
 typedef int s1_bool;
 
 // TODO Later: dllexport/visibility declspec
