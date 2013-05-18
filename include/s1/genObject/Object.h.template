@@ -105,6 +105,7 @@ S1_API int s1_release (s1_Object* obj);
 /// Query reference count of an object. Useful for debugging purposes.
 S1_API int s1_get_ref_count (s1_Object* obj);
 
+#if !defined(DOXYGEN_RUN)
 static inline int _s1_add_ref_actual (s1_Object* obj)
 {
   return s1_add_ref (obj);
@@ -121,6 +122,7 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 #define s1_add_ref(Obj)         _s1_add_ref_actual (S1TYPE_CAST(Obj, s1_Object))
 #define s1_release(Obj)         _s1_release_actual (S1TYPE_CAST(Obj, s1_Object))
 #define s1_get_ref_count(Obj)   _s1_get_ref_count_actual (S1TYPE_CAST(Obj, s1_Object))
+#endif
 
 #if defined(__cplusplus)
 //#include "s1/warn_off.h"
