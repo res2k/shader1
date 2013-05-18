@@ -51,7 +51,8 @@ s1_Options* s1_options_create (s1_Library* obj)
   return options->DowncastEvil<s1_Options> ();
 }
 
-s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source, size_t sourceSize)
+s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
+                                           size_t sourceSize, unsigned int compatLevel)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
@@ -59,6 +60,12 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source, 
   if (!source)
   {
     lib->SetLastError (S1_E_INVALID_ARG_N (0));
+    return nullptr;
+  }
+  
+  if (compatLevel > S1_COMPATIBILITY_LATEST)
+  {
+    lib->SetLastError (S1_E_INCOMPATIBLE);
     return nullptr;
   }
   

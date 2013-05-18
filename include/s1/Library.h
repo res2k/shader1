@@ -37,6 +37,8 @@ S1TYPE_DECLARE_FWD(s1_Options);
  */
 S1_API s1_Options* s1_options_create (s1_Library* lib);
 
+#define S1_COMPATIBILITY_LATEST         0
+
 S1TYPE_DECLARE_FWD(s1_Program);
 /**
  * Create a program object from a string.
@@ -50,7 +52,8 @@ S1TYPE_DECLARE_FWD(s1_Program);
  * last error code.
  */
 S1_API s1_Program* s1_program_create_from_string (s1_Library* lib, const char* source,
-                                                  size_t sourceSize);
+                                                  size_t sourceSize,
+                                                  unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
 S1TYPE_DECLARE_FWD(s1_Backend);
 /**
@@ -100,9 +103,10 @@ namespace s1
         return CPtr<s1_Options> (s1_options_create (Cpointer()), CPtr<s1_Options>::TakeReference ());
       }
       
-      CPtr<s1_Program> CreateProgramFromString (const char* source, size_t sourceSize)
+      CPtr<s1_Program> CreateProgramFromString (const char* source, size_t sourceSize,
+                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
-        return CPtr<s1_Program> (s1_program_create_from_string (Cpointer(), source, sourceSize),
+        return CPtr<s1_Program> (s1_program_create_from_string (Cpointer(), source, sourceSize, compatLevel),
                                  CPtr<s1_Program>::TakeReference ());
       }
       CPtr<s1_Backend> CreateBackend (const char* backend)

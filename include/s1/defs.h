@@ -15,9 +15,11 @@
 #  else
 #    define S1_NOTHROW
 #  endif
+#  define S1_ARG_DEFAULT(val)   = val
 #else
 #  define S1_EXTERN_C           extern
 #  define S1_NOTHROW
+#  define S1_ARG_DEFAULT(val)
 #endif
 
 #ifdef __GNUC__

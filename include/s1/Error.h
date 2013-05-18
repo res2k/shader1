@@ -80,6 +80,10 @@ typedef unsigned int s1_ErrorCode;
  * A program input parameter is not known.
  */
 #define S1_E_UNKNOWN_PARAMETER                  S1_MAKE_ERROR(_S1_ERROR_COMP_PROGRAM, 1)
+/**\def S1_E_INCOMPATIBLE
+ * The requested compatibility level is not supported.
+ */
+#define S1_E_INCOMPATIBLE                       S1_MAKE_ERROR(_S1_ERROR_COMP_PROGRAM, 2)
 
 #if defined(__cplusplus)
 namespace s1
