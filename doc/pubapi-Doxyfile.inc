@@ -750,17 +750,6 @@ EXAMPLE_RECURSIVE      = NO
 
 IMAGE_PATH             =
 
-# The INPUT_FILTER tag can be used to specify a program that doxygen should
-# invoke to filter for each input file. Doxygen will invoke the filter program
-# by executing (via popen()) the command <filter> <input-file>, where <filter>
-# is the value of the INPUT_FILTER tag, and <input-file> is the name of an
-# input file. Doxygen will then use the output that the filter program writes
-# to standard output.
-# If FILTER_PATTERNS is specified, this tag will be
-# ignored.
-
-INPUT_FILTER           =
-
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
 # basis.
 # Doxygen will compare the file name with each pattern and apply the
@@ -1591,7 +1580,8 @@ PREDEFINED             = __cplusplus                            \
                          S1_API=                                \
                          S1_NS_CXXAPI_BEGIN=                    \
                          S1_NS_CXXAPI_END=                      \
-                         S1_REBADGE(D,E,B)=B
+                         S1_REBADGE(D,E,B)=B                    \
+                         S1TYPE_TYPEINFO_NAME(N,B)=N
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

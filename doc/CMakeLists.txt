@@ -1,7 +1,8 @@
 add_custom_target(docs)
 
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
+find_package(PythonInterp)
+if(DOXYGEN_FOUND AND PYTHONINTERP_FOUND)
   add_custom_target(merge_headers
     ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include/s1 headers-merged/s1
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/include/s1/Object.h headers-merged/s1/
@@ -15,4 +16,4 @@ if(DOXYGEN_FOUND)
   )
   add_dependencies(doc_pubapi generate_Object merge_headers)
   add_dependencies(docs doc_pubapi)
-endif(DOXYGEN_FOUND)
+endif()
