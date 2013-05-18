@@ -78,7 +78,7 @@ namespace s1
     public:
       typedef Ptr<Library> Pointer;
 
-      static ErrorCode Create (Pointer& lib) throw()
+      static ErrorCode Create (Pointer& lib)
       {
         s1_Library* p (0);
         ErrorCode err = s1_create_library (&p);
