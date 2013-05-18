@@ -77,7 +77,7 @@ enum s1_InputFrequency
  * \remarks Input variables are global variables and arguments to the
  *  entry function.
  */
-S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, s1_InputFrequency freq);
+S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, enum s1_InputFrequency freq);
 /**
  * Query the variation frequency of a program input variable.
  * \param program Program object.
@@ -88,7 +88,7 @@ S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* 
  * \remarks If a variation frequency wasn't explicitly set for the
  *   given parameter a default frequency will be returned.
  */
-S1_API s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param);
+S1_API enum s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param);
 
 /* TODO: Should probably distinguish between an upper bound size (actual runtime size conveyed through
  * a distinct input uniform in the compiled program) and a fixed array size (actual runtime size is given). */

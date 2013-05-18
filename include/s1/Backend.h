@@ -35,7 +35,7 @@ S1TYPE_DECLARE_FWD(s1_CompiledProgram);
  */
 S1_API s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
                                                         s1_Program* program,
-                                                        s1_CompileTarget target);
+                                                        enum s1_CompileTarget target);
 
 #if defined(__cplusplus)
 namespace s1

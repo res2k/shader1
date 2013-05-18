@@ -31,7 +31,7 @@ enum s1_Optimization
  * In case of an error, the error status is saved in the library's
  * last error code.
  */
-S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt, s1_bool enable);
+S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, enum s1_Optimization opt, s1_bool enable);
 /**
  * Query status of an optimization option.
  * \param options Compiler options object.
@@ -42,7 +42,7 @@ S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt
  * actually disabled by inspecting the library's
  * last error code.
  */
-S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt);
+S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, enum s1_Optimization opt);
 
 /**
  * Enable/disable all optimizations for some "level" of optimizations.
@@ -69,7 +69,7 @@ S1_API s1_bool s1_options_set_opt_level (s1_Options* options, int level);
  * last error code.
  */
 S1_API s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
-                                              s1_Optimization* opt, s1_bool* flag);
+                                              enum s1_Optimization* opt, s1_bool* flag);
     
 /**
  * Parse and set an optimization flag from a string.
