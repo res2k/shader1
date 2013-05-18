@@ -48,7 +48,6 @@ int main (const int argc, const char* const argv[])
   };
   compilerOpts->SetOptLevel (defaultOptimizationLevel);
   
-  //OptimizationFlags optFlags;
   int argNum = 1;
   while (argNum < argc)
   {
