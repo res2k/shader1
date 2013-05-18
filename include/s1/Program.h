@@ -6,8 +6,12 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/fwd/Options_type.h"
-#include "s1/fwd/Program_type.h"
+#include "s1/LibraryObject.h"
+
+#define S1TYPE_INFO_s1_Program   (s1_Program, S1TYPE_INFO_s1_LibraryObject)
+S1TYPE_DECLARE(S1TYPE_INFO_s1_Program);
+
+S1TYPE_DECLARE_FWD(s1_Options);
 
 /**
  * Set program compilation options.

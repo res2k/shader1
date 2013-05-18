@@ -6,11 +6,8 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/fwd/Backend_type.h"
 #include "s1/Error.h"
 #include "s1/Object.h"
-#include "s1/fwd/Options_type.h"
-#include "s1/fwd/Program_type.h"
 #include "s1/Ptr.h"
 
 #define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
@@ -28,6 +25,7 @@ S1_API s1_ErrorCode s1_library_get_last_error (s1_Library* lib);
 /// Reset the last error code (to #S1_SUCCESS)
 S1_API void s1_library_clear_last_error (s1_Library* lib);
 
+S1TYPE_DECLARE_FWD(s1_Options);
 /**
  * Create a compiler options objects.
  * \param lib Parent library.
@@ -39,6 +37,7 @@ S1_API void s1_library_clear_last_error (s1_Library* lib);
  */
 S1_API s1_Options* s1_options_create (s1_Library* lib);
 
+S1TYPE_DECLARE_FWD(s1_Program);
 /**
  * Create a program object from a string.
  * \param lib Parent library.
@@ -53,6 +52,7 @@ S1_API s1_Options* s1_options_create (s1_Library* lib);
 S1_API s1_Program* s1_program_create_from_string (s1_Library* lib, const char* source,
                                                   size_t sourceSize);
 
+S1TYPE_DECLARE_FWD(s1_Backend);
 /**
  * Create a backend object.
  * \param lib Parent library.

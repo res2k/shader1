@@ -6,7 +6,10 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/fwd/Options_type.h"
+#include "s1/LibraryObject.h"
+
+#define S1TYPE_INFO_s1_Options   (s1_Options, S1TYPE_INFO_s1_LibraryObject)
+S1TYPE_DECLARE(S1TYPE_INFO_s1_Options);
 
 /// Optimization option constants
 enum s1_Optimization

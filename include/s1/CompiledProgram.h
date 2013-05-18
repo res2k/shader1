@@ -6,7 +6,10 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/fwd/CompiledProgram_type.h"
+#include "s1/LibraryObject.h"
+
+#define S1TYPE_INFO_s1_CompiledProgram   (s1_CompiledProgram, S1TYPE_INFO_s1_LibraryObject)
+S1TYPE_DECLARE(S1TYPE_INFO_s1_CompiledProgram);
 
 /**
  * Obtain the string of a generated program.

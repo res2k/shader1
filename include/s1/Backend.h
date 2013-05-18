@@ -6,9 +6,11 @@
 
 #include "s1/warn_off.h"
 
-#include "s1/fwd/Backend_type.h"
-#include "s1/fwd/CompiledProgram_type.h"
+#include "s1/LibraryObject.h"
 #include "s1/Program.h"
+
+#define S1TYPE_INFO_s1_Backend   (s1_Backend, S1TYPE_INFO_s1_LibraryObject)
+S1TYPE_DECLARE(S1TYPE_INFO_s1_Backend);
 
 /// Target for backend program compilation
 enum s1_CompileTarget
@@ -19,6 +21,7 @@ enum s1_CompileTarget
   S1_TARGET_FP = 1
 };
 
+S1TYPE_DECLARE_FWD(s1_CompiledProgram);
 /**
  * Let a backend generate an actual shader code from a Shader1 program.
  * \param backend Backend that should generate the program.
