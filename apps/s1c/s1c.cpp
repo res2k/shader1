@@ -144,9 +144,10 @@ int main (const int argc, const char* const argv[])
   }
   std::string sourceStr;
   {
+    size_t startPos (inputFile.tellg());
     inputFile.seekg (0, std::ios_base::end);
     size_t fileSize (inputFile.tellg());
-    inputFile.seekg (0, std::ios_base::beg);
+    inputFile.seekg (startPos, std::ios_base::beg);
     
     sourceStr.reserve (fileSize);
     while (fileSize > 0)
