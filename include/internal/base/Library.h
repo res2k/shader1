@@ -15,15 +15,15 @@ namespace s1
 {
   class Library : public Object
   {
-    s1_ErrorCode lastError; // TODO: Store with thread affinity
+    s1_ResultCode lastError; // TODO: Store with thread affinity
     /// The internal factory object
     Compiler compiler;  // TODO: Can probably be removed
   public:
     Library() : lastError (S1_SUCCESS), compiler (this) {}
     
     // TODO: Store stuff like memory allocator, global options etc... here
-    s1_ErrorCode GetLastError () { return lastError; }
-    void SetLastError (s1_ErrorCode code) { lastError = code; }
+    s1_ResultCode GetLastError () { return lastError; }
+    void SetLastError (s1_ResultCode code) { lastError = code; }
     
     Compiler& GetCompiler() { return compiler; }
   };

@@ -17,7 +17,7 @@
 
 static void print_lib_error (const char* message, s1_Library* lib)
 {
-  s1_ErrorCode error = s1_library_get_last_error (lib);
+  s1_ResultCode error = s1_library_get_last_error (lib);
   fprintf (stderr, "%s: %0.8x\n", message, error);
 }
 
@@ -41,7 +41,7 @@ int main (const int argc, const char* const argv[])
   s1_Options* compiler_options = NULL;
   s1_Backend* backend = NULL;
   s1_Program* program = NULL;
-  s1_ErrorCode error;
+  s1_ResultCode error;
   int arg_num;
   const char* input_file_name = NULL;
   const char* entry_name = "main";

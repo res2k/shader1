@@ -21,7 +21,7 @@ namespace s1
      * Helper method to to set a library error code and return an appropriate
      * \c s1_bool result.
      */
-    inline s1_bool ReturnErrorCode (s1_ErrorCode code)
+    inline s1_bool ReturnErrorCode (s1_ResultCode code)
     {
       GetLibrary()->SetLastError (code);
       return S1_SUCCESSFUL(code);
@@ -39,7 +39,7 @@ namespace s1
      * Helper method to to set a library error code and return an arbitrary result.
      */
     template<typename T>
-    inline const T& ReturnErrorCode (s1_ErrorCode code, const T& result)
+    inline const T& ReturnErrorCode (s1_ResultCode code, const T& result)
     {
       GetLibrary()->SetLastError (code);
       return result;

@@ -41,7 +41,7 @@ namespace s1
       return wrapped_program->GetCompiledProgram (backend, target);
     }
 
-    s1_ErrorCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
+    s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
     {
       this->options.reset (new s1::Compiler::Options (GetLibrary(), *(options.get())));
       Dirty ();
@@ -49,20 +49,20 @@ namespace s1
     }
     const s1::Compiler::OptionsPtr& Program::GetOptions() const { return options; }
     
-    s1_ErrorCode Program::SetEntry (const char* entry)
+    s1_ResultCode Program::SetEntry (const char* entry)
     {
       // TODO: Function name validation
       entryFunction = entry;
       Dirty();
       return S1_SUCCESS;
     }
-    s1_ErrorCode Program::GetEntry (const char*& entry) const
+    s1_ResultCode Program::GetEntry (const char*& entry) const
     {
       entry = entryFunction.c_str();
       return S1_SUCCESS;
     }
     
-    s1_ErrorCode Program::SetInputFrequency (const char* param, s1_InputFrequency freq)
+    s1_ResultCode Program::SetInputFrequency (const char* param, s1_InputFrequency freq)
     {
       // TODO: Parameter validation
       s1::splitter::Frequency new_freq;
@@ -77,7 +77,7 @@ namespace s1
       Dirty();
       return S1_SUCCESS;
     }
-    s1_ErrorCode Program::GetInputFrequency (const char* param, s1_InputFrequency& freq) const
+    s1_ResultCode Program::GetInputFrequency (const char* param, s1_InputFrequency& freq) const
     {
       InputFreqMapType::const_iterator it (inputFreqMap.find (param));
       if (it == inputFreqMap.end())
@@ -94,14 +94,14 @@ namespace s1
       return S1_SUCCESS;
     }
 
-    s1_ErrorCode Program::SetInputArraySize (const char* param, size_t size)
+    s1_ResultCode Program::SetInputArraySize (const char* param, size_t size)
     {
       // TODO: Parameter validation
       inputSizeMap[param] = size;
       Dirty();
       return S1_SUCCESS;
     }
-    s1_ErrorCode Program::GetInputArraySize (const char* param, size_t& size) const
+    s1_ResultCode Program::GetInputArraySize (const char* param, size_t& size) const
     {
       InputSizeMapType::const_iterator it (inputSizeMap.find (param));
       if (it == inputSizeMap.end())
@@ -158,7 +158,7 @@ const char* s1_program_get_entry_function (s1_Program* program)
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
 
   const char* entry (nullptr);
-  s1_ErrorCode error (program_impl->GetEntry (entry));
+  s1_ResultCode error (program_impl->GetEntry (entry));
   return program_impl->ReturnErrorCode (error, entry);
 }
 
@@ -186,7 +186,7 @@ s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const cha
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), freq);
   }
 
-  s1_ErrorCode error (program_impl->GetInputFrequency (param, freq));
+  s1_ResultCode error (program_impl->GetInputFrequency (param, freq));
   return program_impl->ReturnErrorCode (error, freq);
 }
 
@@ -214,7 +214,7 @@ size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), size);
   }
 
-  s1_ErrorCode error (program_impl->GetInputArraySize (param, size));
+  s1_ResultCode error (program_impl->GetInputArraySize (param, size));
   return program_impl->ReturnErrorCode (error, size);
 }
 

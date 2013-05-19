@@ -11,7 +11,7 @@
 #include <new>
 #include <string.h>
 
-s1_ErrorCode s1_create_library (s1_Library** out)
+s1_ResultCode s1_create_library (s1_Library** out)
 {
   if (!out) return S1_E_INVALID_ARG_N(0);
   
@@ -22,10 +22,10 @@ s1_ErrorCode s1_create_library (s1_Library** out)
   return S1_SUCCESS;
 }
 
-s1_ErrorCode s1_library_get_last_error (s1_Library* lib)
+s1_ResultCode s1_library_get_last_error (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library",
-                S1_MAKE_ERROR(S1_ERROR_COMP_BASE, 0xbad1));
+                S1_MAKE_ERROR(S1_RESULT_COMP_BASE, 0xbad1));
   return s1::EvilUpcast<s1::Library> (lib)->GetLastError();
 }
 

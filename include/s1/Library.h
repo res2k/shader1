@@ -31,7 +31,7 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_Library);
  *   Otherwise, the return code is an error code indicating why the
  *   library could not be created.
  */
-S1_API s1_ErrorCode s1_create_library (s1_Library** out);
+S1_API s1_ResultCode s1_create_library (s1_Library** out);
 
 /**
  * Return the last error code set by a function.
@@ -39,7 +39,7 @@ S1_API s1_ErrorCode s1_create_library (s1_Library** out);
  * \memberof s1_Library
  */
 // TODO: More docs on error handling, link
-S1_API s1_ErrorCode s1_library_get_last_error (s1_Library* lib);
+S1_API s1_ResultCode s1_library_get_last_error (s1_Library* lib);
 /**
  * Reset the last error code (to #S1_SUCCESS).
  * \param lib Library to clear error code on.
@@ -155,10 +155,10 @@ namespace s1
        *   Otherwise, the return code is an error code indicating why the
        *   library could not be created.
        */
-      static ErrorCode Create (Pointer& lib)
+      static ResultCode Create (Pointer& lib)
       {
         s1_Library* p (0);
-        ErrorCode err = s1_create_library (&p);
+        ResultCode err = s1_create_library (&p);
         if (S1_SUCCESSFUL(err))
         {
           lib.take (FromC (p));
@@ -169,7 +169,7 @@ namespace s1
       /**
        * Return the last error code set by a function.
       */
-      ErrorCode GetLastError()
+      ResultCode GetLastError()
       {
         return s1_library_get_last_error (Cpointer());
       }

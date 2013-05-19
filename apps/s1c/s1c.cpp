@@ -31,7 +31,7 @@ int main (const int argc, const char* const argv[])
   ParamArraySizeMap paramArraySizes;
   
   Ptr<Library> lib;
-  ErrorCode libErr (Library::Create (lib));
+  ResultCode libErr (Library::Create (lib));
   if (!S1_SUCCESSFUL(libErr))
   {
     // TODO: Print error code

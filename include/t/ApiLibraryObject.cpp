@@ -10,7 +10,7 @@ public:
   void testCreateLibraryObjectC (void)
   {
     s1_Library* lib;
-    s1_ErrorCode err = s1_create_library (&lib);
+    s1_ResultCode err = s1_create_library (&lib);
     TS_ASSERT(S1_SUCCESSFUL(err));
     TS_ASSERT_DIFFERS(lib, (s1_Library*)0);
     
@@ -28,7 +28,7 @@ public:
   void testCreateLibraryObjectCXX (void)
   {
     s1::Library::Pointer lib;
-    s1_ErrorCode err = s1::Library::Create (lib);
+    s1_ResultCode err = s1::Library::Create (lib);
     TS_ASSERT(S1_SUCCESSFUL(err));
     TS_ASSERT_DIFFERS(lib, (s1::Library*)0);
     int rc;

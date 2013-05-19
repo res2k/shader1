@@ -47,17 +47,17 @@ namespace s1
 
       /**\name Methods mapping to public API
        * @{ */
-      s1_ErrorCode SetOptions (const s1::Compiler::OptionsPtr& options);
+      s1_ResultCode SetOptions (const s1::Compiler::OptionsPtr& options);
       const s1::Compiler::OptionsPtr& GetOptions() const;
       
-      s1_ErrorCode SetEntry (const char* entry);
-      s1_ErrorCode GetEntry (const char*& entry) const;
+      s1_ResultCode SetEntry (const char* entry);
+      s1_ResultCode GetEntry (const char*& entry) const;
       
-      s1_ErrorCode SetInputFrequency (const char* param, s1_InputFrequency freq);
-      s1_ErrorCode GetInputFrequency (const char* param, s1_InputFrequency& freq) const;
+      s1_ResultCode SetInputFrequency (const char* param, s1_InputFrequency freq);
+      s1_ResultCode GetInputFrequency (const char* param, s1_InputFrequency& freq) const;
 
-      s1_ErrorCode SetInputArraySize (const char* param, size_t size);
-      s1_ErrorCode GetInputArraySize (const char* param, size_t& size) const;
+      s1_ResultCode SetInputArraySize (const char* param, size_t size);
+      s1_ResultCode GetInputArraySize (const char* param, size_t& size) const;
       /** @} */
     };
   } // namespace api_impl

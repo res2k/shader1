@@ -9,7 +9,7 @@ public:
   {
     // Check object creation
     s1_Library* lib;
-    s1_ErrorCode err = s1_create_library (&lib);
+    s1_ResultCode err = s1_create_library (&lib);
     TS_ASSERT(S1_SUCCESSFUL(err));
     TS_ASSERT_DIFFERS(lib, (s1_Library*)0);
     int rc;
@@ -21,7 +21,7 @@ public:
 
   void testWrongCreateLibraryC (void)
   {
-    s1_ErrorCode err = s1_create_library (0);
+    s1_ResultCode err = s1_create_library (0);
     TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_INVALID_ARG));
   }
 
@@ -29,7 +29,7 @@ public:
   {
     // Check object creation
     s1::Library::Pointer lib;
-    s1_ErrorCode err = s1::Library::Create (lib);
+    s1_ResultCode err = s1::Library::Create (lib);
     TS_ASSERT(S1_SUCCESSFUL(err));
     TS_ASSERT_DIFFERS(lib, (s1::Library*)0);
     int rc;
