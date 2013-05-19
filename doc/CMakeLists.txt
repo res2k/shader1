@@ -4,8 +4,8 @@ find_package(Doxygen)
 find_package(PythonInterp)
 if(DOXYGEN_FOUND AND PYTHONINTERP_FOUND)
   add_custom_target(merge_headers
-    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include/s1 headers-merged/s1
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/include/s1/Object.h headers-merged/s1/
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/treelink.py ${CMAKE_SOURCE_DIR}/include/s1 headers-merged/s1
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/include/s1/Object.h headers-merged/s1/Object.h
     COMMENT "Merging headers" VERBATIM
   )
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pubapi-Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/pubapi-Doxyfile @ONLY)
