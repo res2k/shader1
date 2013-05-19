@@ -14,6 +14,9 @@ namespace s1
     /// CPtr<> reference handling trait: Add/release references
     struct Counted
     {
+      /* NOTE: If you get an 'undefined reference' from here, it means
+       * you're trying to use a CPtr<> instance for a type that has
+       * only been forward-declared. */
       template<typename T>
       static void Ref (T* obj) { s1_add_ref (CastToObject (obj)); }
       template<typename T>
