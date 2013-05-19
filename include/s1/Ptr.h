@@ -9,7 +9,8 @@
 #ifdef __cplusplus
 namespace s1
 {
-  namespace detail
+  /// Reference handling traits for CPtr<>
+  namespace ref_traits
   {
     /// CPtr<> reference handling trait: Add/release references
     struct Counted
@@ -18,9 +19,9 @@ namespace s1
        * you're trying to use a CPtr<> instance for a type that has
        * only been forward-declared. */
       template<typename T>
-      static void Ref (T* obj) { s1_add_ref (CastToObject (obj)); }
+      static void Ref (T* obj) { s1_add_ref (detail::CastToObject (obj)); }
       template<typename T>
-      static void Release (T* obj) { s1_release (CastToObject (obj)); }
+      static void Release (T* obj) { s1_release (detail::CastToObject (obj)); }
     };
     /**
      * CPtr<> reference handling trait: Ignore references.
@@ -35,17 +36,20 @@ namespace s1
       template<typename T>
       static void Release (T* obj) { }
     };
-  } // namespace detail
+  } // namespace ref_traits
 
   /**
    * Smart pointer for Shader1 C public API objects.
    * \tparam T C API object type (e.g. s1_Object).
    * \tparam Ref Reference handling traits.
-   *  This can either be s1::detail::Counted or s1::detail::Uncounted.
-   *  However, be careful with s1::detail::Uncounted; it is intended
-   *  for method arguments only. Do not use when permanently storing an object pointer!
+   *  This can either be s1::ref_traits::Counted or s1::ref_traits::Uncounted.
+   * \warning
+   *  Be careful with s1::ref_traits::Uncounted; it is intended
+   *  for method arguments only. Do not use when permanently storing an object pointer!<br/>
+   *  And keep in mind that if s1::ref_traits::Uncounted is used, <em>no reference
+   *  counting happens</em>... contrary to the methods documentation!
    */
-  template<typename T, typename Ref = detail::Counted>
+  template<typename T, typename Ref = ref_traits::Counted>
   class CPtr
   {
   private:

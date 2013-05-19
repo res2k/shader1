@@ -69,7 +69,7 @@ namespace s1
        * In that case the error status is saved in the library's
        * last error code.
        */
-      CPtr<s1_CompiledProgram> GenerateProgram (const CPtr<s1_Program, detail::Uncounted>& program,
+      CPtr<s1_CompiledProgram> GenerateProgram (const CPtr<s1_Program, ref_traits::Uncounted>& program,
                                                 s1_CompileTarget target)
       {
         return CPtr<s1_CompiledProgram> (s1_backend_generate_program (Cpointer(), program, target),
