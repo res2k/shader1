@@ -13,16 +13,16 @@ public:
     // Make sure object declarations produce the expected memory layout
     {
       TestA* test_a = (TestA*)0x100;
-      s1_Object* test_obj = S1TYPE_CAST(test_a, s1_Object);
+      s1_Object* test_obj = S1TYPE_CAST(s1_Object, test_a);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj);
     }
     {
       TestA2* test_a2 = (TestA2*)0x100;
-      TestA* test_a = S1TYPE_CAST(test_a2, TestA);
+      TestA* test_a = S1TYPE_CAST(TestA, test_a2);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_a2);
-      s1_Object* test_obj1 = S1TYPE_CAST(test_a2, s1_Object);
+      s1_Object* test_obj1 = S1TYPE_CAST(s1_Object, test_a2);
       TS_ASSERT_EQUALS((void*)test_a2, (void*)test_obj1);
-      s1_Object* test_obj2 = S1TYPE_CAST(test_a, s1_Object);
+      s1_Object* test_obj2 = S1TYPE_CAST(s1_Object, test_a);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj2);
       TS_ASSERT_EQUALS((void*)test_obj1, (void*)test_obj2);
     }
@@ -38,7 +38,7 @@ public:
       s1::Object* test_obj_cxx = test_a_cxx;
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj_cxx);
       TS_ASSERT_EQUALS((void*)test_a_cxx, (void*)test_obj_cxx);
-      s1_Object* test_obj = S1TYPE_CAST(test_a, s1_Object);
+      s1_Object* test_obj = S1TYPE_CAST(s1_Object, test_a);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj);
       TS_ASSERT_EQUALS((void*)test_a_cxx, (void*)test_obj);
       TS_ASSERT_EQUALS((void*)test_obj_cxx, (void*)test_obj);
@@ -50,21 +50,21 @@ public:
       
       TestA2* test_a2 = test_a2_cxx->Cpointer();
       TS_ASSERT_EQUALS((void*)test_a2, (void*)test_a2_cxx);
-      TestA* test_a = S1TYPE_CAST(test_a2, TestA);
+      TestA* test_a = S1TYPE_CAST(TestA, test_a2);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_a2);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_a_cxx);
 
       s1::Object* test_obj1_cxx = test_a2_cxx;
       TS_ASSERT_EQUALS((void*)test_a2, (void*)test_obj1_cxx);
       TS_ASSERT_EQUALS((void*)test_a2_cxx, (void*)test_obj1_cxx);
-      s1_Object* test_obj1 = S1TYPE_CAST(test_a2, s1_Object);
+      s1_Object* test_obj1 = S1TYPE_CAST(s1_Object, test_a2);
       TS_ASSERT_EQUALS((void*)test_a2, (void*)test_obj1);
       TS_ASSERT_EQUALS((void*)test_obj1_cxx, (void*)test_obj1);
       
       s1::Object* test_obj2_cxx = test_a_cxx;
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj2_cxx);
       TS_ASSERT_EQUALS((void*)test_a_cxx, (void*)test_obj2_cxx);
-      s1_Object* test_obj2 = S1TYPE_CAST(test_a, s1_Object);
+      s1_Object* test_obj2 = S1TYPE_CAST(s1_Object, test_a);
       TS_ASSERT_EQUALS((void*)test_a, (void*)test_obj2);
       TS_ASSERT_EQUALS((void*)test_obj2_cxx, (void*)test_obj2);
       
@@ -123,7 +123,7 @@ public:
     rc = s1_get_ref_count(test_a2);
     TS_ASSERT_EQUALS(rc, 1);
     
-    TS_ASSERT_EQUALS(TestA_GetValue (S1TYPE_CAST(test_a2, TestA)), TEST_VAL_1);
+    TS_ASSERT_EQUALS(TestA_GetValue (S1TYPE_CAST(TestA, test_a2)), TEST_VAL_1);
     TS_ASSERT_EQUALS(TestA2_GetValue2 (test_a2), TEST_VAL_2);
 
     rc = s1_release (test_a2);
@@ -141,7 +141,7 @@ public:
     TS_ASSERT_EQUALS(rc, 1);
 
     TS_ASSERT_EQUALS(test_a2->GetValue(), TEST_VAL_1);
-    TS_ASSERT_EQUALS(TestA_GetValue (S1TYPE_CAST(test_a2->Cpointer(), TestA)), TEST_VAL_1);
+    TS_ASSERT_EQUALS(TestA_GetValue (S1TYPE_CAST(TestA, test_a2->Cpointer())), TEST_VAL_1);
     TS_ASSERT_EQUALS(test_a2->GetValue2(), TEST_VAL_2);
     TS_ASSERT_EQUALS(TestA2_GetValue2 (test_a2->Cpointer()), TEST_VAL_2);
     

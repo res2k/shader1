@@ -22,7 +22,7 @@
  * Workaround: Keep pseudo-classes empty, and provide cast functionality
  * through a helper method.
  */
-#define S1TYPE_CAST(x, Type)    (x->BOOST_PP_CAT(cast_to_, Type)())
+#define S1TYPE_CAST(Type, x)    ((x)->BOOST_PP_CAT(cast_to_, Type)())
 
 #define _S1TYPE_CAST_MEMBER(d, state, T)                        \
   state                                                         \
@@ -47,7 +47,7 @@ namespace s1                                            \
   {                                                     \
     template<>                                          \
     inline s1_Object* CastToObject<T> (T* x)            \
-    { return S1TYPE_CAST(x, s1_Object); }               \
+    { return S1TYPE_CAST(s1_Object, x); }               \
   }                                                     \
 }                                                       \
 enum {}
@@ -76,7 +76,7 @@ typedef struct BOOST_PP_CAT(T, _s) T
                                  BOOST_PP_EMPTY(),              \
                                  TYPEINFO)
 
-#define S1TYPE_CAST(x, Type)    ((Type*)(&((x)->bases.Type)))
+#define S1TYPE_CAST(Type, x)    ((Type*)(&((x)->bases.Type)))
 
 #endif // defined(__cplusplus)
 
@@ -141,9 +141,9 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
   return s1_get_ref_count (obj);
 }
 
-#define s1_add_ref(Obj)         _s1_add_ref_actual (S1TYPE_CAST(Obj, s1_Object))
-#define s1_release(Obj)         _s1_release_actual (S1TYPE_CAST(Obj, s1_Object))
-#define s1_get_ref_count(Obj)   _s1_get_ref_count_actual (S1TYPE_CAST(Obj, s1_Object))
+#define s1_add_ref(Obj)         _s1_add_ref_actual (S1TYPE_CAST(s1_Object, Obj))
+#define s1_release(Obj)         _s1_release_actual (S1TYPE_CAST(s1_Object, Obj))
+#define s1_get_ref_count(Obj)   _s1_get_ref_count_actual (S1TYPE_CAST(s1_Object, Obj))
 #endif
 
 #if defined(__cplusplus)

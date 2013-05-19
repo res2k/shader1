@@ -16,7 +16,7 @@ public:
     
     TestLO* lib_obj = CreateTestLO (lib);
     TS_ASSERT(lib_obj);
-    s1_Library* stored_lib (s1_libraryobject_get_library (S1TYPE_CAST(lib_obj, s1_LibraryObject)));
+    s1_Library* stored_lib (s1_libraryobject_get_library (S1TYPE_CAST(s1_LibraryObject, lib_obj)));
     TS_ASSERT_EQUALS(stored_lib, lib);
     int rc = s1_release (lib_obj);
     TS_ASSERT_EQUALS(rc, 0);
