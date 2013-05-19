@@ -10,6 +10,13 @@
 #include "s1/Program.h"
 
 #define S1TYPE_INFO_s1_Backend   (s1_Backend, S1TYPE_INFO_s1_LibraryObject)
+/**
+ * Compiler backend.
+ * Used to compile a program object representing actual shader code.
+ * \extends s1_LibraryObject
+ * \sa s1_CompiledProgram
+ * \createdby s1_backend_create()
+ */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_Backend);
 
 /// Target for backend program compilation
@@ -32,6 +39,7 @@ S1TYPE_DECLARE_FWD(s1_CompiledProgram);
  * using s1_release().
  * In that case the error status is saved in the library's
  * last error code.
+ * \memberof s1_Backend
  */
 S1_API s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
                                                         s1_Program* program,
@@ -41,9 +49,16 @@ S1_API s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+    /**
+     * Compiler backend.
+     * Used to compile a program object representing actual shader code.
+     * \sa CompiledProgram
+     * \createdby Library::CreateBackend()
+     */
     class Backend : public S1_REBADGE(Backend, s1_Backend, LibraryObject)
     {
     public:
+      /// Smart pointer class for Backend instances.
       typedef Ptr<Backend> Pointer;
 
       /**

@@ -9,6 +9,13 @@
 #include "s1/LibraryObject.h"
 
 #define S1TYPE_INFO_s1_Options   (s1_Options, S1TYPE_INFO_s1_LibraryObject)
+/**
+ * Program compilation options.
+ * Encapsulates compiler settings likely to be used across a number of
+ * compiled programs.
+ * \createdby s1_options_create()
+ * \extends s1_LibraryObject
+ */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_Options);
 
 /// Optimization option constants
@@ -30,6 +37,7 @@ enum s1_Optimization
  * \returns Whether changing the optimization flag succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \memberof s1_Options
  */
 S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, enum s1_Optimization opt, s1_bool enable);
 /**
@@ -41,17 +49,19 @@ S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, enum s1_Optimizatio
  * as well. You can check whether an error occured or if the optimization is
  * actually disabled by inspecting the library's
  * last error code.
+ * \memberof s1_Options
  */
 S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, enum s1_Optimization opt);
 
 /**
- * Enable/disable all optimizations for some "level" of optimizations.
- * Currently two levels are supported: 0 -> no optimization, anything >0 -> full optimization.
+ * Enable/disable all optimizations for some &ldquo;level&rdquo; of optimizations.
+ * Currently two levels are supported: 0 &rarr; no optimization, anything >0 &rarr; full optimization.
  * \param options Compiler options object.
  * \param level Optimization level to set.
  * \returns Whether setting the optimization level succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \memberof s1_Options
  */
 S1_API s1_bool s1_options_set_opt_level (s1_Options* options, int level);
     
@@ -60,13 +70,14 @@ S1_API s1_bool s1_options_set_opt_level (s1_Options* options, int level);
  * Useful for e.g. command line parsing.
  * \param options Compiler options object.
  * \param flagStr Optimization option string. Can be prefixed by <tt>no-</tt> in which
- *   case it's parsed as a "disable" option; otherwise, it's parsed as an "enable"
- *   option.
+ *   case it's parsed as a &ldquo;disable&rdquo; option; otherwise, it's
+ *   parsed as an &ldquo;enable&rdquo; option.
  * \param opt Receives parsed option.
  * \param flag Receives parsed option enable flag.
- * \returns Whether setting the optimization level succeeded.
+ * \returns Whether parsing the optimization flag succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \memberof s1_Options
  */
 S1_API s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
                                               enum s1_Optimization* opt, s1_bool* flag);
@@ -80,6 +91,7 @@ S1_API s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* f
  * \returns Whether setting the optimization level succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \memberof s1_Options
  */
 S1_API s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagStr);
 
@@ -88,9 +100,16 @@ S1_API s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+    /**
+     * Program compilation options.
+     * Encapsulates compiler settings likely to be used across a number of
+     * compiled programs.
+     * \createdby s1::Library::CreateOptions()
+     */
     class Options : public S1_REBADGE(Options, s1_Options, LibraryObject)
     {
     public:
+      /// Smart pointer class for Options instances.
       typedef Ptr<Options> Pointer;
 
       /**
@@ -109,9 +128,10 @@ namespace s1
       /**
        * Query status of an optimization option.
        * \param opt Optimization option to query.
-       * \param enable Returns the optimization status.
-       * \returns Whether querying the optimization flag succeeded.
-       * In case of an error, the error status is saved in the library's
+       * \returns The optimization status.
+       * Note: in case querying the optimization flag failed \c false is returned
+       * as well. You can check whether an error occured or if the optimization is
+       * actually disabled by inspecting the library's
        * last error code.
        */
       bool GetOptFlag (s1_Optimization opt)
@@ -120,8 +140,9 @@ namespace s1
       }
 
       /**
-      * Enable/disable all optimizations for some "level" of optimizations.
-      * Currently two levels are supported: 0 -> no optimization, anything >0 -> full optimization.
+      * Enable/disable all optimizations for some &ldquo;level&rdquo; of optimizations.
+      * Currently two levels are supported: 0 &rarr; no optimization,
+      * anything >0 &rarr; full optimization.
       * \param level Optimization level to set.
       * \returns Whether setting the optimization level succeeded.
       * In case of an error, the error status is saved in the library's
@@ -135,12 +156,12 @@ namespace s1
       /**
        * Parse an optimization flag from a string.
        * Useful for e.g. command line parsing.
-       * \param flagStr Optimization option string. Can be prefixed by <tt>no-</tt> in which
-       *   case it's parsed as a "disable" option; otherwise, it's parsed as an "enable"
-       *   option.
+       * \param flagStr Optimization option string. Can be prefixed by
+       *   <tt>no-</tt> in which case it's parsed as a &ldquo;disable&rdquo; option;
+       *   otherwise, it's parsed as an &ldquo;enable&rdquo; option.
        * \param opt Receives parsed option.
        * \param flag Receives parsed option enable flag.
-       * \returns Whether setting the optimization level succeeded.
+       * \returns Whether parsing the optimization flag succeeded.
        * In case of an error, the error status is saved in the library's
        * last error code.
        */

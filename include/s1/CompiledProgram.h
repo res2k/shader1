@@ -9,16 +9,24 @@
 #include "s1/LibraryObject.h"
 
 #define S1TYPE_INFO_s1_CompiledProgram   (s1_CompiledProgram, S1TYPE_INFO_s1_LibraryObject)
+/**
+ * Compiled program object.
+ * Produced by a backend, encapsulates a program compiled to a specific target
+ * shader language and shading stage.
+ * \createdby s1_backend_generate_program().
+ * \extends s1_LibraryObject
+ */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_CompiledProgram);
 
 /**
  * Obtain the string of a generated program.
  * \param program The compile program object.
- * \returns Whether getting the program string succeeded.
- * In case of an error, the error status is saved in the library's
- * last error code.
+ * \returns The program string.
+ *   If obtaining the string failed, \NULL is returned, and the error status
+ *   is saved in the library's last error code.
  * \remarks The returned string is valid as long as the compiled
  *  program object exists.
+ * \memberof s1_CompiledProgram
  */
 S1_API const char* s1_compiledprogram_get_string (s1_CompiledProgram* program);
 
@@ -26,17 +34,23 @@ S1_API const char* s1_compiledprogram_get_string (s1_CompiledProgram* program);
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+    /**
+     * Compiled program object.
+     * Produced by a backend, encapsulates a program compiled to a specific target
+     * shader language and shading stage.
+     * \createdby s1::Backend::GenerateProgram().
+     */
     class CompiledProgram : public S1_REBADGE(CompiledProgram, s1_CompiledProgram, LibraryObject)
     {
     public:
+      /// Smart pointer class for CompiledProgram instances.
       typedef Ptr<CompiledProgram> Pointer;
 
       /**
        * Obtain the string of a generated program.
-       * \param string Receives the generated program string.
-       * \returns Whether getting the program string succeeded.
-       * In case of an error, the error status is saved in the library's
-       * last error code.
+       * \returns The program string.
+       *   If obtaining the string failed, \NULL is returned, and the error status
+       *   is saved in the library's last error code.
        * \remarks The returned string is valid as long as the compiled
        *  program object exists.
        */

@@ -195,7 +195,8 @@ TAB_SIZE               = 4
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = NULL="<span style='font-variant: small-caps;'>NULL</span>"
+ALIASES                = NULL="<span style='font-variant: small-caps;'>null</span>"     \
+                         createdby="\par Created by:\n"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
@@ -293,7 +294,7 @@ IDL_PROPERTY_SUPPORT   = YES
 # member in the group (if any) for the other members of the group. By default
 # all members of a group must be documented explicitly.
 
-DISTRIBUTE_GROUP_DOC   = NO
+DISTRIBUTE_GROUP_DOC   = YES
 
 # Set the SUBGROUPING tag to YES (the default) to allow class member groups of
 # the same type (for instance a group of public functions) to be put as a
@@ -722,7 +723,7 @@ EXCLUDE_PATTERNS       =
 # wildcard * is used, a substring. Examples: ANamespace, AClass,
 # AClass::ANamespace, ANamespace::*Test
 
-EXCLUDE_SYMBOLS        =
+EXCLUDE_SYMBOLS        = S1TYPE_INFO_*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or
 # directories that contain example code fragments that are included (see
@@ -859,7 +860,7 @@ COLS_IN_ALPHA_INDEX    = 5
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          =
+IGNORE_PREFIX          = s1_
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -1547,7 +1548,7 @@ MACRO_EXPANSION        = YES
 # then the macro expansion is limited to the macros specified with the
 # PREDEFINED and EXPAND_AS_DEFINED tags.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES (the default) the includes files
 # pointed to by INCLUDE_PATH will be searched when a #include is found.
@@ -1581,7 +1582,8 @@ PREDEFINED             = __cplusplus                            \
                          S1_NS_CXXAPI_BEGIN=                    \
                          S1_NS_CXXAPI_END=                      \
                          S1_REBADGE(D,E,B)=B                    \
-                         S1TYPE_TYPEINFO_NAME(N,B)=N
+                         S1TYPE_TYPEINFO_NAME(N,B)=N            \
+                         S1_ARG_DEFAULT(X)==(X)
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

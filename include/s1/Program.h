@@ -9,6 +9,13 @@
 #include "s1/LibraryObject.h"
 
 #define S1TYPE_INFO_s1_Program   (s1_Program, S1TYPE_INFO_s1_LibraryObject)
+/**
+ * Intermediate program object, provides program information
+ * (e.g. program inputs and outputs) and stores per-program settings (e.g.
+ * parameter characteristics).
+ * \createdby s1_program_create_from_string()
+ * \extends s1_LibraryObject
+ */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_Program);
 
 S1TYPE_DECLARE_FWD(s1_Options);
@@ -20,6 +27,7 @@ S1TYPE_DECLARE_FWD(s1_Options);
  * \returns Whether setting the options succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \memberof s1_Program
  */
 S1_API s1_bool s1_program_set_options (s1_Program* program, s1_Options* options);
 /**
@@ -31,7 +39,9 @@ S1_API s1_bool s1_program_set_options (s1_Program* program, s1_Options* options)
  * In case of an error, \NULL is returned and the error status is saved in the library's
  * last error code.
  * \remarks You will \em not get back the object passed to s1_program_set_options().
+ * \memberof s1_Program
  */
+// FIXME: Is a "get" function, should not add a reference!
 S1_API s1_Options* s1_program_get_options (s1_Program* program);
 
 /**
@@ -41,6 +51,7 @@ S1_API s1_Options* s1_program_get_options (s1_Program* program);
  * \returns Whether changing the entry function succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \memberof s1_Program
  */
 S1_API s1_bool s1_program_set_entry_function (s1_Program* program, const char* name);
 /**
@@ -52,6 +63,7 @@ S1_API s1_bool s1_program_set_entry_function (s1_Program* program, const char* n
  * \remarks The default entry function name is \c main.
  *   The returned pointer is valid as long as the program object is valid and the entry
  *   function name wasn't changed.
+ * \memberof s1_Program
  */
 S1_API const char* s1_program_get_entry_function (s1_Program* program);
 
@@ -76,6 +88,7 @@ enum s1_InputFrequency
  * last error code.
  * \remarks Input variables are global variables and arguments to the
  *  entry function.
+ * \memberof s1_Program
  */
 S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, enum s1_InputFrequency freq);
 /**
@@ -87,6 +100,7 @@ S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* 
  * last error code.
  * \remarks If a variation frequency wasn't explicitly set for the
  *   given parameter a default frequency will be returned.
+ * \memberof s1_Program
  */
 S1_API enum s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param);
 
@@ -101,6 +115,7 @@ S1_API enum s1_InputFrequency s1_program_get_input_frequency (s1_Program* progra
  * In case of an error, the error status is saved in the library's
  * last error code.
  * \remarks Array input variables have a default size of 0.
+ * \memberof s1_Program
  */
 S1_API s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size);
 /**
@@ -110,6 +125,7 @@ S1_API s1_bool s1_program_set_input_array_size (s1_Program* program, const char*
  * \returns The input variable array size or <tt>(size_t)~0</tt> in case of an error.
  * In that case the error status is saved in the library's
  * last error code.
+ * \memberof s1_Program
  */
 S1_API size_t s1_program_get_input_array_size (s1_Program* program, const char* param);
 
@@ -119,9 +135,16 @@ S1_API size_t s1_program_get_input_array_size (s1_Program* program, const char* 
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+    /**
+     * Intermediate program object, provides program information
+     * (e.g. program inputs and outputs) and stores per-program settings (e.g.
+     * parameter characteristics).
+     * \createdby s1::Library::CreateProgramFromString()
+     */
     class Program : public S1_REBADGE(Program, s1_Program, LibraryObject)
     {
     public:
+      /// Smart pointer class for Program instances.
       typedef Ptr<Program> Pointer;
 
       /**
@@ -138,8 +161,6 @@ namespace s1
       /**
        * Get program compilation options.
        * \returns The program compilation options.
-       *   The returned object will already have a reference, release the reference
-       *   using s1_release().
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        * \remarks You will \em not get back the object passed to s1_program_set_options().

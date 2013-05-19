@@ -11,18 +11,40 @@
 #include "s1/Ptr.h"
 
 #define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
+/**
+ * Library object, generally serves as a factory
+ * for all available object types.
+ * Since libraries create all other object types it's the first
+ * object that needs to be called in order to use the Shader1 API.
+ * \createdby s1_create_library()
+ * \extends s1_Object
+ */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_Library);
 
 /**
  * Create a library object. A library object generally serves as a factory
  * for all available object types.
+ * \param out Pointer receiving the new library object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * \returns If successful, the return code fulfills #S1_SUCCESSFUL.
+ *   Otherwise, the return code is an error code indicating why the
+ *   library could not be created.
  */
 S1_API s1_ErrorCode s1_create_library (s1_Library** out);
 
-/// Return the last error code set by a failed function
+/**
+ * Return the last error code set by a function.
+ * \param lib Library request error code from.
+ * \memberof s1_Library
+ */
 // TODO: More docs on error handling, link
 S1_API s1_ErrorCode s1_library_get_last_error (s1_Library* lib);
-/// Reset the last error code (to #S1_SUCCESS)
+/**
+ * Reset the last error code (to #S1_SUCCESS).
+ * \param lib Library to clear error code on.
+ * \memberof s1_Library
+ */
 S1_API void s1_library_clear_last_error (s1_Library* lib);
 
 S1TYPE_DECLARE_FWD(s1_Options);
@@ -34,9 +56,44 @@ S1TYPE_DECLARE_FWD(s1_Options);
  *   using s1_release().
  * In case of an error, \NULL is returned and the error status is saved in the library's
  * last error code.
+ * \memberof s1_Library
  */
 S1_API s1_Options* s1_options_create (s1_Library* lib);
 
+/**\page compat_level Program compatibility levels
+ * Compability levels are for dealing with breaking changes as the
+ * Shader1 language grows and evolves over time. 
+ * As new features are added &ndash; or existing features receive
+ * bug fixes &ndash; there's always the possibility that compatibility
+ * issues arise. For example, a new language feature introduces a new
+ * reserved keyword, breaking programs using the same token as a regular
+ * identifier. Or a bug fix might cause semantics to change, but existing
+ * third-party users have come to rely on the &ldquo;broken&rdquo; semantics
+ * (and consequently, the fix does the reverse for them).
+ * 
+ * To address these issues, a &ldquo;compatibility level&rdquo; can be
+ * provided when creating a program object. This compatibility level
+ * controls available language features and semantics (e.g. a feature
+ * introducing a new reserved keyword is not made available, making
+ * it possible to continue using the keyword for other purposes).
+ * 
+ * The default compatibility level #S1_COMPATIBILITY_LATEST enables
+ * features and behaviour supported by the version of Shader1 you're
+ * currently building against. That means if you build against an old
+ * version, but use a newer library version at runtime, you will still
+ * obtain the behaviour you're expecting from the old version.
+ * Only if \em building against a newer version will make the
+ * new features available. (Conversely, if you build against a newer
+ * version of Shader1 but need legacy behaviour, you must specify this
+ * explicitly).
+ */
+
+/**\def S1_COMPATIBILITY_LATEST
+ * \hideinitializer
+ * Compability level: use highest level supported by the Shader1 version currently
+ * building against.
+ * \sa \ref compat_level
+ */
 #define S1_COMPATIBILITY_LATEST         0
 
 S1TYPE_DECLARE_FWD(s1_Program);
@@ -45,11 +102,14 @@ S1TYPE_DECLARE_FWD(s1_Program);
  * \param lib Parent library.
  * \param source Program source code. Must be encoded in UTF-8.
  * \param sourceSize Program source code size.
+ * \param compatLevel Program compatibility level.
+ *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
  * \returns A new program object.
  *   The returned object will already have a reference, release the reference
  *   using s1_release().
  * In case of an error, \NULL is returned and the error status is saved in the library's
  * last error code.
+ * \memberof s1_Library
  */
 S1_API s1_Program* s1_program_create_from_string (s1_Library* lib, const char* source,
                                                   size_t sourceSize,
@@ -66,6 +126,7 @@ S1TYPE_DECLARE_FWD(s1_Backend);
  *   using s1_release().
  * In case of an error, \NULL is returned and the error status is saved in the library's
  * last error code.
+ * \memberof s1_Library
  */
 S1_API s1_Backend* s1_backend_create (s1_Library* lib, const char* backend);
 
@@ -73,11 +134,27 @@ S1_API s1_Backend* s1_backend_create (s1_Library* lib, const char* backend);
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+    /**
+     * Library object, generally serves as a factory
+     * for all available object types.
+     * Since libraries create all other object types it's the first
+     * object that needs to be called in order to use the Shader1 API.
+     * \createdby s1::Library::Create()
+     */
     class Library : public S1_REBADGE(Library, s1_Library, Object)
     {
     public:
+      /// Smart pointer class for Library instances.
       typedef Ptr<Library> Pointer;
 
+      /**
+       * Create a library object. A library object generally serves as a factory
+       * for all available object types.
+       * \param lib Reference to a smart pointer receiving the new library object.
+       * \returns If successful, the return code fulfills #S1_SUCCESSFUL.
+       *   Otherwise, the return code is an error code indicating why the
+       *   library could not be created.
+       */
       static ErrorCode Create (Pointer& lib)
       {
         s1_Library* p (0);
@@ -89,26 +166,57 @@ namespace s1
         return err;
       }
       
+      /**
+       * Return the last error code set by a function.
+      */
       ErrorCode GetLastError()
       {
         return s1_library_get_last_error (Cpointer());
       }
+      /**
+       * Reset the last error code (to #S1_SUCCESS).
+       */
       void ClearLastError ()
       {
         s1_library_clear_last_error (Cpointer());
       }
       
+      /**
+       * Create a compiler options objects.
+       * \param lib Parent library.
+       * \returns The new compiler options objects.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+      */
       CPtr<s1_Options> CreateOptions ()
       {
         return CPtr<s1_Options> (s1_options_create (Cpointer()), CPtr<s1_Options>::TakeReference ());
       }
       
+      /**
+       * Create a program object from a string.
+       * \param source Program source code. Must be encoded in UTF-8.
+       * \param sourceSize Program source code size.
+       * \param compatLevel Program compatibility level.
+       *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
+       * \returns A new program object.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+       */
       CPtr<s1_Program> CreateProgramFromString (const char* source, size_t sourceSize,
                                                 unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
         return CPtr<s1_Program> (s1_program_create_from_string (Cpointer(), source, sourceSize, compatLevel),
                                  CPtr<s1_Program>::TakeReference ());
       }
+      /**
+       * Create a backend object.
+       * \param backend Name of the backend to create.
+       *   Currently only <tt>"cg"</tt> is supported.
+       * \returns A new backend object.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+       */
       CPtr<s1_Backend> CreateBackend (const char* backend)
       {
         return CPtr<s1_Backend> (s1_backend_create (Cpointer(), backend),

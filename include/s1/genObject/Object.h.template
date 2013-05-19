@@ -22,8 +22,17 @@
  * Workaround: Keep pseudo-classes empty, and provide cast functionality
  * through a helper method.
  */
+/**\def S1TYPE_CAST(Type, x)
+ * \hideinitializer
+ * Downcast a pointer to a public API object to a (base) type.
+ * Provides some compile-time type safety (i.e. a cast will not
+ * compile if trying to cast to a type that's not a base class).
+ * \param Type Type to cast down to.
+ * \param x Pointer to cast down.
+ */
 #define S1TYPE_CAST(Type, x)    ((x)->BOOST_PP_CAT(cast_to_, Type)())
 
+#if !defined(DOXYGEN_RUN)
 #define _S1TYPE_CAST_MEMBER(d, state, T)                        \
   state                                                         \
   T* BOOST_PP_CAT(cast_to_, T)()                                \
@@ -51,6 +60,7 @@ namespace s1                                            \
   }                                                     \
 }                                                       \
 enum {}
+#endif
 
 #else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
@@ -80,14 +90,30 @@ typedef struct BOOST_PP_CAT(T, _s) T
 
 #endif // defined(__cplusplus)
 
+#if !defined(DOXYGEN_RUN)
 #define _S1TYPE_DECLARE_BODY(TYPEINFO, Body)        \
   _S1TYPE_DECLARE_BODY1(TYPEINFO, BOOST_PP_LIST_FIRST(TYPEINFO), Body)
 
 #define _S1TYPE_BODY_DUMMY()    void* reserved;
 #define _S1TYPE_BODY_EMPTY()
+#endif
 
 #if defined(__cplusplus)
+/**\def S1TYPE_DECLARE(TYPEINFO)
+ * \hideinitializer
+ * \internal
+ * Emits type declaration for type described in \c TYPEINFO as well as
+ * all necessary helpers to support casting/type-checking.
+ * \param TYPEINFO Type description. Is a Boost.PP tuple, the first element
+ *   is the name of the type, the second element is the type info for the
+ *   base class.
+ */
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_EMPTY)
+/**\def S1TYPE_DECLARE_FWD(TYPENAME)
+ * \hideinitializer
+ * \internal
+ * Forward-declare a type.
+ */
 #define S1TYPE_DECLARE_FWD(TYPENAME)   struct TYPENAME
 #else
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
@@ -110,21 +136,46 @@ namespace s1
 } // namespace s1
 #endif
 
-#if defined(__cplusplus) && defined(S1_BUILD)
-// Library-internal, s1_Object is declared empty
-_S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_EMPTY);
+#if defined(DOXYGEN_RUN)
+  S1TYPE_DECLARE(S1TYPE_INFO_s1_Object);
 #else
-/* Externally, s1_Object never appears empty.
- * (This is important so the empty base class optimization can be employed
- * to get the desired memory layout for the API classes.) */
-_S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_DUMMY);
+  #if defined(__cplusplus) && defined(S1_BUILD)
+  // Library-internal, s1_Object is declared empty
+  _S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_EMPTY);
+  #else
+  /* Externally, s1_Object never appears empty.
+  * (This is important so the empty base class optimization can be employed
+  * to get the desired memory layout for the API classes.) */
+  _S1TYPE_DECLARE_BODY(S1TYPE_INFO_s1_Object, _S1TYPE_BODY_DUMMY);
+  #endif
 #endif
 
-/// Add a reference to the object. Returns new reference count.
+/**
+ * Add a reference to the object. Returns new reference count.
+ * \param obj Object to add an reference to.
+ * \remarks In code, you can actually pass in any public API object,
+ *   not only those of type s1_Object, without a separate cast.
+ * \sa \ref refcounting
+ * \memberof s1_Object
+ */
 S1_API int s1_add_ref (s1_Object* obj);
-/// Release a reference to the object. Returns new reference count.
+/**
+ * Release a reference to the object. Returns new reference count.
+ * \param obj Object to release a reference from.
+ * \remarks In code, you can actually pass in any public API object,
+ *   not only those of type s1_Object, without a separate cast.
+ * \sa \ref refcounting
+ * \memberof s1_Object
+ */
 S1_API int s1_release (s1_Object* obj);
-/// Query reference count of an object. Useful for debugging purposes.
+/**
+ * Query reference count of an object. Useful for debugging purposes.
+ * \param obj Object to query reference count from.
+ * \remarks In code, you can actually pass in any public API object,
+ *   not only those of type s1_Object, without a separate cast.
+ * \sa \ref refcounting
+ * \memberof s1_Object
+ */
 S1_API int s1_get_ref_count (s1_Object* obj);
 
 #if !defined(DOXYGEN_RUN)
@@ -149,12 +200,19 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 #if defined(__cplusplus)
 //#include "s1/warn_off.h"
 
+#if !defined(DOXYGEN_RUN)
 // Macro so it can be overridden for Doxygen
 #define S1_REBADGE(D, E, B)   Rebadge<D, E, B>
+#endif
 
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+#if !defined(DOXYGEN_RUN)
+    /**
+     * \internal Base class for Object to disallow instantiation, copying,
+     * assignment, and manual destruction.
+     */
     class ObjectBase
     {
     private:
@@ -168,7 +226,6 @@ namespace s1
       ~ObjectBase ();
     };
 
-#if !defined(DOXYGEN_RUN)
     template<typename Derived, typename ExtType, typename BaseClass>
     class Rebadge : public BaseClass
     {
@@ -194,21 +251,73 @@ namespace s1
     };
 #endif
 
-    class Object : public S1_REBADGE(Object, s1_Object, ObjectBase)
+    /**
+     * Base class for public C++ API base objects.
+     * Provides reference counting facilities.
+     * All classes in the public API are derived from this class.
+     * \sa \ref refcounting
+     */
+    class Object
+#if !defined(DOXYGEN_RUN)
+      : public S1_REBADGE(Object, s1_Object, ObjectBase)
+#endif
     {
     public:
+      /**
+       * Add a reference to the object. Returns new reference count.
+       * \sa \ref refcounting
+       */
       int AddRef()
       {
         return s1_add_ref (Cpointer());
       }
+      /**
+       * Release a reference to the object. Returns new reference count.
+       * \sa \ref refcounting
+       */
       int Release()
       {
         return s1_release (Cpointer());
       }
+      /**
+       * Query reference count of an object. Useful for debugging purposes.
+       * \sa \ref refcounting
+       */
       int GetRefCount()
       {
         return s1_get_ref_count (Cpointer());
       }
+
+    #if defined(DOXYGEN_RUN)
+      /**\name Conversion to/from C API types
+       * @{ */
+      /**
+       * Obtain C API pointer from C++ objects.
+       * \tparam CType To C API type corresponding to the C++ API type.
+       *   This can be determined by simply adding the &ldquo;s1_&rdquo; prefix
+       *   to the C++ type name; e.g. s1_Object is the C type for s1::Object.
+       */
+      template<typename CType>
+      CType* Cpointer();
+      /// \copydoc Cpointer()
+      template<typename CType>
+      const CType* Cpointer() const;
+      /**
+       * Obtain C++ API object pointer from C pointer.
+       * \tparam CxxType To C++ API type corresponding to the C API type.
+       *   This can be determined by simply removing the &ldquo;s1_&rdquo; prefix
+       *   from the C type name; e.g. s1::Object is the C++ type for s1_Object.
+       * \tparam CType Type of the C API object. (Typically simply deduced by
+       *   the compiler).
+       * \param p Pointer to C API object.
+       */
+      template<typename CxxType, typename CType>
+      static CxxType* FromC (CType* p);
+      /// \copydoc FromC()
+      template<typename CxxType, typename CType>
+      static const CxxType* FromC (const CType* p);
+      /** @} */
+    #endif
     };
   S1_NS_CXXAPI_END
 
@@ -219,5 +328,49 @@ namespace s1
 
 //#include "s1/warn_on.h"
 #endif // defined(__cplusplus)
+
+/**\page refcounting Reference counting
+ *
+ * Reference counting controls the lifetime of public API objects.
+ * These can only be created and destroyed through API
+ * methods. The point of time when an object can be freed is determined
+ * by reference counting - when you start using an object you &ldquo;take&rdquo;
+ * (non-exclusive) ownership of an object by adding a reference. After you're
+ * done using it, release the reference &mdash; after the last reference was
+ * released, the object is automatically destroyed.
+ * 
+ * Some methods &ldquo;transfer&rdquo; ownership when returning an object,
+ * that is, a reference has already been added for you. In this case,
+ * you \em only need to release the reference.
+ * 
+ * Other methods, however, &ldquo;borrow&rdquo; you ownership when returning
+ * an objects, meaning a reference was \em not added. You can use the object
+ * as long as it's guaranteed that it is still &ldquo;alive&rdquo;. The
+ * conditions may vary from case to case, but typically, it's fine to use
+ * an object without adding a reference if you can ensure it's initially owning
+ * object (the one which borrowed you the reference) is valid. However, if
+ * you plan to keep a reference beyond the lifetime of the initially owning
+ * object, or if you're not sure the initially owning object is alive long
+ * enough, you should add a reference (and later release it) as usual.
+ * 
+ * As a rule of thumb, methods that &ldquo;<tt>create</tt>&rdquo; an object
+ * transfer a reference, while methods that &ldquo;<tt>get</tt>&rdquo; some
+ * object return a borrowed reference.
+ * 
+ * \par Reference counting in the C API
+ * * Add a reference: s1_add_ref()
+ * * Release a reference: s1_release()
+ * * Query reference count: s1_get_ref_count()
+ * 
+ * \par Reference counting in the C++ API
+ * \note The C++ API generally returns smart pointers to objects, so
+ * proper reference counting is done automatically. The explicit
+ * reference counting methods typically don't have to be used.
+ * 
+ * * Add a reference: s1::Object::AddRef()
+ * * Release a reference: s1::Object::Release()
+ * * Query reference count: s1::Object::GetRefCount()
+ * 
+ */
 
 #endif // __S1_OBJECT_H__
