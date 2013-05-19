@@ -67,7 +67,7 @@ typedef unsigned int s1_ResultCode;
 #define S1_FAILED(Code)                         (((Code) & S1_ERROR_FLAG) != 0)
 /**\def S1_WARNING(Code)
  * \hideinitializer
- * Check if a result code is a warning code (i.e. it's a success code,
+ * Check if a result code is a warning code (ie it's a success code,
  * but it's not #S1_SUCCESS).
  */
 #define S1_WARNING(Code)                        (S1_SUCCESSFUL(Code) && ((Code) != S1_SUCCESS))
@@ -122,17 +122,18 @@ typedef unsigned int s1_ResultCode;
 #define S1_E_OUT_OF_MEMORY                      S1_MAKE_ERROR(S1_RESULT_COMP_BASE, 1)
 /**\def S1_E_INVALID_ARG
  * \hideinitializer
- * Some argument was invalid (e.g. a pointer was \NULL).
+ * Some argument was invalid (eg a pointer was \NULL).
  * \remarks You need to use the #S1_ERROR_EQUAL flag to check for this error code.
  */
 #define S1_E_INVALID_ARG                        S1_MAKE_ERROR(S1_RESULT_COMP_BASE, 2)
 /**\def S1_E_INVALID_ARG_N(N)
  * \hideinitializer
- * A specific argument was invalid (e.g. a pointer was \NULL).
+ * A specific argument was invalid (eg a pointer was \NULL).
  * \a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
  * has index 0. But note that for functions taking an object instance as the first argument that
  * argument is \em not included when counting the invalid argument number.
- * (Note that passing an invalid object instance instead typically results in a crash.)
+ * (This is not really incur a loss of information &ndash; in this case, there wouldn't be
+ * a way to obtain a library to set the error code on anyway.)
  */
 #define S1_E_INVALID_ARG_N(N)                   S1_MAKE_ERROR_X(S1_RESULT_COMP_BASE, 2, (N ## u) + 1)
 /** @} */

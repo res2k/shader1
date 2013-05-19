@@ -183,7 +183,6 @@ namespace s1
       
       /**
        * Create a compiler options objects.
-       * \param lib Parent library.
        * \returns The new compiler options objects.
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.

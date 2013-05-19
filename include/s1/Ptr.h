@@ -18,21 +18,25 @@ namespace s1
       /* NOTE: If you get an 'undefined reference' from here, it means
        * you're trying to use a CPtr<> instance for a type that has
        * only been forward-declared. */
+      /// Adds reference to \a obj.
       template<typename T>
       static void Ref (T* obj) { s1_add_ref (detail::CastToObject (obj)); }
+      /// Removes a reference from \a obj.
       template<typename T>
       static void Release (T* obj) { s1_release (detail::CastToObject (obj)); }
     };
     /**
      * CPtr<> reference handling trait: Ignore references.
-     * \remarks This type is intended for optimization purposes, i.e.
+     * \warning This type is intended for optimization purposes, i.e.
      *  in method arguments to avoid unnecessary s1_add_ref/s1_release calls.
      *  Do not use this type to permanently store an object pointer!
      */
     struct Uncounted
     {
+      /// Does nothing
       template<typename T>
       static void Ref (T* obj) { }
+      /// Does nothing
       template<typename T>
       static void Release (T* obj) { }
     };
@@ -55,31 +59,44 @@ namespace s1
   private:
     T* obj;
   public:
+    /// Tag for reference-taking constructor.
     struct TakeReference {};
-    
+
+    /// Construct with a \NULL pointer.
     CPtr () : obj (0) {}
+    /// Construct from \a p, adding a reference
     CPtr (T* p) : obj (p)
     {
       if (p) Ref::Ref (p);
     }
+    /// Construct from \a p, never adding a reference
     CPtr (T* p, TakeReference) : obj (p) { }
+    /// Copy from \a other, adding a reference
     template<typename OtherRef>
     CPtr (const CPtr<T, OtherRef>& other) : obj (0) { reset (other.get()); }
+    /// Releases reference
     ~CPtr()
     {
       if (obj) Ref::Release (obj);
     }
     
+    /**
+     * Replace the currently stored pointer.
+     * To the new pointer a reference is added, and from the old
+     * pointer a reference is removed.
+     */
     void reset (T* p = 0)
     {
       if (p) Ref::Ref (p);
       if (obj) Ref::Release (obj);
       obj = p;
     }
+    /// Return the stored pointer.
     T* get() const
     {
       return obj;
     }
+    /// Return the stored pointer.
     operator T* () const
     {
       return obj;
@@ -87,7 +104,7 @@ namespace s1
     /**
      * Hand over ownership of a pointer.
      * Returns the stored pointer and clears it internally.
-     * Does not release a reference to the pointer!
+     * Never releases the reference to the pointer!
      */
     T* detach()
     {
@@ -96,6 +113,7 @@ namespace s1
       return p;
     }
     
+    /// Copy from \a other, adding a reference
     template<typename OtherRef>
     CPtr& operator= (const CPtr<T, OtherRef>& other)
     {
@@ -103,10 +121,12 @@ namespace s1
       return *this;
     }
 
+    /// Dereference stored pointer.
     T& operator* () const
     {
       return *obj;
     }
+    /// Dereference stored pointer.
     T* operator-> () const
     {
       return obj;
@@ -120,33 +140,52 @@ namespace s1
   private:
     T* obj;
   public:
+    /// Tag for reference-taking constructor.
     struct TakeReference {};
     
+    /// Construct with a \NULL pointer.
     Ptr () : obj (0) {}
+    /// Construct from \a p, adding a reference
     Ptr (T* p) : obj (p)
     {
       s1_add_ref (p->Cpointer());
     }
+    /// Construct from \a p, never adding a reference
     Ptr (T* p, TakeReference) : obj (p) { }
+    /// Construct from \a p, adding a reference
     Ptr (typename T::CType* p) : obj (T::FromC (p))
     {
       s1_add_ref (p);
     }
+    /// Construct from \a p, never adding a reference
     Ptr (typename T::CType* p, TakeReference) : obj (T::FromC (p)) { }
+    /// Copy from \a other, adding a reference
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
+    /// Copy from \a other, adding a reference
     template<typename T2, typename CPtrRef>
     Ptr (const CPtr<T2, CPtrRef>& other) : obj (0) { reset (T::FromC (other)); }
+    /// Releases reference
     ~Ptr()
     {
       if (obj) s1_release (obj->Cpointer());
     }
     
+    /**
+     * Replace the currently stored pointer.
+     * To the new pointer a reference is added, and from the old
+     * pointer a reference is removed.
+     */
     void reset (T* p = 0)
     {
       if (p) s1_add_ref (p->Cpointer());
       if (obj) s1_release (obj->Cpointer());
       obj = p;
     }
+    /**
+     * Replace the currently stored pointer.
+     * To the new pointer a reference is added, and from the old
+     * pointer a reference is removed.
+     */
     void reset (typename T::CType* p)
     {
       if (p) s1_add_ref (p);
@@ -163,10 +202,12 @@ namespace s1
       if (obj) s1_release (obj->Cpointer());
       obj = p;
     }
+    /// Return the stored pointer.
     T* get() const
     {
       return obj;
     }
+    /// Return the stored pointer.
     operator T* () const
     {
       return obj;
@@ -183,33 +224,39 @@ namespace s1
       return p;
     }
     
+    /// Copy from \a other, adding a reference
     Ptr& operator= (const Ptr& other)
     {
       reset (other.obj);
       return *this;
     }
+    /// Copy from \a other, adding a reference
     template<typename T2, typename CPtrRef>
     Ptr& operator= (const CPtr<T2, CPtrRef>& other)
     {
       reset (T::FromC (other));
       return *this;
     }
+    /// Copy from \a other, adding a reference
     Ptr& operator= (typename T::CType* other)
     {
       reset (other);
       return *this;
     }
 
+    /// Convert to a CPtr<>
     template<typename CPtrRef>
     operator CPtr<typename T::CType, CPtrRef> () const
     {
       return CPtr<typename T::CType, CPtrRef> (obj->Cpointer());
     }
 
+    /// Dereference stored pointer.
     T& operator* () const
     {
       return *obj;
     }
+    /// Dereference stored pointer.
     T* operator-> () const
     {
       return obj;
