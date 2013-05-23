@@ -246,7 +246,7 @@ namespace s1
       }
       static const Derived* FromC (const ExtType* p)
       {
-        return static_cast<Derived*> (reinterpret_cast<const BaseClass*> (p));
+        return static_cast<const Derived*> (reinterpret_cast<const BaseClass*> (p));
       }
     };
 #endif
