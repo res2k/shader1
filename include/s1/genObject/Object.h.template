@@ -9,19 +9,29 @@
 #include <boost/preprocessor/facilities/expand.hpp>
 #include <boost/preprocessor/list/fold_right.hpp>
 #include <boost/preprocessor/list/for_each.hpp>
+#include <boost/preprocessor/tuple/elem.hpp>
 //#include "preprocessor.h"
 
 //#include "s1/defs.h"
 
+#if !defined(DOXYGEN_RUN)
+// Extract the C type name from a type name tuple.
+#define _S1TYPE_TYPENAME_CNAME(IMPLINFO)          BOOST_PP_TUPLE_ELEM(2, 0, IMPLINFO)
+// Extract the C type name from a type info.
+#define _S1TYPE_TYPEINFO_CNAME(TYPEINFO)          _S1TYPE_TYPENAME_CNAME(BOOST_PP_LIST_FIRST(TYPEINFO))
+// Extract the C++ identifier tuple from a type name tuple.
+#define _S1TYPE_TYPENAME_CXXINFO(IMPLINFO)        BOOST_PP_TUPLE_ELEM(2, 1, IMPLINFO)
+// Extract the C++ forward declaration from a type name tuple.
+#define _S1TYPE_TYPENAME_CXXFWD(IMPLINFO)         BOOST_PP_TUPLE_ELEM(2, 0, _S1TYPE_TYPENAME_CXXINFO(IMPLINFO))
+// Extract the C++ forward declaration from a type info.
+#define _S1TYPE_TYPEINFO_CXXFWD(TYPEINFO)         _S1TYPE_TYPENAME_CXXFWD(BOOST_PP_LIST_FIRST(TYPEINFO))
+// Extract the C++ type alias from a type name tuple.
+#define _S1TYPE_TYPENAME_CXXALIAS(IMPLINFO)       BOOST_PP_TUPLE_ELEM(2, 1, _S1TYPE_TYPENAME_CXXINFO(IMPLINFO))
+// Extract the C++ type alias from a type info.
+#define _S1TYPE_TYPEINFO_CXXALIAS(TYPEINFO)       _S1TYPE_TYPENAME_CXXALIAS(BOOST_PP_LIST_FIRST(TYPEINFO))
+#endif // #if !defined(DOXYGEN_RUN)
+
 #if defined(__cplusplus)
-/* C++ is tricky... externally, s1_Object should not appear empty.
- * However, it's descendants are used in multiple inheritance and
- * *must* be empty (lest the dummy member would figure into 
- * C++ wrappers once for each derivation level).
- * 
- * Workaround: Keep pseudo-classes empty, and provide cast functionality
- * through a helper method.
- */
 /**\def S1TYPE_CAST(Type, x)
  * \hideinitializer
  * Downcast a pointer to a public API object to a (base) type.
@@ -30,37 +40,17 @@
  * \param Type Type to cast down to.
  * \param x Pointer to cast down.
  */
-#define S1TYPE_CAST(Type, x)    ((x)->BOOST_PP_CAT(cast_to_, Type)())
-
-#if !defined(DOXYGEN_RUN)
-#define _S1TYPE_CAST_MEMBER(d, state, T)                        \
-  state                                                         \
-  T* BOOST_PP_CAT(cast_to_, T)()                                \
-  { return reinterpret_cast<T*> (this); }                       \
-  const T* BOOST_PP_CAT(cast_to_, T)() const                    \
-  { return reinterpret_cast<const T*> (this); }
-#define _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                     \
-        BOOST_PP_LIST_FOLD_RIGHT(_S1TYPE_CAST_MEMBER,           \
-                                 BOOST_PP_EMPTY(),              \
-                                 TYPEINFO)
-
-#define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)        \
-struct T                                                \
-{                                                       \
-  Body()                                                \
-  _S1TYPE_MAKE_CAST_MEMBERS(TYPEINFO)                   \
-};                                                      \
-namespace s1                                            \
-{                                                       \
-  namespace detail                                      \
-  {                                                     \
-    template<>                                          \
-    inline s1_Object* CastToObject<T> (T* x)            \
-    { return S1TYPE_CAST(s1_Object, x); }               \
-  }                                                     \
-}                                                       \
-enum {}
-#endif
+#define S1TYPE_CAST(Type, x)    (static_cast<Type*> (x))
+#define _S1TYPE_DECLARE_BODY1(TYPEINFO, T, Body)                \
+  _S1TYPE_TYPEINFO_CXXFWD(TYPEINFO)                             \
+  typedef _S1TYPE_TYPEINFO_CXXALIAS(TYPEINFO) T
+/**\def S1_CXXTYPE_IMPL(Type)
+ * \hideinitializer
+ * \internal
+ * Make a type name tuple for the Shader public API.
+ */
+#define S1_CXXTYPE_IMPL(Type)                           \
+  (namespace s1 { namespace cxxapi { class Type; } }, s1::cxxapi::Type)
 
 #else // defined(__cplusplus)
 // Provide a pseudo-casting mechanism for public API types
@@ -80,7 +70,8 @@ struct BOOST_PP_CAT(T, _s)                              \
 };                                                      \
 typedef struct BOOST_PP_CAT(T, _s) T
 
-#define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     state BOOST_PP_CAT(T, _Type) T;
+#define _S1TYPE_ANCESTRY_ENTRY1(state, T)       state BOOST_PP_CAT(T, _Type) T;
+#define _S1TYPE_ANCESTRY_ENTRY(d, state, T)     _S1TYPE_ANCESTRY_ENTRY1(state, _S1TYPE_TYPENAME_CNAME(T))
 #define _S1TYPE_ANCESTRY(TYPEINFO)                              \
         BOOST_PP_LIST_FOLD_RIGHT(_S1TYPE_ANCESTRY_ENTRY,        \
                                  BOOST_PP_EMPTY(),              \
@@ -92,7 +83,7 @@ typedef struct BOOST_PP_CAT(T, _s) T
 
 #if !defined(DOXYGEN_RUN)
 #define _S1TYPE_DECLARE_BODY(TYPEINFO, Body)        \
-  _S1TYPE_DECLARE_BODY1(TYPEINFO, BOOST_PP_LIST_FIRST(TYPEINFO), Body)
+  _S1TYPE_DECLARE_BODY1(TYPEINFO, _S1TYPE_TYPEINFO_CNAME(TYPEINFO), Body)
 
 #define _S1TYPE_BODY_DUMMY()    void* reserved;
 #define _S1TYPE_BODY_EMPTY()
@@ -105,36 +96,40 @@ typedef struct BOOST_PP_CAT(T, _s) T
  * Emits type declaration for type described in \c TYPEINFO as well as
  * all necessary helpers to support casting/type-checking.
  * \param TYPEINFO Type description. Is a Boost.PP tuple, the first element
- *   is the name of the type, the second element is the type info for the
+ *   is a type name t, the second element is the type info for the
  *   base class.
  */
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_EMPTY)
+/**\def S1TYPE_DECLARE_FWD(IMPLINFO)
+ * \hideinitializer
+ * \internal
+ * Forward-declare a type. Takes a &lsquo;raw&rsquo; type name tuple.
+ */
+#define S1TYPE_DECLARE_FWD_RAW(IMPLINFO)                \
+  _S1TYPE_TYPENAME_CXXFWD(IMPLINFO)                     \
+  typedef _S1TYPE_TYPENAME_CXXALIAS(IMPLINFO) _S1TYPE_TYPENAME_CNAME(IMPLINFO)
+#else // defined(__cplusplus)
+#define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
+#define _S1TYPE_DECLARE_FWD_RAW_1(TYPENAME)                     \
+  struct BOOST_PP_CAT(TYPENAME, _s);                            \
+  typedef struct BOOST_PP_CAT(TYPENAME, _s) TYPENAME
+#define S1TYPE_DECLARE_FWD_RAW(TYPEINFO)        _S1TYPE_DECLARE_FWD_RAW_1(_S1TYPE_TYPENAME_CNAME(TYPEINFO))
+#endif
+
+/**\def S1_TYPE_MAKE_NAME(Name)
+ * \hideinitializer
+ * \internal
+ * Make a type name tuple for the Shader1 API.
+ */
+#define S1_TYPE_MAKE_NAME(Name)         (BOOST_PP_CAT(s1_, Name), S1_CXXTYPE_IMPL(Name))
 /**\def S1TYPE_DECLARE_FWD(TYPENAME)
  * \hideinitializer
  * \internal
- * Forward-declare a type.
+ * Forward-declare a type. Uses #S1_TYPE_MAKE_NAME to generate type name tuple.
  */
-#define S1TYPE_DECLARE_FWD(TYPENAME)   struct TYPENAME
-#else
-#define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
-#define S1TYPE_DECLARE_FWD(TYPENAME)                    \
-  struct BOOST_PP_CAT(TYPENAME, _s);                    \
-  typedef struct BOOST_PP_CAT(TYPENAME, _s) TYPENAME
-#endif
+#define S1TYPE_DECLARE_FWD(TYPENAME)    S1TYPE_DECLARE_FWD_RAW(S1_TYPE_MAKE_NAME(TYPENAME))
 
-#define S1TYPE_INFO_s1_Object	(s1_Object, BOOST_PP_NIL)
-
-#if defined(__cplusplus)
-struct s1_Object;
-namespace s1
-{
-  namespace detail
-  {
-    template<typename T>
-    static S1_FORCEINLINE s1_Object* CastToObject (T* x);
-  } // namespace cxxapi
-} // namespace s1
-#endif
+#define S1TYPE_INFO_s1_Object	(S1_TYPE_MAKE_NAME(Object), BOOST_PP_NIL)
 
 #if defined(DOXYGEN_RUN)
   S1TYPE_DECLARE(S1TYPE_INFO_s1_Object);
@@ -200,14 +195,17 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 #if defined(__cplusplus)
 //#include "s1/warn_off.h"
 
-#if !defined(DOXYGEN_RUN)
-// Macro so it can be overridden for Doxygen
-#define S1_REBADGE(D, E, B)   Rebadge<D, E, B>
-#endif
+#if !defined(S1_BUILD)
+#define S1_CXXAPI_EXTERNAL(T)                                     \
+  namespace s1 { typedef cxxapi::T T; }
+#else
+#define S1_CXXAPI_EXTERNAL(T)
+#endif // !defined(S1_BUILD)
 
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
+
 #if !defined(DOXYGEN_RUN)
     /**
      * \internal Base class for Object to disallow instantiation, copying,
@@ -225,30 +223,6 @@ namespace s1
       ObjectBase& operator=(const ObjectBase&);
       ~ObjectBase ();
     };
-
-    template<typename Derived, typename ExtType, typename BaseClass>
-    class Rebadge : public BaseClass
-    {
-    public:
-      typedef ExtType CType;
-
-      ExtType* Cpointer()
-      {
-        return reinterpret_cast<ExtType*> (this);
-      }
-      const ExtType* Cpointer() const
-      {
-        return reinterpret_cast<const ExtType*> (this);
-      }
-      static Derived* FromC (ExtType* p)
-      {
-        return static_cast<Derived*> (reinterpret_cast<BaseClass*> (p));
-      }
-      static const Derived* FromC (const ExtType* p)
-      {
-        return static_cast<const Derived*> (reinterpret_cast<const BaseClass*> (p));
-      }
-    };
 #endif
 
     /**
@@ -258,9 +232,9 @@ namespace s1
      * \sa \ref refcounting
      */
     class Object
-#if !defined(DOXYGEN_RUN)
-      : public S1_REBADGE(Object, s1_Object, ObjectBase)
-#endif
+#if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
+      : public ObjectBase
+#endif // !defined(S1_BUILD)
     {
     public:
       /**
@@ -269,7 +243,7 @@ namespace s1
        */
       int AddRef()
       {
-        return s1_add_ref (Cpointer());
+        return s1_add_ref (this);
       }
       /**
        * Release a reference to the object. Returns new reference count.
@@ -277,7 +251,7 @@ namespace s1
        */
       int Release()
       {
-        return s1_release (Cpointer());
+        return s1_release (this);
       }
       /**
        * Query reference count of an object. Useful for debugging purposes.
@@ -285,40 +259,10 @@ namespace s1
        */
       int GetRefCount()
       {
-        return s1_get_ref_count (Cpointer());
+        return s1_get_ref_count (this);
       }
-
-    #if defined(DOXYGEN_RUN)
-      /**\name Conversion to/from C API types
-       * @{ */
-      /**
-       * Obtain C API pointer from C++ objects.
-       * \tparam CType To C API type corresponding to the C++ API type.
-       *   This can be determined by simply adding the &ldquo;s1_&rdquo; prefix
-       *   to the C++ type name; e.g. s1_Object is the C type for s1::Object.
-       */
-      template<typename CType>
-      CType* Cpointer();
-      /// \copydoc Cpointer()
-      template<typename CType>
-      const CType* Cpointer() const;
-      /**
-       * Obtain C++ API object pointer from C pointer.
-       * \tparam CxxType To C++ API type corresponding to the C API type.
-       *   This can be determined by simply removing the &ldquo;s1_&rdquo; prefix
-       *   from the C type name; e.g. s1::Object is the C++ type for s1_Object.
-       * \tparam CType Type of the C API object. (Typically simply deduced by
-       *   the compiler).
-       * \param p Pointer to C API object.
-       */
-      template<typename CxxType, typename CType>
-      static CxxType* FromC (CType* p);
-      /// \copydoc FromC()
-      template<typename CxxType, typename CType>
-      static const CxxType* FromC (const CType* p);
-      /** @} */
-    #endif
     };
+    
   S1_NS_CXXAPI_END
 
 #if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)

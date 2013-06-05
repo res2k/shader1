@@ -8,9 +8,9 @@
 
 #include "s1/Ptr.h"
 
-S1TYPE_DECLARE_FWD(s1_Library);
+S1TYPE_DECLARE_FWD(Library);
 
-#define S1TYPE_INFO_s1_LibraryObject   (s1_LibraryObject, S1TYPE_INFO_s1_Object)
+#define S1TYPE_INFO_s1_LibraryObject   (S1_TYPE_MAKE_NAME(LibraryObject), S1TYPE_INFO_s1_Object)
 /**
  * Base class for all objects created by a Library directly or
  * some LibraryObject descendant.
@@ -35,7 +35,7 @@ namespace s1
      * some LibraryObject descendant.
      * Can be used to query to which library an object belongs to.
      */
-    class LibraryObject : public S1_REBADGE(LibraryObject, s1_LibraryObject, Object)
+    class LibraryObject : public Object
     {
     public:
       /// Smart pointer class for LibraryObject instances.
@@ -47,7 +47,7 @@ namespace s1
       // TODO: Better return Library* (C++ type)
       s1_Library* GetLibrary()
       {
-        return s1_libraryobject_get_library (Cpointer());
+        return s1_libraryobject_get_library (this);
       }
     };
   S1_NS_CXXAPI_END

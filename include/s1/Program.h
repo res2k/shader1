@@ -8,7 +8,7 @@
 
 #include "s1/LibraryObject.h"
 
-#define S1TYPE_INFO_s1_Program   (s1_Program, S1TYPE_INFO_s1_LibraryObject)
+#define S1TYPE_INFO_s1_Program   (S1_TYPE_MAKE_NAME(Program), S1TYPE_INFO_s1_LibraryObject)
 /**
  * Intermediate program object, provides program information
  * (e.g. program inputs and outputs) and stores per-program settings (e.g.
@@ -18,7 +18,7 @@
  */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_Program);
 
-S1TYPE_DECLARE_FWD(s1_Options);
+S1TYPE_DECLARE_FWD(Options);
 
 /**
  * Set program compilation options.
@@ -141,7 +141,7 @@ namespace s1
      * parameter characteristics).
      * \createdby s1::Library::CreateProgramFromString()
      */
-    class Program : public S1_REBADGE(Program, s1_Program, LibraryObject)
+    class Program : public LibraryObject
     {
     public:
       /// Smart pointer class for Program instances.
@@ -154,9 +154,9 @@ namespace s1
        * In case of an error, the error status is saved in the library's
        * last error code.
        */
-      bool SetOptions (const CPtr<s1_Options, ref_traits::Uncounted>& options)
+      bool SetOptions (Options* options)
       {
-        return s1_program_set_options (Cpointer(), options);
+        return s1_program_set_options (this, options);
       }
       /**
        * Get program compilation options.
@@ -165,9 +165,9 @@ namespace s1
        * last error code.
        * \remarks You will \em not get back the object passed to s1_program_set_options().
        */
-      CPtr<s1_Options> GetOptions ()
+      TransferRefPtr<Options> GetOptions ()
       {
-        return CPtr<s1_Options> (s1_program_get_options (Cpointer()), CPtr<s1_Options>::TakeReference ());
+        return s1_program_get_options (this);
       }
 
       /**
@@ -179,7 +179,7 @@ namespace s1
        */
       bool SetEntryFunction (const char* name)
       {
-        return s1_program_set_entry_function (Cpointer(), name);
+        return s1_program_set_entry_function (this, name);
       }
 
       /**
@@ -193,7 +193,7 @@ namespace s1
        */
       bool GetEntryFunction ()
       {
-        return s1_program_get_entry_function (Cpointer());
+        return s1_program_get_entry_function (this);
       }
 
       /**
@@ -208,7 +208,7 @@ namespace s1
        */
       bool SetInputFrequency (const char* param, s1_InputFrequency freq)
       {
-        return s1_program_set_input_frequency (Cpointer(), param, freq);
+        return s1_program_set_input_frequency (this, param, freq);
       }
 
       /**
@@ -222,7 +222,7 @@ namespace s1
        */
       s1_InputFrequency GetInputFrequency (const char* param)
       {
-        return s1_program_get_input_frequency (Cpointer(), param);
+        return s1_program_get_input_frequency (this, param);
       }
 
       /**
@@ -236,7 +236,7 @@ namespace s1
        */
       bool SetInputArraySize (const char* param, size_t size)
       {
-        return s1_program_set_input_array_size (Cpointer(), param, size);
+        return s1_program_set_input_array_size (this, param, size);
       }
       /**
        * Get the size of an array program input variable.
@@ -247,7 +247,7 @@ namespace s1
        */
       size_t GetInputArraySize (const char* param)
       {
-        return s1_program_get_input_array_size (Cpointer(), param);
+        return s1_program_get_input_array_size (this, param);
       }
 
     };

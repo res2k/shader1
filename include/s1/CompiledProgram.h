@@ -8,7 +8,7 @@
 
 #include "s1/LibraryObject.h"
 
-#define S1TYPE_INFO_s1_CompiledProgram   (s1_CompiledProgram, S1TYPE_INFO_s1_LibraryObject)
+#define S1TYPE_INFO_s1_CompiledProgram   (S1_TYPE_MAKE_NAME(CompiledProgram), S1TYPE_INFO_s1_LibraryObject)
 /**
  * Compiled program object.
  * Produced by a backend, encapsulates a program compiled to a specific target
@@ -40,7 +40,7 @@ namespace s1
      * shader language and shading stage.
      * \createdby s1::Backend::GenerateProgram().
      */
-    class CompiledProgram : public S1_REBADGE(CompiledProgram, s1_CompiledProgram, LibraryObject)
+    class CompiledProgram : public LibraryObject
     {
     public:
       /// Smart pointer class for CompiledProgram instances.
@@ -56,7 +56,7 @@ namespace s1
        */
       const char* GetString ()
       {
-        return s1_compiledprogram_get_string (Cpointer());;
+        return s1_compiledprogram_get_string (this);;
       }
 
     };

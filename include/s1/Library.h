@@ -10,7 +10,7 @@
 #include "s1/Object.h"
 #include "s1/Ptr.h"
 
-#define S1TYPE_INFO_s1_Library   (s1_Library, S1TYPE_INFO_s1_Object)
+#define S1TYPE_INFO_s1_Library   (S1_TYPE_MAKE_NAME(Library), S1TYPE_INFO_s1_Object)
 /**
  * Library object, generally serves as a factory
  * for all available object types.
@@ -47,7 +47,7 @@ S1_API s1_ResultCode s1_library_get_last_error (s1_Library* lib);
  */
 S1_API void s1_library_clear_last_error (s1_Library* lib);
 
-S1TYPE_DECLARE_FWD(s1_Options);
+S1TYPE_DECLARE_FWD(Options);
 /**
  * Create a compiler options objects.
  * \param lib Parent library.
@@ -96,7 +96,7 @@ S1_API s1_Options* s1_options_create (s1_Library* lib);
  */
 #define S1_COMPATIBILITY_LATEST         0
 
-S1TYPE_DECLARE_FWD(s1_Program);
+S1TYPE_DECLARE_FWD(Program);
 /**
  * Create a program object from a string.
  * \param lib Parent library.
@@ -115,7 +115,7 @@ S1_API s1_Program* s1_program_create_from_string (s1_Library* lib, const char* s
                                                   size_t sourceSize,
                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
-S1TYPE_DECLARE_FWD(s1_Backend);
+S1TYPE_DECLARE_FWD(Backend);
 /**
  * Create a backend object.
  * \param lib Parent library.
@@ -136,12 +136,12 @@ namespace s1
   S1_NS_CXXAPI_BEGIN
     /**
      * Library object, generally serves as a factory
-     * for all available object types.
-     * Since libraries create all other object types it's the first
+     * for all available object types.t
      * object that needs to be called in order to use the Shader1 API.
+     * Since libraries create all other object types it's the firs
      * \createdby s1::Library::Create()
      */
-    class Library : public S1_REBADGE(Library, s1_Library, Object)
+    class Library : public Object
     {
     public:
       /// Smart pointer class for Library instances.
@@ -161,7 +161,7 @@ namespace s1
         ResultCode err = s1_create_library (&p);
         if (S1_SUCCESSFUL(err))
         {
-          lib.take (FromC (p));
+          lib.take (p);
         }
         return err;
       }
@@ -169,16 +169,16 @@ namespace s1
       /**
        * Return the last error code set by a function.
       */
-      ResultCode GetLastError()
+      s1::ResultCode GetLastError()
       {
-        return s1_library_get_last_error (Cpointer());
+        return s1_library_get_last_error (this);
       }
       /**
        * Reset the last error code (to #S1_SUCCESS).
        */
       void ClearLastError ()
       {
-        s1_library_clear_last_error (Cpointer());
+        s1_library_clear_last_error (this);
       }
       
       /**
@@ -187,9 +187,9 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
       */
-      CPtr<s1_Options> CreateOptions ()
+      TransferRefPtr<Options, PtrCleanupUnsafe> CreateOptions ()
       {
-        return CPtr<s1_Options> (s1_options_create (Cpointer()), CPtr<s1_Options>::TakeReference ());
+        return s1_options_create (this);
       }
       
       /**
@@ -202,11 +202,10 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      CPtr<s1_Program> CreateProgramFromString (const char* source, size_t sourceSize,
-                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
+      TransferRefPtr<Program, PtrCleanupUnsafe> CreateProgramFromString (const char* source, size_t sourceSize,
+                                                                         unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
-        return CPtr<s1_Program> (s1_program_create_from_string (Cpointer(), source, sourceSize, compatLevel),
-                                 CPtr<s1_Program>::TakeReference ());
+        return s1_program_create_from_string (this, source, sourceSize, compatLevel);
       }
       /**
        * Create a backend object.
@@ -216,10 +215,9 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      CPtr<s1_Backend> CreateBackend (const char* backend)
+      TransferRefPtr<Backend, PtrCleanupUnsafe> CreateBackend (const char* backend)
       {
-        return CPtr<s1_Backend> (s1_backend_create (Cpointer(), backend),
-                                 CPtr<s1_Backend>::TakeReference ());
+        return s1_backend_create (this, backend);
       }
     };
   S1_NS_CXXAPI_END

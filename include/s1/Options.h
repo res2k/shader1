@@ -8,7 +8,7 @@
 
 #include "s1/LibraryObject.h"
 
-#define S1TYPE_INFO_s1_Options   (s1_Options, S1TYPE_INFO_s1_LibraryObject)
+#define S1TYPE_INFO_s1_Options   (S1_TYPE_MAKE_NAME(Options), S1TYPE_INFO_s1_LibraryObject)
 /**
  * Program compilation options.
  * Encapsulates compiler settings likely to be used across a number of
@@ -106,7 +106,7 @@ namespace s1
      * compiled programs.
      * \createdby s1::Library::CreateOptions()
      */
-    class Options : public S1_REBADGE(Options, s1_Options, LibraryObject)
+    class Options : public LibraryObject
     {
     public:
       /// Smart pointer class for Options instances.
@@ -122,7 +122,7 @@ namespace s1
        */
       bool SetOptFlag (s1_Optimization opt, bool enable)
       {
-        return s1_options_set_opt_flag (Cpointer(), opt, enable);
+        return s1_options_set_opt_flag (this, opt, enable);
       }
       
       /**
@@ -136,7 +136,7 @@ namespace s1
        */
       bool GetOptFlag (s1_Optimization opt)
       {
-        return s1_options_get_opt_flag (Cpointer(), opt);
+        return s1_options_get_opt_flag (this, opt);
       }
 
       /**
@@ -150,7 +150,7 @@ namespace s1
       */
       bool SetOptLevel (int level)
       {
-        return s1_options_set_opt_level (Cpointer(), level);
+        return s1_options_set_opt_level (this, level);
       }
           
       /**
@@ -168,7 +168,7 @@ namespace s1
       bool ParseOptFlagStr (const char* flagStr, s1_Optimization& opt, bool& flag)
       {
         s1_bool ret_flag;
-        bool ret (s1_options_parse_opt_flag_str (Cpointer(), flagStr, &opt, &ret_flag));
+        bool ret (s1_options_parse_opt_flag_str (this, flagStr, &opt, &ret_flag));
         if (!ret) return false;
         flag = ret_flag;
         return true;
@@ -185,7 +185,7 @@ namespace s1
        */
       bool SetOptFlagFromStr (const char* flagStr)
       {
-        return s1_options_set_opt_flag_from_str (Cpointer(), flagStr);
+        return s1_options_set_opt_flag_from_str (this, flagStr);
       }
     };
   S1_NS_CXXAPI_END

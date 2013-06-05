@@ -4,8 +4,9 @@
 #include "s1/Object.h"
 #include "s1/Ptr.h"
 
-#define TYPE_INFO_TestA   (TestA, S1TYPE_INFO_s1_Object)
-#define TYPE_INFO_TestA2  (TestA2, TYPE_INFO_TestA)
+#define TEST_MAKE_NAME(N) (N, (namespace cxxapi { class N; }, ::cxxapi::N))
+#define TYPE_INFO_TestA   (TEST_MAKE_NAME(TestA), S1TYPE_INFO_s1_Object)
+#define TYPE_INFO_TestA2  (TEST_MAKE_NAME(TestA2), TYPE_INFO_TestA)
 
 S1TYPE_DECLARE(TYPE_INFO_TestA);
 S1TYPE_DECLARE(TYPE_INFO_TestA2);
@@ -20,7 +21,7 @@ int TestA2_GetValue2 (TestA2* obj);
 
 namespace cxxapi
 {
-  class TestA : public s1::cxxapi::Rebadge<TestA, ::TestA, s1::cxxapi::Object>
+  class TestA : public s1::cxxapi::Object
   {
   public:
     typedef s1::Ptr<TestA> Pointer;
@@ -28,16 +29,16 @@ namespace cxxapi
     static Pointer Create (int v)
     {
       ::TestA* p (CreateTestA (v));
-      return Pointer (FromC (p), Pointer::TakeReference ());
+      return s1::TransferRefPtr<TestA> (p);
     }
     
     int GetValue ()
     {
-      return TestA_GetValue (Cpointer());
+      return TestA_GetValue (this);
     }
   };
 
-  class TestA2 : public s1::cxxapi::Rebadge<TestA2, ::TestA2, TestA>
+  class TestA2 : public TestA
   {
   public:
     typedef s1::Ptr<TestA2> Pointer;
@@ -45,12 +46,12 @@ namespace cxxapi
     static Pointer Create (int v, int v2)
     {
       ::TestA2* p (CreateTestA2 (v, v2));
-      return Pointer (FromC (p), Pointer::TakeReference ());
+      return s1::TransferRefPtr<TestA2> (p);
     }
     
     int GetValue2 ()
     {
-      return TestA2_GetValue2 (Cpointer());
+      return TestA2_GetValue2 (this);
     }
   };
 } // namespace cxxapi

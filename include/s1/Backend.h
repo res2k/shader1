@@ -9,7 +9,7 @@
 #include "s1/LibraryObject.h"
 #include "s1/Program.h"
 
-#define S1TYPE_INFO_s1_Backend   (s1_Backend, S1TYPE_INFO_s1_LibraryObject)
+#define S1TYPE_INFO_s1_Backend   (S1_TYPE_MAKE_NAME(Backend), S1TYPE_INFO_s1_LibraryObject)
 /**
  * Compiler backend.
  * Used to compile a program object representing actual shader code.
@@ -28,7 +28,7 @@ enum s1_CompileTarget
   S1_TARGET_FP = 1
 };
 
-S1TYPE_DECLARE_FWD(s1_CompiledProgram);
+S1TYPE_DECLARE_FWD(CompiledProgram);
 /**
  * Let a backend generate an actual shader code from a Shader1 program.
  * \param backend Backend that should generate the program.
@@ -55,7 +55,7 @@ namespace s1
      * \sa CompiledProgram
      * \createdby Library::CreateBackend()
      */
-    class Backend : public S1_REBADGE(Backend, s1_Backend, LibraryObject)
+    class Backend : public LibraryObject
     {
     public:
       /// Smart pointer class for Backend instances.
@@ -69,11 +69,9 @@ namespace s1
        * In that case the error status is saved in the library's
        * last error code.
        */
-      CPtr<s1_CompiledProgram> GenerateProgram (const CPtr<s1_Program, ref_traits::Uncounted>& program,
-                                                s1_CompileTarget target)
+      TransferRefPtr<CompiledProgram, PtrCleanupUnsafe> GenerateProgram (Program* program, s1_CompileTarget target)
       {
-        return CPtr<s1_CompiledProgram> (s1_backend_generate_program (Cpointer(), program, target),
-                                         CPtr<s1_CompiledProgram>::TakeReference ());
+        return s1_backend_generate_program (this, program, target);
       }
     };
   S1_NS_CXXAPI_END
