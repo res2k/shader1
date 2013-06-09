@@ -4,8 +4,9 @@ import re
 import string
 import sys
 
+patterns_pre = [(re.compile(r'^(#.*)S1_TYPE_MAKE_NAME\((\w*)\)'), r'\1s1_\2')]
 re_define = re.compile(r'^#define\s+(S1TYPE_INFO_\w*)\s+(.*)')
-patterns = [(re.compile(r'^S1TYPE_DECLARE_FWD\((\w*)\);$'), r'struct \1;'),
+patterns = [(re.compile(r'^S1TYPE_DECLARE_FWD\((\w*)\);$'), r'struct s1_\1;'),
             (re.compile(r'^S1TYPE_DECLARE\((\w*)\);$'), r'struct S1TYPE_TYPEINFO_NAME\1 {};')]
 
 for line in fileinput.input():
@@ -19,6 +20,8 @@ for line in fileinput.input():
     i = i + 1
   leading_space = line[:i]
   line = line[i:]
+  for pat in patterns_pre:
+    line = pat[0].sub (pat[1], line)
   defn_match = re_define.match(line)
   if defn_match:
     patterns.append ((re.compile (defn_match.group(1)), defn_match.group(2)))
