@@ -7,6 +7,8 @@
 
 #include <boost/foreach.hpp>
 
+#include <sstream>
+
 namespace s1
 {
   namespace api_impl
