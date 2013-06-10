@@ -174,6 +174,11 @@ S1_API int s1_release (s1_Object* obj);
 S1_API int s1_get_ref_count (s1_Object* obj);
 
 #if !defined(DOXYGEN_RUN)
+// MSVC bugginess, see http://lists.cairographics.org/archives/cairo/2008-January/012722.html
+#ifdef _MSC_VER
+#define inline __inline
+#endif
+
 static inline int _s1_add_ref_actual (s1_Object* obj)
 {
   return s1_add_ref (obj);
@@ -186,6 +191,10 @@ static inline int _s1_get_ref_count_actual (s1_Object* obj)
 {
   return s1_get_ref_count (obj);
 }
+
+#ifdef _MSC_VER
+#undef inline
+#endif
 
 #define s1_add_ref(Obj)         _s1_add_ref_actual (S1TYPE_CAST(s1_Object, Obj))
 #define s1_release(Obj)         _s1_release_actual (S1TYPE_CAST(s1_Object, Obj))
