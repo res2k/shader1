@@ -1,11 +1,11 @@
 file(GLOB codegen_cg_sources cg/*.h cg/*.cpp)
-add_library(codegen_cg ${codegen_cg_sources})
+add_library(codegen_cg STATIC ${codegen_cg_sources})
 set(codegen_sources
 	CgGenerator.cpp
 	StringsArray.cpp
 	../../include/internal/codegen/CgGenerator.h
 	../../include/internal/codegen/StringsArray.h)
-add_library(codegen ${codegen_sources})
+add_library(codegen STATIC ${codegen_sources})
 target_link_libraries(codegen codegen_cg intermediate)
 
 if(CXXTEST_FOUND)

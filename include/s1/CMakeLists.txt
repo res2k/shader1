@@ -1,4 +1,3 @@
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_GENERATOR MATCHES "Unix Makefiles")
   # Collect Boost.Preprocessor includes, concatenate to one big header, replacing BOOST_PP with _S1BOOSTPP
   add_custom_command(OUTPUT preprocessor.h

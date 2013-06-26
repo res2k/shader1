@@ -1,0 +1,7 @@
+#ifndef __S1_S1CONFIG_H__
+#define __S1_S1CONFIG_H__
+
+/* Shader1 was built as a shared lib */
+#cmakedefine S1_BUILD_SHARED
+
+#endif /* __S1_S1CONFIG_H__ */
