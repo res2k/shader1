@@ -156,7 +156,7 @@ namespace s1
        */
       bool SetOptions (Options* options)
       {
-        return s1_program_set_options (this, options);
+        return s1_program_set_options (this, options) != 0;
       }
       /**
        * Get program compilation options.
@@ -179,7 +179,7 @@ namespace s1
        */
       bool SetEntryFunction (const char* name)
       {
-        return s1_program_set_entry_function (this, name);
+        return s1_program_set_entry_function (this, name) != 0;
       }
 
       /**
@@ -208,7 +208,7 @@ namespace s1
        */
       bool SetInputFrequency (const char* param, s1_InputFrequency freq)
       {
-        return s1_program_set_input_frequency (this, param, freq);
+        return s1_program_set_input_frequency (this, param, freq) != 0;
       }
 
       /**
@@ -236,7 +236,7 @@ namespace s1
        */
       bool SetInputArraySize (const char* param, size_t size)
       {
-        return s1_program_set_input_array_size (this, param, size);
+        return s1_program_set_input_array_size (this, param, size) != 0;
       }
       /**
        * Get the size of an array program input variable.

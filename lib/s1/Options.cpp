@@ -12,7 +12,7 @@ s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt, s1_bo
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
   }
-  options_impl->SetOptimizationFlag ((s1::Compiler::Options::Optimization)opt, enable);
+  options_impl->SetOptimizationFlag ((s1::Compiler::Options::Optimization)opt, enable != 0);
   return options_impl->ReturnSuccess();
 }
 
