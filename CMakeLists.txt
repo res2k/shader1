@@ -73,7 +73,10 @@ set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library"
 set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
 
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
-  # Silence more annoyances
+  # Automatically make use of 'secure' CRT funtions
+  add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1")
+  add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT=1")
+  # Silence remaining annoyances
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
