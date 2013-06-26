@@ -1,5 +1,5 @@
 file(GLOB lexer_sources *.h *.cpp ../include/internal/lexer/*.h)
-add_library(lexer ${lexer_sources})
+add_library(lexer STATIC ${lexer_sources})
 target_link_libraries(lexer base)
 
 if(CXXTEST_FOUND)

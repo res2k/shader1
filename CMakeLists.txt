@@ -55,7 +55,10 @@ if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
   # Annoying on MSVC; lots of warnings from inside Boost
   CxxCompilerFlagString (CXX_WARN_ALL "-Wall")
 endif()
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARN_ALL}")
+if(CMAKE_COMPILER_IS_GNUCXX)
+  CxxCompilerFlagString (CXX_VISIBILITY_HIDDEN "-fvisibility-inlines-hidden -fvisibility=hidden")
+endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARN_ALL} ${CXX_VISIBILITY_HIDDEN}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 
@@ -64,6 +67,10 @@ CHECK_CXX_SOURCE_COMPILES(
   CXX_HAS_NULLPTR)
 if(NOT CXX_HAS_NULLPTR)
 endif()
+
+# Build shared libs by default
+set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
+set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
 
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
   # Silence more annoyances
@@ -75,8 +82,12 @@ if(UNIX)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
 endif()
 
+# Configuration settings only relevant for building
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base)
 configure_file(include/internal/base/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base/config.h)
+# Configuration settings exposed to clients
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/s1)
+configure_file(include/s1/s1config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/s1/s1config.h)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/internal)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)

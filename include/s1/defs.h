@@ -4,6 +4,7 @@
 #ifndef __S1_DEFS_H__
 #define __S1_DEFS_H__
 
+#include "s1/s1config.h"
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -47,12 +48,27 @@
 /// Boolean type.
 typedef int s1_bool;
 
-// TODO Later: dllexport/visibility declspec
 /**\def S1_DECLSPEC
  * \internal
  * Calling convention, visibility specification etc for public API methods
  */
-#define S1_DECLSPEC
+#ifdef _WIN32
+#  if defined(S1_BUILD_SHARED)
+#    ifdef S1_BUILD
+#      define S1_DECLSPEC    _declspec(dllexport)
+#    else
+#      define S1_DECLSPEC    _declspec(dllimport)
+#    endif
+#  else
+#    define S1_DECLSPEC
+#  endif
+#else
+#  ifdef __GNUC__
+#    define S1_DECLSPEC    __attribute__((visibility("default")))
+#  else
+#    define S1_DECLSPEC
+#  endif
+#endif
 
 /**\def S1_API
  * \internal

@@ -1,5 +1,5 @@
 file(GLOB splitter_sources *.h *.cpp ../include/internal/splitter/*.h)
-add_library(splitter ${splitter_sources})
+add_library(splitter STATIC ${splitter_sources})
 
 if(CXXTEST_FOUND)
   file(GLOB splitter_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.cpp)

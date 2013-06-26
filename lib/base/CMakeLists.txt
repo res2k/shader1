@@ -9,7 +9,7 @@ set(base_sources
     ../../include/internal/base/UnicodeStreamException.h
     ../../include/internal/base/UnicodeStreamInvalidCharacterException.h
     )
-add_library(base ${base_sources})
+add_library(base STATIC ${base_sources})
 add_dependencies(base generate_Object)
 target_link_libraries(base ${ICU_LIBRARIES})
 

@@ -1,5 +1,5 @@
 file(GLOB optimize_sources *.h *.cpp ../include/internal/optimize/*.h)
-add_library(optimize ${optimize_sources})
+add_library(optimize STATIC ${optimize_sources})
 target_link_libraries(optimize intermediate)
 
 if(CXXTEST_FOUND)
