@@ -70,11 +70,11 @@ typedef int s1_bool;
 #  endif
 #endif
 
-/**\def S1_API
+/**\def S1_API(T)
  * \internal
- * Combined public API method attributes
+ * Combined public API method attributes. \a T is the function return type.
  */
-#define S1_API          S1_EXTERN_C S1_DECLSPEC S1_NOTHROW
+#define S1_API(T)          S1_EXTERN_C S1_DECLSPEC S1_NOTHROW T
 
 // Macros so they can be overridden for Doxygen
 /**\def S1_NS_CXXAPI_BEGIN

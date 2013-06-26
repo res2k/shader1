@@ -39,7 +39,7 @@ enum s1_Optimization
  * last error code.
  * \memberof s1_Options
  */
-S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, enum s1_Optimization opt, s1_bool enable);
+S1_API(s1_bool) s1_options_set_opt_flag (s1_Options* options, enum s1_Optimization opt, s1_bool enable);
 /**
  * Query status of an optimization option.
  * \param options Compiler options object.
@@ -51,7 +51,7 @@ S1_API s1_bool s1_options_set_opt_flag (s1_Options* options, enum s1_Optimizatio
  * last error code.
  * \memberof s1_Options
  */
-S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, enum s1_Optimization opt);
+S1_API(s1_bool) s1_options_get_opt_flag (s1_Options* options, enum s1_Optimization opt);
 
 /**
  * Enable/disable all optimizations for some &ldquo;level&rdquo; of optimizations.
@@ -63,7 +63,7 @@ S1_API s1_bool s1_options_get_opt_flag (s1_Options* options, enum s1_Optimizatio
  * last error code.
  * \memberof s1_Options
  */
-S1_API s1_bool s1_options_set_opt_level (s1_Options* options, int level);
+S1_API(s1_bool) s1_options_set_opt_level (s1_Options* options, int level);
     
 /**
  * Parse an optimization flag from a string.
@@ -79,7 +79,7 @@ S1_API s1_bool s1_options_set_opt_level (s1_Options* options, int level);
  * last error code.
  * \memberof s1_Options
  */
-S1_API s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
+S1_API(s1_bool) s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
                                               enum s1_Optimization* opt, s1_bool* flag);
     
 /**
@@ -93,7 +93,7 @@ S1_API s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* f
  * last error code.
  * \memberof s1_Options
  */
-S1_API s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagStr);
+S1_API(s1_bool) s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagStr);
 
 
 #if defined(__cplusplus)

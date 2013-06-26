@@ -28,7 +28,7 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_CompiledProgram);
  *  program object exists.
  * \memberof s1_CompiledProgram
  */
-S1_API const char* s1_compiledprogram_get_string (s1_CompiledProgram* program);
+S1_API(const char*) s1_compiledprogram_get_string (s1_CompiledProgram* program);
 
 #if defined(__cplusplus)
 namespace s1

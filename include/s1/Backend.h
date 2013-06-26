@@ -41,9 +41,9 @@ S1TYPE_DECLARE_FWD(CompiledProgram);
  * last error code.
  * \memberof s1_Backend
  */
-S1_API s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
-                                                        s1_Program* program,
-                                                        enum s1_CompileTarget target);
+S1_API(s1_CompiledProgram*) s1_backend_generate_program (s1_Backend* backend,
+                                                         s1_Program* program,
+                                                         enum s1_CompileTarget target);
 
 #if defined(__cplusplus)
 namespace s1

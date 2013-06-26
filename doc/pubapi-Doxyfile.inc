@@ -1578,7 +1578,7 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = __cplusplus                            \
                          DOXYGEN_RUN                            \
-                         S1_API=                                \
+                         S1_API(T)=T                            \
                          S1_NS_CXXAPI_BEGIN=                    \
                          S1_NS_CXXAPI_END=                      \
                          S1_REBADGE(D,E,B)=B                    \

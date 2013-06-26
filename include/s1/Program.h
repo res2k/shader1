@@ -29,7 +29,7 @@ S1TYPE_DECLARE_FWD(Options);
  * last error code.
  * \memberof s1_Program
  */
-S1_API s1_bool s1_program_set_options (s1_Program* program, s1_Options* options);
+S1_API(s1_bool) s1_program_set_options (s1_Program* program, s1_Options* options);
 /**
  * Get program compilation options.
  * \param program Program object.
@@ -42,7 +42,7 @@ S1_API s1_bool s1_program_set_options (s1_Program* program, s1_Options* options)
  * \memberof s1_Program
  */
 // FIXME: Is a "get" function, should not add a reference!
-S1_API s1_Options* s1_program_get_options (s1_Program* program);
+S1_API(s1_Options*) s1_program_get_options (s1_Program* program);
 
 /**
  * Set the entry function of a program.
@@ -53,7 +53,7 @@ S1_API s1_Options* s1_program_get_options (s1_Program* program);
  * last error code.
  * \memberof s1_Program
  */
-S1_API s1_bool s1_program_set_entry_function (s1_Program* program, const char* name);
+S1_API(s1_bool) s1_program_set_entry_function (s1_Program* program, const char* name);
 /**
  * Get the entry function of a program.
  * \param program Program object.
@@ -65,7 +65,7 @@ S1_API s1_bool s1_program_set_entry_function (s1_Program* program, const char* n
  *   function name wasn't changed.
  * \memberof s1_Program
  */
-S1_API const char* s1_program_get_entry_function (s1_Program* program);
+S1_API(const char*) s1_program_get_entry_function (s1_Program* program);
 
 /// Variation frequency of a program input variable
 enum s1_InputFrequency
@@ -90,7 +90,7 @@ enum s1_InputFrequency
  *  entry function.
  * \memberof s1_Program
  */
-S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, enum s1_InputFrequency freq);
+S1_API(s1_bool) s1_program_set_input_frequency (s1_Program* program, const char* param, enum s1_InputFrequency freq);
 /**
  * Query the variation frequency of a program input variable.
  * \param program Program object.
@@ -102,7 +102,7 @@ S1_API s1_bool s1_program_set_input_frequency (s1_Program* program, const char* 
  *   given parameter a default frequency will be returned.
  * \memberof s1_Program
  */
-S1_API enum s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param);
+S1_API(enum s1_InputFrequency) s1_program_get_input_frequency (s1_Program* program, const char* param);
 
 /* TODO: Should probably distinguish between an upper bound size (actual runtime size conveyed through
  * a distinct input uniform in the compiled program) and a fixed array size (actual runtime size is given). */
@@ -117,7 +117,7 @@ S1_API enum s1_InputFrequency s1_program_get_input_frequency (s1_Program* progra
  * \remarks Array input variables have a default size of 0.
  * \memberof s1_Program
  */
-S1_API s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size);
+S1_API(s1_bool) s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size);
 /**
  * Get the size of an array program input variable.
  * \param program Program object.
@@ -127,7 +127,7 @@ S1_API s1_bool s1_program_set_input_array_size (s1_Program* program, const char*
  * last error code.
  * \memberof s1_Program
  */
-S1_API size_t s1_program_get_input_array_size (s1_Program* program, const char* param);
+S1_API(size_t) s1_program_get_input_array_size (s1_Program* program, const char* param);
 
 //TODO: Lots of inspection/query functions
 

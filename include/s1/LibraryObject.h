@@ -24,7 +24,7 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_LibraryObject);
  * \remarks Does \em not add a reference to the returned object.
  * \memberof s1_LibraryObject
  */
-S1_API s1_Library* s1_libraryobject_get_library (s1_LibraryObject* obj);
+S1_API(s1_Library*) s1_libraryobject_get_library (s1_LibraryObject* obj);
 
 #if defined(__cplusplus)
 namespace s1

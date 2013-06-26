@@ -31,7 +31,7 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_Library);
  *   Otherwise, the return code is an error code indicating why the
  *   library could not be created.
  */
-S1_API s1_ResultCode s1_create_library (s1_Library** out);
+S1_API(s1_ResultCode) s1_create_library (s1_Library** out);
 
 /**
  * Return the last error code set by a function.
@@ -39,13 +39,13 @@ S1_API s1_ResultCode s1_create_library (s1_Library** out);
  * \memberof s1_Library
  */
 // TODO: More docs on error handling, link
-S1_API s1_ResultCode s1_library_get_last_error (s1_Library* lib);
+S1_API(s1_ResultCode) s1_library_get_last_error (s1_Library* lib);
 /**
  * Reset the last error code (to #S1_SUCCESS).
  * \param lib Library to clear error code on.
  * \memberof s1_Library
  */
-S1_API void s1_library_clear_last_error (s1_Library* lib);
+S1_API(void) s1_library_clear_last_error (s1_Library* lib);
 
 S1TYPE_DECLARE_FWD(Options);
 /**
@@ -58,7 +58,7 @@ S1TYPE_DECLARE_FWD(Options);
  * last error code.
  * \memberof s1_Library
  */
-S1_API s1_Options* s1_options_create (s1_Library* lib);
+S1_API(s1_Options*) s1_options_create (s1_Library* lib);
 
 /**\page compat_level Program compatibility levels
  * Compability levels are for dealing with breaking changes as the
@@ -111,7 +111,7 @@ S1TYPE_DECLARE_FWD(Program);
  * last error code.
  * \memberof s1_Library
  */
-S1_API s1_Program* s1_program_create_from_string (s1_Library* lib, const char* source,
+S1_API(s1_Program*) s1_program_create_from_string (s1_Library* lib, const char* source,
                                                   size_t sourceSize,
                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
@@ -128,7 +128,7 @@ S1TYPE_DECLARE_FWD(Backend);
  * last error code.
  * \memberof s1_Library
  */
-S1_API s1_Backend* s1_backend_create (s1_Library* lib, const char* backend);
+S1_API(s1_Backend*) s1_backend_create (s1_Library* lib, const char* backend);
 
 #if defined(__cplusplus)
 namespace s1
