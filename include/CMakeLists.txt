@@ -1,6 +1,12 @@
 add_subdirectory(s1)
 
 if(CXXTEST_FOUND)
+  if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    # Disable some warnings
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800")
+  endif()
+
   file(GLOB api_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
   add_library(api_testlib STATIC ${api_testlib_sources})
   add_dependencies(api_testlib generate_Object)
