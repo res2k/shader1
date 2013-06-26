@@ -70,6 +70,11 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
+# Build everything with -fPIC to allow linking into shared libs
+if(UNIX)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
+endif()
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base)
 configure_file(include/internal/base/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base/config.h)
 
