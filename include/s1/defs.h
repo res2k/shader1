@@ -48,25 +48,25 @@
 /// Boolean type.
 typedef int s1_bool;
 
-/**\def S1_DECLSPEC
+/**\def S1_VISIBILITY
  * \internal
- * Calling convention, visibility specification etc for public API methods
+ * Visibility specification for public API methods
  */
 #ifdef _WIN32
 #  if defined(S1_BUILD_SHARED)
 #    ifdef S1_BUILD
-#      define S1_DECLSPEC    _declspec(dllexport)
+#      define S1_VISIBILITY    _declspec(dllexport)
 #    else
-#      define S1_DECLSPEC    _declspec(dllimport)
+#      define S1_VISIBILITY    _declspec(dllimport)
 #    endif
 #  else
-#    define S1_DECLSPEC
+#    define S1_VISIBILITY
 #  endif
 #else
 #  ifdef __GNUC__
-#    define S1_DECLSPEC    __attribute__((visibility("default")))
+#    define S1_VISIBILITY      __attribute__((visibility("default")))
 #  else
-#    define S1_DECLSPEC
+#    define S1_VISIBILITY
 #  endif
 #endif
 
@@ -74,7 +74,7 @@ typedef int s1_bool;
  * \internal
  * Combined public API method attributes. \a T is the function return type.
  */
-#define S1_API(T)          S1_EXTERN_C S1_DECLSPEC S1_NOTHROW T
+#define S1_API(T)          S1_EXTERN_C S1_VISIBILITY S1_NOTHROW T
 
 // Macros so they can be overridden for Doxygen
 /**\def S1_NS_CXXAPI_BEGIN
