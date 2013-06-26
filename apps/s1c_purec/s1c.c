@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 static void print_lib_error (const char* message, s1_Library* lib)
 {
@@ -153,7 +154,6 @@ int main (const int argc, const char* const argv[])
   }
   {
     int start_pos = ftell (infile);
-    const char* source_ptr;
     fseek (infile, 0, SEEK_END);
     source_size = ftell (infile);
     fseek (infile, start_pos, SEEK_SET);
@@ -283,7 +283,7 @@ int main (const int argc, const char* const argv[])
 
 cleanup_program:
   s1_release (program);
-cleanup_source:
+/*cleanup_source:*/
   if (source_str) free (source_str);
 cleanup_backend:
   s1_release (backend);

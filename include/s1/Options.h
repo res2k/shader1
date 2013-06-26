@@ -122,7 +122,7 @@ namespace s1
        */
       bool SetOptFlag (s1_Optimization opt, bool enable)
       {
-        return s1_options_set_opt_flag (this, opt, enable);
+        return s1_options_set_opt_flag (this, opt, enable) != 0;
       }
       
       /**
@@ -136,7 +136,7 @@ namespace s1
        */
       bool GetOptFlag (s1_Optimization opt)
       {
-        return s1_options_get_opt_flag (this, opt);
+        return s1_options_get_opt_flag (this, opt) != 0;
       }
 
       /**
@@ -150,7 +150,7 @@ namespace s1
       */
       bool SetOptLevel (int level)
       {
-        return s1_options_set_opt_level (this, level);
+        return s1_options_set_opt_level (this, level) != 0;
       }
           
       /**
@@ -168,9 +168,9 @@ namespace s1
       bool ParseOptFlagStr (const char* flagStr, s1_Optimization& opt, bool& flag)
       {
         s1_bool ret_flag;
-        bool ret (s1_options_parse_opt_flag_str (this, flagStr, &opt, &ret_flag));
+        bool ret (s1_options_parse_opt_flag_str (this, flagStr, &opt, &ret_flag) != 0);
         if (!ret) return false;
-        flag = ret_flag;
+        flag = ret_flag != 0;
         return true;
       }
           
@@ -185,7 +185,7 @@ namespace s1
        */
       bool SetOptFlagFromStr (const char* flagStr)
       {
-        return s1_options_set_opt_flag_from_str (this, flagStr);
+        return s1_options_set_opt_flag_from_str (this, flagStr) != 0;
       }
     };
   S1_NS_CXXAPI_END
