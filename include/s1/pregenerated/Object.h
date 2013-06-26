@@ -147,7 +147,7 @@ typedef struct _S1BOOSTPP_CAT(T, _s) T
  * \sa \ref refcounting
  * \memberof s1_Object
  */
-S1_API int s1_add_ref (s1_Object* obj);
+S1_API(int) s1_add_ref (s1_Object* obj);
 /**
  * Release a reference to the object. Returns new reference count.
  * \param obj Object to release a reference from.
@@ -156,7 +156,7 @@ S1_API int s1_add_ref (s1_Object* obj);
  * \sa \ref refcounting
  * \memberof s1_Object
  */
-S1_API int s1_release (s1_Object* obj);
+S1_API(int) s1_release (s1_Object* obj);
 /**
  * Query reference count of an object. Useful for debugging purposes.
  * \param obj Object to query reference count from.
@@ -165,7 +165,7 @@ S1_API int s1_release (s1_Object* obj);
  * \sa \ref refcounting
  * \memberof s1_Object
  */
-S1_API int s1_get_ref_count (s1_Object* obj);
+S1_API(int) s1_get_ref_count (s1_Object* obj);
 
 #if !defined(DOXYGEN_RUN)
 // MSVC bugginess, see http://lists.cairographics.org/archives/cairo/2008-January/012722.html
