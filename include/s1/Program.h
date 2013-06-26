@@ -191,7 +191,7 @@ namespace s1
        * last error code.
        * \remarks The default entry function name is \c main.
        */
-      bool GetEntryFunction ()
+      const char* GetEntryFunction ()
       {
         return s1_program_get_entry_function (this);
       }
