@@ -137,7 +137,6 @@ s1_Options* s1_program_get_options (s1_Program* program)
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
 
   s1::Compiler::OptionsPtr options_impl (program_impl->GetOptions());
-  options_impl->AddRef();
   return program_impl->ReturnSuccess (options_impl->DowncastEvil<s1_Options> ());
 }
 

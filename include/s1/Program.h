@@ -47,7 +47,6 @@ S1_API(s1_bool) s1_program_set_options (s1_Program* program, s1_Options* options
  * \remarks You will \em not get back the object passed to s1_program_set_options().
  * \memberof s1_Program
  */
-// FIXME: Is a "get" function, should not add a reference!
 S1_API(s1_Options*) s1_program_get_options (s1_Program* program);
 
 /**
@@ -194,7 +193,7 @@ namespace s1
        * last error code.
        * \remarks You will \em not get back the object passed to s1_program_set_options().
        */
-      TransferRefPtr<Options> GetOptions ()
+      Options* GetOptions ()
       {
         return s1_program_get_options (this);
       }
