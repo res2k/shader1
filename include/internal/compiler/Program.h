@@ -17,8 +17,7 @@ namespace s1
   protected:
     friend class Compiler;
     
-    Program (const OptionsPtr& compilerOptions,
-	     UnicodeStream* inputStream);
+    Program (UnicodeStream* inputStream);
     
     OptionsPtr compilerOptions;
     
@@ -36,7 +35,8 @@ namespace s1
     void SetInputArrayParameterSize (const UnicodeString& param, size_t size);
     void SetEntryFunctionName (const UnicodeString& name);
     
-    Compiler::Backend::ProgramPtr GetCompiledProgram (const Compiler::BackendPtr& backend,
+    Compiler::Backend::ProgramPtr GetCompiledProgram (const OptionsPtr& compilerOptions,
+                                                      const Compiler::BackendPtr& backend,
 						      Backend::CompileTarget target);
     
     // @@@ Output: a "backend program"

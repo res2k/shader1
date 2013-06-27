@@ -19,9 +19,7 @@
 
 namespace s1
 {
-  Compiler::Program::Program (const OptionsPtr& compilerOptions,
-			      UnicodeStream* inputStream)
-   : compilerOptions (compilerOptions)
+  Compiler::Program::Program (UnicodeStream* inputStream)
   {
     compiler::ErrorHandler errorHandler; // TODO: real error handler
     Lexer lexer (*inputStream, errorHandler);
@@ -93,7 +91,8 @@ namespace s1
     intermediateProg = intermediate::ProgramPtr();
   }
 
-  Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
+  Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const OptionsPtr& compilerOptions,
+                                                                       const Compiler::BackendPtr& backend,
 								       Backend::CompileTarget target)
   {
     if (!intermediateProg)

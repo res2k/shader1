@@ -25,7 +25,7 @@ namespace s1
       if (!wrapped_program)
       {
         std::istringstream inputStream (source, std::ios_base::in | std::ios_base::binary);
-        wrapped_program = compiler.CreateProgram (options, inputStream);
+        wrapped_program = compiler.CreateProgram (inputStream);
         wrapped_program->SetEntryFunctionName (UnicodeString::fromUTF8 (entryFunction));
         
         BOOST_FOREACH(const InputFreqMapType::value_type& inputFreq, inputFreqMap)
@@ -40,7 +40,7 @@ namespace s1
         }
       }
       
-      return wrapped_program->GetCompiledProgram (backend, target);
+      return wrapped_program->GetCompiledProgram (options, backend, target);
     }
 
     s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
