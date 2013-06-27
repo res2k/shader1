@@ -27,6 +27,12 @@ S1TYPE_DECLARE_FWD(Options);
  * \returns Whether setting the options succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \remarks - The options object can be modified without affecting the
+ * programs it was assigned to.
+ * Conversely, to change the compilation options of a program, you have
+ * to set the options again.
+ * - Changing the options will affect the reported available
+ * input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
 S1_API(s1_bool) s1_program_set_options (s1_Program* program, s1_Options* options);
@@ -51,6 +57,8 @@ S1_API(s1_Options*) s1_program_get_options (s1_Program* program);
  * \returns Whether changing the entry function succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
+ * \remarks Changing the entry function will affect the reported available
+ * input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
 S1_API(s1_bool) s1_program_set_entry_function (s1_Program* program, const char* name);
@@ -86,8 +94,10 @@ enum s1_InputFrequency
  * \returns Whether changing the variation frequency succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
- * \remarks Input variables are global variables and arguments to the
+ * \remarks - Input variables are global variables and arguments to the
  *  entry function.
+ *  - Changing an input variation frequency will affect the reported available
+ *  input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
 S1_API(s1_bool) s1_program_set_input_frequency (s1_Program* program, const char* param, enum s1_InputFrequency freq);
@@ -114,7 +124,9 @@ S1_API(enum s1_InputFrequency) s1_program_get_input_frequency (s1_Program* progr
  * \returns Whether changing the array size succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
- * \remarks Array input variables have a default size of 0.
+ * \remarks - Array input variables have a default size of 0.
+ *  - Changing an input array size will affect the reported available
+ *  input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
 S1_API(s1_bool) s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size);
@@ -130,6 +142,17 @@ S1_API(s1_bool) s1_program_set_input_array_size (s1_Program* program, const char
 S1_API(size_t) s1_program_get_input_array_size (s1_Program* program, const char* param);
 
 //TODO: Lots of inspection/query functions
+
+/**\page input_vars_volatility Volatility of input variable properties
+ * Various program settings affect which input variables are actually used by
+ * the program -- as a typical example, due to optimizations a variable may end
+ * up being unused.
+ * 
+ * Keep this is mind when querying available input variables and their
+ * properties -- though the set of variables will stay the same, their
+ * disposition may change (e.g. suddenly become unused) if you change
+ * program settings between queries.
+ */
 
 #if defined(__cplusplus)
 namespace s1
@@ -153,6 +176,12 @@ namespace s1
        * \returns Whether setting the options succeeded.
        * In case of an error, the error status is saved in the library's
        * last error code.
+       * \remarks - The options object can be modified without affecting the
+       * programs it was assigned to.
+       * Conversely, to change the compilation options of a program, you have
+       * to set the options again.
+       * - Changing the options will affect the reported available
+       * input variables -- \ref input_vars_volatility.
        */
       bool SetOptions (Options* options)
       {
@@ -176,6 +205,8 @@ namespace s1
        * \returns Whether changing the entry function succeeded.
        * In case of an error, the error status is saved in the library's
        * last error code.
+       * \remarks Changing the entry function will affect the reported available
+       * input variables -- \ref input_vars_volatility.
        */
       bool SetEntryFunction (const char* name)
       {
@@ -203,8 +234,10 @@ namespace s1
        * \returns Whether changing the variation frequency succeeded.
        * In case of an error, the error status is saved in the library's
        * last error code.
-       * \remarks Input variables are global variables and arguments to the
+       * \remarks - Input variables are global variables and arguments to the
        *  entry function.
+       *  - Changing an input variation frequency will affect the reported available
+       *  input variables -- \ref input_vars_volatility.
        */
       bool SetInputFrequency (const char* param, s1_InputFrequency freq)
       {
@@ -232,7 +265,9 @@ namespace s1
        * \returns Whether changing the array size succeeded.
        * In case of an error, the error status is saved in the library's
        * last error code.
-       * \remarks Array input variables have a default size of 0.
+       * \remarks - Array input variables have a default size of 0.
+       * - Changing an input array size will affect the reported available
+       * input variables -- \ref input_vars_volatility.
        */
       bool SetInputArraySize (const char* param, size_t size)
       {
