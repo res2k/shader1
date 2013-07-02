@@ -25,8 +25,9 @@ namespace s1
       if (!wrapped_program)
       {
         std::istringstream inputStream (source, std::ios_base::in | std::ios_base::binary);
-        wrapped_program = compiler.CreateProgram (inputStream);
-        wrapped_program->SetEntryFunctionName (UnicodeString::fromUTF8 (entryFunction));
+        UnicodeString entryFunctionU (UnicodeString::fromUTF8 (entryFunction));
+        wrapped_program = compiler.CreateProgram (inputStream, entryFunctionU);
+        wrapped_program->SetEntryFunctionName (entryFunctionU);
         
         BOOST_FOREACH(const InputFreqMapType::value_type& inputFreq, inputFreqMap)
         {

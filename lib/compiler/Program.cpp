@@ -19,12 +19,12 @@
 
 namespace s1
 {
-  Compiler::Program::Program (UnicodeStream* inputStream)
+  Compiler::Program::Program (UnicodeStream* inputStream, const UnicodeString& entryFunction)
   {
     compiler::ErrorHandler errorHandler; // TODO: real error handler
     Lexer lexer (*inputStream, errorHandler);
     
-    //intermediateHandler.SetEntryFunction (entryName);
+    intermediateHandler.SetEntryFunction (entryFunction);
     Parser parser (lexer, intermediateHandler, errorHandler);
     parser.Parse ();
   }

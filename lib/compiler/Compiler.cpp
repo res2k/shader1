@@ -21,9 +21,9 @@ namespace s1
     return BackendPtr (new compiler::BackendCg (lib));
   }
 
-  Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input)
+  Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input, const UnicodeString& entryFunction)
   {
     UnicodeStream uniStream (input, "utf-8");
-    return ProgramPtr (new Program (&uniStream));
+    return ProgramPtr (new Program (&uniStream, entryFunction));
   }
 } // namespace s1

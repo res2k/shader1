@@ -17,7 +17,7 @@ namespace s1
   protected:
     friend class Compiler;
     
-    Program (UnicodeStream* inputStream);
+    Program (UnicodeStream* inputStream, const UnicodeString& entryFunction);
     
     OptionsPtr compilerOptions;
     

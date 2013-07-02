@@ -27,7 +27,7 @@ namespace s1
     class Program;
     typedef boost::intrusive_ptr<Program> ProgramPtr;
     
-    ProgramPtr CreateProgram (std::istream& input);
+    ProgramPtr CreateProgram (std::istream& input, const UnicodeString& entryFunction);
     
     // Methods to specify input
     // Optimization getters/setters
