@@ -33,9 +33,12 @@ namespace s1
 	unsigned int PromoteRegister (const RegisterPtr& reg, int frequency);
 	void SplitBinaryOp (const RegisterPtr& destination, const SequenceOpPtr& op,
 			    const RegisterPtr& source1, const RegisterPtr& source2);
-	unsigned int ComputeCombinedFreqs (const std::vector<RegisterPtr>& sources);
-	int ComputeHighestFreq (const std::vector<RegisterPtr>& sources);
-	unsigned int PromoteAll (int freq, const std::vector<RegisterPtr>& sources);
+        template<typename Container>
+	unsigned int ComputeCombinedFreqs (const Container& sources);
+        template<typename Container>
+	int ComputeHighestFreq (const Container& sources);
+        template<typename Container>
+	unsigned int PromoteAll (int freq, const Container& sources);
 	
 	unsigned int AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
 	

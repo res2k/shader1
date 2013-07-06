@@ -146,30 +146,28 @@ namespace s1
       parent.SetRegAvailability (destination, destAvail);
     }
     
-    unsigned int SequenceSplitter::InputVisitor::ComputeCombinedFreqs (const std::vector<RegisterPtr>& sources)
+    template<typename Container>
+    unsigned int SequenceSplitter::InputVisitor::ComputeCombinedFreqs (const Container& sources)
     {
       unsigned int allFreq = 0;
-      for (std::vector<RegisterPtr>::const_iterator it (sources.begin());
-	   it != sources.end();
-	   ++it)
+      BOOST_FOREACH(const RegisterPtr& src, sources)
       {
-	unsigned int srcAvail = parent.GetRegAvailability (*it);
+	unsigned int srcAvail = parent.GetRegAvailability (src);
 	allFreq |= srcAvail;
       }
       return allFreq;
     }
     
-    int SequenceSplitter::InputVisitor::ComputeHighestFreq (const std::vector<RegisterPtr>& sources)
+    template<typename Container>
+    int SequenceSplitter::InputVisitor::ComputeHighestFreq (const Container& sources)
     {
       bool found = false;
       int highestFreq = freqNum;
       while (!found && (highestFreq-- > 0))
       {
-	for (std::vector<RegisterPtr>::const_iterator it (sources.begin());
-	     it != sources.end();
-	     ++it)
+        BOOST_FOREACH(const RegisterPtr& src, sources)
 	{
-	  unsigned int srcAvail = parent.GetRegAvailability (*it);
+	  unsigned int srcAvail = parent.GetRegAvailability (src);
 	  if ((srcAvail & (1 << highestFreq)) != 0)
 	  {
 	    found = true;
@@ -182,16 +180,15 @@ namespace s1
       return highestFreq;
     }
     
-    unsigned int SequenceSplitter::InputVisitor::PromoteAll (int freq, const std::vector<RegisterPtr>& sources)
+    template<typename Container>
+    unsigned int SequenceSplitter::InputVisitor::PromoteAll (int freq, const Container& sources)
     {
       unsigned int commonFreqs = (1 << freqNum) - 1;
-      for (std::vector<RegisterPtr>::const_iterator it (sources.begin());
-	    it != sources.end();
-	    ++it)
+      BOOST_FOREACH(const RegisterPtr& src, sources)
       {
-	unsigned int srcAvail = parent.GetRegAvailability (*it);
-	srcAvail = PromoteRegister (*it, freq);
-	parent.SetRegAvailability (*it, srcAvail);
+	unsigned int srcAvail = parent.GetRegAvailability (src);
+	srcAvail = PromoteRegister (src, freq);
+	parent.SetRegAvailability (src, srcAvail);
 	commonFreqs &= srcAvail;
       }
       
@@ -887,14 +884,30 @@ namespace s1
       }
       
       // Compute highest frequency of condition and all loop inputs
-      std::vector<RegisterPtr> allInputs;
+      boost::unordered_set<RegisterPtr> allInputs;
       {
 	for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
 	     loopedReg != loopedRegs.end();
 	     ++loopedReg)
 	{
-	  allInputs.push_back (loopedReg->first);
+	  allInputs.insert (loopedReg->first);
 	}      
+
+        SequencePtr blockSequence (body->GetSequence());
+        const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
+        const Sequence::IdentifierToRegMap& identToRegIDs_imp = body->GetImportIdentToRegs();
+        BOOST_FOREACH(const Sequence::RegisterImpMappings::value_type& imp, blockImports)
+        {
+          Sequence::IdentifierToRegMap::const_iterator impRegID = identToRegIDs_imp.find (imp.first);
+          assert (impRegID != identToRegIDs_imp.end());
+          RegisterPtr reg (impRegID->second);
+
+          std::string s;
+          reg->GetName().toUTF8String (s);
+          std::cerr << s << std::endl;
+
+          allInputs.insert (reg);
+        }
       }
       // Propagate condition and all sequence inputs to highest frequency
       /* @@@ Force highest frequency to cover the case where a looped reg gets a higher
@@ -904,7 +917,12 @@ namespace s1
       
       /* Generating per vertex code for loops is problematic,
        * so hack to avoid that */
-      if (highestFreq == freqVertex) highestFreq = freqFragment;
+      if (highestFreq == freqVertex)
+      {
+        highestFreq = freqFragment;
+        combinedFreqs &= ~freqFlagV; // Prevent vertex prog emission,
+        combinedFreqs |= freqFlagF; // but emit fragment prog
+      }
       std::vector<RegisterPtr> allImports;
       {
 	const Sequence::IdentifierToRegMap& identToRegs (body->GetImportIdentToRegs());
