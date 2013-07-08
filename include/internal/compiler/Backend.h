@@ -26,6 +26,7 @@ namespace s1
     
     enum CompileTarget
     {
+      targetUnsplit,
       targetVP,
       targetFP
     };

@@ -146,6 +146,8 @@ namespace s1
 	  target == Backend::targetVP ? splitProgs[splitter::freqVertex] : splitProgs[splitter::freqFragment]);
       }
       break;
+    case Backend::targetUnsplit:
+      return backend->GenerateProgram (target, intermediateProg);
     }
     
     assert (false);
