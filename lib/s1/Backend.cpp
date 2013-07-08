@@ -21,8 +21,9 @@ s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
   s1::Compiler::Backend::CompileTarget impl_target;
   switch (target)
   {
-  case S1_TARGET_VP:    impl_target = s1::Compiler::Backend::targetVP; break;
-  case S1_TARGET_FP:    impl_target = s1::Compiler::Backend::targetFP; break;
+  case S1_TARGET_VP:        impl_target = s1::Compiler::Backend::targetVP; break;
+  case S1_TARGET_FP:        impl_target = s1::Compiler::Backend::targetFP; break;
+  case S1_TARGET_UNSPLIT:   impl_target = s1::Compiler::Backend::targetUnsplit; break;
   default:
     return backend_impl->ReturnErrorCode (S1_E_INVALID_ARG_N (1), nullptr);
   }
