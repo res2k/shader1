@@ -25,6 +25,7 @@ int main (const int argc, const char* const argv[])
   const char* inputFileName = 0;
   const char* entryName = "main";
   const char* backendStr = "cg";
+  bool noSplit = false;
   typedef boost::unordered_map<std::string, s1_InputFrequency> ParamMap;
   ParamMap paramFlags;
   typedef boost::unordered_map<std::string, size_t> ParamArraySizeMap;
@@ -104,6 +105,10 @@ int main (const int argc, const char* const argv[])
       argNum++;
       if (argNum < argc)
 	backendStr = argv[argNum];
+    }
+    else if (strcmp (arg, "--nosplit") == 0)
+    {
+      noSplit = true;
     }
     else
     {
@@ -186,11 +191,20 @@ int main (const int argc, const char* const argv[])
     // TODO: Error checking
   }
 
-  CompiledProgram::Pointer compiledVP (
-    compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP));
-  std::cout << compiledVP->GetString() << std::endl;
-  CompiledProgram::Pointer compiledFP (
-    compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP));
-  std::cout << compiledFP->GetString () << std::endl;
+  if (noSplit)
+  {
+    CompiledProgram::Pointer compiled (
+      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_UNSPLIT));
+    std::cout << compiled->GetString() << std::endl;
+  }
+  else
+  {
+    CompiledProgram::Pointer compiledVP (
+      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP));
+    std::cout << compiledVP->GetString() << std::endl;
+    CompiledProgram::Pointer compiledFP (
+      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP));
+    std::cout << compiledFP->GetString () << std::endl;
+  }
   return 0;
 }
