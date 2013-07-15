@@ -17,3 +17,5 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES G
 add_library(s1 ${s1_sources})
 add_dependencies(s1 generate_Object)
 target_link_libraries(s1 base compiler)
+set_target_properties(s1 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+set_target_properties(s1 PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
