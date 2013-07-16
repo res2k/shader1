@@ -204,6 +204,12 @@ namespace s1
 	virtual NamePtr AddTypeAlias (TypePtr aliasedType,
 	  const UnicodeString& identifier) = 0;
 	  
+        /// Type of a format parameter
+        enum FormalParameterType
+        {
+          /// User-defined parameter
+          ptUser
+        };
 	enum FormalParameterDirection
 	{
 	  dirDefault = 0,
@@ -213,10 +219,14 @@ namespace s1
 	};
 	struct FunctionFormalParameter
 	{
+          /// Type of parameter
+          FormalParameterType paramType;
 	  TypePtr type;
 	  UnicodeString identifier;
 	  ExpressionPtr defaultValue;
 	  FormalParameterDirection dir;
+
+          FunctionFormalParameter() : paramType (ptUser) {}
 	};
 	typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
 	  

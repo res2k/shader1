@@ -47,15 +47,20 @@ namespace s1
       }
       overload = candidates[0];
       
-      for (size_t i = 0; i < overload->params.size(); i++)
+      for (size_t formal = 0, actual = 0; formal < overload->params.size(); formal++)
       {
-	const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
+	const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
 	
 	ExpressionPtr paramExpr;
-	if (i < params.size())
-	  paramExpr = params[i];
-	else
-	  paramExpr = param.defaultValue;
+        switch (param.paramType)
+        {
+        case SemanticsHandler::Scope::ptUser:
+          if (actual < params.size())
+            paramExpr = params[actual++];
+          else
+            paramExpr = param.defaultValue;
+          break;
+        }
 	
 	actualParams.push_back (paramExpr);
       }

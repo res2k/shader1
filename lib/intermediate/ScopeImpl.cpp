@@ -227,24 +227,31 @@ namespace s1
 	  if (params.size() > (*vecIt)->params.size()) continue;
 	  
 	  bool abort = false;
-	  size_t i = 0;
-	  for (; i < params.size(); i++)
+	  size_t formal = 0, actual = 0;
+	  for (; actual < params.size(); formal++)
 	  {
-	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[i]));
+        // Only consider user-specified parameters for matching
+        if ((*vecIt)->params[formal].paramType != ptUser) continue;
+
+	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[actual]));
 	    TypeImplPtr paramType (exprImpl->GetValueType ());
-	    TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[i].type));
+	    TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[formal].type));
 	    // No exact type match? Skip
 	    if (!paramType->IsEqual (*formalParamType))
 	    {
 	      abort = true;
 	      break;
 	    }
+	    actual++;
 	  }
 	  if (abort) continue;
-	  for (; i < (*vecIt)->params.size(); i++)
+	  for (; formal < (*vecIt)->params.size(); formal++)
 	  {
+        // Only consider user-specified parameters for matching
+        if ((*vecIt)->params[formal].paramType != ptUser) continue;
+
 	    // Leftover parameter + no default value? Skip
-	    if (!(*vecIt)->params[i].defaultValue)
+	    if (!(*vecIt)->params[formal].defaultValue)
 	    {
 	      abort = true;
 	      break;
@@ -265,14 +272,17 @@ namespace s1
 	    if (params.size() > (*vecIt)->params.size()) continue;
 	    
 	    bool abort = false;
-	    size_t i = 0;
-	    for (; i < params.size(); i++)
+	    size_t formal = 0, actual = 0;
+	    for (; actual < params.size(); formal++)
 	    {
-	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[i]));
+          // Only consider user-specified parameters for matching
+          if ((*vecIt)->params[formal].paramType != ptUser) continue;
+
+	      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[actual]));
 	      TypeImplPtr paramType (exprImpl->GetValueType ());
-	      TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[i].type));
+	      TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[formal].type));
 	      bool match;
-	      if ((*vecIt)->params[i].dir & dirOut)
+	      if ((*vecIt)->params[formal].dir & dirOut)
 		// Output parameters must _always_ match exactly
 		match = paramType->IsEqual (*formalParamType);
 	      else
@@ -284,12 +294,16 @@ namespace s1
 		abort = true;
 		break;
 	      }
+	      actual++;
 	    }
 	    if (abort) continue;
-	    for (; i < (*vecIt)->params.size(); i++)
+	    for (; formal < (*vecIt)->params.size(); formal++)
 	    {
+          // Only consider user-specified parameters for matching
+          if ((*vecIt)->params[formal].paramType != ptUser) continue;
+
 	      // Leftover parameter + no default value? Skip
-	      if (!(*vecIt)->params[i].defaultValue)
+	      if (!(*vecIt)->params[formal].defaultValue)
 	      {
 		abort = true;
 		break;
