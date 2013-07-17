@@ -893,11 +893,13 @@ namespace s1
 //@@ENDSNIP
     // Add function to scope, get block
 //@@SNIP ParseFuncDeclare.txt
-    Block inFunctionBlock = scope->AddFunction (returnType, functionIdentifier, params);
+    Function func (scope->AddFunction (returnType, functionIdentifier, params));
+    Block inFunctionBlock = func->GetBody();;
     Expect (Lexer::BraceL);
     NextToken();
     // Anweisungen in Block verarbeiten
     ParseBlock (inFunctionBlock);
+    func->Finish ();
     Expect (Lexer::BraceR);
     NextToken();
   }

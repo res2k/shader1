@@ -85,6 +85,7 @@ namespace s1
     void ParseTypedef (const Scope& scope);
     
     // Functions
+    typedef parser::SemanticsHandler::FunctionPtr Function;
     void ParseFuncDeclare (const Scope& scope);
     Parser::Type ParseFuncType (const Scope& scope);
     void ParseFuncParamFormal (const Scope& scope,

@@ -44,6 +44,8 @@ namespace s1
       ScopeLevel level;
       TypePtr funcReturnType;
       
+      FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
+
       void AddParameter (const FunctionFormalParameter& param);
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
@@ -59,7 +61,7 @@ namespace s1
       NamePtr AddTypeAlias (TypePtr aliasedType,
 	const UnicodeString& identifier);
 	
-      BlockPtr AddFunction (TypePtr returnType,
+      FunctionPtr AddFunction (TypePtr returnType,
 	const UnicodeString& identifier,
 	const FunctionFormalParameters& params);
     

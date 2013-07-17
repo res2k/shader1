@@ -21,6 +21,15 @@ public:
     TestSemanticsHandler* handler;
     boost::shared_ptr<TestScope> parent;
     ScopeLevel level;
+
+    class TestFunction : public Function
+    {
+      BlockPtr block;
+    public:
+      TestFunction (const BlockPtr& block) : block (block) {}
+      BlockPtr GetBody() { return block; }
+      void Finish() {}
+    };
   public:
     TestScope (TestSemanticsHandler* handler,
 	       const boost::shared_ptr<TestScope>& parent, ScopeLevel level);
@@ -34,7 +43,7 @@ public:
     NamePtr AddTypeAlias (TypePtr aliasedType,
       const UnicodeString& identifier);
       
-    BlockPtr AddFunction (TypePtr returnType,
+    FunctionPtr AddFunction (TypePtr returnType,
       const UnicodeString& identifier,
       const FunctionFormalParameters& params);
   

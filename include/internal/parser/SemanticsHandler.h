@@ -156,6 +156,20 @@ namespace s1
       virtual ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
 							  const ExpressionVector& params) = 0;
       /** @} */
+
+      /**\name Functions
+       * @{ */
+      struct Function
+      {
+        virtual ~Function() {}
+
+        /// Get function block to add commands to.
+        virtual BlockPtr GetBody() = 0;
+        /// Finish function. Call after body was filled.
+        virtual void Finish() = 0;
+      };
+      typedef boost::shared_ptr<Function> FunctionPtr;
+      /** @} */
       
       /**\name Scope
        * @{ */
@@ -235,9 +249,9 @@ namespace s1
 	 * \param returnType Return type of function.
 	 * \param identifier Identifier of function.
 	 * \param params Formal parameters.
-	 * \returns Function block to add commands to.
+	 * \returns Function object.
 	 */
-	virtual BlockPtr AddFunction (TypePtr returnType,
+	virtual FunctionPtr AddFunction (TypePtr returnType,
 	  const UnicodeString& identifier,
 	  const FunctionFormalParameters& params) = 0;
 	  

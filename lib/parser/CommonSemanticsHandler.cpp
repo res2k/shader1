@@ -403,7 +403,7 @@ namespace s1
       return newName;
     }
       
-    CommonSemanticsHandler::BlockPtr
+    CommonSemanticsHandler::FunctionPtr
     CommonSemanticsHandler::CommonScope::AddFunction (TypePtr returnType,
 						      const UnicodeString& identifier,
 						      const FunctionFormalParameters& params)
@@ -417,7 +417,8 @@ namespace s1
       funcScope = handler->CreateScope (shared_from_this(), Function);
       BlockPtr newBlock (handler->CreateBlock (funcScope));
       funcScope = ScopePtr();
-      return newBlock;
+      FunctionPtr newFunction (new CommonFunction (newBlock));
+      return newFunction;
     }
 
     CommonSemanticsHandler::NamePtr

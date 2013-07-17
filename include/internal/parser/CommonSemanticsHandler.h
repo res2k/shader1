@@ -135,6 +135,15 @@ namespace s1
 	CommonSemanticsHandler* handler;
 	boost::shared_ptr<CommonScope> parent;
 	ScopeLevel level;
+
+        class CommonFunction : public Function
+        {
+          BlockPtr block;
+        public:
+          CommonFunction (const BlockPtr& block) : block (block) {}
+          BlockPtr GetBody() { return block; }
+          void Finish() {}
+        };
       public:
 	CommonScope (CommonSemanticsHandler* handler,
 		     const boost::shared_ptr<CommonScope>& parent, ScopeLevel level);
@@ -148,7 +157,7 @@ namespace s1
 	NamePtr AddTypeAlias (TypePtr aliasedType,
 	  const UnicodeString& identifier);
 	  
-	BlockPtr AddFunction (TypePtr returnType,
+	FunctionPtr AddFunction (TypePtr returnType,
 	  const UnicodeString& identifier,
 	  const FunctionFormalParameters& params);
       

@@ -2,6 +2,7 @@
 
 #include "BlockImpl.h"
 #include "Builtin.h"
+#include "FunctionImpl.h"
 #include "ScopeImpl.h"
 
 #include "parser/Exception.h"
@@ -17,6 +18,7 @@ namespace s1
   {
     typedef IntermediateGeneratorSemanticsHandler::NamePtr NamePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
+    typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const UnicodeString& identifier)
     {
@@ -48,6 +50,11 @@ namespace s1
 								 const TypePtr& funcReturnType)
      : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
     {}
+
+    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (FunctionInfoPtr funcInfo, const BlockPtr& block)
+    {
+      return FunctionPtr (new FunctionImpl (handler, funcInfo, block));
+    }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
     {
@@ -85,7 +92,7 @@ namespace s1
       return newName;
     }
       
-    BlockPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (TypePtr returnType,
+    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (TypePtr returnType,
 									    const UnicodeString& identifier,
 									    const FunctionFormalParameters& params)
     {
@@ -143,7 +150,8 @@ namespace s1
 	blockImpl->GenerateGlobalVarInitialization();
       }	
       
-      return newBlock;
+      FunctionPtr newFunction (CreateFunction (funcInfo, newBlock));
+      return newFunction;
     }
 
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const UnicodeString& identifier)

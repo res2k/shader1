@@ -36,6 +36,7 @@ namespace s1
   namespace intermediate
   {
     typedef IntermediateGeneratorSemanticsHandler::NamePtr NamePtr;
+    typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef IntermediateGeneratorSemanticsHandler::TypePtr TypePtr;

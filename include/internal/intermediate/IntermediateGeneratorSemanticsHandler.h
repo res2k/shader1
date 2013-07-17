@@ -17,6 +17,7 @@ namespace s1
       
       struct TypeImpl;
       struct NameImpl;
+      class FunctionImpl;
       class ScopeImpl;
       class BlockImpl;
       

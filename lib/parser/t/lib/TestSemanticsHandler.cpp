@@ -6,6 +6,7 @@
 using namespace s1;
 
 typedef TestSemanticsHandler::NamePtr NamePtr;
+typedef TestSemanticsHandler::FunctionPtr FunctionPtr;
 typedef TestSemanticsHandler::BlockPtr BlockPtr;
 
 void TestSemanticsHandler::TestScope::CheckIdentifierUnique (const UnicodeString& identifier)
@@ -42,7 +43,7 @@ NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, cons
   return newName;
 }
   
-BlockPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
+FunctionPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
 							   const UnicodeString& identifier,
 							   const FunctionFormalParameters& params)
 {
@@ -53,7 +54,8 @@ BlockPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
   funcScope = handler->CreateScope (shared_from_this(), Function);
   BlockPtr newBlock (handler->CreateBlock (funcScope));
   funcScope = ScopePtr();
-  return newBlock;
+  FunctionPtr newFunction (new TestFunction (newBlock));
+  return newFunction;
 }
 
 NamePtr TestSemanticsHandler::TestScope::ResolveIdentifier (const UnicodeString& identifier)
