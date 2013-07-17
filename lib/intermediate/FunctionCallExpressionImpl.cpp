@@ -60,6 +60,9 @@ namespace s1
           else
             paramExpr = param.defaultValue;
           break;
+        case SemanticsHandler::Scope::ptAutoGlobal:
+          paramExpr = param.defaultValue;
+          break;
         }
 	
 	actualParams.push_back (paramExpr);
@@ -137,37 +140,6 @@ namespace s1
 	  if (!outReg)
 	    throw Exception (ActualParameterNotAnLValue);
 	  outParams.push_back (outReg);
-	}
-      }
-      
-      if (overload->block)
-      {
-	// Look for globals imported into function, add as parameters
-	boost::shared_ptr<BlockImpl> funcBlockImpl (boost::static_pointer_cast<BlockImpl> (overload->block));
-	Sequence::RegisterImpMappings imports (funcBlockImpl->GetSequence()->GetImports());
-	for (Sequence::RegisterImpMappings::const_iterator imported (imports.begin());
-	    imported != imports.end();
-	    ++imported)
-	{
-	  NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (imported->first));
-	  if (global)
-	  {
-	    RegisterPtr globLocal (block.GetRegisterForName (global, false));
-	    inParams.push_back (globLocal);
-	  }
-	}
-	
-	intermediate::Sequence::RegisterExpMappings exports (funcBlockImpl->GetSequence()->GetExports());
-	for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
-	      exported != exports.end();
-	      ++exported)
-	{
-	  NameImplPtr global (handler->globalScope->ResolveIdentifierInternal (exported->first));
-	  if (global)
-	  {
-	    RegisterPtr globLocal (block.GetRegisterForName (global, true));
-	    outParams.push_back (globLocal);
-	  }
 	}
       }
       

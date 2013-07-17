@@ -222,7 +222,9 @@ namespace s1
         enum FormalParameterType
         {
           /// User-defined parameter
-          ptUser
+          ptUser,
+          /// Automatically generated parameter, representing a global var
+          ptAutoGlobal
         };
 	enum FormalParameterDirection
 	{
