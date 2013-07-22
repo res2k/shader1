@@ -902,10 +902,6 @@ namespace s1
           assert (impRegID != identToRegIDs_imp.end());
           RegisterPtr reg (impRegID->second);
 
-          std::string s;
-          reg->GetName().toUTF8String (s);
-          std::cerr << s << std::endl;
-
           allInputs.insert (reg);
         }
       }
