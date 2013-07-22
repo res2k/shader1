@@ -127,6 +127,7 @@ namespace s1
 	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
 	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
 	  {
+            if (!(funcParams[i].dir & parser::SemanticsHandler::Scope::dirIn)) continue;
 	    seqSplit.SetInputFreqFlags (funcParams[i].identifier, inputParamFreqFlags[i]);
 	  }
 	  
