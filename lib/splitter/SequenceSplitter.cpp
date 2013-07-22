@@ -1163,12 +1163,8 @@ namespace s1
 	ParamMap::const_iterator inputFreq = paramFlags.find (impMap->first);
 	if (inputFreq != paramFlags.end())
 	{
-	  Sequence::IdentifierToRegMap::const_iterator toReg =
-	    inputSeq->GetIdentifierToRegisterMap().find (inputFreq->first);
-	  if (toReg != inputSeq->GetIdentifierToRegisterMap().end())
-	  {
-	    regAvailability[toReg->second] = inputFreq->second;
-	  }
+          RegisterPtr toReg (impMap->second);
+          regAvailability[toReg] = inputFreq->second;
 	}
       }
       for (intermediate::Sequence::RegisterExpMappings::const_iterator expMap = inputSeq->GetExports().begin();
