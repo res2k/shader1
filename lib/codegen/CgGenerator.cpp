@@ -145,8 +145,7 @@ namespace s1
 	// Valid Cg identifier character?
 	if (IsCgIdentifierChar (ch))
 	{
-	  char s[2] = {char (ch), 0};
-	  basic_str.append (s);
+	  basic_str.push_back (char (ch));
 	}
       }
       // Actual encoding, see RFC 3492 sect. 6.3
@@ -160,7 +159,7 @@ namespace s1
       // let h = b = the number of basic code points in the input
       h = b = basic_str.size();
       std::string outStr (basic_str);
-      outStr.append ("_");
+      outStr.push_back ('_');
       const size_t num_str_chars (str.countChar32());
       while (h < num_str_chars)
       {
@@ -198,12 +197,10 @@ namespace s1
 		t = k - bias;
 	      if (q < t) break;
 	      size_t digit = t + (delta_type (q - t).convert_to<size_t>() % (rfc3492_base - t));
-	      char s[2] = {rfc3492_encode_digit (digit), 0};
-	      outStr.append (s);
+	      outStr.push_back (rfc3492_encode_digit (digit));
 	      q = (q - t) / (rfc3492_base - t);
 	    }
-	    char s[2] = {rfc3492_encode_digit (q.convert_to<size_t>()), 0};
-	    outStr.append (s);
+	    outStr.push_back (rfc3492_encode_digit (q.convert_to<size_t>()));
 	    bias = rfc3492_adapt (delta, h + 1, h == b);
 	    delta = 0;
 	    h++;
