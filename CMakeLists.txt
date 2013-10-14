@@ -4,6 +4,10 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cxx_fla
 PROJECT(s1)
 cmake_minimum_required(VERSION 2.6)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+
 find_package(CxxTest)
 
 if(CXXTEST_FOUND)
