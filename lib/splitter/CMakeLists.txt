@@ -6,5 +6,7 @@ if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Splitter test_Splitter.cpp
 		   ${splitter_test_sources})
   target_link_libraries(test_Splitter intermediate splitter)
+  set_property(TARGET test_Splitter PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_Splitter)
 endif()
 

@@ -7,4 +7,6 @@ if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Lexer test_Lexer.cpp
 		   ${lexer_test_sources})
   target_link_libraries(test_Lexer lexer)
+  set_property(TARGET test_Lexer PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_Lexer)
 endif()

@@ -95,6 +95,13 @@ configure_file(include/internal/base/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/inc
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/s1)
 configure_file(include/s1/s1config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/s1/s1config.h)
 
+add_custom_target(build_tests)
+function(AutoBuildTest test_name)
+  add_test(test_build_${test_name} "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${test_name})
+  set_tests_properties(${test_name} PROPERTIES DEPENDS test_build_${test_name})
+  add_dependencies(build_tests ${test_name})
+endfunction()
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/internal)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 include_directories(include/internal)

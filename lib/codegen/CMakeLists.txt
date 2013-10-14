@@ -13,5 +13,7 @@ if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Codegen test_Codegen.cpp
 		   ${codegen_test_sources})
   target_link_libraries(test_Codegen codegen)
+  set_property(TARGET test_Codegen PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_Codegen)
 endif()
 

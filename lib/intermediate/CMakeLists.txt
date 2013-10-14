@@ -8,5 +8,7 @@ if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Intermediate test_Intermediate.cpp
 		   ${intermediate_test_sources})
   target_link_libraries(test_Intermediate intermediate)
+  set_property(TARGET test_Intermediate PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_Intermediate)
 endif()
 

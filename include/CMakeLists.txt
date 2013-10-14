@@ -11,9 +11,12 @@ if(CXXTEST_FOUND)
   add_library(api_testlib STATIC ${api_testlib_sources})
   add_dependencies(api_testlib generate_Object)
   set_property(TARGET api_testlib PROPERTY COMPILE_DEFINITIONS S1_BUILD)
+  set_property(TARGET api_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
   file(GLOB api_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.cpp)
   CXXTEST_ADD_TEST(test_Api test_Api.cpp
                    ${api_test_sources})
   target_link_libraries(test_Api api_testlib s1)
+  set_property(TARGET test_Api PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_Api)
 endif()
