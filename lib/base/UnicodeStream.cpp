@@ -50,40 +50,42 @@ namespace s1
     if (!uconv) return *this;
     
     currentError = U_ZERO_ERROR;
-    try
+    UChar uc;
+    if (!GetNextUChar (uc))
     {
-      UChar uc = GetNextUChar ();
+      currentChar = noCharacter;
+      return *this;
+    }
+    if (U_FAILURE (currentError))
+    {
+      /* Error occured earlier during conversion to Unicode,
+	  fetching current char will raise that. */
+      currentChar = errorCharacter;
+      return *this;
+    }
+    if (U_IS_SURROGATE(uc))
+    {
+      UChar uc2;
+      if (!GetNextUChar (uc2))
+      {
+        currentChar = noCharacter;
+        return *this;
+      }
       if (U_FAILURE (currentError))
       {
-	/* Error occured earlier during conversion to Unicode,
-	   fetching current char will raise that. */
+	// Give errors from ICU precedence
 	currentChar = errorCharacter;
 	return *this;
       }
-      if (U_IS_SURROGATE(uc))
-      {
-	UChar uc2;
-	uc2 = GetNextUChar ();
-	if (U_FAILURE (currentError))
-	{
-	  // Give errors from ICU precedence
-	  currentChar = errorCharacter;
-	  return *this;
-	}
-	// Assume ICU always gives us a correct pair of surrogates
-	assert(U_IS_SURROGATE_LEAD(uc));
-	assert(U_IS_SURROGATE_TRAIL(uc2));
+      // Assume ICU always gives us a correct pair of surrogates
+      assert(U_IS_SURROGATE_LEAD(uc));
+      assert(U_IS_SURROGATE_TRAIL(uc2));
 	
-	currentChar = 0x10000 + ((uc & 0x03ff) << 10);
-	currentChar |= (uc2 & 0x3ff);
-      }
-      else
-	currentChar = uc;
+      currentChar = 0x10000 + ((uc & 0x03ff) << 10);
+      currentChar |= (uc2 & 0x3ff);
     }
-    catch (UnicodeStreamEndOfInputException&)
-    {
-      currentChar = noCharacter;
-    }
+    else
+      currentChar = uc;
     return *this;
   }
   
@@ -112,11 +114,11 @@ namespace s1
     }
   }
 
-  UChar UnicodeStream::GetNextUChar ()
+  bool UnicodeStream::GetNextUChar (UChar& c)
   {
     if ((ucBufferRemaining == 0) && U_SUCCESS(ucBufferEndError))
     {
-      RefillUCBuffer ();
+      if (!RefillUCBuffer ()) return false;
     }
     
     /* Don't use -1 as we want to, in case of a conversion error, _pretend_
@@ -134,18 +136,19 @@ namespace s1
       // Clear end-of-buffer error so next call will refill buffer
       ucBufferEndError = U_ZERO_ERROR;
     }
-    return ret;
+    c = ret;
+    return true;
   }
   
   /// Refill unicode buffer
-  void UnicodeStream::RefillUCBuffer ()
+  bool UnicodeStream::RefillUCBuffer ()
   {
     assert(ucBufferEndError == U_ZERO_ERROR);
     if (streamInBufferRemaining == 0)
     {
       if (!inStream.good())
       {
-	throw UnicodeStreamEndOfInputException ();
+	return false;
       }
       
       inStream.read (streamInBuffer, sizeof (streamInBuffer));
@@ -155,7 +158,7 @@ namespace s1
       if (streamInBufferRemaining == 0)
       {
 	// Nothing was read
-	throw UnicodeStreamEndOfInputException ();
+	return false;
       }
     }
     
@@ -175,6 +178,8 @@ namespace s1
        Since we buffer as much UChars as input bytes, a buffer overflow should
        _not_ occur. (A single byte expanding into a surrogate pair? Won't happen.)
      */
+
+    return true;
   }
 
 } // namespace s1

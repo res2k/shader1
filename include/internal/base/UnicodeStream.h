@@ -63,9 +63,9 @@ namespace s1
     };
     
     /// Get next UTF-16 character from buffer, refill if necessary
-    UChar GetNextUChar ();
+    bool GetNextUChar (UChar& c);
     /// Refill unicode buffer
-    void RefillUCBuffer ();
+    bool RefillUCBuffer ();
   public:
     /**
      * Constructor.
