@@ -12,10 +12,22 @@ namespace s1
     public:
       typedef intermediate::RegisterPtr RegisterPtr;
       typedef intermediate::Sequence Sequence;
+      typedef intermediate::SequencePtr SequencePtr;
       typedef intermediate::SequenceOpPtr SequenceOpPtr;
       
       CommonSequenceVisitor (const intermediate::SequencePtr& newSequence)
         : CloningSequenceVisitor (newSequence) {}
+
+      // Overridden by optimizing visitors
+      virtual void PostVisitSequence (CommonSequenceVisitor* visitor,
+				      const SequencePtr& newSequence,
+				      const RegisterMap& regMap)
+      { }
+      // Simply to wrap the method taking a CommonSequenceVisitor*
+      virtual void PostVisitSequence (CloningSequenceVisitor* visitor,
+				      const SequencePtr& newSequence,
+				      const RegisterMap& regMap)
+      { PostVisitSequence (static_cast<CommonSequenceVisitor*> (visitor), newSequence, regMap); }
     };
   } // namespace optimize
 } // namespace s1
