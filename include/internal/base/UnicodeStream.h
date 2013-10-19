@@ -38,7 +38,7 @@ namespace s1
     UChar ucBuffer[UCBufferSize];
     
     const UChar* ucBufferPtr;
-    unsigned int ucBufferRemaining;
+    size_t ucBufferRemaining;
     /**
      * ICU error that occured during filling the buffer.
      * The buffer is filled up until an error occured. So the error needs to
