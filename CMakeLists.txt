@@ -66,7 +66,7 @@ function(CxxCompilerFlagStringAppend flagvar flagstr)
   endif()
 endfunction()
 
-if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+if(NOT MSVC)
   # Annoying on MSVC; lots of warnings from inside Boost
   CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS_DEBUG "-Wall")
   CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS_DEBUG "-Wno-unused-local-typedefs")
@@ -90,7 +90,7 @@ endif()
 set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
 set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
 
-if(CMAKE_GENERATOR MATCHES "Visual Studio")
+if(MSVC)
   # Automatically make use of 'secure' CRT funtions
   add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1")
   add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT=1")
