@@ -10,6 +10,8 @@ endif()
 
 find_package(CxxTest)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/libutils.cmake)
+
 if(CXXTEST_FOUND)
   include_directories(${CXXTEST_INCLUDE_DIR})
   enable_testing()
@@ -101,6 +103,7 @@ endif()
 # Build everything with -fPIC to allow linking into shared libs
 if(UNIX)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
+  set(WITH_PIC YES)
 endif()
 
 # Configuration settings only relevant for building
