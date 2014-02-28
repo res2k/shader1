@@ -1,0 +1,8 @@
+execute_process(COMMAND dumpbin /directives @INPUT_FILES@
+                OUTPUT_VARIABLE DIRECTIVES)
+string(REPLACE "\n" ";" DIRECTIVES ${DIRECTIVES})
+string(REGEX MATCHALL "/EXPORT:[^  ]*" DIRECTIVES ${DIRECTIVES})
+string(REPLACE ";" "\n" DIRECTIVES "${DIRECTIVES}")
+string(REPLACE "/EXPORT:" "" DIRECTIVES "${DIRECTIVES}")
+file(WRITE "@DEF_FILE@" "EXPORTS\n")
+file(APPEND "@DEF_FILE@" ${DIRECTIVES})
