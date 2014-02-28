@@ -44,6 +44,7 @@ namespace s1
     intermediateHandler.SetEntryFunction (entryFunction);
     Parser parser (lexer, intermediateHandler, errorHandler);
     parser.Parse ();
+    intermediateHandler.CompleteProgram();
   }
 
   void Compiler::Program::SetProgramOutputParameters ()

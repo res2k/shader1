@@ -78,7 +78,9 @@ namespace s1
       Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& type);
       Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& typeA, const TypePtr& typeB);
       void SetupBuiltins (const ScopeImplPtr& scope);
-      
+
+      /// Whether the intermediate program was marked "completed"
+      bool completed;
       UnicodeString entryFunction;
     public:
       /**\name Type utilities
@@ -163,7 +165,9 @@ namespace s1
 			 const TypeImplPtr& typeDestination,
 			 const RegisterPtr& castSource,
 			 const TypeImplPtr& typeSource);
-			 
+
+      /// Mark the program as “completed”. Required before GetProgram() is called
+      void CompleteProgram ();
       ProgramPtr GetProgram ();
 
     #ifdef _MSC_VER

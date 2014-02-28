@@ -59,7 +59,7 @@ namespace s1
     typedef IntermediateGeneratorSemanticsHandler::TypePtr TypePtr;
     typedef IntermediateGeneratorSemanticsHandler::ExpressionPtr ExpressionPtr;
     
-    IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler ()
+    IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
       voidType = boost::shared_ptr<TypeImpl> (new TypeImpl (Void));
       boolType = boost::shared_ptr<TypeImpl> (new TypeImpl (Bool));
@@ -411,8 +411,31 @@ namespace s1
       throw Exception (InvalidTypeCast);
     }
 
+    void IntermediateGeneratorSemanticsHandler::CompleteProgram ()
+    {
+      S1_ASSERT(!completed, S1_ASSERT_RET_VOID);
+
+      if (globalScope)
+      {
+        ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions());
+        for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
+             funcIt != functions.end();
+             ++funcIt)
+        {
+          if ((*funcIt)->builtin) continue;
+
+          boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
+          blockImpl->FinishBlock();
+        }
+      }
+
+      completed = true;
+    }
+
     ProgramPtr IntermediateGeneratorSemanticsHandler::GetProgram ()
     {
+      S1_ASSERT(completed, ProgramPtr ());
+
       ProgramPtr newProg (boost::make_shared <Program> ());
       if (globalScope)
       {
@@ -421,10 +444,7 @@ namespace s1
 	     funcIt != functions.end();
 	     ++funcIt)
 	{
-	  if ((*funcIt)->builtin) continue;
-	  
 	  boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
-	  blockImpl->FinishBlock();
 	  
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
 	  TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
