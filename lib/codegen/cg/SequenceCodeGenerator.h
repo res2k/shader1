@@ -158,6 +158,10 @@ namespace s1
       
       typedef boost::unordered_map<RegisterPtr, std::string> RegistersToIDMap;
       RegistersToIDMap seenRegisters;
+      // Track original registers for extraction results
+      typedef std::pair<RegisterPtr, unsigned int> RegisterOriginPair;
+      typedef boost::unordered_map<RegisterPtr, RegisterOriginPair> RegisterOriginsMap;
+      RegisterOriginsMap registerOrigins;
       
       std::string GetOutputRegisterName (const RegisterPtr& reg);
       bool GetOutputRegisterName (const RegisterPtr& reg,

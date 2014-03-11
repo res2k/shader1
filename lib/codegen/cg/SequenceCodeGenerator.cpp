@@ -52,6 +52,45 @@ namespace s1
 	  str.append (s);
 	}
       };
+
+      static const char* const vecCompStr[] = { "x", "y", "z", "w" };
+
+      // Helper to build swizzles strings for consecutive components of the same vector
+      class SwizzleHelper
+      {
+        ParamHelper& params;
+        std::string currentName;
+        std::string currentComps;
+      public:
+        SwizzleHelper (ParamHelper& params) : params (params) {}
+        ~SwizzleHelper ()
+        {
+          Flush ();
+        }
+        // Aggregate swizzle components for subsequent components of the same var
+        void Add (const std::string& name, unsigned int comp)
+        {
+          if (name != currentName)
+          {
+            Flush();
+            currentName = name;
+          }
+          currentComps.append (vecCompStr[comp]);
+        }
+        // Unconditionally write out the current aggregated swizzle
+        void Flush ()
+        {
+          if (!currentName.empty())
+          {
+            std::string s (currentName);
+            s.append (".");
+            s.append (currentComps);
+            params.Add (s);
+            currentName.clear();
+            currentComps.clear();
+          }
+        }
+      };
     }
     
     //-----------------------------------------------------------------------
@@ -228,19 +267,46 @@ namespace s1
 	break;
       }
     }
-    
 
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterPtr& destination,
 									   intermediate::BasicType compType,
 									   const std::vector<RegisterPtr>& sources)
     {
       std::string paramsStr;
-      ParamHelper params (paramsStr);
-      for (std::vector<RegisterPtr>::const_iterator source (sources.begin());
-	   source != sources.end();
-	   ++source)
+      bool one_source (true);
       {
-	params.Add (owner->GetOutputRegisterName (*source));
+        RegisterPtr lastSource (sources[0]);
+        for (size_t i = 1; i < sources.size(); i++)
+        {
+          RegisterPtr source (sources[i]);
+          one_source &= (source == lastSource);
+          lastSource = source;
+        }
+      }
+      if (one_source)
+      {
+        paramsStr = owner->GetOutputRegisterName (sources[0]);
+      }
+      else
+      {
+        ParamHelper params (paramsStr);
+        {
+          SwizzleHelper swizzles (params);
+          BOOST_FOREACH(const RegisterPtr& source, sources)
+          {
+            RegisterOriginsMap::const_iterator originIt (owner->registerOrigins.find (source));
+            if (originIt != owner->registerOrigins.end())
+            {
+              const RegisterOriginPair& origin (originIt->second);
+              swizzles.Add (owner->GetOutputRegisterName (origin.first), origin.second);
+            }
+            else
+            {
+              swizzles.Flush ();
+              params.Add (owner->GetOutputRegisterName (source));
+            }
+          }
+        }
       }
       std::string typeStr;
       switch (compType)
@@ -356,11 +422,9 @@ namespace s1
 										       const RegisterPtr& source,
 										       unsigned int comp)
     {
-      static const char* const compStr[] = { "x", "y", "z", "w" };
-      
       std::string sourceName (owner->GetOutputRegisterName (source));
       sourceName.append (".");
-      sourceName.append (compStr[comp]);
+      sourceName.append (vecCompStr[comp]);
       
       RegistersToIDMap::iterator regIt = owner->seenRegisters.find (destination);
       if (regIt != owner->seenRegisters.end())
@@ -373,6 +437,7 @@ namespace s1
 	// Set 'name' of register to constant value...
 	owner->seenRegisters[destination] = sourceName.c_str();
       }
+      owner->registerOrigins[destination] = std::make_pair (source, comp);
     }
     
 
