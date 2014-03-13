@@ -51,6 +51,13 @@ namespace s1
 	
 	void EmitAssign (const RegisterPtr& destination,
 			 const char* value);
+        /**
+         * Internally store a value for a register.
+         * Doesn't necessarily result in an assign and allows 'simple' values
+         * to be inlined later on (for tidier generated code).
+         */
+        void PseudoAssign (const RegisterPtr& destination,
+                           const char* value);
 	void EmitAssign (const char* destination,
 			 const RegisterPtr& source);
 	void EmitFunctionCall (const RegisterPtr& destination,
