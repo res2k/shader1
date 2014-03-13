@@ -222,7 +222,28 @@ namespace s1
 								     intermediate::BasicType destType,
 								     const RegisterPtr& source)
     {
+      // Check if the destination register type matches the source register type
+      bool typeMatch (false);
+      if (destination->GetOriginalType()->GetTypeClass()
+          == parser::SemanticsHandler::Type::Base)
+      {
+        switch (destination->GetOriginalType()->GetBaseType())
+        {
+        case parser::SemanticsHandler::Bool:    typeMatch = (destType == intermediate::Bool);  break;
+        case parser::SemanticsHandler::Int:     typeMatch = (destType == intermediate::Int);   break;
+        case parser::SemanticsHandler::UInt:    typeMatch = (destType == intermediate::UInt);  break;
+        case parser::SemanticsHandler::Float:   typeMatch = (destType == intermediate::Float); break;
+        default: break;
+        }
+      }
       std::string sourceName (owner->GetOutputRegisterName (source));
+      // If the types match just perform a simple assignment
+      if (typeMatch)
+      {
+        PseudoAssign (destination, sourceName.c_str());
+        return;
+      }
+      // Types don't match: actually generate cast
       switch (destType)
       {
       case intermediate::Bool:
