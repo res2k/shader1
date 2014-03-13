@@ -1,5 +1,7 @@
-file(GLOB intermediate_sources *.h *.cpp ../include/internal/intermediate/*.h 
+file(GLOB intermediate_sources *.h *.cpp ../include/internal/intermediate/*.h
+                               generator/*.h generator/*.cpp
 			       SequenceOp/*.h SequenceOp/*.cpp ../include/internal/intermediate/SequenceOp/*.h)
+include_directories(generator .)
 add_library(intermediate STATIC ${intermediate_sources})
 target_link_libraries(intermediate parser ${ICU_ICUIO_LIBRARIES})
 
