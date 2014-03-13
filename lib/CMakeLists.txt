@@ -3,7 +3,10 @@ if(MSVC)
   # Disable some warnings
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800")
+endif()
 
+if(MSVC AND BUILD_SHARED_LIBS)
+  # Use static VC runtime when building an S1 DLL
   foreach(flag_var
           CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
           CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
