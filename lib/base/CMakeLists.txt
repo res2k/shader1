@@ -15,7 +15,7 @@ target_link_libraries(base ${ICU_LIBRARIES})
 
 if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_UnicodeStream test_UnicodeStream.cpp
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.cpp)
+                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h)
   target_link_libraries(test_UnicodeStream base)
   set_property(TARGET test_UnicodeStream PROPERTY EXCLUDE_FROM_ALL YES)
   AutoBuildTest(test_UnicodeStream)
