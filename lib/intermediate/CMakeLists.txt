@@ -16,6 +16,10 @@ if(CXXTEST_FOUND)
 		   ${intermediate_test_sources})
   target_link_libraries(test_Intermediate intermediate)
   set_property(TARGET test_Intermediate PROPERTY EXCLUDE_FROM_ALL YES)
+  set_property(TARGET test_Intermediate
+               APPEND
+               PROPERTY INCLUDE_DIRECTORIES
+               ${CMAKE_CURRENT_SOURCE_DIR}/generator)
   AutoBuildTest(test_Intermediate)
 endif()
 

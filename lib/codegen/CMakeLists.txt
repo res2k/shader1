@@ -14,6 +14,11 @@ if(CXXTEST_FOUND)
 		   ${codegen_test_sources})
   target_link_libraries(test_Codegen codegen)
   set_property(TARGET test_Codegen PROPERTY EXCLUDE_FROM_ALL YES)
+  set_property(TARGET test_Codegen
+               APPEND
+               PROPERTY INCLUDE_DIRECTORIES
+               ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate
+               ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate/generator)
   AutoBuildTest(test_Codegen)
 endif()
 

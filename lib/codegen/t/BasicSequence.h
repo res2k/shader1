@@ -20,8 +20,8 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 // FIXME: Tests using too much intermediate internals
-#include "../../intermediate/BlockImpl.h"
-#include "../../intermediate/NameImpl.h"
+#include "BlockImpl.h"
+#include "NameImpl.h"
 
 #include "codegen/CgGenerator.h"
 #include "../cg/SequenceCodeGenerator.h"

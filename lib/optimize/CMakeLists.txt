@@ -8,5 +8,10 @@ if(CXXTEST_FOUND)
 		   ${optimize_test_sources})
   target_link_libraries(test_Optimize optimize)
   set_property(TARGET test_Optimize PROPERTY EXCLUDE_FROM_ALL YES)
+  set_property(TARGET test_Optimize
+               APPEND
+               PROPERTY INCLUDE_DIRECTORIES
+               ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate
+               ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate/generator)
   AutoBuildTest(test_Optimize)
 endif()

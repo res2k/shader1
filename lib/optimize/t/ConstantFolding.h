@@ -25,12 +25,12 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
-#include "../../intermediate/BlockImpl.h"
-#include "../../intermediate/TypeImpl.h"
+#include "BlockImpl.h"
+#include "TypeImpl.h"
 
 #include "optimize/ConstantFolding.h"
-#include "../../intermediate/t/TestSequenceVisitor.h"
-#include "../../intermediate/t/IntermediateTestTraits.h"
+#include "t/TestSequenceVisitor.h"
+#include "t/IntermediateTestTraits.h"
 
 using namespace s1::intermediate;
 using namespace s1::optimize;
