@@ -71,22 +71,24 @@ namespace s1
 
     void Sequence::Visit (SequenceVisitor& visitor) const
     {
-      for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
+      for(const SequenceOpPtr& op : ops)
       {
-	visitor.SetVisitedOp (*op);
-	(*op)->Visit (visitor);
+	visitor.PreVisitOp (op);
+	op->Visit (visitor);
+        visitor.PostVisitOp ();
       }
-      visitor.SetVisitedOp (SequenceOpPtr ());
+      visitor.VisitEnd ();
     }
     
     void Sequence::ReverseVisit (SequenceVisitor& visitor) const
     {
       for(const SequenceOpPtr& op : boost::adaptors::reverse(ops))
       {
-	visitor.SetVisitedOp (op);
+        visitor.PreVisitOp (op);
 	op->Visit (visitor);
+        visitor.PostVisitOp ();
       }
-      visitor.SetVisitedOp (SequenceOpPtr ());
+      visitor.VisitEnd ();
     }
 
     const Sequence::RegisterExpMappings& Sequence::GetExports () const

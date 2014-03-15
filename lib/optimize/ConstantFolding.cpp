@@ -1049,8 +1049,9 @@ namespace s1
 	
 	if (branchOp)
 	{
-	  SetVisitedOp (branchOp);
+	  PreVisitOp (branchOp);
 	  branchOp->Visit (*this);
+          PostVisitOp ();
 	}
 	
 	seqChanged = true;

@@ -109,7 +109,9 @@ namespace s1
 	CodegenVisitor (SequenceCodeGenerator* owner,
 			const StringsArrayPtr& target);
 			
-	void SetVisitedOp (const intermediate::SequenceOpPtr& op) {}
+	void PreVisitOp (const intermediate::SequenceOpPtr& op) {}
+	void PostVisitOp () {}
+	void VisitEnd() {}
 	
 	void OpConstBool (const RegisterPtr& destination,
 			  bool value);

@@ -270,7 +270,9 @@ namespace s1
       
       bool WasRecursionFound() const { return recursionFound; }
       
-      void SetVisitedOp (const intermediate::SequenceOpPtr& op) {}
+      void PreVisitOp (const intermediate::SequenceOpPtr& op) {}
+      void PostVisitOp () {}
+      void VisitEnd() {}
       
       typedef intermediate::RegisterPtr RegisterPtr;
       void OpConstBool (const RegisterPtr&, bool) {}

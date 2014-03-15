@@ -46,8 +46,11 @@ namespace s1
 	newSequenceBuilder->AddOp (seqOp);
       }
 		      
-      void SetVisitedOp (const SequenceOpPtr& op)
+      void PreVisitOp (const SequenceOpPtr& op)
       { visitedOp = op; }
+      void PostVisitOp () {}
+      void VisitEnd()
+      { visitedOp.reset(); }
       
       void OpConstBool (const RegisterPtr& destination,
 			bool value);

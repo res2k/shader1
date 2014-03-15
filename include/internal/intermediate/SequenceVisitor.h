@@ -31,7 +31,15 @@ namespace s1
     {
       virtual ~SequenceVisitor() {}
       
-      virtual void SetVisitedOp (const intermediate::SequenceOpPtr& op) = 0;
+      /**
+       * Called before an operation is visited.
+       * \param op Operation about to be visited.
+       */
+      virtual void PreVisitOp (const intermediate::SequenceOpPtr& op) = 0;
+      /// Called after an operation was visited.
+      virtual void PostVisitOp () = 0;
+      /// Called once all operations were visited.
+      virtual void VisitEnd() = 0;
       
       virtual void OpConstBool (const RegisterPtr& destination,
 				bool value) = 0;

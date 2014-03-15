@@ -54,8 +54,6 @@ namespace s1
 				   CloningSequenceVisitor* owner)
        : CloningSequenceVisitor (newSequenceBuilder), owner (owner) {}
       
-      void SetVisitedOp (const SequenceOpPtr& op) { }
-      
       void OpConstBool (const RegisterPtr& destination,
 			bool value)
       { assert (false); }
@@ -436,8 +434,9 @@ namespace s1
       {
         SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
         BlockNestingSequenceVisitor visitor (newSeqBuilder, this);
-	visitor.SetVisitedOp (seqOpIf);
+	visitor.PreVisitOp (seqOpIf);
 	seqOpIf->Visit (visitor);
+        visitor.PostVisitOp ();
 	
         SequencePtr newSeq (newSeqBuilder->GetSequence());
 	assert (newSeq->GetNumOps() == 1);
@@ -448,8 +447,9 @@ namespace s1
       {
         SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
         BlockNestingSequenceVisitor visitor (newSeqBuilder, this);
-	visitor.SetVisitedOp (seqOpElse);
+	visitor.PreVisitOp (seqOpElse);
 	seqOpElse->Visit (visitor);
+        visitor.PostVisitOp ();
 	
         SequencePtr newSeq (newSeqBuilder->GetSequence());
 	assert (newSeq->GetNumOps() == 1);
@@ -471,8 +471,9 @@ namespace s1
       {
         SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
         BlockNestingSequenceVisitor visitor (newSeqBuilder, this);
-	visitor.SetVisitedOp (seqOpBody);
+	visitor.PreVisitOp (seqOpBody);
 	seqOpBody->Visit (visitor);
+        visitor.PostVisitOp ();
 	
         SequencePtr newSeq (newSeqBuilder->GetSequence());
 	assert (newSeq->GetNumOps() == 1);

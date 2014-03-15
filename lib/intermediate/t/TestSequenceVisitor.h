@@ -110,7 +110,9 @@ public:
   
   std::vector<SequenceEntry> entries;
   
-  void SetVisitedOp (const s1::intermediate::SequenceOpPtr& op) {}
+  void PreVisitOp (const s1::intermediate::SequenceOpPtr& op) {}
+  void PostVisitOp () {}
+  void VisitEnd() {}
   
   void OpConstBool (const RegisterPtr& destination,
 		    bool value)

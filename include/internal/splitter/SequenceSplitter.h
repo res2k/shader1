@@ -86,7 +86,9 @@ namespace s1
       public:
 	InputVisitor (SequenceSplitter& parent);
 	
-	void SetVisitedOp (const s1::intermediate::SequenceOpPtr& op) {}
+        void PreVisitOp (const intermediate::SequenceOpPtr& op) {}
+        void PostVisitOp () {}
+        void VisitEnd() {}
 	
 	void OpConstBool (const RegisterPtr& destination,
 			  bool value);
