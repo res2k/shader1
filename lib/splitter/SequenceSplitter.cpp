@@ -391,7 +391,7 @@ namespace s1
 	  == op (lerp (x_1, x_2, f), lerp (y_1, y_2, f)).
        */
       
-      bool lerpSafe;
+      bool lerpSafe (false);
       
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
@@ -420,7 +420,6 @@ namespace s1
 	break;
       case Mod:
 	/* Mod isn't interpolation safe at all */
-	lerpSafe = false;	
 	break;
       }
       
@@ -493,7 +492,7 @@ namespace s1
 						  UnaryOp op,
 						  const RegisterPtr& source)
     {
-      bool lerpSafe;
+      bool lerpSafe (false);
       
       switch (op)
       {
@@ -504,7 +503,6 @@ namespace s1
 	break;
       case Inv:
 	/* Bit-wise invert isn't */
-	lerpSafe = false;	
 	break;
       }
       

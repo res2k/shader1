@@ -530,6 +530,9 @@ namespace s1
       SemanticsHandler::UnaryOp op;
       switch (currentToken.typeOrID)
       {
+      default:
+        assert (false);
+        // Fall through (silence compiler)
       case Lexer::BitwiseInvert:
 	op = SemanticsHandler::Inv;
 	break;
@@ -539,8 +542,6 @@ namespace s1
       case Lexer::Minus:
 	op = SemanticsHandler::Neg;
 	break;
-      default:
-	assert (false);
       }
       NextToken();
       expr = ParseExprBase (scope);
