@@ -53,6 +53,7 @@ public:
     s1::intermediate::IntermediateGeneratorSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     s1::Parser parser (lexer, semanticsHandler, parserErrorHandler);
+    semanticsHandler.CompleteProgram();
     
     s1::splitter::ProgramSplitter splitter;
 
