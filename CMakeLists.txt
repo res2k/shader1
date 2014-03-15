@@ -67,13 +67,12 @@ endfunction()
 
 if(NOT MSVC)
   # Annoying on MSVC; lots of warnings from inside Boost
-  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS_DEBUG "-Wall")
-  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS_DEBUG "-Wno-unused-local-typedefs")
+  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-Wall")
+  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-Wno-unused-local-typedefs")
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
-  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS_DEBUG "-fvisibility-inlines-hidden -fvisibility=hidden")
+  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-fvisibility-inlines-hidden -fvisibility=hidden")
 endif()
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CXX_WARN_ALL} ${CXX_VISIBILITY_HIDDEN}")
 
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
@@ -99,7 +98,7 @@ endif()
 
 # Build everything with -fPIC to allow linking into shared libs
 if(UNIX)
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   set(WITH_PIC YES)
 endif()
 
