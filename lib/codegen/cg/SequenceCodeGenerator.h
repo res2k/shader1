@@ -34,8 +34,8 @@ namespace s1
     {
       virtual ~ImportedNameResolver() {}
       
-      virtual std::string GetImportedNameIdentifier (const UnicodeString& name) = 0;
-      virtual std::string GetExportedNameIdentifier (const UnicodeString& name) = 0;
+      virtual std::string GetImportedNameIdentifier (const uc::String& name) = 0;
+      virtual std::string GetExportedNameIdentifier (const uc::String& name) = 0;
     };
     
     class CgGenerator::SequenceCodeGenerator
@@ -54,8 +54,8 @@ namespace s1
 						 const Sequence::IdentifierToRegMap& identToRegID_imp,
 						 const Sequence::IdentifierToRegMap& identToRegID_exp);
 					 
-	std::string GetImportedNameIdentifier (const UnicodeString& name);
-	std::string GetExportedNameIdentifier (const UnicodeString& name);
+	std::string GetImportedNameIdentifier (const uc::String& name);
+	std::string GetExportedNameIdentifier (const uc::String& name);
       };
       
       class CodegenVisitor : public intermediate::SequenceVisitor
@@ -165,7 +165,7 @@ namespace s1
 		      const intermediate::SequenceOpPtr& seqOpBody);
 		      
 	void OpReturn (const std::vector<RegisterPtr>& outParamVals);
-	void OpFunctionCall (const UnicodeString& funcIdent,
+	void OpFunctionCall (const uc::String& funcIdent,
 			     const std::vector<RegisterPtr>& inParams,
 			     const std::vector<RegisterPtr>& outParams);
 	void OpBuiltinCall (const RegisterPtr& destination,

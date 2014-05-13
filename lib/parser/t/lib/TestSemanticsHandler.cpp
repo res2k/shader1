@@ -26,7 +26,7 @@ typedef TestSemanticsHandler::NamePtr NamePtr;
 typedef TestSemanticsHandler::FunctionPtr FunctionPtr;
 typedef TestSemanticsHandler::BlockPtr BlockPtr;
 
-void TestSemanticsHandler::TestScope::CheckIdentifierUnique (const UnicodeString& identifier)
+void TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::String& identifier)
 {
   IdentifierMap::iterator ident = identifiers.find (identifier);
   if (ident != identifiers.end())
@@ -43,7 +43,7 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : handler (handler), parent (parent), level (level)
 {}
 
-NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const UnicodeString& identifier,
+NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const s1::uc::String& identifier,
 						  ExpressionPtr initialValue, bool constant)
 {
   CheckIdentifierUnique (identifier);
@@ -52,7 +52,7 @@ NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const Unicod
   return newName;
 }
   
-NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, const UnicodeString& identifier)
+NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, const s1::uc::String& identifier)
 {
   CheckIdentifierUnique (identifier);
   NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
@@ -61,7 +61,7 @@ NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, cons
 }
   
 FunctionPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
-							   const UnicodeString& identifier,
+							   const s1::uc::String& identifier,
 							   const FunctionFormalParameters& params)
 {
   CheckIdentifierUnique (identifier);
@@ -75,7 +75,7 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
   return newFunction;
 }
 
-NamePtr TestSemanticsHandler::TestScope::ResolveIdentifier (const UnicodeString& identifier)
+NamePtr TestSemanticsHandler::TestScope::ResolveIdentifier (const s1::uc::String& identifier)
 {
   IdentifierMap::iterator ident = identifiers.find (identifier);
   if (ident != identifiers.end())

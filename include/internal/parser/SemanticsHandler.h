@@ -122,12 +122,12 @@ namespace s1
       /// Create an expression for a constant bool value
       virtual ExpressionPtr CreateConstBoolExpression (bool value) = 0;
       /// Create an expression for a numeric value
-      virtual ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr) = 0;
+      virtual ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr) = 0;
       /// Create an expression for a variable/parameter
       virtual ExpressionPtr CreateVariableExpression (NamePtr name) = 0;
       /// Create an expression that access an attribute of some other expression
       virtual ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-						   const UnicodeString& attr) = 0;
+						   const uc::String& attr) = 0;
       /// Create an expression that accesses a member of an array
       virtual ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
 						      ExpressionPtr elementIndexExpr) = 0;
@@ -223,7 +223,7 @@ namespace s1
 	 * \param constant Whether it is a constant variable.
 	 */
 	virtual NamePtr AddVariable (TypePtr type,
-	  const UnicodeString& identifier,
+	  const uc::String& identifier,
 	  ExpressionPtr initialValue,
 	  bool constant) = 0;
 	  
@@ -233,7 +233,7 @@ namespace s1
 	 * \param identifier Identifier of type alias.
 	 */
 	virtual NamePtr AddTypeAlias (TypePtr aliasedType,
-	  const UnicodeString& identifier) = 0;
+	  const uc::String& identifier) = 0;
 	  
         /// Type of a format parameter
         enum FormalParameterType
@@ -255,7 +255,7 @@ namespace s1
           /// Type of parameter
           FormalParameterType paramType;
 	  TypePtr type;
-	  UnicodeString identifier;
+	  uc::String identifier;
 	  ExpressionPtr defaultValue;
 	  FormalParameterDirection dir;
 
@@ -271,11 +271,11 @@ namespace s1
 	 * \returns Function object.
 	 */
 	virtual FunctionPtr AddFunction (TypePtr returnType,
-	  const UnicodeString& identifier,
+	  const uc::String& identifier,
 	  const FunctionFormalParameters& params) = 0;
 	  
 	/// Resolve an identifier to a name
-	virtual NamePtr ResolveIdentifier (const UnicodeString& identifier) = 0;
+	virtual NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
       };
       typedef boost::shared_ptr<Scope> ScopePtr;
       

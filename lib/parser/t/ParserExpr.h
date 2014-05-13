@@ -557,9 +557,9 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("x"),
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddFunction (TestSemanticsHandler::TypePtr (), UnicodeString ("Foo"), params);
+    scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -584,13 +584,13 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("a"),
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("a"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("b"),
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("b"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), UnicodeString ("x"),
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddFunction (TestSemanticsHandler::TypePtr (), UnicodeString ("Foo"), params);
+    scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));

@@ -33,7 +33,7 @@ namespace s1
 {
   namespace intermediate
   {
-    Sequence::Register::Register (const UnicodeString& name, const TypePtr& originalType)
+    Sequence::Register::Register (const uc::String& name, const TypePtr& originalType)
      : originalName (name), generation (0), name (name), originalType (originalType)
     {}
     
@@ -41,8 +41,8 @@ namespace s1
      : originalName (other.originalName), generation (other.generation+1),
        name (other.originalName), originalType (other.originalType)
     {
-      UChar generationSuffix[charsToFormatUint + 2];
-      u_snprintf (generationSuffix, sizeof (generationSuffix)/sizeof (UChar),
+      uc::Char generationSuffix[charsToFormatUint + 2];
+      u_snprintf (generationSuffix, sizeof (generationSuffix)/sizeof (uc::Char),
 		  ".%u", generation);
       name.append (generationSuffix);
     }
@@ -93,7 +93,7 @@ namespace s1
       return exports;
     }
     
-    RegisterPtr Sequence::GetExport (const UnicodeString& name) const
+    RegisterPtr Sequence::GetExport (const uc::String& name) const
     {
       RegisterExpMappings::const_iterator it (exports.find (name));
       if (it != exports.end())

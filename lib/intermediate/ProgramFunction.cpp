@@ -26,8 +26,8 @@ namespace s1
 {
   namespace intermediate
   {
-    ProgramFunction::ProgramFunction (const UnicodeString& originalIdentifier,
-				      const UnicodeString& identifier,
+    ProgramFunction::ProgramFunction (const uc::String& originalIdentifier,
+				      const uc::String& identifier,
 				      const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
 				      const SequencePtr& body,
 				      bool isEntryFunction)
@@ -37,7 +37,7 @@ namespace s1
     {
     }
 
-    void ProgramFunction::SetTransferMapping (const UnicodeString& transferVal,
+    void ProgramFunction::SetTransferMapping (const uc::String& transferVal,
 					      const RegisterPtr& programReg)
     {
       transferMappings.push_back (std::make_pair (transferVal, programReg));

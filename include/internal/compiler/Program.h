@@ -34,23 +34,23 @@ namespace s1
   protected:
     friend class Compiler;
     
-    Program (UnicodeStream* inputStream, const UnicodeString& entryFunction);
+    Program (UnicodeStream* inputStream, const uc::String& entryFunction);
     
     OptionsPtr compilerOptions;
     
     intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
     intermediate::ProgramPtr intermediateProg;
     
-    boost::unordered_map<UnicodeString, unsigned int> freqFlagMap;
-    boost::unordered_map<UnicodeString, size_t> arraySizeMap;
+    boost::unordered_map<uc::String, unsigned int> freqFlagMap;
+    boost::unordered_map<uc::String, size_t> arraySizeMap;
     intermediate::ProgramPtr splitProgs[splitter::freqNum];
     
     void SetProgramOutputParameters ();
   public:
-    void SetInputParameterFrequencyFlags (const UnicodeString& param,
+    void SetInputParameterFrequencyFlags (const uc::String& param,
 					  unsigned int frequencyFlags);
-    void SetInputArrayParameterSize (const UnicodeString& param, size_t size);
-    void SetEntryFunctionName (const UnicodeString& name);
+    void SetInputArrayParameterSize (const uc::String& param, size_t size);
+    void SetEntryFunctionName (const uc::String& name);
     
     Compiler::Backend::ProgramPtr GetCompiledProgram (const OptionsPtr& compilerOptions,
                                                       const Compiler::BackendPtr& backend,

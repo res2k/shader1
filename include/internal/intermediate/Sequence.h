@@ -46,16 +46,16 @@ namespace s1
       protected:
 	friend class Sequence;
 	
-	UnicodeString originalName;
+	uc::String originalName;
 	unsigned int generation;
-	UnicodeString name;
+	uc::String name;
 	
 	TypePtr originalType;
       public:
-	Register (const UnicodeString& name, const TypePtr& originalType);
+	Register (const uc::String& name, const TypePtr& originalType);
 	Register (const Register& other);
 	
-	const UnicodeString& GetName() const { return name; }
+	const uc::String& GetName() const { return name; }
 	void StealName (Register& other);
 	
 	const TypePtr& GetOriginalType () const { return originalType; }
@@ -63,7 +63,7 @@ namespace s1
       typedef boost::shared_ptr<Register> RegisterPtr;
       typedef boost::unordered_set<RegisterPtr> RegisterSet;
       
-      typedef boost::unordered_map<UnicodeString, RegisterPtr> IdentifierToRegMap;
+      typedef boost::unordered_map<uc::String, RegisterPtr> IdentifierToRegMap;
       /// Get number of operations
       size_t GetNumOps() const;
       /// Get a specific op
@@ -72,13 +72,13 @@ namespace s1
       void Visit (SequenceVisitor& visitor) const;
       void ReverseVisit (SequenceVisitor& visitor) const;
       
-      typedef std::pair<UnicodeString, RegisterPtr> IdentRegPair;
+      typedef std::pair<uc::String, RegisterPtr> IdentRegPair;
       typedef std::vector<IdentRegPair> RegisterImpMappings;
       const RegisterImpMappings& GetImports () const { return imports; }
 
-      typedef boost::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
+      typedef boost::unordered_map<uc::String, RegisterPtr> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const;
-      RegisterPtr GetExport (const UnicodeString& name) const;
+      RegisterPtr GetExport (const uc::String& name) const;
 
       RegisterSet GetAllReadRegisters() const;
       RegisterSet GetAllWrittenRegisters() const;

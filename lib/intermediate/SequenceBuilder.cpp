@@ -65,7 +65,7 @@ namespace s1
     }
 
     RegisterPtr SequenceBuilder::AllocateRegister (const TypePtr& originalType,
-                                                   const UnicodeString& name)
+                                                   const uc::String& name)
     {
       RegisterPtr reg (boost::make_shared<Register> (name, originalType));
       return reg;
@@ -79,12 +79,12 @@ namespace s1
       return reg;
     }
 
-    void SequenceBuilder::SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& reg)
+    void SequenceBuilder::SetIdentifierRegister (const uc::String& identifier, const RegisterPtr& reg)
     {
       identToReg[identifier] = reg;
     }
     
-    RegisterPtr SequenceBuilder::GetIdentifierRegister (const UnicodeString& identifier) const
+    RegisterPtr SequenceBuilder::GetIdentifierRegister (const uc::String& identifier) const
     {
       IdentifierToRegMap::const_iterator regIt = identToReg.find (identifier);
       if (regIt != identToReg.end())
@@ -106,7 +106,7 @@ namespace s1
     }
 
     void SequenceBuilder::SetImport (const RegisterPtr& localReg,
-                                     const UnicodeString& parentRegName)
+                                     const uc::String& parentRegName)
     {
       RegisterImpMappings::iterator it = sequence->imports.begin();
       while (it != sequence->imports.end())
@@ -135,7 +135,7 @@ namespace s1
       return sequence->exports;
     }
 
-    void SequenceBuilder::SetExport (const UnicodeString& parentRegName,
+    void SequenceBuilder::SetExport (const uc::String& parentRegName,
                                      const RegisterPtr& local)
     {
       sequence->exports[parentRegName] = local;

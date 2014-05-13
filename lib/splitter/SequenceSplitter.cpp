@@ -556,7 +556,7 @@ namespace s1
       Sequence::IdentifierToRegMap newIdentToRegIDs_imp (identToRegIDs_imp);
       Sequence::IdentifierToRegMap newIdentToRegIDs_exp (identToRegIDs_exp);
       // Propagate registers transferred by nested block to this block
-      typedef boost::unordered_map<RegisterPtr, std::pair<RegisterPtr, UnicodeString> > TransferRegsMap;
+      typedef boost::unordered_map<RegisterPtr, std::pair<RegisterPtr, uc::String> > TransferRegsMap;
       TransferRegsMap transferRegsMap;
       for (int f = 0; f < freqNum-1; f++)
       {
@@ -566,7 +566,7 @@ namespace s1
 	BOOST_FOREACH(const RegisterPtr& reg, transferRegs)
 	{
 	  RegisterPtr newReg;
-	  UnicodeString regName;
+	  uc::String regName;
 	  TransferRegsMap::const_iterator transferReg (transferRegsMap.find (reg));
 	  if (transferReg != transferRegsMap.end())
 	  {
@@ -661,7 +661,7 @@ namespace s1
 	  writtenRegs.push_back (expReg->second);
 	  continue;
 	}
-	UnicodeString newIdent (oldReg->GetName());
+	uc::String newIdent (oldReg->GetName());
 	newIdent.append ("$");
 	newIdent.append (suffix);
 	newIdent.append (UChar ('0' + f));
@@ -707,7 +707,7 @@ namespace s1
 	  intermediate::Sequence::RegisterPtr srcRegPtr (rename.second);
 	  intermediate::Sequence::RegisterPtr dstRegPtr (rename.first);
 	  
-	  UnicodeString newIdent (dstRegPtr->GetName());
+	  uc::String newIdent (dstRegPtr->GetName());
 	  newIdent.append ("$");
 	  newIdent.append (suffix);
 	  newIdent.append (UChar ('0' + f));
@@ -1015,7 +1015,7 @@ namespace s1
       parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
     }
     
-    void SequenceSplitter::InputVisitor::OpFunctionCall (const UnicodeString& funcIdent,
+    void SequenceSplitter::InputVisitor::OpFunctionCall (const uc::String& funcIdent,
 							 const std::vector<RegisterPtr>& inParams,
 							 const std::vector<RegisterPtr>& outParams)
     {
@@ -1035,7 +1035,7 @@ namespace s1
       {
 	inputParamFreqFlags.push_back (parent.GetRegAvailability (reg));
       }
-      UnicodeString freqFuncIdents[freqNum];
+      uc::String freqFuncIdents[freqNum];
       std::vector<unsigned int> outputParamFreqs;
       std::vector<ProgramSplitter::FunctionTransferValues> transferValues[freqNum-1];
       parent.progSplit.GetSplitFunctions (funcIdent, inputParamFreqFlags, freqFuncIdents,
@@ -1057,7 +1057,7 @@ namespace s1
       {
 	BOOST_FOREACH(const ProgramSplitter::FunctionTransferValues& tfv, transferValues[f])
 	{
-	  UnicodeString transferIdent (parent.GetTransferIdent ());
+	  uc::String transferIdent (parent.GetTransferIdent ());
 	  
 	  RegisterPtr reg (parent.AllocateRegister (tfv.valueType, transferIdent));
 	  
@@ -1150,7 +1150,7 @@ namespace s1
     {
     }
     
-    void SequenceSplitter::SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags)
+    void SequenceSplitter::SetInputFreqFlags (const uc::String& input, unsigned int freqFlags)
     {
       paramFlags[input] = freqFlags;
     }
@@ -1287,7 +1287,7 @@ namespace s1
 	if (isImported)
 	{
 	  const char* const defFreqName[freqNum] = { "uniform",  "vertex", "fragment" };
-	  const UnicodeString& regName = reg->GetName();
+	  const uc::String& regName = reg->GetName();
 	  std::string regNameStr;
 	  regName.toUTF8String (regNameStr);
 	  // FIXME: use a special 'warning' mechanism for this
@@ -1299,9 +1299,9 @@ namespace s1
       return avail->second;
     }
 
-    UnicodeString SequenceSplitter::GetTransferIdent (const UnicodeString& origName)
+    uc::String SequenceSplitter::GetTransferIdent (const uc::String& origName)
     {
-      UnicodeString transferIdent (origName);
+      uc::String transferIdent (origName);
       transferIdent.append ("$tf");
       UChar transferSuffix[charsToFormatUint + 1];
       u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (UChar),
@@ -1312,7 +1312,7 @@ namespace s1
     
     s1::intermediate::RegisterPtr
     SequenceSplitter::AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
-					const UnicodeString& name)
+					const uc::String& name)
     {
       // Generate registers for all output sequences are the same across all frequency program. (Makes life easier.)
       RegisterPtr reg (outputSeqBuilder[0]->AllocateRegister (originalType, name));

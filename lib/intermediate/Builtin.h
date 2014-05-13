@@ -31,12 +31,12 @@ namespace s1
     {
       intermediate::BuiltinFunction what;
       TypePtr returnType;
-      UnicodeString identifier;
+      uc::String identifier;
       ScopeImpl::FunctionFormalParameters formalParameters;
     public:
       Builtin (intermediate::BuiltinFunction what,
 	       const TypePtr& returnType,
-	       const UnicodeString& identifier,
+	       const uc::String& identifier,
 	       const ScopeImpl::FunctionFormalParameters& formalParameters)
        : what (what), returnType (returnType), identifier (identifier),
 	 formalParameters (formalParameters)
@@ -44,7 +44,7 @@ namespace s1
       
       intermediate::BuiltinFunction GetBuiltinFunction () const { return what; }
       const TypePtr& GetReturnType () const { return returnType; }
-      const UnicodeString& GetIdentifier() const { return identifier; }
+      const uc::String& GetIdentifier() const { return identifier; }
       const ScopeImpl::FunctionFormalParameters& GetFormalParameters() const
       { return formalParameters; }
     };

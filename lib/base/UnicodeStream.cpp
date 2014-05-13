@@ -67,7 +67,7 @@ namespace s1
     if (!uconv) return *this;
     
     currentError = U_ZERO_ERROR;
-    UChar uc;
+    uc::Char uc;
     if (!GetNextUChar (uc))
     {
       currentChar = noCharacter;
@@ -82,7 +82,7 @@ namespace s1
     }
     if (U_IS_SURROGATE(uc))
     {
-      UChar uc2;
+      uc::Char uc2;
       if (!GetNextUChar (uc2))
       {
         currentChar = noCharacter;
@@ -106,7 +106,7 @@ namespace s1
     return *this;
   }
   
-  UChar32 UnicodeStream::operator* () const
+  uc::Char32 UnicodeStream::operator* () const
   {
     if (U_FAILURE(currentError))
     {
@@ -131,7 +131,7 @@ namespace s1
     }
   }
 
-  bool UnicodeStream::GetNextUChar (UChar& c)
+  bool UnicodeStream::GetNextUChar (uc::Char& c)
   {
     if ((ucBufferRemaining == 0) && U_SUCCESS(ucBufferEndError))
     {
@@ -141,7 +141,7 @@ namespace s1
     /* Don't use -1 as we want to, in case of a conversion error, _pretend_
        there is a character, but then sneakily throw an exception when it's
        tried to obtain it! */
-    UChar32 ret = errorCharacter;
+    uc::Char32 ret = errorCharacter;
     if (ucBufferRemaining > 0)
     {
       ucBufferRemaining--;
@@ -181,7 +181,7 @@ namespace s1
     
     ICUError err;
     const char* source = streamInBufferPtr;
-    UChar* target = ucBuffer;
+    uc::Char* target = ucBuffer;
     ucnv_toUnicode (uconv, &target, target + UCBufferSize,
 		    &source, source + streamInBufferRemaining, 0,
 		    !inStream.good(), err);
@@ -192,7 +192,7 @@ namespace s1
     ucBufferEndError = err;
     /* Since 'source' should point after the last byte consumed, it should
        also point beyond any troublesome input.
-       Since we buffer as much UChars as input bytes, a buffer overflow should
+       Since we buffer as much uc::Chars as input bytes, a buffer overflow should
        _not_ occur. (A single byte expanding into a surrogate pair? Won't happen.)
      */
 

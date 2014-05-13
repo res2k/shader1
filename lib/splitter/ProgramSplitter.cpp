@@ -54,15 +54,15 @@ namespace s1
       return sig;
     }
     
-    void ProgramSplitter::GetSplitFunctions (const UnicodeString& originalIdent,
+    void ProgramSplitter::GetSplitFunctions (const uc::String& originalIdent,
 					     const std::vector<unsigned int>& inputParamFreqFlags,
-					     UnicodeString freqFuncIdents[freqNum],
+					     uc::String freqFuncIdents[freqNum],
 					     std::vector<unsigned int>& outputParamFreqs,
 					     std::vector<FunctionTransferValues> transferValues[freqNum-1])
     {
       std::string freqSig (FreqFlagsSignature (inputParamFreqFlags));
       
-      UnicodeString decoratedIdent (originalIdent);
+      uc::String decoratedIdent (originalIdent);
       decoratedIdent.append ("$");
       decoratedIdent.append (freqSig.c_str());
       
@@ -121,7 +121,7 @@ namespace s1
 	  newFunc->outputParamFreqs = outputParamFreqs;
       
 	  // Generate 'split' functions
-	  UnicodeString funcFName ("fragment_");
+	  uc::String funcFName ("fragment_");
 	  funcFName.append (decoratedIdent);
 	  freqFuncIdents[freqFragment] = funcFName;
 	  newFunc->funcName[freqFragment] = funcFName;
@@ -158,9 +158,9 @@ namespace s1
 	  BOOST_FOREACH (const intermediate::RegisterPtr& reg, transfers)
 	  {
 	    // Generate unique parameter identifier
-	    UnicodeString transferIdent ("transferP$");
-	    UChar transferSuffix[charsToFormatUint + 1];
-	    u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (UChar),
+	    uc::String transferIdent ("transferP$");
+	    uc::Char transferSuffix[charsToFormatUint + 1];
+	    u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (uc::Char),
 			"%u", n++);
 	    transferIdent.append (transferSuffix);
 	    
@@ -220,7 +220,7 @@ namespace s1
 	    
 	    static const char* const freqPrefix[freqNum] = { "uniform_", "vertex_", "fragment_" };
 	      
-	    UnicodeString funcName (freqPrefix[f]);
+	    uc::String funcName (freqPrefix[f]);
 	    funcName.append (decoratedIdent);
 	    AddFreqFunction (funcName, progFunc, extraParams[f], seq, f);
 	    freqFuncIdents[f] = funcName;
@@ -230,7 +230,7 @@ namespace s1
       }
     }
     
-    intermediate::ProgramFunctionPtr ProgramSplitter::FindProgramFunction (const UnicodeString& ident)
+    intermediate::ProgramFunctionPtr ProgramSplitter::FindProgramFunction (const uc::String& ident)
     {
       for (size_t i = 0; i < inputProgram->GetNumFunctions(); i++)
       {
@@ -240,7 +240,7 @@ namespace s1
       return intermediate::ProgramFunctionPtr ();
     }
     
-    void ProgramSplitter::AddFreqFunction (const UnicodeString& funcName,
+    void ProgramSplitter::AddFreqFunction (const uc::String& funcName,
 					   const intermediate::ProgramFunctionPtr& originalFunc,
 					   const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
 					   const intermediate::SequencePtr& sequence,
@@ -260,12 +260,12 @@ namespace s1
     class ProgramSplitter::RecursionChecker : public intermediate::SequenceVisitor
     {
       ProgramSplitter& parent;
-      UnicodeString funcToCheck;
+      uc::String funcToCheck;
       bool recursionFound;
       
-      boost::unordered_set<UnicodeString> seenFunctions;
+      boost::unordered_set<uc::String> seenFunctions;
     public:
-      RecursionChecker (ProgramSplitter& parent, const UnicodeString& funcToCheck)
+      RecursionChecker (ProgramSplitter& parent, const uc::String& funcToCheck)
        : parent (parent), funcToCheck (funcToCheck), recursionFound (false) {}
       
       bool WasRecursionFound() const { return recursionFound; }
@@ -336,7 +336,7 @@ namespace s1
       }
 			    
       void OpReturn (const std::vector<RegisterPtr>&) {}
-      void OpFunctionCall (const UnicodeString& funcIdent,
+      void OpFunctionCall (const uc::String& funcIdent,
 			   const std::vector<RegisterPtr>& inParams,
 			   const std::vector<RegisterPtr>& outParams)
       {
@@ -380,7 +380,7 @@ namespace s1
       inputProgram = program;
     }
 
-    void ProgramSplitter::SetInputFreqFlags (const UnicodeString& inpName, unsigned int flags)
+    void ProgramSplitter::SetInputFreqFlags (const uc::String& inpName, unsigned int flags)
     {
       paramFlags[inpName] = flags;
     }
@@ -424,7 +424,7 @@ namespace s1
 	
 	parser::SemanticsHandler::Scope::FunctionFormalParameters vParams;
 	parser::SemanticsHandler::Scope::FunctionFormalParameters fParams;
-	typedef std::pair<UnicodeString, int> ParamFreqPair;
+	typedef std::pair<uc::String, int> ParamFreqPair;
 	std::vector<ParamFreqPair> allFrequencies;
 	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
 	{
@@ -480,7 +480,7 @@ namespace s1
 	  * (single source) codegen */
 	}
 
-	UnicodeString funcVName ("vertex_");
+	uc::String funcVName ("vertex_");
 	//funcVName.append (func->GetIdentifier());
 	funcVName.append ("main");
 	
@@ -492,7 +492,7 @@ namespace s1
                                                              func->IsEntryFunction()));
 	outputPrograms[freqVertex]->AddFunction (funcV);
 
-	UnicodeString funcFName ("fragment_");
+	uc::String funcFName ("fragment_");
 	//funcFName.append (func->GetIdentifier());
 	funcFName.append ("main");
 	

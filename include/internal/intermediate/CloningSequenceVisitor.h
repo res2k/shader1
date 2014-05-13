@@ -121,7 +121,7 @@ namespace s1
 		    const SequenceOpPtr& seqOpBody);
 		    
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
-      void OpFunctionCall (const UnicodeString& funcIdent,
+      void OpFunctionCall (const uc::String& funcIdent,
 			    const std::vector<RegisterPtr>& inParams,
 			    const std::vector<RegisterPtr>& outParams);
       void OpBuiltinCall (const RegisterPtr& destination,

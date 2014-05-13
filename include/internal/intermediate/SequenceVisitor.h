@@ -109,7 +109,7 @@ namespace s1
 			    const SequenceOpPtr& seqOpBody) = 0;
 			    
       virtual void OpReturn (const std::vector<RegisterPtr>& outParamVals) = 0;
-      virtual void OpFunctionCall (const UnicodeString& funcIdent,
+      virtual void OpFunctionCall (const uc::String& funcIdent,
 				   const std::vector<RegisterPtr>& inParams,
 				   const std::vector<RegisterPtr>& outParams) = 0;
       virtual void OpBuiltinCall (const RegisterPtr& destination,

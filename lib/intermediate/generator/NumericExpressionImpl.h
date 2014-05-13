@@ -26,11 +26,11 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::NumericExpressionImpl : public ExpressionImpl
     {
-      UnicodeString valueStr;
+      uc::String valueStr;
       SemanticsHandler::BaseType numberType;
     public:
       NumericExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			     const UnicodeString& valueStr);
+			     const uc::String& valueStr);
       
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

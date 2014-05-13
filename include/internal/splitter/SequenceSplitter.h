@@ -41,7 +41,7 @@ namespace s1
       
       intermediate::SequencePtr inputSeq;
       
-      typedef boost::unordered_map<UnicodeString, unsigned int> ParamMap;
+      typedef boost::unordered_map<uc::String, unsigned int> ParamMap;
       ParamMap paramFlags;
       
       class InputVisitor : public intermediate::SequenceVisitor
@@ -160,7 +160,7 @@ namespace s1
 		      const SequenceOpPtr& seqOpBody);
 			      
 	void OpReturn (const std::vector<RegisterPtr>& outParamVals);
-	void OpFunctionCall (const UnicodeString& funcIdent,
+	void OpFunctionCall (const uc::String& funcIdent,
 			     const std::vector<RegisterPtr>& inParams,
 			     const std::vector<RegisterPtr>& outParams);
 	void OpBuiltinCall (const RegisterPtr& destination,
@@ -174,7 +174,7 @@ namespace s1
       { inputSeq = sequence; }
       
       // set input param frequencies
-      void SetInputFreqFlags (const UnicodeString& input, unsigned int freqFlags);
+      void SetInputFreqFlags (const uc::String& input, unsigned int freqFlags);
       void SetLocalRegFreqFlags (const RegisterPtr& regID, unsigned int freqFlags)
       { setAvailability[regID] = freqFlags; }
       unsigned int GetLocalRegFreqFlags (const RegisterPtr& regID)
@@ -212,11 +212,11 @@ namespace s1
       void SetRegAvailability (const RegisterPtr& regID, unsigned int freqFlags)
       { regAvailability[regID] = freqFlags; }
       
-      UnicodeString GetTransferIdent (const UnicodeString& origName = UnicodeString());
+      uc::String GetTransferIdent (const uc::String& origName = uc::String());
       
       /// Allocate register in all output sequences
       RegisterPtr AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
-				    const UnicodeString& name);
+				    const uc::String& name);
     private:
       typedef boost::unordered_map<RegisterPtr, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;

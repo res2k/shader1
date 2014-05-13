@@ -18,6 +18,8 @@
 #ifndef __BASE_UNICODESTREAM_H__
 #define __BASE_UNICODESTREAM_H__
 
+#include "base/uc/Char.h"
+
 #include <unicode/errorcode.h>
 #include <unicode/utypes.h>
 
@@ -52,9 +54,9 @@ namespace s1
       /// Size of internal unicode characters buffer
       UCBufferSize = 1024
     };
-    UChar ucBuffer[UCBufferSize];
+    uc::Char ucBuffer[UCBufferSize];
     
-    const UChar* ucBufferPtr;
+    const uc::Char* ucBufferPtr;
     size_t ucBufferRemaining;
     /**
      * ICU error that occured during filling the buffer.
@@ -71,7 +73,7 @@ namespace s1
     const char* streamInBufferPtr;
     size_t streamInBufferRemaining;
     
-    UChar32 currentChar;
+    uc::Char32 currentChar;
     UErrorCode currentError;
     enum
     {
@@ -80,7 +82,7 @@ namespace s1
     };
     
     /// Get next UTF-16 character from buffer, refill if necessary
-    bool GetNextUChar (UChar& c);
+    bool GetNextUChar (uc::Char& c);
     /// Refill unicode buffer
     bool RefillUCBuffer ();
   public:
@@ -100,7 +102,7 @@ namespace s1
     UnicodeStream& operator++() throw();
     
     /// Return current character
-    UChar32 operator* () const;
+    uc::Char32 operator* () const;
   private:
     UnicodeStream (const UnicodeStream& other); // forbidden
   };

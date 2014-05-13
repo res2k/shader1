@@ -30,10 +30,10 @@ public:
   {
     friend class TestSemanticsHandler;
     
-    typedef boost::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+    typedef boost::unordered_map<s1::uc::String, NamePtr> IdentifierMap;
     IdentifierMap identifiers;
     
-    void CheckIdentifierUnique (const UnicodeString& identifier);
+    void CheckIdentifierUnique (const s1::uc::String& identifier);
     
     TestSemanticsHandler* handler;
     boost::shared_ptr<TestScope> parent;
@@ -53,18 +53,18 @@ public:
     ScopeLevel GetLevel() const { return level; }
     
     NamePtr AddVariable (TypePtr type,
-      const UnicodeString& identifier,
+      const s1::uc::String& identifier,
       ExpressionPtr initialValue,
       bool constant);
       
     NamePtr AddTypeAlias (TypePtr aliasedType,
-      const UnicodeString& identifier);
+      const s1::uc::String& identifier);
       
     FunctionPtr AddFunction (TypePtr returnType,
-      const UnicodeString& identifier,
+      const s1::uc::String& identifier,
       const FunctionFormalParameters& params);
   
-    NamePtr ResolveIdentifier (const UnicodeString& identifier);
+    NamePtr ResolveIdentifier (const s1::uc::String& identifier);
   };
   
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
@@ -100,7 +100,7 @@ public:
     std::string identifier;
     TypePtr valueType;
     
-    TestExpressionVar (const UnicodeString& identifier,
+    TestExpressionVar (const s1::uc::String& identifier,
 		       const TypePtr& valueType) : valueType (valueType)
     {
       identifier.toUTF8String (this->identifier);
@@ -175,7 +175,7 @@ public:
     std::string str;
     TypePtr valueType;
     
-    TestExpressionAttr (ExpressionPtr base, const UnicodeString& attr,
+    TestExpressionAttr (ExpressionPtr base, const s1::uc::String& attr,
 			TestSemanticsHandler& handler)
     {
       std::string attrStr;
@@ -279,7 +279,7 @@ public:
 						   CreateType (Bool)));
   }
   
-  ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr)
+  ExpressionPtr CreateConstNumericExpression (const s1::uc::String& valueStr)
   {
     std::string str;
     valueStr.toUTF8String (str);
@@ -295,7 +295,7 @@ public:
   }
   
   ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-				       const UnicodeString& attr)
+				       const s1::uc::String& attr)
   {
     return ExpressionPtr (new TestExpressionAttr (expr, attr, *this));
   }

@@ -24,7 +24,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <unicode/uchar.h>
-#include <unicode/normlzr.h>
 
 namespace s1
 {
@@ -57,7 +56,7 @@ namespace s1
      currentToken (EndOfFile)
   {
 #define KEYWORD(Str, Symbol)	\
-    keywords[UnicodeString (Str)] 		= Symbol;
+    keywords[uc::String (Str)] 		= Symbol;
 KEYWORDS
 #undef KEYWORD
     
@@ -104,7 +103,7 @@ KEYWORDS
       case '}': currentToken = Token (BraceR, currentChar); 	NextChar(); return *this;
       case '.':
 	{
-	  UChar32 next = PeekChar();
+	  uc::Char32 next = PeekChar();
 	  if ((next >= '0') && (next <= '9'))
 	  {
 	    // '.' is start of a number
@@ -215,7 +214,7 @@ KEYWORDS
       case ':': currentToken = Token (TernaryElse, currentChar);NextChar(); return *this;
       case '&':
 	{
-	  UChar32 next = PeekChar();
+	  uc::Char32 next = PeekChar();
 	  if (next == '&')
 	  {
 	    currentToken = Token (LogicAnd, "&&");
@@ -232,7 +231,7 @@ KEYWORDS
 	return *this;
       case '|':
 	{
-	  UChar32 next = PeekChar();
+	  uc::Char32 next = PeekChar();
 	  if (next == '|')
 	  {
 	    currentToken = Token (LogicOr, "||");
@@ -280,7 +279,7 @@ KEYWORDS
 
   void Lexer::ParseIdentifier ()
   {
-    UnicodeString tokenStr;
+    uc::String tokenStr;
     tokenStr += currentChar;
     NextChar();
     while (u_isIDPart (currentChar))
@@ -296,12 +295,7 @@ KEYWORDS
        explicitly refered to. Hence normalize token string to NFD (canonical
        decomposition).
      */
-    {
-      ErrorCode err;
-      UnicodeString tokenStrN;
-      Normalizer::normalize (tokenStr, UNORM_NFD, 0, tokenStrN, err);
-      tokenStr = tokenStrN;
-    }
+    tokenStr = tokenStr.Normalized (uc::String::normNFD);
     
     currentToken = Token (Identifier, tokenStr);
     KeywordMap::iterator kwType = keywords.find (tokenStr);
@@ -316,21 +310,21 @@ KEYWORDS
          Instead of specifying a new enum for each possible vector or matrix
          type parse these specially by manually extracting the dimension(s). */
       TokenType typeCandidate = Invalid;
-      UnicodeString dimensions;
+      uc::String dimensions;
       if (tokenStr.startsWith ("int"))
       {
 	typeCandidate = kwInt;
-	dimensions = UnicodeString (tokenStr, 3);
+	dimensions = uc::String (tokenStr, 3);
       }
       else if (tokenStr.startsWith ("float"))
       {
 	typeCandidate = kwFloat;
-	dimensions = UnicodeString (tokenStr, 5);
+	dimensions = uc::String (tokenStr, 5);
       }
       else if (tokenStr.startsWith ("bool"))
       {
 	typeCandidate = kwBool;
-	dimensions = UnicodeString (tokenStr, 4);
+	dimensions = uc::String (tokenStr, 4);
       }
       if (typeCandidate != Invalid)
       {
@@ -362,11 +356,11 @@ KEYWORDS
   
   void Lexer::ParseNumeric()
   {
-    UnicodeString tokenStr;
+    uc::String tokenStr;
     tokenStr += currentChar;
     if (currentChar == '0')
     {
-      UChar32 next = PeekChar();
+      uc::Char32 next = PeekChar();
       if ((next == 'x') || (next == 'X'))
       {
 	// Hex number
@@ -403,7 +397,7 @@ KEYWORDS
 	// Force to 'true' since decimal exponents are not allowed
 	hasDecimal = true;
 	// Accept '-' again, once
-	UChar32 next = PeekChar();
+	uc::Char32 next = PeekChar();
 	if (next == '-')
 	{
 	  NextChar();

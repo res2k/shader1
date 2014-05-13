@@ -18,9 +18,8 @@
 #ifndef __LEXER_LEXER_H__
 #define __LEXER_LEXER_H__
 
-#include <unicode/unistr.h>
-
 #include "base/UnicodeStream.h"
+#include "base/uc/String.h"
 
 #include <boost/unordered_map.hpp>
 
@@ -161,7 +160,7 @@ namespace s1
       /// Original string for this token
 //@@SNIP LexerToken.txt
       // Originale Zeichenkette des Tokens
-      UnicodeString tokenString;
+      uc::String tokenString;
 //@@ENDSNIP
       /// Classification (normal, vector or matrix) for type keywords
 //@@SNIP LexerToken.txt
@@ -181,9 +180,9 @@ namespace s1
 
       Token () : typeOrID (Invalid), typeClass (Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type) : typeOrID (type), typeClass (Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type, const UnicodeString& tokenString)
+      Token (TokenType type, const uc::String& tokenString)
        : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type, UChar32 tokenChar)
+      Token (TokenType type, uc::Char32 tokenChar)
        : typeOrID (type), tokenString (tokenChar), typeClass (Normal), dimension1 (0), dimension2 (0) {}
       Token (TokenType type, const char* tokenString)
        : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
@@ -215,7 +214,7 @@ namespace s1
     UnicodeStream& inputChars;
     LexerErrorHandler& errorHandler;
     
-    typedef boost::unordered_map<UnicodeString, TokenType> KeywordMap;
+    typedef boost::unordered_map<uc::String, TokenType> KeywordMap;
     /// Map of identifier strings to keyword names
     KeywordMap keywords;
     
@@ -227,14 +226,14 @@ namespace s1
     void ParseNumeric ();
     
     /// Current character. Set by NextChar().
-    UChar32 currentChar;
+    uc::Char32 currentChar;
     /// Read next character from input stream.
     void NextChar ();
     enum { LookAhead = 2 };
     /// Next character in input stream. Set by NextChar().
-    UChar32 nextChar[LookAhead];
+    uc::Char32 nextChar[LookAhead];
     /// Look ahead to a character
-    UChar32 PeekChar (int la = 0) { return nextChar[la]; }
+    uc::Char32 PeekChar (int la = 0) const { return nextChar[la]; }
   };
 } // namespace s1
 

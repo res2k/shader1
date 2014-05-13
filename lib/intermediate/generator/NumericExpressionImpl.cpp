@@ -32,7 +32,7 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::NumericExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
-      const UnicodeString& valueStr)
+      const uc::String& valueStr)
        : ExpressionImpl (handler), valueStr (valueStr),
 	 numberType (IntermediateGeneratorSemanticsHandler::DetectNumericType (valueStr))
     {
@@ -73,14 +73,14 @@ namespace s1
       
       SequenceOpPtr seqOp;
       // Extract value from string
-      if (valueStr.startsWith (UnicodeString ("0x")) || valueStr.startsWith (UnicodeString ("0X")))
+      if (valueStr.startsWith (uc::String ("0x")) || valueStr.startsWith (uc::String ("0X")))
       {
 	// Parse hex number
 	unsigned int val = 0;
 	for (int i = 2; i < valueStr.length(); i++)
 	{
 	  unsigned int digitVal = 0;
-	  UChar digit = valueStr[i];
+	  uc::Char digit = valueStr[i];
 	  if ((digit >= '0') && (digit <= '9'))
 	  {
 	    digitVal = digit - '0';

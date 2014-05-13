@@ -69,14 +69,14 @@ namespace s1
 	bool IsEqual (const CommonType& other) const;
 	bool IsPrecisionHigherEqual (const CommonType& other) const;
 	
-	UnicodeString ToString() const;
+	uc::String ToString() const;
       };
       
       /**\name Type utilities
        * @{ */
       static boost::shared_ptr<CommonType> GetHigherPrecisionType (
 	const boost::shared_ptr<CommonType>& t1, const boost::shared_ptr<CommonType>& t2);
-      static BaseType DetectNumericType (const UnicodeString& numericStr);
+      static BaseType DetectNumericType (const uc::String& numericStr);
       /**@}*/
       
       /**\name Attribute utilities
@@ -107,14 +107,14 @@ namespace s1
 	   swizzleComps ((comp1 & 3) | ((comp2 & 3) << 2) | ((comp3 & 3) << 4) | ((comp4 & 3) << 6))
 	{}
       };
-      static Attribute IdentifyAttribute (const UnicodeString& attributeStr);
+      static Attribute IdentifyAttribute (const uc::String& attributeStr);
       TypePtr GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
 				const Attribute& attr);
       /** @} */
       
       struct CommonName : public Name
       {
-	UnicodeString identifier;
+	uc::String identifier;
 	NameType type;
 	
 	/* Variables/Constants: type of variable/constant
@@ -127,9 +127,9 @@ namespace s1
 	// Distinguish between variable/constant
 	bool varConstant;
 	
-	CommonName (const UnicodeString& identifier, NameType type, TypePtr typeOfName)
+	CommonName (const uc::String& identifier, NameType type, TypePtr typeOfName)
 	 : identifier (identifier), type (type), valueType (typeOfName) {}
-	CommonName (const UnicodeString& identifier, TypePtr typeOfName,
+	CommonName (const uc::String& identifier, TypePtr typeOfName,
 		    ExpressionPtr value, bool constant)
 	 : identifier (identifier), type (Variable), valueType (typeOfName),
 	   varValue (value), varConstant (constant) {}
@@ -144,10 +144,10 @@ namespace s1
       {
 	friend class CommonSemanticsHandler;
 	
-	typedef boost::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+	typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
 	IdentifierMap identifiers;
 	
-	void CheckIdentifierUnique (const UnicodeString& identifier);
+	void CheckIdentifierUnique (const uc::String& identifier);
 	
 	CommonSemanticsHandler* handler;
 	boost::shared_ptr<CommonScope> parent;
@@ -167,18 +167,18 @@ namespace s1
 	ScopeLevel GetLevel() const { return level; }
 	
 	NamePtr AddVariable (TypePtr type,
-	  const UnicodeString& identifier,
+	  const uc::String& identifier,
 	  ExpressionPtr initialValue,
 	  bool constant);
 	  
 	NamePtr AddTypeAlias (TypePtr aliasedType,
-	  const UnicodeString& identifier);
+	  const uc::String& identifier);
 	  
 	FunctionPtr AddFunction (TypePtr returnType,
-	  const UnicodeString& identifier,
+	  const uc::String& identifier,
 	  const FunctionFormalParameters& params);
       
-	NamePtr ResolveIdentifier (const UnicodeString& identifier);
+	NamePtr ResolveIdentifier (const uc::String& identifier);
       };
       
     public:  

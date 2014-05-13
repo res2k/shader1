@@ -23,7 +23,7 @@ namespace s1
 {
   namespace intermediate
   {
-    SequenceOpFunctionCall::SequenceOpFunctionCall (const UnicodeString& funcIdent,
+    SequenceOpFunctionCall::SequenceOpFunctionCall (const uc::String& funcIdent,
 						    const std::vector<RegisterPtr>& inParams,
 						    const std::vector<RegisterPtr>& outParams)
      : funcIdent (funcIdent), inParams (inParams), outParams (outParams)

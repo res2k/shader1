@@ -36,7 +36,7 @@ namespace s1
 
       IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameter fp;
       fp.type = type;
-      fp.identifier = UnicodeString ("a");
+      fp.identifier = uc::String ("a");
       fp.dir = IntermediateGeneratorSemanticsHandler::ScopeImpl::dirIn;
       params.push_back (fp);
 
@@ -56,12 +56,12 @@ namespace s1
 
       IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameter fp;
       fp.type = typeA;
-      fp.identifier = UnicodeString ("a");
+      fp.identifier = uc::String ("a");
       fp.dir = IntermediateGeneratorSemanticsHandler::ScopeImpl::dirIn;
       params.push_back (fp);
 
       fp.type = typeB;
-      fp.identifier = UnicodeString ("b");
+      fp.identifier = uc::String ("b");
       params.push_back (fp);
       
       return params;
@@ -96,35 +96,35 @@ namespace s1
       
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::pow,
 							      floatType,
-							      UnicodeString ("pow"),
+							      uc::String ("pow"),
 							      MakeFormalParameters2 (floatType)));
 							      
       for (unsigned int c = 1; c < 5; c++)
       {
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::dot,
 								intType,
-								UnicodeString ("dot"),
+								uc::String ("dot"),
 								MakeFormalParameters2 (vecTypeInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::dot,
 								uintType,
-								UnicodeString ("dot"),
+								uc::String ("dot"),
 								MakeFormalParameters2 (vecTypeUInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::dot,
 								floatType,
-								UnicodeString ("dot"),
+								uc::String ("dot"),
 								MakeFormalParameters2 (vecTypeFloat[c])));
       }
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::cross,
 							      vecTypeInt[3],
-							      UnicodeString ("cross"),
+							      uc::String ("cross"),
 							      MakeFormalParameters2 (vecTypeInt[3])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::cross,
 							      vecTypeUInt[3],
-							      UnicodeString ("cross"),
+							      uc::String ("cross"),
 							      MakeFormalParameters2 (vecTypeUInt[3])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::cross,
 							      vecTypeFloat[3],
-							      UnicodeString ("cross"),
+							      uc::String ("cross"),
 							      MakeFormalParameters2 (vecTypeFloat[3])));
 
       for (unsigned int l = 1; l < 5; l++)
@@ -135,15 +135,15 @@ namespace s1
 	  {
 	    scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								    matTypeInt[l][n],
-								    UnicodeString ("mul"),
+								    uc::String ("mul"),
 								    MakeFormalParameters2 (matTypeInt[l][m], matTypeInt[m][n])));
 	    scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								    matTypeUInt[l][n],
-								    UnicodeString ("mul"),
+								    uc::String ("mul"),
 								    MakeFormalParameters2 (matTypeUInt[l][m], matTypeUInt[m][n])));
 	    scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								    matTypeFloat[l][n],
-								    UnicodeString ("mul"),
+								    uc::String ("mul"),
 								    MakeFormalParameters2 (matTypeFloat[l][m], matTypeFloat[m][n])));
 	  }
 	}
@@ -155,15 +155,15 @@ namespace s1
 	{
 	  scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								  vecTypeInt[n],
-								  UnicodeString ("mul"),
+								  uc::String ("mul"),
 								  MakeFormalParameters2 (vecTypeInt[m], matTypeInt[m][n])));
 	  scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								  vecTypeUInt[n],
-								  UnicodeString ("mul"),
+								  uc::String ("mul"),
 								  MakeFormalParameters2 (vecTypeUInt[m], matTypeUInt[m][n])));
 	  scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								  vecTypeFloat[n],
-								  UnicodeString ("mul"),
+								  uc::String ("mul"),
 								  MakeFormalParameters2 (vecTypeFloat[m], matTypeFloat[m][n])));
 	}
       }
@@ -174,15 +174,15 @@ namespace s1
 	{
 	  scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								  vecTypeInt[l],
-								  UnicodeString ("mul"),
+								  uc::String ("mul"),
 								  MakeFormalParameters2 (matTypeInt[l][m], vecTypeInt[m])));
 	  scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								  vecTypeUInt[l],
-								  UnicodeString ("mul"),
+								  uc::String ("mul"),
 								  MakeFormalParameters2 (matTypeUInt[l][m], vecTypeUInt[m])));
 	  scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::mul,
 								  vecTypeFloat[l],
-								  UnicodeString ("mul"),
+								  uc::String ("mul"),
 								  MakeFormalParameters2 (matTypeFloat[l][m], vecTypeFloat[m])));
 	}
       }
@@ -191,15 +191,15 @@ namespace s1
       {
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::normalize,
 								vecTypeFloat[c],
-								UnicodeString ("normalize"),
+								uc::String ("normalize"),
 								MakeFormalParameters1 (vecTypeInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::normalize,
 								vecTypeFloat[c],
-								UnicodeString ("normalize"),
+								uc::String ("normalize"),
 								MakeFormalParameters1 (vecTypeUInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::normalize,
 								vecTypeFloat[c],
-								UnicodeString ("normalize"),
+								uc::String ("normalize"),
 								MakeFormalParameters1 (vecTypeFloat[c])));
       }
       
@@ -207,123 +207,123 @@ namespace s1
       {
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::length,
 								floatType,
-								UnicodeString ("length"),
+								uc::String ("length"),
 								MakeFormalParameters1 (vecTypeInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::length,
 								floatType,
-								UnicodeString ("length"),
+								uc::String ("length"),
 								MakeFormalParameters1 (vecTypeUInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::length,
 								floatType,
-								UnicodeString ("length"),
+								uc::String ("length"),
 								MakeFormalParameters1 (vecTypeFloat[c])));
       }
       
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex1D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex1D"),
+							      uc::String ("tex1D"),
 							      MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeInt[1])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex1D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex1D"),
+							      uc::String ("tex1D"),
 							      MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeUInt[1])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex1D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex1D"),
+							      uc::String ("tex1D"),
 							      MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeFloat[1])));
       
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex2D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex2D"),
+							      uc::String ("tex2D"),
 							      MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeInt[2])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex2D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex2D"),
+							      uc::String ("tex2D"),
 							      MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeUInt[2])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex2D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex2D"),
+							      uc::String ("tex2D"),
 							      MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeFloat[2])));
       
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex3D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex3D"),
+							      uc::String ("tex3D"),
 							      MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeInt[3])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex3D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex3D"),
+							      uc::String ("tex3D"),
 							      MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeUInt[3])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::tex3D,
 							      vecTypeFloat[4],
-							      UnicodeString ("tex3D"),
+							      uc::String ("tex3D"),
 							      MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeFloat[3])));
       
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::texCUBE,
 							      vecTypeFloat[4],
-							      UnicodeString ("texCUBE"),
+							      uc::String ("texCUBE"),
 							      MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeInt[3])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::texCUBE,
 							      vecTypeFloat[4],
-							      UnicodeString ("texCUBE"),
+							      uc::String ("texCUBE"),
 							      MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeUInt[3])));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::texCUBE,
 							      vecTypeFloat[4],
-							      UnicodeString ("texCUBE"),
+							      uc::String ("texCUBE"),
 							      MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeFloat[3])));
 							      
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::min,
 							      intType,
-							      UnicodeString ("min"),
+							      uc::String ("min"),
 							      MakeFormalParameters2 (intType)));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::min,
 							      uintType,
-							      UnicodeString ("min"),
+							      uc::String ("min"),
 							      MakeFormalParameters2 (uintType)));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::min,
 							      floatType,
-							      UnicodeString ("min"),
+							      uc::String ("min"),
 							      MakeFormalParameters2 (floatType)));
       for (unsigned int c = 1; c < 5; c++)
       {
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::min,
 								vecTypeInt[c],
-								UnicodeString ("min"),
+								uc::String ("min"),
 								MakeFormalParameters2 (vecTypeInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::min,
 								vecTypeUInt[c],
-								UnicodeString ("min"),
+								uc::String ("min"),
 								MakeFormalParameters2 (vecTypeUInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::min,
 								vecTypeFloat[c],
-								UnicodeString ("min"),
+								uc::String ("min"),
 								MakeFormalParameters2 (vecTypeFloat[c])));
       }
 							      
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::max,
 							      intType,
-							      UnicodeString ("max"),
+							      uc::String ("max"),
 							      MakeFormalParameters2 (intType)));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::max,
 							      uintType,
-							      UnicodeString ("max"),
+							      uc::String ("max"),
 							      MakeFormalParameters2 (uintType)));
       scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::max,
 							      floatType,
-							      UnicodeString ("max"),
+							      uc::String ("max"),
 							      MakeFormalParameters2 (floatType)));
       for (unsigned int c = 1; c < 5; c++)
       {
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::max,
 								vecTypeInt[c],
-								UnicodeString ("max"),
+								uc::String ("max"),
 								MakeFormalParameters2 (vecTypeInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::max,
 								vecTypeUInt[c],
-								UnicodeString ("max"),
+								uc::String ("max"),
 								MakeFormalParameters2 (vecTypeUInt[c])));
 	scope->AddBuiltinFunction (boost::make_shared<Builtin> (intermediate::max,
 								vecTypeFloat[c],
-								UnicodeString ("max"),
+								uc::String ("max"),
 								MakeFormalParameters2 (vecTypeFloat[c])));
       }
     }

@@ -15,28 +15,32 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __LEXER_LEXERERRORHANDLER_H__
-#define __LEXER_LEXERERRORHANDLER_H__
-
-#include <unicode/utypes.h>
+/**\file
+ * Exception for Unicode-related operations
+ */
+#ifndef __BASE_UC_EXCEPTION_H__
+#define __BASE_UC_EXCEPTION_H__
 
 namespace s1
 {
-  struct LexerErrorHandler
+  namespace uc
   {
-    virtual ~LexerErrorHandler() {}
-    
     /**
-     * Handler called when an invalid input sequence is encountered.
-     * An example would be an incomplete encoding sequence in UTF-8.
-     */
-    virtual void InputInvalidCharacter () {}
-    /**
-     * Handler called when a character is found that can't occur in any
-     * type of token.
-     */
-    virtual void StrayCharacter (uc::Char32 offender) {}
-  };
+    * Base class for for Unicode-related exceptions
+    */
+    class Exception : public std::exception
+    {
+      int uerr;
+    public:
+      /**
+      * Construct a new exception object.
+      * \param uerr The error code returned by ICU.
+      */
+      Exception (int uerr) : uerr (uerr) {}
+      
+      const char* what () const throw();
+    };
+  } // namespace uc
 } // namespace s1
 
-#endif // __LEXER_LEXERERRORHANDLER_H__
+#endif // __BASE_UC_EXCEPTION_H__

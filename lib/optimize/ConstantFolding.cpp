@@ -263,7 +263,7 @@ namespace s1
 		    const intermediate::SequenceOpPtr& seqOpBody);
 		    
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
-      void OpFunctionCall (const UnicodeString& funcIdent,
+      void OpFunctionCall (const uc::String& funcIdent,
 			    const std::vector<RegisterPtr>& inParams,
 			    const std::vector<RegisterPtr>& outParams);
       void OpBuiltinCall (const RegisterPtr& destination,
@@ -274,9 +274,9 @@ namespace s1
     intermediate::RegisterPtr
     ConstantFolding::FoldingVisitor::NewConstReg (const intermediate::Sequence::TypePtr& type)
     {
-      UnicodeString regName ("$fold");
-      UChar suffix[charsToFormatUint + 1];
-      u_snprintf (suffix, sizeof (suffix)/sizeof (UChar),
+      uc::String regName ("$fold");
+      uc::Char suffix[charsToFormatUint + 1];
+      u_snprintf (suffix, sizeof (suffix)/sizeof (uc::Char),
 		  "%u", foldRegNum);
       foldRegNum++;
       regName.append (suffix);
@@ -1113,7 +1113,7 @@ namespace s1
       CommonSequenceVisitor::OpReturn (outParamVals);
     }
     
-    void ConstantFolding::FoldingVisitor::OpFunctionCall (const UnicodeString& funcIdent,
+    void ConstantFolding::FoldingVisitor::OpFunctionCall (const uc::String& funcIdent,
     							  const std::vector<RegisterPtr>& inParams,
 							  const std::vector<RegisterPtr>& outParams)
     {

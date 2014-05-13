@@ -31,21 +31,21 @@ namespace s1
   {
     class ProgramFunction
     {
-      UnicodeString originalIdentifier;
-      UnicodeString identifier;
+      uc::String originalIdentifier;
+      uc::String identifier;
       parser::SemanticsHandler::Scope::FunctionFormalParameters params;
       SequencePtr body;
       bool isEntryFunction;
     public:
-      ProgramFunction (const UnicodeString& originalIdentifier,
-		       const UnicodeString& identifier,
+      ProgramFunction (const uc::String& originalIdentifier,
+		       const uc::String& identifier,
 		       const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
 		       const SequencePtr& body,
 		       bool isEntryFunction);
 
-      const UnicodeString& GetOriginalIdentifier() const
+      const uc::String& GetOriginalIdentifier() const
       { return originalIdentifier; }
-      const UnicodeString& GetIdentifier() const
+      const uc::String& GetIdentifier() const
       { return identifier; }
       const parser::SemanticsHandler::Scope::FunctionFormalParameters& GetParams() const
       { return params; }
@@ -54,15 +54,15 @@ namespace s1
       bool IsEntryFunction() const
       { return isEntryFunction; }
       
-      void SetTransferMapping (const UnicodeString& transferVal,
+      void SetTransferMapping (const uc::String& transferVal,
 			       const RegisterPtr& programReg);
-      typedef std::pair<UnicodeString, RegisterPtr> TransferMappingPair;
+      typedef std::pair<uc::String, RegisterPtr> TransferMappingPair;
       typedef std::vector<TransferMappingPair> TransferMappings;
       const TransferMappings& GetTransferMappings () const { return transferMappings; }
       
-      void SetParameterFrequency (const UnicodeString& param, int freq)
+      void SetParameterFrequency (const uc::String& param, int freq)
       { paramFreqMap[param] = freq; }
-      typedef boost::unordered_map<UnicodeString, int> ParameterFrequencyMap;
+      typedef boost::unordered_map<uc::String, int> ParameterFrequencyMap;
       const ParameterFrequencyMap& GetParameterFrequencies() const
       { return paramFreqMap; }
     private:

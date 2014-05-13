@@ -28,7 +28,7 @@ class NameToCgIdentifierTestSuite : public CxxTest::TestSuite
 public:
   void testNameASCII (void)
   {
-    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (UnicodeString ("a"));
+    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (s1::uc::String ("a"));
     for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
     {
       char ch = *it;
@@ -38,7 +38,7 @@ public:
 
   void testNameASCIINonAlpha (void)
   {
-    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (UnicodeString ("a!b\"c$d%e&f/g(h)i=j?k\\l,m;n.o:p-q_r#s*t~u+v@w[x]y{z}"));
+    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (s1::uc::String ("a!b\"c$d%e&f/g(h)i=j?k\\l,m;n.o:p-q_r#s*t~u+v@w[x]y{z}"));
     for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
     {
       char ch = *it;
@@ -48,8 +48,8 @@ public:
   
   void testNameUnicode (void)
   {
-    static const UChar ustr[] = {0xe4, 0};
-    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (UnicodeString (ustr));
+    static const s1::uc::Char ustr[] = {0xe4, 0};
+    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (s1::uc::String (ustr));
     for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
     {
       char ch = *it;
@@ -60,7 +60,7 @@ public:
   // Test an excessively long string
   void testNameLong (void)
   {
-    static const UChar ustr[] =
+    static const s1::uc::Char ustr[] =
     {
       0x0915, 0x093e, 0x091a, 0x0902, 0x0020, 0x0936, 0x0915, 0x094d,
       0x0928, 0x094b, 0x092e, 0x094d, 0x092f, 0x0924, 0x094d, 0x0924,
@@ -865,7 +865,7 @@ public:
       0x0020, 0x0063, 0x1e83, 0x0072, 0x0061, 0x006e, 0x002e, 0x0020,
       0x000a, 0
     };
-    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (UnicodeString (ustr));
+    std::string cgIdentifier = CgGenerator::NameToCgIdentifier (s1::uc::String (ustr));
     for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
     {
       char ch = *it;

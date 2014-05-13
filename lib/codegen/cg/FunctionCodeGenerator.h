@@ -33,15 +33,15 @@ namespace s1
       {
 	friend class FunctionCodeGenerator;
 	
-	typedef boost::unordered_map<UnicodeString, std::string> FunctionParamsToIdentifier;
+	typedef boost::unordered_map<uc::String, std::string> FunctionParamsToIdentifier;
 	FunctionParamsToIdentifier inParamMap;
 	FunctionParamsToIdentifier outParamMap;
       public:
-	std::string GetImportedNameIdentifier (const UnicodeString& name)
+	std::string GetImportedNameIdentifier (const uc::String& name)
 	{ 
 	  return inParamMap[name];
 	}
-	std::string GetExportedNameIdentifier (const UnicodeString& name)
+	std::string GetExportedNameIdentifier (const uc::String& name)
 	{ 
 	  return outParamMap[name];
 	}

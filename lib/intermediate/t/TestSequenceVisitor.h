@@ -97,7 +97,7 @@ public:
     
     unsigned int extractComp;
     
-    UnicodeString functionIdentifier;
+    s1::uc::String functionIdentifier;
     s1::intermediate::BuiltinFunction whatBuiltin;
     std::vector<RegisterPtr> inParams;
     std::vector<RegisterPtr> outParams;
@@ -466,7 +466,7 @@ public:
     entries.push_back (entry);
   }
   
-  void OpFunctionCall (const UnicodeString& funcIdent,
+  void OpFunctionCall (const s1::uc::String& funcIdent,
 		       const std::vector<RegisterPtr>& inParams,
 		       const std::vector<RegisterPtr>& outParams)
   {

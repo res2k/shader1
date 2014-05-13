@@ -36,7 +36,7 @@
 
 namespace s1
 {
-  Compiler::Program::Program (UnicodeStream* inputStream, const UnicodeString& entryFunction)
+  Compiler::Program::Program (UnicodeStream* inputStream, const uc::String& entryFunction)
   {
     compiler::ErrorHandler errorHandler; // TODO: real error handler
     Lexer lexer (*inputStream, errorHandler);
@@ -50,8 +50,8 @@ namespace s1
   void Compiler::Program::SetProgramOutputParameters ()
   {
     // Determine output values
-    UnicodeString vertexOutput;
-    UnicodeString fragmentOutput;
+    uc::String vertexOutput;
+    uc::String fragmentOutput;
     
     for (size_t i = 0; i < intermediateProg->GetNumFunctions(); i++)
     {
@@ -91,19 +91,19 @@ namespace s1
     intermediateProg->SetOutputParameter (fragmentOutput, intermediate::Program::Color);
   }
 
-  void Compiler::Program::SetInputParameterFrequencyFlags (const UnicodeString& param,
+  void Compiler::Program::SetInputParameterFrequencyFlags (const uc::String& param,
 							   unsigned int frequencyFlags)
   {
     freqFlagMap[param] = frequencyFlags;
   }
 
-  void Compiler::Program::SetInputArrayParameterSize (const UnicodeString& param,
+  void Compiler::Program::SetInputArrayParameterSize (const uc::String& param,
 						      size_t size)
   {
     arraySizeMap[param] = size;
   }
   
-  void Compiler::Program::SetEntryFunctionName (const UnicodeString& name)
+  void Compiler::Program::SetEntryFunctionName (const uc::String& name)
   {
     intermediateHandler.SetEntryFunction (name);
     intermediateProg = intermediate::ProgramPtr();
@@ -118,7 +118,7 @@ namespace s1
       intermediateProg = intermediateHandler.GetProgram();
       SetProgramOutputParameters ();
       
-      typedef std::pair<UnicodeString, size_t> ParamArraySizePair;
+      typedef std::pair<uc::String, size_t> ParamArraySizePair;
       BOOST_FOREACH(ParamArraySizePair paramArraySize, arraySizeMap)
       {
 	intermediateProg->SetParameterArraySize (paramArraySize.first, paramArraySize.second);
@@ -143,7 +143,7 @@ namespace s1
 	{
 	  splitter::ProgramSplitter splitter;
 	  
-	  typedef std::pair<UnicodeString, unsigned int> FreqFlagPair;
+	  typedef std::pair<uc::String, unsigned int> FreqFlagPair;
 	  BOOST_FOREACH(FreqFlagPair freqFlag, freqFlagMap)
 	  {
 	    splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);

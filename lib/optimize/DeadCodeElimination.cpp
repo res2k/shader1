@@ -144,7 +144,7 @@ namespace s1
 		    const intermediate::SequenceOpPtr& seqOpBody);
 		    
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
-      void OpFunctionCall (const UnicodeString& funcIdent,
+      void OpFunctionCall (const uc::String& funcIdent,
 			    const std::vector<RegisterPtr>& inParams,
 			    const std::vector<RegisterPtr>& outParams);
       void OpBuiltinCall (const RegisterPtr& destination,
@@ -473,7 +473,7 @@ namespace s1
       CommonSequenceVisitor::OpReturn (outParamVals);
     }
     
-    void DeadCodeElimination::DeadCodeChecker::OpFunctionCall (const UnicodeString& funcIdent,
+    void DeadCodeElimination::DeadCodeChecker::OpFunctionCall (const uc::String& funcIdent,
 							       const std::vector<RegisterPtr>& inParams,
 							       const std::vector<RegisterPtr>& outParams)
     {

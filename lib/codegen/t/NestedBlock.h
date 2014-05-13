@@ -68,9 +68,9 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
   class TestImportedNameResolver : public ImportedNameResolver
   {
   public:
-    std::string GetImportedNameIdentifier (const UnicodeString& name)
+    std::string GetImportedNameIdentifier (const s1::uc::String& name)
     { return std::string(); }	
-    std::string GetExportedNameIdentifier (const UnicodeString& name)
+    std::string GetExportedNameIdentifier (const s1::uc::String& name)
     { return std::string(); }	
   };
   

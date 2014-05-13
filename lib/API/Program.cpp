@@ -42,18 +42,18 @@ namespace s1
       if (!wrapped_program)
       {
         std::istringstream inputStream (source, std::ios_base::in | std::ios_base::binary);
-        UnicodeString entryFunctionU (UnicodeString::fromUTF8 (entryFunction));
+        uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
         wrapped_program = compiler.CreateProgram (inputStream, entryFunctionU);
         wrapped_program->SetEntryFunctionName (entryFunctionU);
         
         BOOST_FOREACH(const InputFreqMapType::value_type& inputFreq, inputFreqMap)
         {
-          UnicodeString ucParam (UnicodeString::fromUTF8 (inputFreq.first));
+          uc::String ucParam (uc::String::fromUTF8 (inputFreq.first));
           wrapped_program->SetInputParameterFrequencyFlags (ucParam, 1 << inputFreq.second);
         }
         BOOST_FOREACH(const InputSizeMapType::value_type& inputSize, inputSizeMap)
         {
-          UnicodeString ucParam (UnicodeString::fromUTF8 (inputSize.first));
+          uc::String ucParam (uc::String::fromUTF8 (inputSize.first));
           wrapped_program->SetInputArrayParameterSize (ucParam, 1 << inputSize.second);
         }
       }

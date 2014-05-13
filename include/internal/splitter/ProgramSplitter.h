@@ -37,7 +37,7 @@ namespace s1
       intermediate::ProgramPtr inputProgram;
       intermediate::ProgramPtr outputPrograms[freqNum];
       
-      typedef boost::unordered_map<UnicodeString, unsigned int> ParamMap;
+      typedef boost::unordered_map<uc::String, unsigned int> ParamMap;
       ParamMap paramFlags;
       
       friend class SequenceSplitter;
@@ -48,12 +48,12 @@ namespace s1
       };
       struct SplitFunctionInfo
       {
-	UnicodeString funcName[freqNum];
+	uc::String funcName[freqNum];
 	std::vector<unsigned int> outputParamFreqs;
 	std::vector<FunctionTransferValues> transferValues[freqNum-1];
       };
       typedef boost::shared_ptr<SplitFunctionInfo> SplitFunctionInfoPtr;
-      typedef boost::unordered_map<UnicodeString, SplitFunctionInfoPtr> SplitFunctionInfoMap;
+      typedef boost::unordered_map<uc::String, SplitFunctionInfoPtr> SplitFunctionInfoMap;
       SplitFunctionInfoMap splitFunctions;
       /**
        * \param originalIdent Original identifier of function.
@@ -65,15 +65,15 @@ namespace s1
        *   Each transferred value corresponds to an extra output parameter in the source frequency
        *   and an extra input parameter in the destination frequency.
        */
-      void GetSplitFunctions (const UnicodeString& originalIdent,
+      void GetSplitFunctions (const uc::String& originalIdent,
 			      const std::vector<unsigned int>& inputParamFreqFlags,
-			      UnicodeString freqFuncIdents[freqNum],
+			      uc::String freqFuncIdents[freqNum],
 			      std::vector<unsigned int>& outputParamFreqs,
 			      std::vector<FunctionTransferValues> transferValues[freqNum-1]);
 			      
-      intermediate::ProgramFunctionPtr FindProgramFunction (const UnicodeString& ident);
+      intermediate::ProgramFunctionPtr FindProgramFunction (const uc::String& ident);
       
-      void AddFreqFunction (const UnicodeString& funcName,
+      void AddFreqFunction (const uc::String& funcName,
 			    const intermediate::ProgramFunctionPtr& originalFunc,
 			    const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
 			    const intermediate::SequencePtr& sequence,
@@ -85,7 +85,7 @@ namespace s1
       ProgramSplitter ();
       
       void SetInputProgram (const intermediate::ProgramPtr& program);
-      void SetInputFreqFlags (const UnicodeString& inpName, unsigned int flags);
+      void SetInputFreqFlags (const uc::String& inpName, unsigned int flags);
       
       void PerformSplit ();
       

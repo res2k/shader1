@@ -155,7 +155,7 @@ namespace s1
       return false;
     }
 
-    UnicodeString CommonSemanticsHandler::CommonType::ToString() const
+    uc::String CommonSemanticsHandler::CommonType::ToString() const
     {
       switch (typeClass)
       {
@@ -163,11 +163,11 @@ namespace s1
 	{
 	  switch (base)
 	  {
-	    case Void: return UnicodeString ("void");
-	    case Bool: return UnicodeString ("bool");
-	    case Int: return UnicodeString ("int");
-	    case UInt: return UnicodeString ("unsigned int");
-	    case Float: return UnicodeString ("float");
+	    case Void: return uc::String ("void");
+	    case Bool: return uc::String ("bool");
+	    case Int: return uc::String ("int");
+	    case UInt: return uc::String ("unsigned int");
+	    case Float: return uc::String ("float");
 	  }
 	}
 	break;
@@ -175,32 +175,32 @@ namespace s1
 	{
 	  switch (sampler)
 	  {
-	    case _1D: return UnicodeString ("sampler1D");
-	    case _2D: return UnicodeString ("sampler2D");
-	    case _3D: return UnicodeString ("sampler3D");
-	    case CUBE: return UnicodeString ("samplerCUBE");
+	    case _1D: return uc::String ("sampler1D");
+	    case _2D: return uc::String ("sampler2D");
+	    case _3D: return uc::String ("sampler3D");
+	    case CUBE: return uc::String ("samplerCUBE");
 	  }
 	}
 	break;
       case Array:
 	{
-	  return static_cast<CommonType*> (avmBase.get())->ToString() + UnicodeString ("[]");
+	  return static_cast<CommonType*> (avmBase.get())->ToString() + uc::String ("[]");
 	}
       case Vector:
 	{
 	  char nStr[2];
 	  snprintf (nStr, sizeof (nStr), "%d", vectorDim);
-	  return static_cast<CommonType*> (avmBase.get())->ToString() + UnicodeString (nStr);
+	  return static_cast<CommonType*> (avmBase.get())->ToString() + uc::String (nStr);
 	}
       case Matrix:
 	{
 	  char nStr[4];
 	  snprintf (nStr, sizeof (nStr), "%dx%d", matrixCols, matrixRows);
-	  return static_cast<CommonType*> (avmBase.get())->ToString() + UnicodeString (nStr);
+	  return static_cast<CommonType*> (avmBase.get())->ToString() + uc::String (nStr);
 	}
       }
       assert (false);
-      return UnicodeString();
+      return uc::String();
     }
     
     boost::shared_ptr<CommonSemanticsHandler::CommonType>
@@ -214,9 +214,9 @@ namespace s1
       return boost::shared_ptr<CommonSemanticsHandler::CommonType> ();
     }
       
-    CommonSemanticsHandler::BaseType CommonSemanticsHandler::DetectNumericType (const UnicodeString& numericStr)
+    CommonSemanticsHandler::BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
     {
-      if (numericStr.startsWith (UnicodeString ("0x")) || numericStr.startsWith (UnicodeString ("0X")))
+      if (numericStr.startsWith (uc::String ("0x")) || numericStr.startsWith (uc::String ("0X")))
       {
 	// Hex number: always unsigned int
 	return UInt;
@@ -227,24 +227,24 @@ namespace s1
 	return Float;
       }
       // Can only be an integer
-      return numericStr.startsWith (UnicodeString ("-")) ? Int : UInt;
+      return numericStr.startsWith (uc::String ("-")) ? Int : UInt;
     }
     
-    CommonSemanticsHandler::Attribute CommonSemanticsHandler::IdentifyAttribute (const UnicodeString& attributeStr)
+    CommonSemanticsHandler::Attribute CommonSemanticsHandler::IdentifyAttribute (const uc::String& attributeStr)
     {
       if (attributeStr.length() == 0)
 	// Empty attribute? Bogus.
 	return Attribute (Attribute::Unknown);
       
-      if (attributeStr == UnicodeString ("length"))
+      if (attributeStr == uc::String ("length"))
 	return Attribute (Attribute::arrayLength);
-      else if (attributeStr == UnicodeString ("row"))
+      else if (attributeStr == uc::String ("row"))
 	return Attribute (Attribute::matrixRow);
-      else if (attributeStr == UnicodeString ("col"))
+      else if (attributeStr == uc::String ("col"))
 	return Attribute (Attribute::matrixCol);
-      else if (attributeStr == UnicodeString ("transpose"))
+      else if (attributeStr == uc::String ("transpose"))
 	return Attribute (Attribute::matrixTranspose);
-      else if (attributeStr == UnicodeString ("invert"))
+      else if (attributeStr == uc::String ("invert"))
 	return Attribute (Attribute::matrixInvert);
       
       // Attribute is swizzle
@@ -384,7 +384,7 @@ namespace s1
       return TypePtr (new CommonType (baseType, columns, rows));
     }
   
-    void CommonSemanticsHandler::CommonScope::CheckIdentifierUnique (const UnicodeString& identifier)
+    void CommonSemanticsHandler::CommonScope::CheckIdentifierUnique (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
@@ -402,7 +402,7 @@ namespace s1
     {}
 
     CommonSemanticsHandler::NamePtr
-    CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const UnicodeString& identifier,
+    CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
 						      ExpressionPtr initialValue, bool constant)
     {
       CheckIdentifierUnique (identifier);
@@ -412,7 +412,7 @@ namespace s1
     }
       
     CommonSemanticsHandler::NamePtr
-    CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const UnicodeString& identifier)
+    CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
       CheckIdentifierUnique (identifier);
       NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
@@ -422,7 +422,7 @@ namespace s1
       
     CommonSemanticsHandler::FunctionPtr
     CommonSemanticsHandler::CommonScope::AddFunction (TypePtr returnType,
-						      const UnicodeString& identifier,
+						      const uc::String& identifier,
 						      const FunctionFormalParameters& params)
     {
       if (level >= Function)
@@ -439,7 +439,7 @@ namespace s1
     }
 
     CommonSemanticsHandler::NamePtr
-    CommonSemanticsHandler::CommonScope::ResolveIdentifier (const UnicodeString& identifier)
+    CommonSemanticsHandler::CommonScope::ResolveIdentifier (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())

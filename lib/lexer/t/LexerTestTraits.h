@@ -58,12 +58,12 @@ CXXTEST_ENUM_TRAITS (s1::Lexer::TokenType,
 namespace CxxTest 
 {
   CXXTEST_TEMPLATE_INSTANTIATION
-  class ValueTraits<UnicodeString> 
+  class ValueTraits<s1::uc::String> 
   {
     std::string utfStr;
 
   public:
-    ValueTraits (const UnicodeString& s )
+    ValueTraits (const s1::uc::String& s )
     {
       std::string tmp;
       s.toUTF8String (tmp);

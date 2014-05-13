@@ -108,7 +108,7 @@ namespace s1
       return typeStr;
     }
     
-    static bool IsCgIdentifierChar (UChar32 ch)
+    static bool IsCgIdentifierChar (uc::Char32 ch)
     {
     return (((ch >= 'a') && (ch <= 'z'))
 	    || ((ch >= 'A') && (ch <= 'Z'))
@@ -151,14 +151,14 @@ namespace s1
       return delta_type (k + (rfc3492_base - rfc3492_tmin + 1) * delta / (delta + int (rfc3492_skew))).convert_to<size_t> ();
     }
 
-    std::string CgGenerator::NameToCgIdentifier (const UnicodeString& str)
+    std::string CgGenerator::NameToCgIdentifier (const uc::String& str)
     {
       std::string basic_str;
       // An implementation of the punycode algorithm, see RFC 3492
       StringCharacterIterator idIt (str);
       while (idIt.hasNext())
       {
-	UChar32 ch = idIt.next32PostInc();
+	uc::Char32 ch = idIt.next32PostInc();
 	// Valid Cg identifier character?
 	if (IsCgIdentifierChar (ch))
 	{
@@ -184,7 +184,7 @@ namespace s1
 	size_t m = INT32_MAX;
 	for(idIt.setToStart(); idIt.hasNext();)
 	{
-	  UChar32 c = idIt.next32PostInc();;
+	  uc::Char32 c = idIt.next32PostInc();;
 	  if (!IsCgIdentifierChar (c) && (size_t (c) >= n) && (size_t (c) < m))
 	    m = c;
 	}
@@ -193,7 +193,7 @@ namespace s1
 	// for each code point c in the input (in order) ...
 	for(idIt.setToStart(); idIt.hasNext();)
 	{
-	  UChar32 c = idIt.next32PostInc();;
+	  uc::Char32 c = idIt.next32PostInc();;
 	  if ((size_t (c) < n) || (IsCgIdentifierChar (c)))
 	  {
 	    // increment delta

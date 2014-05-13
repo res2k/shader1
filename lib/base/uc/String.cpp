@@ -17,30 +17,28 @@
 
 #include "base/common.h"
 
-#include "compiler/Compiler.h"
+#include "base/uc/Exception.h"
+#include "base/uc/String.h"
 
-#include "BackendCg.h"
-#include "base/UnicodeStream.h"
-#include "compiler/Options.h"
-#include "compiler/Program.h"
-
-#include <boost/make_shared.hpp>
+#include <unicode/errorcode.h>
+#include <unicode/normlzr.h>
 
 namespace s1
 {
-  Compiler::OptionsPtr Compiler::CreateOptions ()
+  namespace uc
   {
-    return OptionsPtr (new Options (lib));
-  }
-  
-  Compiler::BackendPtr Compiler::CreateBackendCg ()
-  {
-    return BackendPtr (new compiler::BackendCg (lib));
-  }
-
-  Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input, const uc::String& entryFunction)
-  {
-    UnicodeStream uniStream (input, "utf-8");
-    return ProgramPtr (new Program (&uniStream, entryFunction));
-  }
+    String String::Normalized (NormalizationMode mode)
+    {
+      UNormalizationMode icu_mode (UNORM_NONE);
+      switch (mode)
+      {
+      case normNFD: icu_mode = UNORM_NFD;       break;
+      }
+      ErrorCode err;
+      UnicodeString strN;
+      Normalizer::normalize (*this, icu_mode, 0, strN, err);
+      if (err > 0) throw Exception (err);
+      return String (strN);
+    }
+  } // namespace uc
 } // namespace s1

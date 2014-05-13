@@ -139,9 +139,9 @@ namespace s1
     }
       
     IntermediateGeneratorSemanticsHandler::BaseType
-    IntermediateGeneratorSemanticsHandler::DetectNumericType (const UnicodeString& numericStr)
+    IntermediateGeneratorSemanticsHandler::DetectNumericType (const uc::String& numericStr)
     {
-      if (numericStr.startsWith (UnicodeString ("0x")) || numericStr.startsWith (UnicodeString ("0X")))
+      if (numericStr.startsWith (uc::String ("0x")) || numericStr.startsWith (uc::String ("0X")))
       {
 	// Hex number: always unsigned int
 	return UInt;
@@ -152,25 +152,25 @@ namespace s1
 	return Float;
       }
       // Can only be an integer
-      return numericStr.startsWith (UnicodeString ("-")) ? Int : UInt;
+      return numericStr.startsWith (uc::String ("-")) ? Int : UInt;
     }
     
     IntermediateGeneratorSemanticsHandler::Attribute
-    IntermediateGeneratorSemanticsHandler::IdentifyAttribute (const UnicodeString& attributeStr)
+    IntermediateGeneratorSemanticsHandler::IdentifyAttribute (const uc::String& attributeStr)
     {
       if (attributeStr.length() == 0)
 	// Empty attribute? Bogus.
 	return Attribute (Attribute::Unknown);
       
-      if (attributeStr == UnicodeString ("length"))
+      if (attributeStr == uc::String ("length"))
 	return Attribute (Attribute::arrayLength);
-      else if (attributeStr == UnicodeString ("row"))
+      else if (attributeStr == uc::String ("row"))
 	return Attribute (Attribute::matrixRow);
-      else if (attributeStr == UnicodeString ("col"))
+      else if (attributeStr == uc::String ("col"))
 	return Attribute (Attribute::matrixCol);
-      else if (attributeStr == UnicodeString ("transpose"))
+      else if (attributeStr == uc::String ("transpose"))
 	return Attribute (Attribute::matrixTranspose);
-      else if (attributeStr == UnicodeString ("invert"))
+      else if (attributeStr == uc::String ("invert"))
 	return Attribute (Attribute::matrixInvert);
       
       // Attribute is swizzle
@@ -283,17 +283,17 @@ namespace s1
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
 									 const TypeImplPtr& type,
 									 RegisterClassification classify,
-									 const UnicodeString& name)
+									 const uc::String& name)
     {
-      const UChar prefix[3] = { UChar (classify), '_', 0};
-      UnicodeString regName (prefix);
+      const uc::Char prefix[3] = { uc::Char (classify), '_', 0};
+      uc::String regName (prefix);
       if (!name.isEmpty())
 	regName.append (name);
       else
       {
 	static unsigned int allRegNum = 0;
-	UChar regNumStr[charsToFormatUint + 4];
-	u_snprintf (regNumStr, sizeof (regNumStr)/sizeof (UChar),
+	uc::Char regNumStr[charsToFormatUint + 4];
+	u_snprintf (regNumStr, sizeof (regNumStr)/sizeof (uc::Char),
 		    "tmp%u", allRegNum++);
 	regName.append (regNumStr);
       }
@@ -510,7 +510,7 @@ namespace s1
       return ExpressionPtr (new BoolExpressionImpl (this, value));
     }
     
-    ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstNumericExpression (const UnicodeString& valueStr)
+    ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstNumericExpression (const uc::String& valueStr)
     {
       return ExpressionPtr (new NumericExpressionImpl (this, valueStr));
     }
@@ -533,7 +533,7 @@ namespace s1
     }
     
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAttributeAccess (ExpressionPtr expr,
-										const UnicodeString& attr)
+										const uc::String& attr)
     {
       Attribute attrInfo (IdentifyAttribute (attr));
       if (attrInfo.attrClass == Attribute::Unknown)

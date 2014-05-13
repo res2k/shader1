@@ -34,7 +34,7 @@ namespace s1
       const Sequence::IdentifierToRegMap& identToRegID_exp)
       : owner (owner), identToRegID_imp (identToRegID_imp), identToRegID_exp (identToRegID_exp) {}
 
-    std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const UnicodeString& name)
+    std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const uc::String& name)
     {
       Sequence::IdentifierToRegMap::const_iterator regIt = identToRegID_imp.find (name);
       if (regIt != identToRegID_imp.end())
@@ -42,7 +42,7 @@ namespace s1
       return std::string ();
     }
 	
-    std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const UnicodeString& name)
+    std::string CgGenerator::SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const uc::String& name)
     {
       Sequence::IdentifierToRegMap::const_iterator regIt = identToRegID_exp.find (name);
       if (regIt != identToRegID_exp.end())
@@ -642,7 +642,7 @@ namespace s1
       target->AddString ("return;");
     }
     
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const UnicodeString& funcIdent,
+    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpFunctionCall (const uc::String& funcIdent,
 									     const std::vector<RegisterPtr>& inParams,
 									     const std::vector<RegisterPtr>& outParams)
     {

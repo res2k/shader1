@@ -30,8 +30,8 @@ namespace s1
     public:
       struct FunctionInfo
       {
-	UnicodeString originalIdentifier;
-	UnicodeString identifier;
+	uc::String originalIdentifier;
+	uc::String identifier;
 	TypePtr returnType;
 	FunctionFormalParameters params;
 	/// Function body (for user-defined functions)
@@ -44,17 +44,17 @@ namespace s1
     private:
       friend class IntermediateGeneratorSemanticsHandler;
       
-      typedef boost::unordered_map<UnicodeString, NamePtr> IdentifierMap;
+      typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
-      std::vector<UnicodeString> outputParams;
+      std::vector<uc::String> outputParams;
       
-      typedef boost::unordered_map<UnicodeString, FunctionInfoVector> FunctionsMap;
+      typedef boost::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
       
-      void CheckIdentifierUnique (const UnicodeString& identifier);
-      NamePtr CheckIdentifierIsFunction (const UnicodeString& identifier);
+      void CheckIdentifierUnique (const uc::String& identifier);
+      NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
       
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
@@ -71,19 +71,19 @@ namespace s1
       ScopeLevel GetLevel() const { return level; }
       
       NamePtr AddVariable (TypePtr type,
-	const UnicodeString& identifier,
+	const uc::String& identifier,
 	ExpressionPtr initialValue,
 	bool constant);
 	
       NamePtr AddTypeAlias (TypePtr aliasedType,
-	const UnicodeString& identifier);
+	const uc::String& identifier);
 	
       FunctionPtr AddFunction (TypePtr returnType,
-	const UnicodeString& identifier,
+	const uc::String& identifier,
 	const FunctionFormalParameters& params);
     
-      NamePtr ResolveIdentifier (const UnicodeString& identifier);
-      NameImplPtr ResolveIdentifierInternal (const UnicodeString& identifier);
+      NamePtr ResolveIdentifier (const uc::String& identifier);
+      NameImplPtr ResolveIdentifierInternal (const uc::String& identifier);
       
       TypePtr GetFunctionReturnType() const
       {
@@ -91,7 +91,7 @@ namespace s1
 	if (parent) return parent->GetFunctionReturnType();
 	return TypePtr ();
       }
-      const std::vector<UnicodeString>& GetFunctionOutputParams () const
+      const std::vector<uc::String>& GetFunctionOutputParams () const
       {
 	if (!parent || (parent->level < Function))
 	  return outputParams;

@@ -18,6 +18,8 @@
 #ifndef __INTERMEDIATE_INTERMEDIATEGENERATORSEMANTICSHANDLER_H__
 #define __INTERMEDIATE_INTERMEDIATEGENERATORSEMANTICSHANDLER_H__
 
+#include "base/uc/String.h"
+
 #include "parser/CommonSemanticsHandler.h"
 
 #include "forwarddecl.h"
@@ -81,12 +83,12 @@ namespace s1
 
       /// Whether the intermediate program was marked "completed"
       bool completed;
-      UnicodeString entryFunction;
+      uc::String entryFunction;
     public:
       /**\name Type utilities
        * @{ */
       static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
-      static BaseType DetectNumericType (const UnicodeString& numericStr);
+      static BaseType DetectNumericType (const uc::String& numericStr);
       static std::string GetTypeString (const TypePtr& type);
       /**@}*/
       
@@ -121,7 +123,7 @@ namespace s1
 	unsigned char GetSwizzleComp (unsigned char num) const
 	{ return (swizzleComps >> (num*2)) & 3; }
       };
-      static Attribute IdentifyAttribute (const UnicodeString& attributeStr);
+      static Attribute IdentifyAttribute (const uc::String& attributeStr);
       TypeImplPtr GetAttributeType (const TypeImplPtr& expressionType,
 				    const Attribute& attr);
       /** @} */
@@ -155,7 +157,7 @@ namespace s1
        */
       RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const TypeImplPtr& type,
 				    RegisterClassification classify,
-				    const UnicodeString& name = UnicodeString ());
+				    const uc::String& name = uc::String ());
       /// Create a new generation of a register
       RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
@@ -174,8 +176,8 @@ namespace s1
     #  pragma warning(push)
     #  pragma warning(disable : 4800)
     #endif
-      void SetEntryFunction (const UnicodeString& entryFunction) { this->entryFunction = entryFunction; }
-      bool IsEntryFunction (const UnicodeString& entryFunction) const { return this->entryFunction == entryFunction; }
+      void SetEntryFunction (const uc::String& entryFunction) { this->entryFunction = entryFunction; }
+      bool IsEntryFunction (const uc::String& entryFunction) const { return this->entryFunction == entryFunction; }
     #ifdef _MSC_VER
     #  pragma warning(pop)
     #endif
@@ -192,10 +194,10 @@ namespace s1
 				unsigned int rows);
       
       ExpressionPtr CreateConstBoolExpression (bool value);
-      ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr);
+      ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr);
       ExpressionPtr CreateVariableExpression (NamePtr name);
       ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-					   const UnicodeString& attr);
+					   const uc::String& attr);
       ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
 					      ExpressionPtr elementIndexExpr);
       ExpressionPtr CreateAssignExpression (ExpressionPtr target,

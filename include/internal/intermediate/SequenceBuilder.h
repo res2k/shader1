@@ -63,11 +63,11 @@ namespace s1
       /** @} */
       
       RegisterPtr AllocateRegister (const TypePtr& originalType,
-                                    const UnicodeString& name);
+                                    const uc::String& name);
       RegisterPtr AllocateRegister (const RegisterPtr& oldReg);
       
-      void SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& regID);
-      RegisterPtr GetIdentifierRegister (const UnicodeString& identifier) const;
+      void SetIdentifierRegister (const uc::String& identifier, const RegisterPtr& regID);
+      RegisterPtr GetIdentifierRegister (const uc::String& identifier) const;
       
       typedef Sequence::IdentRegPair IdentRegPair;
       typedef Sequence::IdentifierToRegMap IdentifierToRegMap;
@@ -84,7 +84,7 @@ namespace s1
        * it will be replaced.
        */
       void SetImport (const RegisterPtr& localReg,
-                      const UnicodeString& parentRegName);
+                      const uc::String& parentRegName);
       void AddImports (const RegisterImpMappings& imports);
       const RegisterImpMappings& GetImports () const;
       typedef Sequence::RegisterExpMappings RegisterExpMappings;
@@ -95,7 +95,7 @@ namespace s1
        * will be set to the value of \a localReg. If a mapping for \a parentRegName already
        * exists it will be replaced.
        */
-      void SetExport (const UnicodeString& parentRegName,
+      void SetExport (const uc::String& parentRegName,
                       const RegisterPtr& localReg);
       void AddExports (const RegisterExpMappings& exports);
       void CleanUnusedImportsExports (const RegisterSet& keepImports = RegisterSet (),

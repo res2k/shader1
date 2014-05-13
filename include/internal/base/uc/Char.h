@@ -15,30 +15,21 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __TESTERRORHANDLER_H__
-#define __TESTERRORHANDLER_H__
+/**\file
+ * Unicode character types
+ */
+#ifndef __BASE_UC_CHAR_H__
+#define __BASE_UC_CHAR_H__
 
-struct TestErrorHandler : public s1::LexerErrorHandler
+#include <unicode/uchar.h>
+
+namespace s1
 {
-  bool invalidCharFound;
-  bool strayCharFound;
-  s1::uc::Char32 strayCharOffender;
-  
-  TestErrorHandler() { Reset(); }
-    
-  void Reset ()
+  namespace uc
   {
-    invalidCharFound = false;
-    strayCharFound = false;
-    strayCharOffender = 0;
-  }
-  
-  void InputInvalidCharacter () { invalidCharFound = true; }
-  void StrayCharacter (s1::uc::Char32 offender)
-  {
-    strayCharFound = true;
-    strayCharOffender = offender;
-  }
-};
+    typedef UChar Char;
+    typedef UChar32 Char32;
+  } // namespace uc
+} // namespace s1
 
-#endif // __TESTERRORHANDLER_H__
+#endif // __BASE_UC_CHAR_H__

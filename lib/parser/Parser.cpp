@@ -901,7 +901,7 @@ namespace s1
     Type returnType = ParseFuncType (scope);
     // Funktionsbezeichner parsen
     Expect (Lexer::Identifier);
-    UnicodeString functionIdentifier (currentToken.tokenString);
+    uc::String functionIdentifier (currentToken.tokenString);
     NextToken ();
     // Formale Parameter parsen
     Expect (Lexer::ParenL);
@@ -1040,7 +1040,7 @@ namespace s1
   void Parser::ParseVarIdentifierAndInitializer (const Scope& scope, Type type)
   {
     Expect (Lexer::Identifier);
-    UnicodeString varIdentifier = currentToken.tokenString;
+    uc::String varIdentifier = currentToken.tokenString;
     NextToken ();
     Expression initExpr;
     if (currentToken.typeOrID == Lexer::Assign)
@@ -1077,7 +1077,7 @@ namespace s1
   void Parser::ParseConstIdentifierAndInitializer (const Scope& scope, Type type)
   {
     Expect (Lexer::Identifier);
-    UnicodeString varIdentifier = currentToken.tokenString;
+    uc::String varIdentifier = currentToken.tokenString;
     NextToken ();
     // initializer value is required
     Expect (Lexer::Assign);

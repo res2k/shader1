@@ -55,11 +55,11 @@ public:
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     // Add some variables
     TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
-    TestSemanticsHandler::NamePtr varA = testBlock->GetInnerScope()->AddVariable (floatType, UnicodeString ("a"),
+    TestSemanticsHandler::NamePtr varA = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("a"),
 										  TestSemanticsHandler::ExpressionPtr (),
 										  false);
     TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
-    TestSemanticsHandler::NamePtr varB = testBlock->GetInnerScope()->AddVariable (floatType, UnicodeString ("b"),
+    TestSemanticsHandler::NamePtr varB = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("b"),
 										  exprA,
 										  false);
     // No further ops - initializer on 'b' should be enough to emit an op ...

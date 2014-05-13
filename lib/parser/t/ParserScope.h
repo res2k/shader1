@@ -42,13 +42,13 @@ public:
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
 	scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
-			    UnicodeString ("a"), 
+			    s1::uc::String ("a"), 
 			    SemanticsHandler::ExpressionPtr(), false)
     );
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-	scope->ResolveIdentifier (UnicodeString ("a"))
+	scope->ResolveIdentifier (s1::uc::String ("a"))
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -65,12 +65,12 @@ public:
     SemanticsHandler::Scope::FunctionFormalParameters params;
     TS_ASSERT_THROWS_NOTHING(
       scope->AddFunction (semanticsHandler.CreateType (SemanticsHandler::Int),
-			  UnicodeString ("a"), params)
+			  s1::uc::String ("a"), params)
     );
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-	scope->ResolveIdentifier (UnicodeString ("a"))
+	scope->ResolveIdentifier (s1::uc::String ("a"))
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Function);
@@ -88,12 +88,12 @@ public:
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
 	scope->AddTypeAlias (semanticsHandler.CreateType (SemanticsHandler::Int),
-			     UnicodeString ("a"))
+			     s1::uc::String ("a"))
     );
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-	scope->ResolveIdentifier (UnicodeString ("a"))
+	scope->ResolveIdentifier (s1::uc::String ("a"))
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::TypeAlias);
@@ -110,7 +110,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_ASSERT(
       varRequested =
-	scope->ResolveIdentifier (UnicodeString ("foo")),
+	scope->ResolveIdentifier (s1::uc::String ("foo")),
       const s1::parser::Exception& e,
       e.GetCode() == s1::parser::IdentifierUndeclared
     );
@@ -128,13 +128,13 @@ public:
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
 	scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
-			    UnicodeString ("a"), 
+			    s1::uc::String ("a"), 
 			    SemanticsHandler::ExpressionPtr(), false)
     );
     TS_ASSERT_THROWS_ASSERT(
       varAdded =
 	scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
-			    UnicodeString ("a"), 
+			    s1::uc::String ("a"), 
 			    SemanticsHandler::ExpressionPtr(), false),
       const s1::parser::Exception& e,
       e.GetCode() == s1::parser::IdentifierAlreadyDeclared
@@ -153,7 +153,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
 	scopeOuter->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
-				 UnicodeString ("a"), 
+				 s1::uc::String ("a"), 
 				 SemanticsHandler::ExpressionPtr(), false)
     );
     SemanticsHandler::ScopePtr scopeInner (
@@ -162,7 +162,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-	scopeInner->ResolveIdentifier (UnicodeString ("a"))
+	scopeInner->ResolveIdentifier (s1::uc::String ("a"))
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);

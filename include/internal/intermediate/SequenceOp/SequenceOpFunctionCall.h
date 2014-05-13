@@ -30,11 +30,11 @@ namespace s1
   {
     class SequenceOpFunctionCall : public SequenceOp
     {
-      UnicodeString funcIdent;
+      uc::String funcIdent;
       std::vector<RegisterPtr> inParams;
       std::vector<RegisterPtr> outParams;
     public:
-      SequenceOpFunctionCall (const UnicodeString& funcIdent,
+      SequenceOpFunctionCall (const uc::String& funcIdent,
 			      const std::vector<RegisterPtr>& inParams,
 			      const std::vector<RegisterPtr>& outParams);
       

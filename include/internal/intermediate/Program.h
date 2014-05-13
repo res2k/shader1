@@ -41,8 +41,8 @@ namespace s1
       ProgramFunctionPtr GetFunction (size_t n) const;
       
       void AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
-			     const UnicodeString& name);
-      typedef std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, UnicodeString> TransferValuePair;
+			     const uc::String& name);
+      typedef std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, uc::String> TransferValuePair;
       typedef std::vector<TransferValuePair> TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
       
@@ -53,12 +53,12 @@ namespace s1
 	/// Fragment output color
 	Color
       };
-      typedef boost::unordered_map<UnicodeString, ParameterTarget> OutputParameters;
-      void SetOutputParameter (const UnicodeString& name, ParameterTarget target);
+      typedef boost::unordered_map<uc::String, ParameterTarget> OutputParameters;
+      void SetOutputParameter (const uc::String& name, ParameterTarget target);
       const OutputParameters& GetOutputParameters () const;
       
-      typedef boost::unordered_map<UnicodeString, size_t> ParameterArraySizes;
-      void SetParameterArraySize (const UnicodeString& name, size_t size);
+      typedef boost::unordered_map<uc::String, size_t> ParameterArraySizes;
+      void SetParameterArraySize (const uc::String& name, size_t size);
       const ParameterArraySizes& GetParameterArraySizes () const;
       
       // @@@ Actualls, should perhaps better be in splitter ...

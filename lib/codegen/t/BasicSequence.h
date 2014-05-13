@@ -57,9 +57,9 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
   class TestImportedNameResolver : public ImportedNameResolver
   {
   public:
-    std::string GetImportedNameIdentifier (const UnicodeString& name)
+    std::string GetImportedNameIdentifier (const s1::uc::String& name)
     { return std::string(); }	
-    std::string GetExportedNameIdentifier (const UnicodeString& name)
+    std::string GetExportedNameIdentifier (const s1::uc::String& name)
     { return std::string(); }	
   };
   
@@ -96,15 +96,15 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
 								 TestSemanticsHandler::ExpressionPtr (),
 								 false);
-    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, UnicodeString ("b"),
+    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
 								 TestSemanticsHandler::ExpressionPtr (),
 								 false);
     // Create a simple expression "a = 1"
     TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
-    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("1.0"));
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
@@ -143,13 +143,13 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
 								 TestSemanticsHandler::ExpressionPtr (),
 								 false);
-    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, UnicodeString ("b"),
+    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
 								 TestSemanticsHandler::ExpressionPtr (),
 								 false);
-    TestSemanticsHandler::NamePtr varC = testScope->AddVariable (floatType, UnicodeString ("c"),
+    TestSemanticsHandler::NamePtr varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
 								 TestSemanticsHandler::ExpressionPtr (),
 								 false);
     // Create a simple expression "c = a + b"

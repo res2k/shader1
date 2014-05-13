@@ -29,7 +29,7 @@ namespace s1
     struct IntermediateGeneratorSemanticsHandler::NameImpl : public Name
     {
       boost::weak_ptr<ScopeImpl> ownerScope;
-      UnicodeString identifier;
+      uc::String identifier;
       NameType type;
       
       /* Variables/Constants: type of variable/constant
@@ -45,11 +45,11 @@ namespace s1
       bool isOutputParam;
       
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
-		const UnicodeString& identifier, NameType type,
+		const uc::String& identifier, NameType type,
 		const boost::shared_ptr<TypeImpl>& typeOfName)
 	: ownerScope (ownerScope), identifier (identifier), type (type), valueType (typeOfName) {}
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
-		const UnicodeString& identifier,
+		const uc::String& identifier,
 		const boost::shared_ptr<TypeImpl>& typeOfName,
 		ExpressionPtr value, bool constant, bool isOutputParam = false)
 	: ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),

@@ -152,7 +152,7 @@ namespace s1
 		    
       void OpReturn (const std::vector<RegisterPtr>& outParamVals)
       { assert (false); }
-      void OpFunctionCall (const UnicodeString& funcIdent,
+      void OpFunctionCall (const uc::String& funcIdent,
 			    const std::vector<RegisterPtr>& inParams,
 			    const std::vector<RegisterPtr>& outParams)
       { assert (false); }
@@ -527,7 +527,7 @@ namespace s1
       AddOpToSequence (newOp);
     }
     
-    void CloningSequenceVisitor::OpFunctionCall (const UnicodeString& funcIdent,
+    void CloningSequenceVisitor::OpFunctionCall (const uc::String& funcIdent,
 						const std::vector<RegisterPtr>& inParams,
 						const std::vector<RegisterPtr>& outParams)
     {

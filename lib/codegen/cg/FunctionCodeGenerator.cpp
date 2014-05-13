@@ -62,8 +62,8 @@ namespace s1
 	
 	const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies());
 	
-	boost::unordered_set<UnicodeString> paramImports;
-	std::vector<std::pair<std::string, UnicodeString> > inParams;
+	boost::unordered_set<uc::String> paramImports;
+	std::vector<std::pair<std::string, uc::String> > inParams;
 	std::vector<std::string> outParams;
 	const FunctionFormalParameters& params (func->GetParams());
 	for (FunctionFormalParameters::const_iterator param = params.begin();
@@ -90,7 +90,7 @@ namespace s1
 
 	  if (param->dir & parser::SemanticsHandler::Scope::dirIn)
 	  {
-	    UnicodeString paramIdentDecorated ("i");
+	    uc::String paramIdentDecorated ("i");
 	    paramIdentDecorated.append (param->identifier);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    std::string paramStr (paramStrBase);
@@ -103,7 +103,7 @@ namespace s1
 	  
 	  if (param->dir & parser::SemanticsHandler::Scope::dirOut)
 	  {
-	    UnicodeString paramIdentDecorated ("o");
+	    uc::String paramIdentDecorated ("o");
 	    paramIdentDecorated.append (param->identifier);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    outParamIdents.push_back (paramIdent);
@@ -140,7 +140,7 @@ namespace s1
 	    // Only look at globals
 	    if (paramImports.find (import->first) != paramImports.end()) continue;
 	    
-	    UnicodeString paramIdentDecorated ("I");
+	    uc::String paramIdentDecorated ("I");
 	    paramIdentDecorated.append (import->first);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    std::string typeSuffix;
@@ -162,7 +162,7 @@ namespace s1
 	    // Only look at globals
 	    if (paramImports.find (exported->first) != paramImports.end()) continue;
 	    
-	    UnicodeString paramIdentDecorated ("O");
+	    uc::String paramIdentDecorated ("O");
 	    paramIdentDecorated.append (exported->first);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    std::string typeSuffix;
@@ -186,7 +186,7 @@ namespace s1
 	    paramAdder.Add ("in ", "V2F v2f");
 	}
 	
-	for (std::vector<std::pair<std::string, UnicodeString> >::const_iterator inParam (inParams.begin());
+	for (std::vector<std::pair<std::string, uc::String> >::const_iterator inParam (inParams.begin());
 	     inParam != inParams.end();
 	     ++inParam)
 	{

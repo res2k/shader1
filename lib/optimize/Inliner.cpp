@@ -56,13 +56,13 @@ namespace s1
     
     class Inliner::InliningVisitor : public CommonSequenceVisitor
     {
-      UnicodeString regsSuffix;
+      uc::String regsSuffix;
       
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       RegisterMap registerMap;
     public:
       InliningVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-		       const UnicodeString& regsSuffix)
+		       const uc::String& regsSuffix)
        : CommonSequenceVisitor (outputSeqBuilder), regsSuffix (regsSuffix)
       {
       }
@@ -78,7 +78,7 @@ namespace s1
 	if (mappedReg != registerMap.end())
 	  return mappedReg->second;
 	
-	UnicodeString newRegName (reg->GetName());
+	uc::String newRegName (reg->GetName());
 	newRegName.append (regsSuffix);
 	RegisterPtr newReg = newSequenceBuilder->AllocateRegister (reg->GetOriginalType(), newRegName);
 	registerMap[reg] = newReg;
@@ -105,8 +105,8 @@ namespace s1
       haveInlined = true;
       if (seq->GetNumOps() == 0) return;
       
-      UChar blockSuffix[charsToFormatUint + 3];
-      u_snprintf (blockSuffix, sizeof (blockSuffix)/sizeof (UChar),
+      uc::Char blockSuffix[charsToFormatUint + 3];
+      u_snprintf (blockSuffix, sizeof (blockSuffix)/sizeof (uc::Char),
 		  "$b%u", blockNum);
       blockNum++;
       

@@ -52,7 +52,7 @@ namespace s1
       snprintf (newCondName, sizeof (newCondName), "%s%d", varConditionName, 
 		boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
       varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
-										    UnicodeString (newCondName),
+										    uc::String (newCondName),
 										    ExpressionPtr(), false));
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
@@ -63,7 +63,7 @@ namespace s1
 	snprintf (newRetValName, sizeof (newRetValName), "%s%d", varReturnValueName, 
 		  boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
 	varReturnValue = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (retTypeImpl,
-											UnicodeString (newRetValName),
+											uc::String (newRetValName),
 											ExpressionPtr(), false));
       }
     }
@@ -119,8 +119,8 @@ namespace s1
       
       // Need to collect regs for all output params
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
-      const std::vector<UnicodeString>& outputParams = blockScopeImpl->GetFunctionOutputParams();
-      BOOST_FOREACH(const UnicodeString& identifier, outputParams)
+      const std::vector<uc::String>& outputParams = blockScopeImpl->GetFunctionOutputParams();
+      BOOST_FOREACH(const uc::String& identifier, outputParams)
       {
 	retValRegs.push_back (sequenceBuilder->GetIdentifierRegister (identifier));
       }
@@ -562,7 +562,7 @@ namespace s1
       char newTernaryResultName[sizeof (varTernaryResultName) + charsToFormatInt + 1];
       snprintf (newTernaryResultName, sizeof (newTernaryResultName), "%s%d", varTernaryResultName, 
 		boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
-      UnicodeString newVarName (newTernaryResultName);
+      uc::String newVarName (newTernaryResultName);
       newVarName.append (typeStr.c_str());
       NameImplPtr newVar (boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
 											 newVarName,
@@ -595,15 +595,15 @@ namespace s1
 	nameReg.isImported = isFromOutside;
 	if (isFromOutside)
 	{
-	  UnicodeString importName (name->identifier);
+	  uc::String importName (name->identifier);
 	  /* Add a suffix derived from the "distance" of this block's scope to the scope
 	    that defines 'name' in order to make local register name unique */
 	  int d = boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (
 	    boost::shared_ptr<ScopeImpl> (name->ownerScope));
 	  if (d >= 0)
 	  {
-	    UChar distSuffix[charsToFormatInt + 3];
-	    u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (UChar),
+	    uc::Char distSuffix[charsToFormatInt + 3];
+	    u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (uc::Char),
 			"_B%d", d);
 	    importName.append (distSuffix);
 	  }

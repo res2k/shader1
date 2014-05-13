@@ -40,12 +40,12 @@ namespace s1
     }
     
     void Program::AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
-				    const UnicodeString& name)
+				    const uc::String& name)
     {
       transferValues.push_back (std::make_pair (type, name));
     }
     
-    void Program::SetOutputParameter (const UnicodeString& name, ParameterTarget target)
+    void Program::SetOutputParameter (const uc::String& name, ParameterTarget target)
     {
       outputParams[name] = target;
     }
@@ -55,7 +55,7 @@ namespace s1
       return outputParams;
     }
 
-    void Program::SetParameterArraySize (const UnicodeString& name, size_t size)
+    void Program::SetParameterArraySize (const uc::String& name, size_t size)
     {
       paramArraySizes[name] = size;
     }

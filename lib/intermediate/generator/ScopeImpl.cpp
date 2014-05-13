@@ -37,7 +37,7 @@ namespace s1
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     
-    void IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const UnicodeString& identifier)
+    void IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
@@ -48,7 +48,7 @@ namespace s1
 	parent->CheckIdentifierUnique (identifier);
     }
     
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const UnicodeString& identifier)
+    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if ((ident != identifiers.end()) && (ident->second->GetType() != Name::Function))
@@ -89,7 +89,7 @@ namespace s1
 	outputParams.push_back (param.identifier);
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const UnicodeString& identifier,
+    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const uc::String& identifier,
 									   ExpressionPtr initialValue, bool constant)
     {
       CheckIdentifierUnique (identifier);
@@ -100,7 +100,7 @@ namespace s1
       return newName;
     }
       
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (TypePtr aliasedType, const UnicodeString& identifier)
+    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
       CheckIdentifierUnique (identifier);
       NamePtr newName (new NameImpl (shared_from_this(), identifier, Name::TypeAlias, 
@@ -110,7 +110,7 @@ namespace s1
     }
       
     FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (TypePtr returnType,
-									    const UnicodeString& identifier,
+									    const uc::String& identifier,
 									    const FunctionFormalParameters& params)
     {
       if (level >= Function)
@@ -139,7 +139,7 @@ namespace s1
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
       funcInfo->originalIdentifier = identifier;
       // Decorate identifier with type info (so each overload gets a unique name)
-      UnicodeString identifierDecorated (identifier);
+      uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
       for (FunctionFormalParameters::const_iterator param (params.begin());
 	   param != params.end();
@@ -171,7 +171,7 @@ namespace s1
       return newFunction;
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const UnicodeString& identifier)
+    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
     {
       NameImplPtr name (ResolveIdentifierInternal (identifier));
       if (!name)
@@ -180,7 +180,7 @@ namespace s1
     }
     
     IntermediateGeneratorSemanticsHandler::NameImplPtr
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifierInternal (const UnicodeString& identifier)
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifierInternal (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
@@ -197,7 +197,7 @@ namespace s1
       if (level >= Function)
 	throw parser::Exception (parser::DeclarationNotAllowedInScope);
       
-      const UnicodeString& identifier = builtin->GetIdentifier();
+      const uc::String& identifier = builtin->GetIdentifier();
       const FunctionFormalParameters& params = builtin->GetFormalParameters();
       NamePtr funcName (CheckIdentifierIsFunction (identifier));
       if (funcName == NamePtr ())
@@ -212,7 +212,7 @@ namespace s1
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
       funcInfo->originalIdentifier = identifier;
       // Decorate identifier with type info (so each overload gets a unique name)
-      UnicodeString identifierDecorated (identifier);
+      uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
       for (FunctionFormalParameters::const_iterator param (params.begin());
 	   param != params.end();
