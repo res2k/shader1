@@ -44,11 +44,9 @@ namespace boost
   }
 }
 
-/* Work around differing identifiers on MSVC
- * FIXME: Ensure to be private (i.e. invisible outside build) */
+/* Work around differing identifiers on MSVC */
 #ifdef _MSC_VER
   #define snprintf    _snprintf
-  #define strcasecmp  _stricmp
 #endif
 
 // Debugging helpers
