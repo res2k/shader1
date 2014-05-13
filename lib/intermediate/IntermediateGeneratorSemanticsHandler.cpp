@@ -292,7 +292,7 @@ namespace s1
       else
       {
 	static unsigned int allRegNum = 0;
-	UChar regNumStr[64];
+	UChar regNumStr[charsToFormatUint + 4];
 	u_snprintf (regNumStr, sizeof (regNumStr)/sizeof (UChar),
 		    "tmp%u", allRegNum++);
 	regName.append (regNumStr);
