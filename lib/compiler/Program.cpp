@@ -20,7 +20,7 @@
 #include "compiler/Options.h"
 #include "compiler/Program.h"
 
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
 #include "lexer/Lexer.h"
@@ -36,7 +36,7 @@
 
 namespace s1
 {
-  Compiler::Program::Program (UnicodeStream* inputStream, const uc::String& entryFunction)
+  Compiler::Program::Program (uc::Stream* inputStream, const uc::String& entryFunction)
   {
     compiler::ErrorHandler errorHandler; // TODO: real error handler
     Lexer lexer (*inputStream, errorHandler);

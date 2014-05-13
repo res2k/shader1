@@ -15,27 +15,29 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __BASE_UNICODESTREAMINVALIDCHARACTEREXCEPTION_H__
-#define __BASE_UNICODESTREAMINVALIDCHARACTEREXCEPTION_H__
+#ifndef __BASE_UC_STREAMINVALIDCHARACTEREXCEPTION_H__
+#define __BASE_UC_STREAMINVALIDCHARACTEREXCEPTION_H__
 
-#include "UnicodeStreamException.h"
+#include "StreamException.h"
 
 namespace s1
 {
+namespace uc
+{
   /**
-   * Exception thrown when UnicodeStream encounters an invalid character
+   * Exception thrown when Stream encounters an invalid character
    */
-  class UnicodeStreamInvalidCharacterException : public UnicodeStreamException
+  class StreamInvalidCharacterException : public StreamException
   {
   public:
     /**
      * Construct a new exception object.
      * \param uerr The error code returned by ICU.
      */
-    UnicodeStreamInvalidCharacterException (UErrorCode uerr)
-     : UnicodeStreamException (uerr) {}
+    StreamInvalidCharacterException (int uerr) : StreamException (uerr) {}
   };
-  
+
+} // namespace uc
 } // namespace s1
 
-#endif // __BASE_UNICODESTREAMINVALIDCHARACTEREXCEPTION_H__
+#endif // __BASE_UC_STREAMINVALIDCHARACTEREXCEPTION_H__

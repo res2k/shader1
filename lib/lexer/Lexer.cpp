@@ -19,7 +19,7 @@
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
 
-#include "base/UnicodeStreamInvalidCharacterException.h"
+#include "base/uc/StreamInvalidCharacterException.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -51,7 +51,7 @@ namespace s1
   KEYWORD ("while",		kwWhile)	\
   KEYWORD ("for",		kwFor)
   
-  Lexer::Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler)
+  Lexer::Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler)
    : inputChars (inputChars), errorHandler (errorHandler),
      currentToken (EndOfFile)
   {
@@ -429,7 +429,7 @@ KEYWORDS
       {
 	nextChar[LookAhead-1] = *inputChars;
       }
-      catch (UnicodeStreamInvalidCharacterException&)
+      catch (uc::StreamInvalidCharacterException&)
       {
 	// Signal error handler ...
 	errorHandler.InputInvalidCharacter();

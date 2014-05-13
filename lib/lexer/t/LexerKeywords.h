@@ -17,7 +17,7 @@
 
 #include <cxxtest/TestSuite.h>
 
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
@@ -32,7 +32,7 @@ public:
   {
     std::istringstream in ("return true false bool unsigned int float sampler1D sampler2D sampler3D samplerCUBE "
 			   "typedef void in out const if else while");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -58,7 +58,7 @@ public:
   void testVectorMatrixKeywords(void)
   {
     std::istringstream in ("int2 int3x2 float5 float32 bool3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;

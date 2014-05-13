@@ -19,7 +19,7 @@
 
 #include "base/common.h"
 
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
@@ -34,7 +34,7 @@ public:
   {
     std::string empty;
     std::istringstream in (empty);
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -55,7 +55,7 @@ public:
   void testWhitespace(void)
   {
     std::istringstream in ("  \r   \t  \n   ");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -76,7 +76,7 @@ public:
   void testInvalidInput(void)
   {
     std::istringstream in ("\xE2\x98");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -99,7 +99,7 @@ public:
   void testInvalidInput2(void)
   {
     std::istringstream in ("a" "\xE2\x98" "b");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -139,7 +139,7 @@ public:
   void testTokens(void)
   {
     std::istringstream in ("; ( ) [ ] { } . , == != > >= < <= = + - * / % ~ ! ? : || &&");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -165,7 +165,7 @@ public:
   void testTokensInvalid(void)
   {
     std::istringstream in ("| &");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;

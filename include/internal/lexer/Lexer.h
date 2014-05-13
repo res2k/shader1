@@ -18,7 +18,7 @@
 #ifndef __LEXER_LEXER_H__
 #define __LEXER_LEXER_H__
 
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 #include "base/uc/String.h"
 
 #include <boost/unordered_map.hpp>
@@ -190,7 +190,7 @@ namespace s1
     };
 //@@ENDSNIP
     
-    Lexer (UnicodeStream& inputChars, LexerErrorHandler& errorHandler);
+    Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler);
     
     /// Returns whether more token are available
     operator bool() const throw();
@@ -211,7 +211,7 @@ namespace s1
     static std::string GetTokenStr (const Token& token);
     //@}
   protected:
-    UnicodeStream& inputChars;
+    uc::Stream& inputChars;
     LexerErrorHandler& errorHandler;
     
     typedef boost::unordered_map<uc::String, TokenType> KeywordMap;

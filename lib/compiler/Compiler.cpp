@@ -20,7 +20,7 @@
 #include "compiler/Compiler.h"
 
 #include "BackendCg.h"
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
 
@@ -40,7 +40,7 @@ namespace s1
 
   Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input, const uc::String& entryFunction)
   {
-    UnicodeStream uniStream (input, "utf-8");
+    uc::Stream uniStream (input, "utf-8");
     return ProgramPtr (new Program (&uniStream, entryFunction));
   }
 } // namespace s1

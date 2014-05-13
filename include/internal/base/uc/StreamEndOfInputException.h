@@ -15,28 +15,30 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __BASE_UNICODESTREAMENDOFINPUTEXCEPTION_H__
-#define __BASE_UNICODESTREAMENDOFINPUTEXCEPTION_H__
+#ifndef __BASE_UC_STREAMENDOFINPUTEXCEPTION_H__
+#define __BASE_UC_STREAMENDOFINPUTEXCEPTION_H__
 
-#include "UnicodeStreamException.h"
+#include "StreamException.h"
 
 namespace s1
+{
+namespace uc
 {
   /**
    * Exception thrown when trying to read from a UnicodeStream beyond it's
    * end
    */
-  class UnicodeStreamEndOfInputException : public UnicodeStreamException
+  class StreamEndOfInputException : public StreamException
   {
   public:
     /**
      * Construct a new exception object.
      */
-    UnicodeStreamEndOfInputException () : UnicodeStreamException (U_ZERO_ERROR) {}
+    StreamEndOfInputException () : StreamException (U_ZERO_ERROR) {}
     
     const char* what () const throw() { return "end of input"; }
   };
-  
+} // namespace uc
 } // namespace s1
 
-#endif // __BASE_UNICODESTREAMENDOFINPUTEXCEPTION_H__
+#endif // __BASE_UC_STREAMENDOFINPUTEXCEPTION_H__

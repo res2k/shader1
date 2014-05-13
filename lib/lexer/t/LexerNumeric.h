@@ -17,7 +17,7 @@
 
 #include <cxxtest/TestSuite.h>
 
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
@@ -30,7 +30,7 @@ public:
   void testNumeric(void)
   {
     std::istringstream in ("0 0xabc 0x12AB 0.0 .0 0.0 .1 1e2 1e-2 .1E3 1.E-4");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -54,7 +54,7 @@ public:
   void testNumericInvalid1(void)
   {
     std::istringstream in ("0.0.0");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -85,7 +85,7 @@ public:
   void testNumericInvalid2(void)
   {
     std::istringstream in ("0.-0");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -123,7 +123,7 @@ public:
   void testNumericInvalid3(void)
   {
     std::istringstream in ("1e2.3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -154,7 +154,7 @@ public:
   void testNumericInvalid4(void)
   {
     std::istringstream in ("1e2e3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -185,7 +185,7 @@ public:
   void testNumericInvalid5(void)
   {
     std::istringstream in ("0xa.e2");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -223,7 +223,7 @@ public:
   void testNumericInvalid6(void)
   {
     std::istringstream in (".e2");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -254,7 +254,7 @@ public:
   void testNumericInvalid7(void)
   {
     std::istringstream in (".x");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;

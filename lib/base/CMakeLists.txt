@@ -1,17 +1,17 @@
 set(base_sources
-    UnicodeStream.cpp
     uc/Exception.cpp
     uc/String.cpp
+    uc/Stream.cpp
     ../../include/internal/base/common.h
     ../../include/internal/base/Library.h
     ../../include/internal/base/LibraryObject.h
     ../../include/internal/base/Object.h
-    ../../include/internal/base/UnicodeStream.h
-    ../../include/internal/base/UnicodeStreamEndOfInputException.h
-    ../../include/internal/base/UnicodeStreamException.h
-    ../../include/internal/base/UnicodeStreamInvalidCharacterException.h
     ../../include/internal/base/uc/Char.h
     ../../include/internal/base/uc/Exception.h
+    ../../include/internal/base/uc/Stream.h
+    ../../include/internal/base/uc/StreamEndOfInputException.h
+    ../../include/internal/base/uc/StreamException.h
+    ../../include/internal/base/uc/StreamInvalidCharacterException.h
     ../../include/internal/base/uc/String.h
     )
 add_library(base STATIC ${base_sources})

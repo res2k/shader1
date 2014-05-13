@@ -42,7 +42,7 @@ public:
   void testTypeBool (void)
   {
     std::istringstream in ("bool");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -60,7 +60,7 @@ public:
   void testTypeInt (void)
   {
     std::istringstream in ("int");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -78,7 +78,7 @@ public:
   void testTypeUInt (void)
   {
     std::istringstream in ("unsigned int");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -96,7 +96,7 @@ public:
   void testTypeFloat (void)
   {
     std::istringstream in ("float");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -114,7 +114,7 @@ public:
   void testTypeSampler1D (void)
   {
     std::istringstream in ("sampler1D");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -132,7 +132,7 @@ public:
   void testTypeSampler2D (void)
   {
     std::istringstream in ("sampler2D");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -150,7 +150,7 @@ public:
   void testTypeSampler3D (void)
   {
     std::istringstream in ("sampler3D");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -168,7 +168,7 @@ public:
   void testTypeSamplerCUBE (void)
   {
     std::istringstream in ("samplerCUBE");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -186,7 +186,7 @@ public:
   void testTypeVectorBool (void)
   {
     std::istringstream in ("bool3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -208,7 +208,7 @@ public:
   void testTypeVectorInt (void)
   {
     std::istringstream in ("int3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -230,7 +230,7 @@ public:
   void testTypeVectorUInt (void)
   {
     std::istringstream in ("unsigned int3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -252,7 +252,7 @@ public:
   void testTypeVectorFloat (void)
   {
     std::istringstream in ("float3");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -274,7 +274,7 @@ public:
   void testTypeMatrixBool (void)
   {
     std::istringstream in ("bool3x2");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -297,7 +297,7 @@ public:
   void testTypeMatrixInt (void)
   {
     std::istringstream in ("int3x2");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -320,7 +320,7 @@ public:
   void testTypeMatrixUInt (void)
   {
     std::istringstream in ("unsigned int3x2");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -343,7 +343,7 @@ public:
   void testTypeMatrixFloat (void)
   {
     std::istringstream in ("float3x2");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -366,7 +366,7 @@ public:
   void testTypeArray (void)
   {
     std::istringstream in ("int[]");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -387,7 +387,7 @@ public:
   void testTypeArrayArray (void)
   {
     std::istringstream in ("int[][]");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;

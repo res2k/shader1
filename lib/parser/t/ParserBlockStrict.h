@@ -44,7 +44,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int a;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -78,7 +78,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int a, b;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -131,7 +131,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int a; int b;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -184,7 +184,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int a = 1+2;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -221,7 +221,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int a = 1+2, b;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -268,7 +268,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("const int a = 0;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -302,7 +302,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("const int a;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -327,7 +327,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("typedef int MyInt;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -359,7 +359,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("typedef int MyInt1; typedef MyInt1 MyInt;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -391,7 +391,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("typedef int MyInt; MyInt a;");
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;

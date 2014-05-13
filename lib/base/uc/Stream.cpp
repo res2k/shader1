@@ -15,24 +15,26 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#include "base/UnicodeStream.h"
-#include "base/UnicodeStreamException.h"
-#include "base/UnicodeStreamInvalidCharacterException.h"
-#include "base/UnicodeStreamEndOfInputException.h"
+#include "base/uc/Stream.h"
+#include "base/uc/StreamException.h"
+#include "base/uc/StreamInvalidCharacterException.h"
+#include "base/uc/StreamEndOfInputException.h"
 
 #include <assert.h>
 #include <unicode/ucnv.h>
 
 namespace s1
 {
-  void UnicodeStream::ICUError::handleFailure() const
+namespace uc
+{
+  void Stream::ICUError::handleFailure() const
   {
-    throw UnicodeStreamException (errorCode);
+    throw StreamException (errorCode);
   }
   
   //-------------------------------------------------------------------------
   
-  UnicodeStream::UnicodeStream (std::istream& inStream, const char* encoding)
+  Stream::Stream (std::istream& inStream, const char* encoding)
    : inStream (inStream), ucBufferRemaining (0),
      ucBufferEndError (U_ZERO_ERROR), streamInBufferRemaining (0),
      currentChar (noCharacter)
@@ -47,12 +49,12 @@ namespace s1
     if (*this) ++(*this);
   }
   
-  UnicodeStream::~UnicodeStream()
+  Stream::~Stream()
   {
     if (uconv) ucnv_close (uconv);
   }
 
-  UnicodeStream::operator bool() const throw()
+  Stream::operator bool() const throw()
   {
     if (!uconv) return false;
     
@@ -62,7 +64,7 @@ namespace s1
       || !inStream.eof(); // ... or still raw input data
   }
 
-  UnicodeStream& UnicodeStream::operator++() throw()
+  Stream& Stream::operator++() throw()
   {
     if (!uconv) return *this;
     
@@ -106,7 +108,7 @@ namespace s1
     return *this;
   }
   
-  uc::Char32 UnicodeStream::operator* () const
+  uc::Char32 Stream::operator* () const
   {
     if (U_FAILURE(currentError))
     {
@@ -114,16 +116,16 @@ namespace s1
 	|| (currentError == U_TRUNCATED_CHAR_FOUND)
 	|| (currentError == U_ILLEGAL_CHAR_FOUND))
       {
-	throw UnicodeStreamInvalidCharacterException (currentError);
+	throw StreamInvalidCharacterException (currentError);
       }
       else
       {
-	throw UnicodeStreamException (currentError);
+	throw StreamException (currentError);
       }
     }
     else if (!(*this))
     {
-      throw UnicodeStreamEndOfInputException ();
+      throw StreamEndOfInputException ();
     }
     else
     {
@@ -131,7 +133,7 @@ namespace s1
     }
   }
 
-  bool UnicodeStream::GetNextUChar (uc::Char& c)
+  bool Stream::GetNextUChar (uc::Char& c)
   {
     if ((ucBufferRemaining == 0) && U_SUCCESS(ucBufferEndError))
     {
@@ -158,7 +160,7 @@ namespace s1
   }
   
   /// Refill unicode buffer
-  bool UnicodeStream::RefillUCBuffer ()
+  bool Stream::RefillUCBuffer ()
   {
     assert(ucBufferEndError == U_ZERO_ERROR);
     if (streamInBufferRemaining == 0)
@@ -199,4 +201,5 @@ namespace s1
     return true;
   }
 
+} // namespace uc
 } // namespace s1

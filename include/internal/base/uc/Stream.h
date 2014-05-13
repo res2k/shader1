@@ -15,10 +15,10 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __BASE_UNICODESTREAM_H__
-#define __BASE_UNICODESTREAM_H__
+#ifndef __BASE_UC_STREAM_H__
+#define __BASE_UC_STREAM_H__
 
-#include "base/uc/Char.h"
+#include "Char.h"
 
 #include <unicode/errorcode.h>
 #include <unicode/utypes.h>
@@ -29,10 +29,12 @@ struct UConverter;
 
 namespace s1
 {
+namespace uc
+{
   /**
    * Stream for Unicode characters from some encoded source.
    */
-  class UnicodeStream
+  class Stream
   {
   protected:
     class ICUError : public U_NAMESPACE_QUALIFIER ErrorCode
@@ -54,9 +56,9 @@ namespace s1
       /// Size of internal unicode characters buffer
       UCBufferSize = 1024
     };
-    uc::Char ucBuffer[UCBufferSize];
+    Char ucBuffer[UCBufferSize];
     
-    const uc::Char* ucBufferPtr;
+    const Char* ucBufferPtr;
     size_t ucBufferRemaining;
     /**
      * ICU error that occured during filling the buffer.
@@ -73,7 +75,7 @@ namespace s1
     const char* streamInBufferPtr;
     size_t streamInBufferRemaining;
     
-    uc::Char32 currentChar;
+    Char32 currentChar;
     UErrorCode currentError;
     enum
     {
@@ -82,7 +84,7 @@ namespace s1
     };
     
     /// Get next UTF-16 character from buffer, refill if necessary
-    bool GetNextUChar (uc::Char& c);
+    bool GetNextUChar (Char& c);
     /// Refill unicode buffer
     bool RefillUCBuffer ();
   public:
@@ -91,22 +93,22 @@ namespace s1
      * \param inStream Input byte stream.
      * \param encoding ICU encoding name of the input.
      */
-    UnicodeStream (std::istream& inStream, const char* encoding);
-    ~UnicodeStream();
+    Stream (std::istream& inStream, const char* encoding);
+    ~Stream();
     
     /// Returns whether more characters are available
     operator bool() const throw();
     bool operator!() const throw() { return !(bool)(*this); }
 
     /// Advance stream
-    UnicodeStream& operator++() throw();
+    Stream& operator++() throw();
     
     /// Return current character
-    uc::Char32 operator* () const;
+    Char32 operator* () const;
   private:
-    UnicodeStream (const UnicodeStream& other); // forbidden
+    Stream (const Stream& other); // forbidden
   };
-  
+} // namespace uc
 } // namespace s1
 
-#endif // __BASE_UNICODESTREAM_H__
+#endif // __BASE_UC_STREAM_H__

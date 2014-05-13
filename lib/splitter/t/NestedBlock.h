@@ -18,7 +18,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "base/common.h"
-#include "base/UnicodeStream.h"
+#include "base/uc/Stream.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
@@ -47,7 +47,7 @@ public:
 	"float y = x;"
       "}"
     );
-    s1::UnicodeStream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in, "utf-8");
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::intermediate::IntermediateGeneratorSemanticsHandler semanticsHandler;

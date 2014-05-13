@@ -15,29 +15,29 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __BASE_UNICODESTREAMEXCEPTION_H__
-#define __BASE_UNICODESTREAMEXCEPTION_H__
+#ifndef __BASE_UC_STREAMEXCEPTION_H__
+#define __BASE_UC_STREAMEXCEPTION_H__
 
-#include <unicode/utypes.h>
+#include "Exception.h"
 
 namespace s1
 {
+namespace uc
+{
   /**
-   * Base class for for UnicodeStream exceptions
+   * Base class for for Stream exceptions
    */
-  class UnicodeStreamException : public std::exception
+  class StreamException : public Exception
   {
-    UErrorCode uerr;
   public:
     /**
      * Construct a new exception object.
      * \param uerr The error code returned by ICU.
      */
-    UnicodeStreamException (UErrorCode uerr) : uerr (uerr) {}
-    
-    const char* what () const throw() { return u_errorName (uerr); }
+    StreamException (int uerr) : Exception (uerr) {}
   };
   
+} // namespace uc
 } // namespace s1
 
-#endif // __BASE_UNICODESTREAMEXCEPTION_H__
+#endif // __BASE_UC_STREAMEXCEPTION_H__

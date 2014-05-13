@@ -27,14 +27,17 @@
 
 namespace s1
 {
-  class UnicodeStream;
+  namespace uc
+  {
+    class Stream;
+  } // namespace uc
   
   class Compiler::Program : public Object
   {
   protected:
     friend class Compiler;
     
-    Program (UnicodeStream* inputStream, const uc::String& entryFunction);
+    Program (uc::Stream* inputStream, const uc::String& entryFunction);
     
     OptionsPtr compilerOptions;
     
