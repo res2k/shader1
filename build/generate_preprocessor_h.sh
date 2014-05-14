@@ -4,7 +4,7 @@ collect_included()
 {
   header_file="$1"
   shift
-  gcc -x c-header -E "$header_file" "$@" \
+  gcc -x c-header -ffreestanding -E "$header_file" "$@" \
     | grep -v "$header_file" \
     | grep "^#" \
     | tail -n +2 \
