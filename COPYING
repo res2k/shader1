@@ -1,0 +1,11 @@
+Shader1
+Copyright (c) 2010-2014 Frank Richter
+
+
+The Shader1 library source code is distributed under the wxWindows Library
+Licence.
+In essence it's the GNU Library General Public Licence (LGPL) version with
+a static linking exception.
+
+For the full wxWindows Library Licence text see LICENCE-wxWindows.txt.
+For the full GNU Library General Public Licence text see LICENCE-LGPL.txt.
