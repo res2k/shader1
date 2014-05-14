@@ -125,6 +125,22 @@ if(UNIX)
   set(WITH_PIC YES)
 endif()
 
+# LTO configuration
+set(S1_BUILD_LTO OFF CACHE BOOL "Enable building with LTO")
+if(S1_BUILD_LTO)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    CxxCompilerFlagString (CXX_LTO_FLAG "-flto")
+    CxxCompilerFlagString (CXX_NO_LTO_FLAG "-fno-lto")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_LTO_FLAG}")
+    # At least with gcc 4.8 -flto causes problems when linking the examples.
+    # Must be explicitly disabled as CMake passes CMAKE_CXX_FLAGS to
+    # the linker as well.
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_NO_LTO_FLAG}")
+  else()
+    message(WARNING "LTO is not supported for your compiler")
+  endif()
+endif()
+
 # Configuration settings only relevant for building
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base)
 configure_file(include/internal/base/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base/config.h)
