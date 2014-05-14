@@ -9,3 +9,9 @@ a static linking exception.
 
 For the full wxWindows Library Licence text see LICENCE-wxWindows.txt.
 For the full GNU Library General Public Licence text see LICENCE-LGPL.txt.
+
+
+The Shader1 example applications source code is distributed under the zlib
+licence.
+Please see the example source code (below the apps/ directory) for the
+licence text.
