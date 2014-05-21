@@ -47,6 +47,8 @@ namespace s1
       String (const String& s, size_type n) : UnicodeString (s, n) {}
       String (Char32 c) : UnicodeString (c) {}
 
+      size_t size() const { return length(); }
+
       friend String operator+ (const String& s1, const String& s2)
       {
         return String (static_cast<const UnicodeString&> (s1) + static_cast<const UnicodeString&> (s2));

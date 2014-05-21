@@ -23,6 +23,7 @@ target_link_libraries(base ${ICU_LIBRARIES})
 if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Base test_Base.cpp
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
+                   ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h)
   target_link_libraries(test_Base base)
