@@ -16,15 +16,19 @@
 */
 
 #include "base/common.h"
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Exception.h"
 
-#include <stdio.h>
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
   namespace parser
   {
+    typedef format::Formatter<> Format;
+
     bool CommonSemanticsHandler::CommonType::CompatibleLossless (const CommonType& to) const
     {
       if (typeClass != to.typeClass) return false;
@@ -184,19 +188,21 @@ namespace s1
 	break;
       case Array:
 	{
-	  return static_cast<CommonType*> (avmBase.get())->ToString() + uc::String ("[]");
+          uc::String s;
+          Format ("{0}[]") (s, static_cast<CommonType*> (avmBase.get())->ToString());
+          return s;
 	}
       case Vector:
 	{
-	  char nStr[2];
-	  snprintf (nStr, sizeof (nStr), "%d", vectorDim);
-	  return static_cast<CommonType*> (avmBase.get())->ToString() + uc::String (nStr);
+          uc::String s;
+          Format ("{0}{1}") (s, static_cast<CommonType*> (avmBase.get())->ToString(), vectorDim);
+          return s;
 	}
       case Matrix:
 	{
-	  char nStr[4];
-	  snprintf (nStr, sizeof (nStr), "%dx%d", matrixCols, matrixRows);
-	  return static_cast<CommonType*> (avmBase.get())->ToString() + uc::String (nStr);
+          uc::String s;
+          Format ("{0}{1}x{2}") (s, static_cast<CommonType*> (avmBase.get())->ToString(), matrixCols, matrixRows);
+          return s;
 	}
       }
       assert (false);

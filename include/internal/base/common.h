@@ -41,11 +41,6 @@ static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 // Used all over the place
 #include "uc/String.h"
 
-/* Work around differing identifiers on MSVC */
-#ifdef _MSC_VER
-  #define snprintf    _snprintf
-#endif
-
 // Debugging helpers
 #include <assert.h>
 #define S1_ASSERT_RET_VOID

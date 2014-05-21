@@ -17,6 +17,9 @@
 
 #include "base/common.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/std_string.h"
+#include "base/format/uc_String.h"
 #include "intermediate/Exception.h"
 #include "FunctionCallExpressionImpl.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
@@ -46,12 +49,15 @@
 #include "VariableExpressionImpl.h"
 
 #include <boost/make_shared.hpp>
-#include <unicode/ustdio.h>
+
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
   namespace intermediate
   {
+    typedef format::Formatter<> Format;
+
     typedef IntermediateGeneratorSemanticsHandler::NamePtr NamePtr;
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
@@ -101,21 +107,22 @@ namespace s1
 	break;
       case TypeImpl::Array:
 	{
-	  return std::string ("a") + GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase));
+          std::string s;
+          Format ("a{0}") (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)));
+          return s;
 	}
       case TypeImpl::Vector:
 	{
-	  char nStr[2];
-	  snprintf (nStr, sizeof (nStr), "%d", type->vectorDim);
-	  return std::string ("v") + GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase))
-	    + std::string (nStr);
+          std::string s;
+          Format ("v{0}{1}") (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)), type->vectorDim);
+	  return s;
 	}
       case TypeImpl::Matrix:
 	{
-	  char nStr[4];
-	  snprintf (nStr, sizeof (nStr), "%dx%d", type->matrixCols, type->matrixRows);
-	  return std::string ("m") + GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase))
-	    + std::string (nStr);
+          std::string s;
+          Format ("m{0}{1}x{2}") (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)),
+                              type->matrixCols, type->matrixRows);
+          return s;
 	}
       }
       assert (false);
@@ -288,16 +295,15 @@ namespace s1
 									 const uc::String& name)
     {
       const uc::Char prefix[3] = { uc::Char (classify), '_', 0};
-      uc::String regName (prefix);
+      uc::String regName;
       if (!name.isEmpty())
-	regName.append (name);
+      {
+        Format ("{0}{1}") (regName, prefix, name);
+      }
       else
       {
 	static unsigned int allRegNum = 0;
-	uc::Char regNumStr[charsToFormatUint + 4];
-	u_snprintf (regNumStr, sizeof (regNumStr)/sizeof (uc::Char),
-		    "tmp%u", allRegNum++);
-	regName.append (regNumStr);
+        Format ("{0}tmp{1}") (regName, prefix, allRegNum++);
       }
       
       return seqBuilder.AllocateRegister (type, regName);

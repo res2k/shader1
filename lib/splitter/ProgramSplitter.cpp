@@ -19,6 +19,8 @@
 
 #include "splitter/ProgramSplitter.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
 #include "intermediate/SequenceBuilder.h"
@@ -28,12 +30,14 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#include <unicode/ustdio.h>
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
   namespace splitter
   {
+    typedef format::Formatter<> Format;
+
     static std::string FreqFlagsSignature (const std::vector<unsigned int>& inputParamFreqFlags)
     {
       std::string sig;
@@ -158,11 +162,8 @@ namespace s1
 	  BOOST_FOREACH (const intermediate::RegisterPtr& reg, transfers)
 	  {
 	    // Generate unique parameter identifier
-	    uc::String transferIdent ("transferP$");
-	    uc::Char transferSuffix[charsToFormatUint + 1];
-	    u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (uc::Char),
-			"%u", n++);
-	    transferIdent.append (transferSuffix);
+	    uc::String transferIdent;
+            Format ("transferP${0}") (transferIdent, n++);
 	    
 	    // Synthesize new parameters
 	    {

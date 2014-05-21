@@ -19,12 +19,17 @@
 
 #include "codegen/CgGenerator.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/std_string.h"
+
 #include "cg/ProgramCodeGenerator.h"
 
 #include <limits>
 #include <stdio.h>
 
 #include <boost/multiprecision/cpp_int.hpp>
+
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
@@ -34,6 +39,8 @@ namespace s1
     const char CgGenerator::cgTypeInt[]		= "int";
     const char CgGenerator::cgTypeUInt[]	= "unsigned int";
     const char CgGenerator::cgTypeFloat[]	= "float";
+
+    typedef format::Formatter<> Format;
     
     CgGenerator::CgGenerator ()
     {
@@ -88,19 +95,17 @@ namespace s1
       case parser::SemanticsHandler::Type::Vector:
 	{
 	  std::string newSuffix;
-	  typeStr = TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix);
-	  char compStr[2];
-	  snprintf (compStr, sizeof (compStr), "%u", type->GetVectorTypeComponents());
-	  typeStr.append (compStr);
+          Format ("{0}{1}") (typeStr,
+            TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix),
+            type->GetVectorTypeComponents());
 	}
 	break;
       case parser::SemanticsHandler::Type::Matrix:
 	{
 	  std::string newSuffix;
-	  typeStr = TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix);
-	  char compStr[4];
-	  snprintf (compStr, sizeof (compStr), "%ux%u", type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
-	  typeStr.append (compStr);
+          Format ("{0}{1}x{2}") (typeStr,
+            TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix),
+            type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
 	}
 	break;
       }

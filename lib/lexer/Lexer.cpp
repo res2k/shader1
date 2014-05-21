@@ -19,14 +19,20 @@
 #include "lexer/Lexer.h"
 #include "lexer/LexerErrorHandler.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/std_string.h"
 #include "base/uc/StreamInvalidCharacterException.h"
 
 #include <assert.h>
 #include <stdio.h>
 #include <unicode/uchar.h>
 
+#include "base/format/Formatter.txx"
+
 namespace s1
 {
+  typedef format::Formatter<> Format;
+
   U_NAMESPACE_USE
   
 #define KEYWORDS				\
@@ -493,19 +499,19 @@ KEYWORDS
   
   std::string Lexer::GetTokenStr (const Token& token)
   {
-    std::string tokenStr (GetTokenStr (token.typeOrID));
+    const char* baseTokenStr (GetTokenStr (token.typeOrID));
     if (token.typeClass == Vector)
     {
-      char nStr[2];
-      snprintf (nStr, sizeof (nStr), "%d", token.dimension1);
-      tokenStr.append (nStr);
+      std::string s;
+      Format ("{0}{1}") (s, baseTokenStr, token.dimension1);
+      return s;
     }
     else if (token.typeClass == Matrix)
     {
-      char nStr[4];
-      snprintf (nStr, sizeof (nStr), "%dx%d", token.dimension1, token.dimension2);
-      tokenStr.append (nStr);
+      std::string s;
+      Format ("{0}{1}x{2}") (s, baseTokenStr, token.dimension1, token.dimension2);
+      return s;
     }
-    return tokenStr;
+    return baseTokenStr;
   }
 } // namespace s1

@@ -19,6 +19,8 @@
 
 #include "splitter/SequenceSplitter.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpArith.h"
@@ -47,7 +49,7 @@
 #include <boost/make_shared.hpp>
 #include <iostream>
 
-#include <unicode/ustdio.h>
+#include "base/format/Formatter.txx"
 
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -1144,6 +1146,8 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
+    typedef format::Formatter<> Format;
+
     SequenceSplitter::SequenceSplitter (ProgramSplitter& progSplit,
 					bool mergeUniformToVF)
      : progSplit (progSplit), mergeUniformToVF (mergeUniformToVF)					
@@ -1301,12 +1305,8 @@ namespace s1
 
     uc::String SequenceSplitter::GetTransferIdent (const uc::String& origName)
     {
-      uc::String transferIdent (origName);
-      transferIdent.append ("$tf");
-      UChar transferSuffix[charsToFormatUint + 1];
-      u_snprintf (transferSuffix, sizeof (transferSuffix)/sizeof (UChar),
-		  "%u", transferIdentNum++);
-      transferIdent.append (transferSuffix);
+      uc::String transferIdent;
+      Format ("{0}$tf{1}") (transferIdent, origName, transferIdentNum++);
       return transferIdent;
     }
     

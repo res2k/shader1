@@ -21,30 +21,31 @@
 #include <boost/functional/hash.hpp>
 #include <boost/make_shared.hpp>
 
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceVisitor.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
-#include <unicode/ustdio.h>
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
   namespace intermediate
   {
+    typedef format::Formatter<> Format;
+
     Sequence::Register::Register (const uc::String& name, const TypePtr& originalType)
      : originalName (name), generation (0), name (name), originalType (originalType)
     {}
     
     Sequence::Register::Register (const Sequence::Register& other)
      : originalName (other.originalName), generation (other.generation+1),
-       name (other.originalName), originalType (other.originalType)
+       originalType (other.originalType)
     {
-      uc::Char generationSuffix[charsToFormatUint + 2];
-      u_snprintf (generationSuffix, sizeof (generationSuffix)/sizeof (uc::Char),
-		  ".%u", generation);
-      name.append (generationSuffix);
+      Format ("{0}.{1}") (name, other.originalName, generation);
     }
     
     void Sequence::Register::StealName (Register& other)

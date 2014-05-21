@@ -19,6 +19,9 @@
 
 #include "BlockImpl.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/std_string.h"
+#include "base/format/uc_String.h"
 #include "intermediate/Exception.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
@@ -33,37 +36,38 @@
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-#include <unicode/ustdio.h>
+
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
   namespace intermediate
   {
-    static const char varConditionName[] = "$cond";
-    static const char varTernaryResultName[] = "$tr";
+    typedef format::Formatter<> Format;
+
     const char IntermediateGeneratorSemanticsHandler::BlockImpl::varReturnValueName[] = "$retval";
-    
+
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 ScopePtr innerScope)
      : handler (handler), innerScope (innerScope),
        sequenceBuilder (boost::make_shared<SequenceBuilder> ())
     {
-      char newCondName[sizeof (varConditionName) + charsToFormatInt + 1];
-      snprintf (newCondName, sizeof (newCondName), "%s%d", varConditionName, 
-		boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+      uc::String newCondName;
+      Format ("$cond{0}") (newCondName,
+                           boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
       varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
-										    uc::String (newCondName),
+										    newCondName,
 										    ExpressionPtr(), false));
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
       if (retTypeImpl // @@@ retTypeImpl == 0 happens in tests; but also in real life?
 	&& !handler->voidType->IsEqual (*retTypeImpl))
       {
-	char newRetValName[sizeof (varReturnValueName) + charsToFormatInt + 1];
-	snprintf (newRetValName, sizeof (newRetValName), "%s%d", varReturnValueName, 
-		  boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+        uc::String newRetValName;
+        Format ("$retval{1}") (newRetValName,
+                               boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
 	varReturnValue = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (retTypeImpl,
-											uc::String (newRetValName),
+											newRetValName,
 											ExpressionPtr(), false));
       }
     }
@@ -559,11 +563,10 @@ namespace s1
       TernaryResultVarsMap::const_iterator var (varsTernaryResult.find (typeStr));
       if (var != varsTernaryResult.end()) return var->second;
       
-      char newTernaryResultName[sizeof (varTernaryResultName) + charsToFormatInt + 1];
-      snprintf (newTernaryResultName, sizeof (newTernaryResultName), "%s%d", varTernaryResultName, 
-		boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
-      uc::String newVarName (newTernaryResultName);
-      newVarName.append (typeStr.c_str());
+      uc::String newVarName;
+      Format ("$tr{0}{1}") (newVarName,
+                            boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope),
+                            typeStr.c_str());
       NameImplPtr newVar (boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
 											 newVarName,
 											 ExpressionPtr(), false)));
@@ -595,17 +598,14 @@ namespace s1
 	nameReg.isImported = isFromOutside;
 	if (isFromOutside)
 	{
-	  uc::String importName (name->identifier);
+	  uc::String importName;
 	  /* Add a suffix derived from the "distance" of this block's scope to the scope
 	    that defines 'name' in order to make local register name unique */
 	  int d = boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (
 	    boost::shared_ptr<ScopeImpl> (name->ownerScope));
 	  if (d >= 0)
 	  {
-	    uc::Char distSuffix[charsToFormatInt + 3];
-	    u_snprintf (distSuffix, sizeof (distSuffix)/sizeof (uc::Char),
-			"_B%d", d);
-	    importName.append (distSuffix);
+            Format ("{0}_B{1}") (importName, name->identifier, d);
 	  }
 	  reg = handler->AllocateRegister (*sequenceBuilder, name->valueType, Imported,
 					  importName);

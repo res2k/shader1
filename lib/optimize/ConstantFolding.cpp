@@ -19,6 +19,8 @@
 #include "optimize/ConstantFolding.h"
 
 #include "CommonSequenceVisitor.h"
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
@@ -28,12 +30,14 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#include <unicode/ustdio.h>
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
   namespace optimize
   {
+    typedef format::Formatter<> Format;
+
     class ConstantFolding::FoldingVisitor : public CommonSequenceVisitor
     {
       bool& seqChanged;
@@ -274,12 +278,9 @@ namespace s1
     intermediate::RegisterPtr
     ConstantFolding::FoldingVisitor::NewConstReg (const intermediate::Sequence::TypePtr& type)
     {
-      uc::String regName ("$fold");
-      uc::Char suffix[charsToFormatUint + 1];
-      u_snprintf (suffix, sizeof (suffix)/sizeof (uc::Char),
-		  "%u", foldRegNum);
+      uc::String regName;
+      Format ("$fold{0}") (regName, foldRegNum);
       foldRegNum++;
-      regName.append (suffix);
       return newSequenceBuilder->AllocateRegister (type, regName);
     }
     

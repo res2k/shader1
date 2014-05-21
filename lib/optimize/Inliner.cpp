@@ -18,13 +18,16 @@
 #include "base/common.h"
 #include "optimize/Inliner.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 
 #include "CommonSequenceVisitor.h"
 
 #include <boost/make_shared.hpp>
 #include <boost/unordered_map.hpp>
-#include <unicode/ustdio.h>
+
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
@@ -98,16 +101,17 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
+    typedef format::Formatter<> Format;
+
     void Inliner::InlineBlockVisitor::OpBlock (const intermediate::SequencePtr& seq,
 					       const Sequence::IdentifierToRegMap& identToRegID_imp,
 					       const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
       haveInlined = true;
       if (seq->GetNumOps() == 0) return;
-      
-      uc::Char blockSuffix[charsToFormatUint + 3];
-      u_snprintf (blockSuffix, sizeof (blockSuffix)/sizeof (uc::Char),
-		  "$b%u", blockNum);
+
+      uc::String blockSuffix;
+      Format ("$b{0}") (blockSuffix, blockNum);
       blockNum++;
       
       InliningVisitor visitor (newSequenceBuilder, blockSuffix);

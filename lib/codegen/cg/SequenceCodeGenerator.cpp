@@ -17,6 +17,9 @@
 
 #include "base/common.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/std_string.h"
+
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"
 
@@ -24,6 +27,8 @@
 #include <boost/make_shared.hpp>
 #include <sstream>
 #include <stdio.h>
+
+#include "base/format/Formatter.txx"
 
 namespace s1
 {
@@ -111,6 +116,8 @@ namespace s1
     }
     
     //-----------------------------------------------------------------------
+
+    typedef format::Formatter<> Format;
     
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
@@ -318,25 +325,24 @@ namespace s1
           }
         }
       }
-      std::string typeStr;
+      const char* baseStr (nullptr);
       switch (compType)
       {
       case intermediate::Bool:
-	typeStr = cgTypeBool;
+	baseStr = cgTypeBool;
 	break;
       case intermediate::Int:
-	typeStr = cgTypeInt;
+	baseStr = cgTypeInt;
 	break;
       case intermediate::UInt:
-	typeStr = cgTypeUInt;
+	baseStr = cgTypeUInt;
 	break;
       case intermediate::Float:
-	typeStr = cgTypeFloat;
+	baseStr = cgTypeFloat;
 	break;
       }
-      char compNumStr[2];
-      snprintf (compNumStr, sizeof (compNumStr), "%u", unsigned (sources.size()));
-      typeStr.append (compNumStr);
+      std::string typeStr;
+      Format ("{0}{1}") (typeStr, baseStr, unsigned (sources.size()));
       EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
     }
     
@@ -356,25 +362,24 @@ namespace s1
       {
 	params.Add (owner->GetOutputRegisterName (*source));
       }
-      std::string typeStr;
+      const char* baseStr (nullptr);
       switch (compType)
       {
       case intermediate::Bool:
-	typeStr = cgTypeBool;
-	break;
+        baseStr = cgTypeBool;
+        break;
       case intermediate::Int:
-	typeStr = cgTypeInt;
-	break;
+        baseStr = cgTypeInt;
+        break;
       case intermediate::UInt:
-	typeStr = cgTypeUInt;
-	break;
+        baseStr = cgTypeUInt;
+        break;
       case intermediate::Float:
-	typeStr = cgTypeFloat;
-	break;
+        baseStr = cgTypeFloat;
+        break;
       }
-      char compNumStr[4];
-      snprintf (compNumStr, sizeof (compNumStr), "%ux%u", matrixRows, matrixCols);
-      typeStr.append (compNumStr);
+      std::string typeStr;
+      Format ("{0}{1}x{2}") (typeStr, baseStr, matrixRows, matrixCols);
       EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
     }
     
