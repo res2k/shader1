@@ -78,6 +78,24 @@ CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 
+# Check if we can link the C++ standard library statically
+set(S1_STATIC_LIBSTDCXX ON CACHE BOOL "Whether to statically link libstdc++")
+if(S1_STATIC_LIBSTDCXX)
+  CxxCompilerFlagString (CXX_STATIC_LIBSTDCXX_FLAG "-static-libstdc++")
+  if(CXX_STATIC_LIBSTDCXX_FLAG)
+    # The flag is supported, but it may not actually work.
+    message(STATUS "Checking if ${CXX_STATIC_LIBSTDCXX_FLAG} works")
+    try_compile(STATIC_LIBSTDCXX_WORKS
+                ${CMAKE_CURRENT_BINARY_DIR}
+                ${CMAKE_CURRENT_SOURCE_DIR}/config-tests/static-libstdcxx.cpp
+                LINK_LIBRARIES ${CXX_STATIC_LIBSTDCXX_FLAG})
+    message(STATUS "Checking if ${CXX_STATIC_LIBSTDCXX_FLAG} works - ${STATIC_LIBSTDCXX_WORKS}")
+    if(NOT STATIC_LIBSTDCXX_WORKS)
+      set(CXX_STATIC_LIBSTDCXX_FLAG "")
+    endif()
+  endif()
+endif()
+
 CHECK_CXX_SOURCE_COMPILES(
   "int main() { void* p = nullptr; return 0; }"
   CXX_HAS_NULLPTR)
