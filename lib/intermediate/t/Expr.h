@@ -19,12 +19,15 @@
 
 #include "base/common.h"
 
+#include "intermediate/Exception.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
 #include "BlockImpl.h"
 #include "TestSequenceVisitor.h"
 
 #include "IntermediateTestTraits.h"
+
+#include <boost/lexical_cast.hpp>
 
 using namespace s1::intermediate;
 
@@ -44,7 +47,7 @@ class IntermediateExprTestSuite : public CxxTest::TestSuite
     };
   };
 public:
-  void testExprAssignConst (void)
+  void testExprAssignConstFloat (void)
   {
     TestSemanticsHandler semanticsHandler;
     
@@ -72,7 +75,213 @@ public:
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
     TS_ASSERT_EQUALS(visitor.entries[0].floatConst, 1.0f);
   }
-  
+
+  void testExprAssignConstInt (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("1"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 2);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToInt);
+  }
+
+  void testExprAssignConstIntNeg (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("-1"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].intConst, -1);
+  }
+
+  void testExprAssignConstUInt (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("1"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
+  }
+
+  void testExprAssignConstIntFromHex (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("0xa"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 2);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 10);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToInt);
+  }
+
+  void testExprAssignConstIntFromHEX (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("0XA"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 2);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 10);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToInt);
+  }
+
+  void testExprAssignConstUIntFromHex (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("0xa"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 10);
+  }
+
+  void testExprAssignConstUIntFromHEX (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("0XA"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 1);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 10);
+  }
+
   void testExprAssignWithCast (void)
   {
     TestSemanticsHandler semanticsHandler;
@@ -103,7 +312,185 @@ public:
     TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToFloat);
     TS_ASSERT_EQUALS(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
   }
-  
+
+  void testExprAssignWithCastFromHex (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("0x1"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    testBlock->AddExpressionCommand (assignExpr);
+    
+    TestSemanticsHandler::TestBlockImpl* testBlockImpl =
+      static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
+    TestSequenceVisitor visitor;
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
+    TS_ASSERT_EQUALS(visitor.entries.size(), 2);
+    TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
+    TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToFloat);
+    TS_ASSERT_EQUALS(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
+  }
+
+  void testExprAssignMalformedEmpty (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString (""));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
+                            const Exception& e,
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+  }
+
+  void testExprAssignMalformedInput1 (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("0xg"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
+                            const Exception& e,
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+  }
+
+  void testExprAssignMalformedInput2 (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("-0x1"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
+                            const Exception& e,
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+  }
+
+  void testExprAssignMalformedInput3 (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString ("foo"));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
+                            const Exception& e,
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+  }
+
+  void testExprAssignUIntOverflow (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    std::string overflowing_num (
+        boost::lexical_cast<std::string> (
+            static_cast<boost::uintmax_t> (std::numeric_limits<unsigned int>::max()) + 1));
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString (overflowing_num.c_str()));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
+                            const Exception& e,
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+  }
+
+  void testExprAssignIntUnderflow (void)
+  {
+    TestSemanticsHandler semanticsHandler;
+    
+    // Create a scope
+    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
+      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    // Add some variables
+    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, UnicodeString ("a"),
+                                                                 TestSemanticsHandler::ExpressionPtr (),
+                                                                 false);
+    // Create a simple expression "a = 1"
+    TestSemanticsHandler::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+    std::string underflowing_num (
+        boost::lexical_cast<std::string> (
+            static_cast<boost::intmax_t> (std::numeric_limits<int>::min()) - 1));
+    TestSemanticsHandler::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (UnicodeString (underflowing_num.c_str()));
+    TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
+    // Add to a block
+    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
+                            const Exception& e,
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+  }
+
+  /* TODO: uint underflow, int overflow
+   * (detect in cast op? code gen?) */
+
   void testExprAssignVar (void)
   {
     TestSemanticsHandler semanticsHandler;
