@@ -8,7 +8,7 @@ add_library(intermediate STATIC
 			 ${intermediate_sources}
 			 $<TARGET_OBJECTS:intermediate_generator>
                          $<TARGET_OBJECTS:intermediate_seqop>)
-target_link_libraries(intermediate parser ${ICU_ICUIO_LIBRARIES})
+target_link_libraries(intermediate parser)
 
 if(CXXTEST_FOUND)
   file(GLOB intermediate_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)

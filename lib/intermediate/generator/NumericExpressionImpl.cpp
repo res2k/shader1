@@ -24,7 +24,10 @@
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "TypeImpl.h"
 
-#include <unicode/ustdio.h>
+#include <boost/lexical_cast.hpp>
+
+#include <limits>
+#include <malloc.h>
 
 namespace s1
 {
@@ -46,19 +49,110 @@ namespace s1
 	
       return valueType;
     }
-    
-    namespace
+
+    template<typename T>
+    static T ParseNumber (int base, const uc::String& str, int begin, int end,
+                          bool negative)
     {
-      class ICUError : public U_NAMESPACE_QUALIFIER ErrorCode
+      T val (0);
+      for (int i = begin; i < end; i++)
       {
-      public:
-	virtual void handleFailure() const
-	{
-	  throw Exception (NumberParseError);
-	}
-      };
+        unsigned int digitVal = 0;
+        uc::Char digit = str[i];
+        if ((digit >= '0') && (digit <= '9'))
+        {
+          digitVal = digit - '0';
+        }
+        else if ((digit >= 'a') && (digit < 'a' + (base - 10)))
+        {
+          digitVal = digit - 'a' + 10;
+        }
+        else if ((digit >= 'A') && (digit < 'A' + (base - 10)))
+        {
+          digitVal = digit - 'A' + 10;
+        }
+        else
+          throw Exception (NumberParseError);
+
+        // Over-/underflow check
+        if (((std::numeric_limits<T>::max() / static_cast<T> (base)) < val)
+            || ((std::numeric_limits<T>::min() / static_cast<T> (base)) > val))
+        {
+          throw Exception (NumberParseError);
+        }
+        val = (val * static_cast<T> (base));
+
+        if (negative)
+        {
+          // Underflow check
+          if ((val - std::numeric_limits<T>::min()) > static_cast<T> (digitVal))
+          {
+            throw Exception (NumberParseError);
+          }
+          val = (val * static_cast<T> (base)) - static_cast<T> (digitVal);
+        }
+        else
+        {
+          // Overflow check
+          if ((std::numeric_limits<T>::max() - val) < static_cast<T> (digitVal))
+          {
+            throw Exception (NumberParseError);
+          }
+          val = (val * static_cast<T> (base)) + static_cast<T> (digitVal);
+        }
+      }
+      return val;
     }
-    
+
+    template<typename T>
+    static T ParseInteger (const uc::String& str)
+    {
+      if (str.isEmpty())
+      {
+        throw Exception (NumberParseError);
+      }
+
+      if (str.startsWith (uc::String ("0x")) || str.startsWith (uc::String ("0X")))
+      {
+        return ParseNumber<T> (16, str, 2, str.length(), false);
+      }
+      else if (str.startsWith (uc::String ("-")))
+      {
+        return ParseNumber<T> (10, str, 1, str.length(), true);
+      }
+      else
+      {
+        return ParseNumber<T> (10, str, 0, str.length(), false);
+      }
+    }
+
+    static float ParseFloat (const uc::String& str)
+    {
+      // Convert string to ASCII
+      int strLen = str.length();
+      char* strAsc = (char*)alloca (strLen + 1);
+      for (int i = 0; i < strLen; i++)
+      {
+        uc::Char ch = str[i];
+        if (ch >= 128)
+        {
+          // Outside ASCII range, can't parse
+          throw Exception (NumberParseError);
+        }
+        strAsc[i] = static_cast<char> (ch);
+      }
+      strAsc[strLen] = 0;
+      // Actual parsing
+      try
+      {
+        return boost::lexical_cast<float> (strAsc);
+      }
+      catch(...)
+      {
+        throw Exception (NumberParseError);
+      }
+    }
+
     RegisterPtr IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
 											     RegisterClassification classify,
 											     bool asLvalue)
@@ -73,69 +167,35 @@ namespace s1
       
       SequenceOpPtr seqOp;
       // Extract value from string
-      if (valueStr.startsWith (uc::String ("0x")) || valueStr.startsWith (uc::String ("0X")))
+      switch (numberType)
       {
-	// Parse hex number
-	unsigned int val = 0;
-	for (int i = 2; i < valueStr.length(); i++)
-	{
-	  unsigned int digitVal = 0;
-	  uc::Char digit = valueStr[i];
-	  if ((digit >= '0') && (digit <= '9'))
-	  {
-	    digitVal = digit - '0';
-	  }
-	  else if ((digit >= 'a') && (digit <= 'f'))
-	  {
-	    digitVal = digit - 'a' + 10;
-	  }
-	  else if ((digit >= 'A') && (digit <= 'F'))
-	  {
-	    digitVal = digit - 'A' + 10;
-	  }
-	  val = (val << 4) + digitVal;
-	}
-	seqOp = SequenceOpPtr (new SequenceOpConst (destination, val));
-      }
-      else
-      {
-	// Parse decimal number
-	switch (numberType)
-	{
-	case Int:
-	  {
-	    // Create actual sequence operation
-	    int n;
-	    char dummy;
-	    if (u_sscanf (valueStr.getTerminatedBuffer(), "%d%c", &n, &dummy) != 1)
-	      throw Exception (NumberParseError);
-	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
-	  }
-	  break;
-	case UInt:
-	  {
-	    // Create actual sequence operation
-	    unsigned int n;
-	    char dummy;
-	    if (u_sscanf (valueStr.getTerminatedBuffer(), "%u%c", &n, &dummy) != 1)
-	      throw Exception (NumberParseError);
-	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
-	  }
-	  break;
-	case Float:
-	  {
-	    // Create actual sequence operation
-	    float n;
-	    char dummy;
-	    if (u_sscanf (valueStr.getTerminatedBuffer(), "%f%c", &n, &dummy) != 1)
-	      throw Exception (NumberParseError);
-	    seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
-	  }
-	  break;
-	case Void:
-	case Bool:
-	  break;
-	}
+      case Int:
+        {
+          // Parse number
+          int n = ParseInteger<int> (valueStr);
+          // Create actual sequence operation
+          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
+        }
+        break;
+      case UInt:
+        {
+          // Parse number
+          unsigned int n = ParseInteger<unsigned int> (valueStr);
+          // Create actual sequence operation
+          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
+        }
+        break;
+      case Float:
+        {
+          // Parse number
+          float n = ParseFloat (valueStr);
+          // Create actual sequence operation
+          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
+        }
+        break;
+      case Void:
+      case Bool:
+        break;
       }
       assert (seqOp);
       block.GetSequenceBuilder()->AddOp (seqOp);

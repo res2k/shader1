@@ -53,9 +53,6 @@ else()
   execute_process(COMMAND ${ICU_CONFIG} --ldflags
 		  OUTPUT_VARIABLE ICU_LIBRARIES)
   string(STRIP "${ICU_LIBRARIES}" ICU_LIBRARIES)
-  execute_process(COMMAND ${ICU_CONFIG} --ldflags-icuio
-		  OUTPUT_VARIABLE ICU_ICUIO_LIBRARIES)
-  string(STRIP "${ICU_ICUIO_LIBRARIES}" ICU_ICUIO_LIBRARIES)
   execute_process(COMMAND ${ICU_CONFIG} --cppflags-searchpath
 		  OUTPUT_VARIABLE ICU_INCLUDE_DIRS)
   string(REGEX REPLACE "^-I" "" ICU_INCLUDE_DIRS "${ICU_INCLUDE_DIRS}")
@@ -64,6 +61,7 @@ include_directories(${ICU_INCLUDE_DIRS})
 
 find_package(Boost 1.53.0 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
+add_definitions("-DBOOST_LEXICAL_CAST_ASSUME_C_LOCALE")
 
 include(CheckCXXCompilerFlag)
 function(CxxCompilerFlagString flagvar flagstr)
