@@ -96,6 +96,10 @@ if(S1_STATIC_LIBSTDCXX)
   endif()
 endif()
 
+# Look for symbolic link options
+CxxCompilerFlagString (CXX_SYMBOLIC_LINK_FLAG "-Wl,-Bsymbolic -Wl,-Bsymbolic-functions")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_SYMBOLIC_LINK_FLAG}")
+
 CHECK_CXX_SOURCE_COMPILES(
   "int main() { void* p = nullptr; return 0; }"
   CXX_HAS_NULLPTR)
