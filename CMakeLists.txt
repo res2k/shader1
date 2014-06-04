@@ -100,6 +100,10 @@ endif()
 CxxCompilerFlagString (CXX_SYMBOLIC_LINK_FLAG "-Wl,-Bsymbolic -Wl,-Bsymbolic-functions")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_SYMBOLIC_LINK_FLAG}")
 
+# Look for section GC options
+CxxCompilerFlagString (CXX_LINK_GC_SECTIONS "-Wl,--gc-sections")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_LINK_GC_SECTIONS}")
+
 CHECK_CXX_SOURCE_COMPILES(
   "int main() { void* p = nullptr; return 0; }"
   CXX_HAS_NULLPTR)
