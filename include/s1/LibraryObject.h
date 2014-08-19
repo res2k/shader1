@@ -61,8 +61,7 @@ namespace s1
       /**
        * Query the library used to create an object.
        */
-      // TODO: Better return Library* (C++ type)
-      s1_Library* GetLibrary()
+      Library* GetLibrary()
       {
         return s1_libraryobject_get_library (this);
       }
