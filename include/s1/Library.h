@@ -168,6 +168,7 @@ namespace s1
        * Create a library object. A library object generally serves as a factory
        * for all available object types.
        * \param lib Reference to a smart pointer receiving the new library object.
+       *   Receives \NULL in case of error.
        * \returns If successful, the return code fulfills #S1_SUCCESSFUL.
        *   Otherwise, the return code is an error code indicating why the
        *   library could not be created.
@@ -176,10 +177,7 @@ namespace s1
       {
         s1_Library* p (0);
         ResultCode err = s1_create_library (&p);
-        if (S1_SUCCESSFUL(err))
-        {
-          lib.take (p);
-        }
+        lib.take (p);
         return err;
       }
       
