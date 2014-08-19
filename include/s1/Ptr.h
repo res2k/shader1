@@ -37,7 +37,7 @@ namespace s1
   };
 
   /** 
-   * Pointer cleanup for TransferRefPtr<>: Type-unssafe.
+   * Pointer cleanup for TransferRefPtr<>: Type-unsafe.
    * Assumes type is derived from s1::Object, will not trigger compile-time checks.
    */
   struct PtrCleanupUnsafe
