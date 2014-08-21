@@ -94,6 +94,9 @@ if(MSVC)
   add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT=1")
   # Silence remaining annoyances
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
+  # Check for extended optimized build debug info
+  CxxCompilerFlagString (CXX_ZO " /Zo")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}${CXX_ZO}")
   # New option in VC 12. Needed when more than one project writes to a PDB
   CxxCompilerFlagString (CXX_PDB_SYNC " /FS")
 endif()
