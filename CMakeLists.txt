@@ -94,6 +94,8 @@ if(MSVC)
   add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT=1")
   # Silence remaining annoyances
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
+  # New option in VC 12. Needed when more than one project writes to a PDB
+  CxxCompilerFlagString (CXX_PDB_SYNC " /FS")
 endif()
 
 # Build everything with -fPIC to allow linking into shared libs

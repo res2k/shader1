@@ -15,6 +15,11 @@ if(MSVC AND BUILD_SHARED_LIBS)
      endif(${flag_var} MATCHES "/MD")
   endforeach(flag_var)
 endif()
+if(MSVC AND NOT BUILD_SHARED_LIBS)
+  # Static lib merging doesn't merge debug info, so manually set up a single
+  # PDB. For convenience, place it in the same dir the lib is put
+  add_compile_options("/Fd${CMAKE_BINARY_DIR}/\$(Configuration)/$<TARGET_PROPERTY:s1,OUTPUT_NAME>.pdb" ${CXX_PDB_SYNC})
+endif()
 
 add_subdirectory(base)
 add_subdirectory(lexer)
