@@ -25,7 +25,6 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <unicode/uchar.h>
 
 #include "base/format/Formatter.txx"
 
@@ -88,7 +87,7 @@ KEYWORDS
     while (true)
     {
       // Skip whitespace
-      while (u_isUWhiteSpace (currentChar)) NextChar();
+      while (uc::IsWhiteSpace (currentChar)) NextChar();
       
       // Check for end of input
       if (currentChar == -1)
@@ -254,7 +253,7 @@ KEYWORDS
 	return *this;
       }
       
-      if ((currentChar == '_') || u_isIDStart (currentChar))
+      if ((currentChar == '_') || uc::IsIDStart (currentChar))
       {
 	// Identifier
 	ParseIdentifier ();
@@ -288,7 +287,7 @@ KEYWORDS
     uc::String tokenStr;
     tokenStr += currentChar;
     NextChar();
-    while (u_isIDPart (currentChar))
+    while (uc::IsIDContinue (currentChar))
     {
       tokenStr += currentChar;
       NextChar();

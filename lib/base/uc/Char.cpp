@@ -15,32 +15,34 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-/**\file
- * Unicode character types
- */
-#ifndef __BASE_UC_CHAR_H__
-#define __BASE_UC_CHAR_H__
+#include "base/common.h"
 
-#include <unicode/uchar.h>
+#include "base/uc/Char.h"
+
+#include "UCDDataLookup.h"
 
 namespace s1
 {
   namespace uc
   {
-    typedef UChar Char;
-    typedef UChar Char16;
-    typedef UChar32 Char32;
+    #include "ucd_White_Space.inc"
+    #include "ucd_XID_Continue.inc"
+    #include "ucd_XID_Start.inc"
 
-    /**\name Character class checks
-     * @{ */
-    /// Check whether a character is a whitespace character
-    bool IsWhiteSpace (Char32 ch);
-    /// Check whether a character is an ID start character
-    bool IsIDStart (Char32 ch);
-    /// Check whether a character is an ID continue character
-    bool IsIDContinue (Char32 ch);
-    /** @} */
+    bool IsWhiteSpace (Char32 ch)
+    {
+      return IsCharInSet (ch, ucd_White_Space);
+    }
+
+    bool IsIDStart (Char32 ch)
+    {
+      return IsCharInSet (ch, ucd_XID_Start);
+    }
+
+    bool IsIDContinue (Char32 ch)
+    {
+      return IsCharInSet (ch, ucd_XID_Continue);
+    }
+
   } // namespace uc
 } // namespace s1
-
-#endif // __BASE_UC_CHAR_H__
