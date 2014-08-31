@@ -294,6 +294,31 @@ namespace s1
     format::StaticFormatter FormatRegPrefixName ("{0}{1}");
     format::StaticFormatter FormatRegTmp ("{0}tmp{1}");
     
+    SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameImplSet& exportedNames)
+    {
+      // Create a block with all assignments
+      BlockPtr globalsInitBlock (CreateBlock (globalScope));
+      
+      const std::vector<NamePtr>& globalVars (globalScope->GetAllVars());
+      for (auto global : globalVars)
+      {
+        boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (global));
+        if (nameImpl->varValue)
+        {
+          // Synthesize an expression to assign the global with the default value
+          ExpressionPtr nameExpr (CreateVariableExpression (nameImpl));
+          ExpressionPtr assignExpr (CreateAssignExpression (nameExpr, nameImpl->varValue));
+          globalsInitBlock->AddExpressionCommand (assignExpr);
+        }
+      }
+
+      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (globalsInitBlock));
+      blockImpl->FinishBlock();
+      
+      exportedNames = blockImpl->GetExportedNames();
+      return blockImpl->GetSequence();
+    }
+    
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
 									 const TypeImplPtr& type,
 									 RegisterClassification classify,

@@ -87,6 +87,8 @@ namespace s1
       
       RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);
       bool OverrideNameRegister (const NameImplPtr& name, const RegisterPtr& reg);
+      
+      const NameImplSet& GetExportedNames() const { return exportedNames; }
     };
   } // namespace intermediate
 } // namespace s1

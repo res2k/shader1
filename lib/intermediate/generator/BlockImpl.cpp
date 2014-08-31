@@ -483,23 +483,30 @@ namespace s1
     
     void IntermediateGeneratorSemanticsHandler::BlockImpl::GenerateGlobalVarInitialization ()
     {
-      // Create a block with all assignments
-      BlockPtr globalsInitBlock (handler->CreateBlock (innerScope));
+      NameImplSet exportedNames;
+      SequencePtr initSeq (handler->CreateGlobalVarInitializationSeq (exportedNames));
       
-      const std::vector<NamePtr>& globalVars (handler->globalScope->GetAllVars());
-      for (auto global : globalVars)
+      // Imports: ignore; by definition, global var init should not _import_ any names
+
+      //
+      // Set up sequence exports
+      //
+
+      /* Pass 'snapshot' of identifiers-to-register-ID map.
+       * See CreateBlockSeqOp for explanation */
+      Sequence::IdentifierToRegMap identifierToRegIDMap (sequenceBuilder->GetIdentifierToRegisterMap ());
+      // Generate register IDs for all values the nested block exports
       {
-	boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (global));
-	if (nameImpl->varValue)
-	{
-	  // Synthesize an expression to assign the global with the default value
-	  ExpressionPtr nameExpr (handler->CreateVariableExpression (nameImpl));
-	  ExpressionPtr assignExpr (handler->CreateAssignExpression (nameExpr, nameImpl->varValue));
-	  globalsInitBlock->AddExpressionCommand (assignExpr);
-	}
+        for(const NameImplPtr& exportedName : exportedNames)
+        {
+          GetRegisterForName (exportedName, true);
+        }
       }
-      
-      SequenceOpPtr seqOp (CreateBlockSeqOp (globalsInitBlock, NameImplSet()));
+
+      // Apply overrides for register IDs of exported identifiers
+      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (initSeq,
+                                                                identifierToRegIDMap,
+                                                                sequenceBuilder->GetIdentifierToRegisterMap ()));
       sequenceBuilder->AddOp (seqOp);
     }
 

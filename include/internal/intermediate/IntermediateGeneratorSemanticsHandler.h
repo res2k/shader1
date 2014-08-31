@@ -81,6 +81,9 @@ namespace s1
       Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& typeA, const TypePtr& typeB);
       void SetupBuiltins (const ScopeImplPtr& scope);
 
+      /// Create a sequence containing global vars initialization
+      SequencePtr CreateGlobalVarInitializationSeq (NameImplSet& exportedNames);
+
       /// Whether the intermediate program was marked "completed"
       bool completed;
       uc::String entryFunction;
