@@ -203,7 +203,7 @@ namespace s1
       }
       
       {
-	boost::scoped_ptr<CloningSequenceVisitor> visitor (Clone (newSeqBuilder, regMap));
+	boost::scoped_ptr<CloningSequenceVisitor> visitor (Clone (newSeqBuilder, seq, regMap));
 	if (VisitBackwards())
 	  seq->ReverseVisit (*visitor);
 	else
@@ -232,6 +232,13 @@ namespace s1
 						newIdentToReg_imp,
 						newIdentToReg_exp));
       handlingVisitor->AddOpToSequence (newOp);
+    }
+
+    CloningSequenceVisitor* CloningSequenceVisitor::Clone (const SequenceBuilderPtr& newSequenceBuilder,
+                                                           const SequencePtr& oldSequence,
+                                                           const RegisterMap& regMap)
+    {
+      return Clone (newSequenceBuilder, regMap);
     }
     
     void CloningSequenceVisitor::OpConstBool (const RegisterPtr& destination,

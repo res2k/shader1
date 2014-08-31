@@ -141,6 +141,9 @@ namespace s1
       
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
+                                             const SequencePtr& oldSequence,
+                                             const RegisterMap& regMap);
+      virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
 					     const RegisterMap& regMap) = 0;
       virtual bool VisitBackwards() const { return false; }
       virtual void PostVisitSequence (CloningSequenceVisitor* visitor,
