@@ -511,7 +511,7 @@ namespace s1
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
-      std::vector<RegisterPtr> readRegisters;
+      // Call GetRegisterForName for all imports as a constness check
       {
 	for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
 	     import != blockImpl->nameRegisters.end();
@@ -521,8 +521,7 @@ namespace s1
 	  if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
 	      && !import->second.initiallyWriteable)
 	  {
-	    RegisterPtr reg (GetRegisterForName (import->first, false));
-	    readRegisters.push_back (reg);
+	    GetRegisterForName (import->first, false);
 	  }
 	}
       }
@@ -534,7 +533,6 @@ namespace s1
          as we want the ID before that */
       Sequence::IdentifierToRegMap identifierToRegIDMap (sequenceBuilder->GetIdentifierToRegisterMap ());
       // Generate register IDs for all values the nested block exports
-      std::vector<RegisterPtr> writtenRegisters;
       {
 	for (NameImplSet::const_iterator exportedName = blockImpl->exportedNames.begin();
 	     exportedName != blockImpl->exportedNames.end();
@@ -543,9 +541,7 @@ namespace s1
 	  /* "Loop names" are treated somewhat special as the caller will have taken care of
 	     allocating writeable regs for these names. */
 	  bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
-	  RegisterPtr reg;
-	  reg = GetRegisterForName (*exportedName, !isLoopName);
-	  writtenRegisters.push_back (reg);
+	  GetRegisterForName (*exportedName, !isLoopName);
 	}
       }
       // Apply overrides for register IDs of exported identifiers
