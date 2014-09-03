@@ -86,8 +86,14 @@ if(NOT MSVC)
   CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-Wall")
   CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-Wno-unused-local-typedefs")
 endif()
+# gcc flags that improve size of binaries
 if(CMAKE_COMPILER_IS_GNUCXX)
-  CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-fvisibility-inlines-hidden -fvisibility=hidden")
+  # Default visibility
+  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-fvisibility-inlines-hidden -fvisibility=hidden")
+  # Put data into own sections (so the linker discard if unused ones)
+  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-fdata-sections")
+  # Put functions into own sections (again, so unused ones can be discarded by the linker)
+  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-ffunction-sections")
 endif()
 
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
