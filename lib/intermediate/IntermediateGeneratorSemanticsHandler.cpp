@@ -511,6 +511,22 @@ namespace s1
               blockSeq->Visit (prependVisitor);
             }
             funcSeq = newSeqBuilder->GetSequence();
+            
+            // Globals are contained in entry func, so remove the corresponding formal args
+            {
+              parser::SemanticsHandler::Scope::FunctionFormalParameters::iterator paramsIt (params.begin());
+              while (paramsIt != params.end())
+              {
+                if (paramsIt->paramType == parser::SemanticsHandler::Scope::ptAutoGlobal)
+                {
+                  paramsIt = params.erase (paramsIt);
+                }
+                else
+                {
+                  ++paramsIt;
+                }
+              }
+            }
           }
           else
           {
