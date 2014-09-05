@@ -481,35 +481,6 @@ namespace s1
       }
     }
     
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::GenerateGlobalVarInitialization ()
-    {
-      NameImplSet exportedNames;
-      SequencePtr initSeq (handler->CreateGlobalVarInitializationSeq (exportedNames));
-      
-      // Imports: ignore; by definition, global var init should not _import_ any names
-
-      //
-      // Set up sequence exports
-      //
-
-      /* Pass 'snapshot' of identifiers-to-register-ID map.
-       * See CreateBlockSeqOp for explanation */
-      Sequence::IdentifierToRegMap identifierToRegIDMap (sequenceBuilder->GetIdentifierToRegisterMap ());
-      // Generate register IDs for all values the nested block exports
-      {
-        for(const NameImplPtr& exportedName : exportedNames)
-        {
-          GetRegisterForName (exportedName, true);
-        }
-      }
-
-      // Apply overrides for register IDs of exported identifiers
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBlock> (initSeq,
-                                                                identifierToRegIDMap,
-                                                                sequenceBuilder->GetIdentifierToRegisterMap ()));
-      sequenceBuilder->AddOp (seqOp);
-    }
-
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
 										      const NameImplSet& loopNames)
     {

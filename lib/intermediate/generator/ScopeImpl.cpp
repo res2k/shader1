@@ -162,12 +162,6 @@ namespace s1
       
       functionsInDeclOrder.push_back (funcInfo);
       
-      if (handler->IsEntryFunction (identifier))
-      {
-	boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (newBlock));
-	blockImpl->GenerateGlobalVarInitialization();
-      }	
-      
       FunctionPtr newFunction (CreateFunction (funcInfo, newBlock));
       return newFunction;
     }

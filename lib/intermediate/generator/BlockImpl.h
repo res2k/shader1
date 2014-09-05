@@ -82,7 +82,6 @@ namespace s1
       const SequenceBuilderPtr& GetSequenceBuilder();
       
       void FinishBlock() { FlushVariableInitializers(); }
-      void GenerateGlobalVarInitialization ();
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
       
       RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);

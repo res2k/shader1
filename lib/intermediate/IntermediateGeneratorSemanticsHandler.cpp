@@ -31,6 +31,7 @@
 
 #include "BlockImpl.h"
 #include "NameImpl.h"
+#include "PrependGlobalsInit.h"
 #include "ScopeImpl.h"
 #include "TypeImpl.h"
 
@@ -494,11 +495,32 @@ namespace s1
 	    retParam.dir = parser::SemanticsHandler::Scope::dirOut;
 	    params.insert (params.begin(), retParam);
 	  }
+          
+          SequencePtr funcSeq;
+          SequencePtr blockSeq (blockImpl->GetSequence());
+          if (IsEntryFunction ((*funcIt)->originalIdentifier))
+          {
+            // Create a new sequence...
+            SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+            // ...containing the original function sequence, prepended by the globals initialization
+            {
+              NameImplSet initSeqExported;
+              SequencePtr initSeq (CreateGlobalVarInitializationSeq (initSeqExported));
+
+              PrependGlobalsInit prependVisitor (newSeqBuilder, blockSeq, initSeq);
+              blockSeq->Visit (prependVisitor);
+            }
+            funcSeq = newSeqBuilder->GetSequence();
+          }
+          else
+          {
+            funcSeq = blockSeq;
+          }
 	  
 	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
 									    (*funcIt)->identifier,
 									    params,
-									    blockImpl->GetSequence (),
+									    funcSeq,
 									    IsEntryFunction ((*funcIt)->originalIdentifier)));
 	  newProg->AddFunction (newFunc);
 	}
