@@ -36,6 +36,8 @@ namespace s1
     {
     protected:
       explicit String (const UnicodeString& s) : UnicodeString (s) {}
+
+      String NormalizeNFD ();
     public:
       typedef int size_type;
       BOOST_STATIC_CONSTANT(size_type, npos = -1);

@@ -97,7 +97,9 @@ def SplitRanges(ranges, right_bits):
       split[key][1].append (cp)
   return split
 
-def PrintRanges(out_file, split, name, bytes_per_char):
+
+# Character sets
+def PrintSetRanges(out_file, split, name, bytes_per_char):
   if bytes_per_char == 1:
     char_type = 'uint8_t'
   elif bytes_per_char == 2:
@@ -111,7 +113,7 @@ def PrintRanges(out_file, split, name, bytes_per_char):
 
 OUTPUT_DIR = None
 
-def ProcessRanges(ranges, name):
+def ProcessSetRanges(ranges, name):
   print >> sys.stderr, name + ":"
   out_file = open (os.path.join (OUTPUT_DIR, 'ucd_{0}.inc'.format (name)), "w")
   print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
@@ -125,7 +127,169 @@ def ProcessRanges(ranges, name):
     bytes_per_char = 2
   queries = int(math.ceil(math.log(len(ranges), 2)))
   print >> sys.stderr, "queries:", queries
-  PrintRanges (out_file, ranges, name, bytes_per_char)
+  PrintSetRanges (out_file, ranges, name, bytes_per_char)
+
+class Data_UI8_per_CP(object):
+  type_str = 'uint8_t'
+
+  def __init__(self, prop_map):
+    self.prop_map = prop_map
+
+  def WriteExtraMapDataDecl(self, out_file):
+    return False
+
+  def WriteExtraMapData(self, out_file):
+    pass
+
+  def StrForCP(self, cp):
+    if cp in self.prop_map:
+      val = self.prop_map[cp]
+    else:
+      val = 0
+    return '{0:>3}'.format (val)
+
+  @staticmethod
+  def RangeDataSize(cp_range, prop_map):
+    return (cp_range[1] - cp_range[0] + 1)
+
+class Data_CP_Seq(object):
+  type_str = 'uint32_t'
+
+  def __init__(self, prop_map):
+    self.prop_map = prop_map
+  
+  def WriteExtraMapDataDecl(self, out_file):
+    self.ofs_for_cp = {}
+    n = 0
+    for cp, seq in self.prop_map.iteritems():
+      if len(seq) == 1: continue
+      self.ofs_for_cp[cp] = n
+      n += len(seq)
+    print >> out_file, '\tChar32 seqdata[{0}];'.format (n)
+    return True
+
+  def WriteExtraMapData(self, out_file):
+    print >> out_file, '\t{'
+    for cp, seq in self.prop_map.iteritems():
+      if len(seq) == 1: continue
+      s = ""
+      for seq_cp in seq:
+        s = s + '{0}, '.format (hex (seq_cp))
+      print >> out_file, '\t\t{0}'.format (s.rstrip())
+    print >> out_file, '\t},'
+
+  def StrForCP(self, cp):
+    if cp in self.prop_map:
+      seq = self.prop_map[cp]
+      if cp in self.ofs_for_cp:
+        val = self.ofs_for_cp[cp] | ((len(seq)-1) << 24)
+      else:
+        val = seq[0]
+    else:
+      val = 0
+    return hex(val)
+
+  @staticmethod
+  def RangeDataSize(cp_range, prop_map):
+    num_ui32 = 0
+    for cp in range(cp_range[0], cp_range[1]):
+      if not cp in prop_map:
+        num_ui32 += 1
+        continue
+      mapped_seq = prop_map[cp]
+      if len(mapped_seq) == 1:
+        num_ui32 += 1
+      else:
+        num_ui32 += 1 + len(mapped_seq)
+    return num_ui32 * 4
+
+# Character maps
+def PrintMapRanges(out_file, prop_map, ranges, name, bytes_per_char, datatype):
+  if bytes_per_char == 1:
+    char_type = 'uint8_t'
+  elif bytes_per_char == 2:
+    char_type = 'Char16'
+  else:
+    char_type = 'Char32'
+
+  data_size = 0
+  for c in ranges:
+    data_size = data_size + c[1] - c[0] + 1
+
+  save_data = datatype (prop_map)
+
+  # Map data struct
+  print >> out_file, 'static const struct _ucd_{0}'.format (name)
+  print >> out_file, '{'
+  print >> out_file, '\t{0} key[{1}*2];'.format (char_type, len(ranges))
+  print >> out_file, '\tunsigned int idx[{0}];'.format (len(ranges))
+  print >> out_file, '\t{0} data[{1}];'.format (datatype.type_str, data_size)
+  have_extra_data = save_data.WriteExtraMapDataDecl(out_file)
+  print >> out_file, '}} ucd_{0} = {{'.format (name)
+
+  print >> out_file, '\t{'
+  for c in ranges:
+    print >> out_file, '\t\t{0}, {1},'.format (hex(c[0]), hex(c[1]))
+  print >> out_file, '\t},'
+  print >> out_file, '\t{'
+  i = 0
+  for c in ranges:
+    print >> out_file, '\t\t{0},'.format (i)
+    i = i + c[1] - c[0] + 1
+  print >> out_file, '\t},'
+  print >> out_file, '\t{'
+  for c in ranges:
+    print >> out_file, '\t\t// {0} - {1}'.format (hex(c[0]), hex(c[1]))
+    n = 0
+    s = ""
+    for cp in range(c[0], c[1]+1):
+      if s and (n % 8 == 0):
+        print >> out_file, '\t\t{0}'.format (s.rstrip())
+        s = ''
+      s = s + save_data.StrForCP (cp) + ', '
+      n = n + 1
+    if s:
+      print >> out_file, '\t\t{0}'.format (s.rstrip())
+  if have_extra_data:
+    print >> out_file, '\t}, '
+  else:
+    print >> out_file, '\t}'
+  save_data.WriteExtraMapData(out_file)
+  print >> out_file, '};'
+
+def ProcessMap(prop_map, name, datatype):
+  print >> sys.stderr, name + ":"
+  out_file = open (os.path.join (OUTPUT_DIR, 'ucd_{0}.inc'.format (name)), "w")
+  print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
+  max_cp = 0
+  char_ranges = Range()
+  for cp in sorted(prop_map):
+    max_cp = max(max_cp, cp)
+    char_ranges.append ((cp, cp))
+  bytes_per_char = 1
+  if max_cp >= 0x10000:
+    bytes_per_char = 4
+  elif max_cp >= 0x100:
+    bytes_per_char = 2
+  max_bits = int(math.ceil(math.log(max_cp, 2)))
+  min_size = 0x7fffffff
+  min_b = 0
+  min_ranges = []
+  for b in range(0, max_bits+1):
+    compressed_ranges = CompressRanges (char_ranges, b)
+    queries = int(math.ceil(math.log(len(compressed_ranges), 2)))
+    # For each range need at least two CPs and a pointer
+    s = len(compressed_ranges) * (bytes_per_char * 2 + 4)
+    for r in compressed_ranges:
+      s = s + datatype.RangeDataSize (r, prop_map)
+    print >> sys.stderr, b, queries, s
+    if s < min_size:
+      min_size = s
+      min_b = b
+      min_ranges = compressed_ranges
+  print >> sys.stderr, "min:", min_b, min_size, min_ranges
+  PrintMapRanges (out_file, prop_map, min_ranges, name, bytes_per_char, datatype)
+
 
 def LocateUCDData(ucddir, subdirs, filename):
   fullpath = os.path.join (ucddir, '/'.join (subdirs), filename)
@@ -154,6 +318,9 @@ args = parser.parse_args()
 ranges_White_Space = Range()
 ranges_XID_Start = Range()
 ranges_XID_Continue = Range()
+combining_class = {}
+canonical_decomp = {}
+ranges_NFD_QC_No = Range()
 
 def HandleBaseProp(prop_info):
   if prop_info[1] == 'White_Space':
@@ -165,12 +332,60 @@ def HandleDerivedProp(prop_info):
   elif prop_info[1] == 'XID_Continue':
      ranges_XID_Continue.append(prop_info[0])
 
+def HandleCCProp(prop_info):
+  ch_range, prop_str = prop_info
+  cc = int(prop_str)
+  if not cc:
+    return
+  for ch in range(ch_range[0], ch_range[1]+1):
+    combining_class[ch] = cc
 
+def HandleUnicodeData(prop_info):
+  ch = prop_info[0]
+  decomp = prop_info[5]
+  if not decomp: return
+  # Ignore compatibility mappings
+  if decomp[0] == '<': return
+  seq = []
+  for cp_str in decomp.split(' '):
+    if not cp_str: continue
+    cp = int(cp_str, 16)
+    seq.append (cp)
+  canonical_decomp[ch[0]] = seq
+
+def RecursivelyResolveDecompositions():
+  global canonical_decomp
+  do_resolve = True
+  while do_resolve:
+    do_resolve = False
+    new_canonical_decomp = {}
+    for cp, decomp in canonical_decomp.iteritems():
+      new_decomp = []
+      for dcp in decomp:
+        if dcp in canonical_decomp:
+          new_decomp += canonical_decomp[dcp]
+          do_resolve = True
+        else:
+          new_decomp.append (dcp)
+      new_canonical_decomp[cp] = new_decomp
+    canonical_decomp = new_canonical_decomp
+
+def HandleDerivedNormProp(prop_info):
+  if prop_info[1] != "NFD_QC": return
+  ranges_NFD_QC_No.append(prop_info[0])
 
 ParseProperties (LocateUCDData (args.ucd_dir, [], "PropList.txt"), HandleBaseProp)
 ParseProperties (LocateUCDData (args.ucd_dir, ['extracted'], "DerivedCoreProperties.txt"), HandleDerivedProp)
+ParseProperties (LocateUCDData (args.ucd_dir, ['extracted'], "DerivedCombiningClass.txt"), HandleCCProp)
+ParseProperties (LocateUCDData (args.ucd_dir, [], "UnicodeData.txt"), HandleUnicodeData)
+ParseProperties (LocateUCDData (args.ucd_dir, [], "DerivedNormalizationProps.txt"), HandleDerivedNormProp)
 
 OUTPUT_DIR = args.out_dir
-ProcessRanges (ranges_White_Space, "White_Space")
-ProcessRanges (ranges_XID_Start, "XID_Start")
-ProcessRanges (ranges_XID_Continue, "XID_Continue")
+ProcessSetRanges (ranges_White_Space, "White_Space")
+ProcessSetRanges (ranges_XID_Start, "XID_Start")
+ProcessSetRanges (ranges_XID_Continue, "XID_Continue")
+ProcessMap (combining_class, "CombiningClass", Data_UI8_per_CP)
+ProcessSetRanges (ranges_NFD_QC_No, "NFD_QC_No")
+
+RecursivelyResolveDecompositions()
+ProcessMap (canonical_decomp, "CanonicalDecomp", Data_CP_Seq)

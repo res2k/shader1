@@ -60,6 +60,40 @@ namespace s1
     {
       return IndexInRanges (ch, set) != ~0u;
     }
+
+    /// Looks up an UCD property for a character
+    template<typename T, typename DataType>
+    static inline T LookupProperty (Char32 ch, const DataType& data, const T& defaultVal)
+    {
+      unsigned int keyIndex (IndexInRanges (ch, data.key));
+      if (keyIndex == ~0u) return defaultVal;
+      unsigned int dataOfs = ch - data.key[keyIndex * 2] + data.idx[keyIndex];
+      return data.data[dataOfs];
+    }
+
+    /// Looks up a character sequence for another character
+    template<typename DataType>
+    static inline bool LookupSeq (Char32 ch, const DataType& data, const Char32*& seq, unsigned int& size)
+    {
+      unsigned int keyIndex (IndexInRanges (ch, data.key));
+      if (keyIndex == ~0u) return false;
+      unsigned int dataOfs = ch - data.key[keyIndex * 2] + data.idx[keyIndex];
+      uint32_t charData = data.data[dataOfs];
+      unsigned int seqLen = (charData >> 24) + 1;
+      if (seqLen == 1)
+      {
+        // One-char sequences are stored 'inline'
+        seq = reinterpret_cast<const Char32*> (&(data.data[dataOfs]));
+        size = 1;
+      }
+      else
+      {
+        // Multi-char sequences are in the 'seqdata' table
+        seq = &(data.seqdata[charData & 0xffffff]);
+        size = seqLen;
+      }
+      return true;
+    }
   } // namespace uc
 } // namespace s1
 
