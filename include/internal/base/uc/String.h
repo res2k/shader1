@@ -24,6 +24,7 @@
 #include "Char.h"
 
 #include <unicode/unistr.h>
+#include <unicode/schriter.h>
 
 #include <boost/config.hpp>
 
@@ -70,6 +71,8 @@ namespace s1
       };
       /// \throws UnicodeException in case of error
       String Normalized (NormalizationMode mode);
+
+      typedef StringCharacterIterator CharacterIterator;
     };
   } // namespace uc
 } // namespace s1

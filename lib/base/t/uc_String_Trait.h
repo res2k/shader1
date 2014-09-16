@@ -24,7 +24,6 @@
 #include <cxxtest/ValueTraits.h>
 
 #include "base/uc/String.h"
-#include <unicode/schriter.h>
 
 #include <boost/format.hpp>
 
@@ -38,7 +37,7 @@ namespace CxxTest
     ValueTraits(const s1::uc::String& str)
     {
       as_string.push_back ('"');
-      StringCharacterIterator idIt (str);
+      s1::uc::String::CharacterIterator idIt (str);
       while (idIt.hasNext())
       {
         s1::uc::Char32 ch = idIt.next32PostInc();

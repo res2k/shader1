@@ -23,7 +23,6 @@
 
 #include <limits>
 #include <stdio.h>
-#include <unicode/schriter.h>
 
 #include <boost/multiprecision/cpp_int.hpp>
 
@@ -155,7 +154,7 @@ namespace s1
     {
       std::string basic_str;
       // An implementation of the punycode algorithm, see RFC 3492
-      StringCharacterIterator idIt (str);
+      uc::String::CharacterIterator idIt (str);
       while (idIt.hasNext())
       {
 	uc::Char32 ch = idIt.next32PostInc();
