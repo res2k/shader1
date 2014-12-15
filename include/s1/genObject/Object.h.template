@@ -149,6 +149,13 @@ typedef struct BOOST_PP_CAT(T, _s) T
 #define S1TYPE_INFO_s1_Object	(S1_TYPE_MAKE_NAME(Object), BOOST_PP_NIL)
 
 #if defined(DOXYGEN_RUN)
+  /**
+   * Base "class" for public C API base objects.
+   * Provides reference counting facilities.
+   * All classes in the public API are derived from this class.
+   * \sa #S1TYPE_CAST
+   * \sa \ref refcounting
+   */
   S1TYPE_DECLARE(S1TYPE_INFO_s1_Object);
 #else
   #if defined(__cplusplus) && defined(S1_BUILD)
