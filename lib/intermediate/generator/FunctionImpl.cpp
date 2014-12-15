@@ -15,6 +15,8 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+#include "base/common.h"
+
 #include "FunctionImpl.h"
 
 #include "BlockImpl.h"
