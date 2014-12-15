@@ -62,6 +62,13 @@
 #  define S1_FORCEINLINE
 #endif
 
+#if defined(DOXYGEN_RUN) || (defined(__cplusplus) && (__cplusplus >= 201103L))
+/**\def S1_HAVE_RVALUES
+ * Defined if compiler supports value types.
+ */
+#define S1_HAVE_RVALUES
+#endif
+
 /// Boolean type.
 typedef int s1_bool;
 

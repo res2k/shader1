@@ -64,6 +64,13 @@ namespace s1
     /// Move reference from \a other
     template<typename T2>
     TransferRefPtr (const TransferRefPtr<T2>& other) : obj (const_cast<TransferRefPtr&> (other).detach()) { }
+#ifdef S1_HAVE_RVALUES
+    /// Move reference from \a other
+    TransferRefPtr (const TransferRefPtr& other) : obj (const_cast<TransferRefPtr&> (other).detach()) { }
+    /// Move reference from \a other
+    template<typename T2>
+    TransferRefPtr (TransferRefPtr<T2>&& other) : obj (other.detach()) { }
+#endif
     /// Releases reference
     ~TransferRefPtr ()
     {
@@ -108,6 +115,14 @@ namespace s1
       take (const_cast<TransferRefPtr&> (other).detach());
       return *this;
     }
+#ifdef S1_HAVE_RVALUES
+    /// Move reference from \a other
+    TransferRefPtr& operator= (TransferRefPtr&& other)
+    {
+      take (other.detach());
+      return *this;
+    }
+#endif
 
     /// Dereference stored pointer.
     T& operator* () const
@@ -140,12 +155,20 @@ namespace s1
     Ptr (const TransferRefPtr<T2, C>& other) : obj (const_cast<TransferRefPtr<T2, C>&> (other).detach()) { }
     /// Copy from \a other, adding a reference
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
+#ifdef S1_HAVE_RVALUES
+    /// Move reference from \a other
+    Ptr (Ptr&& other) : obj (other.detach()) { }
+    /// Move reference from \a other
+    template<typename T2, typename C>
+    Ptr (TransferRefPtr<T2, C>&& other) : obj (other.detach()) { }
+#endif
     /// Releases reference
     ~Ptr()
     {
       if (obj) s1_release (obj);
     }
     
+    //@{
     /**
      * Replace the currently stored pointer.
      * To the new pointer a reference is added, and from the old
@@ -157,6 +180,20 @@ namespace s1
       if (obj) s1_release (obj);
       obj = p;
     }
+#ifdef S1_HAVE_RVALUES
+    void reset (Ptr&& p)
+    {
+      if (obj) s1_release (obj);
+      obj = p.detach();
+    }
+    template<typename C>
+    void reset (TransferRefPtr<T, C>&& p)
+    {
+      if (obj) s1_release (obj);
+      obj = p.detach();
+    }
+#endif
+    //@}
     /**
      * Assume ownership of a pointer.
      * Replaces the currently stored pointer. Properly releases reference of the
@@ -202,6 +239,14 @@ namespace s1
       take (const_cast<TransferRefPtr<T2, C>&> (other).detach());
       return *this;
     }
+#ifdef S1_HAVE_RVALUES
+    /// Move reference from \a other
+    Ptr& operator= (Ptr&& other)
+    {
+      take (other.detach());
+      return *this;
+    }
+#endif
 
     /// Dereference stored pointer.
     T& operator* () const
