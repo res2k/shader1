@@ -215,6 +215,12 @@ namespace s1
     }
   };
 } // namespace s1
+
+/* Helper macro resolving to return type for pointers from API that already
+ * have a reference */
+#define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
+    ::s1::TransferRefPtr< Type , ::s1::PtrCleanupUnsafe>
+
 #endif
 
 #endif // __S1_PTR_H__

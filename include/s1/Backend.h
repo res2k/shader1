@@ -93,7 +93,7 @@ namespace s1
        * In that case the error status is saved in the library's
        * last error code.
        */
-      TransferRefPtr<CompiledProgram, PtrCleanupUnsafe> GenerateProgram (Program* program, s1_CompileTarget target)
+      S1_RETURN_TRANSFER_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target)
       {
         return s1_backend_generate_program (this, program, target);
       }

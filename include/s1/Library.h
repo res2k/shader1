@@ -202,7 +202,7 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
       */
-      TransferRefPtr<Options, PtrCleanupUnsafe> CreateOptions ()
+      S1_RETURN_TRANSFER_REF_TYPE(Options) CreateOptions ()
       {
         return s1_options_create (this);
       }
@@ -217,8 +217,9 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      TransferRefPtr<Program, PtrCleanupUnsafe> CreateProgramFromString (const char* source, size_t sourceSize,
-                                                                         unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
+      S1_RETURN_TRANSFER_REF_TYPE(Program) CreateProgramFromString (const char* source,
+                                                                    size_t sourceSize,
+                                                                    unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
         return s1_program_create_from_string (this, source, sourceSize, compatLevel);
       }
@@ -230,7 +231,7 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      TransferRefPtr<Backend, PtrCleanupUnsafe> CreateBackend (const char* backend)
+      S1_RETURN_TRANSFER_REF_TYPE(Backend) CreateBackend (const char* backend)
       {
         return s1_backend_create (this, backend);
       }
