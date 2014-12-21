@@ -27,32 +27,54 @@
 namespace s1
 {
 #if !defined(DOXYGEN_RUN)
-  /** 
-   * Pointer cleanup for TransferRefPtr<>: Type-safe.
-   * Will not compile if type is not derived from s1::Object.
-   */
-  struct PtrCleanupDefault
+  namespace cxxapi
   {
-    template<typename T>
-    static void Release (T* p) { s1_release (p); }
-  };
+    namespace
+    {
+      typedef int Yes;
+      typedef char No;
+      
+      template <typename T>
+      Yes IsDefinedHelper(int(*)[sizeof(T)]);
 
-  /** 
-   * Pointer cleanup for TransferRefPtr<>: Type-unsafe.
-   * Assumes type is derived from s1::Object, will not trigger compile-time checks.
-   */
-  struct PtrCleanupUnsafe
-  {
+      template <typename>
+      No IsDefinedHelper(...);
+
+      // Call s1_release() for 'unknown' types - let compiler sort it out
+      template<size_t S>
+      struct ReleasePtrHelper
+      {
+        template<typename Ptr>
+        static inline void Release (Ptr* p)
+        {
+          s1_release (p);
+        }
+      };
+      // Call s1_release() for a 'well-known' type - reinterpret to Object pointer
+      template<>
+      struct ReleasePtrHelper<sizeof(No)> /* Note: if we have a well-known forward decl,
+                                             WellKnownForwardDecl<> is _not_ defined! */
+      {
+        template<typename Ptr>
+        static inline void Release (Ptr* p)
+        {
+          s1_release (reinterpret_cast<Object*> (p));
+        }
+      };
+    }
+
     template<typename T>
-    static void Release (T* p) { s1_release (reinterpret_cast<cxxapi::Object*> (p)); }
-  };
+    inline void ReleasePtr (T* ptr)
+    {
+      ReleasePtrHelper<sizeof(IsDefinedHelper<WellKnownForwardDecl<T> >(0))>::Release (ptr);
+    }
+  } // namespace cxxapi
 
   /**
    * Smart pointer for Shader1 C++ public API objects.
    * This smart pointer \em always assumes ownership.
-   * \tparam Cleanup Trait to handle pointer cleanup.
    */
-  template<typename T, typename Cleanup = PtrCleanupDefault>
+  template<typename T>
   class TransferRefPtr
   {
   private:
@@ -75,7 +97,7 @@ namespace s1
     /// Releases reference
     ~TransferRefPtr ()
     {
-      if (obj) Cleanup::Release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
     }
     
     /**
@@ -85,7 +107,7 @@ namespace s1
      */
     void take (T* p)
     {
-      if (obj) s1_release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
       obj = p;
     }
     /// Return the stored pointer.
@@ -154,8 +176,8 @@ namespace s1
     }
 #if !defined(DOXYGEN_RUN)
     /// Move reference from \a other
-    template<typename T2, typename C>
-    Ptr (const TransferRefPtr<T2, C>& other) : obj (const_cast<TransferRefPtr<T2, C>&> (other).detach()) { }
+    template<typename T2>
+    Ptr (const TransferRefPtr<T2>& other) : obj (const_cast<TransferRefPtr<T2>&> (other).detach()) { }
 #endif
     /// Copy from \a other, adding a reference
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
@@ -164,14 +186,14 @@ namespace s1
     Ptr (Ptr&& other) : obj (other.detach()) { }
 #if !defined(DOXYGEN_RUN)
     /// Move reference from \a other
-    template<typename T2, typename C>
-    Ptr (TransferRefPtr<T2, C>&& other) : obj (other.detach()) { }
+    template<typename T2>
+    Ptr (TransferRefPtr<T2>&& other) : obj (other.detach()) { }
 #endif
 #endif
     /// Releases reference
     ~Ptr()
     {
-      if (obj) s1_release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
     }
     
     //@{
@@ -183,19 +205,18 @@ namespace s1
     void reset (T* p = 0)
     {
       if (p) s1_add_ref (p);
-      if (obj) s1_release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
       obj = p;
     }
 #ifdef S1_HAVE_RVALUES
     void reset (Ptr&& p)
     {
-      if (obj) s1_release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
       obj = p.detach();
     }
-    template<typename C>
-    void reset (TransferRefPtr<T, C>&& p)
+    void reset (TransferRefPtr<T>&& p)
     {
-      if (obj) s1_release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
       obj = p.detach();
     }
 #endif
@@ -207,7 +228,7 @@ namespace s1
      */
     void take (T* p)
     {
-      if (obj) s1_release (obj);
+      if (obj) cxxapi::ReleasePtr (obj);
       obj = p;
     }
     /// Return the stored pointer.
@@ -240,10 +261,10 @@ namespace s1
     }
 #if !defined(DOXYGEN_RUN)
     /// Move reference from \a other
-    template<typename T2, typename C>
-    Ptr& operator= (const TransferRefPtr<T2, C>& other)
+    template<typename T2>
+    Ptr& operator= (const TransferRefPtr<T2>& other)
     {
-      take (const_cast<TransferRefPtr<T2, C>&> (other).detach());
+      take (const_cast<TransferRefPtr<T2>&> (other).detach());
       return *this;
     }
 #endif
@@ -272,7 +293,7 @@ namespace s1
 /* Helper macro resolving to return type for pointers from API that already
  * have a reference */
 #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
-    ::s1::TransferRefPtr< Type , ::s1::PtrCleanupUnsafe>
+    ::s1::TransferRefPtr< Type >
 
 #endif
 
