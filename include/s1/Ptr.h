@@ -42,8 +42,13 @@ namespace s1
 
       // Call s1_release() for 'unknown' types - let compiler sort it out
       template<size_t S>
-      struct ReleasePtrHelper
+      struct PtrRefHelper
       {
+        template<typename Ptr>
+        static inline void AddRef (Ptr* p)
+        {
+          s1_add_ref (p);
+        }
         template<typename Ptr>
         static inline void Release (Ptr* p)
         {
@@ -52,9 +57,14 @@ namespace s1
       };
       // Call s1_release() for a 'well-known' type - reinterpret to Object pointer
       template<>
-      struct ReleasePtrHelper<sizeof(No)> /* Note: if we have a well-known forward decl,
-                                             WellKnownForwardDecl<> is _not_ defined! */
+      struct PtrRefHelper<sizeof(No)> /* Note: if we have a well-known forward decl,
+                                         WellKnownForwardDecl<> is _not_ defined! */
       {
+        template<typename Ptr>
+        static inline void AddRef (Ptr* p)
+        {
+          s1_add_ref (reinterpret_cast<Object*> (p));
+        }
         template<typename Ptr>
         static inline void Release (Ptr* p)
         {
@@ -64,12 +74,18 @@ namespace s1
     }
 
     template<typename T>
+    inline void AddRefPtr (T* ptr)
+    {
+      PtrRefHelper<sizeof(IsDefinedHelper<WellKnownForwardDecl<T> >(0))>::AddRef (ptr);
+    }
+    template<typename T>
     inline void ReleasePtr (T* ptr)
     {
-      ReleasePtrHelper<sizeof(IsDefinedHelper<WellKnownForwardDecl<T> >(0))>::Release (ptr);
+      PtrRefHelper<sizeof(IsDefinedHelper<WellKnownForwardDecl<T> >(0))>::Release (ptr);
     }
   } // namespace cxxapi
 
+#ifndef S1_HAVE_RVALUES
   /**
    * Smart pointer for Shader1 C++ public API objects.
    * This smart pointer \em always assumes ownership.
@@ -87,13 +103,6 @@ namespace s1
     /// Move reference from \a other
     template<typename T2>
     TransferRefPtr (const TransferRefPtr<T2>& other) : obj (const_cast<TransferRefPtr&> (other).detach()) { }
-#ifdef S1_HAVE_RVALUES
-    /// Move reference from \a other
-    TransferRefPtr (const TransferRefPtr& other) : obj (const_cast<TransferRefPtr&> (other).detach()) { }
-    /// Move reference from \a other
-    template<typename T2>
-    TransferRefPtr (TransferRefPtr<T2>&& other) : obj (other.detach()) { }
-#endif
     /// Releases reference
     ~TransferRefPtr ()
     {
@@ -138,14 +147,6 @@ namespace s1
       take (const_cast<TransferRefPtr&> (other).detach());
       return *this;
     }
-#ifdef S1_HAVE_RVALUES
-    /// Move reference from \a other
-    TransferRefPtr& operator= (TransferRefPtr&& other)
-    {
-      take (other.detach());
-      return *this;
-    }
-#endif
 
     /// Dereference stored pointer.
     T& operator* () const
@@ -158,6 +159,7 @@ namespace s1
       return obj;
     }
   };
+#endif
 #endif
 
   /// Smart pointer for Shader1 C++ public API objects.
@@ -172,9 +174,12 @@ namespace s1
     /// Construct from \a p, adding a reference
     Ptr (T* p) : obj (p)
     {
-      s1_add_ref (p);
+      if (obj) cxxapi::AddRefPtr (obj);
     }
-#if !defined(DOXYGEN_RUN)
+    struct TakeTag {};
+    /// Construct from \a p, \em not adding a reference
+    Ptr (T* p, const TakeTag&) : obj (p) { }
+#if !defined(DOXYGEN_RUN) && !defined(S1_HAVE_RVALUES)
     /// Move reference from \a other
     template<typename T2>
     Ptr (const TransferRefPtr<T2>& other) : obj (const_cast<TransferRefPtr<T2>&> (other).detach()) { }
@@ -184,7 +189,7 @@ namespace s1
 #ifdef S1_HAVE_RVALUES
     /// Move reference from \a other
     Ptr (Ptr&& other) : obj (other.detach()) { }
-#if !defined(DOXYGEN_RUN)
+#if !defined(DOXYGEN_RUN) && !defined(S1_HAVE_RVALUES)
     /// Move reference from \a other
     template<typename T2>
     Ptr (TransferRefPtr<T2>&& other) : obj (other.detach()) { }
@@ -210,11 +215,6 @@ namespace s1
     }
 #ifdef S1_HAVE_RVALUES
     void reset (Ptr&& p)
-    {
-      if (obj) cxxapi::ReleasePtr (obj);
-      obj = p.detach();
-    }
-    void reset (TransferRefPtr<T>&& p)
     {
       if (obj) cxxapi::ReleasePtr (obj);
       obj = p.detach();
@@ -259,7 +259,7 @@ namespace s1
       reset (other.obj);
       return *this;
     }
-#if !defined(DOXYGEN_RUN)
+#if !defined(DOXYGEN_RUN) && !defined(S1_HAVE_RVALUES)
     /// Move reference from \a other
     template<typename T2>
     Ptr& operator= (const TransferRefPtr<T2>& other)
@@ -287,13 +287,32 @@ namespace s1
     {
       return obj;
     }
+    
+    /// Helper function to create an instance by taking a reference
+#ifdef S1_HAVE_RVALUES
+    static Ptr Take (T* p)
+    {
+      return Ptr (p, TakeTag ());
+    }
+#else
+    static TransferRefPtr<T> Take (T* p)
+    {
+      return TransferRefPtr<T> (p);
+    }
+#endif
   };
 } // namespace s1
 
 /* Helper macro resolving to return type for pointers from API that already
  * have a reference */
-#define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
-    ::s1::TransferRefPtr< Type >
+#ifdef S1_HAVE_RVALUES
+  // Prefer Ptr<> if we have rvalues. Also plays nicer with 'auto'
+  #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
+      ::s1::Ptr< Type >
+#else
+  #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
+      ::s1::TransferRefPtr< Type >
+#endif
 
 #endif
 
