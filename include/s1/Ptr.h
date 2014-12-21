@@ -26,6 +26,7 @@
 #ifdef __cplusplus
 namespace s1
 {
+#if !defined(DOXYGEN_RUN)
   /** 
    * Pointer cleanup for TransferRefPtr<>: Type-safe.
    * Will not compile if type is not derived from s1::Object.
@@ -135,6 +136,7 @@ namespace s1
       return obj;
     }
   };
+#endif
 
   /// Smart pointer for Shader1 C++ public API objects.
   template<typename T>
@@ -150,17 +152,21 @@ namespace s1
     {
       s1_add_ref (p);
     }
+#if !defined(DOXYGEN_RUN)
     /// Move reference from \a other
     template<typename T2, typename C>
     Ptr (const TransferRefPtr<T2, C>& other) : obj (const_cast<TransferRefPtr<T2, C>&> (other).detach()) { }
+#endif
     /// Copy from \a other, adding a reference
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
 #ifdef S1_HAVE_RVALUES
     /// Move reference from \a other
     Ptr (Ptr&& other) : obj (other.detach()) { }
+#if !defined(DOXYGEN_RUN)
     /// Move reference from \a other
     template<typename T2, typename C>
     Ptr (TransferRefPtr<T2, C>&& other) : obj (other.detach()) { }
+#endif
 #endif
     /// Releases reference
     ~Ptr()
@@ -232,6 +238,7 @@ namespace s1
       reset (other.obj);
       return *this;
     }
+#if !defined(DOXYGEN_RUN)
     /// Move reference from \a other
     template<typename T2, typename C>
     Ptr& operator= (const TransferRefPtr<T2, C>& other)
@@ -239,6 +246,7 @@ namespace s1
       take (const_cast<TransferRefPtr<T2, C>&> (other).detach());
       return *this;
     }
+#endif
 #ifdef S1_HAVE_RVALUES
     /// Move reference from \a other
     Ptr& operator= (Ptr&& other)
