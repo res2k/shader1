@@ -116,15 +116,22 @@ typedef struct _S1BOOSTPP_CAT(T, _s) T
  * \internal
  * Forward-declare a type. Takes a &lsquo;raw&rsquo; type name tuple.
  */
-#define S1TYPE_DECLARE_FWD_RAW(IMPLINFO)                \
+#define S1TYPE_DECLARE_FWD_RAW(TYPENAME, IMPLINFO)      \
   _S1TYPE_TYPENAME_CXXFWD(IMPLINFO)                     \
-  typedef _S1TYPE_TYPENAME_CXXALIAS(IMPLINFO) _S1TYPE_TYPENAME_CNAME(IMPLINFO)
+  namespace s1 {                                        \
+    S1_NS_CXXAPI_BEGIN                                  \
+      template<> struct WellKnownForwardDecl<TYPENAME>; \
+    S1_NS_CXXAPI_END                                    \
+  }                                                     \
+  typedef _S1TYPE_TYPENAME_CXXALIAS(IMPLINFO)           \
+    _S1TYPE_TYPENAME_CNAME(IMPLINFO)
 #else // defined(__cplusplus)
 #define S1TYPE_DECLARE(TYPEINFO)       _S1TYPE_DECLARE_BODY(TYPEINFO, _S1TYPE_BODY_DUMMY)
-#define _S1TYPE_DECLARE_FWD_RAW_1(TYPENAME)                     \
-  struct _S1BOOSTPP_CAT(TYPENAME, _s);                            \
+#define _S1TYPE_DECLARE_FWD_RAW_1(TYPENAME)             \
+  struct _S1BOOSTPP_CAT(TYPENAME, _s);                    \
   typedef struct _S1BOOSTPP_CAT(TYPENAME, _s) TYPENAME
-#define S1TYPE_DECLARE_FWD_RAW(TYPEINFO)        _S1TYPE_DECLARE_FWD_RAW_1(_S1TYPE_TYPENAME_CNAME(TYPEINFO))
+#define S1TYPE_DECLARE_FWD_RAW(TYPENAME, TYPEINFO)      \
+  _S1TYPE_DECLARE_FWD_RAW_1(_S1TYPE_TYPENAME_CNAME(TYPEINFO))
 #endif
 
 /**\def S1_TYPE_MAKE_NAME(Name)
@@ -138,11 +145,18 @@ typedef struct _S1BOOSTPP_CAT(T, _s) T
  * \internal
  * Forward-declare a type. Uses #S1_TYPE_MAKE_NAME to generate type name tuple.
  */
-#define S1TYPE_DECLARE_FWD(TYPENAME)    S1TYPE_DECLARE_FWD_RAW(S1_TYPE_MAKE_NAME(TYPENAME))
+#define S1TYPE_DECLARE_FWD(TYPENAME)    S1TYPE_DECLARE_FWD_RAW(TYPENAME, S1_TYPE_MAKE_NAME(TYPENAME))
 
 #define S1TYPE_INFO_s1_Object	(S1_TYPE_MAKE_NAME(Object), _S1BOOSTPP_NIL)
 
 #if defined(DOXYGEN_RUN)
+  /**
+   * Base "class" for public C API base objects.
+   * Provides reference counting facilities.
+   * All classes in the public API are derived from this class.
+   * \sa #S1TYPE_CAST
+   * \sa \ref refcounting
+   */
   S1TYPE_DECLARE(S1TYPE_INFO_s1_Object);
 #else
   #if defined(__cplusplus) && defined(S1_BUILD)
@@ -282,7 +296,18 @@ namespace s1
         return s1_get_ref_count (this);
       }
     };
-    
+  
+  #if !defined(DOXYGEN_RUN)
+    /* Note: If this class is _defined_, we there is _no_ well-known forward
+     * declaration!
+     * A well-known forward declaration causes a specialization to be forward-
+     * declared. */
+    template<typename T>
+    struct WellKnownForwardDecl
+    {
+    };
+  #endif
+
   S1_NS_CXXAPI_END
 
 #if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
