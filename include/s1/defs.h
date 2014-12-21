@@ -64,7 +64,9 @@
 #  define S1_FORCEINLINE
 #endif
 
-#if defined(DOXYGEN_RUN) || (defined(__cplusplus) && (__cplusplus >= 201103L))
+#if defined(DOXYGEN_RUN) \
+  || (defined(__cplusplus) && (__cplusplus >= 201103L)) \
+  || (defined(_MSC_VER) && (_MSC_VER >= 1600))
 /**\def S1_HAVE_RVALUES
  * Defined if compiler supports value types.
  */
