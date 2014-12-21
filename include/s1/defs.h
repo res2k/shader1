@@ -54,6 +54,8 @@
 
 #ifdef __GNUC__
 #  define S1_FORCEINLINE        __attribute__((always_inline))
+#elif defined(_MSC_VER)
+#  define S1_FORCEINLINE        __forceinline
 #else
   /**\def S1_FORCEINLINE
    * \internal
