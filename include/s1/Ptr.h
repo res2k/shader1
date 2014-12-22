@@ -292,31 +292,23 @@ namespace s1
     {
       return obj;
     }
-    
-    /// Helper function to create an instance by taking a reference
-#ifdef S1_HAVE_RVALUES
-    static Ptr Take (T* p)
-    {
-      return Ptr (p, TakeTag ());
-    }
-#else
-    static TransferRefPtr<T> Take (T* p)
-    {
-      return TransferRefPtr<T> (p);
-    }
-#endif
   };
 } // namespace s1
 
 /* Helper macro resolving to return type for pointers from API that already
- * have a reference */
+ * have a reference.
+ * Note: S1_RETURN_TRANSFER_REF() is a macro so it gets inlined on MSVC */
 #ifdef S1_HAVE_RVALUES
   // Prefer Ptr<> if we have rvalues. Also plays nicer with 'auto'
   #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
       ::s1::Ptr< Type >
+  #define S1_RETURN_TRANSFER_REF(Type, p)                              \
+      ::s1::Ptr<Type> ((p), ::s1::Ptr< Type >::TakeTag ())
 #else
   #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
       ::s1::TransferRefPtr< Type >
+  #define S1_RETURN_TRANSFER_REF(Type, p)                              \
+      (p)
 #endif
 
 #endif

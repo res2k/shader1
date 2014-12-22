@@ -204,7 +204,7 @@ namespace s1
       */
       S1_RETURN_TRANSFER_REF_TYPE(Options) CreateOptions ()
       {
-        return Ptr<Options>::Take (s1_options_create (this));
+        return S1_RETURN_TRANSFER_REF(Options, s1_options_create (this));
       }
       
       /**
@@ -221,7 +221,8 @@ namespace s1
                                                                     size_t sourceSize,
                                                                     unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
-        return Ptr<Program>::Take (s1_program_create_from_string (this, source, sourceSize, compatLevel));
+        return S1_RETURN_TRANSFER_REF(Program,
+          s1_program_create_from_string (this, source, sourceSize, compatLevel));
       }
       /**
        * Create a backend object.
@@ -233,7 +234,8 @@ namespace s1
        */
       S1_RETURN_TRANSFER_REF_TYPE(Backend) CreateBackend (const char* backend)
       {
-        return Ptr<Backend>::Take (s1_backend_create (this, backend));
+        return S1_RETURN_TRANSFER_REF(Backend,
+          s1_backend_create (this, backend));
       }
     };
   S1_NS_CXXAPI_END

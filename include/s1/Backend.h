@@ -95,7 +95,8 @@ namespace s1
        */
       S1_RETURN_TRANSFER_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target)
       {
-        return Ptr<CompiledProgram>::Take (s1_backend_generate_program (this, program, target));
+        return S1_RETURN_TRANSFER_REF (CompiledProgram,
+          s1_backend_generate_program (this, program, target));
       }
     };
   S1_NS_CXXAPI_END
