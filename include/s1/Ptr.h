@@ -33,12 +33,17 @@ namespace s1
     {
       typedef int Yes;
       typedef char No;
-      
-      template <typename T>
-      Yes IsDefinedHelper(int(*)[sizeof(T)]);
 
-      template <typename>
-      No IsDefinedHelper(...);
+      template<typename T>
+      struct IsDefinedHelper
+      {
+        static No tester(...);
+
+        template<typename U>
+        static Yes tester(U* p, typename U::Sentinel = typename U::Sentinel());
+
+        enum { Result = sizeof(tester((T*)0)) != sizeof(No) };
+      };
 
       // Call s1_release() for 'unknown' types - let compiler sort it out
       template<size_t S>
@@ -57,8 +62,8 @@ namespace s1
       };
       // Call s1_release() for a 'well-known' type - reinterpret to Object pointer
       template<>
-      struct PtrRefHelper<sizeof(No)> /* Note: if we have a well-known forward decl,
-                                         WellKnownForwardDecl<> is _not_ defined! */
+      struct PtrRefHelper<0> /* Note: if we have a well-known forward decl,
+                                WellKnownForwardDecl<> is _not_ defined! */
       {
         template<typename Ptr>
         static inline void AddRef (Ptr* p)
@@ -76,12 +81,12 @@ namespace s1
     template<typename T>
     inline void AddRefPtr (T* ptr)
     {
-      PtrRefHelper<sizeof(IsDefinedHelper<WellKnownForwardDecl<T> >(0))>::AddRef (ptr);
+      PtrRefHelper<IsDefinedHelper<WellKnownForwardDecl<T> >::Result>::AddRef (ptr);
     }
     template<typename T>
     inline void ReleasePtr (T* ptr)
     {
-      PtrRefHelper<sizeof(IsDefinedHelper<WellKnownForwardDecl<T> >(0))>::Release (ptr);
+      PtrRefHelper<IsDefinedHelper<WellKnownForwardDecl<T> >::Result>::Release (ptr);
     }
   } // namespace cxxapi
 

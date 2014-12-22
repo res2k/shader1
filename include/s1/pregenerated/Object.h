@@ -305,6 +305,7 @@ namespace s1
     template<typename T>
     struct WellKnownForwardDecl
     {
+      typedef int Sentinel;
     };
   #endif
 
