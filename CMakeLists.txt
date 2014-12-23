@@ -152,8 +152,9 @@ if(UNIX)
 endif()
 
 # LTO configuration
-set(S1_BUILD_LTO OFF CACHE BOOL "Enable building with LTO/LTCG")
+set(S1_BUILD_LTO ${MSVC} CACHE BOOL "Enable building with LTO/LTCG")
 if(S1_BUILD_LTO)
+  message(STATUS "LTO/LTCG is enabled")
   if(CMAKE_COMPILER_IS_GNUCXX)
     CxxCompilerFlagString (CXX_LTO_FLAG "-flto")
     CxxCompilerFlagString (CXX_NO_LTO_FLAG "-fno-lto")
