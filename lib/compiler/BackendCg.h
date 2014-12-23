@@ -34,7 +34,7 @@ namespace s1
 	CgProgram (Library* lib, const std::string& programString)
           : Program (lib), programString (programString) {}
       public:
-	std::string GetProgramString ();
+	const std::string& GetProgramString ();
       };
     public:
       BackendCg (Library* lib);

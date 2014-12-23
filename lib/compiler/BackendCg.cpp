@@ -61,7 +61,7 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    std::string BackendCg::CgProgram::GetProgramString ()
+    const std::string& BackendCg::CgProgram::GetProgramString ()
     {
       return programString;
     }

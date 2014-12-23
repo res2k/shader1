@@ -35,7 +35,7 @@ namespace s1
     public:
       Program (Library* lib) : LibraryObject (lib) {}
 
-      virtual std::string GetProgramString () = 0;
+      virtual const std::string& GetProgramString () = 0;
     };
     typedef boost::intrusive_ptr<Program> ProgramPtr;
     
