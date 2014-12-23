@@ -152,7 +152,7 @@ if(UNIX)
 endif()
 
 # LTO configuration
-set(S1_BUILD_LTO OFF CACHE BOOL "Enable building with LTO")
+set(S1_BUILD_LTO OFF CACHE BOOL "Enable building with LTO/LTCG")
 if(S1_BUILD_LTO)
   if(CMAKE_COMPILER_IS_GNUCXX)
     CxxCompilerFlagString (CXX_LTO_FLAG "-flto")
@@ -162,8 +162,15 @@ if(S1_BUILD_LTO)
     # Must be explicitly disabled as CMake passes CMAKE_CXX_FLAGS to
     # the linker as well.
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_NO_LTO_FLAG}")
+  elseif(MSVC)
+    foreach(mode RELEASE MINSIZEREL RELWITHDEBINFO)
+      set(CMAKE_CXX_FLAGS_${mode} "${CMAKE_CXX_FLAGS_${mode}} /GL")
+      set(CMAKE_EXE_LINKER_FLAGS_${mode} "${CMAKE_EXE_LINKER_FLAGS_${mode}} /LTCG")
+      set(CMAKE_SHARED_LINKER_FLAGS_${mode} "${CMAKE_SHARED_LINKER_FLAGS_${mode}} /LTCG")
+      set(CMAKE_STATIC_LINKER_FLAGS_${mode} "${CMAKE_STATIC_LINKER_FLAGS_${mode}} /LTCG")
+    endforeach()
   else()
-    message(WARNING "LTO is not supported for your compiler")
+    message(WARNING "LTO/LTCG is not supported for your compiler")
   endif()
 endif()
 
