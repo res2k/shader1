@@ -20,6 +20,7 @@
 #include "base/common.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/SequenceBuilder.h"
 #include "BlockImpl.h"
 #include "TestSequenceVisitor.h"
 
@@ -39,7 +40,7 @@ class IntermediateDeclTestSuite : public CxxTest::TestSuite
     public:
       typedef BlockImpl Superclass;
     
-      using Superclass::sequence;
+      using Superclass::sequenceBuilder;
     };
   };
 public:
@@ -68,7 +69,7 @@ public:
     testBlockImpl->FinishBlock(); // Needed for initializer emission
     
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 1);
     if (visitor.entries.size() < 1) return;
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opAssignment);

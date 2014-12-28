@@ -36,6 +36,7 @@ namespace s1
       typedef intermediate::RegisterPtr RegisterPtr;
       typedef intermediate::Sequence Sequence;
       typedef intermediate::SequencePtr SequencePtr;
+      typedef intermediate::SequenceBuilderPtr SequenceBuilderPtr;
       typedef intermediate::SequenceOpPtr SequenceOpPtr;
       
       intermediate::SequencePtr inputSeq;
@@ -61,19 +62,25 @@ namespace s1
 	
 	typedef std::pair<RegisterPtr, RegisterPtr> LoopedReg;
 	typedef std::vector<LoopedReg> LoopedRegs;
+        struct SplitResult
+        {
+          SequenceBuilderPtr seqBuilder;
+          Sequence::IdentifierToRegMap identToRegs_imp;
+          Sequence::IdentifierToRegMap identToRegs_exp;
+        };
 	void SplitBlock (const SequencePtr& blockSequence,
 			 const Sequence::IdentifierToRegMap& identToRegIDs_imp,
 			 const Sequence::IdentifierToRegMap& identToRegIDs_exp,
-			 SequenceOpPtr* newSequences,
+			 SplitResult* newSequences,
 			 bool keepEmpty = false,
 			 bool mergeUniformToVF = false);
 	
 	typedef std::pair<RegisterPtr, RegisterPtr> RegisterPair;
 	typedef std::vector<RegisterPair> RenamedBranchOutputs;
-	void EmitUnconditionalBranchBlock (const char* suffix, const SequenceOpPtr& blockOp, int f,
+	void EmitUnconditionalBranchBlock (const char* suffix, const SplitResult& splitRes, int f,
 					   RenamedBranchOutputs& outputs);
 	SequenceOpPtr AugmentBranchBlockWithRenames (const char* suffix,
-						     const SequenceOpPtr& blockOp,
+						     const SplitResult& splitRes,
 						     const RenamedBranchOutputs* renames,
 						     int f);
       public:
@@ -180,22 +187,22 @@ namespace s1
       const TransferRegsVector& GetTransferRegs (int srcFreq) const
       { return transferRegs[srcFreq]; }
       
-      intermediate::SequencePtr GetOutputUniformSequence ()
-      { return outputSeq[freqUniform]; }
-      intermediate::SequencePtr GetOutputVertexSequence ()
-      { return outputSeq[freqVertex]; }
-      intermediate::SequencePtr GetOutputFragmentSequence ()
-      { return outputSeq[freqFragment]; }
+      intermediate::SequenceBuilderPtr GetOutputUniformSequence ()
+      { return outputSeqBuilder[freqUniform]; }
+      intermediate::SequenceBuilderPtr GetOutputVertexSequence ()
+      { return outputSeqBuilder[freqVertex]; }
+      intermediate::SequenceBuilderPtr GetOutputFragmentSequence ()
+      { return outputSeqBuilder[freqFragment]; }
       
-      intermediate::SequencePtr GetOutputSequence (int freq)
-      { return outputSeq[freq]; }
+      intermediate::SequenceBuilderPtr GetOutputSequence (int freq)
+      { return outputSeqBuilder[freq]; }
       
       static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type);
     protected:
       ProgramSplitter& progSplit;
       bool mergeUniformToVF;
       
-      intermediate::SequencePtr outputSeq[freqNum];
+      intermediate::SequenceBuilderPtr outputSeqBuilder[freqNum];
       
       /** Registers to transfer to next frequency.
           The registers in element 0 need to be transferred from frequency 0 to frequency 1,

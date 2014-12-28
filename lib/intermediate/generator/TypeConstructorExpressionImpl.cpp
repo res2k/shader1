@@ -45,7 +45,7 @@ namespace s1
 													  std::vector<RegisterPtr>& regs,
 													  PostActionList& postActions)
     {
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
 	  
@@ -108,7 +108,7 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
       
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       switch (type->typeClass)
       {

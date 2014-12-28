@@ -28,7 +28,7 @@ namespace s1
     {
       class DeadCodeChecker;
     public:
-      static bool EliminateDeadCode (const intermediate::SequencePtr& outputSeq,
+      static bool EliminateDeadCode (const intermediate::SequenceBuilderPtr& outputSeq,
 				     const intermediate::SequencePtr& inputSeq,
 				     const intermediate::RegisterSet& usedRegistersSeed);
     };

@@ -72,7 +72,7 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr ();
       
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
 

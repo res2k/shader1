@@ -29,7 +29,7 @@ namespace s1
       class InlineBlockVisitor;
       class InliningVisitor;
     public:
-      static bool InlineAllBlocks (const intermediate::SequencePtr& outputSeq,
+      static bool InlineAllBlocks (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 				   const intermediate::SequencePtr& inputSeq);
     };
   } // namespace optimize

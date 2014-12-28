@@ -34,6 +34,8 @@ namespace s1
     
     class Sequence
     {
+      friend class SequenceBuilder;
+
       typedef std::vector<SequenceOpPtr> OpsVector;
       OpsVector ops;
     public:
@@ -61,32 +63,11 @@ namespace s1
       typedef boost::shared_ptr<Register> RegisterPtr;
       typedef boost::unordered_set<RegisterPtr> RegisterSet;
       
-      /** \name Sequence manipulation
-       * @{ */
-      /// Add an operation
-      void AddOp (SequenceOpPtr op);
-      /// Insert an operation
-      void InsertOp (size_t before, SequenceOpPtr op);
-      /// Get number of operations
-      size_t GetNumOps() const { return ops.size(); }
-      /// Get a specific op
-      SequenceOpPtr GetOp(size_t index) const { return ops[index]; }
-      /// Clear sequence
-      void Clear ();
-      /** @} */
-      
-      RegisterPtr AllocateRegister (const TypePtr& originalType,
-				    const UnicodeString& name);
-      RegisterPtr AllocateRegister (const RegisterPtr& oldReg);
-      
-      void SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& regID);
-      RegisterPtr GetIdentifierRegister (const UnicodeString& identifier) const;
-      
       typedef boost::unordered_map<UnicodeString, RegisterPtr> IdentifierToRegMap;
-      /// Get current identifiers-to-register map
-      const IdentifierToRegMap& GetIdentifierToRegisterMap () const
-      { return identToReg; }
-      void SetIdentifierRegisters (const IdentifierToRegMap& map);
+      /// Get number of operations
+      size_t GetNumOps() const;
+      /// Get a specific op
+      SequenceOpPtr GetOp(size_t index) const;
       
       void Visit (SequenceVisitor& visitor) const;
       void ReverseVisit (SequenceVisitor& visitor) const;
@@ -94,49 +75,27 @@ namespace s1
       typedef std::pair<UnicodeString, RegisterPtr> IdentRegPair;
       typedef std::vector<IdentRegPair> RegisterImpMappings;
       const RegisterImpMappings& GetImports () const { return imports; }
-      /**
-       * Set an import mapping for a register.
-       * \a localReg will be initialized with the value from \a parentRegName
-       * in the parent scope. If a mapping for \a localReg already exists
-       * it will be replaced.
-       */
-      void SetImport (const RegisterPtr& localReg,
-		      const UnicodeString& parentRegName);
-      void AddImports (const RegisterImpMappings& imports);
+
       typedef boost::unordered_map<UnicodeString, RegisterPtr> RegisterExpMappings;
-      const RegisterExpMappings& GetExports () const { return exports; }
-      RegisterExpMappings& GetExports () { return exports; }
-      /**
-       * Set an export mapping for a register.
-       * When the block ends, the value of \a parentRegName in the parent scope
-       * will be set to the value of \a localReg. If a mapping for \a parentRegName already
-       * exists it will be replaced.
-       */
-      void SetExport (const UnicodeString& parentRegName,
-		      const RegisterPtr& localReg);
-      void AddExports (const RegisterExpMappings& exports);
+      const RegisterExpMappings& GetExports () const;
+      RegisterPtr GetExport (const UnicodeString& name) const;
 
       RegisterSet GetAllReadRegisters() const;
       RegisterSet GetAllWrittenRegisters() const;
       
       /**
        * Get imported registers from outer sequence.
-       * \a identToReg is the identifier-to-register mapping, from the outer sequence, to be used
-       * to resolve names.
+       * \a identToReg is the identifier-to-register mapping, from the outer sequence builder,
+       * to be used to resolve names.
        */
       RegisterSet GetImportOuterRegs (const IdentifierToRegMap& identToReg);
       /**
        * Get exported registers from outer sequence.
-       * \a identToReg is the identifier-to-register mapping, from the outer sequence, to be used
-       * to resolve names.
+       * \a identToReg is the identifier-to-register mapping, from the outer sequence builder,
+       * to be used to resolve names.
        */
       RegisterSet GetExportOuterRegs (const IdentifierToRegMap& identToReg);
-		      
-      void CleanUnusedImportsExports (const RegisterSet& keepImports = RegisterSet (),
-				      const RegisterSet& keepExports = RegisterSet ());
     protected:
-      IdentifierToRegMap identToReg;
-      
       RegisterImpMappings imports;
       RegisterExpMappings exports;
     };

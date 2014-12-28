@@ -33,7 +33,7 @@ namespace s1
     public:
       OptimizeSequenceDeadCodeEliminate (const intermediate::RegisterSet& usedRegistersSeed);
       
-      unsigned int Apply (const intermediate::SequencePtr& outputSeq,
+      unsigned int Apply (const intermediate::SequenceBuilderPtr& outputSeq,
 			  const intermediate::SequencePtr& inputSeq);
 			  
       unsigned int FilterOptimizerFlags (unsigned int optimizers)

@@ -54,7 +54,7 @@ class DeadCodeEliminationTestSuite : public CxxTest::TestSuite
     public:
       typedef BlockImpl Superclass;
     
-      using Superclass::sequence;
+      using Superclass::sequenceBuilder;
     };
   };
 public:
@@ -86,11 +86,12 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 0);
@@ -124,12 +125,13 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("a"));
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    usedRegs.insert (testBlockImpl->GetSequenceBuilder()->GetIdentifierRegister ("a"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -164,11 +166,12 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 0);
@@ -202,12 +205,13 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("c"));
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    usedRegs.insert (testBlockImpl->GetSequenceBuilder()->GetIdentifierRegister ("c"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 3);
@@ -253,11 +257,12 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 0);
@@ -299,12 +304,13 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("a"));
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    usedRegs.insert (testBlockImpl->GetSequenceBuilder()->GetIdentifierRegister ("a"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -364,12 +370,13 @@ public:
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
     testBlockImpl->FinishBlock();
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("b"));
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    usedRegs.insert (testBlockImpl->GetSequenceBuilder()->GetIdentifierRegister ("b"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 2);
@@ -429,12 +436,13 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("a"));
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    usedRegs.insert (testBlockImpl->GetSequenceBuilder()->GetIdentifierRegister ("a"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -492,11 +500,12 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 0);
@@ -534,12 +543,13 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;
-    usedRegs.insert (testBlockImpl->GetSequence()->GetIdentifierRegister ("a"));
-    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeq, testBlockImpl->GetSequence(), usedRegs);
+    usedRegs.insert (testBlockImpl->GetSequenceBuilder()->GetIdentifierRegister ("a"));
+    bool codeEliminated = s1::optimize::DeadCodeElimination::EliminateDeadCode (newSeqBuilder, testBlockImpl->GetSequence(), usedRegs);
     TS_ASSERT_EQUALS (codeEliminated, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 2);

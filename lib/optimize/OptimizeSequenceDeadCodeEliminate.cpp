@@ -18,6 +18,8 @@
 #include "base/common.h"
 #include "OptimizeSequenceDeadCodeEliminate.h"
 
+#include "intermediate/SequenceBuilder.h"
+
 #include "optimize/DeadCodeElimination.h"
 
 namespace s1
@@ -29,7 +31,7 @@ namespace s1
     {
     }
     
-    unsigned int OptimizeSequenceDeadCodeEliminate::Apply (const intermediate::SequencePtr& outputSeq,
+    unsigned int OptimizeSequenceDeadCodeEliminate::Apply (const intermediate::SequenceBuilderPtr& outputSeq,
 							   const intermediate::SequencePtr& inputSeq)
     {
       bool seqChanged = DeadCodeElimination::EliminateDeadCode (outputSeq, inputSeq, usedRegistersSeed);

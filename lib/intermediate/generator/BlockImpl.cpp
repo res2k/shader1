@@ -20,6 +20,7 @@
 #include "BlockImpl.h"
 
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "intermediate/SequenceOp/SequenceOpBranch.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
@@ -45,7 +46,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 ScopePtr innerScope)
      : handler (handler), innerScope (innerScope),
-       sequence (boost::make_shared<Sequence> ())
+       sequenceBuilder (boost::make_shared<SequenceBuilder> ())
     {
       char newCondName[sizeof (varConditionName) + charsToFormatInt + 1];
       snprintf (newCondName, sizeof (newCondName), "%s%d", varConditionName, 
@@ -109,7 +110,7 @@ namespace s1
 	retValRegs.push_back (retValReg);
 	
 	// @@@ This is a hack so the return val out param is later correctly "seen" by the splitter.
-	sequence->SetExport (varReturnValueName, retValReg);
+	sequenceBuilder->SetExport (varReturnValueName, retValReg);
       }
       else
       {
@@ -121,11 +122,11 @@ namespace s1
       const std::vector<UnicodeString>& outputParams = blockScopeImpl->GetFunctionOutputParams();
       BOOST_FOREACH(const UnicodeString& identifier, outputParams)
       {
-	retValRegs.push_back (sequence->GetIdentifierRegister (identifier));
+	retValRegs.push_back (sequenceBuilder->GetIdentifierRegister (identifier));
       }
 
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValRegs));
-      sequence->AddOp (seqOp);
+      sequenceBuilder->AddOp (seqOp);
     }
 
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddBranching (ExpressionPtr branchCondition,
@@ -184,7 +185,7 @@ namespace s1
          insertion_ is needed, hence the snapshot.
          Also, do it before allocating new registers for the 'written registers',
          as we want the ID before that */
-      Sequence::IdentifierToRegMap identifierToRegMap (sequence->GetIdentifierToRegisterMap ());
+      Sequence::IdentifierToRegMap identifierToRegMap (sequenceBuilder->GetIdentifierToRegisterMap ());
       
       NameImplSet allExportedNames (ifBlockImpl->exportedNames);
       allExportedNames.insert (elseBlockImpl->exportedNames.begin(), elseBlockImpl->exportedNames.end());
@@ -249,13 +250,13 @@ namespace s1
       
       SequenceOpPtr seqOpIf (boost::make_shared<SequenceOpBlock> (ifBlockImpl->GetSequence(),
 								  identifierToRegMap,
-								  sequence->GetIdentifierToRegisterMap ()));
+								  sequenceBuilder->GetIdentifierToRegisterMap ()));
       SequenceOpPtr seqOpElse (boost::make_shared<SequenceOpBlock> (elseBlockImpl->GetSequence(),
 								    identifierToRegMap,
-								    sequence->GetIdentifierToRegisterMap ()));
+								    sequenceBuilder->GetIdentifierToRegisterMap ()));
       
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpBranch> (condReg, seqOpIf, seqOpElse));
-      sequence->AddOp (seqOp);
+      sequenceBuilder->AddOp (seqOp);
     }
 
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock)
@@ -332,7 +333,7 @@ namespace s1
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
-      sequence->AddOp (seqOp);
+      sequenceBuilder->AddOp (seqOp);
     }
 
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond,
@@ -433,14 +434,25 @@ namespace s1
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
-      sequence->AddOp (seqOp);
+      sequenceBuilder->AddOp (seqOp);
     }
     
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (BlockPtr block)
     {
       FlushVariableInitializers();
       SequenceOpPtr seqOp (CreateBlockSeqOp (block));
-      sequence->AddOp (seqOp);
+      sequenceBuilder->AddOp (seqOp);
+    }
+    
+    const SequencePtr& IntermediateGeneratorSemanticsHandler::BlockImpl::GetSequence()
+    {
+      FlushVariableInitializers();
+      return GetSequenceBuilder()->GetSequence();
+    }
+    
+    const SequenceBuilderPtr& IntermediateGeneratorSemanticsHandler::BlockImpl::GetSequenceBuilder()
+    {
+      return sequenceBuilder;
     }
     
     void IntermediateGeneratorSemanticsHandler::BlockImpl::FlushVariableInitializers()
@@ -486,7 +498,7 @@ namespace s1
       }
       
       SequenceOpPtr seqOp (CreateBlockSeqOp (globalsInitBlock, NameImplSet()));
-      sequence->AddOp (seqOp);
+      sequenceBuilder->AddOp (seqOp);
     }
 
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
@@ -518,7 +530,7 @@ namespace s1
          insertion_ is needed, hence the snapshot.
          Also, do it before allocating new registers for the 'written registers',
          as we want the ID before that */
-      Sequence::IdentifierToRegMap identifierToRegIDMap (sequence->GetIdentifierToRegisterMap ());
+      Sequence::IdentifierToRegMap identifierToRegIDMap (sequenceBuilder->GetIdentifierToRegisterMap ());
       // Generate register IDs for all values the nested block exports
       std::vector<RegisterPtr> writtenRegisters;
       {
@@ -537,7 +549,7 @@ namespace s1
       // Apply overrides for register IDs of exported identifiers
       return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
 						  identifierToRegIDMap,
-						  sequence->GetIdentifierToRegisterMap ());
+						  sequenceBuilder->GetIdentifierToRegisterMap ());
     }
 
     IntermediateGeneratorSemanticsHandler::NameImplPtr
@@ -595,18 +607,18 @@ namespace s1
 			"_B%d", d);
 	    importName.append (distSuffix);
 	  }
-	  reg = handler->AllocateRegister (*sequence, name->valueType, Imported,
+	  reg = handler->AllocateRegister (*sequenceBuilder, name->valueType, Imported,
 					  importName);
-	  if (doImport) sequence->SetImport (reg, name->identifier);
+	  if (doImport) sequenceBuilder->SetImport (reg, name->identifier);
 	}
 	else
 	{
-	  reg = handler->AllocateRegister (*sequence, name->valueType, Variable,
+	  reg = handler->AllocateRegister (*sequenceBuilder, name->valueType, Variable,
 					    name->identifier);
 	}
 	nameReg.initiallyWriteable = writeable;
 	nameReg.initialReg = reg;
-	sequence->SetIdentifierRegister (name->identifier, reg);
+	sequenceBuilder->SetIdentifierRegister (name->identifier, reg);
       }
       else
       {
@@ -614,13 +626,13 @@ namespace s1
 	{
 	  if (name->varConstant)
 	    throw Exception (AssignmentTargetIsNotAnLValue);
-	  reg = handler->AllocateRegister (*sequence, reg);
-	  sequence->SetIdentifierRegister (name->identifier, reg);
+	  reg = handler->AllocateRegister (*sequenceBuilder, reg);
+	  sequenceBuilder->SetIdentifierRegister (name->identifier, reg);
 	}
       }
       if (doExport)
       {
-	sequence->SetExport (name->identifier, reg);
+	sequenceBuilder->SetExport (name->identifier, reg);
 	exportedNames.insert (name);
       }
       return reg;
@@ -633,9 +645,9 @@ namespace s1
       newRegPtr->StealName (*origRegPtr);
       NameReg& nameReg = nameRegisters[name];
       nameReg.reg = newRegPtr;
-      sequence->SetIdentifierRegister (name->identifier, newRegPtr);
+      sequenceBuilder->SetIdentifierRegister (name->identifier, newRegPtr);
       if (nameReg.isImported)
-	sequence->SetExport (name->identifier, newRegPtr);
+	sequenceBuilder->SetExport (name->identifier, newRegPtr);
       return true;
     }
   } // namespace intermediate

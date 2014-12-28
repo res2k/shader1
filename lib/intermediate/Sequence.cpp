@@ -58,60 +58,16 @@ namespace s1
     
     // ----------------------------------------------------------------------
     
-    void Sequence::AddOp (SequenceOpPtr op)
+    size_t Sequence::GetNumOps() const
     {
-      ops.push_back (op);
-    }
-    
-    void Sequence::InsertOp (size_t before, SequenceOpPtr op)
-    {
-      ops.insert (ops.begin() + before, op);
-    }
-      
-    void Sequence::Clear ()
-    {
-      ops.clear();
-      identToReg.clear();
-      imports.clear();;
-      exports.clear();;
+      return ops.size();
     }
 
-    RegisterPtr Sequence::AllocateRegister (const TypePtr& originalType,
-					    const UnicodeString& name)
+    SequenceOpPtr Sequence::GetOp(size_t index) const
     {
-      RegisterPtr reg (boost::make_shared<Register> (name, originalType));
-      return reg;
-    }
-    
-    RegisterPtr Sequence::AllocateRegister (const RegisterPtr& oldReg)
-    {
-      if (!oldReg) return RegisterPtr ();
-      
-      RegisterPtr reg (boost::make_shared<Register> (*oldReg));
-      return reg;
+      return ops[index];
     }
 
-    void Sequence::SetIdentifierRegister (const UnicodeString& identifier, const RegisterPtr& reg)
-    {
-      identToReg[identifier] = reg;
-    }
-    
-    RegisterPtr Sequence::GetIdentifierRegister (const UnicodeString& identifier) const
-    {
-      IdentifierToRegMap::const_iterator regIt = identToReg.find (identifier);
-      if (regIt != identToReg.end())
-	return regIt->second;
-      return RegisterPtr ();
-    }
-
-    void Sequence::SetIdentifierRegisters (const IdentifierToRegMap& map)
-    {
-      BOOST_FOREACH(const IdentRegPair& i2r, map)
-      {
-	identToReg[i2r.first] = i2r.second;
-      }
-    }
-      
     void Sequence::Visit (SequenceVisitor& visitor) const
     {
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
@@ -131,46 +87,20 @@ namespace s1
       }
       visitor.SetVisitedOp (SequenceOpPtr ());
     }
-    
-    void Sequence::SetImport (const RegisterPtr& localReg,
-			      const UnicodeString& parentRegName)
+
+    const Sequence::RegisterExpMappings& Sequence::GetExports () const
     {
-      RegisterImpMappings::iterator it = imports.begin();
-      while (it != imports.end())
-      {
-	if (it->second == localReg)
-	{
-	  it->first = parentRegName;
-	  return;
-	}
-	++it;
-      }
-	
-      imports.push_back (std::make_pair (parentRegName, localReg));
+      return exports;
     }
     
-    void Sequence::AddImports (const RegisterImpMappings& imports)
+    RegisterPtr Sequence::GetExport (const UnicodeString& name) const
     {
-      BOOST_FOREACH(const IdentRegPair& imp, imports)
-      {
-	SetImport (imp.second, imp.first);
-      }
+      RegisterExpMappings::const_iterator it (exports.find (name));
+      if (it != exports.end())
+        return it->second;
+      return RegisterPtr();
     }
-    
-    void Sequence::SetExport (const UnicodeString& parentRegName,
-			      const RegisterPtr& local)
-    {
-      exports[parentRegName] = local;
-    }
-    
-    void Sequence::AddExports (const RegisterExpMappings& exports)
-    {
-      BOOST_FOREACH(const IdentRegPair& exp, exports)
-      {
-	this->exports[exp.first] = exp.second;
-      }
-    }
-    
+
     RegisterSet Sequence::GetAllReadRegisters() const
     {
       RegisterSet allReadRegisters;
@@ -224,49 +154,6 @@ namespace s1
       }
       return exportRegs;
     }
-    
-    void Sequence::CleanUnusedImportsExports (const RegisterSet& keepImports,
-					      const RegisterSet& keepExports)
-    {
-      RegisterSet allReadRegisters (GetAllReadRegisters ());
-      RegisterSet allWrittenRegisters (GetAllWrittenRegisters ());
-      
-      // Forcibly kept import/export regs are treated like read/written
-      allReadRegisters.insert (keepImports.begin(), keepImports.end());
-      allWrittenRegisters.insert (keepExports.begin(), keepExports.end());
-      // Import destinations are considered 'written'
-      BOOST_FOREACH(const IdentRegPair& imp, imports)
-      {
-	allWrittenRegisters.insert (imp.second);
-      }
-      // Export sources are considered 'read'
-      BOOST_FOREACH(const IdentRegPair& exp, exports)
-      {
-	allReadRegisters.insert (exp.second);
-      }
-      
-      {
-	RegisterImpMappings::iterator it = imports.begin();
-	while (it != imports.end())
-	{
-	  if (allReadRegisters.count (it->second) == 0)
-	    it = imports.erase (it);
-	  else
-	    ++it;
-	}
-      }
-      {
-	RegisterExpMappings::iterator it = exports.begin();
-	while (it != exports.end())
-	{
-	  if (allWrittenRegisters.count (it->second) == 0)
-	    it = exports.erase (it);
-	  else
-	    ++it;
-	}
-      }
-    }
-
   } // namespace intermediate
 } // namespace s1
 

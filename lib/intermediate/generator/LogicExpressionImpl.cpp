@@ -77,7 +77,7 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
       
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
 	
       // Set up registers for operand values
       RegisterPtr orgReg1, reg1;
@@ -85,7 +85,7 @@ namespace s1
       RegisterPtr orgReg2, reg2;
       orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       
-      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (seq, GetValueType(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;

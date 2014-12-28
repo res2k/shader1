@@ -280,7 +280,7 @@ namespace s1
       return boost::static_pointer_cast<TypeImpl> (attrType);
     }
     
-    RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
+    RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
 									 const TypeImplPtr& type,
 									 RegisterClassification classify,
 									 const UnicodeString& name)
@@ -298,16 +298,16 @@ namespace s1
 	regName.append (regNumStr);
       }
       
-      return seq.AllocateRegister (type, regName);
+      return seqBuilder.AllocateRegister (type, regName);
     }
 
-    RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (Sequence& seq,
+    RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
 									 const RegisterPtr& oldReg)
     {
-      return seq.AllocateRegister (oldReg);
+      return seqBuilder.AllocateRegister (oldReg);
     }
       
-    void IntermediateGeneratorSemanticsHandler::GenerateCast (Sequence& seq,
+    void IntermediateGeneratorSemanticsHandler::GenerateCast (SequenceBuilder& seqBuilder,
 							      const RegisterPtr& castDestination,
 							      const TypeImplPtr& typeDestination,
 							      const RegisterPtr& castSource,
@@ -335,7 +335,7 @@ namespace s1
 	  }
 	  if (seqOp)
 	  {
-	    seq.AddOp (seqOp);
+	    seqBuilder.AddOp (seqOp);
 	    return;
 	  }
 	  break;
@@ -356,8 +356,8 @@ namespace s1
 	  if (!destBaseType->IsEqual (*(typeSource)))
 	  {
 	    // Generate cast
-	    RegisterPtr srcVecReg (AllocateRegister (seq, destBaseType, Intermediate));
-	    GenerateCast (seq, srcVecReg, destBaseType, castSource, typeSource);
+	    RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
+	    GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
 	    srcReg = srcVecReg;
 	  }
 	  else
@@ -393,7 +393,7 @@ namespace s1
 	  }
 	  if (seqOp)
 	  {
-	    seq.AddOp (seqOp);
+	    seqBuilder.AddOp (seqOp);
 	    return;
 	  }
 	  break;

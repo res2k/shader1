@@ -32,14 +32,16 @@ namespace s1
       bool& seqChanged;
       intermediate::RegisterSet usedRegisters;
     public:
-      DeadCodeChecker (const intermediate::SequencePtr& outputSeq,
+      DeadCodeChecker (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 		       const intermediate::RegisterSet& usedRegistersSeed,
 		       bool& seqChanged)
-       : CommonSequenceVisitor (outputSeq), seqChanged (seqChanged), usedRegisters (usedRegistersSeed)
+       : CommonSequenceVisitor (outputSeqBuilder),
+         seqChanged (seqChanged),
+         usedRegisters (usedRegistersSeed)
       {
       }
       
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+      CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
 				    const RegisterMap& regMap)
       {
 	intermediate::RegisterSet newUsedRegisters;
@@ -51,23 +53,23 @@ namespace s1
 	    newUsedRegisters.insert (newSeqReg->second);
 	  }
 	}
-	return new DeadCodeChecker (newSequence, newUsedRegisters, seqChanged);
+	return new DeadCodeChecker (newSequenceBuilder, newUsedRegisters, seqChanged);
       }
       
       bool VisitBackwards() const { return true; }
       
       void PostVisitSequence (CommonSequenceVisitor* visitor,
-			      const intermediate::SequencePtr& newSequence,
+			      const intermediate::SequenceBuilderPtr& newSequenceBuilder,
 			      const RegisterMap& regMap)
       {
-	newSequence->CleanUnusedImportsExports();
+	newSequenceBuilder->CleanUnusedImportsExports();
       }
       
       void AddOpToSequence (const SequenceOpPtr& seqOp)
       {
 	// DeadCodeChecker is meant to use with reverse Sequence visiting,
 	// so to 'add' an op, insert it at the beginning
-	newSequence->InsertOp (0, seqOp);
+	newSequenceBuilder->InsertOp (0, seqOp);
       }
       
       void OpConstBool (const RegisterPtr& destination,
@@ -505,12 +507,12 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    bool DeadCodeElimination::EliminateDeadCode (const intermediate::SequencePtr& outputSeq,
+    bool DeadCodeElimination::EliminateDeadCode (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 						 const intermediate::SequencePtr& inputSeq,
 						 const intermediate::RegisterSet& usedRegistersSeed)
     {
       bool seqChanged (false);
-      DeadCodeChecker checker (outputSeq, usedRegistersSeed, seqChanged);
+      DeadCodeChecker checker (outputSeqBuilder, usedRegistersSeed, seqChanged);
       inputSeq->ReverseVisit (checker);
       return seqChanged;
     }

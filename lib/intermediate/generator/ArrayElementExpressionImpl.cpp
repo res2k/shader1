@@ -52,7 +52,7 @@ namespace s1
 												  RegisterClassification classify,
 												  bool asLvalue)
     {
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
 
       boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
       boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));
@@ -97,7 +97,7 @@ namespace s1
     {
       if (!wasLvalue) return;
       
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
       boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));

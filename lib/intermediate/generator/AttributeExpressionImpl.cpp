@@ -50,7 +50,7 @@ namespace s1
 											       RegisterClassification classify,
 											       bool asLvalue)
     {
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       switch (attr.attrClass)
       {
@@ -150,7 +150,7 @@ namespace s1
     {
       if (!wasLvalue) return;
       
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       // Generate assignment from register to actual target
       boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));

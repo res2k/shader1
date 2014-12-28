@@ -19,6 +19,7 @@
 #include "base/common.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/SequenceBuilder.h"
 // FIXME: Tests using too much intermediate internals
 #include "BlockImpl.h"
 #include "NameImpl.h"
@@ -43,7 +44,7 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
     public:
       typedef BlockImpl Superclass;
     
-      using Superclass::sequence;
+      using Superclass::sequenceBuilder;
     };
     
     class TestNameImpl : public NameImpl
@@ -120,7 +121,7 @@ public:
       boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varB);
       
     TestImportedNameResolver nameRes;
-    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
+    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
     TS_ASSERT_EQUALS(generateResult->Size(), 1);
@@ -172,7 +173,7 @@ public:
       boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varC);
       
     TestImportedNameResolver nameRes;
-    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
+    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
     
     std::string varARegName (seqGen.GetOutputRegisterName (

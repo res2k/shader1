@@ -51,9 +51,9 @@ namespace s1
       : public CloningSequenceVisitor
     {
     public:
-      BlockNestingSequenceVisitor (const SequencePtr& newSequence,
+      BlockNestingSequenceVisitor (const SequenceBuilderPtr& newSequenceBuilder,
 				   CloningSequenceVisitor* owner)
-       : CloningSequenceVisitor (newSequence), owner (owner) {}
+       : CloningSequenceVisitor (newSequenceBuilder), owner (owner) {}
       
       void SetVisitedOp (const SequenceOpPtr& op) { }
       
@@ -163,7 +163,7 @@ namespace s1
     protected:
       CloningSequenceVisitor* owner;
       
-      CloningSequenceVisitor* Clone (const SequencePtr& newSequence,
+      CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
 				    const RegisterMap& regMap)
       {
 	assert (false);
@@ -173,8 +173,8 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    CloningSequenceVisitor::CloningSequenceVisitor (const SequencePtr& newSequence)
-     : newSequence (newSequence)
+    CloningSequenceVisitor::CloningSequenceVisitor (const SequenceBuilderPtr& newSequenceBuilder)
+     : newSequenceBuilder (newSequenceBuilder)
     {}
 
     void CloningSequenceVisitor::NestedBlock (CloningSequenceVisitor* handlingVisitor,
@@ -182,10 +182,10 @@ namespace s1
 					     const Sequence::IdentifierToRegMap& identToReg_imp,
 					     const Sequence::IdentifierToRegMap& identToReg_exp)
     {
-      SequencePtr newSeq (boost::make_shared<Sequence> ());
-      newSeq->AddImports (seq->GetImports ());
-      newSeq->AddExports (seq->GetExports ());
-      newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
+      SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+      newSeqBuilder->AddImports (seq->GetImports ());
+      newSeqBuilder->AddExports (seq->GetExports ());
+      //newSeq->SetIdentifierRegisters  (seq->GetIdentifierToRegisterMap());
       
       RegisterMap regMap;
       for (Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
@@ -206,12 +206,12 @@ namespace s1
       }
       
       {
-	boost::scoped_ptr<CloningSequenceVisitor> visitor (Clone (newSeq, regMap));
+	boost::scoped_ptr<CloningSequenceVisitor> visitor (Clone (newSeqBuilder, regMap));
 	if (VisitBackwards())
 	  seq->ReverseVisit (*visitor);
 	else
 	  seq->Visit (*visitor);
-	PostVisitSequence (visitor.get(), newSeq, regMap);
+	PostVisitSequence (visitor.get(), newSeqBuilder, regMap);
       }
       
       //CloningSequenceVisitor::OpBlock (newSeq, identToReg_imp, identToReg_exp);
@@ -232,7 +232,7 @@ namespace s1
       }
       
       SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpBlock> (newSeq,
+	boost::make_shared<SequenceOpBlock> (newSeqBuilder->GetSequence(),
 							   newIdentToReg_imp,
 							   newIdentToReg_exp));
       handlingVisitor->AddOpToSequence (newOp);
@@ -453,22 +453,24 @@ namespace s1
       SequenceOpPtr newSeqOpIf;
       if (seqOpIf)
       {
-	SequencePtr newSeq (boost::make_shared<Sequence> ());
-	BlockNestingSequenceVisitor visitor (newSeq, this);
+        SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+        BlockNestingSequenceVisitor visitor (newSeqBuilder, this);
 	visitor.SetVisitedOp (seqOpIf);
 	seqOpIf->Visit (visitor);
 	
+        SequencePtr newSeq (newSeqBuilder->GetSequence());
 	assert (newSeq->GetNumOps() == 1);
 	newSeqOpIf = newSeq->GetOp (0);
       }
       SequenceOpPtr newSeqOpElse;
       if (seqOpElse)
       {
-	SequencePtr newSeq (boost::make_shared<Sequence> ());
-	BlockNestingSequenceVisitor visitor (newSeq, this);
+        SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+        BlockNestingSequenceVisitor visitor (newSeqBuilder, this);
 	visitor.SetVisitedOp (seqOpElse);
 	seqOpElse->Visit (visitor);
 	
+        SequencePtr newSeq (newSeqBuilder->GetSequence());
 	assert (newSeq->GetNumOps() == 1);
 	newSeqOpElse = newSeq->GetOp (0);
       }
@@ -487,11 +489,12 @@ namespace s1
       SequenceOpPtr newSeqOpBody;
       if (seqOpBody)
       {
-	SequencePtr newSeq (boost::make_shared<Sequence> ());
-	BlockNestingSequenceVisitor visitor (newSeq, this);
+        SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+        BlockNestingSequenceVisitor visitor (newSeqBuilder, this);
 	visitor.SetVisitedOp (seqOpBody);
 	seqOpBody->Visit (visitor);
 	
+        SequencePtr newSeq (newSeqBuilder->GetSequence());
 	assert (newSeq->GetNumOps() == 1);
 	newSeqOpBody = newSeq->GetOp (0);
       }

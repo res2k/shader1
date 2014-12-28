@@ -28,7 +28,7 @@ namespace s1
     class OptimizeSequenceConstantFolding : public OptimizeSequenceStep
     {
     public:
-      unsigned int Apply (const intermediate::SequencePtr& outputSeq,
+      unsigned int Apply (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 			  const intermediate::SequencePtr& inputSeq);
 			  
       unsigned int FilterOptimizerFlags (unsigned int optimizers)

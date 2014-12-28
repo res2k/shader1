@@ -55,7 +55,7 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
     public:
       typedef BlockImpl Superclass;
     
-      using Superclass::sequence;
+      using Superclass::sequenceBuilder;
     };
     
     class TestNameImpl : public NameImpl
@@ -128,17 +128,14 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
     
+    SequencePtr sequence (testBlockImpl->sequenceBuilder->GetSequence());
     TestImportedNameResolver nameRes;
-    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequence), &nameRes);
+    TestCodeGenerator::TestSequenceCodeGenerator seqGen (*sequence, &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
-    
-    // First (and only) op in sequence is a block op
-    boost::shared_ptr<s1::intermediate::SequenceOpBlock> blockOp (
-      boost::static_pointer_cast<s1::intermediate::SequenceOpBlock> (testBlockImpl->sequence->GetOp (0)));
     
     StringStringMap substMap;
     substMap["A"] = CgGenerator::NameToCgIdentifier (
-      testBlockImpl->sequence->GetIdentifierRegister ("a")->GetName ());
+      testBlockImpl->sequenceBuilder->GetIdentifierRegister ("a")->GetName ());
     TS_ASSERT_EQUALS(generateResult->Size(), 4);
     unsigned int l = 0;
     if (l >= generateResult->Size()) return;

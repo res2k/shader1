@@ -144,8 +144,8 @@ namespace s1
 	  boost::shared_ptr<TypeImpl> formalParamType (boost::static_pointer_cast<TypeImpl> (param.type));
 	  if (!paramExprType->IsEqual (*formalParamType))
 	  {
-	    RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequence()), formalParamType, Intermediate));
-	    handler->GenerateCast (*(block.GetSequence()), targetReg, formalParamType, inReg, paramExprType);
+	    RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequenceBuilder()), formalParamType, Intermediate));
+	    handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType);
 	    inReg = targetReg;
 	  }
 	  inParams.push_back (inReg);
@@ -163,7 +163,7 @@ namespace s1
       RegisterPtr destination;
       boost::shared_ptr<TypeImpl> retType (GetValueType());
       if (!retType->IsEqual (*(handler->GetVoidType())))
-	destination = handler->AllocateRegister (*(block.GetSequence()), retType, classify);
+	destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);
       
       SequenceOpPtr seqOp;
       if (overload->builtin)
@@ -175,7 +175,7 @@ namespace s1
 	  outParams.insert (outParams.begin(), destination);
 	seqOp = boost::make_shared<SequenceOpFunctionCall> (overload->identifier, inParams, outParams);
       }
-      block.GetSequence()->AddOp (seqOp);
+      block.GetSequenceBuilder()->AddOp (seqOp);
       
       for (PostActions::const_iterator postAction (postActions.begin());
 	   postAction != postActions.end();

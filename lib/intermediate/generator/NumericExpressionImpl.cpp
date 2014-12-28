@@ -67,7 +67,7 @@ namespace s1
       
       U_NAMESPACE_USE
       
-      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType(), classify));
       
       // Mark 'destination' as constant or something?
       
@@ -138,7 +138,7 @@ namespace s1
 	}
       }
       assert (seqOp);
-      block.GetSequence()->AddOp (seqOp);
+      block.GetSequenceBuilder()->AddOp (seqOp);
       
       return destination;
     }

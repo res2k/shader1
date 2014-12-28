@@ -24,10 +24,10 @@ namespace s1
 {
   namespace optimize
   {
-    unsigned int OptimizeSequenceConstantFolding::Apply (const intermediate::SequencePtr& outputSeq,
+    unsigned int OptimizeSequenceConstantFolding::Apply (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 							 const intermediate::SequencePtr& inputSeq)
     {
-      bool seqChanged = ConstantFolding::FoldConstants (outputSeq, inputSeq);
+      bool seqChanged = ConstantFolding::FoldConstants (outputSeqBuilder, inputSeq);
       
       if (seqChanged)
       {

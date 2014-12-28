@@ -31,7 +31,7 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler;
       ScopePtr innerScope;
       
-      SequencePtr sequence;
+      SequenceBuilderPtr sequenceBuilder;
       
       // Special, internal names
       NameImplPtr varCondition;
@@ -78,8 +78,8 @@ namespace s1
       void AddNestedBlock (BlockPtr block);
       /** @} */
       
-      const SequencePtr& GetSequence() const { return sequence; }
-      SequencePtr& GetSequence() { return sequence; }
+      const SequencePtr& GetSequence();
+      const SequenceBuilderPtr& GetSequenceBuilder();
       
       void FinishBlock() { FlushVariableInitializers(); }
       void GenerateGlobalVarInitialization ();

@@ -21,6 +21,7 @@
 
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
+#include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "splitter/SequenceSplitter.h"
 
@@ -136,7 +137,7 @@ namespace s1
 	  
 	  // Generate 'split' functions
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
-	  AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence(), freqFragment);
+	  AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence()->GetSequence(), freqFragment);
 	}
 	else
 	{
@@ -213,7 +214,7 @@ namespace s1
 	  // Generate 'split' functions
 	  for (int f = 0; f < freqNum; f++)
 	  {
-	    intermediate::SequencePtr seq (seqSplit.GetOutputSequence (f));
+	    intermediate::SequencePtr seq (seqSplit.GetOutputSequence (f)->GetSequence());
 	    if (!((seq->GetNumOps() > 0) || (extraParams[f].size() > 0)))
 	      continue;
 	    
@@ -483,22 +484,24 @@ namespace s1
 	//funcVName.append (func->GetIdentifier());
 	funcVName.append ("main");
 	
-	intermediate::ProgramFunctionPtr funcV (boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
-												   funcVName,
-												   vParams,
-												   splitter.GetOutputVertexSequence(),
-												   func->IsEntryFunction()));
+	intermediate::ProgramFunctionPtr funcV (
+          boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
+                                                             funcVName,
+                                                             vParams,
+                                                             splitter.GetOutputVertexSequence()->GetSequence(),
+                                                             func->IsEntryFunction()));
 	outputPrograms[freqVertex]->AddFunction (funcV);
 
 	UnicodeString funcFName ("fragment_");
 	//funcFName.append (func->GetIdentifier());
 	funcFName.append ("main");
 	
-	intermediate::ProgramFunctionPtr funcF (boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
-												   funcFName,
-												   fParams,
-												   splitter.GetOutputFragmentSequence(),
-												   func->IsEntryFunction()));
+	intermediate::ProgramFunctionPtr funcF (
+          boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier(),
+                                                             funcFName,
+                                                             fParams,
+                                                             splitter.GetOutputFragmentSequence()->GetSequence(),
+                                                             func->IsEntryFunction()));
 	outputPrograms[freqFragment]->AddFunction (funcF);
 	
 	const std::vector<intermediate::RegisterPtr>& transferV2F = splitter.GetTransferRegs (freqVertex);

@@ -20,6 +20,7 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
+#include "intermediate/SequenceBuilder.h"
 
 namespace s1
 {

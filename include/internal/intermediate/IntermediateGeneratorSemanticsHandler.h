@@ -153,14 +153,14 @@ namespace s1
        * Allocate a new register.
        * If name is empty generates a dummy name.
        */
-      RegisterPtr AllocateRegister (Sequence& seq, const TypeImplPtr& type,
+      RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const TypeImplPtr& type,
 				    RegisterClassification classify,
 				    const UnicodeString& name = UnicodeString ());
       /// Create a new generation of a register
-      RegisterPtr AllocateRegister (Sequence& seq, const RegisterPtr& oldReg);
+      RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
       
-      void GenerateCast (Sequence& seq,
+      void GenerateCast (SequenceBuilder& seqBuilder,
 			 const RegisterPtr& castDestination,
 			 const TypeImplPtr& typeDestination,
 			 const RegisterPtr& castSource,

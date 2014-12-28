@@ -151,15 +151,15 @@ namespace s1
 			     const RegisterPtr& source1,
 			     const RegisterPtr& source2);
     public:
-      FoldingVisitor (const intermediate::SequencePtr& outputSeq,
+      FoldingVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 		      bool& seqChanged,
 		      const ConstRegsMap& constRegs = ConstRegsMap ())
-       : CommonSequenceVisitor (outputSeq), seqChanged (seqChanged),
+       : CommonSequenceVisitor (outputSeqBuilder), seqChanged (seqChanged),
 	 constRegs (constRegs), foldRegNum (0)
       {
       }
       
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+      CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
 				    const RegisterMap& regMap)
       {
 	ConstRegsMap newConstRegs;
@@ -172,11 +172,11 @@ namespace s1
 	    newConstRegs[newSeqReg->second] = constReg.second;
 	  }
 	}
-	return new FoldingVisitor (newSequence, seqChanged, newConstRegs);
+	return new FoldingVisitor (newSequenceBuilder, seqChanged, newConstRegs);
       }
       
       void PostVisitSequence (CommonSequenceVisitor* visitor,
-			      const intermediate::SequencePtr& newSequence,
+			      const intermediate::SequenceBuilderPtr& newSequenceBuilder,
 			      const RegisterMap& regMap)
       {
 	FoldingVisitor* foldVisitor = static_cast<FoldingVisitor*> (visitor);
@@ -280,7 +280,7 @@ namespace s1
 		  "%u", foldRegNum);
       foldRegNum++;
       regName.append (suffix);
-      return newSequence->AllocateRegister (type, regName);
+      return newSequenceBuilder->AllocateRegister (type, regName);
     }
     
     intermediate::SequenceOpPtr
@@ -1602,11 +1602,11 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    bool ConstantFolding::FoldConstants (const intermediate::SequencePtr& outputSeq,
+    bool ConstantFolding::FoldConstants (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 					 const intermediate::SequencePtr& inputSeq)
     {
       bool seqChanged (false);
-      FoldingVisitor visitor (outputSeq, seqChanged);
+      FoldingVisitor visitor (outputSeqBuilder, seqChanged);
       inputSeq->Visit (visitor);
       return seqChanged;
     }

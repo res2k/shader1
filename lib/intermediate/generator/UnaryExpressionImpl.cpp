@@ -85,7 +85,7 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
       
-      Sequence& seq (*(block.GetSequence()));
+      SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
       
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
@@ -102,7 +102,7 @@ namespace s1
 	reg = newReg;
       }
       
-      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequence()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;

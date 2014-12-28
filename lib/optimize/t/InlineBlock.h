@@ -54,7 +54,7 @@ class InlineBlockTestSuite : public CxxTest::TestSuite
     public:
       typedef BlockImpl Superclass;
     
-      using Superclass::sequence;
+      using Superclass::sequenceBuilder;
     };
   };
 public:
@@ -88,10 +88,11 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
-    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeq, testBlockImpl->GetSequence());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
+    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (blocksInlined, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -130,10 +131,11 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
-    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeq, testBlockImpl->GetSequence());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
+    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (blocksInlined, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -176,10 +178,11 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
-    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeq, testBlockImpl->GetSequence());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
+    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (blocksInlined, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -236,10 +239,11 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
-    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeq, testBlockImpl->GetSequence());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
+    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (blocksInlined, false);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -298,10 +302,11 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
-    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeq, testBlockImpl->GetSequence());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
+    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (blocksInlined, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);
@@ -358,10 +363,11 @@ public:
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
       
-    s1::intermediate::SequencePtr newSeq (boost::make_shared<s1::intermediate::Sequence> ());
-    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeq, testBlockImpl->GetSequence());
+    s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
+    bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (blocksInlined, true);
     
+    s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries.size(), 1);

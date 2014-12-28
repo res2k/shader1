@@ -18,7 +18,7 @@
 #ifndef __INTERMEDIATE_COMMONSEQUENCEVISITOR_H__
 #define __INTERMEDIATE_COMMONSEQUENCEVISITOR_H__
 
-#include "Sequence.h"
+#include "SequenceBuilder.h"
 #include "SequenceVisitor.h"
 
 namespace s1
@@ -33,9 +33,9 @@ namespace s1
     class CloningSequenceVisitor : public SequenceVisitor
     {
     public:
-      SequencePtr newSequence;
+      SequenceBuilderPtr newSequenceBuilder;
       
-      CloningSequenceVisitor (const SequencePtr& newSequence);
+      CloningSequenceVisitor (const SequenceBuilderPtr& newSequenceBuilder);
       
       /// Map a register.
       virtual RegisterPtr MapRegister (const RegisterPtr& reg)
@@ -43,7 +43,7 @@ namespace s1
       /// Add an operation to the target sequence.
       virtual void AddOpToSequence (const SequenceOpPtr& seqOp)
       {
-	newSequence->AddOp (seqOp);
+	newSequenceBuilder->AddOp (seqOp);
       }
 		      
       void SetVisitedOp (const SequenceOpPtr& op)
@@ -137,11 +137,11 @@ namespace s1
       SequenceOpPtr visitedOp;
       
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
-      virtual CloningSequenceVisitor* Clone (const SequencePtr& newSequence,
-					    const RegisterMap& regMap) = 0;
+      virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
+					     const RegisterMap& regMap) = 0;
       virtual bool VisitBackwards() const { return false; }
       virtual void PostVisitSequence (CloningSequenceVisitor* visitor,
-				      const SequencePtr& newSequence,
+				      const SequenceBuilderPtr& newSequenceBuilder,
 				      const RegisterMap& regMap) {}
     };
   } // namespace intermediate

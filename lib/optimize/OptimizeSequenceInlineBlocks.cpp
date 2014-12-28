@@ -23,10 +23,10 @@ namespace s1
 {
   namespace optimize
   {
-    unsigned int OptimizeSequenceInlineBlocks::Apply (const intermediate::SequencePtr& outputSeq,
+    unsigned int OptimizeSequenceInlineBlocks::Apply (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 						      const intermediate::SequencePtr& inputSeq)
     {
-      bool seqChanged = Inliner::InlineAllBlocks (outputSeq, inputSeq);
+      bool seqChanged = Inliner::InlineAllBlocks (outputSeqBuilder, inputSeq);
       
       return seqChanged ? opsExpanded : 0;
     }

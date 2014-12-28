@@ -23,6 +23,7 @@
 #include "OptimizeSequenceInlineBlocks.h"
 
 #include "intermediate/Sequence.h"
+#include "intermediate/SequenceBuilder.h"
 #include "optimize/Optimizer.h"
 
 #include <boost/foreach.hpp>
@@ -63,12 +64,12 @@ namespace s1
 	
 	BOOST_FOREACH(const OptimizeSequenceStepPtr& step, steps)
 	{
-	  intermediate::SequencePtr newSeq (boost::make_shared<intermediate::Sequence> ());
-	  newSeq->AddImports (currentSeq->GetImports ());
-	  newSeq->AddExports (currentSeq->GetExports ());
-	  newSeq->SetIdentifierRegisters  (currentSeq->GetIdentifierToRegisterMap());
-	  unsigned int changes = step->Apply (newSeq, currentSeq);
-	  currentSeq = newSeq;
+	  intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<intermediate::SequenceBuilder> ());
+	  newSeqBuilder->AddImports (currentSeq->GetImports ());
+	  newSeqBuilder->AddExports (currentSeq->GetExports ());
+	  //newSeqBuilder->SetIdentifierRegisters  (currentSeq->GetIdentifierToRegisterMap());
+	  unsigned int changes = step->Apply (newSeqBuilder, currentSeq);
+	  currentSeq = newSeqBuilder->GetSequence();
 	  newOpt = step->FilterOptimizerFlags (newOpt);
 	  
 	  if (changes & OptimizeSequenceStep::opsExpanded)

@@ -20,6 +20,7 @@
 #include "base/common.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/SequenceBuilder.h"
 #include "BlockImpl.h"
 #include "TestSequenceVisitor.h"
 
@@ -39,7 +40,7 @@ class IntermediateExprTestSuite : public CxxTest::TestSuite
     public:
       typedef BlockImpl Superclass;
     
-      using Superclass::sequence;
+      using Superclass::sequenceBuilder;
     };
   };
 public:
@@ -66,7 +67,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 1);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
     TS_ASSERT_EQUALS(visitor.entries[0].floatConst, 1.0f);
@@ -95,7 +96,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 2);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
     TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
@@ -132,7 +133,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 2);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
     TS_ASSERT_EQUALS(visitor.entries[0].floatConst, 1.0f);
@@ -172,7 +173,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 1);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opArithAdd);
   }
@@ -203,7 +204,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 3);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
     TS_ASSERT_EQUALS(visitor.entries[0].floatConst, 1.0f);
@@ -240,7 +241,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 4);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
     TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
@@ -282,7 +283,7 @@ public:
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
     TestSequenceVisitor visitor;
-    testBlockImpl->sequence->Visit (visitor);
+    testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
     TS_ASSERT_EQUALS(visitor.entries.size(), 1);
     TS_ASSERT_DIFFERS(visitor.entries[0].destReg, visitor.entries[0].sourceReg[0]);
     TS_ASSERT_DIFFERS(visitor.entries[0].destReg, visitor.entries[0].sourceReg[1]);

@@ -35,9 +35,9 @@ namespace s1
       unsigned int blockNum;
       bool& haveInlined;
     public:
-      InlineBlockVisitor (const intermediate::SequencePtr& outputSeq,
+      InlineBlockVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 			  bool& haveInlined)
-       : CommonSequenceVisitor (outputSeq), blockNum (0), haveInlined (haveInlined)
+       : CommonSequenceVisitor (outputSeqBuilder), blockNum (0), haveInlined (haveInlined)
       {
       }
       
@@ -45,10 +45,10 @@ namespace s1
 		    const Sequence::IdentifierToRegMap& identToRegID_imp,
 		    const Sequence::IdentifierToRegMap& identToRegID_exp);
 
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+      CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
 				    const RegisterMap& regMap)
       {
-	return new InlineBlockVisitor (newSequence, haveInlined);
+	return new InlineBlockVisitor (newSequenceBuilder, haveInlined);
       }
     };
     
@@ -61,9 +61,9 @@ namespace s1
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       RegisterMap registerMap;
     public:
-      InliningVisitor (const intermediate::SequencePtr& outputSeq,
+      InliningVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 		       const UnicodeString& regsSuffix)
-       : CommonSequenceVisitor (outputSeq), regsSuffix (regsSuffix)
+       : CommonSequenceVisitor (outputSeqBuilder), regsSuffix (regsSuffix)
       {
       }
 		       
@@ -80,19 +80,19 @@ namespace s1
 	
 	UnicodeString newRegName (reg->GetName());
 	newRegName.append (regsSuffix);
-	RegisterPtr newReg = newSequence->AllocateRegister (reg->GetOriginalType(), newRegName);
+	RegisterPtr newReg = newSequenceBuilder->AllocateRegister (reg->GetOriginalType(), newRegName);
 	registerMap[reg] = newReg;
 	return newReg;
       }
       
-      CommonSequenceVisitor* Clone (const intermediate::SequencePtr& newSequence,
+      CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
 				    const RegisterMap& regMap)
       {
 	/* Called for blocks in branch or while ops.
 	   Inline contained ops, but not the block itself.
 	   */
 	bool haveInlined;
-	return new InlineBlockVisitor (newSequence, haveInlined);
+	return new InlineBlockVisitor (newSequenceBuilder, haveInlined);
       }
     };
     
@@ -110,7 +110,7 @@ namespace s1
 		  "$b%u", blockNum);
       blockNum++;
       
-      InliningVisitor visitor (newSequence, blockSuffix);
+      InliningVisitor visitor (newSequenceBuilder, blockSuffix);
       for (Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
 	    imp != seq->GetImports().end();
 	    ++imp)
@@ -130,18 +130,18 @@ namespace s1
 	visitor.AddRegisterMapping (exp->second, mappedReg->second);
       }
       
-      intermediate::SequencePtr seqToInline (boost::make_shared<intermediate::Sequence> ());
+      intermediate::SequenceBuilderPtr seqToInline (boost::make_shared<intermediate::SequenceBuilder> ());
       Inliner::InlineAllBlocks (seqToInline, seq);
-      seqToInline->Visit (visitor);
+      seqToInline->GetSequence()->Visit (visitor);
     }
       
     //-----------------------------------------------------------------------
     
-    bool Inliner::InlineAllBlocks (const intermediate::SequencePtr& outputSeq,
+    bool Inliner::InlineAllBlocks (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 				   const intermediate::SequencePtr& inputSeq)
     {
       bool haveInlined (false);
-      InlineBlockVisitor visitor (outputSeq, haveInlined);
+      InlineBlockVisitor visitor (outputSeqBuilder, haveInlined);
       inputSeq->Visit (visitor);
       return haveInlined;
     }

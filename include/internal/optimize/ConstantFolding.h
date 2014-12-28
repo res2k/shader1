@@ -28,7 +28,7 @@ namespace s1
     {
       class FoldingVisitor;
     public:
-      static bool FoldConstants (const intermediate::SequencePtr& outputSeq,
+      static bool FoldConstants (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 				 const intermediate::SequencePtr& inputSeq);
     };
   } // namespace optimize

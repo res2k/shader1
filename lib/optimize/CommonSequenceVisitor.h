@@ -30,19 +30,20 @@ namespace s1
       typedef intermediate::RegisterPtr RegisterPtr;
       typedef intermediate::Sequence Sequence;
       typedef intermediate::SequencePtr SequencePtr;
+      typedef intermediate::SequenceBuilderPtr SequenceBuilderPtr;
       typedef intermediate::SequenceOpPtr SequenceOpPtr;
       
-      CommonSequenceVisitor (const intermediate::SequencePtr& newSequence)
-        : CloningSequenceVisitor (newSequence) {}
+      CommonSequenceVisitor (const intermediate::SequenceBuilderPtr& newSequenceBuilder)
+        : CloningSequenceVisitor (newSequenceBuilder) {}
 
       // Overridden by optimizing visitors
       virtual void PostVisitSequence (CommonSequenceVisitor* visitor,
-				      const SequencePtr& newSequence,
+				      const SequenceBuilderPtr& newSequence,
 				      const RegisterMap& regMap)
       { }
       // Simply to wrap the method taking a CommonSequenceVisitor*
       virtual void PostVisitSequence (CloningSequenceVisitor* visitor,
-				      const SequencePtr& newSequence,
+				      const SequenceBuilderPtr& newSequence,
 				      const RegisterMap& regMap)
       { PostVisitSequence (static_cast<CommonSequenceVisitor*> (visitor), newSequence, regMap); }
     };

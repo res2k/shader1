@@ -45,7 +45,7 @@ namespace s1
 	/// Some new nested block ops were added
 	opsBlocksChanged = 1 << 2,
       };
-      virtual unsigned int Apply (const intermediate::SequencePtr& outputSeq,
+      virtual unsigned int Apply (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
 				  const intermediate::SequencePtr& inputSeq) = 0;
 				  
       virtual unsigned int FilterOptimizerFlags (unsigned int optimizers) = 0;
