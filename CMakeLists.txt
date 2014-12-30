@@ -1,6 +1,22 @@
 PROJECT(s1)
 cmake_minimum_required(VERSION 2.8.12)
 
+# CMake cache variables we will augment with out own detected settings
+set(OVERRIDE_CACHE_VARS CXX_FLAGS
+                        EXE_LINKER_FLAGS
+                        SHARED_LINKER_FLAGS)
+foreach(release_mode RELEASE RELWITHDEBINFO MINSIZEREL)
+  list(APPEND OVERRIDE_CACHE_VARS
+       CXX_FLAGS_${release_mode}
+       C_FLAGS_${release_mode}
+       EXE_LINKER_FLAGS_${release_mode}
+       SHARED_LINKER_FLAGS_${release_mode}
+       STATIC_LINKER_FLAGS_${release_mode})
+endforeach()
+foreach(cached_var ${OVERRIDE_CACHE_VARS})
+  set(CACHE_${cached_var} ${CMAKE_${cached_var}})
+endforeach()
+
 if(NOT CMAKE_BUILD_TYPE AND NOT MSVC)
   set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
@@ -67,16 +83,16 @@ endfunction()
 
 if(NOT MSVC)
   # Annoying on MSVC; lots of warnings from inside Boost
-  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-Wall")
-  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-Wno-unused-local-typedefs")
+  CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-Wall")
+  CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-Wno-unused-local-typedefs")
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
-  CxxCompilerFlagStringAppend (CMAKE_CXX_FLAGS "-fvisibility-inlines-hidden -fvisibility=hidden")
+  CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-fvisibility-inlines-hidden -fvisibility=hidden")
 endif()
 
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
+set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
+set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 
 # Check if we can link the C++ standard library statically
 set(S1_STATIC_LIBSTDCXX ON CACHE BOOL "Whether to statically link libstdc++")
@@ -98,11 +114,11 @@ endif()
 
 # Look for symbolic link options
 CxxCompilerFlagString (CXX_SYMBOLIC_LINK_FLAG "-Wl,-Bsymbolic -Wl,-Bsymbolic-functions")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_SYMBOLIC_LINK_FLAG}")
+set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_SYMBOLIC_LINK_FLAG}")
 
 # Look for section GC options
 CxxCompilerFlagString (CXX_LINK_GC_SECTIONS "-Wl,--gc-sections")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CXX_LINK_GC_SECTIONS}")
+set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_LINK_GC_SECTIONS}")
 
 CHECK_CXX_SOURCE_COMPILES(
   "int main() { void* p = nullptr; return 0; }"
@@ -122,32 +138,32 @@ if(MSVC)
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 
   # More aggressive optimization flags for release configs
-  string(REPLACE "/Ob1" "" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-  string(REPLACE "/Ob1" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-  string(REPLACE "/Ob2" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
-  string(REPLACE "/Ob2" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-  string(REPLACE "/Ob1" "" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
-  string(REPLACE "/Ob1" "" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
+  string(REPLACE "/Ob1" "" CACHE_C_FLAGS_RELWITHDEBINFO "${CACHE_C_FLAGS_RELWITHDEBINFO}")
+  string(REPLACE "/Ob1" "" CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}")
+  string(REPLACE "/Ob2" "" CACHE_C_FLAGS_RELEASE "${CACHE_C_FLAGS_RELEASE}")
+  string(REPLACE "/Ob2" "" CACHE_CXX_FLAGS_RELEASE "${CACHE_CXX_FLAGS_RELEASE}")
+  string(REPLACE "/Ob1" "" CACHE_C_FLAGS_MINSIZEREL "${CACHE_C_FLAGS_MINSIZEREL}")
+  string(REPLACE "/Ob1" "" CACHE_CXX_FLAGS_MINSIZEREL "${CACHE_CXX_FLAGS_MINSIZEREL}")
   # Re-enable certain optimizations
-  string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO /opt:ref" CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO}")
-  string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO /opt:ref" CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO}")
+  string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO /opt:ref" CACHE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CACHE_EXE_LINKER_FLAGS_RELWITHDEBINFO}")
+  string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO /opt:ref" CACHE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CACHE_SHARED_LINKER_FLAGS_RELWITHDEBINFO}")
 
   # Check for data COMDATs (eq. to gcc's -fdata-sections)
   CxxCompilerFlagString (CXX_GW " /Gw")
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}${CXX_GW}")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}${CXX_GW}")
-  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}${CXX_GW}")
+  set(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}${CXX_GW}")
+  set(CACHE_CXX_FLAGS_RELEASE "${CACHE_CXX_FLAGS_RELEASE}${CXX_GW}")
+  set(CACHE_CXX_FLAGS_MINSIZEREL "${CACHE_CXX_FLAGS_MINSIZEREL}${CXX_GW}")
   
   # Check for extended optimized build debug info
   CxxCompilerFlagString (CXX_ZO " /Zo")
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}${CXX_ZO}")
+  set(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}${CXX_ZO}")
   # New option in VC 12. Needed when more than one project writes to a PDB
   CxxCompilerFlagString (CXX_PDB_SYNC " /FS")
 endif()
 
 # Build everything with -fPIC to allow linking into shared libs
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  set(CACHE_CXX_FLAGS "${CACHE_CXX_FLAGS} -fPIC")
   set(WITH_PIC YES)
 endif()
 
@@ -158,22 +174,33 @@ if(S1_BUILD_LTO)
   if(CMAKE_COMPILER_IS_GNUCXX)
     CxxCompilerFlagString (CXX_LTO_FLAG "-flto")
     CxxCompilerFlagString (CXX_NO_LTO_FLAG "-fno-lto")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_LTO_FLAG}")
+    set(CACHE_CXX_FLAGS "${CACHE_CXX_FLAGS} ${CXX_LTO_FLAG}")
     # At least with gcc 4.8 -flto causes problems when linking the examples.
     # Must be explicitly disabled as CMake passes CMAKE_CXX_FLAGS to
     # the linker as well.
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_NO_LTO_FLAG}")
+    set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_NO_LTO_FLAG}")
+    # TODO: set CMAKE_AR/_NM_/_RANLIB to gcc-* variants
   elseif(MSVC)
     foreach(mode RELEASE MINSIZEREL RELWITHDEBINFO)
-      set(CMAKE_CXX_FLAGS_${mode} "${CMAKE_CXX_FLAGS_${mode}} /GL")
-      set(CMAKE_EXE_LINKER_FLAGS_${mode} "${CMAKE_EXE_LINKER_FLAGS_${mode}} /LTCG")
-      set(CMAKE_SHARED_LINKER_FLAGS_${mode} "${CMAKE_SHARED_LINKER_FLAGS_${mode}} /LTCG")
-      set(CMAKE_STATIC_LINKER_FLAGS_${mode} "${CMAKE_STATIC_LINKER_FLAGS_${mode}} /LTCG")
+      set(CACHE_CXX_FLAGS_${mode} "${CACHE_CXX_FLAGS_${mode}} /GL")
+      set(CACHE_EXE_LINKER_FLAGS_${mode} "${CACHE_EXE_LINKER_FLAGS_${mode}} /LTCG")
+      set(CACHE_SHARED_LINKER_FLAGS_${mode} "${CACHE_SHARED_LINKER_FLAGS_${mode}} /LTCG")
+      set(CACHE_STATIC_LINKER_FLAGS_${mode} "${CACHE_STATIC_LINKER_FLAGS_${mode}} /LTCG")
     endforeach()
   else()
     message(WARNING "LTO/LTCG is not supported for your compiler")
   endif()
 endif()
+
+# Update cache values with config check results
+foreach(cached_var ${OVERRIDE_CACHE_VARS})
+  if(NOT CACHE_SET_${cached_var})
+    set_property(CACHE CMAKE_${cached_var}
+                 PROPERTY VALUE ${CACHE_${cached_var}})
+    set(CACHE_SET_${cached_var} 1
+        CACHE INTERNAL "The CMAKE_${cached_var} variable was augmented with out own settings.")
+  endif()
+endforeach()
 
 # Configuration settings only relevant for building
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/internal/base)
