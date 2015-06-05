@@ -31,6 +31,15 @@ namespace s1
     typedef UChar Char16;
     typedef UChar32 Char32;
 
+    static const Char32 InvalidChar32 = (Char32)~0u;
+    static const Char32 ReplacementChar = 0xfffd;
+    static const Char LeadSurrogateFirst = 0xd800;
+    static const Char LeadSurrogateLast  = 0xdbff;
+    static const Char TailSurrogateFirst = 0xdc00;
+    static const Char TailSurrogateLast  = 0xdfff;
+    static const Char MaxChar16 = 0xffff;
+    static const Char32 MaxChar = 0x10ffff;
+
     /**\name Character class checks
      * @{ */
     /// Check whether a character is a whitespace character
