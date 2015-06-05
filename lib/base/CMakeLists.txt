@@ -14,6 +14,7 @@ set(base_sources
     ../../include/internal/base/uc/StreamException.h
     ../../include/internal/base/uc/StreamInvalidCharacterException.h
     ../../include/internal/base/uc/String.h
+    ../../include/internal/base/uc/UTF16Encoder.h
     ../../include/internal/base/uc/UTF8Decoder.h
     ../../include/internal/base/format/Formatter.h
     ../../include/internal/base/format/Formatter.txx
@@ -29,6 +30,7 @@ if(CXXTEST_FOUND)
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
+                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h)
   target_link_libraries(test_Base base)
   set_property(TARGET test_Base PROPERTY EXCLUDE_FROM_ALL YES)
