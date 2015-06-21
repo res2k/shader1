@@ -3,6 +3,7 @@ set(base_sources
     uc/Exception.cpp
     uc/String.cpp
     uc/Stream.cpp
+    uc/StreamException.cpp
     ../../include/internal/base/common.h
     ../../include/internal/base/Library.h
     ../../include/internal/base/LibraryObject.h

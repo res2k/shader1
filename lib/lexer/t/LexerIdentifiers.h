@@ -31,7 +31,7 @@ public:
   void testIdentifiers1(void)
   {
     std::istringstream in ("foo bar  ");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -64,7 +64,7 @@ public:
   void testIdentifiers2(void)
   {
     std::istringstream in ("f00 b4r  ");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -97,7 +97,7 @@ public:
   void testIdentifiers3(void)
   {
     std::istringstream in ("\xCE\xB1"); // alpha
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -121,7 +121,7 @@ public:
   void testIdentifiers4(void)
   {
     std::istringstream in ("_foo bar_ b_az ");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -164,7 +164,7 @@ public:
   void testCanonicalEquivalence(void)
   {
     std::istringstream in ("o\xCC\x88 \xC3\xB6"); // <o, combining-diaeresis>, <ö>
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token1;

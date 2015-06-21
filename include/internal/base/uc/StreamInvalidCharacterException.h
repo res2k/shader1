@@ -32,9 +32,9 @@ namespace uc
   public:
     /**
      * Construct a new exception object.
-     * \param uerr The error code returned by ICU.
+     * \param result UTF8Decoder result code
      */
-    StreamInvalidCharacterException (int uerr) : StreamException (uerr) {}
+    StreamInvalidCharacterException (UTF8Decoder::DecodeResult result) : StreamException (result) {}
   };
 
 } // namespace uc

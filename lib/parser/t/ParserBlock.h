@@ -46,7 +46,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("a = b;");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -67,7 +67,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("a = b");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -88,7 +88,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("if (a) { c = d; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -112,7 +112,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("if (a) { c = d; } else { c = e; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -140,7 +140,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("while (a) { c = d; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -164,7 +164,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("for (a; b; b = b+1) { c = d; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -188,7 +188,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("{ a = b; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -211,7 +211,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("a = b error; c=d;");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;

@@ -20,107 +20,86 @@
 #include "base/uc/StreamInvalidCharacterException.h"
 #include "base/uc/StreamEndOfInputException.h"
 
-#include <assert.h>
-#include <unicode/ucnv.h>
-
 namespace s1
 {
 namespace uc
 {
-  void Stream::ICUError::handleFailure() const
-  {
-    throw StreamException (errorCode);
-  }
-  
   //-------------------------------------------------------------------------
   
-  Stream::Stream (std::istream& inStream, const char* encoding)
-   : inStream (inStream), ucBufferRemaining (0),
-     ucBufferEndError (U_ZERO_ERROR), streamInBufferRemaining (0),
-     currentChar (noCharacter)
+  Stream::Stream (std::istream& inStream)
+   : inStream (inStream), streamInBufferRemaining (0),
+     currentChar (noCharacter), currentDecodeResult (UTF8Decoder::drSuccess)
   {
-    ICUError err;
-    uconv = ucnv_open (encoding, err);
-    err.assertSuccess();
-    ucnv_setToUCallBack (uconv, UCNV_TO_U_CALLBACK_STOP, 0, 0, 0, err);
-    err.assertSuccess();
-    
+    RefillBuffer();
     // Go to first character
     if (*this) ++(*this);
   }
   
   Stream::~Stream()
   {
-    if (uconv) ucnv_close (uconv);
   }
 
   Stream::operator bool() const throw()
   {
-    if (!uconv) return false;
-    
     return
       (currentChar != noCharacter) // We have a current character
-      || (ucBufferRemaining > 0) // ... or still chars in the internal UC buffer
+      || (streamInBufferRemaining > 0) // ... or still buffered chars to decode
       || !inStream.eof(); // ... or still raw input data
   }
 
   Stream& Stream::operator++() throw()
   {
-    if (!uconv) return *this;
-    
-    currentError = U_ZERO_ERROR;
-    uc::Char uc;
-    if (!GetNextUChar (uc))
+    do
     {
-      currentChar = noCharacter;
-      return *this;
-    }
-    if (U_FAILURE (currentError))
-    {
-      /* Error occured earlier during conversion to Unicode,
-	  fetching current char will raise that. */
-      currentChar = errorCharacter;
-      return *this;
-    }
-    if (U_IS_SURROGATE(uc))
-    {
-      uc::Char uc2;
-      if (!GetNextUChar (uc2))
+      const char* streamInBufferPrev = streamInBufferPtr;
+      currentDecodeResult = decoder (streamInBufferPtr,
+                                     streamInBufferPtr + streamInBufferRemaining,
+                                     currentChar);
+      bool bufferConsumed = streamInBufferPtr != streamInBufferPrev;
+      streamInBufferRemaining -= (streamInBufferPtr - streamInBufferPrev);
+      if (currentDecodeResult == UTF8Decoder::drInputUnderrun)
       {
-        currentChar = noCharacter;
-        return *this;
+        // Try to refill buffer
+        if (!RefillBuffer())
+        {
+          if (bufferConsumed)
+          {
+            // Input undderun?
+            // Refill failed?
+            // Input buffer was consumed?
+            // Means we have a trailing incomplete character
+            currentDecodeResult = UTF8Decoder::drCharacterIncomplete;
+            currentChar = ReplacementChar;
+          }
+          else
+          {
+            currentChar = noCharacter;
+          }
+          return *this;
+        }
       }
-      if (U_FAILURE (currentError))
-      {
-	// Give errors from ICU precedence
-	currentChar = errorCharacter;
-	return *this;
-      }
-      // Assume ICU always gives us a correct pair of surrogates
-      assert(U_IS_SURROGATE_LEAD(uc));
-      assert(U_IS_SURROGATE_TRAIL(uc2));
-	
-      currentChar = 0x10000 + ((uc & 0x03ff) << 10);
-      currentChar |= (uc2 & 0x3ff);
     }
-    else
-      currentChar = uc;
+    while (currentDecodeResult < 0);
     return *this;
   }
   
   uc::Char32 Stream::operator* () const
   {
-    if (U_FAILURE(currentError))
+    if (currentDecodeResult != UTF8Decoder::drSuccess)
     {
-      if ((currentError == U_INVALID_CHAR_FOUND)
-	|| (currentError == U_TRUNCATED_CHAR_FOUND)
-	|| (currentError == U_ILLEGAL_CHAR_FOUND))
+      if ((currentDecodeResult == UTF8Decoder::drCharacterInvalid)
+	|| (currentDecodeResult == UTF8Decoder::drCharacterIncomplete)
+	|| (currentDecodeResult == UTF8Decoder::drEncodingInvalid))
       {
-	throw StreamInvalidCharacterException (currentError);
+	throw StreamInvalidCharacterException (currentDecodeResult);
+      }
+      else if (currentDecodeResult == UTF8Decoder::drInputUnderrun)
+      {
+        throw StreamEndOfInputException ();
       }
       else
       {
-	throw StreamException (currentError);
+	throw StreamException (currentDecodeResult);
       }
     }
     else if (!(*this))
@@ -133,36 +112,8 @@ namespace uc
     }
   }
 
-  bool Stream::GetNextUChar (uc::Char& c)
+  bool Stream::RefillBuffer ()
   {
-    if ((ucBufferRemaining == 0) && U_SUCCESS(ucBufferEndError))
-    {
-      if (!RefillUCBuffer ()) return false;
-    }
-    
-    /* Don't use -1 as we want to, in case of a conversion error, _pretend_
-       there is a character, but then sneakily throw an exception when it's
-       tried to obtain it! */
-    uc::Char32 ret = errorCharacter;
-    if (ucBufferRemaining > 0)
-    {
-      ucBufferRemaining--;
-      ret = *(ucBufferPtr++);
-    }
-    else
-    {
-      currentError = ucBufferEndError;
-      // Clear end-of-buffer error so next call will refill buffer
-      ucBufferEndError = U_ZERO_ERROR;
-    }
-    c = ret;
-    return true;
-  }
-  
-  /// Refill unicode buffer
-  bool Stream::RefillUCBuffer ()
-  {
-    assert(ucBufferEndError == U_ZERO_ERROR);
     if (streamInBufferRemaining == 0)
     {
       if (!inStream.good())
@@ -180,24 +131,6 @@ namespace uc
 	return false;
       }
     }
-    
-    ICUError err;
-    const char* source = streamInBufferPtr;
-    uc::Char* target = ucBuffer;
-    ucnv_toUnicode (uconv, &target, target + UCBufferSize,
-		    &source, source + streamInBufferRemaining, 0,
-		    !inStream.good(), err);
-    ucBufferPtr = ucBuffer;
-    ucBufferRemaining = target - ucBuffer;
-    streamInBufferRemaining -= (source - streamInBufferPtr);
-    streamInBufferPtr = source;
-    ucBufferEndError = err;
-    /* Since 'source' should point after the last byte consumed, it should
-       also point beyond any troublesome input.
-       Since we buffer as much uc::Chars as input bytes, a buffer overflow should
-       _not_ occur. (A single byte expanding into a surrogate pair? Won't happen.)
-     */
-
     return true;
   }
 

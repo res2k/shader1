@@ -44,7 +44,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void main() {}");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -59,7 +59,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void main (out float4 pos, out float4 color) {}");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -74,7 +74,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void main() { int foo = 1; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -89,7 +89,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void main() { int foo = 1, bar; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -104,7 +104,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int bar; void main() { int foo = bar; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -119,7 +119,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("const int bar = 1; void main() { int foo = bar; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -134,7 +134,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void Foo() {} void main() { Foo(); }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -149,7 +149,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("int Foo() { return 1; } void main() { int x = Foo(); }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -164,7 +164,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void main() { int x; x = float (1.2); }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
@@ -179,7 +179,7 @@ public:
     using namespace s1::parser;
     
     std::istringstream in ("void main() { int x, y; x + y; }");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;

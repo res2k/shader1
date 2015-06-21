@@ -19,13 +19,9 @@
 #define __BASE_UC_STREAM_H__
 
 #include "Char.h"
-
-#include <unicode/errorcode.h>
-#include <unicode/utypes.h>
+#include "UTF8Decoder.h"
 
 #include <istream>
-
-struct UConverter;
 
 namespace s1
 {
@@ -37,36 +33,15 @@ namespace uc
   class Stream
   {
   protected:
-    class ICUError : public U_NAMESPACE_QUALIFIER ErrorCode
-    {
-    public:
-      virtual void handleFailure() const;
-    #if (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM) < 404
-      // Source compatibility w/ ICU 4.2
-      inline void assertSuccess() const { check(); }
-    #endif
-    };
-    
     std::istream& inStream;
-    /// ICU converter object
-    UConverter* uconv;
+    /// UTF-8 decoder object
+    UTF8Decoder decoder;
     
     enum
     {
       /// Size of internal unicode characters buffer
       UCBufferSize = 1024
     };
-    Char ucBuffer[UCBufferSize];
-    
-    const Char* ucBufferPtr;
-    size_t ucBufferRemaining;
-    /**
-     * ICU error that occured during filling the buffer.
-     * The buffer is filled up until an error occured. So the error needs to
-     * be propagated only once we reach the end of the internal buffer.
-     */
-    UErrorCode ucBufferEndError;
-    
     /**
      * Internal buffer for data from input stream.
      * Stored to allow resuming after ICU reports an error.
@@ -76,24 +51,21 @@ namespace uc
     size_t streamInBufferRemaining;
     
     Char32 currentChar;
-    UErrorCode currentError;
+    UTF8Decoder::DecodeResult currentDecodeResult;
     enum
     {
       errorCharacter = 0xFFFF,
       noCharacter = -1
     };
     
-    /// Get next UTF-16 character from buffer, refill if necessary
-    bool GetNextUChar (Char& c);
-    /// Refill unicode buffer
-    bool RefillUCBuffer ();
+    /// Refill stream input buffer
+    bool RefillBuffer ();
   public:
     /**
      * Constructor.
      * \param inStream Input byte stream.
-     * \param encoding ICU encoding name of the input.
      */
-    Stream (std::istream& inStream, const char* encoding);
+    Stream (std::istream& inStream);
     ~Stream();
     
     /// Returns whether more characters are available

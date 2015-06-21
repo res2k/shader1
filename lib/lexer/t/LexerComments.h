@@ -30,7 +30,7 @@ public:
   void testLineComment1(void)
   {
     std::istringstream in ("// foo");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -51,7 +51,7 @@ public:
   void testLineComment2(void)
   {
     std::istringstream in ("// foo\n");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -72,7 +72,7 @@ public:
   void testLineComment3(void)
   {
     std::istringstream in ("a\n// foo\nb");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -103,7 +103,7 @@ public:
   void testBlockComment1(void)
   {
     std::istringstream in ("/* foo */");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -124,7 +124,7 @@ public:
   void testBlockComment2(void)
   {
     std::istringstream in ("/* foo\n bar */");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
@@ -145,7 +145,7 @@ public:
   void testBlockComment3(void)
   {
     std::istringstream in ("a\n/* foo */\nb");
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;

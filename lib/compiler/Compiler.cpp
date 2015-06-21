@@ -40,7 +40,7 @@ namespace s1
 
   Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input, const uc::String& entryFunction)
   {
-    uc::Stream uniStream (input, "utf-8");
+    uc::Stream uniStream (input);
     return ProgramPtr (new Program (&uniStream, entryFunction));
   }
 } // namespace s1

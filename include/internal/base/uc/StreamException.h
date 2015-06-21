@@ -19,6 +19,7 @@
 #define __BASE_UC_STREAMEXCEPTION_H__
 
 #include "Exception.h"
+#include "UTF8Decoder.h"
 
 namespace s1
 {
@@ -29,12 +30,15 @@ namespace uc
    */
   class StreamException : public Exception
   {
+    UTF8Decoder::DecodeResult result;
   public:
     /**
      * Construct a new exception object.
-     * \param uerr The error code returned by ICU.
+     * \param result UTF8Decoder result code
      */
-    StreamException (int uerr) : Exception (uerr) {}
+    StreamException (UTF8Decoder::DecodeResult result) : Exception (0), result (result) {}
+
+    const char* what () const throw();
   };
   
 } // namespace uc

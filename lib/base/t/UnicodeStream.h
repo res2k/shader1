@@ -24,20 +24,11 @@
 class UnicodeStreamTestSuite : public CxxTest::TestSuite 
 {
 public:
-  void testBogusEncoding (void)
-  {
-    std::string empty;
-    std::istringstream in (empty);
-    // Specifying a bogus encoding name should throw an exception
-    TS_ASSERT_THROWS (s1::uc::Stream ustream (in, "qwertz"),
-		      s1::uc::StreamException);
-  }
-  
   void testEmptyStream (void)
   {
     std::string empty;
     std::istringstream in (empty);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
 
     // Empty stream should report "no chars"
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -53,7 +44,7 @@ public:
   {
     std::string str ("a");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -70,7 +61,7 @@ public:
   {
     std::string str ("\xE2\x98\xBA");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -88,7 +79,7 @@ public:
   {
     std::string str ("\xF0\x9D\x94\xBD");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -106,7 +97,7 @@ public:
   {
     std::string str ("\xE2\x98");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Incomplete UTF-8 encoded char should be an error
@@ -122,7 +113,7 @@ public:
   {
     std::string str ("a\xE2\x98");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -143,7 +134,7 @@ public:
   {
     std::string str ("\xE2\x98" "a");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -164,7 +155,7 @@ public:
   {
     std::string str ("\xC0\x8a" "a");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -194,7 +185,7 @@ public:
     std::string str;
     for (size_t i = 0; i < testSize; i++) str.append ("a");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     
     for (size_t i = 0; i < testSize; i++)
     {
@@ -219,7 +210,7 @@ public:
     for (size_t i = 0; i < testSize; i++) str.append ("a");
     str.append ("\xE2\x98\xBA");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     
     s1::uc::Char32 ch;
     for (size_t i = 0; i < testSize; i++)
@@ -244,7 +235,7 @@ public:
   {
     std::string str ("\xED\xA0\xB5\xED\xB4\xBD");
     std::istringstream in (str);
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test that a surrogate, encoded separately in UTF-8, are invalid

@@ -47,7 +47,7 @@ public:
 	"float y = x;"
       "}"
     );
-    s1::uc::Stream ustream (in, "utf-8");
+    s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::intermediate::IntermediateGeneratorSemanticsHandler semanticsHandler;
