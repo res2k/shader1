@@ -33,6 +33,7 @@ if(CXXTEST_FOUND)
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
+                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.h)
