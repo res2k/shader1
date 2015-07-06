@@ -36,6 +36,7 @@ if(CXXTEST_FOUND)
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h
+                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Encoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.h)
   target_link_libraries(test_Base base)
   set_property(TARGET test_Base PROPERTY EXCLUDE_FROM_ALL YES)
