@@ -4,6 +4,7 @@ set(base_sources
     uc/String.cpp
     uc/Stream.cpp
     uc/StreamException.cpp
+    uc/UTF16to8Transcoder.cpp
     uc/UTF8to16Transcoder.cpp
     ../../include/internal/base/common.h
     ../../include/internal/base/Library.h
@@ -16,8 +17,10 @@ set(base_sources
     ../../include/internal/base/uc/StreamException.h
     ../../include/internal/base/uc/StreamInvalidCharacterException.h
     ../../include/internal/base/uc/String.h
+    ../../include/internal/base/uc/UTF16Decoder.h
     ../../include/internal/base/uc/UTF16Encoder.h
     ../../include/internal/base/uc/UTF8Decoder.h
+    ../../include/internal/base/uc/UTF16to8Transcoder.h
     ../../include/internal/base/uc/UTF8to16Transcoder.h
     ../../include/internal/base/format/Formatter.h
     ../../include/internal/base/format/Formatter.txx
@@ -37,6 +40,7 @@ if(CXXTEST_FOUND)
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Encoder.h
+                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16to8Transcoder.h
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.h)
   target_link_libraries(test_Base base)
   set_property(TARGET test_Base PROPERTY EXCLUDE_FROM_ALL YES)
