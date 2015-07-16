@@ -25,6 +25,8 @@
 
 #include <unicode/unistr.h>
 
+#include <boost/config.hpp>
+
 namespace s1
 {
   namespace uc
@@ -34,11 +36,14 @@ namespace s1
     protected:
       explicit String (const UnicodeString& s) : UnicodeString (s) {}
     public:
+      typedef int size_type;
+      BOOST_STATIC_CONSTANT(size_type, npos = -1);
+
       String () {}
       String (const char* s) : UnicodeString (s) {}
       String (const Char* s) : UnicodeString (s) {}
       String (const String& s) : UnicodeString (s) {}
-      String (const String& s, int n) : UnicodeString (s, n) {}
+      String (const String& s, size_type n) : UnicodeString (s, n) {}
       String (Char32 c) : UnicodeString (c) {}
 
       friend String operator+ (const String& s1, const String& s2)
@@ -54,7 +59,7 @@ namespace s1
       {
         return String (UnicodeString::fromUTF8 (s));
       }
-      static String fromUTF32 (const Char32* s, int len)
+      static String fromUTF32 (const Char32* s, size_type len)
       {
         return String (UnicodeString::fromUTF32 (s, len));
       }
