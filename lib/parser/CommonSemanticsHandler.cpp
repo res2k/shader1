@@ -221,7 +221,9 @@ namespace s1
 	// Hex number: always unsigned int
 	return UInt;
       }
-      if ((numericStr.indexOf ('.') != -1) || (numericStr.indexOf ('e') != -1) || (numericStr.indexOf ('E') != -1))
+      if ((numericStr.indexOf ('.') != uc::String::npos)
+        || (numericStr.indexOf ('e') != uc::String::npos)
+        || (numericStr.indexOf ('E') != uc::String::npos))
       {
 	// Contains '.', 'e' or 'E': must be float number
 	return Float;
@@ -260,7 +262,7 @@ namespace s1
       case 'w':
 	{
 	  // XYZW style swizzle
-	  for (int i = 0; i < attributeStr.length(); i++)
+	  for (uc::String::size_type i = 0; i < attributeStr.length(); i++)
 	  {
 	    unsigned char comp;
 	    switch (attributeStr[i])
@@ -283,7 +285,7 @@ namespace s1
       case 'a':
 	{
 	  // RGBA style swizzle
-	  for (int i = 0; i < attributeStr.length(); i++)
+	  for (uc::String::size_type i = 0; i < attributeStr.length(); i++)
 	  {
 	    unsigned char comp;
 	    switch (attributeStr[i])
