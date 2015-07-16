@@ -82,6 +82,19 @@ namespace s1
     // Lazy shortcut
     typedef char_traits<Char> Char_traits;
 
+    String::String (const String& s) : d (0, 0, internalBuffer)
+    {
+      if (s.d.buffer == s.internalBuffer)
+      {
+        append (s);
+      }
+      else
+      {
+        RefBufferData(s.BufferDataPtr());
+        d = s.d;
+      }
+    }
+    
     String::~String()
     {
       FreeBuffer();
@@ -169,7 +182,7 @@ namespace s1
 
       if (before > length()) before = length();
       reserve (d.length + n);
-      Char_traits::move (data() + before + n, data() + before, length() - before);
+      Char_traits::move (writePtr() + before + n, writePtr() + before, length() - before);
       Char* dest = d.buffer + before;
       for (size_type i = 0; i < n; i++)
       {
@@ -197,10 +210,21 @@ namespace s1
 
     String& String::operator= (const String& other)
     {
-      // TODO: Share buffer
-      ResizeBuffer (other.d.length);
-      Char_traits::copy (d.buffer, other.d.buffer, other.d.length);
-      d.length = other.d.length;
+      if (&other != this)
+      {
+        if (other.d.buffer == other.internalBuffer)
+        {
+          ResizeBuffer (other.d.length);
+          Char_traits::copy (d.buffer, other.d.buffer, other.d.length);
+          d.length = other.d.length;
+        }
+        else
+        {
+          RefBufferData(other.BufferDataPtr());
+          FreeBuffer();
+          d = other.d;
+        }
+      }
       return *this;
     }
 
@@ -246,7 +270,7 @@ namespace s1
       s.reserve (len);
       const char* input = utf8_str;
       const char* inputEnd = utf8_str + len;
-      Char* outputStart = s.data();
+      Char* outputStart = s.writePtr();
       Char* output = outputStart;
       Char* outputEnd = output + len;
       
@@ -362,16 +386,14 @@ namespace s1
     {
       if (d.buffer != internalBuffer)
       {
-        free (BufferDataPtr ());
+        ReleaseBufferData (BufferDataPtr());
         d.buffer = internalBuffer;
+        d.capacity = InternalBufferSize;
       }
     }
 
     void String::ResizeBuffer (size_type capacity)
     {
-      // TODO: We probably need buffer un-sharing here.
-      if (d.capacity == capacity) return;
-
       bool currentIsInternal = d.buffer == internalBuffer;
       bool canUseInternal = capacity <= InternalBufferSize;
       if (canUseInternal)
@@ -380,7 +402,7 @@ namespace s1
         {
           assert (capacity < d.capacity); // Otherwise, couldn't use internal buffer
 	  Char_traits::copy (internalBuffer, d.buffer, capacity);
-          FreeBuffer();
+          ReleaseBufferData (BufferDataPtr());
           d.buffer = internalBuffer;
         }
       }
@@ -391,37 +413,68 @@ namespace s1
           assert (d.capacity < capacity);
           // Allocate new buffer
           AllocatedBufferData* newBuffer = AllocBufferData (capacity);
+          RefBufferData (newBuffer);
 	  Char_traits::copy (newBuffer->data, internalBuffer, d.capacity);
           d.buffer = newBuffer->data;
         }
         else
         {
+          if (d.capacity == capacity) return;
+
           // Reallocate current buffer
-          d.buffer = ReallocBufferData (BufferDataPtr(), capacity)->data;
+          AllocatedBufferData* data = BufferDataPtr();
+          if (data->refCount.load() != 1)
+          {
+            AllocatedBufferData* newBuffer = AllocBufferData (capacity);
+            RefBufferData (newBuffer);
+            Char_traits::copy (newBuffer->data, data->data, std::min (d.length, capacity));
+            d.buffer = newBuffer->data;
+            ReleaseBufferData (data);
+          }
+          else
+          {
+            d.buffer = ReallocBufferData (BufferDataPtr(), capacity)->data;
+          }
         }
       }
       d.capacity = capacity;
     }
 
-    String::AllocatedBufferData* String::BufferDataPtr()
+    String::AllocatedBufferData* String::BufferDataPtr() const
     {
       assert (d.buffer != internalBuffer);
       return reinterpret_cast<AllocatedBufferData*> (
         reinterpret_cast<char*> (d.buffer) - offsetof (AllocatedBufferData, data));
     }
-
+    
     String::AllocatedBufferData* String::AllocBufferData (size_type numChars)
     {
-      return reinterpret_cast<AllocatedBufferData*> (
+      AllocatedBufferData* p = reinterpret_cast<AllocatedBufferData*> (
         malloc (offsetof (AllocatedBufferData, data) + numChars * sizeof (Char)));
+      p->refCount.store (0);
+      return p;
     }
 
     String::AllocatedBufferData* String::ReallocBufferData (AllocatedBufferData* p, size_type numChars)
     {
-      String::AllocatedBufferData* new_p = reinterpret_cast<AllocatedBufferData*> (
+      AllocatedBufferData* new_p = reinterpret_cast<AllocatedBufferData*> (
         realloc (p, offsetof (AllocatedBufferData, data) + numChars * sizeof (Char)));
       assert (new_p); // FIXME: Better OOM handling
       return new_p;
+    }
+
+    void String::RefBufferData (AllocatedBufferData* data)
+    {
+      data->refCount.fetch_add (1, boost::memory_order_relaxed);
+    }
+    
+    void String::ReleaseBufferData (AllocatedBufferData* data)
+    {
+      if (data->refCount.fetch_sub (1, boost::memory_order_release) == 1)
+      {
+        boost::atomic_thread_fence(boost::memory_order_acquire);
+        free (data);
+      }
     }
 
     //

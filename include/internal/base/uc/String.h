@@ -26,6 +26,7 @@
 #include <string>
 #include <string.h>
 
+#include <boost/atomic.hpp>
 #include <boost/config.hpp>
 
 namespace s1
@@ -44,7 +45,7 @@ namespace s1
       inline String ();
       inline String (const char* s);
       inline String (const Char* s);
-      inline String (const String& s);
+      String (const String& s);
       inline String (const String& s, size_type start);
       inline String (Char32 c);
       inline String (const Char32* s);
@@ -136,6 +137,7 @@ namespace s1
           : length (length), capacity (capacity), buffer (buffer) { }
       } d;
 
+      typedef boost::atomic<boost::uint32_t> ref_count_type;
       // Desired size of a string instance
       BOOST_STATIC_CONSTANT(size_type, DesiredInstanceSize = 64);
       BOOST_STATIC_CONSTANT(size_type, InternalBufferSize = (DesiredInstanceSize - sizeof(Data))/sizeof(value_type));
@@ -143,6 +145,7 @@ namespace s1
       value_type internalBuffer[InternalBufferSize];
       struct AllocatedBufferData
       {
+        ref_count_type refCount;
         value_type data[1];
       };
 
@@ -152,11 +155,18 @@ namespace s1
       void ResizeBuffer (size_type capacity);
 
       /// Get pointer to AllocatedBufferData object
-      AllocatedBufferData* BufferDataPtr();
+      AllocatedBufferData* BufferDataPtr() const;
+      /// Ensure that we have a buffer data object that we and we alone own
+      void EnsureBufferUnique();
+
       AllocatedBufferData* AllocBufferData (size_type numChars);
       AllocatedBufferData* ReallocBufferData (AllocatedBufferData* p, size_type numChars);
+      // Add a reference to some buffer data.
+      void RefBufferData (AllocatedBufferData* data);
+      // Release a reference to some buffer data. Frees if necessary
+      void ReleaseBufferData (AllocatedBufferData* data);
 
-      Char* data() { return d.buffer; }
+      Char* writePtr() { return d.buffer; }
       void setLength (size_type len) { d.length = len; }
     };
   } // namespace uc
@@ -189,12 +199,6 @@ namespace s1
       append (s);
     }
 
-    String::String (const String& s) : d (0, 0, internalBuffer)
-    {
-      // TODO: Share buffer data, if applicable
-      append (s);
-    }
-    
     String::String (const String& s, size_type start) : d (0, 0, internalBuffer)
     {
       if (start < s.length())

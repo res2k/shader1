@@ -327,4 +327,47 @@ public:
       TSM_ASSERT_EQUALS(message.c_str(), normalized, normalized_expected);
     }
   }
+  
+  // Test two strings sharing the same data
+  void testDataSharing1 ()
+  {
+    s1::uc::String str1 (MakeLongString());
+    s1::uc::String str2 (str1);
+    TS_ASSERT_EQUALS(str1, str2);
+    // String should be long enough that a shared heap buffer is used
+    TS_ASSERT_EQUALS(str1.data(), str2.data());
+    // Something that should cause the buffers to be un-shared
+    str2.reserve (str2.length()+1);
+    // Content should be same, but backed by different buffers
+    TS_ASSERT_EQUALS(str1, str2);
+    TS_ASSERT_DIFFERS(str1.data(), str2.data());
+  }
+  
+  // Test two strings sharing the same data
+  void testDataSharing2 ()
+  {
+    s1::uc::String str1;
+    str1 = MakeLongString();
+    s1::uc::String str2;
+    str2 = str1;
+    TS_ASSERT_EQUALS(str1, str2);
+    // String should be long enough that a shared heap buffer is used
+    TS_ASSERT_EQUALS(str1.data(), str2.data());
+    // Something that should cause the buffers to be un-shared
+    str2.reserve (str2.length()+1);
+    // Content should be same, but backed by different buffers
+    TS_ASSERT_EQUALS(str1, str2);
+    TS_ASSERT_DIFFERS(str1.data(), str2.data());
+  }
+  
+  // Test two strings sharing the same data
+  void testDataSharing3 ()
+  {
+    s1::uc::String str1 (MakeLongString());
+    s1::uc::String str2;
+    str2.append (str1);
+    TS_ASSERT_EQUALS(str1, str2);
+    // 'append()' shouldn't cause sharing (would be unintuitive anyway)
+    TS_ASSERT_DIFFERS(str1.data(), str2.data());
+  }
 };
