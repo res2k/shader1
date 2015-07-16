@@ -14,9 +14,9 @@ add_dependencies(base generate_Object)
 target_link_libraries(base ${ICU_LIBRARIES})
 
 if(CXXTEST_FOUND)
-  CXXTEST_ADD_TEST(test_UnicodeStream test_UnicodeStream.cpp
+  CXXTEST_ADD_TEST(test_Base test_Base.cpp
                    ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h)
-  target_link_libraries(test_UnicodeStream base)
-  set_property(TARGET test_UnicodeStream PROPERTY EXCLUDE_FROM_ALL YES)
-  AutoBuildTest(test_UnicodeStream)
+  target_link_libraries(test_Base base)
+  set_property(TARGET test_Base PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_Base)
 endif()
