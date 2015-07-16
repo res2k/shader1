@@ -17,6 +17,8 @@
 
 #include <cxxtest/TestSuite.h>
 
+#include <assert.h>
+
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"

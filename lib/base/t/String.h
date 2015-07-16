@@ -33,6 +33,7 @@ class StringTestSuite : public CxxTest::TestSuite
   static s1::uc::String MakeLongString (s1::uc::String::size_type num = 128)
   {
     s1::uc::String s;
+    s.reserve (num);
     for (s1::uc::String::size_type n = 0; n < num; n++)
     {
       s.append (static_cast<s1::uc::Char> ('a' + (n % 26)));

@@ -27,9 +27,9 @@ namespace s1
 {
   namespace uc
   {
-    typedef UChar Char;
     typedef UChar Char16;
     typedef UChar32 Char32;
+    typedef Char16 Char;
 
     static const Char32 InvalidChar32 = (Char32)~0u;
     static const Char32 ReplacementChar = 0xfffd;
@@ -49,6 +49,21 @@ namespace s1
     /// Check whether a character is an ID continue character
     bool IsIDContinue (Char32 ch);
     /** @} */
+
+    /**
+     * Sanitize a character. 
+     * Returns \c ReplacementChar if \a ch not a valid character
+     * value.
+     */
+    static inline Char32 SanitizeChar (Char32 ch)
+    {
+      if ((ch > MaxChar)
+        || ((ch >= LeadSurrogateFirst) && (ch <= TailSurrogateLast)))
+      {
+        return ReplacementChar;
+      }
+      return ch;
+    }
   } // namespace uc
 } // namespace s1
 

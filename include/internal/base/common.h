@@ -38,15 +38,15 @@ static const size_t charsToFormatUint = S1_APPROX_DIGITS(unsigned int);
 // Add 1 for '-'
 static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 
-// Used all over the place
-#include "uc/String.h"
-
 // Debugging helpers
 #include <assert.h>
 #define S1_ASSERT_RET_VOID
 #define S1_ASSERT(x, ret)            { assert (x); if (!(x)) { return ret; } }
 // TODO: Implement custom assertion messages
 #define S1_ASSERT_MSG(x, msg, ret)   S1_ASSERT(x, ret)
+
+// Used all over the place
+#include "uc/String.h"
 
 #include "nullptr.h"
 

@@ -35,57 +35,35 @@ namespace s1
     class Sink<uc::String>
     {
       uc::String& dest;
-      uc::Char* p_start;
-      uc::Char* p;
-    #ifndef NDEBUG
-      uc::Char* p_end;
-    #endif
     public:
       typedef uc::String DestType;
       typedef uc::Char value_type;
       Sink (uc::String& dest, size_t output_size) : dest (dest)
       {
-        p_start = dest.getBuffer (dest.length() + output_size + 1);
-        p = p_start + dest.length();
-      #ifndef NDEBUG
-        p_end = p + output_size + 1;
-      #endif
+        dest.reserve (dest.length() + output_size);
       }
       ~Sink()
       {
-        assert (p < p_end);
-        *p = 0;
-        dest.releaseBuffer (p - p_start);
       }
 
       void append (const char* s, size_t n)
       {
-        assert (p + n < p_end);
-        while (n-- > 0)
-        {
-          *p++ = *s++;
-        }
+        dest.append (s, n);
       }
 
       void append (const value_type* s, size_t n)
       {
-        assert (p + n < p_end);
-        memcpy (p, s, n * sizeof (uc::Char));
-        p += n;
+        dest.append (s, n);
       }
 
       void append (const DestType& s)
       {
-        int n (s.length());
-        assert (p + n < p_end);
-        memcpy (p, s.getBuffer(), n * sizeof (uc::Char));
-        p += n;
+        dest.append (s);
       }
 
       void push_back (value_type c)
       {
-        assert (p < p_end);
-        *p++ = c;
+        dest.append (c);
       }
     };
   } // namespace format
