@@ -66,8 +66,7 @@ namespace CxxTest
     ValueTraits (const UnicodeString& s )
     {
       std::string tmp;
-      StringByteSink<std::string> utfSink (&tmp);
-      s.toUTF8 (utfSink);
+      s.toUTF8String (tmp);
       utfStr.append ("\"");
       utfStr.append (tmp);
       utfStr.append ("\"");

@@ -456,7 +456,7 @@ public:
     if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
     // @@@ Slightly fragile, relies on imported regs naming
-    TS_ASSERT (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].destReg->GetName().compare ("m_a_B0") == 0);
+    TS_ASSERT_EQUALS (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].destReg->GetName(), s1::uc::String ("m_a_B0"));
     
     TS_ASSERT (testVisitor.entries[0].branchElseVisitor);
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
@@ -465,7 +465,7 @@ public:
     if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
     TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
     // @@@ Slightly fragile, relies on imported regs naming
-    TS_ASSERT (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].destReg->GetName().compare ("m_a_B0") == 0);
+    TS_ASSERT_EQUALS (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].destReg->GetName(), s1::uc::String ("m_a_B0"));
   }
   
   void testLoopUnused (void)

@@ -103,8 +103,7 @@ public:
     TestExpressionVar (const UnicodeString& identifier,
 		       const TypePtr& valueType) : valueType (valueType)
     {
-      StringByteSink<std::string> utfSink (&(this->identifier));
-      identifier.toUTF8 (utfSink);
+      identifier.toUTF8String (this->identifier);
     }
     
     const std::string& GetExprString() { return identifier; }
@@ -180,8 +179,7 @@ public:
 			TestSemanticsHandler& handler)
     {
       std::string attrStr;
-      StringByteSink<std::string> utfSink (&attrStr);
-      attr.toUTF8 (utfSink);
+      attr.toUTF8String (attrStr);
       
       str = static_cast<TestExpressionBase*> (base.get())->GetExprString();
       str.append (".");
@@ -247,8 +245,7 @@ public:
 			    const ExpressionVector& params)
     {
       {
-	StringByteSink<std::string> utfSink (&str);
-	name->identifier.toUTF8 (utfSink);
+	name->identifier.toUTF8String (str);
       }
       
       str.append (" (");
@@ -262,8 +259,7 @@ public:
 			    const ExpressionVector& params)
     {
       {
-	StringByteSink<std::string> utfSink (&str);
-	type->ToString().toUTF8 (utfSink);
+	type->ToString().toUTF8String (str);
       }
       
       str.append (" (");
@@ -286,8 +282,7 @@ public:
   ExpressionPtr CreateConstNumericExpression (const UnicodeString& valueStr)
   {
     std::string str;
-    StringByteSink<std::string> utfSink (&str);
-    valueStr.toUTF8 (utfSink);
+    valueStr.toUTF8String (str);
     return ExpressionPtr (new TestExpressionConst (str,
       CreateType (DetectNumericType (valueStr))));
   }
