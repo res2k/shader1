@@ -164,6 +164,22 @@ namespace s1
           value = S1_APPROX_DIGITS(T) + boost::is_signed<T>::value
         };
       };
+      template<typename T, bool IsSigned>
+      struct MakeUnsignedHelper
+      {
+        static typename boost::make_unsigned<T>::type MakeUnsigned(T v, bool has_sign)
+        {
+          return has_sign ? -v : v;
+        }
+      };
+      template<typename T>
+      struct MakeUnsignedHelper<T, false>
+      {
+        static T MakeUnsigned(T v, bool)
+        {
+          return v;
+        }
+      };
 
       // General integer
       template<typename SinkType, typename T>
@@ -182,7 +198,7 @@ namespace s1
           CharType* p = buf_end;
 
           bool has_sign (arg < 0);
-          typename boost::make_unsigned<T>::type v (has_sign ? -arg : arg);
+          typename boost::make_unsigned<T>::type v = MakeUnsignedHelper<T, boost::is_signed<T>::value>::MakeUnsigned (arg, has_sign);
           do
           {
             --p;
