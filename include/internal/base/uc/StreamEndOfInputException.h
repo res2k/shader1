@@ -34,7 +34,7 @@ namespace uc
     /**
      * Construct a new exception object.
      */
-    StreamEndOfInputException () : StreamException (UTF8Decoder::UTF8Decoder::drInputUnderrun) {}
+    StreamEndOfInputException () : StreamException (UTF8Decoder::drInputUnderrun) {}
     
     const char* what () const throw() { return "end of input"; }
   };
