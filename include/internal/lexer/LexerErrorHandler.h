@@ -18,8 +18,6 @@
 #ifndef __LEXER_LEXERERRORHANDLER_H__
 #define __LEXER_LEXERERRORHANDLER_H__
 
-#include <unicode/utypes.h>
-
 namespace s1
 {
   struct LexerErrorHandler

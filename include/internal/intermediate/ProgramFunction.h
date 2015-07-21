@@ -18,8 +18,6 @@
 #ifndef __INTERMEDIATE_PROGRAMFUNCTION_H__
 #define __INTERMEDIATE_PROGRAMFUNCTION_H__
 
-#include <unicode/unistr.h>
-
 #include "intermediate/Sequence.h"
 #include "parser/SemanticsHandler.h"
 

@@ -23,7 +23,6 @@
 
 #include "Frequency.h"
 
-#include <unicode/unistr.h>
 #include <boost/unordered_map.hpp>
 
 namespace s1

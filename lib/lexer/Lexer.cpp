@@ -32,8 +32,6 @@ namespace s1
 {
   typedef format::Formatter<> Format;
 
-  U_NAMESPACE_USE
-  
 #define KEYWORDS				\
   KEYWORD ("return",		kwReturn)	\
   KEYWORD ("true",		kwTrue)		\

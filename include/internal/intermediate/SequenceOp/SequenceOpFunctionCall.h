@@ -21,7 +21,6 @@
 #include "SequenceOp.h"
 #include "../forwarddecl.h"
 
-#include <unicode/unistr.h>
 #include <vector>
 
 namespace s1

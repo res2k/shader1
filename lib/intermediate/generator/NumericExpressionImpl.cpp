@@ -159,8 +159,6 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
       
-      U_NAMESPACE_USE
-      
       RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType(), classify));
       
       // Mark 'destination' as constant or something?

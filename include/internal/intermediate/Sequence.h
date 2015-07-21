@@ -23,7 +23,6 @@
 
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include <unicode/unistr.h>
 #include <vector>
 
 namespace s1

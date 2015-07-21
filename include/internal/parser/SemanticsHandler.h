@@ -19,7 +19,6 @@
 #define __PARSER_SEMANTICSHANDLER_H__
 
 #include <boost/shared_ptr.hpp>
-#include <unicode/unistr.h>
 
 #include <vector>
 
