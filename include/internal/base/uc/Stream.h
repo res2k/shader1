@@ -44,7 +44,6 @@ namespace uc
     };
     /**
      * Internal buffer for data from input stream.
-     * Stored to allow resuming after ICU reports an error.
      */
     char streamInBuffer[UCBufferSize];
     const char* streamInBufferPtr;
@@ -52,11 +51,6 @@ namespace uc
     
     Char32 currentChar;
     UTF8Decoder::DecodeResult currentDecodeResult;
-    enum
-    {
-      errorCharacter = 0xFFFF,
-      noCharacter = -1
-    };
     
     /// Refill stream input buffer
     bool RefillBuffer ();

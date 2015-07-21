@@ -28,7 +28,7 @@ namespace uc
   
   Stream::Stream (std::istream& inStream)
    : inStream (inStream), streamInBufferRemaining (0),
-     currentChar (noCharacter), currentDecodeResult (UTF8Decoder::drSuccess)
+     currentChar (InvalidChar32), currentDecodeResult (UTF8Decoder::drSuccess)
   {
     RefillBuffer();
     // Go to first character
@@ -42,7 +42,7 @@ namespace uc
   Stream::operator bool() const throw()
   {
     return
-      (currentChar != noCharacter) // We have a current character
+      (currentChar != InvalidChar32) // We have a current character
       || (streamInBufferRemaining > 0) // ... or still buffered chars to decode
       || !inStream.eof(); // ... or still raw input data
   }
@@ -73,7 +73,7 @@ namespace uc
           }
           else
           {
-            currentChar = noCharacter;
+            currentChar = InvalidChar32;
           }
           return *this;
         }
