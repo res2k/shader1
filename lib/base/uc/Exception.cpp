@@ -19,15 +19,13 @@
 
 #include "base/uc/Exception.h"
 
-#include <unicode/utypes.h>
-
 namespace s1
 {
   namespace uc
   {
     const char* Exception::what () const throw()
     {
-      return u_errorName (static_cast<UErrorCode> (uerr));
+      return "s1::uc::Exception";
     }
   } // namespace uc
 } // namespace s1

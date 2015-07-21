@@ -36,7 +36,7 @@ namespace uc
      * Construct a new exception object.
      * \param result UTF8Decoder result code
      */
-    StreamException (UTF8Decoder::DecodeResult result) : Exception (0), result (result) {}
+    StreamException (UTF8Decoder::DecodeResult result) : result (result) {}
 
     const char* what () const throw();
   };

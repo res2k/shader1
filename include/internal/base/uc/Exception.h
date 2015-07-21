@@ -30,13 +30,11 @@ namespace s1
     */
     class Exception : public std::exception
     {
-      int uerr;
     public:
       /**
       * Construct a new exception object.
-      * \param uerr The error code returned by ICU.
       */
-      Exception (int uerr) : uerr (uerr) {}
+      Exception () {}
       
       const char* what () const throw();
     };
