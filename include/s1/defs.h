@@ -68,7 +68,7 @@
   || (defined(__cplusplus) && (__cplusplus >= 201103L)) \
   || (defined(_MSC_VER) && (_MSC_VER >= 1600))
 /**\def S1_HAVE_RVALUES
- * Defined if compiler supports value types.
+ * Defined if compiler supports rvalue types.
  */
 #define S1_HAVE_RVALUES
 #endif
