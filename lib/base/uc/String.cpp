@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <boost/container/vector.hpp>
 #include <boost/foreach.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <stddef.h>
 
