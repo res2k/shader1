@@ -1,4 +1,4 @@
-// Generated on 2014-09-11 14:58:16.961003 from Unicode 7.0.0 data
+// Generated on 2015-07-21 23:28:35.015444 from Unicode 8.0.0 data
 static const Char32 ucd_NFD_QC_No[231 * 2] = {
 	0xc0, 0xc5,
 	0xc7, 0xcf,

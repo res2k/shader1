@@ -1,4 +1,4 @@
-// Generated on 2014-09-11 14:58:16.966144 from Unicode 7.0.0 data
+// Generated on 2015-07-21 23:28:35.020506 from Unicode 8.0.0 data
 static const struct _ucd_CanonicalDecomp
 {
 	Char32 key[230*2];
