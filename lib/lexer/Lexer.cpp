@@ -77,7 +77,7 @@ KEYWORDS
    
   Lexer::operator bool() const throw()
   {
-    return (currentToken.typeOrID != EndOfFile) || currentChar != -1 || inputChars;
+    return (currentToken.typeOrID != EndOfFile) || (currentChar != uc::InvalidChar32) || inputChars;
   }
 
   Lexer& Lexer::operator++() throw()
@@ -90,7 +90,7 @@ KEYWORDS
       while (uc::IsWhiteSpace (currentChar)) NextChar();
       
       // Check for end of input
-      if (currentChar == -1)
+      if (currentChar == uc::InvalidChar32)
       {
 	currentToken = Token (EndOfFile);
 	return *this;
@@ -184,7 +184,7 @@ KEYWORDS
 	    {
 	      NextChar();
 	    }
-	    while ((currentChar != -1) && (currentChar != '\n'));
+	    while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
 	    // Let '\n' be handled by regular code
 	    continue;
 	  }
@@ -205,7 +205,7 @@ KEYWORDS
 		}
 	      }
 	    }
-	    while (currentChar != -1);
+	    while (currentChar != uc::InvalidChar32);
 	    continue;
 	  }
 	  else

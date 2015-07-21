@@ -128,7 +128,7 @@ namespace s1
             outChar = ReplacementChar;
             return drCharacterInvalid;
           }
-          else if (finalChar < (1 << minDecodeBits))
+          else if (finalChar < (s1::uc::Char32)(1 << minDecodeBits))
           {
             // Overlong encoding
             outChar = ReplacementChar;
