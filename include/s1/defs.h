@@ -23,6 +23,7 @@
 
 #include "s1/s1config.h"
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
   /**\def S1_EXTERN_C
@@ -71,10 +72,24 @@
  * Defined if compiler supports rvalue types.
  */
 #define S1_HAVE_RVALUES
+/**\def S1_HAVE_CHARXX_T
+ * \internal
+ * Defined if compiler natively supports \c charXX_t types.
+ */
+#define S1_HAVE_CHARXX_T
 #endif
 
 /// Boolean type.
 typedef int s1_bool;
+#ifdef S1_HAVE_CHARXX_T
+/// UTF-16 character type
+typedef char16_t s1_char16;
+/// UTF-32 character type
+typedef char32_t s1_char32;
+#else
+typedef uint16_t s1_char16;
+typedef uint32_t s1_char32;
+#endif
 
 /**\def S1_VISIBILITY
  * \internal

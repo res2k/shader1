@@ -21,14 +21,14 @@
 #ifndef __BASE_UC_CHAR_H__
 #define __BASE_UC_CHAR_H__
 
-#include <unicode/uchar.h>
+#include "s1/defs.h"
 
 namespace s1
 {
   namespace uc
   {
-    typedef UChar Char16;
-    typedef UChar32 Char32;
+    typedef s1_char16 Char16;
+    typedef s1_char32 Char32;
     typedef Char16 Char;
 
     static const Char32 InvalidChar32 = (Char32)~0u;

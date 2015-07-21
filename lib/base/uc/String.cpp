@@ -608,6 +608,8 @@ namespace boost
 {
   std::size_t hash_value (const s1::uc::String& s)
   {
-    return boost::hash_range (s.data(), s.data() + s.length());
+    // Workaround for infinite recursion when trying to hash char16_t
+    const uint16_t* data_u16 = reinterpret_cast<const uint16_t*> (s.data());
+    return boost::hash_range (data_u16, data_u16 + s.length());
   }
 }
