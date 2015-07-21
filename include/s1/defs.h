@@ -67,7 +67,7 @@
 
 #if defined(DOXYGEN_RUN) \
   || (defined(__cplusplus) && (__cplusplus >= 201103L)) \
-  || (defined(_MSC_VER) && (_MSC_VER >= 1600))
+  || (defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER >= 1600))
 /**\def S1_HAVE_RVALUES
  * Defined if compiler supports rvalue types.
  */
@@ -82,6 +82,11 @@
 /// Boolean type.
 typedef int s1_bool;
 #ifdef S1_HAVE_CHARXX_T
+
+#if defined(_MSC_VER)
+#include <cstdint>
+#endif
+
 /// UTF-16 character type
 typedef char16_t s1_char16;
 /// UTF-32 character type
