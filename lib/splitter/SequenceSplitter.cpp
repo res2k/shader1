@@ -666,7 +666,7 @@ namespace s1
 	uc::String newIdent (oldReg->GetName());
 	newIdent.append ("$");
 	newIdent.append (suffix);
-	newIdent.append (UChar ('0' + f));
+	newIdent.append (uc::Char ('0' + f));
 	
 	RegisterPtr newReg (parent.AllocateRegister (oldReg->GetOriginalType(), newIdent));
 	newExports[newIdent] = seqExp->second;
@@ -712,7 +712,7 @@ namespace s1
 	  uc::String newIdent (dstRegPtr->GetName());
 	  newIdent.append ("$");
 	  newIdent.append (suffix);
-	  newIdent.append (UChar ('0' + f));
+	  newIdent.append (uc::Char ('0' + f));
 	  
 	  RegisterPtr newReg (seqBuilder->AllocateRegister (srcRegPtr->GetOriginalType(), newIdent));
 	  seqBuilder->SetImport (newReg, srcRegPtr->GetName());
