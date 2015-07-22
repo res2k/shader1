@@ -21,7 +21,7 @@ if(BUILD_SHARED_LIBS)
   # Building shared: build lib straight away
   add_library(s1 SHARED ${s1_sources})
   add_dependencies(s1 generate_Object)
-  target_link_libraries(s1 base compiler)
+  target_link_libraries(s1 PRIVATE base compiler)
   set_property(TARGET s1 APPEND PROPERTY LINK_FLAGS "${CXX_STATIC_LIBSTDCXX_FLAG} ${CXX_LINK_HIDE_OTHER_SYMBOLS}")
 else()
   # Building static lib: generate one big lib
