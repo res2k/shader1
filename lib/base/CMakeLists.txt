@@ -27,7 +27,6 @@ set(base_sources
     )
 add_library(base STATIC ${base_sources})
 add_dependencies(base generate_Object)
-target_link_libraries(base ${ICU_LIBRARIES})
 
 if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Base test_Base.cpp
