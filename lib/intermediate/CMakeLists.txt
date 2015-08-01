@@ -2,24 +2,25 @@ file(GLOB intermediate_sources *.h *.cpp ../include/internal/intermediate/*.h)
 file(GLOB generator_sources generator/*.h generator/*.cpp)
 file(GLOB seqop_sources SequenceOp/*.h SequenceOp/*.cpp ../include/internal/intermediate/SequenceOp/*.h)
 include_directories(generator .)
-add_library(intermediate_generator OBJECT ${generator_sources})
-add_library(intermediate_seqop OBJECT ${seqop_sources})
-add_library(intermediate STATIC
-			 ${intermediate_sources}
-			 $<TARGET_OBJECTS:intermediate_generator>
-                         $<TARGET_OBJECTS:intermediate_seqop>)
-target_link_libraries(intermediate parser)
+s1_add_library(intermediate_generator SOURCES ${generator_sources})
+s1_add_library(intermediate_seqop SOURCES ${seqop_sources})
+s1_add_library(intermediate
+               SOURCES ${intermediate_sources}
+               LINK intermediate_generator intermediate_seqop parser)
+IF(S1LIB_PDB)
+  target_compile_options(intermediate_generator PRIVATE ${S1LIB_PDB})
+  target_compile_options(intermediate_seqop PRIVATE ${S1LIB_PDB})
+  target_compile_options(intermediate PRIVATE ${S1LIB_PDB})
+ENDIF()
 
 if(CXXTEST_FOUND)
   file(GLOB intermediate_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
-  CXXTEST_ADD_TEST(test_Intermediate test_Intermediate.cpp
-		   ${intermediate_test_sources})
-  target_link_libraries(test_Intermediate intermediate)
-  set_property(TARGET test_Intermediate PROPERTY EXCLUDE_FROM_ALL YES)
+  s1_add_cxxtest(test_Intermediate
+		 SOURCES ${intermediate_test_sources}
+                 DEPENDS intermediate)
   set_property(TARGET test_Intermediate
                APPEND
                PROPERTY INCLUDE_DIRECTORIES
                ${CMAKE_CURRENT_SOURCE_DIR}/generator)
-  AutoBuildTest(test_Intermediate)
 endif()
 

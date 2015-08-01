@@ -11,5 +11,9 @@ set(compiler_sources
      ../../include/internal/compiler/Options.h
      ../../include/internal/compiler/Program.h
      )
-add_library(compiler STATIC ${compiler_sources})
-target_link_libraries(compiler lexer intermediate codegen optimize splitter)
+s1_add_library(compiler
+               SOURCES ${compiler_sources}
+               LINK lexer intermediate codegen optimize splitter)
+IF(S1LIB_PDB)
+  target_compile_options(compiler PRIVATE ${S1LIB_PDB})
+ENDIF()

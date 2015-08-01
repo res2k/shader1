@@ -18,7 +18,10 @@ endif()
 if(MSVC AND NOT BUILD_SHARED_LIBS)
   # Static lib merging doesn't merge debug info, so manually set up a single
   # PDB. For convenience, place it in the same dir the lib is put
-  add_compile_options("/Fd${CMAKE_BINARY_DIR}/\$(Configuration)/$<TARGET_PROPERTY:s1,OUTPUT_NAME>.pdb" ${CXX_PDB_SYNC})
+  set(s1_outputname "$<TARGET_PROPERTY:s1,OUTPUT_NAME>")
+  set(s1_logicalname "$<TARGET_PROPERTY:s1,NAME>")
+  set(s1_actualoutput "$<$<BOOL:${s1_outputname}>:${s1_outputname}>$<$<NOT:$<BOOL:${s1_outputname}>>:${s1_logicalname}>")
+  set(S1LIB_PDB "/Fd${CMAKE_BINARY_DIR}/\$(Configuration)/${s1_actualoutput}.pdb" ${CXX_PDB_SYNC})
 endif()
 
 add_subdirectory(base)

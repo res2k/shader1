@@ -25,23 +25,25 @@ set(base_sources
     ../../include/internal/base/format/Formatter.h
     ../../include/internal/base/format/Formatter.txx
     )
-add_library(base STATIC ${base_sources})
-add_dependencies(base generate_Object)
+s1_add_library(base
+               SOURCES ${base_sources}
+               DEPENDS generate_Object)
+IF(S1LIB_PDB)
+  target_compile_options(base PRIVATE ${S1LIB_PDB})
+ENDIF()
 
 if(CXXTEST_FOUND)
-  CXXTEST_ADD_TEST(test_Base test_Base.cpp
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Encoder.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16to8Transcoder.h
-                   ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.h)
-  target_link_libraries(test_Base base)
-  set_property(TARGET test_Base PROPERTY EXCLUDE_FROM_ALL YES)
-  AutoBuildTest(test_Base)
+  s1_add_cxxtest(test_Base
+                 SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Encoder.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16to8Transcoder.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.h
+                 DEPENDS base)
 endif()

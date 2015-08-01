@@ -1,24 +1,30 @@
 file(GLOB codegen_cg_sources cg/*.h cg/*.cpp)
-add_library(codegen_cg STATIC ${codegen_cg_sources})
+s1_add_library(codegen_cg SOURCES ${codegen_cg_sources})
+IF(S1LIB_PDB)
+  target_compile_options(codegen_cg PRIVATE ${S1LIB_PDB})
+ENDIF()
 set(codegen_sources
 	CgGenerator.cpp
 	StringsArray.cpp
 	../../include/internal/codegen/CgGenerator.h
 	../../include/internal/codegen/StringsArray.h)
-add_library(codegen STATIC ${codegen_sources})
-target_link_libraries(codegen codegen_cg intermediate)
+s1_add_library(codegen
+               SOURCES ${codegen_sources}
+               LINK codegen_cg intermediate)
+IF(S1LIB_PDB)
+  target_compile_options(codegen PRIVATE ${S1LIB_PDB})
+ENDIF()
+
 
 if(CXXTEST_FOUND)
   file(GLOB codegen_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
-  CXXTEST_ADD_TEST(test_Codegen test_Codegen.cpp
-		   ${codegen_test_sources})
-  target_link_libraries(test_Codegen codegen)
-  set_property(TARGET test_Codegen PROPERTY EXCLUDE_FROM_ALL YES)
+  s1_add_cxxtest(test_Codegen
+		 SOURCES ${codegen_test_sources}
+                 DEPENDS codegen)
   set_property(TARGET test_Codegen
                APPEND
                PROPERTY INCLUDE_DIRECTORIES
                ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate
                ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate/generator)
-  AutoBuildTest(test_Codegen)
 endif()
 

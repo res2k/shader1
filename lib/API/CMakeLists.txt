@@ -18,17 +18,16 @@ set(s1_sources
     )
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)
 if(BUILD_SHARED_LIBS)
-  # Building shared: build lib straight away
-  add_library(s1 SHARED ${s1_sources})
-  add_dependencies(s1 generate_Object)
-  target_link_libraries(s1 PRIVATE base compiler)
+  s1_add_library(s1 SHARED
+                 SOURCES ${s1_sources}
+                 DEPENDS generate_Object
+                 LINK base compiler)
   set_property(TARGET s1 APPEND PROPERTY LINK_FLAGS "${CXX_STATIC_LIBSTDCXX_FLAG} ${CXX_LINK_HIDE_OTHER_SYMBOLS}")
 else()
-  # Building static lib: generate one big lib
-  add_library(s1_api STATIC ${s1_sources})
-  add_dependencies(s1_api generate_Object)
-  target_link_libraries(s1_api base compiler)
-  MERGE_LIBRARIES(s1 s1_api NOINSTALL)
+  s1_add_library(s1 STATIC 
+                 SOURCES ${s1_sources}
+                 DEPENDS generate_Object
+                 LINK base compiler)
 endif()
 if (MSVC AND (${CMAKE_GENERATOR} MATCHES  "Win64"))
   set_target_properties(s1 PROPERTIES OUTPUT_NAME "s1-x64")
