@@ -135,7 +135,7 @@ if(MSVC)
   CxxCompilerFlagString (CXX_ZO " /Zo")
   set(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}${CXX_ZO}")
   # New option in VC 12. Needed when more than one project writes to a PDB
-  CxxCompilerFlagString (CXX_PDB_SYNC " /FS")
+  CxxCompilerFlagString (CXX_PDB_SYNC "/FS")
 endif()
 
 # Build everything with -fPIC to allow linking into shared libs
