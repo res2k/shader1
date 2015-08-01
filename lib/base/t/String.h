@@ -279,7 +279,7 @@ public:
   // Test toUTF8String with malformed input (surrogate half)
   void testToUTF8Malformed1 ()
   {
-    const s1::uc::Char chars_utf16[] = { 'a', 0xd83d, 'b' };
+    const s1::uc::Char chars_utf16[] = { 'a', 0xd83d, 'b', 0 };
     const char chars_utf8[] = "a\xef\xbf\xbd" "b";
     s1::uc::String str_utf16 (chars_utf16);
     std::string str_utf8;
@@ -290,7 +290,7 @@ public:
   // Test toUTF8String with malformed input (surrogate half)
   void testToUTF8Malformed2 ()
   {
-    const s1::uc::Char chars_utf16[] = { 'a', 0xdc9a, 'b' };
+    const s1::uc::Char chars_utf16[] = { 'a', 0xdc9a, 'b', 0 };
     const char chars_utf8[] = "a\xef\xbf\xbd" "b";
     s1::uc::String str_utf16 (chars_utf16);
     std::string str_utf8;
