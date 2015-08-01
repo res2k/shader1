@@ -239,7 +239,7 @@ namespace s1
 	// Unknown component
 	return Attribute (Attribute::Unknown);
       }
-      return Attribute (attributeStr.length(),
+      return Attribute (static_cast<unsigned char> (attributeStr.length()),
 			attr[0], attr[1], attr[2], attr[3]);
     }
     

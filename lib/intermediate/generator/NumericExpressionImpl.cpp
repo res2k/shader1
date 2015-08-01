@@ -51,11 +51,13 @@ namespace s1
     }
 
     template<typename T>
-    static T ParseNumber (int base, const uc::String& str, int begin, int end,
+    static T ParseNumber (int base, const uc::String& str,
+                          uc::String::size_type begin,
+                          uc::String::size_type end,
                           bool negative)
     {
       T val (0);
-      for (int i = begin; i < end; i++)
+      for (uc::String::size_type i = begin; i < end; i++)
       {
         unsigned int digitVal = 0;
         uc::Char digit = str[i];
@@ -129,9 +131,9 @@ namespace s1
     static float ParseFloat (const uc::String& str)
     {
       // Convert string to ASCII
-      int strLen = str.length();
+      uc::String::size_type strLen = str.length();
       char* strAsc = (char*)alloca (strLen + 1);
-      for (int i = 0; i < strLen; i++)
+      for (uc::String::size_type i = 0; i < strLen; i++)
       {
         uc::Char ch = str[i];
         if (ch >= 128)

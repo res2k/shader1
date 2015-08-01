@@ -585,7 +585,8 @@ namespace s1
       {
 	ConstantValPtr arrVal (arrConst->second);
 	ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-	newVal->comp[0].ui = arrVal->arraySize;
+        // TODO: Overflow check
+	newVal->comp[0].ui = static_cast<unsigned int> (arrVal->arraySize);
 	constRegs[destination] = newVal;
 	
 	SequenceOpPtr newOp;
@@ -734,16 +735,16 @@ namespace s1
       switch (baseType->GetBaseType())
       {
       case parser::SemanticsHandler::Int:
-	result = func (src1Val.i, src2Val.i);
+        result = static_cast<T> (func(src1Val.i, src2Val.i));
 	break;
       case parser::SemanticsHandler::UInt:
-	result = func (src1Val.ui, src2Val.ui);
+        result = static_cast<T> (func(src1Val.ui, src2Val.ui));
 	break;
       case parser::SemanticsHandler::Float:
-	result = func (src1Val.f, src2Val.f);
+	result = static_cast<T> (func (src1Val.f, src2Val.f));
 	break;
       case parser::SemanticsHandler::Bool:
-	result = func (src1Val.b, src2Val.b);
+        result = static_cast<T> (func(src1Val.b, src2Val.b));
 	break;
       default:
 	assert (false);
@@ -803,6 +804,13 @@ namespace s1
       return false;
     }
     
+    /* Disable some warnings on MSVC for code that's (should) not be executed
+    * but is nevertheless generated. */
+  #ifdef _MSC_VER
+    #pragma warning (push)
+    #pragma warning (disable: 4804)
+  #endif
+
     namespace
     {
       class FunctorArith
@@ -833,6 +841,10 @@ namespace s1
 	}
       };
     }
+
+  #ifdef _MSC_VER
+    #pragma warning (pop)
+  #endif
     
     void ConstantFolding::FoldingVisitor::OpArith (const RegisterPtr& destination,
 						   ArithmeticOp op,
@@ -925,6 +937,13 @@ namespace s1
       return false;
     }
     
+    /* Disable some warnings on MSVC for code that's (should) not be executed
+     * but is nevertheless generated. */
+  #ifdef _MSC_VER
+    #pragma warning (push)
+    #pragma warning (disable: 4146 4804)
+  #endif
+
     namespace
     {
       class FunctorUnary
@@ -944,7 +963,7 @@ namespace s1
 	  default:					assert (false); return 0;
 	  }
 	}
-	
+
 	float operator() (float src)
 	{
 	  switch (op)
@@ -956,7 +975,11 @@ namespace s1
 	}
       };
     }
-    
+
+  #ifdef _MSC_VER
+    #pragma warning (pop)
+  #endif
+
     void ConstantFolding::FoldingVisitor::OpUnary (const RegisterPtr& destination,
 						   UnaryOp op,
 						   const RegisterPtr& source)
@@ -1478,18 +1501,18 @@ namespace s1
       template<>
       int FunctorPow::operator()<int> (int src1, int src2)
       {
-        return pow (double (src1), double (src2));
+        return static_cast<int> (pow (double (src1), src2));
       }
       template<>
       unsigned int FunctorPow::operator()<unsigned int> (unsigned int src1, unsigned int src2)
       {
-        return pow (double (src1), double (src2));
+        return static_cast<unsigned int> (pow(double(src1), double(src2)));
       }
       // May seem odd, but code for this is generated
       template<>
       bool FunctorPow::operator()<bool> (bool src1, bool src2)
       {
-        return pow (float (int (src1)), float (int (src2)));
+        return static_cast<int> (pow (float (int (src1)), float (int (src2)))) != 0;
       }
     }
     

@@ -122,7 +122,8 @@ namespace s1
     
     static char rfc3492_encode_digit (size_t d)
     {
-      return d + 22 + 75 * (d < 26);
+      assert(d <= 35);
+      return static_cast<char> (d + 22 + 75 * (d < 26));
       /*  0..25 map to ASCII a..z or A..Z */
       /* 26..35 map to ASCII 0..9         */
     }

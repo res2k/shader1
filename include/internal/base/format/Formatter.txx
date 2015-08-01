@@ -361,7 +361,16 @@ namespace s1
       }                                                                      \
     }
 
+  #ifdef _MSC_VER
+    #pragma warning (push)
+    #pragma warning (disable: 4065) // Disable warning in zero-arg formatter
+  #endif
+
     BOOST_PP_REPEAT(FORMATTER_MAX_ARGS, _DEFINE_FORMATTER_OPERATOR, _)
+
+  #ifdef _MSC_VER
+    #pragma warning (pop)
+  #endif
 
 #undef _DEFINE_FORMATTER_OPERATOR
   } // namespace format
