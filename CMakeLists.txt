@@ -107,6 +107,8 @@ endif()
 set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
 set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
 
+SET(S1_STATIC_CRT ${S1_BUILD_SHARED} CACHE BOOL "Whether to link the MSVC runtime statically")
+
 if(MSVC)
   # Automatically make use of 'secure' CRT funtions
   add_definitions("-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1")
