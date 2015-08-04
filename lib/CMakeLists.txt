@@ -14,6 +14,18 @@ if(MSVC AND S1_STATIC_CRT)
         string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
      endif(${flag_var} MATCHES "/MD")
   endforeach(flag_var)
+  IF((MSVC_VERSION GREATER 1800) AND S1_UCRT_DYNAMIC)
+    foreach(flag_var
+            CMAKE_SHARED_LINKER_FLAGS_RELEASE
+            CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL
+            CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO)
+      SET(${flag_var} "${${flag_var}} /nodefaultlib:libucrt.lib ucrt.lib")
+    endforeach(flag_var)
+    foreach(flag_var
+            CMAKE_SHARED_LINKER_FLAGS_DEBUG)
+      SET(${flag_var} "${${flag_var}} /nodefaultlib:libucrtd.lib ucrtd.lib")
+    endforeach(flag_var)
+  ENDIF()
 endif()
 if(MSVC AND NOT BUILD_SHARED_LIBS)
   # Static lib merging doesn't merge debug info, so manually set up a single

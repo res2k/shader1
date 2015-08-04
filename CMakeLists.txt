@@ -107,7 +107,10 @@ endif()
 set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
 set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
 
+# Prefer a static MSVC runtime.
 SET(S1_STATIC_CRT ${S1_BUILD_SHARED} CACHE BOOL "Whether to link the MSVC runtime statically")
+# However, if we're on a version based off the universal, always use a dynamic UCRT component
+SET(S1_UCRT_DYNAMIC ON CACHE BOOL "Whether to always use a dynamic MSVC universal runtime")
 
 if(MSVC)
   # Automatically make use of 'secure' CRT funtions
