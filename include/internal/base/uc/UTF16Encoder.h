@@ -88,8 +88,8 @@ namespace s1
         else if (ch > MaxChar16)
         {
           ch -= (MaxChar16 + 1);
-          s1::uc::Char16 surrogate1 = LeadSurrogateFirst | (ch >> 10);
-          s1::uc::Char16 surrogate2 = TailSurrogateFirst | (ch & 0x3ff);
+          s1::uc::Char16 surrogate1 = LeadSurrogateFirst | static_cast<Char16> (ch >> 10);
+          s1::uc::Char16 surrogate2 = TailSurrogateFirst | static_cast<Char16> (ch & 0x3ff);
           *outputBuf++ = surrogate1;
           if (outputBuf < outputEnd)
           {
