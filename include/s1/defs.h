@@ -72,7 +72,17 @@
  * Defined if compiler supports rvalue types.
  */
 #define S1_HAVE_RVALUES
-/**\def S1_HAVE_CHARXX_T
+
+// On some MSVC versions we need to pull in some header to get charXX_t
+#if defined(_MSC_VER)
+#if _MSC_VER >= 1900
+#include <uchar.h>
+#else
+#include <cstdint>
+#endif
+#endif
+
+ /**\def S1_HAVE_CHARXX_T
  * \internal
  * Defined if compiler natively supports \c charXX_t types.
  */
@@ -81,12 +91,8 @@
 
 /// Boolean type.
 typedef int s1_bool;
+
 #ifdef S1_HAVE_CHARXX_T
-
-#if defined(_MSC_VER)
-#include <cstdint>
-#endif
-
 /// UTF-16 character type
 typedef char16_t s1_char16;
 /// UTF-32 character type
