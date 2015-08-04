@@ -15,6 +15,12 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+// The compiler will rightly complain about some stuff we do below. But we don't want to hear.
+#ifdef _MSC_VER
+  #pragma warning (push)
+  #pragma warning (disable: 4244)
+#endif
+
 #include <cxxtest/TestSuite.h>
 
 #include "base/common.h"
@@ -186,3 +192,7 @@ public:
     TS_ASSERT_EQUALS (format_result, "4294967295");
   }
 };
+
+#ifdef _MSC_VER
+  #pragma warning (pop)
+#endif
