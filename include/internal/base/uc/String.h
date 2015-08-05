@@ -52,7 +52,7 @@ namespace s1
 
       inline String& append (const char* s);
       String& append (const char* s, size_type n);
-      inline String& append (const Char* s);
+      String& append (const Char* s);
       String& append (const Char* s, size_type n);
       inline String& append (const Char32* s);
       String& append (const Char32* s, size_type n);
@@ -215,12 +215,7 @@ namespace s1
 
     String& String::append (const char* s)
     {
-      return append (s, strlen (s));
-    }
-
-    String& String::append (const Char* s)
-    {
-      return append (s, std::char_traits<Char>::length (s));
+      return append (s, std::char_traits<char>::length (s));
     }
 
     String& String::append (const Char32* s)

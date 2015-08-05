@@ -36,6 +36,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_definitions("-DBOOST_LEXICAL_CAST_ASSUME_C_LOCALE")
 
 include(CheckCXXCompilerFlag)
+include(CheckTypeSize) 
+
 function(CxxCompilerFlagString flagvar flagstr)
   CHECK_CXX_COMPILER_FLAG("${flagstr}" ${flagvar}_FOUND)
   if(${flagvar}_FOUND)
@@ -102,6 +104,8 @@ CHECK_CXX_SOURCE_COMPILES(
   CXX_HAS_NULLPTR)
 if(NOT CXX_HAS_NULLPTR)
 endif()
+
+CHECK_TYPE_SIZE(wchar_t CXX_SIZEOF_WCHAR_T BUILTIN_TYPES_ONLY LANGUAGE CXX)
 
 # Build shared libs by default
 set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")

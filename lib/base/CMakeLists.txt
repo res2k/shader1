@@ -1,5 +1,6 @@
 set(base_sources
     uc/Char.cpp
+    uc/char_traits.h
     uc/Exception.cpp
     uc/String.cpp
     uc/Stream.cpp

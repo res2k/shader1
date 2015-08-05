@@ -31,6 +31,7 @@
 
 #include <stddef.h>
 
+#include "char_traits.h"
 #include "UCDDataLookup.h"
 
 namespace s1
@@ -78,6 +79,9 @@ namespace s1
 
     //-----------------------------------------------------------------------
 
+    // Lazy shortcut
+    typedef char_traits<Char> Char_traits;
+
     String::~String()
     {
       FreeBuffer();
@@ -97,12 +101,17 @@ namespace s1
       return *this;
     }
 
+    String& String::append(const Char* s)
+    {
+      return append(s, Char_traits::length(s));
+    }
+
     String& String::append (const Char* s, size_type n)
     {
       if (n == 0) return *this;
 
       reserve (d.length + n);
-      memcpy (d.buffer + d.length, s, n * sizeof(Char));
+      Char_traits::copy (d.buffer + d.length, s, n);
       d.length += n;
       return *this;
     }
@@ -155,12 +164,12 @@ namespace s1
 
     String& String::insert (size_type before, const char* s)
     {
-      size_t n = strlen (s);
+      size_t n = std::char_traits<char>::length (s);
       if (n == 0) return *this;
 
       if (before > length()) before = length();
       reserve (d.length + n);
-      memmove (data() + before + n, data() + before, (length() - before) * sizeof (Char));
+      Char_traits::move (data() + before + n, data() + before, length() - before);
       Char* dest = d.buffer + before;
       for (size_type i = 0; i < n; i++)
       {
@@ -190,7 +199,7 @@ namespace s1
     {
       // TODO: Share buffer
       ResizeBuffer (other.d.length);
-      memcpy (d.buffer, other.d.buffer, other.d.length * sizeof(Char));
+      Char_traits::copy (d.buffer, other.d.buffer, other.d.length);
       d.length = other.d.length;
       return *this;
     }
@@ -199,7 +208,7 @@ namespace s1
     {
       if (length() != other.length()) return false;
       if (data() == other.data()) return true;
-      return memcmp (data(), other.data(), sizeof(Char) * length()) == 0;
+      return Char_traits::compare (data(), other.data(), length()) == 0;
     }
 
     void String::toUTF8String (std::string& dest) const
@@ -229,7 +238,7 @@ namespace s1
 
     String String::fromUTF8 (const char* utf8_str, size_type len)
     {
-      if (len == (size_type)~0) len = strlen (utf8_str);
+      if (len == (size_type)~0) len = std::char_traits<char>::length (utf8_str);
 
       String s;
       /* When converting from UTF-8, the string in UTF-16 will never have
@@ -322,19 +331,15 @@ namespace s1
       if (ch != SanitizeChar(ch)) return npos;
 
       const Char* start = data();
-      const Char* p = start;
-      const Char* last = p + length();
       if (ch <= MaxChar16)
       {
-        while (p < last)
-        {
-          if (*p == ch) return p - start;
-          p++;
-        }
-        return npos;
+        const Char* p = Char_traits::find (start, length(), static_cast<Char16> (ch));
+        return p ? p - start : npos;
       }
       else
       {
+	if (length() < 2) return npos;
+
         Char surr[2];
         {
           UTF16Encoder enc;
@@ -342,11 +347,12 @@ namespace s1
           UTF16Encoder::EncodeResult result = enc (ch, dst, dst+2);
           assert (result == UTF16Encoder::erSuccess);
         }
-        ++p;
-        while (p < last)
+        const Char* end = start + length();
+        const Char* p = start + 1;
+        while (p && (p < end))
         {
-          if ((*p == surr[1]) && (*(p-1) == surr[0])) return p - start - 1;
-          p++;
+	  p = Char_traits::find (p, end - p, surr[1]);
+	  if (p && (*(p - 1) == surr[0])) return p - start - 1;
         }
         return npos;
       }
@@ -373,7 +379,7 @@ namespace s1
         if (!currentIsInternal)
         {
           assert (capacity < d.capacity); // Otherwise, couldn't use internal buffer
-          memcpy (internalBuffer, d.buffer, capacity * sizeof (Char));
+	  Char_traits::copy (internalBuffer, d.buffer, capacity);
           FreeBuffer();
           d.buffer = internalBuffer;
         }
@@ -385,7 +391,7 @@ namespace s1
           assert (d.capacity < capacity);
           // Allocate new buffer
           AllocatedBufferData* newBuffer = AllocBufferData (capacity);
-          memcpy (newBuffer->data, internalBuffer, d.capacity * sizeof (Char));
+	  Char_traits::copy (newBuffer->data, internalBuffer, d.capacity);
           d.buffer = newBuffer->data;
         }
         else
