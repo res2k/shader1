@@ -24,6 +24,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include "base/uc/Char.h"
 
 #include <string>
+#include <wchar.h>
 
 namespace s1
 {
@@ -41,32 +42,32 @@ namespace s1
       template<typename C>
       class char_traits<C, true> : public std::char_traits<C>
       {
-        static inline wchar_t* w(char_type* p) { return reinterpret_cast<wchar_t*> (p); }
-        static inline const wchar_t* w(const char_type* p) { return reinterpret_cast<const wchar_t*> (p); }
-        static inline char_type* c(wchar_t* p) { return reinterpret_cast<char_type*> (p); }
-        static inline const char_type* c(const wchar_t* p) { return reinterpret_cast<const char_type*> (p); }
+        static wchar_t* w(C* p) { return reinterpret_cast<wchar_t*> (p); }
+        static const wchar_t* w(const C* p) { return reinterpret_cast<const wchar_t*> (p); }
+        static C* c(wchar_t* p) { return reinterpret_cast<C*> (p); }
+        static const C* c(const wchar_t* p) { return reinterpret_cast<const C*> (p); }
       public:
-        static char_type* move(char_type* dest, const char_type* src, std::size_t count)
+        static C* move(C* dest, const C* src, std::size_t count)
         {
           return c(wmemmove(w(dest), w(src), count));
         }
 
-        static char_type* copy(char_type* dest, const char_type* src, std::size_t count)
+        static C* copy(C* dest, const C* src, std::size_t count)
         {
           return c(wmemcpy(w(dest), w(src), count));
         }
 
-        static int compare(const char_type* s1, const char_type* s2, std::size_t count)
+        static int compare(const C* s1, const C* s2, std::size_t count)
         {
           return wmemcmp(w(s1), w(s2), count);
         }
 
-        static std::size_t length(const char_type* s)
+        static std::size_t length(const C* s)
         {
           return wcslen(w(s));
         }
 
-        static const char_type* find(const char_type* p, std::size_t count, const char_type& ch)
+        static const C* find(const C* p, std::size_t count, const C& ch)
         {
           return c(wmemchr(w(p), ch, count));
         }
