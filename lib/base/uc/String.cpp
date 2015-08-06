@@ -123,7 +123,7 @@ namespace s1
       size_type needExtra (0);
       for (size_type i = 0; i < n; i++)
       {
-        needExtra += UTF16Encoder::EncodedSize (SanitizeChar (s[i]));
+        needExtra += UTF16Encoder::EncodedSize (SanitizeChar16 (s[i]));
       }
       reserve (length() + needExtra);
       Char* dst = d.buffer + length();
@@ -140,7 +140,7 @@ namespace s1
 
     String& String::append (Char c)
     {
-      c = static_cast<Char> (SanitizeChar (c));
+      c = static_cast<Char> (SanitizeChar16 (c));
       reserve (d.length + 1);
       d.buffer[d.length] = c;
       d.length += 1;
@@ -149,7 +149,7 @@ namespace s1
 
     String& String::append (Char32 c)
     {
-      c = SanitizeChar (c);
+      c = SanitizeChar16 (c);
       unsigned char n = UTF16Encoder::EncodedSize (c);
       reserve (d.length + n);
       Char* dst = d.buffer + d.length;
@@ -328,7 +328,7 @@ namespace s1
     
     String::size_type String::indexOf (Char32 ch) const
     {
-      if (ch != SanitizeChar(ch)) return npos;
+      if (ch != SanitizeChar16(ch)) return npos;
 
       const Char* start = data();
       if (ch <= MaxChar16)

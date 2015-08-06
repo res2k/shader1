@@ -52,10 +52,10 @@ namespace s1
 
     /**
      * Sanitize a character. 
-     * Returns \c ReplacementChar if \a ch not a valid character
+     * Returns \c ReplacementChar if \a ch not a valid Char16
      * value.
      */
-    static inline Char32 SanitizeChar (Char32 ch)
+    static inline Char32 SanitizeChar16 (Char32 ch)
     {
       if ((ch > MaxChar)
         || ((ch >= LeadSurrogateFirst) && (ch <= TailSurrogateLast)))
