@@ -323,7 +323,7 @@ namespace s1
     bool String::startsWith (const String& s) const
     {
       if (s.length() > length()) return false;
-      return memcmp (data(), s.data(), s.length() * sizeof(Char)) == 0;
+      return Char_traits::compare (data(), s.data(), s.length()) == 0;
     }
     
     String::size_type String::indexOf (Char32 ch) const
