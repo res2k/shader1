@@ -419,11 +419,9 @@ namespace s1
         }
         else
         {
-          if (d.capacity == capacity) return;
-
           // Reallocate current buffer
           AllocatedBufferData* data = BufferDataPtr();
-          if (data->refCount.load() != 1)
+          if (!IsBufferUnique())
           {
             AllocatedBufferData* newBuffer = AllocBufferData (capacity);
             RefBufferData (newBuffer);
@@ -433,7 +431,8 @@ namespace s1
           }
           else
           {
-            d.buffer = ReallocBufferData (BufferDataPtr(), capacity)->data;
+            if (d.capacity == capacity) return;
+            d.buffer = ReallocBufferData(BufferDataPtr(), capacity)->data;
           }
         }
       }

@@ -70,7 +70,7 @@ namespace s1
 
       void reserve (size_type minCapacity)
       {
-        if (d.capacity >= minCapacity) return;
+        if (IsBufferUnique() && (d.capacity >= minCapacity)) return;
         ResizeBuffer (minCapacity);
       }
       void shrink_to_fit()
@@ -167,8 +167,9 @@ namespace s1
 
       /// Get pointer to AllocatedBufferData object
       AllocatedBufferData* BufferDataPtr() const;
-      /// Ensure that we have a buffer data object that we and we alone own
-      void EnsureBufferUnique();
+      /// Returns whether we alone own the buffer pointer
+      bool IsBufferUnique() const
+      { return (d.buffer == internalBuffer) || (BufferDataPtr()->refCount.load() == 1); }
 
       AllocatedBufferData* AllocBufferData (size_type numChars);
       AllocatedBufferData* ReallocBufferData (AllocatedBufferData* p, size_type numChars);
