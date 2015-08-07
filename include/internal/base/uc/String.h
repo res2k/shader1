@@ -131,7 +131,18 @@ namespace s1
       {
         size_type length;
         size_type capacity;
+        /* Hack to allow string to be readable in debugger.
+         * (At least VS versions prioer to 2015.
+         * The latter's debugger correctly displays char16_t strings.) */
+      #if defined(_MSC_VER) && (_MSC_VER < 1900) && defined(_DEBUG)
+        union
+        {
+          value_type* buffer;
+          const wchar_t* _buffer_w;
+        };
+      #else
         value_type* buffer;
+      #endif
 
         Data (size_type length, size_type capacity, value_type* buffer)
           : length (length), capacity (capacity), buffer (buffer) { }
