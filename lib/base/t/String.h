@@ -370,4 +370,13 @@ public:
     // 'append()' shouldn't cause sharing (would be unintuitive anyway)
     TS_ASSERT_DIFFERS(str1.data(), str2.data());
   }
+
+  // Insert string insertion
+  void testInsert()
+  {
+    s1::uc::String str ("global_var");
+    str.insert(0, "STOLEN");
+    s1::uc::String str_expected ("STOLENglobal_var");
+    TS_ASSERT_EQUALS(str, str_expected);
+  }
 };
