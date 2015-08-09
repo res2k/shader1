@@ -40,6 +40,8 @@ namespace s1
       /// Map a register.
       virtual RegisterPtr MapRegister (const RegisterPtr& reg)
       { return reg; }
+      virtual RegisterPtr MapRegisterIn (const RegisterPtr& reg) { return MapRegister (reg); }
+      virtual RegisterPtr MapRegisterOut (const RegisterPtr& reg) { return MapRegister (reg); }
       /// Add an operation to the target sequence.
       virtual void AddOpToSequence (const SequenceOpPtr& seqOp)
       {

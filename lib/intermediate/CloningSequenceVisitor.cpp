@@ -217,7 +217,7 @@ namespace s1
 	   i2r != identToReg_imp.end();
 	   ++i2r)
       {
-	newIdentToReg_imp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
+	newIdentToReg_imp.insert (std::make_pair (i2r->first, MapRegisterIn (i2r->second)));
       }
       
       Sequence::IdentifierToRegMap newIdentToReg_exp;
@@ -225,7 +225,7 @@ namespace s1
 	   i2r != identToReg_exp.end();
 	   ++i2r)
       {
-	newIdentToReg_exp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
+	newIdentToReg_exp.insert (std::make_pair (i2r->first, MapRegisterOut (i2r->second)));
       }
       
       SequenceOpPtr newOp (new SequenceOpBlock (newSeqBuilder->GetSequence(),
@@ -244,7 +244,7 @@ namespace s1
     void CloningSequenceVisitor::OpConstBool (const RegisterPtr& destination,
 					     bool value)
     {
-      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegisterOut (destination),
                                                 value));
       AddOpToSequence (newOp);
     }
@@ -252,7 +252,7 @@ namespace s1
     void CloningSequenceVisitor::OpConstInt (const RegisterPtr& destination,
 					    int value)
     {
-      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegisterOut (destination),
 						value));
       AddOpToSequence (newOp);
     }
@@ -260,7 +260,7 @@ namespace s1
     void CloningSequenceVisitor::OpConstUInt (const RegisterPtr& destination,
 					     unsigned int value)
     {
-      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegisterOut (destination),
 						value));
       AddOpToSequence (newOp);
     }
@@ -268,7 +268,7 @@ namespace s1
     void CloningSequenceVisitor::OpConstFloat (const RegisterPtr& destination,
 					      float value)
     {
-      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegisterOut (destination),
 						value));
       AddOpToSequence (newOp);
     }
@@ -276,8 +276,8 @@ namespace s1
     void CloningSequenceVisitor::OpAssign (const RegisterPtr& destination,
 					  const RegisterPtr& source)
     {
-      SequenceOpPtr newOp (new SequenceOpAssign (MapRegister (destination),
-						 MapRegister (source)));
+      SequenceOpPtr newOp (new SequenceOpAssign (MapRegisterOut (destination),
+						 MapRegisterIn (source)));
       AddOpToSequence (newOp);
     }
 
@@ -285,9 +285,9 @@ namespace s1
 					BasicType destType,
 					const RegisterPtr& source)
     {
-      SequenceOpPtr newOp (new SequenceOpCast (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpCast (MapRegisterOut (destination),
                                                destType,
-                                               MapRegister (source)));
+                                               MapRegisterIn (source)));
       AddOpToSequence (newOp);
     }
 
@@ -298,10 +298,10 @@ namespace s1
       std::vector<RegisterPtr> newSources;
       for(const RegisterPtr& source : sources)
       {
-	newSources.push_back (MapRegister (source));
+	newSources.push_back (MapRegisterIn (source));
       }
       
-      SequenceOpPtr newOp (new SequenceOpMakeVector (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpMakeVector (MapRegisterOut (destination),
                                                      compType,
                                                      newSources));
       AddOpToSequence (newOp);
@@ -315,10 +315,10 @@ namespace s1
       std::vector<RegisterPtr> newSources;
       for(const RegisterPtr& source : sources)
       {
-	newSources.push_back (MapRegister (source));
+	newSources.push_back (MapRegisterIn (source));
       }
       
-      SequenceOpPtr newOp (new SequenceOpMakeMatrix (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpMakeMatrix (MapRegisterOut (destination),
                                                      compType,
                                                      matrixRows, matrixCols,
                                                      newSources));
@@ -331,10 +331,10 @@ namespace s1
       std::vector<RegisterPtr> newSources;
       for(const RegisterPtr& source : sources)
       {
-	newSources.push_back (MapRegister (source));
+	newSources.push_back (MapRegisterIn (source));
       }
       
-      SequenceOpPtr newOp (new SequenceOpMakeArray (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpMakeArray (MapRegisterOut (destination),
 						    newSources));
       AddOpToSequence (newOp);
     }
@@ -343,9 +343,9 @@ namespace s1
 						       const RegisterPtr& source,
 						       const RegisterPtr& index)
     {
-      SequenceOpPtr newOp (new SequenceOpExtractArrayElement (MapRegister (destination),
-                                                              MapRegister (source),
-                                                              MapRegister (index)));
+      SequenceOpPtr newOp (new SequenceOpExtractArrayElement (MapRegisterOut (destination),
+                                                              MapRegisterIn (source),
+                                                              MapRegisterIn (index)));
       AddOpToSequence (newOp);
     }
 
@@ -354,18 +354,18 @@ namespace s1
 						      const RegisterPtr& index,
 						      const RegisterPtr& newValue)
     {
-      SequenceOpPtr newOp (new SequenceOpChangeArrayElement (MapRegister (destination),
-                                                             MapRegister (source),
-                                                             MapRegister (index),
-                                                             MapRegister (newValue)));
+      SequenceOpPtr newOp (new SequenceOpChangeArrayElement (MapRegisterOut (destination),
+                                                             MapRegisterIn (source),
+                                                             MapRegisterIn (index),
+                                                             MapRegisterIn (newValue)));
       AddOpToSequence (newOp);
     }
 						      
     void CloningSequenceVisitor::OpGetArrayLength (const RegisterPtr& destination,
 						  const RegisterPtr& array)
     {
-      SequenceOpPtr newOp (new SequenceOpGetArrayLength (MapRegister (destination),
-                                                         MapRegister (array)));
+      SequenceOpPtr newOp (new SequenceOpGetArrayLength (MapRegisterOut (destination),
+                                                         MapRegisterIn (array)));
       AddOpToSequence (newOp);
     }
 
@@ -373,8 +373,8 @@ namespace s1
 							  const RegisterPtr& source,
 							  unsigned int comp)
     {
-      SequenceOpPtr newOp (new SequenceOpExtractVectorComponent (MapRegister (destination),
-								 MapRegister (source),
+      SequenceOpPtr newOp (new SequenceOpExtractVectorComponent (MapRegisterOut (destination),
+								 MapRegisterIn (source),
 								 comp));
       AddOpToSequence (newOp);
     }
@@ -384,10 +384,10 @@ namespace s1
 					 const RegisterPtr& source1,
 					 const RegisterPtr& source2)
     {
-      SequenceOpPtr newOp (new SequenceOpArith (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpArith (MapRegisterOut (destination),
 						op,
-						MapRegister (source1),
-						MapRegister (source2)));
+						MapRegisterIn (source1),
+						MapRegisterIn (source2)));
       AddOpToSequence (newOp);
     }
 
@@ -396,10 +396,10 @@ namespace s1
 					 const RegisterPtr& source1,
 					 const RegisterPtr& source2)
     {
-      SequenceOpPtr newOp (new SequenceOpLogic (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpLogic (MapRegisterOut (destination),
 						op,
-						MapRegister (source1),
-						MapRegister (source2)));
+						MapRegisterIn (source1),
+						MapRegisterIn (source2)));
       AddOpToSequence (newOp);
     }
 
@@ -407,9 +407,9 @@ namespace s1
 					 UnaryOp op,
 					 const RegisterPtr& source)
     {
-      SequenceOpPtr newOp (new SequenceOpUnaryOp (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpUnaryOp (MapRegisterOut (destination),
 						  op,
-						  MapRegister (source)));
+						  MapRegisterIn (source)));
       AddOpToSequence (newOp);
     }
 			    
@@ -418,10 +418,10 @@ namespace s1
 					   const RegisterPtr& source1,
 					   const RegisterPtr& source2)
     {
-      SequenceOpPtr newOp (new SequenceOpCompare (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpCompare (MapRegisterOut (destination),
 						  op,
-						  MapRegister (source1),
-						  MapRegister (source2)));
+						  MapRegisterIn (source1),
+						  MapRegisterIn (source2)));
       AddOpToSequence (newOp);
     }
 		      
@@ -463,7 +463,7 @@ namespace s1
 	newSeqOpElse = newSeq->GetOp (0);
       }
       
-      SequenceOpPtr newOp (new SequenceOpBranch (MapRegister (conditionReg),
+      SequenceOpPtr newOp (new SequenceOpBranch (MapRegisterIn (conditionReg),
 						 newSeqOpIf,
 						 newSeqOpElse));
       AddOpToSequence (newOp);
@@ -491,10 +491,10 @@ namespace s1
       std::vector<RegPair> newLoopedRegs;
       for(const RegPair& loopedReg : loopedRegs)
       {
-	newLoopedRegs.emplace_back (MapRegister (loopedReg.first), MapRegister (loopedReg.second));
+	newLoopedRegs.emplace_back (MapRegisterIn (loopedReg.first), MapRegisterOut (loopedReg.second));
       }
       
-      SequenceOpPtr newOp (new SequenceOpWhile (MapRegister (conditionReg),
+      SequenceOpPtr newOp (new SequenceOpWhile (MapRegisterIn (conditionReg),
 						newLoopedRegs,
 						newSeqOpBody));
       AddOpToSequence (newOp);
@@ -505,7 +505,7 @@ namespace s1
       std::vector<RegisterPtr> newOutParams;
       for(const RegisterPtr& outParam : outParamVals)
       {
-	newOutParams.push_back (MapRegister (outParam));
+	newOutParams.push_back (MapRegisterIn (outParam));
       }
       
       SequenceOpPtr newOp (new SequenceOpReturn (newOutParams));
@@ -519,12 +519,12 @@ namespace s1
       std::vector<RegisterPtr> newInParams;
       for(const RegisterPtr& inParam : inParams)
       {
-	newInParams.push_back (MapRegister (inParam));
+	newInParams.push_back (MapRegisterIn (inParam));
       }
       std::vector<RegisterPtr> newOutParams;
       for(const RegisterPtr& outParam : outParams)
       {
-	newOutParams.push_back (MapRegister (outParam));
+	newOutParams.push_back (MapRegisterOut (outParam));
       }
       
       SequenceOpPtr newOp (new SequenceOpFunctionCall (funcIdent,
@@ -540,10 +540,10 @@ namespace s1
       std::vector<RegisterPtr> newInParams;
       for(const RegisterPtr& inParam : inParams)
       {
-	newInParams.push_back (MapRegister (inParam));
+	newInParams.push_back (MapRegisterIn (inParam));
       }
       
-      SequenceOpPtr newOp (new SequenceOpBuiltinCall (MapRegister (destination),
+      SequenceOpPtr newOp (new SequenceOpBuiltinCall (MapRegisterOut (destination),
                                                       what,
                                                       newInParams));
       AddOpToSequence (newOp);
