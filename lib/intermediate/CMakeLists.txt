@@ -1,4 +1,28 @@
-file(GLOB intermediate_sources *.h *.cpp ../include/internal/intermediate/*.h)
+file(GLOB intermediate_sources
+     Builtin.h
+     FunctionCallGlobalVarAugment.h
+     PrependGlobalsInit.h
+     CloningSequenceVisitor.cpp
+     FunctionCallGlobalVarAugment.cpp
+     IntermediateGeneratorSemanticsHandler.cpp
+     IntermediateGeneratorSemanticsHandler_SetupBuiltins.cpp
+     PrependGlobalsInit.cpp
+     Program.cpp
+     ProgramFunction.cpp
+     Sequence.cpp
+     SequenceBuilder.cpp
+     ../../include/internal/intermediate/BasicType.h
+     ../../include/internal/intermediate/BuiltinFunction.h
+     ../../include/internal/intermediate/CloningSequenceVisitor.h
+     ../../include/internal/intermediate/ErrorCode.h
+     ../../include/internal/intermediate/Exception.h
+     ../../include/internal/intermediate/IntermediateGeneratorSemanticsHandler.h
+     ../../include/internal/intermediate/Program.h
+     ../../include/internal/intermediate/ProgramFunction.h
+     ../../include/internal/intermediate/Sequence.h
+     ../../include/internal/intermediate/SequenceBuilder.h
+     ../../include/internal/intermediate/SequenceVisitor.h
+     ../../include/internal/intermediate/forwarddecl.h)
 file(GLOB generator_sources generator/*.h generator/*.cpp)
 file(GLOB seqop_sources SequenceOp/*.h SequenceOp/*.cpp ../include/internal/intermediate/SequenceOp/*.h)
 include_directories(generator .)

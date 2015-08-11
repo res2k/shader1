@@ -47,7 +47,8 @@ namespace s1
 								  bool doTransfer,
 								  int frequency)
     {
-      typedef parser::SemanticsHandler::Scope::FunctionFormalParameters FunctionFormalParameters;
+      typedef parser::SemanticsHandler::Scope Scope;
+      typedef Scope::FunctionFormalParameters FunctionFormalParameters;
       
       BlockNameResolver nameRes;
       StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
@@ -90,7 +91,7 @@ namespace s1
 
 	  if (param->dir & parser::SemanticsHandler::Scope::dirIn)
 	  {
-	    uc::String paramIdentDecorated ("i");
+	    uc::String paramIdentDecorated (param->paramType == Scope::ptAutoGlobal ? "I" : "i");
 	    paramIdentDecorated.append (param->identifier);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    std::string paramStr (paramStrBase);
@@ -103,7 +104,7 @@ namespace s1
 	  
 	  if (param->dir & parser::SemanticsHandler::Scope::dirOut)
 	  {
-	    uc::String paramIdentDecorated ("o");
+	    uc::String paramIdentDecorated (param->paramType == Scope::ptAutoGlobal ? "O" : "o");
 	    paramIdentDecorated.append (param->identifier);
 	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
 	    outParamIdents.push_back (paramIdent);
@@ -126,53 +127,6 @@ namespace s1
 	    outParams.push_back (paramStr);
 	    
 	    nameRes.outParamMap[param->identifier] = paramIdent;
-	  }
-	}
-	
-	if (!func->IsEntryFunction ()) // In entry functions, global vars are actually local
-	{
-	  // Generate parameters for sequence imports (ie globals)
-	  intermediate::Sequence::RegisterImpMappings imports (func->GetBody()->GetImports());
-	  for (intermediate::Sequence::RegisterImpMappings::const_iterator import (imports.begin());
-	      import != imports.end();
-	      ++import)
-	  {
-	    // Only look at globals
-	    if (paramImports.find (import->first) != paramImports.end()) continue;
-	    
-	    uc::String paramIdentDecorated ("I");
-	    paramIdentDecorated.append (import->first);
-	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
-	    std::string typeSuffix;
-	    std::string paramStr (TypeToCgType (import->second->GetOriginalType(), typeSuffix));
-	    paramStr.append (" ");
-	    paramStr.append (paramIdent);
-	    paramStr.append (typeSuffix);
-	    inParams.emplace_back (paramStr, import->first);
-	    
-	    nameRes.inParamMap[import->first] = paramIdent;
-	  }
-	  
-	  // Generate parameters for sequence exports
-	  intermediate::Sequence::RegisterExpMappings exports (func->GetBody()->GetExports());
-	  for (intermediate::Sequence::RegisterExpMappings::const_iterator exported (exports.begin());
-	      exported != exports.end();
-	      ++exported)
-	  {
-	    // Only look at globals
-	    if (paramImports.find (exported->first) != paramImports.end()) continue;
-	    
-	    uc::String paramIdentDecorated ("O");
-	    paramIdentDecorated.append (exported->first);
-	    std::string paramIdent (NameToCgIdentifier (paramIdentDecorated));
-	    std::string typeSuffix;
-	    std::string paramStr (TypeToCgType (exported->second->GetOriginalType(), typeSuffix));
-	    paramStr.append (" ");
-	    paramStr.append (paramIdent);
-	    paramStr.append (typeSuffix);
-	    outParams.push_back (paramStr);
-	    
-	    nameRes.outParamMap[exported->first] = paramIdent;
 	  }
 	}
 	

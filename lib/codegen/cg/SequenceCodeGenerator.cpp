@@ -1221,7 +1221,7 @@ namespace s1
 	return false;
       }
       
-      std::string cgName (NameToCgIdentifier (regPtr->GetName()));
+      std::string cgName (NameToCgIdentifier (regPtr->GetName ()));
       seenRegisters[regPtr] = cgName;
       
       std::string typeSuffix;

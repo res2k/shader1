@@ -30,6 +30,7 @@
 #include "parser/Exception.h"
 
 #include "BlockImpl.h"
+#include "FunctionCallGlobalVarAugment.h"
 #include "NameImpl.h"
 #include "PrependGlobalsInit.h"
 #include "ScopeImpl.h"
@@ -50,6 +51,7 @@
 #include "VariableExpressionImpl.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/utility.hpp>
 
 #include "base/format/Formatter.txx"
 
@@ -478,7 +480,9 @@ namespace s1
       ProgramPtr newProg (boost::make_shared <Program> ());
       if (globalScope)
       {
-	ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions());
+        // Collect global vars
+        std::vector<NamePtr> globalVars (globalScope->GetAllVars ());
+        ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions ());
 	for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
 	     funcIt != functions.end();
 	     ++funcIt)
@@ -496,8 +500,8 @@ namespace s1
 	    params.insert (params.begin(), retParam);
 	  }
           
-          SequencePtr funcSeq;
-          SequencePtr blockSeq (blockImpl->GetSequence());
+          SequencePtr funcSeq (blockImpl->GetSequence ());
+
           if (IsEntryFunction ((*funcIt)->originalIdentifier))
           {
             // Create a new sequence...
@@ -507,8 +511,8 @@ namespace s1
               NameImplSet initSeqExported;
               SequencePtr initSeq (CreateGlobalVarInitializationSeq (initSeqExported));
 
-              PrependGlobalsInit prependVisitor (newSeqBuilder, blockSeq, initSeq);
-              blockSeq->Visit (prependVisitor);
+              PrependGlobalsInit prependVisitor (newSeqBuilder, funcSeq, initSeq);
+              funcSeq->Visit (prependVisitor);
             }
             funcSeq = newSeqBuilder->GetSequence();
             
@@ -530,10 +534,52 @@ namespace s1
           }
           else
           {
-            funcSeq = blockSeq;
+            size_t inputInsertPos = 0;
+            while (inputInsertPos < params.size())
+            {
+              if (params[inputInsertPos].dir != parser::SemanticsHandler::Scope::dirIn) break;
+              inputInsertPos++;
+            }
+            // Augment parameters list with global vars
+            for (const NamePtr& globalName : globalVars)
+            {
+              NameImplPtr global (boost::static_pointer_cast<NameImpl> (globalName));
+              {
+                parser::SemanticsHandler::Scope::FunctionFormalParameter inParam;
+                inParam.paramType = parser::SemanticsHandler::Scope::ptAutoGlobal;
+                inParam.type = global->valueType;
+                inParam.identifier = global->identifier;
+                inParam.dir = parser::SemanticsHandler::Scope::dirIn;
+                params.insert (boost::next (params.begin(), inputInsertPos), inParam);
+                inputInsertPos++;
+              }
+              if (!global->varConstant)
+              {
+                // TODO: Better handling of constants (no need to pass them as params)
+                parser::SemanticsHandler::Scope::FunctionFormalParameter outParam;
+                outParam.paramType = parser::SemanticsHandler::Scope::ptAutoGlobal;
+                outParam.type = global->valueType;
+                outParam.identifier = global->identifier;
+                outParam.dir = parser::SemanticsHandler::Scope::dirOut;
+                params.insert (params.end(), outParam);
+              }
+            }
           }
-	  
-	  ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
+	
+          /* Note: augmentation happens here because static var initialization may also
+             call functions! */
+          {
+            // Create a new sequence...
+            SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+            // ...containing the original function sequence, augment with global var arguments
+            {
+              FunctionCallGlobalVarAugment augment (newSeqBuilder, funcSeq, globalVars);
+              funcSeq->Visit (augment);
+            }
+            funcSeq = newSeqBuilder->GetSequence ();
+          }
+
+          ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
 									    (*funcIt)->identifier,
 									    params,
 									    funcSeq,
