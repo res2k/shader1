@@ -321,7 +321,7 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
-									 const TypeImplPtr& type,
+									 const TypePtr& type,
 									 RegisterClassification classify,
 									 const uc::String& name)
     {

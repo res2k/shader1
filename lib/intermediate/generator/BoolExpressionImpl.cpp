@@ -21,6 +21,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
+#include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
 

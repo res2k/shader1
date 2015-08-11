@@ -158,11 +158,11 @@ namespace s1
        * Allocate a new register.
        * If name is empty generates a dummy name.
        */
-      RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const TypeImplPtr& type,
-				    RegisterClassification classify,
-				    const uc::String& name = uc::String ());
+      static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const TypePtr& type,
+                                           RegisterClassification classify,
+				           const uc::String& name = uc::String ());
       /// Create a new generation of a register
-      RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
+      static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
       
       void GenerateCast (SequenceBuilder& seqBuilder,
