@@ -104,6 +104,7 @@ namespace s1
       RegisterSet GetAllReadRegisters() const;
       RegisterSet GetAllWrittenRegisters() const;
     protected:
+      /// Identifier to register mapping
       IdentifierToRegMap identToReg;
     };
   } // namespace intermediate
