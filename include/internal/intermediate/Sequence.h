@@ -54,6 +54,7 @@ namespace s1
 	Register (const uc::String& name, const TypePtr& originalType);
 	Register (const Register& other);
 	
+        const uc::String& GetOriginalName () const { return originalName; }
 	const uc::String& GetName() const { return name; }
 	void StealName (Register& other);
 	
