@@ -58,6 +58,9 @@ namespace s1
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
       { return type == TypeAlias ? boost::static_pointer_cast<Type> (valueType) : TypePtr (); }
+      const uc::String& GetIdentifier () { return identifier; }
+      bool IsConstantVariable () { return (type == Variable) && varConstant; }
+      TypePtr GetValueType () { return valueType; }
     };
   } // namespace intermediate
 } // namespace s1

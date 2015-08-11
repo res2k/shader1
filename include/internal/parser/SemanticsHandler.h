@@ -106,6 +106,15 @@ namespace s1
 	
 	/// Get aliased type
 	virtual TypePtr GetAliasedType() = 0;
+
+        /// Get name identifier
+        virtual const uc::String& GetIdentifier () = 0;
+
+        /// Return whether a variable name is a constant
+        virtual bool IsConstantVariable () = 0;
+
+        /// Return type of variable value
+        virtual TypePtr GetValueType () = 0;
       };
       typedef boost::shared_ptr<Name> NamePtr;
       /** @} */
