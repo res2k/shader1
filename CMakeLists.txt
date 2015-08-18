@@ -184,7 +184,7 @@ foreach(cached_var ${OVERRIDE_CACHE_VARS})
     set_property(CACHE CMAKE_${cached_var}
                  PROPERTY VALUE ${CACHE_${cached_var}})
     set(CACHE_SET_${cached_var} 1
-        CACHE INTERNAL "The CMAKE_${cached_var} variable was augmented with out own settings.")
+        CACHE INTERNAL "The CMAKE_${cached_var} variable was augmented with our own settings.")
   endif()
 endforeach()
 
