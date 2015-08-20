@@ -48,14 +48,14 @@ namespace s1
     size_t Formatter<FormatStringType>::FormatPart::GetPartStringLen() const
     {
       assert (IsStringPart());
-      return strLenOrIndex;
+      return strLen;
     }
 
     template<typename FormatStringType>
     size_t Formatter<FormatStringType>::FormatPart::GetArgIndex() const
     {
       assert (!IsStringPart());
-      return strLenOrIndex;
+      return argIndex;
     }
 
     //-----------------------------------------------------------------------
@@ -232,11 +232,12 @@ namespace s1
     } // namespace detail
 
     template<typename FormatStringType>
-    void Formatter<FormatStringType>::ParseFormat ()
+    template<typename FormatIt>
+    void Formatter<FormatStringType>::ParseFormat (FormatIt fmtBegin, FormatIt fmtEnd)
     {
-      const CharType* p = formatStr;
+      const CharType* p = fmtBegin;
       const CharType* partStart = p;
-      while (*p != 0)
+      while (p != fmtEnd)
       {
         if (*p == '{')
         {
@@ -296,10 +297,9 @@ namespace s1
     }
 
     template<typename FormatStringType>
-    Formatter<FormatStringType>::Formatter (const FormatStringType& format)
-      : formatStr (format)
+    Formatter<FormatStringType>::Formatter (FormatStringType format)
     {
-      ParseFormat();
+      ParseFormat (format, format + std::char_traits<CharType>::length (format));
     }
 
 #define _ARGHELPER_EMIT(Z, Arg, Data)                                        \

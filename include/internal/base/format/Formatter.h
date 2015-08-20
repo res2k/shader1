@@ -40,7 +40,6 @@ namespace s1
     class Formatter
     {
     protected:
-      FormatStringType formatStr;
       typedef typename FormatStringTraits<FormatStringType>::CharType CharType;
 
       // A parsed format string part.
@@ -49,13 +48,18 @@ namespace s1
       private:
         /// Begin of format string part, or \c nullptr if index
         const CharType* strBegin;
-        /// String part len, or argument index
-        size_t strLenOrIndex;
+        union
+        {
+          /// String part len
+          size_t strLen;
+          /// Argument index
+          size_t argIndex;
+        };
       public:
         FormatPart (const CharType* str, size_t len)
-          : strBegin (str), strLenOrIndex (len) {}
+          : strBegin (str), strLen (len) {}
         FormatPart (size_t index)
-          : strBegin (nullptr), strLenOrIndex (index) {}
+          : strBegin (nullptr), argIndex (index) {}
 
         bool IsStringPart() const;
         const CharType* GetPartString() const;
@@ -64,12 +68,13 @@ namespace s1
       };
 
       std::vector<FormatPart> parts;
-      void ParseFormat ();
+      template<typename FormatIt>
+      void ParseFormat (FormatIt fmtBegin, FormatIt fmtEnd);
 
       template<typename SinkType>
       void EmitPartString (SinkType& sink, const FormatPart& part) const;
     public:
-      Formatter (const FormatStringType& format);
+      Formatter (FormatStringType format);
 
   #define _DECLARE_FORMATTER_OPERATOR(Z, ArgNum, Data)                         \
       template<typename DestType                                               \
