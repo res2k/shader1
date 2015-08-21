@@ -100,9 +100,9 @@ namespace s1
     };
     
     //-----------------------------------------------------------------------
-    
-    typedef format::Formatter<> Format;
 
+    format::StaticFormatter FormatBlockSuffix ("$b{0}");
+    
     void Inliner::InlineBlockVisitor::OpBlock (const intermediate::SequencePtr& seq,
 					       const Sequence::IdentifierToRegMap& identToRegID_imp,
 					       const Sequence::IdentifierToRegMap& identToRegID_exp)
@@ -111,7 +111,7 @@ namespace s1
       if (seq->GetNumOps() == 0) return;
 
       uc::String blockSuffix;
-      Format ("$b{0}") (blockSuffix, blockNum);
+      FormatBlockSuffix (blockSuffix, blockNum);
       blockNum++;
       
       InliningVisitor visitor (newSequenceBuilder, blockSuffix);

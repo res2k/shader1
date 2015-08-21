@@ -56,8 +56,6 @@ namespace s1
 {
   namespace intermediate
   {
-    typedef format::Formatter<> Format;
-
     typedef IntermediateGeneratorSemanticsHandler::NamePtr NamePtr;
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
@@ -77,7 +75,11 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::~IntermediateGeneratorSemanticsHandler ()
     {
     }
-    
+
+    format::StaticFormatter FormatTSArray ("a{0}");
+    format::StaticFormatter FormatTSVector ("v{0}{1}");
+    format::StaticFormatter FormatTSMatrix ("m{0}{1}x{2}");
+
     std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypeImplPtr& type)
     {
       switch (type->typeClass)
@@ -108,19 +110,19 @@ namespace s1
       case TypeImpl::Array:
 	{
           std::string s;
-          Format ("a{0}") (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)));
+          FormatTSArray (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)));
           return s;
 	}
       case TypeImpl::Vector:
 	{
           std::string s;
-          Format ("v{0}{1}") (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)), type->vectorDim);
+          FormatTSVector (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)), type->vectorDim);
 	  return s;
 	}
       case TypeImpl::Matrix:
 	{
           std::string s;
-          Format ("m{0}{1}x{2}") (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)),
+          FormatTSMatrix (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)),
                               type->matrixCols, type->matrixRows);
           return s;
 	}
@@ -288,6 +290,9 @@ namespace s1
       }
       return boost::static_pointer_cast<TypeImpl> (attrType);
     }
+
+    format::StaticFormatter FormatRegPrefixName ("{0}{1}");
+    format::StaticFormatter FormatRegTmp ("{0}tmp{1}");
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
 									 const TypeImplPtr& type,
@@ -298,12 +303,12 @@ namespace s1
       uc::String regName;
       if (!name.isEmpty())
       {
-        Format ("{0}{1}") (regName, prefix, name);
+        FormatRegPrefixName (regName, prefix, name);
       }
       else
       {
 	static unsigned int allRegNum = 0;
-        Format ("{0}tmp{1}") (regName, prefix, allRegNum++);
+        FormatRegTmp (regName, prefix, allRegNum++);
       }
       
       return seqBuilder.AllocateRegister (type, regName);

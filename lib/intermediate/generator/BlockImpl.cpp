@@ -43,9 +43,10 @@ namespace s1
 {
   namespace intermediate
   {
-    typedef format::Formatter<> Format;
-
     const char IntermediateGeneratorSemanticsHandler::BlockImpl::varReturnValueName[] = "$retval";
+
+    static format::StaticFormatter FormatCondName ("$cond{0}");
+    static format::StaticFormatter FormatRetvalName ("$retval{0}");
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
 								 ScopePtr innerScope)
@@ -53,8 +54,8 @@ namespace s1
        sequenceBuilder (boost::make_shared<SequenceBuilder> ())
     {
       uc::String newCondName;
-      Format ("$cond{0}") (newCondName,
-                           boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+      FormatCondName (newCondName,
+                      boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
       varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
 										    newCondName,
 										    ExpressionPtr(), false));
@@ -64,8 +65,8 @@ namespace s1
 	&& !handler->voidType->IsEqual (*retTypeImpl))
       {
         uc::String newRetValName;
-        Format ("$retval{1}") (newRetValName,
-                               boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
+        FormatRetvalName (newRetValName,
+                          boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
 	varReturnValue = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (retTypeImpl,
 											newRetValName,
 											ExpressionPtr(), false));
@@ -556,6 +557,8 @@ namespace s1
 						  sequenceBuilder->GetIdentifierToRegisterMap ());
     }
 
+    static format::StaticFormatter FormatTernaryResult ("$tr{0}{1}");
+
     IntermediateGeneratorSemanticsHandler::NameImplPtr
     IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (const TypeImplPtr& resultType)
     {
@@ -564,15 +567,17 @@ namespace s1
       if (var != varsTernaryResult.end()) return var->second;
       
       uc::String newVarName;
-      Format ("$tr{0}{1}") (newVarName,
-                            boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope),
-                            typeStr.c_str());
+      FormatTernaryResult (newVarName,
+                           boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope),
+                           typeStr.c_str());
       NameImplPtr newVar (boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
 											 newVarName,
 											 ExpressionPtr(), false)));
       varsTernaryResult[typeStr] = newVar;
       return newVar;
     }
+
+    static format::StaticFormatter FormatImportedReg ("{0}_B{1}");
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
 										      bool writeable)
@@ -605,7 +610,7 @@ namespace s1
 	    boost::shared_ptr<ScopeImpl> (name->ownerScope));
 	  if (d >= 0)
 	  {
-            Format ("{0}_B{1}") (importName, name->identifier, d);
+            FormatImportedReg (importName, name->identifier, d);
 	  }
 	  reg = handler->AllocateRegister (*sequenceBuilder, name->valueType, Imported,
 					  importName);

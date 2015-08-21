@@ -27,8 +27,6 @@ namespace s1
 {
   namespace parser
   {
-    typedef format::Formatter<> Format;
-
     bool CommonSemanticsHandler::CommonType::CompatibleLossless (const CommonType& to) const
     {
       if (typeClass != to.typeClass) return false;
@@ -159,6 +157,10 @@ namespace s1
       return false;
     }
 
+    static format::StaticFormatter FormatArray ("{0}[]");
+    static format::StaticFormatter FormatVector ("{0}{1}");
+    static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
+
     uc::String CommonSemanticsHandler::CommonType::ToString() const
     {
       switch (typeClass)
@@ -189,19 +191,19 @@ namespace s1
       case Array:
 	{
           uc::String s;
-          Format ("{0}[]") (s, static_cast<CommonType*> (avmBase.get())->ToString());
+          FormatArray (s, static_cast<CommonType*> (avmBase.get())->ToString());
           return s;
 	}
       case Vector:
 	{
           uc::String s;
-          Format ("{0}{1}") (s, static_cast<CommonType*> (avmBase.get())->ToString(), vectorDim);
+          FormatVector (s, static_cast<CommonType*> (avmBase.get())->ToString(), vectorDim);
           return s;
 	}
       case Matrix:
 	{
           uc::String s;
-          Format ("{0}{1}x{2}") (s, static_cast<CommonType*> (avmBase.get())->ToString(), matrixCols, matrixRows);
+          FormatMatrix (s, static_cast<CommonType*> (avmBase.get())->ToString(), matrixCols, matrixRows);
           return s;
 	}
       }

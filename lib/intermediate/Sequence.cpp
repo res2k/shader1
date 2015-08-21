@@ -35,7 +35,7 @@ namespace s1
 {
   namespace intermediate
   {
-    typedef format::Formatter<> Format;
+    static format::StaticFormatter FormatRegGeneration ("{0}.{1}");
 
     Sequence::Register::Register (const uc::String& name, const TypePtr& originalType)
      : originalName (name), generation (0), name (name), originalType (originalType)
@@ -45,7 +45,7 @@ namespace s1
      : originalName (other.originalName), generation (other.generation+1),
        originalType (other.originalType)
     {
-      Format ("{0}.{1}") (name, other.originalName, generation);
+      FormatRegGeneration (name, other.originalName, generation);
     }
     
     void Sequence::Register::StealName (Register& other)

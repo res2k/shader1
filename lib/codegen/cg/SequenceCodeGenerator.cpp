@@ -117,8 +117,6 @@ namespace s1
     
     //-----------------------------------------------------------------------
 
-    typedef format::Formatter<> Format;
-    
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
      : owner (owner), target (target), emitEmptyBlocks (false)
@@ -285,6 +283,8 @@ namespace s1
       }
     }
 
+    static format::StaticFormatter FormatVector ("{0}{1}");
+
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterPtr& destination,
 									   intermediate::BasicType compType,
 									   const std::vector<RegisterPtr>& sources)
@@ -342,11 +342,11 @@ namespace s1
 	break;
       }
       std::string typeStr;
-      Format ("{0}{1}") (typeStr, baseStr, unsigned (sources.size()));
+      FormatVector (typeStr, baseStr, unsigned (sources.size()));
       EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
     }
     
-    
+    static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
 				
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterPtr& destination,
 									   intermediate::BasicType compType,
@@ -379,7 +379,7 @@ namespace s1
         break;
       }
       std::string typeStr;
-      Format ("{0}{1}x{2}") (typeStr, baseStr, matrixRows, matrixCols);
+      FormatMatrix (typeStr, baseStr, matrixRows, matrixCols);
       EmitFunctionCall (destination, typeStr.c_str(), paramsStr.c_str());
     }
     

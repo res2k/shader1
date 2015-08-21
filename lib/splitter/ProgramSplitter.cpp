@@ -36,8 +36,6 @@ namespace s1
 {
   namespace splitter
   {
-    typedef format::Formatter<> Format;
-
     static std::string FreqFlagsSignature (const std::vector<unsigned int>& inputParamFreqFlags)
     {
       std::string sig;
@@ -57,6 +55,8 @@ namespace s1
       }
       return sig;
     }
+
+    static format::StaticFormatter FormatTransferIdent ("transferP${0}");
     
     void ProgramSplitter::GetSplitFunctions (const uc::String& originalIdent,
 					     const std::vector<unsigned int>& inputParamFreqFlags,
@@ -163,7 +163,7 @@ namespace s1
 	  {
 	    // Generate unique parameter identifier
 	    uc::String transferIdent;
-            Format ("transferP${0}") (transferIdent, n++);
+            FormatTransferIdent (transferIdent, n++);
 	    
 	    // Synthesize new parameters
 	    {

@@ -30,8 +30,6 @@
 
 namespace s1
 {
-  typedef format::Formatter<> Format;
-
 #define KEYWORDS				\
   KEYWORD ("return",		kwReturn)	\
   KEYWORD ("true",		kwTrue)		\
@@ -493,6 +491,9 @@ KEYWORDS
     }
     return 0;
   }
+
+  format::StaticFormatter FormatVector ("{0}{1}");
+  format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
   
   std::string Lexer::GetTokenStr (const Token& token)
   {
@@ -500,13 +501,13 @@ KEYWORDS
     if (token.typeClass == Vector)
     {
       std::string s;
-      Format ("{0}{1}") (s, baseTokenStr, token.dimension1);
+      FormatVector (s, baseTokenStr, token.dimension1);
       return s;
     }
     else if (token.typeClass == Matrix)
     {
       std::string s;
-      Format ("{0}{1}x{2}") (s, baseTokenStr, token.dimension1, token.dimension2);
+      FormatMatrix (s, baseTokenStr, token.dimension1, token.dimension2);
       return s;
     }
     return baseTokenStr;

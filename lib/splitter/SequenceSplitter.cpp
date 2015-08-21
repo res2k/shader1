@@ -1146,8 +1146,6 @@ namespace s1
     
     //-----------------------------------------------------------------------
     
-    typedef format::Formatter<> Format;
-
     SequenceSplitter::SequenceSplitter (ProgramSplitter& progSplit,
 					bool mergeUniformToVF)
      : progSplit (progSplit), mergeUniformToVF (mergeUniformToVF)					
@@ -1303,10 +1301,12 @@ namespace s1
       return avail->second;
     }
 
+    format::StaticFormatter FormatTransferIdent ("{0}$tf{1}");
+
     uc::String SequenceSplitter::GetTransferIdent (const uc::String& origName)
     {
       uc::String transferIdent;
-      Format ("{0}$tf{1}") (transferIdent, origName, transferIdentNum++);
+      FormatTransferIdent (transferIdent, origName, transferIdentNum++);
       return transferIdent;
     }
     

@@ -40,8 +40,6 @@ namespace s1
     const char CgGenerator::cgTypeUInt[]	= "unsigned int";
     const char CgGenerator::cgTypeFloat[]	= "float";
 
-    typedef format::Formatter<> Format;
-    
     CgGenerator::CgGenerator ()
     {
     }
@@ -52,6 +50,9 @@ namespace s1
       ProgramCodeGenerator progGen;
       return progGen.Generate (program, frequency);
     }
+
+    static format::StaticFormatter FormatTypeVector ("{0}{1}");
+    static format::StaticFormatter FormatTypeMatrix ("{0}{1}x{2}");
     
     std::string CgGenerator::TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
 					   std::string& identifierSuffix,
@@ -95,7 +96,7 @@ namespace s1
       case parser::SemanticsHandler::Type::Vector:
 	{
 	  std::string newSuffix;
-          Format ("{0}{1}") (typeStr,
+          FormatTypeVector (typeStr,
             TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix),
             type->GetVectorTypeComponents());
 	}
@@ -103,7 +104,7 @@ namespace s1
       case parser::SemanticsHandler::Type::Matrix:
 	{
 	  std::string newSuffix;
-          Format ("{0}{1}x{2}") (typeStr,
+          FormatTypeMatrix (typeStr,
             TypeToCgType (type->GetArrayVectorMatrixBaseType(), newSuffix),
             type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
 	}

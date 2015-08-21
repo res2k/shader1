@@ -36,8 +36,6 @@ namespace s1
 {
   namespace optimize
   {
-    typedef format::Formatter<> Format;
-
     class ConstantFolding::FoldingVisitor : public CommonSequenceVisitor
     {
       bool& seqChanged;
@@ -274,12 +272,14 @@ namespace s1
 			  intermediate::BuiltinFunction what,
 			  const std::vector<RegisterPtr>& inParams);
     };
-    
+
+    static format::StaticFormatter FormatFoldReg ("$fold{0}");
+
     intermediate::RegisterPtr
     ConstantFolding::FoldingVisitor::NewConstReg (const intermediate::Sequence::TypePtr& type)
     {
       uc::String regName;
-      Format ("$fold{0}") (regName, foldRegNum);
+      FormatFoldReg (regName, foldRegNum);
       foldRegNum++;
       return newSequenceBuilder->AllocateRegister (type, regName);
     }
