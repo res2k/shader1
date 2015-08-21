@@ -29,7 +29,7 @@ set(base_sources
 s1_add_library(base
                SOURCES ${base_sources}
                DEPENDS generate_Object
-               LINK s1boost_system)
+               LINK s1boost_thread s1boost_system)
 IF(S1LIB_PDB)
   target_compile_options(base PRIVATE ${S1LIB_PDB})
 ENDIF()

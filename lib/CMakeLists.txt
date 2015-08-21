@@ -37,7 +37,7 @@ if(MSVC AND NOT BUILD_SHARED_LIBS)
 endif()
 
 # Build Boost libs we need manually (the build flags we need are kinda wacky).
-set(WANT_BOOST_LIBS system)
+set(WANT_BOOST_LIBS system thread)
 find_package(Boost ${BOOST_VERSION} COMPONENTS ${WANT_BOOST_LIBS})
 foreach(lib_name ${WANT_BOOST_LIBS})
   string(TOUPPER "${lib_name}" lib_upper)
