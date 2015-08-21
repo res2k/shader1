@@ -21,8 +21,9 @@
 #ifndef __BASE_FORMAT_FORMATTER_TPP__
 #define __BASE_FORMAT_FORMATTER_TPP__
 
+#include <boost/convert.hpp>
+#include <boost/convert/spirit.hpp>
 #include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/type_traits/is_signed.hpp>
 
 #include "Sink.h"
@@ -263,11 +264,12 @@ namespace s1
               const CharType* argEnd = p;
               while (*argEnd && (*argEnd != '}')) argEnd++;
               // Parse index
-              // TODO: Get rid of lexical_cast<>? (pulls in iostreams...)
               if (argEnd > p)
               {
-                size_t index = boost::lexical_cast<size_t> (p, argEnd - p);
-                parts.push_back (FormatPart (index));
+                boost::optional<unsigned long int> index (
+                    boost::convert<unsigned long int> (boost::cnv::range<const char*> (p, argEnd), boost::cnv::spirit ()));
+                if (!index) throw std::logic_error ("Invalid format placeholder");
+                parts.push_back (FormatPart (*index));
               }
               // else: assert or so?
               // Continue after '}'
@@ -338,7 +340,7 @@ namespace s1
           {                                                                  \
           _SWITCH_FORMATTER_INDEX(Z, ArgNum, _FORMATTER_INDEX_ADD_SIZE)      \
           default:                                                           \
-            assert(false); /* Invalid format index */                        \
+            throw std::logic_error ("Invalid format argument index");        \
           }                                                                  \
         }                                                                    \
       }                                                                      \
@@ -355,7 +357,7 @@ namespace s1
           {                                                                  \
           _SWITCH_FORMATTER_INDEX(Z, ArgNum, _FORMATTER_INDEX_EMIT)          \
           default:                                                           \
-            assert(false); /* Invalid format index */                        \
+            throw std::logic_error ("Invalid format argument index");        \
           }                                                                  \
         }                                                                    \
       }                                                                      \

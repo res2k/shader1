@@ -24,7 +24,8 @@
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "TypeImpl.h"
 
-#include <boost/lexical_cast.hpp>
+#include <boost/convert.hpp>
+#include <boost/convert/spirit.hpp>
 
 #include <limits>
 #include <malloc.h>
@@ -145,14 +146,13 @@ namespace s1
       }
       strAsc[strLen] = 0;
       // Actual parsing
-      try
-      {
-        return boost::lexical_cast<float> (strAsc);
-      }
-      catch(...)
+      boost::optional<float> floatValue (
+        boost::convert<float> (strAsc, boost::cnv::spirit ()));
+      if (!floatValue)
       {
         throw Exception (NumberParseError);
       }
+      return *floatValue;
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
