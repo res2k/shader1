@@ -37,18 +37,22 @@ if(MSVC AND NOT BUILD_SHARED_LIBS)
 endif()
 
 # Build Boost libs we need manually (the build flags we need are kinda wacky).
-function(BoostLibrary lib_name)
-  # TODO: Add an interface library if lib was found by find_package
+set(WANT_BOOST_LIBS system)
+find_package(Boost ${BOOST_VERSION} COMPONENTS ${WANT_BOOST_LIBS})
+foreach(lib_name ${WANT_BOOST_LIBS})
   string(TOUPPER "${lib_name}" lib_upper)
   file(GLOB_RECURSE lib_sources ${BOOST_ROOT}/libs/${lib_name}/src/*.cpp)
   if(lib_sources)
     s1_add_library(s1boost_${lib_name} STATIC
                    SOURCES ${lib_sources})
     target_compile_definitions(s1boost_${lib_name} PUBLIC "-DBOOST_${lib_upper}_STATIC_LINK=1")
+  elseif(${Boost_${lib_upper}_FOUND})
+    # Add an interface library if we don't have sources
+    add_library(s1boost_${lib_name} INTERFACE)
+    target_link_libraries(s1boost_${lib_name} INTERFACE ${Boost_${lib_upper}_LIBRARY})
+    target_compile_definitions(s1boost_${lib_name} INTERFACE "-DBOOST_${lib_upper}_STATIC_LINK=1")
   endif()
-endfunction()
-
-BoostLibrary(system)
+endforeach()
 
 add_subdirectory(base)
 add_subdirectory(lexer)
