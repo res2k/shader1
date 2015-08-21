@@ -1,4 +1,5 @@
 set(base_sources
+    format/Formatter.cpp
     uc/Char.cpp
     uc/char_traits.h
     uc/Exception.cpp

@@ -21,9 +21,9 @@
 #ifndef __BASE_FORMAT_FORMATTER_TPP__
 #define __BASE_FORMAT_FORMATTER_TPP__
 
-#include <boost/convert.hpp>
-#include <boost/convert/spirit.hpp>
 #include <boost/foreach.hpp>
+#include <boost/optional.hpp>
+#include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_signed.hpp>
 
 #include "Sink.h"
@@ -32,6 +32,16 @@ namespace s1
 {
   namespace format
   {
+    namespace detail
+    {
+      /**
+       * Parse an argument index from a string
+       * @{ */
+      boost::optional<unsigned long int> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd);
+      boost::optional<unsigned long int> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd);
+      /** @} */
+    } // namespace detail
+
     template<typename FormatStringType>
     bool Formatter<FormatStringType>::FormatPart::IsStringPart() const
     {
@@ -266,8 +276,7 @@ namespace s1
               // Parse index
               if (argEnd > p)
               {
-                boost::optional<unsigned long int> index (
-                    boost::convert<unsigned long int> (boost::cnv::range<const char*> (p, argEnd), boost::cnv::spirit ()));
+                boost::optional<unsigned long int> index (detail::ParseArgumentIndex (p, argEnd));
                 if (!index) throw std::logic_error ("Invalid format placeholder");
                 parts.push_back (FormatPart (*index));
               }
