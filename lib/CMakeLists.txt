@@ -36,6 +36,20 @@ if(MSVC AND NOT BUILD_SHARED_LIBS)
   set(S1LIB_PDB "/Fd${CMAKE_BINARY_DIR}/\$(Configuration)/${s1_actualoutput}.pdb" ${CXX_PDB_SYNC})
 endif()
 
+# Build Boost libs we need manually (the build flags we need are kinda wacky).
+function(BoostLibrary lib_name)
+  # TODO: Add an interface library if lib was found by find_package
+  string(TOUPPER "${lib_name}" lib_upper)
+  file(GLOB_RECURSE lib_sources ${BOOST_ROOT}/libs/${lib_name}/src/*.cpp)
+  if(lib_sources)
+    s1_add_library(s1boost_${lib_name} STATIC
+                   SOURCES ${lib_sources})
+    target_compile_definitions(s1boost_${lib_name} PUBLIC "-DBOOST_${lib_upper}_STATIC_LINK=1")
+  endif()
+endfunction()
+
+BoostLibrary(system)
+
 add_subdirectory(base)
 add_subdirectory(lexer)
 add_subdirectory(parser)
