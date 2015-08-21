@@ -31,7 +31,7 @@ if(CXXTEST_FOUND)
   enable_testing()
 endif()
 
-find_package(Boost 1.53.0 REQUIRED)
+find_package(Boost 1.59.0 REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 add_definitions("-DBOOST_LEXICAL_CAST_ASSUME_C_LOCALE -DBOOST_ALL_NO_LIB")
 
