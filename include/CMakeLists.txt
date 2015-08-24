@@ -18,5 +18,7 @@ if(CXXTEST_FOUND)
                    ${api_test_sources})
   target_link_libraries(test_Api api_testlib s1)
   set_property(TARGET test_Api PROPERTY EXCLUDE_FROM_ALL YES)
+  # Make sure S1 lib is found
+  set_property(TARGET test_Api PROPERTY ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
   AutoBuildTest(test_Api)
 endif()
