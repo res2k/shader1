@@ -22,6 +22,7 @@
 
 #include <boost/convert.hpp>
 #include <boost/convert/spirit.hpp>
+#include <boost/convert/strtol.hpp>
 
 namespace s1
 {
@@ -39,6 +40,16 @@ namespace s1
       boost::optional<unsigned long int> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd)
       {
         return boost::convert<unsigned long int> (boost::cnv::range<const wchar_t*> (indexStrBegin, indexStrEnd), default_cnv_type ());
+      }
+
+      //---------------------------------------------------------------------
+
+      ArgHelperFloat::ArgHelperFloat (float value)
+      {
+        boost::optional<string_type> floatStr =
+          boost::convert<string_type> (value, boost::cnv::strtol ()(boost::cnv::parameter::precision = 6));
+        assert (floatStr);
+        convertedStr = *floatStr;
       }
     } // namespace detail
   } // namespace format

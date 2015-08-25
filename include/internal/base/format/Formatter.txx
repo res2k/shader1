@@ -21,6 +21,7 @@
 #ifndef __BASE_FORMAT_FORMATTER_TPP__
 #define __BASE_FORMAT_FORMATTER_TPP__
 
+#include <boost/container/static_vector.hpp>
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
@@ -240,6 +241,32 @@ namespace s1
         ArgHelper (unsigned int v) : Super (v) {}
       };
 
+      //
+      // Float specialization
+      //
+      class ArgHelperFloat
+      {
+      protected:
+        typedef boost::container::static_vector<char, 32> string_type;
+        string_type convertedStr;
+      public:
+        ArgHelperFloat (float);
+      };
+
+      template<typename SinkType>
+      class ArgHelper<SinkType, float> : public ArgHelperFloat
+      {
+      public:
+        ArgHelper (float value) : ArgHelperFloat (value) {}
+        size_t FormattedSize (float) const
+        {
+          return convertedStr.size();
+        }
+        void Emit (SinkType& sink, float)
+        {
+          sink.append (convertedStr.data(), convertedStr.size());
+        }
+      };
     } // namespace detail
 
     template<typename FormatStringType>
