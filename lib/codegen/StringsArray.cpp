@@ -23,9 +23,21 @@ namespace s1
 {
   namespace codegen
   {
+    void StringsArray::AddString (const char* str)
+    {
+      strings.push_back (str);
+    }
+
     void StringsArray::AddString (const std::string& str)
     {
       strings.push_back (str);
+    }
+
+    void StringsArray::AddString(const uc::String& str)
+    {
+      std::string str_utf8;
+      str.toUTF8String (str_utf8);
+      AddString (str_utf8);
     }
     
     void StringsArray::AddStrings (const StringsArray& other)

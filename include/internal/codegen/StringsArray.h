@@ -18,6 +18,8 @@
 #ifndef __CODEGEN_STRINGSARRAY_H__
 #define __CODEGEN_STRINGSARRAY_H__
 
+#include "base/uc/String.h"
+
 #include <boost/shared_ptr.hpp>
 
 #include <vector>
@@ -32,7 +34,9 @@ namespace s1
       typedef std::vector<std::string> StrVector;
       StrVector strings;
     public:
+      void AddString (const char* str);
       void AddString (const std::string& str);
+      void AddString (const uc::String& str);
       void AddStrings (const StringsArray& other);
       void AddStrings (const StringsArray& other, unsigned int indent,
 		       const char* indentStr = " ");
