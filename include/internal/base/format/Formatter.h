@@ -32,7 +32,7 @@
 
 #include "FormatStringTraits.h"
 
-#define FORMATTER_MAX_ARGS      BOOST_PP_INC(3) /* arbitrary, increase as necessary */
+#define FORMATTER_MAX_ARGS      BOOST_PP_INC(12) /* arbitrary, increase as necessary */
 
 namespace s1
 {
