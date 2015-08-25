@@ -18,12 +18,14 @@
 #ifndef __CODEGEN_SEQUENCECODEGENERATOR_H__
 #define __CODEGEN_SEQUENCECODEGENERATOR_H__
 
+#include "base/format/Formatter.h"
 #include "codegen/CgGenerator.h"
 #include "codegen/StringsArray.h"
 #include "intermediate/ProgramFunction.h"
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceVisitor.h"
 
+#include <boost/preprocessor/repeat.hpp>
 #include <boost/unordered_map.hpp>
 
 namespace s1
@@ -65,7 +67,23 @@ namespace s1
 	SequenceCodeGenerator* owner;
 	StringsArrayPtr target;
 	bool emitEmptyBlocks;
-	
+
+        // Write a debug comment to the output.
+        void DebugComment(const uc::String& str);
+
+      #define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
+        BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
+        BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
+      #define _DECLARE_DEBUG_COMMENT(Z, ArgNum, Data)                                 \
+        template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>         \
+        void DebugComment (const char* opStr                                          \
+          BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const;
+
+        BOOST_PP_REPEAT(BOOST_PP_DEC(FORMATTER_MAX_ARGS), _DECLARE_DEBUG_COMMENT, _)
+
+      #undef _DECLARE_DEBUG_COMMENT
+      #undef _GENERATE_METHOD_PARAM
+
 	void EmitAssign (const RegisterPtr& destination,
 			 const char* value);
         /**
