@@ -45,6 +45,11 @@ static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 // TODO: Implement custom assertion messages
 #define S1_ASSERT_MSG(x, msg, ret)   S1_ASSERT(x, ret)
 
+// Provide _DEBUG on all platforms
+#if !defined(NDEBUG) && !defined(_DEBUG)
+  #define _DEBUG
+#endif
+
 // Used all over the place
 #include "uc/String.h"
 
