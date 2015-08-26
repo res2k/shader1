@@ -340,6 +340,10 @@ namespace s1
 #define ENABLE_DEBUG_COMMENTS
 #endif
 
+#define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
+  BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
+  BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
+
 #ifdef ENABLE_DEBUG_COMMENTS
   #define _GENERATE_FMT_PLACEHOLDER(Z, N, Data)                                       \
     BOOST_PP_IF(N, ",", "") " {" BOOST_PP_STRINGIZE(BOOST_PP_INC(BOOST_PP_MUL(N, 2))) \
@@ -347,10 +351,6 @@ namespace s1
   #define _GENERATE_FMT_ARGUMENT(Z, N, Data)      \
     BOOST_PP_COMMA() BOOST_PP_CAT(name, N)        \
     BOOST_PP_COMMA() DebugCommentArgHelper<BOOST_PP_CAT(A, N)>::FormatArg (BOOST_PP_CAT(a, N))
-
-  #define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
-    BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
-    BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
 
   #define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                              \
     template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
@@ -369,7 +369,7 @@ namespace s1
   #define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                              \
     template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::DebugComment (const char* opStr  \
-      BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), const A, & a)) const    \
+      BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
     {                                                                                         \
     }
   #endif
