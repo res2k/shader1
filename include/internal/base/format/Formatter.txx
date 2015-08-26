@@ -244,26 +244,27 @@ namespace s1
       //
       // Float specialization
       //
+      template<typename T>
       class ArgHelperFloat
       {
       protected:
         typedef boost::container::static_vector<char, 32> string_type;
-        string_type convertedStr;
+        static string_type ConvertValue (T value);
       public:
-        ArgHelperFloat (float);
+        size_t FormattedSize (T) const
+        {
+          return std::numeric_limits<T>::max_digits10 + 2;
+        }
       };
 
       template<typename SinkType>
-      class ArgHelper<SinkType, float> : public ArgHelperFloat
+      class ArgHelper<SinkType, float> : public ArgHelperFloat<float>
       {
       public:
-        ArgHelper (float value) : ArgHelperFloat (value) {}
-        size_t FormattedSize (float) const
+        ArgHelper (float value) {}
+        void Emit (SinkType& sink, float value)
         {
-          return convertedStr.size();
-        }
-        void Emit (SinkType& sink, float)
-        {
+          string_type convertedStr (ConvertValue (value));
           sink.append (convertedStr.data(), convertedStr.size());
         }
       };

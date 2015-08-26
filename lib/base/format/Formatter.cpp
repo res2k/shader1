@@ -44,13 +44,18 @@ namespace s1
 
       //---------------------------------------------------------------------
 
-      ArgHelperFloat::ArgHelperFloat (float value)
+      template<typename T>
+      typename ArgHelperFloat<T>::string_type ArgHelperFloat<T>::ConvertValue (T value)
       {
-        boost::optional<string_type> floatStr =
-          boost::convert<string_type> (value, boost::cnv::strtol ()(boost::cnv::parameter::precision = 6));
+        using namespace boost;
+
+        optional<string_type> floatStr =
+          convert<string_type> (value, cnv::strtol ()(cnv::parameter::precision = std::numeric_limits<T>::digits10));
         assert (floatStr);
-        convertedStr = *floatStr;
+        return *floatStr;
       }
+
+      template ArgHelperFloat<float>::string_type ArgHelperFloat<float>::ConvertValue(float);
     } // namespace detail
   } // namespace format
 } // namespace s1
