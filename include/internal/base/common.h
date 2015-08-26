@@ -48,6 +48,4 @@ static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 // Used all over the place
 #include "uc/String.h"
 
-#include "nullptr.h"
-
 #endif // __BASE_COMMON_H__
