@@ -40,6 +40,17 @@ class StringTestSuite : public CxxTest::TestSuite
     }
     return s;
   }
+  // Uppercase variant
+  static s1::uc::String MakeLongString2 (s1::uc::String::size_type num = 128)
+  {
+    s1::uc::String s;
+    s.reserve (num);
+    for (s1::uc::String::size_type n = 0; n < num; n++)
+    {
+      s.append (static_cast<s1::uc::Char> ('A' + (n % 26)));
+    }
+    return s;
+  }
 public:
   void testEmpty1 (void)
   {
@@ -396,5 +407,65 @@ public:
     str.insert(0, "STOLEN");
     s1::uc::String str_expected ("STOLENglobal_var");
     TS_ASSERT_EQUALS(str, str_expected);
+  }
+
+  // Test small string swapping
+  void testSwapSmall ()
+  {
+    const s1::uc::String s1 ("foo");
+    const s1::uc::String s2 ("bar");
+    s1::uc::String s1_copy = s1;
+    s1::uc::String s2_copy = s2;
+    TS_ASSERT_EQUALS (s1_copy, s1);
+    TS_ASSERT_EQUALS (s2_copy, s2);
+    swap (s1_copy, s2_copy);
+    TS_ASSERT_DIFFERS (s1_copy, s2_copy);
+    TS_ASSERT_EQUALS (s2_copy, s1);
+    TS_ASSERT_EQUALS (s1_copy, s2);
+  }
+
+  // Test large string swapping
+  void testSwapLarge ()
+  {
+    const s1::uc::String s1 = MakeLongString ();
+    const s1::uc::String s2 = MakeLongString2 ();
+    s1::uc::String s1_copy = s1;
+    s1::uc::String s2_copy = s2;
+    TS_ASSERT_EQUALS (s1_copy, s1);
+    TS_ASSERT_EQUALS (s2_copy, s2);
+    swap (s1_copy, s2_copy);
+    TS_ASSERT_DIFFERS (s1_copy, s2_copy);
+    TS_ASSERT_EQUALS (s2_copy, s1);
+    TS_ASSERT_EQUALS (s1_copy, s2);
+  }
+
+  // Test small/large string swapping
+  void testSwapMixed1 ()
+  {
+    const s1::uc::String s1 = "foo";
+    const s1::uc::String s2 = MakeLongString2 ();
+    s1::uc::String s1_copy = s1;
+    s1::uc::String s2_copy = s2;
+    TS_ASSERT_EQUALS (s1_copy, s1);
+    TS_ASSERT_EQUALS (s2_copy, s2);
+    swap (s1_copy, s2_copy);
+    TS_ASSERT_DIFFERS (s1_copy, s2_copy);
+    TS_ASSERT_EQUALS (s2_copy, s1);
+    TS_ASSERT_EQUALS (s1_copy, s2);
+  }
+
+  // Test small/large string swapping
+  void testSwapMixed2 ()
+  {
+    const s1::uc::String s1 = MakeLongString ();
+    const s1::uc::String s2 = "bar";
+    s1::uc::String s1_copy = s1;
+    s1::uc::String s2_copy = s2;
+    TS_ASSERT_EQUALS (s1_copy, s1);
+    TS_ASSERT_EQUALS (s2_copy, s2);
+    swap (s1_copy, s2_copy);
+    TS_ASSERT_DIFFERS (s1_copy, s2_copy);
+    TS_ASSERT_EQUALS (s2_copy, s1);
+    TS_ASSERT_EQUALS (s1_copy, s2);
   }
 };

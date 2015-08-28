@@ -126,6 +126,8 @@ namespace s1
         /// Get currently pointed-to character, then advance to next char
         Char32 next32PostInc();
       };
+
+      friend void swap (String& s1, String& s2);
     private:
       friend class CharacterIterator;
 

@@ -681,6 +681,38 @@ namespace s1
       pos = input - str.data();
       return ch;
     }
+
+    //-----------------------------------------------------------------------
+
+    void swap (String& s1, String& s2)
+    {
+      unsigned int buffersCase = (s1.IsBufferInternal () ? 1 : 0)
+        | (s2.IsBufferInternal () ? 2 : 0);
+      std::swap (s1.d, s2.d);
+      switch (buffersCase)
+      {
+      case 0:
+        /* Both buffers external:
+         * Swapping 'd' was enough */
+        break;
+      case 1:
+        // s1 buffer was internal
+        Char_traits::copy (s2.internalBuffer, s1.internalBuffer, String::InternalBufferSize);
+        s2.d.buffer = s2.internalBuffer;
+        break;
+      case 2:
+        // s2 buffer was internal
+        Char_traits::copy (s1.internalBuffer, s2.internalBuffer, String::InternalBufferSize);
+        s1.d.buffer = s1.internalBuffer;
+        break;
+      case 3:
+        // Both buffers internal
+        std::swap (s1.internalBuffer, s2.internalBuffer);
+        s1.d.buffer = s1.internalBuffer;
+        s2.d.buffer = s2.internalBuffer;
+        break;
+      }
+    }
   } // namespace uc
 } // namespace s1
 
