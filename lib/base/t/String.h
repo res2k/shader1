@@ -389,7 +389,7 @@ public:
     TS_ASSERT_DIFFERS(str1.data(), str2.data());
   }
 
-  // Insert string insertion
+  // Test string insertion
   void testInsert()
   {
     s1::uc::String str ("global_var");
