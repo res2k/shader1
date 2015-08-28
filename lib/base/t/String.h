@@ -409,6 +409,15 @@ public:
     TS_ASSERT_EQUALS(str, str_expected);
   }
 
+  // Test string self-append
+  void testSelfAppend()
+  {
+    s1::uc::String str ("foo");
+    str.append (str);
+    s1::uc::String str_expected ("foofoo");
+    TS_ASSERT_EQUALS(str, str_expected);
+  }
+
   // Test small string swapping
   void testSwapSmall ()
   {

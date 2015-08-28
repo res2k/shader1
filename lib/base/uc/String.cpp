@@ -123,7 +123,18 @@ namespace s1
     {
       if (n == 0) return *this;
 
-      reserve (d.length + n);
+      if ((s >= d.buffer) && (s < d.buffer + d.length))
+      {
+        // Special case self-appending
+        ptrdiff_t s_pos = s - d.buffer;
+        reserve (d.length + n);
+        // ...because the pointer may change.
+        s = d.buffer + s_pos;
+      }
+      else
+      {
+        reserve (d.length + n);
+      }
       Char_traits::copy (d.buffer + d.length, s, n);
       d.length += n;
       return *this;
