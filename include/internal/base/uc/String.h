@@ -66,14 +66,21 @@ namespace s1
 
       size_type length() const { return d.length; }
       size_type size() const { return length(); }
+      static size_type max_size() { return std::numeric_limits<size_type>::max () / sizeof (Char); }
       bool isEmpty() const { return length() == 0; }
       size_type countChar32() const;
 
+      /// Make sure memory for at least \a minCapacity characters is reserved
       void reserve (size_type minCapacity)
       {
         if (IsBufferUnique() && (d.capacity >= minCapacity)) return;
         ResizeBuffer (minCapacity);
       }
+      /**
+       * Make sure memory for the current string length plus \a additionalCapacity characters is reserved.
+       * \remarks May throw if \a additionalCapacity is too large.
+       */
+      void reserveExtra (size_t additionalCapacity);
       void shrink_to_fit()
       {
         ResizeBuffer (length());

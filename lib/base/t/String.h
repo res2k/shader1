@@ -418,6 +418,14 @@ public:
     TS_ASSERT_EQUALS(str, str_expected);
   }
 
+  // Test overflow
+  void testOverflow()
+  {
+    s1::uc::String str ("foo");
+    TS_ASSERT_THROWS(str.append ("dummy", s1::uc::String::max_size()-1),
+      std::length_error);
+  }
+
   // Test small string swapping
   void testSwapSmall ()
   {

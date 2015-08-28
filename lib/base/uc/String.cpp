@@ -79,6 +79,15 @@ namespace s1
 
     //-----------------------------------------------------------------------
 
+    // Helper function for overflow checks
+    template<typename A, typename B>
+    static inline A OverflowCheckAdd (A a, B b, A maxValue)
+    {
+      if ((b > maxValue) || ((maxValue - b) < a))
+        throw std::length_error ("String length overflow");
+      return static_cast<A> (a + b);
+    }
+
     // Lazy shortcut
     typedef char_traits<Char> Char_traits;
 
@@ -104,13 +113,14 @@ namespace s1
     {
       if (n == 0) return *this;
 
-      reserve (d.length + n);
+      size_type newLength = OverflowCheckAdd (length(), n, max_size ());
+      reserve (newLength);
       Char* dest = d.buffer + d.length;
       for (size_type i = 0; i < n; i++)
       {
         *dest++ = *s++;
       }
-      d.length += n;
+      d.length = newLength;
       return *this;
     }
 
@@ -123,20 +133,21 @@ namespace s1
     {
       if (n == 0) return *this;
 
+      size_type newLength = OverflowCheckAdd (length(), n, max_size ());
       if ((s >= d.buffer) && (s < d.buffer + d.length))
       {
         // Special case self-appending
         ptrdiff_t s_pos = s - d.buffer;
-        reserve (d.length + n);
+        reserve (newLength);
         // ...because the pointer may change.
         s = d.buffer + s_pos;
       }
       else
       {
-        reserve (d.length + n);
+        reserve (newLength);
       }
       Char_traits::copy (d.buffer + d.length, s, n);
-      d.length += n;
+      d.length = newLength;
       return *this;
     }
 
@@ -149,7 +160,8 @@ namespace s1
       {
         needExtra += UTF16Encoder::EncodedSize (SanitizeChar16 (s[i]));
       }
-      reserve (length() + needExtra);
+      size_type newLength = OverflowCheckAdd (length(), needExtra, max_size ());
+      reserve (newLength);
       Char* dst = d.buffer + length();
       Char* dstEnd = dst + needExtra;
       UTF16Encoder enc;
@@ -158,16 +170,17 @@ namespace s1
         UTF16Encoder::EncodeResult result = enc (s[i], dst, dstEnd);
         assert (result >= 0);
       }
-      d.length += needExtra;
+      d.length = newLength;
       return *this;
     }
 
     String& String::append (Char c)
     {
       c = static_cast<Char> (SanitizeChar16 (c));
-      reserve (d.length + 1);
-      d.buffer[d.length] = c;
-      d.length += 1;
+      size_type newLength = OverflowCheckAdd (length(), 1u, max_size ());
+      reserve (newLength);
+      d.buffer[length()] = c;
+      d.length = newLength;
       return *this;
     }
 
@@ -175,14 +188,15 @@ namespace s1
     {
       c = SanitizeChar16 (c);
       unsigned char n = UTF16Encoder::EncodedSize (c);
-      reserve (d.length + n);
+      size_type newLength = OverflowCheckAdd (length(), n, max_size ());
+      reserve (newLength);
       Char* dst = d.buffer + d.length;
       Char* dstEnd = dst + n;
       UTF16Encoder enc;
       UTF16Encoder::EncodeResult result = enc (c, dst, dstEnd);
       assert (result >= 0);
       assert (dst == dstEnd);
-      d.length += n;
+      d.length = newLength;
       return *this;
     }
 
@@ -192,14 +206,15 @@ namespace s1
       if (n == 0) return *this;
 
       if (before > length()) before = length();
-      reserve (d.length + n);
+      size_type newLength = OverflowCheckAdd (length(), n, max_size ());
+      reserve (newLength);
       Char_traits::move (writePtr() + before + n, writePtr() + before, length() - before);
       Char* dest = d.buffer + before;
       for (size_type i = 0; i < n; i++)
       {
         *dest++ = *s++;
       }
-      d.length += n;
+      d.length = newLength;
       return *this;
     }
 
@@ -217,6 +232,11 @@ namespace s1
         p += n;
       }
       return total;
+    }
+
+    void String::reserveExtra (size_t additionalCapacity)
+    {
+      reserve (OverflowCheckAdd (length (), additionalCapacity, max_size ()));
     }
 
     String& String::operator= (const String& other)
@@ -271,7 +291,8 @@ namespace s1
 
     void String::toUTF8String (std::string& dest) const
     {
-      dest.reserve (dest.size() + d.length);
+      std::string::size_type destReserve = OverflowCheckAdd (dest.size(), length(), dest.max_size ());
+      dest.reserve (destReserve);
       char buf[256];
       char* output;
       char* outputEnd = buf + sizeof (buf);
@@ -301,7 +322,7 @@ namespace s1
       String s;
       /* When converting from UTF-8, the string in UTF-16 will never have
        * more code points than bytes in the original string */
-      s.reserve (len);
+      s.reserve (OverflowCheckAdd (size_type (0), len, max_size()));
       const char* input = utf8_str;
       const char* inputEnd = utf8_str + len;
       Char* outputStart = s.writePtr();
@@ -348,7 +369,7 @@ namespace s1
       #endif
       }
       while (false/*result < 0*/);
-      s.setLength (output - outputStart);
+      s.setLength (OverflowCheckAdd (size_type (0), static_cast<size_t> (output - outputStart), max_size()));
       s.shrink_to_fit();
       
       return s;
@@ -371,7 +392,8 @@ namespace s1
       const Char32* end = utf32_str + len;
       while (p < end)
       {
-        s.reserve (s.length() + (end - p));
+        size_type newReserve = OverflowCheckAdd (s.length(), static_cast<size_t> (end - p), max_size ());
+        s.reserve (newReserve);
         s.append (*p++);
       }
       s.shrink_to_fit();
@@ -492,7 +514,8 @@ namespace s1
     {
       AllocatedBufferData* new_p = reinterpret_cast<AllocatedBufferData*> (
         realloc (p, offsetof (AllocatedBufferData, data) + numChars * sizeof (Char)));
-      assert (new_p); // FIXME: Better OOM handling
+      if (!new_p)
+        throw std::bad_alloc ();
       return new_p;
     }
 

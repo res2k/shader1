@@ -40,7 +40,7 @@ namespace s1
       typedef uc::Char value_type;
       Sink (uc::String& dest, size_t output_size) : dest (dest)
       {
-        dest.reserve (dest.length() + output_size);
+        dest.reserveExtra (output_size);
       }
       ~Sink()
       {
