@@ -228,6 +228,29 @@ namespace s1
       return *this;
     }
 
+    String& String::operator= (String&& other)
+    {
+      if (&other != this)
+      {
+        FreeBuffer ();
+        bool otherBufferInternal = other.IsBufferInternal();
+        d.capacity = other.d.capacity;
+        other.d.capacity = 0;
+        d.length = other.d.length;
+        other.d.length = 0;
+        if (otherBufferInternal)
+        {
+          memcpy (internalBuffer, other.internalBuffer, sizeof(internalBuffer));
+        }
+        else
+        {
+          d.buffer = other.d.buffer;
+          other.d.buffer = other.internalBuffer;
+        }
+      }
+      return *this;
+    }
+
     bool String::operator==(const String& other) const
     {
       if (length() != other.length()) return false;

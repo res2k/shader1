@@ -49,6 +49,7 @@ namespace s1
       inline String (const String& s, size_type start);
       inline String (Char32 c);
       inline String (const Char32* s);
+      inline String (String&& s);
       ~String ();
 
       inline String& append (const char* s);
@@ -80,6 +81,7 @@ namespace s1
       const Char* data() const { return d.buffer; }
 
       String& operator= (const String& other);
+      String& operator= (String&& other);
       friend String operator+ (const String& s1, const String& s2);
       String& operator+= (Char32 ch) { return append (ch); }
       bool operator==(const String& other) const;
@@ -230,6 +232,22 @@ namespace s1
     String::String (const Char32* s) : d (0, 0, internalBuffer)
     {
       append (s);
+    }
+
+    String::String (String&& s) : d (0, 0, internalBuffer)
+    {
+      bool otherBufferInternal = s.IsBufferInternal();
+      std::swap (d.capacity, s.d.capacity);
+      std::swap (d.length, s.d.length);
+      if (otherBufferInternal)
+      {
+        memcpy (internalBuffer, s.internalBuffer, sizeof(internalBuffer));
+      }
+      else
+      {
+        d.buffer = s.d.buffer;
+        s.d.buffer = s.internalBuffer;
+      }
     }
 
     String& String::append (const char* s)
