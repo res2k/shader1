@@ -167,9 +167,12 @@ namespace s1
 
       /// Get pointer to AllocatedBufferData object
       AllocatedBufferData* BufferDataPtr() const;
+      /// Returns whether buffer is internal
+      bool IsBufferInternal() const
+      { return (d.buffer == internalBuffer); }
       /// Returns whether we alone own the buffer pointer
       bool IsBufferUnique() const
-      { return (d.buffer == internalBuffer) || (BufferDataPtr()->refCount.load() == 1); }
+      { return IsBufferInternal() || (BufferDataPtr()->refCount.load() == 1); }
 
       AllocatedBufferData* AllocBufferData (size_type numChars);
       AllocatedBufferData* ReallocBufferData (AllocatedBufferData* p, size_type numChars);

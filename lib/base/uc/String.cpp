@@ -84,7 +84,7 @@ namespace s1
 
     String::String (const String& s) : d (0, 0, internalBuffer)
     {
-      if (s.d.buffer == s.internalBuffer)
+      if (s.IsBufferInternal())
       {
         append (s);
       }
@@ -212,7 +212,7 @@ namespace s1
     {
       if (&other != this)
       {
-        if (other.d.buffer == other.internalBuffer)
+        if (other.IsBufferInternal())
         {
           ResizeBuffer (other.d.length);
           Char_traits::copy (d.buffer, other.d.buffer, other.d.length);
@@ -384,7 +384,7 @@ namespace s1
 
     void String::FreeBuffer()
     {
-      if (d.buffer != internalBuffer)
+      if (!IsBufferInternal())
       {
         ReleaseBufferData (BufferDataPtr());
         d.buffer = internalBuffer;
@@ -394,7 +394,7 @@ namespace s1
 
     void String::ResizeBuffer (size_type capacity)
     {
-      bool currentIsInternal = d.buffer == internalBuffer;
+      bool currentIsInternal = IsBufferInternal();
       bool canUseInternal = capacity <= InternalBufferSize;
       if (canUseInternal)
       {
@@ -441,7 +441,7 @@ namespace s1
 
     String::AllocatedBufferData* String::BufferDataPtr() const
     {
-      assert (d.buffer != internalBuffer);
+      assert (!IsBufferInternal());
       return reinterpret_cast<AllocatedBufferData*> (
         reinterpret_cast<char*> (d.buffer) - offsetof (AllocatedBufferData, data));
     }
