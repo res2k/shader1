@@ -379,12 +379,7 @@ namespace s1
     {
       if (len == (size_type)~0)
       {
-        const Char32* c = utf32_str;
-        while (*c != 0)
-        {
-          c++;
-        }
-        len = c - utf32_str;
+        len = std::char_traits<Char32>::length (utf32_str);
       }
       
       String s;
