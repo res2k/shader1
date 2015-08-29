@@ -104,8 +104,8 @@ namespace s1
       {
         return fromUTF8 (s.c_str());
       }
-      static String fromUTF8 (const char* s, size_t len = (size_type)~0);
-      static String fromUTF32 (const Char32* s, size_t len = (size_type)~0);
+      static String fromUTF8 (const char* s, size_t len = (size_t)~0);
+      static String fromUTF32 (const Char32* s, size_t len = (size_t)~0);
 
       bool startsWith (const String& s) const;
       size_type indexOf (Char32 ch) const;
