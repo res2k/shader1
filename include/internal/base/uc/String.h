@@ -38,7 +38,7 @@ namespace s1
     protected:
       String NormalizeNFD ();
     public:
-      typedef size_t size_type;
+      typedef s1_string_size_type size_type;
       typedef Char value_type;
       BOOST_STATIC_CONSTANT(size_type, npos = (size_type)~0);
 
@@ -53,11 +53,11 @@ namespace s1
       ~String ();
 
       inline String& append (const char* s);
-      String& append (const char* s, size_type n);
+      String& append (const char* s, size_t n);
       String& append (const Char* s);
-      String& append (const Char* s, size_type n);
+      String& append (const Char* s, size_t n);
       inline String& append (const Char32* s);
-      String& append (const Char32* s, size_type n);
+      String& append (const Char32* s, size_t n);
       inline String& append (const String& s);
       String& append (Char c);
       String& append (Char32 c);
@@ -104,8 +104,8 @@ namespace s1
       {
         return fromUTF8 (s.c_str());
       }
-      static String fromUTF8 (const char* s, size_type len = (size_type)~0);
-      static String fromUTF32 (const Char32* s, size_type len = (size_type)~0);
+      static String fromUTF8 (const char* s, size_t len = (size_type)~0);
+      static String fromUTF32 (const Char32* s, size_t len = (size_type)~0);
 
       bool startsWith (const String& s) const;
       size_type indexOf (Char32 ch) const;

@@ -102,6 +102,9 @@ typedef uint16_t s1_char16;
 typedef uint32_t s1_char32;
 #endif
 
+/// String size type.
+typedef uint32_t s1_string_size_type;
+
 /**\def S1_VISIBILITY
  * \internal
  * Visibility specification for public API methods

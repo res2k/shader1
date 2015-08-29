@@ -43,7 +43,7 @@ namespace s1
     {
       /* Return how many UTF-16 code units are encoding the next (valid) character.
        * Note that for an invalid character 0 is returned */
-      static inline unsigned int encodingSize (const Char* src, String::size_type nSrc)
+      static inline unsigned int encodingSize (const Char* src, size_t nSrc)
       {
         assert (nSrc > 0);
         Char ch1 = *src++;
@@ -109,7 +109,7 @@ namespace s1
       FreeBuffer();
     }
 
-    String& String::append (const char* s, size_type n)
+    String& String::append (const char* s, size_t n)
     {
       if (n == 0) return *this;
 
@@ -129,7 +129,7 @@ namespace s1
       return append(s, Char_traits::length(s));
     }
 
-    String& String::append (const Char* s, size_type n)
+    String& String::append (const Char* s, size_t n)
     {
       if (n == 0) return *this;
 
@@ -151,7 +151,7 @@ namespace s1
       return *this;
     }
 
-    String& String::append (const Char32* s, size_type n)
+    String& String::append (const Char32* s, size_t n)
     {
       if (n == 0) return *this;
 
@@ -315,9 +315,9 @@ namespace s1
       while (result != UTF16to8Transcoder::trSuccess);
     }
 
-    String String::fromUTF8 (const char* utf8_str, size_type len)
+    String String::fromUTF8 (const char* utf8_str, size_t len)
     {
-      if (len == (size_type)~0) len = std::char_traits<char>::length (utf8_str);
+      if (len == (size_t)~0) len = std::char_traits<char>::length (utf8_str);
 
       String s;
       /* When converting from UTF-8, the string in UTF-16 will never have
@@ -375,9 +375,9 @@ namespace s1
       return s;
     }
 
-    String String::fromUTF32 (const Char32* utf32_str, size_type len)
+    String String::fromUTF32 (const Char32* utf32_str, size_t len)
     {
-      if (len == (size_type)~0)
+      if (len == (size_t)~0)
       {
         len = std::char_traits<Char32>::length (utf32_str);
       }
@@ -409,7 +409,7 @@ namespace s1
       if (ch <= MaxChar16)
       {
         const Char* p = Char_traits::find (start, length(), static_cast<Char16> (ch));
-        return p ? p - start : npos;
+        return p ? static_cast<size_type> (p - start) : npos;
       }
       else
       {
@@ -427,7 +427,7 @@ namespace s1
         while (p && (p < end))
         {
 	  p = Char_traits::find (p, end - p, surr[1]);
-	  if (p && (*(p - 1) == surr[0])) return p - start - 1;
+	  if (p && (*(p - 1) == surr[0])) return static_cast<size_type> (p - start - 1);
         }
         return npos;
       }
@@ -707,7 +707,7 @@ namespace s1
       const Char16* input = str.data() + pos;
       UTF16Decoder::DecodeResult result = decoder (input, str.data() + str.length(), ch);
       if (result < 0) ch = ReplacementChar;
-      pos = input - str.data();
+      pos = static_cast<size_type> (input - str.data());
       return ch;
     }
 
