@@ -2,7 +2,7 @@
 # different build flags in different places), so we wrap it's usage.
 
 # List of all the Boost libs we use anywhere in the source tree
-set(_S1_BOOST_USED_LIBS system thread)
+set(_S1_BOOST_USED_LIBS iostreams system thread)
 
 macro(s1_find_boost VERSION)
   if(ARGN)
@@ -17,7 +17,12 @@ endmacro()
 # Dependendencies
 set(BOOST_THREAD_BOOSTDEP system)
 
-# Special sources for boost_thread
+# Sources for boost_iostreams
+set(BOOST_IOSTREAMS_SOURCES
+    ${BOOST_ROOT}/libs/iostreams/src/file_descriptor.cpp
+    ${BOOST_ROOT}/libs/iostreams/src/mapped_file.cpp)
+
+# Sources for boost_thread
 file(GLOB thread_sources_all ${BOOST_ROOT}/libs/thread/src/*.cpp)
 if(WIN32)
   file(GLOB thread_sources_platform ${BOOST_ROOT}/libs/thread/src/win32/*.cpp)

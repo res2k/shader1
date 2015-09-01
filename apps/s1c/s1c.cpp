@@ -25,7 +25,6 @@
 
 #include "base/common.h"
 
-#include <fstream>
 #include <iostream>
 
 #include "s1/Backend.h"
@@ -34,11 +33,17 @@
 #include "s1/Library.h"
 #include "s1/Options.h"
 
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <string.h>
 
 using namespace s1;
+
+/* Use this stream type since it provides better exception messages that
+ * the default stream ifstream */
+typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstream;
 
 static void PrintSyntax (const char* execName)
 {
@@ -163,9 +168,7 @@ int main (const int argc, const char* const argv[])
   std::string sourceStr;
   try
   {
-    std::ifstream inputFile;
-    inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
-    inputFile.open (inputFileName, std::ios_base::in | std::ios_base::binary);
+    ifstream inputFile (inputFileName);
     // Check for BOM
     {
       unsigned char bomBuf[3];
@@ -177,6 +180,7 @@ int main (const int argc, const char* const argv[])
         inputFile.seekg (0);
       }
     }
+    inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
     {
       size_t startPos (inputFile.tellg ());
       inputFile.seekg (0, std::ios_base::end);
@@ -187,7 +191,7 @@ int main (const int argc, const char* const argv[])
       while (fileSize > 0)
       {
         char buf[256];
-        inputFile.read (buf, sizeof (buf));
+        inputFile.read (buf, std::min (fileSize, sizeof (buf)));
         size_t nRead (inputFile.gcount ());
         if (nRead == 0) break;
         sourceStr.append (buf, nRead);
@@ -197,7 +201,7 @@ int main (const int argc, const char* const argv[])
   }
   catch (std::exception& e)
   {
-    std::cerr << "Error reading input file: " << e.what() << std::endl;
+    std::cerr << e.what() << std::endl;
     return 4;
   }
   
