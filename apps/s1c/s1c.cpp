@@ -160,36 +160,45 @@ int main (const int argc, const char* const argv[])
     return 2;
   }
   
-  std::ifstream inputFile (inputFileName, std::ios_base::in | std::ios_base::binary);
-  // Check for BOM
+  std::string sourceStr;
+  try
   {
-    unsigned char bomBuf[3];
-    inputFile.read ((char*)bomBuf, 3);
-    if (inputFile.eof() || (bomBuf[0] != 0xEF) || (bomBuf[1] != 0xBB) || (bomBuf[2] != 0xBF))
+    std::ifstream inputFile;
+    inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
+    inputFile.open (inputFileName, std::ios_base::in | std::ios_base::binary);
+    // Check for BOM
     {
-      // Not a BOM, reset
-      inputFile.clear ();
-      inputFile.seekg (0);
+      unsigned char bomBuf[3];
+      inputFile.read ((char*)bomBuf, 3);
+      if (inputFile.eof () || (bomBuf[0] != 0xEF) || (bomBuf[1] != 0xBB) || (bomBuf[2] != 0xBF))
+      {
+        // Not a BOM, reset
+        inputFile.clear ();
+        inputFile.seekg (0);
+      }
+    }
+    {
+      size_t startPos (inputFile.tellg ());
+      inputFile.seekg (0, std::ios_base::end);
+      size_t fileSize (inputFile.tellg ());
+      inputFile.seekg (startPos, std::ios_base::beg);
+
+      sourceStr.reserve (fileSize);
+      while (fileSize > 0)
+      {
+        char buf[256];
+        inputFile.read (buf, sizeof (buf));
+        size_t nRead (inputFile.gcount ());
+        if (nRead == 0) break;
+        sourceStr.append (buf, nRead);
+        fileSize -= nRead;
+      }
     }
   }
-  std::string sourceStr;
+  catch (std::exception& e)
   {
-    size_t startPos (inputFile.tellg());
-    inputFile.seekg (0, std::ios_base::end);
-    size_t fileSize (inputFile.tellg());
-    inputFile.seekg (startPos, std::ios_base::beg);
-    
-    sourceStr.reserve (fileSize);
-    while (fileSize > 0)
-    {
-      char buf[256];
-      inputFile.read (buf, sizeof (buf));
-      size_t nRead (inputFile.gcount());
-      if (nRead == 0) break;
-      sourceStr.append (buf, nRead);
-      fileSize -= nRead;
-    }
-    inputFile.close();
+    std::cerr << "Error reading input file: " << e.what() << std::endl;
+    return 4;
   }
   
   Program::Pointer compilerProg (lib->CreateProgramFromString (sourceStr.c_str(), sourceStr.size()));
