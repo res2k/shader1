@@ -25,13 +25,14 @@ find_package(CxxTest)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/s1_add_library.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/s1_add_cxxtest.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/s1_boost.cmake)
 
 if(CXXTEST_FOUND)
   include_directories(${CXXTEST_INCLUDE_DIR})
   enable_testing()
 endif()
 
-find_package(Boost 1.59.0 REQUIRED)
+s1_find_boost(1.59)
 include_directories(${Boost_INCLUDE_DIRS})
 add_definitions("-DBOOST_ALL_NO_LIB")
 
