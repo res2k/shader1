@@ -173,6 +173,8 @@ S1_API(size_t) s1_program_get_input_array_size (s1_Program* program, const char*
 #if defined(__cplusplus)
 namespace s1
 {
+  typedef s1_InputFrequency InputFrequency;
+
   S1_NS_CXXAPI_BEGIN
     /**
      * Intermediate program object, provides program information
@@ -255,7 +257,7 @@ namespace s1
        *  - Changing an input variation frequency will affect the reported available
        *  input variables -- \ref input_vars_volatility.
        */
-      bool SetInputFrequency (const char* param, s1_InputFrequency freq)
+      bool SetInputFrequency (const char* param, InputFrequency freq)
       {
         return s1_program_set_input_frequency (this, param, freq) != 0;
       }
@@ -269,7 +271,7 @@ namespace s1
        * \remarks If a variation frequency wasn't explicitly set for the
        *   given parameter a default frequency will be returned.
        */
-      s1_InputFrequency GetInputFrequency (const char* param)
+      InputFrequency GetInputFrequency (const char* param)
       {
         return s1_program_get_input_frequency (this, param);
       }
