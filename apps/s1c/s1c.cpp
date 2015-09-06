@@ -23,8 +23,6 @@
       distribution.
 */
 
-#include "base/common.h"
-
 #include <iostream>
 
 #include "s1/Backend.h"
@@ -33,34 +31,223 @@
 #include "s1/Library.h"
 #include "s1/Options.h"
 
+#include <boost/convert.hpp>
+#include <boost/convert/spirit.hpp>
+#include <boost/foreach.hpp>
+#include <boost/format.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/program_options.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/utility/in_place_factory.hpp>
 
 #include <string.h>
 
 using namespace s1;
+namespace bpo = boost::program_options;
 
-/* Use this stream type since it provides better exception messages that
- * the default stream ifstream */
-typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstream;
-
-static void PrintSyntax (const char* execName)
+enum
 {
-  std::cerr << "Syntax: " << execName << " [input filename]" << std::endl;
-}
+  // Optimization level compiler picks by default
+  defaultOptimizationLevel = 1,
+  // Optimization level compiler picks if optimization is requested, but no particular options (-O)s
+  defaultEnableOptimizationLevel = 2
+};
 
-int main (const int argc, const char* const argv[])
+class CommandLineOptions
 {
-  const char* inputFileName = 0;
-  const char* entryName = "main";
-  const char* backendStr = "cg";
-  bool noSplit = false;
-  typedef boost::unordered_map<std::string, s1_InputFrequency> ParamMap;
+public:
+  typedef std::string arg_string_type;
+  typedef std::vector<arg_string_type> arg_string_vec;
+
+  arg_string_type inputFileName;
+  arg_string_type entryName;
+  arg_string_type backendStr;
+  bool noSplit;
+  typedef boost::unordered_map<std::string, s1::InputFrequency> ParamMap;
   ParamMap paramFlags;
   typedef boost::unordered_map<std::string, size_t> ParamArraySizeMap;
   ParamArraySizeMap paramArraySizes;
-  
+
+  CommandLineOptions () : noSplit(false) {}
+  boost::optional<int> Parse (const int argc, const char* const argv[],
+                              Options* compilerOpts)
+  {
+    const char* defaultEntry = "main";
+    const char* defaultBackend = "cg";
+
+    bpo::options_description input_desc ("General usage");
+    input_desc.add_options ()
+      // TODO: --help-backends
+      // TODO: --help-optimization
+      ("help", "print command line help");
+    bpo::options_description compile_desc ("Compilation options");
+    boost::optional<std::string> defaultOptStr (boost::convert<std::string> (int (defaultEnableOptimizationLevel), boost::cnv::spirit ()));
+    compile_desc.add_options ()
+      ("opt,O", 
+        bpo::value<arg_string_vec> ()->composing()->value_name("<flag>")
+        ->implicit_value(arg_string_vec (1), *defaultOptStr),
+        "Specify optimization options")
+      ("entry", bpo::value<arg_string_type> (&entryName)->value_name("<function>")->default_value (defaultEntry),
+        "Set program entry function")
+      ("backend", bpo::value<arg_string_type> (&backendStr)->value_name("<backend>")->default_value (defaultBackend),
+        "Select backend (target language)");
+    bpo::options_description param_desc ("Input parameter options");
+    param_desc.add_options ()
+      ("param-uniform", bpo::value<arg_string_vec> ()->composing()->value_name("<param>"),
+        "Specify a parameter to be uniform input")
+      ("param-vertex", bpo::value<arg_string_vec> ()->composing()->value_name("<param>"),
+        "Specify a parameter to be per-vertex input")
+      ("param-size", (new ParamArraySizeOptionValue)->value_name("<param> <size>"),
+        "Specify size of an array parameter");
+    bpo::options_description special_desc ("Special options");
+    special_desc.add_options ()
+      ("nosplit", bpo::bool_switch(),
+        "Skip program splitting step");
+    bpo::options_description input_files_desc;
+    input_files_desc.add_options ()
+      ("input-file", bpo::value<arg_string_type> (&inputFileName)->required());
+
+    bpo::options_description all_options;
+    all_options.add (input_desc).add (compile_desc).add (param_desc).add (special_desc).add (input_files_desc);
+    bpo::options_description visible_options;
+    visible_options.add (input_desc).add (compile_desc).add (param_desc).add (special_desc);
+
+    bpo::positional_options_description p;
+    p.add("input-file", -1);
+
+    boost::optional<bpo::parsed_options> options;
+    bpo::variables_map vm;
+    try
+    {
+      options = boost::in_place<bpo::parsed_options> (bpo::command_line_parser (argc, argv).
+                                                      options (all_options).positional (p).run ());
+      bpo::store (*options, vm);
+      bpo::notify (vm);
+    }
+    catch (bpo::required_option& /*e*/)
+    {
+      std::cerr << "No input file specified" << std::endl << std::endl;
+      PrintSyntax (argv[0], visible_options);
+      return 1;
+    }
+    catch (bpo::error& e)
+    {
+      std::cerr << e.what() << std::endl << std::endl;
+      PrintSyntax (argv[0], visible_options);
+      return 1;
+    }
+
+    if (vm.count("help"))
+    {
+      PrintSyntax (argv[0], visible_options);
+      return 0;
+    }
+
+    try
+    {
+      boost::unordered_set<std::string> paramsWarnedFlag;
+      boost::unordered_set<std::string> paramsWarnedSize;
+      BOOST_FOREACH (const bpo::option& option, options->options)
+      {
+        {
+          const std::string* paramName = 0;
+          s1::InputFrequency paramFreq = S1_FREQ_INVALID;
+          if (option.string_key == "param-uniform")
+          {
+            paramName = &(option.value[0]);
+            paramFreq = S1_FREQ_UNIFORM;
+          }
+          else if (option.string_key == "param-vertex")
+          {
+            paramName = &(option.value[0]);
+            paramFreq = S1_FREQ_VERTEX;
+          }
+
+          if (paramName != 0)
+          {
+            ParamMap::const_iterator prevFlag = paramFlags.find (*paramName);
+            if ((prevFlag != paramFlags.end ()) && (prevFlag->second != paramFreq)
+                && (paramsWarnedFlag.find (*paramName) != paramsWarnedFlag.end ()))
+            {
+              std::cerr << "Multiple type specifications for parameter: " << *paramName << std::endl;
+              paramsWarnedFlag.insert (*paramName);
+            }
+            paramFlags[*paramName] = paramFreq;
+          }
+        }
+        if (option.string_key == "param-size")
+        {
+          const std::string& paramName = option.value[0];
+          ParamArraySizeMap::const_iterator prevSize = paramArraySizes.find (paramName);
+          if ((prevSize != paramArraySizes.end ())
+              && (paramsWarnedSize.find (paramName) != paramsWarnedSize.end ()))
+          {
+            std::cerr << "Multiple array size specifications for parameter: " << paramName << std::endl;
+            paramsWarnedSize.insert (paramName);
+          }
+          boost::optional<unsigned long> arraySize (boost::convert<unsigned long> (option.value[1].c_str(), boost::cnv::spirit ()));
+          if (!arraySize)
+          {
+            throw std::runtime_error ((boost::format ("Invalid array size '%2%' for parameter '%1%'")
+                                       % option.value[0] % option.value[1]).str ());
+          }
+          paramArraySizes[paramName] = boost::numeric_cast<size_t> (*arraySize);
+        }
+      }
+
+      if (vm.count ("opt"))
+      {
+        arg_string_vec optArgs = vm["opt"].as<arg_string_vec> ();
+        BOOST_FOREACH (const arg_string_type& optArg, optArgs)
+        {
+          if (optArg.empty ())
+          {
+            compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
+          }
+          else
+          {
+            boost::optional<int> optLevel (boost::convert<int> (optArg, boost::cnv::spirit ()));
+            if (optLevel)
+              compilerOpts->SetOptLevel (*optLevel);
+            else
+              compilerOpts->SetOptFlagFromStr (optArg.c_str ());
+          }
+        }
+      }
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl << std::endl;
+      PrintSyntax (argv[0], visible_options);
+      return 1;
+    }
+
+    return boost::optional<int> ();
+  }
+
+  static void PrintSyntax (const char* execName, const bpo::options_description& options)
+  {
+    std::cout << "Usage: " << execName << " [options] <input filename>" << std::endl;
+    std::cout << options << std::endl;
+  }
+private:
+  class ParamArraySizeOptionValue : public bpo::typed_value<arg_string_vec>
+  {
+  public:
+    ParamArraySizeOptionValue (std::vector<arg_string_type>* store_to = 0) : typed_value (store_to) {}
+    unsigned min_tokens () const { return 2; }
+    unsigned max_tokens () const { return 2; }
+  };
+};
+
+/* Use this stream type since it provides better exception messages that
+* the default stream ifstream */
+typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstream;
+
+int main (const int argc, const char* const argv[])
+{
   Ptr<Library> lib;
   ResultCode libErr (Library::Create (lib));
   if (!S1_SUCCESSFUL(libErr))
@@ -70,105 +257,23 @@ int main (const int argc, const char* const argv[])
   }
   
   Options::Pointer compilerOpts = lib->CreateOptions ();
-  enum
-  {
-    // Optimization level compiler picks by default
-    defaultOptimizationLevel = 1,
-    // Optimization level compiler picks if optimization is requested, but no particular options (-O)s
-    defaultEnableOptimizationLevel = 2
-  };
   compilerOpts->SetOptLevel (defaultOptimizationLevel);
+
+  CommandLineOptions options;
+  boost::optional<int> result = options.Parse (argc, argv, compilerOpts);
+  if (result) return *result;
   
-  int argNum = 1;
-  while (argNum < argc)
-  {
-    const char* arg = argv[argNum];
-    if (strcmp (arg, "--param-vertex") == 0)
-    {
-      argNum++;
-      if (argNum < argc)
-	paramFlags[argv[argNum]] = S1_FREQ_VERTEX;
-    }
-    else if (strcmp (arg, "--param-uniform") == 0)
-    {
-      argNum++;
-      if (argNum < argc)
-	paramFlags[argv[argNum]] = S1_FREQ_UNIFORM;
-    }
-    else if (strcmp (arg, "--param-size") == 0)
-    {
-      argNum++;
-      std::string paramStr;
-      int arraySize = -1;
-      if (argNum < argc)
-	paramStr = argv[argNum];
-      argNum++;
-      if (argNum < argc)
-      {
-	char dummy;
-	if (sscanf (argv[argNum], "%d%c", &arraySize, &dummy) != 1)
-	  arraySize = -1;
-      }
-      if (!paramStr.empty() && (arraySize > 0))
-      {
-	paramArraySizes[paramStr] = arraySize;
-      }
-    }
-    else if (strcmp (arg, "--entry") == 0)
-    {
-      argNum++;
-      if (argNum < argc)
-	entryName = argv[argNum];
-    }
-    else if (strncmp (arg, "-O", 2) == 0)
-    {
-      const char* optStr = arg+2;
-      if (!*optStr)
-	compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
-      else if ((*optStr >= '0') && (*optStr <= '9'))
-	compilerOpts->SetOptLevel (*optStr - '0');
-      else
-	compilerOpts->SetOptFlagFromStr (optStr);
-    }
-    else if (strcmp (arg, "--backend") == 0)
-    {
-      argNum++;
-      if (argNum < argc)
-	backendStr = argv[argNum];
-    }
-    else if (strcmp (arg, "--nosplit") == 0)
-    {
-      noSplit = true;
-    }
-    else
-    {
-      if (inputFileName != 0)
-      {
-	PrintSyntax (argv[0]);
-	return 1;
-      }
-      inputFileName = arg;
-    }
-    argNum++;
-  }
-  
-  if (inputFileName == 0)
-  {
-    PrintSyntax (argv[0]);
-    return 1;
-  }
-  
-  Backend::Pointer compilerBackend (lib->CreateBackend (backendStr));
+  Backend::Pointer compilerBackend (lib->CreateBackend (options.backendStr.c_str()));
   if (!compilerBackend)
   {
-    std::cerr << "Invalid backend: " << backendStr << std::endl;
+    std::cerr << "Invalid backend: " << options.backendStr << std::endl;
     return 2;
   }
   
   std::string sourceStr;
   try
   {
-    ifstream inputFile (inputFileName);
+    ifstream inputFile (options.inputFileName);
     // Check for BOM
     {
       unsigned char bomBuf[3];
@@ -211,25 +316,21 @@ int main (const int argc, const char* const argv[])
     std::cerr << "Error creating program" << std::endl;
     return 3;
   }
-  compilerProg->SetEntryFunction (entryName);
+  compilerProg->SetEntryFunction (options.entryName.c_str());
   compilerProg->SetOptions (compilerOpts);
   
-  for (ParamMap::const_iterator paramFlag = paramFlags.begin();
-	paramFlag != paramFlags.end();
-	++paramFlag)
+  BOOST_FOREACH(const CommandLineOptions::ParamMap::value_type& paramFlag, options.paramFlags)
   {
-    compilerProg->SetInputFrequency (paramFlag->first.c_str(), paramFlag->second);
+    compilerProg->SetInputFrequency (paramFlag.first.c_str(), paramFlag.second);
     // TODO: Error checking
   }
-  for (ParamArraySizeMap::const_iterator paramSize = paramArraySizes.begin();
-	paramSize != paramArraySizes.end();
-	++paramSize)
+  BOOST_FOREACH(const CommandLineOptions::ParamArraySizeMap::value_type& paramSize, options.paramArraySizes)
   {
-    compilerProg->SetInputArraySize (paramSize->first.c_str(), paramSize->second);
+    compilerProg->SetInputArraySize (paramSize.first.c_str(), paramSize.second);
     // TODO: Error checking
   }
 
-  if (noSplit)
+  if (options.noSplit)
   {
     CompiledProgram::Pointer compiled (
       compilerBackend->GenerateProgram (compilerProg, S1_TARGET_UNSPLIT));
