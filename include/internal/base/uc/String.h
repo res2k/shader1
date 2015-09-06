@@ -23,6 +23,7 @@
 
 #include "Char.h"
 
+#include <limits>
 #include <string>
 #include <string.h>
 
