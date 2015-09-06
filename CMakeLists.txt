@@ -204,6 +204,11 @@ function(AutoBuildTest test_name)
   add_dependencies(build_tests ${test_name})
 endfunction()
 
+# S1_PREBUILT: Points to a build tree with an already built libs1, which is then
+# used to build s1.
+# Useful if the current compiler can't build libs1 itself (due to required
+# C++ features not being supported) but s1c should be built nevertheless (e.g.
+# to check include files compatibility)
 if(NOT S1_PREBUILT)
   include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/internal)
   include_directories(include/internal)
