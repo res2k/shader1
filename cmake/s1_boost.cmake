@@ -2,7 +2,7 @@
 # different build flags in different places), so we wrap it's usage.
 
 # List of all the Boost libs we use anywhere in the source tree
-set(_S1_BOOST_USED_LIBS iostreams system thread)
+set(_S1_BOOST_USED_LIBS iostreams program_options system thread)
 
 macro(s1_find_boost VERSION)
   if(ARGN)
