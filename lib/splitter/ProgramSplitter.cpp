@@ -27,7 +27,6 @@
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "splitter/SequenceSplitter.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #include "base/format/Formatter.txx"
@@ -39,7 +38,7 @@ namespace s1
     static std::string FreqFlagsSignature (const std::vector<unsigned int>& inputParamFreqFlags)
     {
       std::string sig;
-      BOOST_FOREACH (unsigned int freqFlag, inputParamFreqFlags)
+      for (unsigned int freqFlag : inputParamFreqFlags)
       {
 	char ch = 0;
 	for (int f = 0; f < freqNum; f++)
@@ -109,7 +108,7 @@ namespace s1
 	     (so the recursive call will have something) */
 	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
 	  const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
-	  BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam, funcParams)
+	  for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam : funcParams)
 	  {
 	    if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
 	    
@@ -159,7 +158,7 @@ namespace s1
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParams[freqNum];
 	  const std::vector<intermediate::RegisterPtr>& transfers = seqSplit.GetTransferRegs (freqVertex);
 	  unsigned int n = 0;
-	  BOOST_FOREACH (const intermediate::RegisterPtr& reg, transfers)
+	  for (const intermediate::RegisterPtr& reg : transfers)
 	  {
 	    // Generate unique parameter identifier
 	    uc::String transferIdent;
@@ -194,7 +193,7 @@ namespace s1
 	  
 	  // Extract output parameters, to return output value frequencies
 	  const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
-	  BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam, funcParams)
+	  for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam : funcParams)
 	  {
 	    if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
 	    
@@ -427,7 +426,7 @@ namespace s1
 	parser::SemanticsHandler::Scope::FunctionFormalParameters fParams;
 	typedef std::pair<uc::String, int> ParamFreqPair;
 	std::vector<ParamFreqPair> allFrequencies;
-	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
+	for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : func->GetParams())
 	{
 	  if (param.dir & parser::SemanticsHandler::Scope::dirIn)
 	  {
@@ -506,7 +505,7 @@ namespace s1
 	outputPrograms[freqFragment]->AddFunction (funcF);
 	
 	const std::vector<intermediate::RegisterPtr>& transferV2F = splitter.GetTransferRegs (freqVertex);
-	BOOST_FOREACH(const intermediate::RegisterPtr& reg, transferV2F)
+	for(const intermediate::RegisterPtr& reg : transferV2F)
 	{
 	  outputPrograms[freqVertex]->AddTransferValue (reg->GetOriginalType(), reg->GetName());
 	  outputPrograms[freqFragment]->AddTransferValue (reg->GetOriginalType(), reg->GetName());
@@ -514,7 +513,7 @@ namespace s1
 	  funcF->SetTransferMapping (reg->GetName(), reg);
 	}
 	
-	BOOST_FOREACH(const ParamFreqPair& pfp, allFrequencies)
+	for(const ParamFreqPair& pfp : allFrequencies)
 	{
 	  funcV->SetParameterFrequency (pfp.first, pfp.second);
 	  funcF->SetParameterFrequency (pfp.first, pfp.second);

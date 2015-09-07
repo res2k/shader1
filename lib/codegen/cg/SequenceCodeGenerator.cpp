@@ -25,7 +25,6 @@
 #include "SequenceCodeGenerator.h"
 
 #include <boost/call_traits.hpp>
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/preprocessor/arithmetic/mul.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -180,7 +179,7 @@ namespace s1
           format::Formatter<> fmtItem ("{0}");
           uc::String result ("[");
           bool first = true;
-          BOOST_FOREACH (const T& item, vec)
+          for (const T& item : vec)
           {
             uc::String itemStr;
             if (!first) result.append (", ");
@@ -601,7 +600,7 @@ namespace s1
         ParamHelper params (paramsStr);
         {
           SwizzleHelper swizzles (params);
-          BOOST_FOREACH(const RegisterPtr& source, sources)
+          for(const RegisterPtr& source : sources)
           {
             RegisterOriginsMap::const_iterator originIt (owner->registerOrigins.find (source));
             if (originIt != owner->registerOrigins.end())
@@ -864,7 +863,7 @@ namespace s1
         }
         else
         {
-          BOOST_FOREACH (const Sequence::IdentifierToRegMap::value_type& impPair, identToRegID_imp)
+          for (const Sequence::IdentifierToRegMap::value_type& impPair : identToRegID_imp)
           {
             uc::String s;
             FormatImpMapEntry (s, impPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (impPair.second));
@@ -877,7 +876,7 @@ namespace s1
 
       // Generate registers for 'exported' variables
       intermediate::RegisterSet writtenRegisters (seq->GetExportOuterRegs (identToRegID_exp));
-      BOOST_FOREACH(const RegisterPtr& writtenReg, writtenRegisters)
+      for(const RegisterPtr& writtenReg : writtenRegisters)
       {
 	owner->GetOutputRegisterName (writtenReg);
       }
@@ -904,7 +903,7 @@ namespace s1
         }
         else
         {
-          BOOST_FOREACH (const Sequence::IdentifierToRegMap::value_type& expPair, identToRegID_exp)
+          for (const Sequence::IdentifierToRegMap::value_type& expPair : identToRegID_exp)
           {
             uc::String s;
             FormatExpMapEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
@@ -967,11 +966,11 @@ namespace s1
       // Generate registers for each read or written variable
       intermediate::RegisterSet writtenRegisters (seqOpBody->GetWrittenRegisters());
       intermediate::RegisterSet readRegisters (seqOpBody->GetReadRegisters());
-      BOOST_FOREACH(const RegisterPtr& reg, writtenRegisters)
+      for(const RegisterPtr& reg : writtenRegisters)
       {
 	owner->GetOutputRegisterName (reg);
       }
-      BOOST_FOREACH(const RegisterPtr& reg, readRegisters)
+      for(const RegisterPtr& reg : readRegisters)
       {
 	owner->GetOutputRegisterName (reg);
       }
@@ -1094,7 +1093,7 @@ namespace s1
         }
         else
         {
-          BOOST_FOREACH (const intermediate::Sequence::RegisterImpMappings::value_type& imp, imports)
+          for (const intermediate::Sequence::RegisterImpMappings::value_type& imp : imports)
           {
             uc::String s;
             FormatImpMapEntry (s, imp.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (imp.second));
@@ -1175,7 +1174,7 @@ namespace s1
       // Generate code for actual operations
       seq.Visit (visitor);
       
-      BOOST_FOREACH(const EndAssignmentPair& assignment, endAssignments)
+      for(const EndAssignmentPair& assignment : endAssignments)
       {
 	visitor.EmitAssign (assignment.first.c_str(), assignment.second);
       }
@@ -1190,7 +1189,7 @@ namespace s1
         }
         else
         {
-          BOOST_FOREACH (const intermediate::Sequence::RegisterExpMappings::value_type& expPair, exports)
+          for (const intermediate::Sequence::RegisterExpMappings::value_type& expPair : exports)
           {
             uc::String s;
             FormatExpMapEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));

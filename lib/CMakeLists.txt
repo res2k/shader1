@@ -1,5 +1,5 @@
 add_definitions(-DS1_BUILD)
-set(S1_REQUIRED_CXX_FEATURES cxx_nullptr cxx_rvalue_references)
+set(S1_REQUIRED_CXX_FEATURES cxx_nullptr cxx_range_for cxx_rvalue_references)
 
 if(MSVC)
   # Disable some warnings

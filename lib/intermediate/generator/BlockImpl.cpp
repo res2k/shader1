@@ -34,7 +34,6 @@
 #include "ScopeImpl.h"
 #include "VariableExpressionImpl.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #include "base/format/Formatter.txx"
@@ -125,7 +124,7 @@ namespace s1
       // Need to collect regs for all output params
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       const std::vector<uc::String>& outputParams = blockScopeImpl->GetFunctionOutputParams();
-      BOOST_FOREACH(const uc::String& identifier, outputParams)
+      for(const uc::String& identifier : outputParams)
       {
 	retValRegs.push_back (sequenceBuilder->GetIdentifierRegister (identifier));
       }

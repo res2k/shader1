@@ -30,8 +30,6 @@
 
 #include "ErrorHandler.h"
 
-#include <boost/foreach.hpp>
-
 #include <iostream>
 
 namespace s1
@@ -59,7 +57,7 @@ namespace s1
       if (!func->IsEntryFunction()) continue;
       
       const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = func->GetParams();
-      BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, funcParams)
+      for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : funcParams)
       {
 	if (!(param.dir & parser::SemanticsHandler::Scope::dirOut)) continue;
 	
@@ -119,7 +117,7 @@ namespace s1
       SetProgramOutputParameters ();
       
       typedef std::pair<uc::String, size_t> ParamArraySizePair;
-      BOOST_FOREACH(ParamArraySizePair paramArraySize, arraySizeMap)
+      for(ParamArraySizePair paramArraySize : arraySizeMap)
       {
 	intermediateProg->SetParameterArraySize (paramArraySize.first, paramArraySize.second);
       }
@@ -144,7 +142,7 @@ namespace s1
 	  splitter::ProgramSplitter splitter;
 	  
 	  typedef std::pair<uc::String, unsigned int> FreqFlagPair;
-	  BOOST_FOREACH(FreqFlagPair freqFlag, freqFlagMap)
+	  for(FreqFlagPair freqFlag : freqFlagMap)
 	  {
 	    splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);
 	  }

@@ -22,8 +22,6 @@
 #include "compiler/Program.h"
 #include "splitter/Frequency.h"
 
-#include <boost/foreach.hpp>
-
 #include <sstream>
 
 namespace s1
@@ -46,12 +44,12 @@ namespace s1
         wrapped_program = compiler.CreateProgram (inputStream, entryFunctionU);
         wrapped_program->SetEntryFunctionName (entryFunctionU);
         
-        BOOST_FOREACH(const InputFreqMapType::value_type& inputFreq, inputFreqMap)
+        for(const InputFreqMapType::value_type& inputFreq : inputFreqMap)
         {
           uc::String ucParam (uc::String::fromUTF8 (inputFreq.first));
           wrapped_program->SetInputParameterFrequencyFlags (ucParam, 1 << inputFreq.second);
         }
-        BOOST_FOREACH(const InputSizeMapType::value_type& inputSize, inputSizeMap)
+        for(const InputSizeMapType::value_type& inputSize : inputSizeMap)
         {
           uc::String ucParam (uc::String::fromUTF8 (inputSize.first));
           wrapped_program->SetInputArrayParameterSize (ucParam, 1 << inputSize.second);

@@ -17,9 +17,9 @@
 
 #include "base/common.h"
 
-#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/range/adaptor/reversed.hpp>
 
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
@@ -81,7 +81,7 @@ namespace s1
     
     void Sequence::ReverseVisit (SequenceVisitor& visitor) const
     {
-      BOOST_REVERSE_FOREACH(const SequenceOpPtr& op, ops)
+      for(const SequenceOpPtr& op : boost::adaptors::reverse(ops))
       {
 	visitor.SetVisitedOp (op);
 	op->Visit (visitor);

@@ -22,7 +22,6 @@
 #define __BASE_FORMAT_FORMATTER_TPP__
 
 #include <boost/container/static_vector.hpp>
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_signed.hpp>
@@ -365,7 +364,7 @@ namespace s1
       typedef Sink<DestType> SinkType;                                       \
       BOOST_PP_REPEAT_ ## Z(ArgNum, _ARGHELPER_EMIT, _)                      \
       size_t output_size (0);                                                \
-      BOOST_FOREACH(const FormatPart& part, parts)                           \
+      for(const FormatPart& part : parts)                                    \
       {                                                                      \
         if (part.IsStringPart())                                             \
         {                                                                    \
@@ -382,7 +381,7 @@ namespace s1
         }                                                                    \
       }                                                                      \
       SinkType sink (dest, output_size);                                     \
-      BOOST_FOREACH(const FormatPart& part, parts)                           \
+      for(const FormatPart& part : parts)                                    \
       {                                                                      \
         if (part.IsStringPart())                                             \
         {                                                                    \

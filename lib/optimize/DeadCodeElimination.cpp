@@ -21,8 +21,6 @@
 #include "CommonSequenceVisitor.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 
-#include <boost/foreach.hpp>
-
 namespace s1
 {
   namespace optimize
@@ -45,7 +43,7 @@ namespace s1
 				    const RegisterMap& regMap)
       {
 	intermediate::RegisterSet newUsedRegisters;
-	BOOST_FOREACH(const RegisterPtr& reg, usedRegisters)
+	for(const RegisterPtr& reg : usedRegisters)
 	{
 	  RegisterMap::const_iterator newSeqReg = regMap.find (reg);
 	  if (newSeqReg != regMap.end())
@@ -379,7 +377,7 @@ namespace s1
     {
       intermediate::RegisterSet sequenceExported (seq->GetExportOuterRegs (identToRegID_exp));
       size_t exportedUsed = 0;
-      BOOST_FOREACH(const RegisterPtr& reg, sequenceExported)
+      for(const RegisterPtr& reg : sequenceExported)
       {
 	if (usedRegisters.count (reg) > 0)
 	  exportedUsed++;
@@ -416,7 +414,7 @@ namespace s1
 	writtenRegisters.insert (elseWrittenRegs.begin(), elseWrittenRegs.end());
       }
       size_t writtenRegsUsed = 0;
-      BOOST_FOREACH(const RegisterPtr& reg, writtenRegisters)
+      for(const RegisterPtr& reg : writtenRegisters)
       {
 	if (usedRegisters.count (reg) > 0)
 	  writtenRegsUsed++;
@@ -444,13 +442,13 @@ namespace s1
 	writtenRegisters = seqOpBody->GetWrittenRegisters();
       }
       typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
-      BOOST_FOREACH(const RegPair& loopPair, loopedRegs)
+      for(const RegPair& loopPair : loopedRegs)
       {
 	readRegisters.insert (loopPair.first);
 	writtenRegisters.insert (loopPair.second);
       }
       size_t writtenRegsUsed = 0;
-      BOOST_FOREACH(const RegisterPtr& reg, writtenRegisters)
+      for(const RegisterPtr& reg : writtenRegisters)
       {
 	if (usedRegisters.count (reg) > 0)
 	  writtenRegsUsed++;
@@ -478,7 +476,7 @@ namespace s1
 							       const std::vector<RegisterPtr>& outParams)
     {
       size_t outParamsUsed = 0;
-      BOOST_FOREACH(const RegisterPtr& reg, outParams)
+      for(const RegisterPtr& reg : outParams)
       {
 	if (usedRegisters.count (reg) > 0)
 	  outParamsUsed++;

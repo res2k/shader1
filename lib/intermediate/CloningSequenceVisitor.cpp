@@ -39,7 +39,6 @@
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -299,7 +298,7 @@ namespace s1
 					      const std::vector<RegisterPtr>& sources)
     {
       std::vector<RegisterPtr> newSources;
-      BOOST_FOREACH(const RegisterPtr& source, sources)
+      for(const RegisterPtr& source : sources)
       {
 	newSources.push_back (MapRegister (source));
       }
@@ -317,7 +316,7 @@ namespace s1
 					      const std::vector<RegisterPtr>& sources)
     {
       std::vector<RegisterPtr> newSources;
-      BOOST_FOREACH(const RegisterPtr& source, sources)
+      for(const RegisterPtr& source : sources)
       {
 	newSources.push_back (MapRegister (source));
       }
@@ -334,7 +333,7 @@ namespace s1
 					     const std::vector<RegisterPtr>& sources)
     {
       std::vector<RegisterPtr> newSources;
-      BOOST_FOREACH(const RegisterPtr& source, sources)
+      for(const RegisterPtr& source : sources)
       {
 	newSources.push_back (MapRegister (source));
       }
@@ -501,7 +500,7 @@ namespace s1
       
       typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
       std::vector<RegPair> newLoopedRegs;
-      BOOST_FOREACH(const RegPair& loopedReg, loopedRegs)
+      for(const RegPair& loopedReg : loopedRegs)
       {
 	newLoopedRegs.push_back (std::make_pair (MapRegister (loopedReg.first),
 						 MapRegister (loopedReg.second)));
@@ -517,7 +516,7 @@ namespace s1
     void CloningSequenceVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
       std::vector<RegisterPtr> newOutParams;
-      BOOST_FOREACH(const RegisterPtr& outParam, outParamVals)
+      for(const RegisterPtr& outParam : outParamVals)
       {
 	newOutParams.push_back (MapRegister (outParam));
       }
@@ -532,12 +531,12 @@ namespace s1
 						const std::vector<RegisterPtr>& outParams)
     {
       std::vector<RegisterPtr> newInParams;
-      BOOST_FOREACH(const RegisterPtr& inParam, inParams)
+      for(const RegisterPtr& inParam : inParams)
       {
 	newInParams.push_back (MapRegister (inParam));
       }
       std::vector<RegisterPtr> newOutParams;
-      BOOST_FOREACH(const RegisterPtr& outParam, outParams)
+      for(const RegisterPtr& outParam : outParams)
       {
 	newOutParams.push_back (MapRegister (outParam));
       }
@@ -554,7 +553,7 @@ namespace s1
 					       const std::vector<RegisterPtr>& inParams)
     {
       std::vector<RegisterPtr> newInParams;
-      BOOST_FOREACH(const RegisterPtr& inParam, inParams)
+      for(const RegisterPtr& inParam : inParams)
       {
 	newInParams.push_back (MapRegister (inParam));
       }

@@ -19,7 +19,6 @@
 
 #include "intermediate/SequenceBuilder.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 namespace s1
@@ -94,7 +93,7 @@ namespace s1
 
     void SequenceBuilder::SetIdentifierRegisters (const IdentifierToRegMap& map)
     {
-      BOOST_FOREACH(const IdentRegPair& i2r, map)
+      for(const IdentRegPair& i2r : map)
       {
         identToReg[i2r.first] = i2r.second;
       }
@@ -124,7 +123,7 @@ namespace s1
     
     void SequenceBuilder::AddImports (const RegisterImpMappings& imports)
     {
-      BOOST_FOREACH(const IdentRegPair& imp, imports)
+      for(const IdentRegPair& imp : imports)
       {
         SetImport (imp.second, imp.first);
       }
@@ -143,7 +142,7 @@ namespace s1
     
     void SequenceBuilder::AddExports (const RegisterExpMappings& exports)
     {
-      BOOST_FOREACH(const IdentRegPair& exp, exports)
+      for(const IdentRegPair& exp : exports)
       {
         sequence->exports[exp.first] = exp.second;
       }
@@ -159,12 +158,12 @@ namespace s1
       allReadRegisters.insert (keepImports.begin(), keepImports.end());
       allWrittenRegisters.insert (keepExports.begin(), keepExports.end());
       // Import destinations are considered 'written'
-      BOOST_FOREACH(const IdentRegPair& imp, sequence->imports)
+      for(const IdentRegPair& imp : sequence->imports)
       {
         allWrittenRegisters.insert (imp.second);
       }
       // Export sources are considered 'read'
-      BOOST_FOREACH(const IdentRegPair& exp, sequence->exports)
+      for(const IdentRegPair& exp : sequence->exports)
       {
         allReadRegisters.insert (exp.second);
       }

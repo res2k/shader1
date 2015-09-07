@@ -19,8 +19,6 @@
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "intermediate/SequenceVisitor.h"
 
-#include <boost/foreach.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -35,7 +33,7 @@ namespace s1
     RegisterSet SequenceOpWhile::GetReadRegisters () const
     {
       RegisterSet regs (bodyOp->GetReadRegisters());
-      BOOST_FOREACH(const LoopedRegsPair& loopedReg, loopedRegs)
+      for(const LoopedRegsPair& loopedReg : loopedRegs)
       {
 	regs.insert (loopedReg.first);
       }
@@ -45,7 +43,7 @@ namespace s1
     RegisterSet SequenceOpWhile::GetWrittenRegisters () const
     {
       RegisterSet regs (bodyOp->GetWrittenRegisters());
-      BOOST_FOREACH(const LoopedRegsPair& loopedReg, loopedRegs)
+      for(const LoopedRegsPair& loopedReg : loopedRegs)
       {
 	regs.insert (loopedReg.second);
       }

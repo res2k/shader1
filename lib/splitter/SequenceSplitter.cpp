@@ -45,7 +45,6 @@
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "splitter/ProgramSplitter.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <iostream>
 
@@ -170,7 +169,7 @@ namespace s1
     unsigned int SequenceSplitter::InputVisitor::ComputeCombinedFreqs (const Container& sources)
     {
       unsigned int allFreq = 0;
-      BOOST_FOREACH(const RegisterPtr& src, sources)
+      for(const RegisterPtr& src : sources)
       {
 	unsigned int srcAvail = parent.GetRegAvailability (src);
 	allFreq |= srcAvail;
@@ -185,7 +184,7 @@ namespace s1
       int highestFreq = freqNum;
       while (!found && (highestFreq-- > 0))
       {
-        BOOST_FOREACH(const RegisterPtr& src, sources)
+        for(const RegisterPtr& src : sources)
 	{
 	  unsigned int srcAvail = parent.GetRegAvailability (src);
 	  if ((srcAvail & (1 << highestFreq)) != 0)
@@ -204,7 +203,7 @@ namespace s1
     unsigned int SequenceSplitter::InputVisitor::PromoteAll (int freq, const Container& sources)
     {
       unsigned int commonFreqs = (1 << freqNum) - 1;
-      BOOST_FOREACH(const RegisterPtr& src, sources)
+      for(const RegisterPtr& src : sources)
       {
 	unsigned int srcAvail = parent.GetRegAvailability (src);
 	srcAvail = PromoteRegister (src, freq);
@@ -565,7 +564,7 @@ namespace s1
 	const SequenceBuilderPtr& srcSeqBuilder (blockSplitter.GetOutputSequence (f));
 	const SequenceBuilderPtr& dstSeqBuilder (blockSplitter.GetOutputSequence (f+1));
 	const TransferRegsVector& transferRegs = blockSplitter.GetTransferRegs (f);
-	BOOST_FOREACH(const RegisterPtr& reg, transferRegs)
+	for(const RegisterPtr& reg : transferRegs)
 	{
 	  RegisterPtr newReg;
 	  uc::String regName;
@@ -702,7 +701,7 @@ namespace s1
       writtenRegs.insert (writtenRegs.begin(), seqBuilder->GetAllWrittenRegisters().begin(), seqBuilder->GetAllWrittenRegisters().end());
       for (int g = 0; g < f; g++)
       {
-	BOOST_FOREACH(const RegisterPair& rename, renames[g])
+	for(const RegisterPair& rename : renames[g])
 	{
 	  PromoteRegister (rename.second, f);
 	  
@@ -835,7 +834,7 @@ namespace s1
 	 for looped vars */
       AvailabilityMap loopedRegFreqs;
       // Frequencies of looped regs start out with the frequency of the first-loop reg.
-      BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+      for(const LoopedReg& loopedReg : loopedRegs)
       {
 	loopedRegFreqs[loopedReg.second] = parent.GetRegAvailability (loopedReg.first);
       }
@@ -889,7 +888,7 @@ namespace s1
       }
       
       // Take "dry-run" frequencies for looped regs and promote actual loop input registers
-      BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+      for(const LoopedReg& loopedReg : loopedRegs)
       {
 	unsigned int postLoopAvail = loopedRegFreqs[loopedReg.second];
 	//combinedFreqs |= postLoopAvail;
@@ -913,7 +912,7 @@ namespace s1
         SequencePtr blockSequence (body->GetSequence());
         const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
         const Sequence::IdentifierToRegMap& identToRegIDs_imp = body->GetImportIdentToRegs();
-        BOOST_FOREACH(const Sequence::RegisterImpMappings::value_type& imp, blockImports)
+        for(const Sequence::RegisterImpMappings::value_type& imp : blockImports)
         {
           Sequence::IdentifierToRegMap::const_iterator impRegID = identToRegIDs_imp.find (imp.first);
           assert (impRegID != identToRegIDs_imp.end());
@@ -988,7 +987,7 @@ namespace s1
 	assert(newOps[f].seqBuilder != 0);
 	
 	std::vector<LoopedReg> newLoopedRegs;
-	BOOST_FOREACH(const LoopedReg& loopedReg, loopedRegs)
+	for(const LoopedReg& loopedReg : loopedRegs)
 	{
 	  unsigned int avail = parent.GetRegAvailability (loopedReg.second);
 	  if ((avail & ((1 << f) | freqFlagU)) != 0)
@@ -1010,7 +1009,7 @@ namespace s1
       SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpReturn> (outParamVals));
       
       /* 'return': only execute on fragment frequency */
-      BOOST_FOREACH(const RegisterPtr& reg, outParamVals)
+      for(const RegisterPtr& reg : outParamVals)
       {
 	PromoteRegister (reg, freqFragment);
       }
@@ -1033,7 +1032,7 @@ namespace s1
        */
       
       std::vector<unsigned int> inputParamFreqFlags;
-      BOOST_FOREACH(const RegisterPtr& reg, inParams)
+      for(const RegisterPtr& reg : inParams)
       {
 	inputParamFreqFlags.push_back (parent.GetRegAvailability (reg));
       }
@@ -1057,7 +1056,7 @@ namespace s1
       std::vector<RegisterPtr> transferOut[freqNum];
       for (int f = 0; f < freqNum-1; f++)
       {
-	BOOST_FOREACH(const ProgramSplitter::FunctionTransferValues& tfv, transferValues[f])
+	for(const ProgramSplitter::FunctionTransferValues& tfv : transferValues[f])
 	{
 	  uc::String transferIdent (parent.GetTransferIdent ());
 	  
@@ -1269,7 +1268,7 @@ namespace s1
 	// Availability not given, guess.
 	bool isImported = false;
 	
-	BOOST_FOREACH(const intermediate::Sequence::IdentRegPair& imp, inputSeq->GetImports())
+	for(const intermediate::Sequence::IdentRegPair& imp : inputSeq->GetImports())
 	{
 	  if (imp.second == reg)
 	  {

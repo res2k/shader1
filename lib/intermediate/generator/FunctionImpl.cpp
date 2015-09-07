@@ -23,8 +23,6 @@
 #include "NameImpl.h"
 #include "ScopeImpl.h"
 
-#include <boost/foreach.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -89,7 +87,7 @@ namespace s1
         }
       }
 
-      BOOST_FOREACH(const AutoGlobalParamsMap::value_type& newParam, autoGlobalParams)
+      for(const AutoGlobalParamsMap::value_type& newParam : autoGlobalParams)
       {
         funcInfo->params.push_back (newParam.second);
       }

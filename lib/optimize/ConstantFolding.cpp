@@ -27,7 +27,6 @@
 #include "intermediate/SequenceOp/SequenceOpMakeMatrix.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #include "base/format/Formatter.txx"
@@ -166,7 +165,7 @@ namespace s1
       {
 	ConstRegsMap newConstRegs;
 	typedef std::pair<RegisterPtr, ConstantValPtr> ConstRegPair;
-	BOOST_FOREACH(const ConstRegPair& constReg, constRegs)
+	for(const ConstRegPair& constReg : constRegs)
 	{
 	  RegisterMap::const_iterator newSeqReg = regMap.find (constReg.first);
 	  if (newSeqReg != regMap.end())
@@ -183,7 +182,7 @@ namespace s1
       {
 	FoldingVisitor* foldVisitor = static_cast<FoldingVisitor*> (visitor);
 	typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
-	BOOST_FOREACH(const RegPair& mappedReg, regMap)
+	for(const RegPair& mappedReg : regMap)
 	{
 	  ConstRegsMap::const_iterator constReg = foldVisitor->constRegs.find (mappedReg.second);
 	  if (constReg != foldVisitor->constRegs.end ())
@@ -1075,7 +1074,7 @@ namespace s1
     {
       RegisterPtr conditionRegInitial;
       typedef std::pair<RegisterPtr, RegisterPtr> RegisterPair;
-      BOOST_FOREACH(const RegisterPair& loopedReg, loopedRegs)
+      for(const RegisterPair& loopedReg : loopedRegs)
       {
 	if (loopedReg.second == conditionReg)
 	{
@@ -1094,7 +1093,7 @@ namespace s1
 	  // If initial condition is 'false' loop can be removed.
 	  
 	  // Copy const values for looped regs
-	  BOOST_FOREACH(const RegisterPair& loopedReg, loopedRegs)
+	  for(const RegisterPair& loopedReg : loopedRegs)
 	  {
 	    ConstRegsMap::const_iterator loopedRegConst = constRegs.find (loopedReg.first);
 	    if (loopedRegConst != constRegs.end())
@@ -1111,7 +1110,7 @@ namespace s1
       // Save constant regs ...
       ConstRegsMap saveConstRegs (constRegs);
       // ... clear const values for looped regs (ops like "x=x+1" should not be folded!)
-      BOOST_FOREACH(const RegisterPair& loopedReg, loopedRegs)
+      for(const RegisterPair& loopedReg : loopedRegs)
       {
 	ConstRegsMap::iterator loopedRegConst = constRegs.find (loopedReg.first);
 	if (loopedRegConst != constRegs.end())
@@ -1121,7 +1120,7 @@ namespace s1
       }
       CommonSequenceVisitor::OpWhile (conditionReg, loopedRegs, seqOpBody);
       // ... and restore
-      BOOST_FOREACH(const RegisterPair& loopedReg, loopedRegs)
+      for(const RegisterPair& loopedReg : loopedRegs)
       {
 	ConstRegsMap::iterator loopedRegConst = saveConstRegs.find (loopedReg.first);
 	if (loopedRegConst != constRegs.end())

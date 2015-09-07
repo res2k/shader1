@@ -26,7 +26,6 @@
 
 #include <algorithm>
 #include <boost/container/vector.hpp>
-#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <stddef.h>
@@ -585,7 +584,7 @@ namespace s1
           if (!vec.empty())
           {
             std::stable_sort (vec.begin(), vec.end(), &CombiningMarkCompare);
-            BOOST_FOREACH(Char32 mark, vec)
+            for(Char32 mark : vec)
             {
               str.append (mark);
             }

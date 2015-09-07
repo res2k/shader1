@@ -26,7 +26,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "optimize/Optimizer.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <vector>
 
@@ -62,7 +61,7 @@ namespace s1
 	  steps.push_back (boost::make_shared<OptimizeSequenceDeadCodeEliminate> (usedRegs));
 	}
 	
-	BOOST_FOREACH(const OptimizeSequenceStepPtr& step, steps)
+	for(const OptimizeSequenceStepPtr& step : steps)
 	{
 	  intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<intermediate::SequenceBuilder> ());
 	  newSeqBuilder->AddImports (currentSeq->GetImports ());

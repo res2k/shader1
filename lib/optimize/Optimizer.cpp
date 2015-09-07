@@ -22,7 +22,6 @@
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 namespace s1
@@ -32,7 +31,7 @@ namespace s1
     intermediate::ProgramPtr Optimizer::ApplyOptimizations (const intermediate::ProgramPtr& program)
     {
       intermediate::ProgramPtr newProgram (boost::make_shared<intermediate::Program> ());
-      BOOST_FOREACH(const intermediate::Program::TransferValuePair& tvp, program->GetTransferValues())
+      for(const intermediate::Program::TransferValuePair& tvp : program->GetTransferValues())
       {
 	newProgram->AddTransferValue (tvp.first, tvp.second);
       }
@@ -59,7 +58,7 @@ namespace s1
 	intermediate::RegisterSet usedRegs;
 	const intermediate::Sequence::RegisterExpMappings seqExports (func->GetBody()->GetExports ());
 	// Collect function outputs, mark them as 'used' for DCE
-	BOOST_FOREACH(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param, func->GetParams())
+	for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : func->GetParams())
 	{
 	  if ((param.dir & parser::SemanticsHandler::Scope::dirOut) != 0)
 	  {
@@ -69,7 +68,7 @@ namespace s1
 	  }
 	}
 	// Also, all transferred regs must be considered 'used'
-	BOOST_FOREACH(const intermediate::ProgramFunction::TransferMappingPair& tmp, func->GetTransferMappings())
+	for(const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings())
 	{
 	  usedRegs.insert (tmp.second);
 	}
@@ -84,7 +83,7 @@ namespace s1
 							     newBody,
 							     func->IsEntryFunction()));
 							     
-	BOOST_FOREACH(const intermediate::ProgramFunction::TransferMappingPair& tmp, func->GetTransferMappings())
+	for(const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings())
 	{
 	  newFunc->SetTransferMapping (tmp.first, tmp.second);
 	}
