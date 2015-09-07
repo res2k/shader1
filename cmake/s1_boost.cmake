@@ -35,6 +35,9 @@ set(BOOST_LOCALE_SOURCES
     ${locale_sources_util}
     ${locale_sources_win32})
 set(BOOST_LOCALE_DEFS "-DBOOST_LOCALE_NO_WINAPI_BACKEND=1" "-DBOOST_LOCALE_NO_POSIX_BACKEND=1")
+if(NOT WIN32)
+  set(BOOST_LOCALE_DEFS ${BOOST_LOCALE_DEFS} "-DBOOST_LOCALE_WITH_ICONV=1")
+endif()
 
 # Sources for boost_iostreams
 set(BOOST_IOSTREAMS_SOURCES
