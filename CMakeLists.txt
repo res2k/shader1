@@ -204,6 +204,14 @@ function(AutoBuildTest test_name)
   add_dependencies(build_tests ${test_name})
 endfunction()
 
+# All C++11 features we require
+set(ALL_REQUIRED_CXX_FEATURES cxx_nullptr cxx_range_for cxx_rvalue_references)
+if(NOT S1_BUILD_SHARED)
+  # For static builds, require C++11 features globally (to avoid conflicts
+  # between lib and apps due to differing build flags)
+  set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
+endif()
+
 # S1_PREBUILT: Points to a build tree with an already built libs1, which is then
 # used to build s1.
 # Useful if the current compiler can't build libs1 itself (due to required
