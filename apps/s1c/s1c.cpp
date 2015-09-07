@@ -33,10 +33,13 @@
 
 #include <boost/convert.hpp>
 #include <boost/convert/spirit.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/locale/encoding.hpp>
+#include <boost/locale/generator.hpp>
 #include <boost/program_options.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -55,10 +58,21 @@ enum
   defaultEnableOptimizationLevel = 2
 };
 
+// Helper: Convert a wide string to UTF-8
+static inline std::string to_utf (const std::wstring& orig)
+{
+  return boost::locale::conv::utf_to_utf<char> (orig);
+}
+
+static inline std::wstring to_wide (const std::string& orig)
+{
+  return boost::locale::conv::to_utf<wchar_t> (orig, std::locale());
+}
+
 class CommandLineOptions
 {
 public:
-  typedef std::string arg_string_type;
+  typedef std::wstring arg_string_type;
   typedef std::vector<arg_string_type> arg_string_vec;
 
   arg_string_type inputFileName;
@@ -86,18 +100,18 @@ public:
     boost::optional<std::string> defaultOptStr (boost::convert<std::string> (int (defaultEnableOptimizationLevel), boost::cnv::spirit ()));
     compile_desc.add_options ()
       ("opt,O", 
-        bpo::value<arg_string_vec> ()->composing()->value_name("<flag>")
+        bpo::wvalue<arg_string_vec> ()->composing()->value_name("<flag>")
         ->implicit_value(arg_string_vec (1), *defaultOptStr),
         "Specify optimization options")
-      ("entry", bpo::value<arg_string_type> (&entryName)->value_name("<function>")->default_value (defaultEntry),
+      ("entry", bpo::wvalue<arg_string_type> (&entryName)->value_name("<function>")->default_value (to_wide (defaultEntry), defaultEntry),
         "Set program entry function")
-      ("backend", bpo::value<arg_string_type> (&backendStr)->value_name("<backend>")->default_value (defaultBackend),
+      ("backend", bpo::wvalue<arg_string_type> (&backendStr)->value_name("<backend>")->default_value (to_wide (defaultBackend), defaultBackend),
         "Select backend (target language)");
     bpo::options_description param_desc ("Input parameter options");
     param_desc.add_options ()
-      ("param-uniform", bpo::value<arg_string_vec> ()->composing()->value_name("<param>"),
+      ("param-uniform", bpo::wvalue<arg_string_vec> ()->composing()->value_name("<param>"),
         "Specify a parameter to be uniform input")
-      ("param-vertex", bpo::value<arg_string_vec> ()->composing()->value_name("<param>"),
+      ("param-vertex", bpo::wvalue<arg_string_vec> ()->composing()->value_name("<param>"),
         "Specify a parameter to be per-vertex input")
       ("param-size", (new ParamArraySizeOptionValue)->value_name("<param> <size>"),
         "Specify size of an array parameter");
@@ -107,7 +121,7 @@ public:
         "Skip program splitting step");
     bpo::options_description input_files_desc;
     input_files_desc.add_options ()
-      ("input-file", bpo::value<arg_string_type> (&inputFileName)->required());
+      ("input-file", bpo::wvalue<arg_string_type> (&inputFileName)->required());
 
     bpo::options_description all_options;
     all_options.add (input_desc).add (compile_desc).add (param_desc).add (special_desc).add (input_files_desc);
@@ -212,7 +226,7 @@ public:
             if (optLevel)
               compilerOpts->SetOptLevel (*optLevel);
             else
-              compilerOpts->SetOptFlagFromStr (optArg.c_str ());
+              compilerOpts->SetOptFlagFromStr (to_utf (optArg).c_str ());
           }
         }
       }
@@ -233,7 +247,7 @@ public:
     std::cout << options << std::endl;
   }
 private:
-  class ParamArraySizeOptionValue : public bpo::typed_value<arg_string_vec>
+  class ParamArraySizeOptionValue : public bpo::typed_value<arg_string_vec, wchar_t>
   {
   public:
     ParamArraySizeOptionValue (std::vector<arg_string_type>* store_to = 0) : typed_value (store_to) {}
@@ -248,6 +262,9 @@ typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstr
 
 int main (const int argc, const char* const argv[])
 {
+  boost::locale::generator locale_gen;
+  std::locale::global (locale_gen(""));
+
   Ptr<Library> lib;
   ResultCode libErr (Library::Create (lib));
   if (!S1_SUCCESSFUL(libErr))
@@ -263,17 +280,17 @@ int main (const int argc, const char* const argv[])
   boost::optional<int> result = options.Parse (argc, argv, compilerOpts);
   if (result) return *result;
   
-  Backend::Pointer compilerBackend (lib->CreateBackend (options.backendStr.c_str()));
+  Backend::Pointer compilerBackend (lib->CreateBackend (to_utf (options.backendStr).c_str()));
   if (!compilerBackend)
   {
-    std::cerr << "Invalid backend: " << options.backendStr << std::endl;
+    std::wcerr << L"Invalid backend: " << options.backendStr << std::endl;
     return 2;
   }
   
   std::string sourceStr;
   try
   {
-    ifstream inputFile (options.inputFileName);
+    ifstream inputFile (boost::filesystem::path (options.inputFileName));
     // Check for BOM
     {
       unsigned char bomBuf[3];
@@ -316,7 +333,7 @@ int main (const int argc, const char* const argv[])
     std::cerr << "Error creating program" << std::endl;
     return 3;
   }
-  compilerProg->SetEntryFunction (options.entryName.c_str());
+  compilerProg->SetEntryFunction (to_utf (options.entryName).c_str());
   compilerProg->SetOptions (compilerOpts);
   
   BOOST_FOREACH(const CommandLineOptions::ParamMap::value_type& paramFlag, options.paramFlags)
