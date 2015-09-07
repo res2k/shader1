@@ -103,7 +103,7 @@ public:
         "Specify size of an array parameter");
     bpo::options_description special_desc ("Special options");
     special_desc.add_options ()
-      ("nosplit", bpo::bool_switch(),
+      ("nosplit", bpo::bool_switch(&noSplit),
         "Skip program splitting step");
     bpo::options_description input_files_desc;
     input_files_desc.add_options ()
