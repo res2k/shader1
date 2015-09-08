@@ -64,6 +64,11 @@ static inline std::string to_utf (const std::wstring& orig)
   return boost::locale::conv::utf_to_utf<char> (orig);
 }
 
+static inline std::string to_local (const std::wstring& orig)
+{
+  return boost::locale::conv::from_utf<wchar_t> (orig, std::locale());
+}
+
 static inline std::wstring to_wide (const std::string& orig)
 {
   return boost::locale::conv::to_utf<wchar_t> (orig, std::locale());
@@ -79,9 +84,9 @@ public:
   arg_string_type entryName;
   arg_string_type backendStr;
   bool noSplit;
-  typedef boost::unordered_map<std::string, s1::InputFrequency> ParamMap;
+  typedef boost::unordered_map<arg_string_type, s1::InputFrequency> ParamMap;
   ParamMap paramFlags;
-  typedef boost::unordered_map<std::string, size_t> ParamArraySizeMap;
+  typedef boost::unordered_map<arg_string_type, size_t> ParamArraySizeMap;
   ParamArraySizeMap paramArraySizes;
 
   CommandLineOptions () : noSplit(false) {}
@@ -131,12 +136,18 @@ public:
     bpo::positional_options_description p;
     p.add("input-file", -1);
 
-    boost::optional<bpo::parsed_options> options;
+    boost::optional<bpo::wparsed_options> options;
     bpo::variables_map vm;
     try
     {
-      options = boost::in_place<bpo::parsed_options> (bpo::command_line_parser (argc, argv).
-                                                      options (all_options).positional (p).run ());
+      std::vector<std::wstring> args_vec;
+      args_vec.reserve (argc-1);
+      for (int i = 1; i < argc; i++)
+      {
+        args_vec.push_back (to_wide (argv[i]));
+      }
+      options = boost::in_place<bpo::wparsed_options> (bpo::wcommand_line_parser (args_vec).
+                                                       options (all_options).positional (p).run ());
       bpo::store (*options, vm);
       bpo::notify (vm);
     }
@@ -161,12 +172,12 @@ public:
 
     try
     {
-      boost::unordered_set<std::string> paramsWarnedFlag;
-      boost::unordered_set<std::string> paramsWarnedSize;
-      BOOST_FOREACH (const bpo::option& option, options->options)
+      boost::unordered_set<arg_string_type> paramsWarnedFlag;
+      boost::unordered_set<arg_string_type> paramsWarnedSize;
+      BOOST_FOREACH (const bpo::woption& option, options->options)
       {
         {
-          const std::string* paramName = 0;
+          const arg_string_type* paramName = 0;
           s1::InputFrequency paramFreq = S1_FREQ_INVALID;
           if (option.string_key == "param-uniform")
           {
@@ -185,7 +196,7 @@ public:
             if ((prevFlag != paramFlags.end ()) && (prevFlag->second != paramFreq)
                 && (paramsWarnedFlag.find (*paramName) == paramsWarnedFlag.end ()))
             {
-              std::cerr << "Multiple type specifications for parameter: " << *paramName << std::endl;
+              std::cerr << "Multiple type specifications for parameter: " << to_local (*paramName) << std::endl;
               paramsWarnedFlag.insert (*paramName);
             }
             paramFlags[*paramName] = paramFreq;
@@ -193,19 +204,19 @@ public:
         }
         if (option.string_key == "param-size")
         {
-          const std::string& paramName = option.value[0];
+          const arg_string_type& paramName = option.value[0];
           ParamArraySizeMap::const_iterator prevSize = paramArraySizes.find (paramName);
           if ((prevSize != paramArraySizes.end ())
               && (paramsWarnedSize.find (paramName) == paramsWarnedSize.end ()))
           {
-            std::cerr << "Multiple array size specifications for parameter: " << paramName << std::endl;
+            std::cerr << "Multiple array size specifications for parameter: " << to_local (paramName) << std::endl;
             paramsWarnedSize.insert (paramName);
           }
           boost::optional<unsigned long> arraySize (boost::convert<unsigned long> (option.value[1].c_str(), boost::cnv::spirit ()));
           if (!arraySize)
           {
             throw std::runtime_error ((boost::format ("Invalid array size '%2%' for parameter '%1%'")
-                                       % option.value[0] % option.value[1]).str ());
+                                       % to_local (paramName) % to_local (option.value[1])).str ());
           }
           paramArraySizes[paramName] = boost::numeric_cast<size_t> (*arraySize);
         }
@@ -263,6 +274,7 @@ typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstr
 int main (const int argc, const char* const argv[])
 {
   boost::locale::generator locale_gen;
+  locale_gen.use_ansi_encoding (true);
   std::locale::global (locale_gen(""));
 
   Ptr<Library> lib;
@@ -283,7 +295,7 @@ int main (const int argc, const char* const argv[])
   Backend::Pointer compilerBackend (lib->CreateBackend (to_utf (options.backendStr).c_str()));
   if (!compilerBackend)
   {
-    std::wcerr << L"Invalid backend: " << options.backendStr << std::endl;
+    std::cerr << "Invalid backend: " << to_local (options.backendStr) << std::endl;
     return 2;
   }
   
@@ -338,12 +350,12 @@ int main (const int argc, const char* const argv[])
   
   BOOST_FOREACH(const CommandLineOptions::ParamMap::value_type& paramFlag, options.paramFlags)
   {
-    compilerProg->SetInputFrequency (paramFlag.first.c_str(), paramFlag.second);
+    compilerProg->SetInputFrequency (to_utf (paramFlag.first).c_str(), paramFlag.second);
     // TODO: Error checking
   }
   BOOST_FOREACH(const CommandLineOptions::ParamArraySizeMap::value_type& paramSize, options.paramArraySizes)
   {
-    compilerProg->SetInputArraySize (paramSize.first.c_str(), paramSize.second);
+    compilerProg->SetInputArraySize (to_utf (paramSize.first).c_str(), paramSize.second);
     // TODO: Error checking
   }
 
