@@ -183,7 +183,7 @@ public:
           {
             ParamMap::const_iterator prevFlag = paramFlags.find (*paramName);
             if ((prevFlag != paramFlags.end ()) && (prevFlag->second != paramFreq)
-                && (paramsWarnedFlag.find (*paramName) != paramsWarnedFlag.end ()))
+                && (paramsWarnedFlag.find (*paramName) == paramsWarnedFlag.end ()))
             {
               std::cerr << "Multiple type specifications for parameter: " << *paramName << std::endl;
               paramsWarnedFlag.insert (*paramName);
@@ -196,7 +196,7 @@ public:
           const std::string& paramName = option.value[0];
           ParamArraySizeMap::const_iterator prevSize = paramArraySizes.find (paramName);
           if ((prevSize != paramArraySizes.end ())
-              && (paramsWarnedSize.find (paramName) != paramsWarnedSize.end ()))
+              && (paramsWarnedSize.find (paramName) == paramsWarnedSize.end ()))
           {
             std::cerr << "Multiple array size specifications for parameter: " << paramName << std::endl;
             paramsWarnedSize.insert (paramName);
