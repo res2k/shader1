@@ -69,10 +69,29 @@ static inline std::string to_local (const std::wstring& orig)
   return boost::locale::conv::from_utf<wchar_t> (orig, std::locale());
 }
 
+static inline std::string to_local (const char* orig)
+{
+  return orig;
+}
+
 static inline std::wstring to_wide (const std::string& orig)
 {
   return boost::locale::conv::to_utf<wchar_t> (orig, std::locale());
 }
+
+static inline std::wstring to_wide (const wchar_t* orig)
+{
+  return orig;
+}
+
+// Some abstractions for char vs wchar_t
+#if defined(UNICODE)
+#define MainFunc  wmain
+typedef wchar_t ArgChar;
+#else
+#define MainFunc  main
+typedef char ArgChar;
+#endif
 
 class CommandLineOptions
 {
@@ -90,7 +109,7 @@ public:
   ParamArraySizeMap paramArraySizes;
 
   CommandLineOptions () : noSplit(false) {}
-  boost::optional<int> Parse (const int argc, const char* const argv[],
+  boost::optional<int> Parse (const int argc, const ArgChar* const argv[],
                               Options* compilerOpts)
   {
     const char* defaultEntry = "main";
@@ -252,9 +271,9 @@ public:
     return boost::optional<int> ();
   }
 
-  static void PrintSyntax (const char* execName, const bpo::options_description& options)
+  static void PrintSyntax (const ArgChar* execName, const bpo::options_description& options)
   {
-    std::cout << "Usage: " << execName << " [options] <input filename>" << std::endl;
+    std::cout << "Usage: " << to_local (execName) << " [options] <input filename>" << std::endl;
     std::cout << options << std::endl;
   }
 private:
@@ -271,7 +290,7 @@ private:
 * the default stream ifstream */
 typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstream;
 
-int main (const int argc, const char* const argv[])
+int MainFunc (const int argc, const ArgChar* const argv[])
 {
   boost::locale::generator locale_gen;
   locale_gen.use_ansi_encoding (true);
