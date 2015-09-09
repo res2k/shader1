@@ -25,5 +25,6 @@ else()
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/pregenerated/Object.h Object.h
 					 DEPENDS pregenerated/Object.h)
   set_property(SOURCE Object.h PROPERTY GENERATED YES)
-  add_custom_target(generate_Object DEPENDS preprocessor.h Object.h)
+  add_custom_target(generate_Object DEPENDS preprocessor.h Object.h
+                    COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_Object")
 endif()
