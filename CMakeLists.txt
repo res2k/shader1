@@ -164,10 +164,6 @@ if(S1_BUILD_LTO)
     CxxCompilerFlagString (CXX_LTO_FLAG "-flto")
     CxxCompilerFlagString (CXX_NO_LTO_FLAG "-fno-lto")
     set(CACHE_CXX_FLAGS "${CACHE_CXX_FLAGS} ${CXX_LTO_FLAG}")
-    # At least with gcc 4.8 -flto causes problems when linking the examples.
-    # Must be explicitly disabled as CMake passes CMAKE_CXX_FLAGS to
-    # the linker as well.
-    set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_NO_LTO_FLAG}")
     # Set CMAKE_AR/_NM_/_RANLIB to gcc-* variants
     foreach(tool ar nm ranlib)
       string(TOUPPER "${tool}" tool_u)
