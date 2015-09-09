@@ -38,8 +38,6 @@
 #include <boost/format.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
-#include <boost/locale/encoding.hpp>
-#include <boost/locale/generator.hpp>
 #include <boost/program_options.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -58,15 +56,16 @@ enum
   defaultEnableOptimizationLevel = 2
 };
 
-// Helper: Convert a wide string to UTF-8
+/* Helper: Convert a wide string to UTF-8.
+ * Hijack some program_options functions for that. */
 static inline std::string to_utf (const std::wstring& orig)
 {
-  return boost::locale::conv::utf_to_utf<char> (orig);
+  return boost::to_utf8 (orig);
 }
 
 static inline std::string to_local (const std::wstring& orig)
 {
-  return boost::locale::conv::from_utf<wchar_t> (orig, std::locale());
+  return boost::to_local_8_bit (orig);
 }
 
 static inline std::string to_local (const char* orig)
@@ -76,7 +75,7 @@ static inline std::string to_local (const char* orig)
 
 static inline std::wstring to_wide (const std::string& orig)
 {
-  return boost::locale::conv::to_utf<wchar_t> (orig, std::locale());
+  return boost::from_local_8_bit (orig);
 }
 
 static inline std::wstring to_wide (const wchar_t* orig)
@@ -292,9 +291,7 @@ typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstr
 
 int MainFunc (const int argc, const ArgChar* const argv[])
 {
-  boost::locale::generator locale_gen;
-  locale_gen.use_ansi_encoding (true);
-  std::locale::global (locale_gen(""));
+  std::locale::global (std::locale (""));
 
   Ptr<Library> lib;
   ResultCode libErr (Library::Create (lib));
