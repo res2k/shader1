@@ -168,7 +168,14 @@ if(S1_BUILD_LTO)
     # Must be explicitly disabled as CMake passes CMAKE_CXX_FLAGS to
     # the linker as well.
     set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_NO_LTO_FLAG}")
-    # TODO: set CMAKE_AR/_NM_/_RANLIB to gcc-* variants
+    # Set CMAKE_AR/_NM_/_RANLIB to gcc-* variants
+    foreach(tool ar nm ranlib)
+      string(TOUPPER "${tool}" tool_u)
+      find_program(GCC_${tool_u} gcc-${tool})
+      if(GCC_${tool_u})
+        set(CMAKE_${tool_u} "${GCC_${tool_u}}" CACHE FILEPATH "Path to ${tool}")
+      endif()
+    endforeach()
   elseif(MSVC)
     foreach(mode RELEASE MINSIZEREL RELWITHDEBINFO)
       set(CACHE_CXX_FLAGS_${mode} "${CACHE_CXX_FLAGS_${mode}} /GL")
