@@ -2,7 +2,7 @@
 # different build flags in different places), so we wrap it's usage.
 
 # List of all the Boost libs we use anywhere in the source tree
-set(_S1_BOOST_USED_LIBS filesystem locale iostreams program_options system thread)
+set(_S1_BOOST_USED_LIBS filesystem iostreams program_options system thread)
 
 macro(s1_find_boost VERSION)
   if(ARGN)
@@ -17,27 +17,6 @@ endmacro()
 # Dependendencies
 set(BOOST_FILESYSTEM_BOOSTDEP system)
 set(BOOST_THREAD_BOOSTDEP system)
-
-# Sources for boost_locale
-file(GLOB locale_sources_encoding ${BOOST_ROOT}/libs/locale/src/encoding/*.cpp)
-file(GLOB locale_sources_shared ${BOOST_ROOT}/libs/locale/src/shared/*.cpp)
-file(GLOB locale_sources_std ${BOOST_ROOT}/libs/locale/src/std/*.cpp)
-file(GLOB locale_sources_util ${BOOST_ROOT}/libs/locale/src/util/*.cpp)
-if(WIN32)
-  file(GLOB locale_sources_win32 ${BOOST_ROOT}/libs/locale/src/win32/lcid.cpp)
-else()
-  file(GLOB locale_sources_win32 "")
-endif()
-set(BOOST_LOCALE_SOURCES
-    ${locale_sources_encoding}
-    ${locale_sources_shared}
-    ${locale_sources_std}
-    ${locale_sources_util}
-    ${locale_sources_win32})
-set(BOOST_LOCALE_DEFS "-DBOOST_LOCALE_NO_WINAPI_BACKEND=1" "-DBOOST_LOCALE_NO_POSIX_BACKEND=1")
-if(NOT WIN32)
-  set(BOOST_LOCALE_DEFS ${BOOST_LOCALE_DEFS} "-DBOOST_LOCALE_WITH_ICONV=1")
-endif()
 
 # Sources for boost_iostreams
 set(BOOST_IOSTREAMS_SOURCES
