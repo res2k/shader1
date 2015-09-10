@@ -486,12 +486,10 @@ namespace s1
       // Create a block with all assignments
       BlockPtr globalsInitBlock (handler->CreateBlock (innerScope));
       
-      std::vector<NamePtr> globalVars (handler->globalScope->GetAllVars());
-      for (std::vector<NamePtr>::const_iterator global (globalVars.begin());
-	   global != globalVars.end();
-	   ++global)
+      const std::vector<NamePtr>& globalVars (handler->globalScope->GetAllVars());
+      for (auto global : globalVars)
       {
-	boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (*global));
+	boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (global));
 	if (nameImpl->varValue)
 	{
 	  // Synthesize an expression to assign the global with the default value
