@@ -97,6 +97,7 @@ namespace s1
 				     boost::static_pointer_cast<TypeImpl> (type), initialValue, constant));
       identifiers[identifier] = newName;
       newVars.push_back (newName);
+      varsInDeclOrder.push_back (newName);
       return newName;
     }
       
@@ -350,16 +351,9 @@ namespace s1
       return ret;
     }
 
-    std::vector<NamePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
+    const std::vector<NamePtr>& IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
     {
-      std::vector<NamePtr> ret;
-      for (IdentifierMap::const_iterator ident (identifiers.begin());
-	   ident != identifiers.end();
-	   ++ident)
-      {
-	if (ident->second->GetType() == Name::Variable) ret.push_back (ident->second);
-      }
-      return ret;
+      return varsInDeclOrder;
     }
     
     int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope)

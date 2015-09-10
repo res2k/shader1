@@ -48,6 +48,7 @@ namespace s1
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
       std::vector<uc::String> outputParams;
+      std::vector<NamePtr> varsInDeclOrder;
       
       typedef boost::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
@@ -105,7 +106,7 @@ namespace s1
       FunctionInfoVector CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const;
       
       std::vector<NamePtr> FlushNewVars ();
-      std::vector<NamePtr> GetAllVars ();
+      const std::vector<NamePtr>& GetAllVars ();
     };
   } // namespace intermediate
 } // namespace s1
