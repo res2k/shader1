@@ -897,7 +897,7 @@ namespace s1
     #ifdef ENABLE_DEBUG_COMMENTS
       {
         uc::String expString ("Export map:\n");
-        if (identToRegID_imp.empty ())
+        if (identToRegID_exp.empty ())
         {
           expString.append (" <empty>");
         }
