@@ -118,7 +118,7 @@ namespace s1
         ++it;
       }
         
-      sequence->imports.push_back (std::make_pair (parentRegName, localReg));
+      sequence->imports.emplace_back (parentRegName, localReg);
     }
     
     void SequenceBuilder::AddImports (const RegisterImpMappings& imports)

@@ -25,12 +25,12 @@ namespace s1
   {
     void StringsArray::AddString (const char* str)
     {
-      strings.push_back (str);
+      strings.emplace_back (str);
     }
 
     void StringsArray::AddString (const std::string& str)
     {
-      strings.push_back (str);
+      strings.emplace_back (str);
     }
 
     void StringsArray::AddString(const uc::String& str)
@@ -46,7 +46,7 @@ namespace s1
 	   it != other.strings.end();
 	   ++it)
       {
-	strings.push_back (*it);
+	strings.emplace_back (*it);
       }
     }
     
@@ -63,7 +63,7 @@ namespace s1
       {
 	std::string newStr (indentStr);
 	newStr.append (*it);
-	strings.push_back (newStr);
+	strings.emplace_back (std::move (newStr));
       }
     }
       

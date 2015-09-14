@@ -96,7 +96,7 @@ namespace s1
 	    std::string paramStr (paramStrBase);
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
-	    inParams.push_back (std::make_pair (paramStr, param->identifier));
+	    inParams.emplace_back (paramStr, param->identifier);
 	    
 	    nameRes.inParamMap[param->identifier] = paramIdent;
 	  }
@@ -148,7 +148,7 @@ namespace s1
 	    paramStr.append (" ");
 	    paramStr.append (paramIdent);
 	    paramStr.append (typeSuffix);
-	    inParams.push_back (std::make_pair (paramStr, import->first));
+	    inParams.emplace_back (paramStr, import->first);
 	    
 	    nameRes.inParamMap[import->first] = paramIdent;
 	  }

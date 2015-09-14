@@ -489,7 +489,7 @@ namespace s1
 	ConstRegsMap::const_iterator srcConst = constRegs.find (sources[i]);
 	if (srcConst == constRegs.end())
 	{
-	  srcConstVals.push_back (ConstantValPtr ());
+	  srcConstVals.emplace_back ();
 	}
 	else
 	{

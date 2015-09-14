@@ -97,14 +97,14 @@ namespace s1
 	if (overload->params[i].dir & ScopeImpl::dirIn)
 	{
 	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
-	  postActions.push_back (PostActionInfo (paramExprImpl, reg1, false));
+	  postActions.emplace_back (paramExprImpl, reg1, false);
 	}
 	if (overload->params[i].dir & ScopeImpl::dirOut)
 	{
 	  reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
-	  postActions.push_back (PostActionInfo (paramExprImpl, reg2, false));
+	  postActions.emplace_back (paramExprImpl, reg2, false);
 	}
-	fetchedRegs.push_back (std::make_pair (reg1, reg2));
+	fetchedRegs.emplace_back (reg1, reg2);
       }
     }
       

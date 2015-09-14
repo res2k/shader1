@@ -1146,7 +1146,7 @@ namespace s1
 	    seenRegisters[transfer->second] = transferIdent.c_str();
 	  else
 	    // Assign at end
-	    endAssignments.push_back (std::make_pair (transferIdent, transfer->second));
+	    endAssignments.emplace_back (transferIdent, transfer->second);
 	}
       }
       // 'Export' variables to outer scope
@@ -1165,7 +1165,7 @@ namespace s1
 	      seenRegisters[exportVar->second] = parentID.c_str();
 	    else
 	      // Assign at end
-	      endAssignments.push_back (std::make_pair (parentID, exportVar->second));
+	      endAssignments.emplace_back (parentID, exportVar->second);
 	  }
 	  /* else: no ID, value is undefined; no assign */
 	}

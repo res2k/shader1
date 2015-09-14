@@ -42,7 +42,7 @@ namespace s1
     void Program::AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
 				    const uc::String& name)
     {
-      transferValues.push_back (std::make_pair (type, name));
+      transferValues.emplace_back (type, name);
     }
     
     void Program::SetOutputParameter (const uc::String& name, ParameterTarget target)

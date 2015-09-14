@@ -502,8 +502,7 @@ namespace s1
       std::vector<RegPair> newLoopedRegs;
       for(const RegPair& loopedReg : loopedRegs)
       {
-	newLoopedRegs.push_back (std::make_pair (MapRegister (loopedReg.first),
-						 MapRegister (loopedReg.second)));
+	newLoopedRegs.emplace_back (MapRegister (loopedReg.first), MapRegister (loopedReg.second));
       }
       
       SequenceOpPtr newOp (

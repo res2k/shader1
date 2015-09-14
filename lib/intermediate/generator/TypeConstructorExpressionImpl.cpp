@@ -56,7 +56,7 @@ namespace s1
 	boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
 	TypeImplPtr exprType (exprImpl->GetValueType());
 	RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
-	postActions.push_back(std::make_pair<> (exprImpl, srcExprReg));
+	postActions.emplace_back (exprImpl, srcExprReg);
 	
 	switch (exprType->typeClass)
 	{

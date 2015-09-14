@@ -40,7 +40,7 @@ namespace s1
     void ProgramFunction::SetTransferMapping (const uc::String& transferVal,
 					      const RegisterPtr& programReg)
     {
-      transferMappings.push_back (std::make_pair (transferVal, programReg));
+      transferMappings.emplace_back (transferVal, programReg);
     }
   } // namespace intermediate
 } // namespace s1

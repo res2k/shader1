@@ -322,7 +322,7 @@ namespace s1
       {
 	RegisterPtr regIn (GetRegisterForName (*loopVar, false));
 	RegisterPtr regOut (GetRegisterForName (*loopVar, true));
-	loopedRegs.push_back (std::make_pair (regIn, regOut));
+	loopedRegs.emplace_back (regIn, regOut);
       }
       
       /* Add condition expression again at the bottom of the block
@@ -416,7 +416,7 @@ namespace s1
       {
 	RegisterPtr regIn (GetRegisterForName (*loopVar, false));
 	RegisterPtr regOut (GetRegisterForName (*loopVar, true));
-	loopedRegs.push_back (std::make_pair (regIn, regOut));
+	loopedRegs.emplace_back (regIn, regOut);
       }
       
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::static_pointer_cast<BlockImpl> (loopBlock))));

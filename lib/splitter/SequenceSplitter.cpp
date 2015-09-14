@@ -672,7 +672,7 @@ namespace s1
 	newIdentToRegIDsExp[newIdent] = newReg;
 	
 	parent.SetRegAvailability (newReg, 1 << f);
-	outputs.push_back (std::make_pair (oldReg, newReg));
+	outputs.emplace_back (oldReg, newReg);
 	writtenRegs.push_back (newReg);
       }
       seqExports = newExports;
