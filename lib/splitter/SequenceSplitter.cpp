@@ -1225,11 +1225,11 @@ namespace s1
 	  }
 	}
 
-	for (size_t i = 0; i < outputSeqBuilder[freqUniform]->GetNumOps(); i++)
+	for (size_t i = outputSeqBuilder[freqUniform]->GetNumOps(); i-- > 0; )
 	{
 	  SequenceOpPtr uniOp (outputSeqBuilder[freqUniform]->GetOp (i));
-	  outputSeqBuilder[freqVertex]->InsertOp (i, uniOp);
-	  outputSeqBuilder[freqFragment]->InsertOp (i, uniOp);
+	  outputSeqBuilder[freqVertex]->FrontInsertOp (uniOp);
+	  outputSeqBuilder[freqFragment]->FrontInsertOp (uniOp);
 	}
 
 	outputSeqBuilder[freqVertex]->AddImports (outputSeqBuilder[freqUniform]->GetSequence()->GetImports());

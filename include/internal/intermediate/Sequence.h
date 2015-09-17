@@ -21,9 +21,9 @@
 #include "forwarddecl.h"
 #include "parser/SemanticsHandler.h"
 
+#include <boost/container/deque.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include <vector>
 
 namespace s1
 {
@@ -35,7 +35,7 @@ namespace s1
     {
       friend class SequenceBuilder;
 
-      typedef std::vector<SequenceOpPtr> OpsVector;
+      typedef boost::container::deque<SequenceOpPtr> OpsVector;
       OpsVector ops;
     public:
       typedef parser::SemanticsHandler::TypePtr TypePtr;

@@ -67,7 +67,7 @@ namespace s1
       {
 	// DeadCodeChecker is meant to use with reverse Sequence visiting,
 	// so to 'add' an op, insert it at the beginning
-	newSequenceBuilder->InsertOp (0, seqOp);
+	newSequenceBuilder->FrontInsertOp (seqOp);
       }
       
       void OpConstBool (const RegisterPtr& destination,

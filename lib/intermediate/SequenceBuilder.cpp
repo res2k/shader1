@@ -42,9 +42,9 @@ namespace s1
       sequence->ops.push_back (op);
     }
     
-    void SequenceBuilder::InsertOp (size_t before, SequenceOpPtr op)
+    void SequenceBuilder::FrontInsertOp (SequenceOpPtr op)
     {
-      sequence->ops.insert (sequence->ops.begin() + before, op);
+      sequence->ops.push_front (op);
     }
 
     size_t SequenceBuilder::GetNumOps() const

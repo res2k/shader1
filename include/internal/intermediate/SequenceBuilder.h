@@ -50,10 +50,10 @@ namespace s1
 
       /** \name Sequence manipulation
        * @{ */
-      /// Add an operation
+      /// Add an operation to end
       void AddOp (SequenceOpPtr op);
-      /// Insert an operation
-      void InsertOp (size_t before, SequenceOpPtr op);
+      /// Insert an operation in front
+      void FrontInsertOp (SequenceOpPtr op);
       /// Get number of operations
       size_t GetNumOps() const;
       /// Get a specific op
