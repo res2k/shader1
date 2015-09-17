@@ -19,6 +19,8 @@
 
 #include "intermediate/SequenceBuilder.h"
 
+#include "intermediate/SequenceOp/SequenceOp.h"
+
 #include <boost/make_shared.hpp>
 
 namespace s1

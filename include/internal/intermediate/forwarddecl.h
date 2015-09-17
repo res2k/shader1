@@ -18,6 +18,7 @@
 #ifndef __INTERMEDIATE_FORWARDDECL_H__
 #define __INTERMEDIATE_FORWARDDECL_H__
 
+#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace s1
@@ -31,7 +32,7 @@ namespace s1
     class SequenceBuilder;
     typedef boost::shared_ptr<SequenceBuilder> SequenceBuilderPtr;
     class SequenceOp;
-    typedef boost::shared_ptr<SequenceOp> SequenceOpPtr;
+    typedef boost::intrusive_ptr<SequenceOp> SequenceOpPtr;
     class Program;
     typedef boost::shared_ptr<Program> ProgramPtr;
     class ProgramFunction;

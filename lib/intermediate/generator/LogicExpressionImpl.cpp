@@ -92,10 +92,10 @@ namespace s1
       switch (op)
       {
       case And:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpLogic> (destination, SequenceVisitor::And, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpLogic (destination, SequenceVisitor::And, reg1, reg2));
 	break;
       case Or:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpLogic> (destination, SequenceVisitor::Or, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpLogic (destination, SequenceVisitor::Or, reg1, reg2));
 	break;
       }
       assert (seqOp);

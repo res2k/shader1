@@ -66,7 +66,7 @@ namespace s1
 	  boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
 	  RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
 	  
-	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpGetArrayLength> (targetReg, exprValueReg));
+	  SequenceOpPtr seqOp (new SequenceOpGetArrayLength (targetReg, exprValueReg));
 	  seq.AddOp (seqOp);
 	  
 	  exprImpl->AddToSequencePostAction (block, exprValueReg, false);
@@ -107,9 +107,7 @@ namespace s1
 	      for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
 	      {
 		RegisterPtr compReg (handler->AllocateRegister (seq, valueCompType, classify));
-		SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg,
-											  exprValueReg,
-											  attr.GetSwizzleComp (c)));
+		SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, exprValueReg, attr.GetSwizzleComp (c)));
 		seq.AddOp (seqOp);
 		compRegs.push_back (compReg);
 	      }
@@ -122,15 +120,13 @@ namespace s1
 	      case Float: vecType = intermediate::Float; break;
 	      default:	return RegisterPtr();
 	      }
-	      SequenceOpPtr seqOp (boost::make_shared<SequenceOpMakeVector> (targetReg, vecType, compRegs));
+	      SequenceOpPtr seqOp (new SequenceOpMakeVector (targetReg, vecType, compRegs));
 	      seq.AddOp (seqOp);
 	    }
 	    else
 	    {
 	      RegisterPtr compReg (handler->AllocateRegister (seq, valueType, classify));
-	      SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg,
-											 exprValueReg,
-											 attr.GetSwizzleComp (0)));
+	      SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, exprValueReg, attr.GetSwizzleComp (0)));
 	      seq.AddOp (seqOp);
 	      targetReg = compReg;
 	    }
@@ -179,9 +175,7 @@ namespace s1
 	if (valueType->typeClass == TypeImpl::Vector)
 	{
 	  RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
-	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg,
-										     target,
-										     c));
+	  SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, target, c));
 	  seq.AddOp (seqOp);
 	  compRegs[comp] = compReg;
 	}
@@ -198,9 +192,7 @@ namespace s1
 	if (!(compDefined & (1 << c)))
 	{
 	  RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
-	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg,
-										     originalTarget,
-										     c));
+	  SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, originalTarget, c));
 	  seq.AddOp (seqOp);
 	  compRegs[c] = compReg;
 	}
@@ -214,7 +206,7 @@ namespace s1
       case Float: 	vecType = intermediate::Float; break;
       default:		return;
       }
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpMakeVector> (actualTarget, vecType, compRegs));
+      SequenceOpPtr seqOp (new SequenceOpMakeVector (actualTarget, vecType, compRegs));
       seq.AddOp (seqOp);
       
       exprImpl->AddToSequencePostAction (block, actualTarget, true);

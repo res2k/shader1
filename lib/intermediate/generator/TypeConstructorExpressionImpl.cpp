@@ -82,7 +82,7 @@ namespace s1
 	    for (unsigned int c = 0; c < exprType->vectorDim; c++)
 	    {
 	      RegisterPtr compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
-	      SequenceOpPtr extractOp (boost::make_shared<SequenceOpExtractVectorComponent> (compReg, srcExprReg, c));
+	      SequenceOpPtr extractOp (new SequenceOpExtractVectorComponent (compReg, srcExprReg, c));
 	      seq.AddOp (extractOp);
 	      if (targetBaseType->IsEqual (*exprCompType))
 	      {
@@ -127,7 +127,7 @@ namespace s1
 	  if (type->IsEqual (*srcType))
 	  {
 	    // If type is the same, just generate assignment
-	    SequenceOpPtr seqOp (boost::make_shared<SequenceOpAssign> (targetReg, srcReg));
+	    SequenceOpPtr seqOp (new SequenceOpAssign (targetReg, srcReg));
 	    seq.AddOp (seqOp);
 	  }
 	  else
@@ -182,10 +182,10 @@ namespace s1
 	  
 	  SequenceOpPtr seqOp;
 	  if (type->typeClass == TypeImpl::Vector)
-	    seqOp = boost::make_shared<SequenceOpMakeVector> (targetReg, vecType, srcRegs);
+	    seqOp = new SequenceOpMakeVector (targetReg, vecType, srcRegs);
 	  else
-	    seqOp = boost::make_shared<SequenceOpMakeMatrix> (targetReg, vecType, 
-							      type->matrixRows, type->matrixCols, srcRegs);
+	    seqOp = new SequenceOpMakeMatrix (targetReg, vecType, 
+					      type->matrixRows, type->matrixCols, srcRegs);
 	  seq.AddOp (seqOp);
 	  
 	  for (PostActionList::const_iterator postAction (postActions.begin());
@@ -229,7 +229,7 @@ namespace s1
 	    }
 	  }
 	  
-	  SequenceOpPtr seqOp (boost::make_shared<SequenceOpMakeArray> (targetReg, srcRegs));
+	  SequenceOpPtr seqOp (new SequenceOpMakeArray (targetReg, srcRegs));
 	  seq.AddOp (seqOp);
 	  return targetReg;
 	}

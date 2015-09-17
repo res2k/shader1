@@ -129,7 +129,7 @@ namespace s1
 	retValRegs.push_back (sequenceBuilder->GetIdentifierRegister (identifier));
       }
 
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpReturn> (retValRegs));
+      SequenceOpPtr seqOp (new SequenceOpReturn (retValRegs));
       sequenceBuilder->AddOp (seqOp);
     }
 
@@ -252,14 +252,14 @@ namespace s1
 	}
       }
       
-      SequenceOpPtr seqOpIf (boost::make_shared<SequenceOpBlock> (ifBlockImpl->GetSequence(),
-								  identifierToRegMap,
-								  sequenceBuilder->GetIdentifierToRegisterMap ()));
-      SequenceOpPtr seqOpElse (boost::make_shared<SequenceOpBlock> (elseBlockImpl->GetSequence(),
-								    identifierToRegMap,
-								    sequenceBuilder->GetIdentifierToRegisterMap ()));
+      SequenceOpPtr seqOpIf (new SequenceOpBlock (ifBlockImpl->GetSequence(),
+						  identifierToRegMap,
+						  sequenceBuilder->GetIdentifierToRegisterMap ()));
+      SequenceOpPtr seqOpElse (new SequenceOpBlock (elseBlockImpl->GetSequence(),
+						    identifierToRegMap,
+						    sequenceBuilder->GetIdentifierToRegisterMap ()));
       
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpBranch> (condReg, seqOpIf, seqOpElse));
+      SequenceOpPtr seqOp (new SequenceOpBranch (condReg, seqOpIf, seqOpElse));
       sequenceBuilder->AddOp (seqOp);
     }
 
@@ -336,7 +336,7 @@ namespace s1
       RegisterPtr condReg (GetRegisterForName (varCondition, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
+      SequenceOpPtr seqOp (new SequenceOpWhile (condReg, loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
 
@@ -437,7 +437,7 @@ namespace s1
       RegisterPtr condReg (GetRegisterForName (varCondition, false));
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpWhile> (condReg, loopedRegs, seqOpBody));
+      SequenceOpPtr seqOp (new SequenceOpWhile (condReg, loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
     
@@ -551,9 +551,9 @@ namespace s1
 	}
       }
       // Apply overrides for register IDs of exported identifiers
-      return boost::make_shared<SequenceOpBlock> (blockImpl->GetSequence(),
-						  identifierToRegIDMap,
-						  sequenceBuilder->GetIdentifierToRegisterMap ());
+      return new SequenceOpBlock (blockImpl->GetSequence(),
+				  identifierToRegIDMap,
+				  sequenceBuilder->GetIdentifierToRegisterMap ());
     }
 
     static format::StaticFormatter FormatTernaryResult ("$tr{0}{1}");

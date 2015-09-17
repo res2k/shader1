@@ -292,16 +292,16 @@ namespace s1
       switch (srcType->GetBaseType())
       {
       case parser::SemanticsHandler::Int:
-	newOp = boost::make_shared<intermediate::SequenceOpConst> (dest, val.i);
+	newOp = new intermediate::SequenceOpConst (dest, val.i);
 	break;
       case parser::SemanticsHandler::UInt:
-	newOp = boost::make_shared<intermediate::SequenceOpConst> (dest, val.ui);
+	newOp = new intermediate::SequenceOpConst (dest, val.ui);
 	break;
       case parser::SemanticsHandler::Float:
-	newOp = boost::make_shared<intermediate::SequenceOpConst> (dest, val.f);
+	newOp = new intermediate::SequenceOpConst (dest, val.f);
 	break;
       case parser::SemanticsHandler::Bool:
-	newOp = boost::make_shared<intermediate::SequenceOpConst> (dest, val.b);
+	newOp = new intermediate::SequenceOpConst (dest, val.b);
 	break;
       default:
 	assert (false);
@@ -537,8 +537,7 @@ namespace s1
 	    constRegs[destination] = newVal;
 	    
 	    SequenceOpPtr newOp;
-	    newOp = boost::make_shared<intermediate::SequenceOpAssign> (destination,
-									elemConst.second);
+	    newOp = new intermediate::SequenceOpAssign (destination, elemConst.second);
 	    AddOpToSequence (newOp);
 	    seqChanged = true;
 	    return;
@@ -589,8 +588,7 @@ namespace s1
 	constRegs[destination] = newVal;
 	
 	SequenceOpPtr newOp;
-	newOp = boost::make_shared<intermediate::SequenceOpConst> (destination,
-								   (unsigned int)arrVal->arraySize);
+	newOp = new intermediate::SequenceOpConst (destination, (unsigned int)arrVal->arraySize);
 	AddOpToSequence (newOp);
 	seqChanged = true;
       }
@@ -696,9 +694,7 @@ namespace s1
 	    AddOpToSequence (MakeConstOp (newReg, baseType, newVal->comp[c]));
 	    vecRegs.push_back (newReg);
 	  }
-	  newOp = boost::make_shared<intermediate::SequenceOpMakeVector> (destination,
-									  basicType,
-									  vecRegs);
+	  newOp = new intermediate::SequenceOpMakeVector (destination, basicType, vecRegs);
 	}
 	break;
       case parser::SemanticsHandler::Type::Matrix:
@@ -710,11 +706,11 @@ namespace s1
 	    AddOpToSequence (MakeConstOp (newReg, baseType, newVal->comp[c]));
 	    matRegs.push_back (newReg);
 	  }
-	  newOp = boost::make_shared<intermediate::SequenceOpMakeMatrix> (destination,
-									  basicType,
-									  destType->GetMatrixTypeRows(),
-									  destType->GetMatrixTypeCols(),
-									  matRegs);
+	  newOp = new intermediate::SequenceOpMakeMatrix (destination,
+							  basicType,
+							  destType->GetMatrixTypeRows(),
+							  destType->GetMatrixTypeCols(),
+							  matRegs);
 	}
 	break;
       default:

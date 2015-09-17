@@ -312,13 +312,13 @@ namespace s1
 		      const intermediate::SequenceOpPtr& seqOpElse)
       {
 	if (recursionFound) return;
-	boost::shared_ptr<intermediate::SequenceOpBlock> ifBlock (
+	boost::intrusive_ptr<intermediate::SequenceOpBlock> ifBlock (
 	  boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpIf));
 	assert (ifBlock);
 	ifBlock->GetSequence()->Visit (*this);
 	
 	if (recursionFound) return;
-	boost::shared_ptr<intermediate::SequenceOpBlock> elseBlock (
+	boost::intrusive_ptr<intermediate::SequenceOpBlock> elseBlock (
 	  boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpElse));
 	assert (elseBlock);
 	elseBlock->GetSequence()->Visit (*this);
@@ -329,7 +329,7 @@ namespace s1
 		    const intermediate::SequenceOpPtr& seqOpBody)
       {
 	if (recursionFound) return;
-	boost::shared_ptr<intermediate::SequenceOpBlock> block (
+	boost::intrusive_ptr<intermediate::SequenceOpBlock> block (
 	  boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpBody));
 	assert (block);
 	block->GetSequence()->Visit (*this);

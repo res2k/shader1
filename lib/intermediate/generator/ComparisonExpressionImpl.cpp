@@ -102,22 +102,22 @@ namespace s1
       switch (op)
       {
       case Equals:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::Eq, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::Eq, reg1, reg2));
 	break;
       case NotEquals:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::NE, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::NE, reg1, reg2));
 	break;
       case Smaller:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::LT, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::LT, reg1, reg2));
 	break;
       case SmallerEqual:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::LE, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::LE, reg1, reg2));
 	break;
       case Larger:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::GT, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::GT, reg1, reg2));
 	break;
       case LargerEqual:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpCompare> (destination, SequenceVisitor::GE, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::GE, reg1, reg2));
 	break;
       }
       assert (seqOp);

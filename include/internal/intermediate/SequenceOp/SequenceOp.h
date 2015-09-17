@@ -20,7 +20,7 @@
 
 #include "../Sequence.h"
 
-#include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace s1
 {
@@ -29,6 +29,8 @@ namespace s1
     struct SequenceVisitor;
     
     class SequenceOp
+      : public boost::intrusive_ref_counter<SequenceOp,
+                                            boost::thread_unsafe_counter>
     {
     public:
       virtual ~SequenceOp() {}

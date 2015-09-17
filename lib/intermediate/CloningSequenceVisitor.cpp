@@ -230,55 +230,49 @@ namespace s1
 	newIdentToReg_exp.insert (std::make_pair (i2r->first, MapRegister (i2r->second)));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpBlock> (newSeqBuilder->GetSequence(),
-							   newIdentToReg_imp,
-							   newIdentToReg_exp));
+      SequenceOpPtr newOp (new SequenceOpBlock (newSeqBuilder->GetSequence(),
+						newIdentToReg_imp,
+						newIdentToReg_exp));
       handlingVisitor->AddOpToSequence (newOp);
     }
     
     void CloningSequenceVisitor::OpConstBool (const RegisterPtr& destination,
 					     bool value)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpConst> (MapRegister (destination),
-							   value));
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+                                                value));
       AddOpToSequence (newOp);
     }
     
     void CloningSequenceVisitor::OpConstInt (const RegisterPtr& destination,
 					    int value)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpConst> (MapRegister (destination),
-							   value));
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+						value));
       AddOpToSequence (newOp);
     }
     
     void CloningSequenceVisitor::OpConstUInt (const RegisterPtr& destination,
 					     unsigned int value)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpConst> (MapRegister (destination),
-							   value));
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+						value));
       AddOpToSequence (newOp);
     }
     
     void CloningSequenceVisitor::OpConstFloat (const RegisterPtr& destination,
 					      float value)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpConst> (MapRegister (destination),
-							   value));
+      SequenceOpPtr newOp (new SequenceOpConst (MapRegister (destination),
+						value));
       AddOpToSequence (newOp);
     }
     
     void CloningSequenceVisitor::OpAssign (const RegisterPtr& destination,
 					  const RegisterPtr& source)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpAssign> (MapRegister (destination),
-							    MapRegister (source)));
+      SequenceOpPtr newOp (new SequenceOpAssign (MapRegister (destination),
+						 MapRegister (source)));
       AddOpToSequence (newOp);
     }
 
@@ -286,10 +280,9 @@ namespace s1
 					BasicType destType,
 					const RegisterPtr& source)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpCast> (MapRegister (destination),
-							  destType,
-							  MapRegister (source)));
+      SequenceOpPtr newOp (new SequenceOpCast (MapRegister (destination),
+                                               destType,
+                                               MapRegister (source)));
       AddOpToSequence (newOp);
     }
 
@@ -303,10 +296,9 @@ namespace s1
 	newSources.push_back (MapRegister (source));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpMakeVector> (MapRegister (destination),
-								compType,
-								newSources));
+      SequenceOpPtr newOp (new SequenceOpMakeVector (MapRegister (destination),
+                                                     compType,
+                                                     newSources));
       AddOpToSequence (newOp);
     }
 				  
@@ -321,11 +313,10 @@ namespace s1
 	newSources.push_back (MapRegister (source));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpMakeMatrix> (MapRegister (destination),
-								compType,
-								matrixRows, matrixCols,
-								newSources));
+      SequenceOpPtr newOp (new SequenceOpMakeMatrix (MapRegister (destination),
+                                                     compType,
+                                                     matrixRows, matrixCols,
+                                                     newSources));
       AddOpToSequence (newOp);
     }
 				  
@@ -338,9 +329,8 @@ namespace s1
 	newSources.push_back (MapRegister (source));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpMakeArray> (MapRegister (destination),
-							       newSources));
+      SequenceOpPtr newOp (new SequenceOpMakeArray (MapRegister (destination),
+						    newSources));
       AddOpToSequence (newOp);
     }
 				  
@@ -348,10 +338,9 @@ namespace s1
 						       const RegisterPtr& source,
 						       const RegisterPtr& index)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpExtractArrayElement> (MapRegister (destination),
-									 MapRegister (source),
-									 MapRegister (index)));
+      SequenceOpPtr newOp (new SequenceOpExtractArrayElement (MapRegister (destination),
+                                                              MapRegister (source),
+                                                              MapRegister (index)));
       AddOpToSequence (newOp);
     }
 
@@ -360,20 +349,18 @@ namespace s1
 						      const RegisterPtr& index,
 						      const RegisterPtr& newValue)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpChangeArrayElement> (MapRegister (destination),
-									MapRegister (source),
-									MapRegister (index),
-									MapRegister (newValue)));
+      SequenceOpPtr newOp (new SequenceOpChangeArrayElement (MapRegister (destination),
+                                                             MapRegister (source),
+                                                             MapRegister (index),
+                                                             MapRegister (newValue)));
       AddOpToSequence (newOp);
     }
 						      
     void CloningSequenceVisitor::OpGetArrayLength (const RegisterPtr& destination,
 						  const RegisterPtr& array)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpGetArrayLength> (MapRegister (destination),
-								    MapRegister (array)));
+      SequenceOpPtr newOp (new SequenceOpGetArrayLength (MapRegister (destination),
+                                                         MapRegister (array)));
       AddOpToSequence (newOp);
     }
 
@@ -381,10 +368,9 @@ namespace s1
 							  const RegisterPtr& source,
 							  unsigned int comp)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpExtractVectorComponent> (MapRegister (destination),
-									    MapRegister (source),
-									    comp));
+      SequenceOpPtr newOp (new SequenceOpExtractVectorComponent (MapRegister (destination),
+								 MapRegister (source),
+								 comp));
       AddOpToSequence (newOp);
     }
 							  
@@ -393,11 +379,10 @@ namespace s1
 					 const RegisterPtr& source1,
 					 const RegisterPtr& source2)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpArith> (MapRegister (destination),
-							   op,
-							   MapRegister (source1),
-							   MapRegister (source2)));
+      SequenceOpPtr newOp (new SequenceOpArith (MapRegister (destination),
+						op,
+						MapRegister (source1),
+						MapRegister (source2)));
       AddOpToSequence (newOp);
     }
 
@@ -406,11 +391,10 @@ namespace s1
 					 const RegisterPtr& source1,
 					 const RegisterPtr& source2)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpLogic> (MapRegister (destination),
-							   op,
-							   MapRegister (source1),
-							   MapRegister (source2)));
+      SequenceOpPtr newOp (new SequenceOpLogic (MapRegister (destination),
+						op,
+						MapRegister (source1),
+						MapRegister (source2)));
       AddOpToSequence (newOp);
     }
 
@@ -418,10 +402,9 @@ namespace s1
 					 UnaryOp op,
 					 const RegisterPtr& source)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpUnaryOp> (MapRegister (destination),
-							     op,
-							     MapRegister (source)));
+      SequenceOpPtr newOp (new SequenceOpUnaryOp (MapRegister (destination),
+						  op,
+						  MapRegister (source)));
       AddOpToSequence (newOp);
     }
 			    
@@ -430,11 +413,10 @@ namespace s1
 					   const RegisterPtr& source1,
 					   const RegisterPtr& source2)
     {
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpCompare> (MapRegister (destination),
-							     op,
-							     MapRegister (source1),
-							     MapRegister (source2)));
+      SequenceOpPtr newOp (new SequenceOpCompare (MapRegister (destination),
+						  op,
+						  MapRegister (source1),
+						  MapRegister (source2)));
       AddOpToSequence (newOp);
     }
 		      
@@ -474,10 +456,9 @@ namespace s1
 	newSeqOpElse = newSeq->GetOp (0);
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpBranch> (MapRegister (conditionReg),
-							    newSeqOpIf,
-							    newSeqOpElse));
+      SequenceOpPtr newOp (new SequenceOpBranch (MapRegister (conditionReg),
+						 newSeqOpIf,
+						 newSeqOpElse));
       AddOpToSequence (newOp);
     }
 		    
@@ -505,10 +486,9 @@ namespace s1
 	newLoopedRegs.emplace_back (MapRegister (loopedReg.first), MapRegister (loopedReg.second));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpWhile> (MapRegister (conditionReg),
-							   newLoopedRegs,
-							   newSeqOpBody));
+      SequenceOpPtr newOp (new SequenceOpWhile (MapRegister (conditionReg),
+						newLoopedRegs,
+						newSeqOpBody));
       AddOpToSequence (newOp);
     }
 		  
@@ -520,8 +500,7 @@ namespace s1
 	newOutParams.push_back (MapRegister (outParam));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpReturn> (newOutParams));
+      SequenceOpPtr newOp (new SequenceOpReturn (newOutParams));
       AddOpToSequence (newOp);
     }
     
@@ -540,10 +519,9 @@ namespace s1
 	newOutParams.push_back (MapRegister (outParam));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpFunctionCall> (funcIdent,
-								  newInParams,
-								  newOutParams));
+      SequenceOpPtr newOp (new SequenceOpFunctionCall (funcIdent,
+                                                       newInParams,
+                                                       newOutParams));
       AddOpToSequence (newOp);
     }
     
@@ -557,10 +535,9 @@ namespace s1
 	newInParams.push_back (MapRegister (inParam));
       }
       
-      SequenceOpPtr newOp (
-	boost::make_shared<SequenceOpBuiltinCall> (MapRegister (destination),
-								 what,
-								 newInParams));
+      SequenceOpPtr newOp (new SequenceOpBuiltinCall (MapRegister (destination),
+                                                      what,
+                                                      newInParams));
       AddOpToSequence (newOp);
     }
   } // namespace intermediate

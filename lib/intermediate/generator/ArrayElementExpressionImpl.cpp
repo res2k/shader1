@@ -80,7 +80,7 @@ namespace s1
 	  indexReg = newIndexReg;
 	}
 	
-      	SequenceOpPtr seqOp (boost::make_shared<SequenceOpExtractArrayElement> (targetReg, arrayReg, indexReg));
+      	SequenceOpPtr seqOp (new SequenceOpExtractArrayElement (targetReg, arrayReg, indexReg));
 	seq.AddOp (seqOp);
 	
 	arrayExprImpl->AddToSequencePostAction (block, arrayReg, false);
@@ -117,7 +117,7 @@ namespace s1
 	indexReg = newIndexReg;
       }
       
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpChangeArrayElement> (arrayRegDst, arrayRegSrc, indexReg, target));
+      SequenceOpPtr seqOp (new SequenceOpChangeArrayElement (arrayRegDst, arrayRegSrc, indexReg, target));
       seq.AddOp (seqOp);
       
       arrayExprImpl->AddToSequencePostAction (block, arrayRegSrc, false);

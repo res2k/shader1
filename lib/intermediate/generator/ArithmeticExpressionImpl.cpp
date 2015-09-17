@@ -159,19 +159,19 @@ namespace s1
       switch (op)
       {
       case Add:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Add, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Add, reg1, reg2));
 	break;
       case Sub:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Sub, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Sub, reg1, reg2));
 	break;
       case Mul:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Mul, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Mul, reg1, reg2));
 	break;
       case Div:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Div, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Div, reg1, reg2));
 	break;
       case Mod:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpArith> (destination, SequenceVisitor::Mod, reg1, reg2));
+	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Mod, reg1, reg2));
 	break;
       }
       assert (seqOp);

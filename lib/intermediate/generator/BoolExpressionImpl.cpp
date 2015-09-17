@@ -48,7 +48,7 @@ namespace s1
       if (asLvalue) return RegisterPtr();
       
       RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType(), classify));
-      SequenceOpPtr seqOp (boost::make_shared<SequenceOpConst> (destination, value));
+      SequenceOpPtr seqOp (new SequenceOpConst (destination, value));
       assert (seqOp);
       block.GetSequenceBuilder()->AddOp (seqOp);
       

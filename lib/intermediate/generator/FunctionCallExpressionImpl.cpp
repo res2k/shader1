@@ -167,13 +167,13 @@ namespace s1
       
       SequenceOpPtr seqOp;
       if (overload->builtin)
-	seqOp = boost::make_shared<SequenceOpBuiltinCall> (destination, overload->builtin->GetBuiltinFunction(),
-							   inParams);
+	seqOp = new SequenceOpBuiltinCall (destination, overload->builtin->GetBuiltinFunction(),
+					   inParams);
       else
       {
 	if (destination)
 	  outParams.insert (outParams.begin(), destination);
-	seqOp = boost::make_shared<SequenceOpFunctionCall> (overload->identifier, inParams, outParams);
+	seqOp = new SequenceOpFunctionCall (overload->identifier, inParams, outParams);
       }
       block.GetSequenceBuilder()->AddOp (seqOp);
       

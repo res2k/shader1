@@ -109,13 +109,13 @@ namespace s1
       switch (op)
       {
       case Neg:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryOp> (destination, SequenceVisitor::Neg, reg));
+	seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Neg, reg));
 	break;
       case Inv:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryOp> (destination, SequenceVisitor::Inv, reg));
+	seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Inv, reg));
 	break;
       case Not:
-	seqOp = SequenceOpPtr (boost::make_shared<SequenceOpUnaryOp> (destination, SequenceVisitor::Not, reg));
+	seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Not, reg));
 	break;
       }
       assert (seqOp);

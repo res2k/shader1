@@ -381,24 +381,24 @@ namespace s1
 	  switch (destBaseType->base)
 	  {
 	    case Bool:
-	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
-								intermediate::Bool,
-								srcVec);
+	      seqOp = new SequenceOpMakeVector (castDestination,
+						intermediate::Bool,
+						srcVec);
 	      break;
 	    case Int:
-	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
-								intermediate::Int,
-								srcVec);
+	      seqOp = new SequenceOpMakeVector (castDestination,
+						intermediate::Int,
+						srcVec);
 	      break;
 	    case UInt:
-	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
-								intermediate::UInt,
-								srcVec);
+	      seqOp = new SequenceOpMakeVector (castDestination,
+						intermediate::UInt,
+						srcVec);
 	      break;
 	    case Float:
-	      seqOp = boost::make_shared<SequenceOpMakeVector> (castDestination,
-								intermediate::Float,
-								srcVec);
+	      seqOp = new SequenceOpMakeVector (castDestination,
+						intermediate::Float,
+						srcVec);
 	      break;
 	    default:
 	      // Void can't be casted

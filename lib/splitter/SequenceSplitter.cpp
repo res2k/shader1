@@ -240,7 +240,7 @@ namespace s1
     {
       parent.SetRegAvailability (destination, freqFlagU);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
 			  
@@ -249,7 +249,7 @@ namespace s1
     {
       parent.SetRegAvailability (destination, freqFlagU);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
 			  
@@ -258,7 +258,7 @@ namespace s1
     {
       parent.SetRegAvailability (destination, freqFlagU);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
 			  
@@ -267,7 +267,7 @@ namespace s1
     {
       parent.SetRegAvailability (destination, freqFlagU);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpConst> (destination, value));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
     
@@ -276,7 +276,7 @@ namespace s1
     {
       unsigned int srcAvail = parent.GetRegAvailability (source);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpAssign> (destination, source));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpAssign (destination, source));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
     
@@ -286,9 +286,9 @@ namespace s1
     {
       unsigned int srcAvail = parent.GetRegAvailability (source);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCast> (destination,
-										destType,
-										source));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpCast (destination,
+								destType,
+								source));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
     
@@ -303,9 +303,9 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeVector> (destination,
-										      compType,
-										      sources));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpMakeVector (destination,
+								      compType,
+								      sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
     
@@ -317,10 +317,10 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeMatrix> (destination,
-										      compType, 
-										      matrixRows, matrixCols,
-										      sources));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpMakeMatrix (destination,
+								      compType, 
+								      matrixRows, matrixCols,
+								      sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
     
@@ -330,7 +330,7 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpMakeArray> (destination, sources));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpMakeArray (destination, sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
 		      
@@ -338,7 +338,7 @@ namespace s1
 								const RegisterPtr& source,
 								const RegisterPtr& index)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpExtractArrayElement> (destination, source, index));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpExtractArrayElement (destination, source, index));
       SplitBinaryOp (destination, newSeqOp, source, index);
     }
     
@@ -354,15 +354,15 @@ namespace s1
       int highestFreq = ComputeHighestFreq (sourceRegs);
       unsigned int commonFreqs = PromoteAll (highestFreq, sourceRegs);
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpChangeArrayElement> (destination, source,
-											      index, newValue));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpChangeArrayElement (destination, source,
+									      index, newValue));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
     
     void SequenceSplitter::InputVisitor::OpGetArrayLength (const RegisterPtr& destination,
 							   const RegisterPtr& array)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpGetArrayLength> (destination, array));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpGetArrayLength (destination, array));
       
       unsigned int srcAvail = parent.GetRegAvailability (array);
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
@@ -372,7 +372,7 @@ namespace s1
 								   const RegisterPtr& source,
 								   unsigned int comp)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpExtractVectorComponent> (destination, source, comp));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpExtractVectorComponent (destination, source, comp));
       
       unsigned int srcAvail = parent.GetRegAvailability (source);
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
@@ -425,7 +425,7 @@ namespace s1
 	break;
       }
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpArith> (destination, op, source1, source2));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpArith (destination, op, source1, source2));
       if (lerpSafe)
       {
 	SplitBinaryOp (destination, newSeqOp, source1, source2);
@@ -447,7 +447,7 @@ namespace s1
 						    const RegisterPtr& source1,
 						    const RegisterPtr& source2)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpCompare> (destination, op, source1, source2));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpCompare (destination, op, source1, source2));
       // Interpolation safety: comparison ops really aren't, except if both operands are uniform
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
@@ -471,7 +471,7 @@ namespace s1
 						  const RegisterPtr& source1,
 						  const RegisterPtr& source2)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpLogic> (destination, op, source1, source2));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpLogic (destination, op, source1, source2));
       // Interpolation safety: logic ops really aren't, except if both operands are uniform
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
@@ -508,7 +508,7 @@ namespace s1
 	break;
       }
       
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpUnaryOp> (destination, op, source));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpUnaryOp (destination, op, source));
       unsigned int srcAvail = parent.GetRegAvailability (source);
       if (lerpSafe)
       {
@@ -628,9 +628,9 @@ namespace s1
       for (int f = 0; f < freqNum; f++)
       {
 	if (!newSeqOps[f].seqBuilder) continue;
-        SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (newSeqOps[f].seqBuilder->GetSequence(),
-                                                                                   newSeqOps[f].identToRegs_imp,
-                                                                                   newSeqOps[f].identToRegs_exp));
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (newSeqOps[f].seqBuilder->GetSequence(),
+                                                                   newSeqOps[f].identToRegs_imp,
+                                                                   newSeqOps[f].identToRegs_exp));
 	parent.outputSeqBuilder[f]->AddOp (newSeqOp);
       }
     }
@@ -679,9 +679,9 @@ namespace s1
     
       std::vector<RegisterPtr> readRegs;
       readRegs.insert (readRegs.begin(), seqBuilder->GetAllReadRegisters().begin(), seqBuilder->GetAllReadRegisters().end());
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seqBuilder->GetSequence(),
-										 splitRes.identToRegs_imp,
-										 newIdentToRegIDsExp));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (seqBuilder->GetSequence(),
+								 splitRes.identToRegs_imp,
+								 newIdentToRegIDsExp));
       parent.outputSeqBuilder[f]->AddOp (newSeqOp);
     }
 
@@ -727,9 +727,9 @@ namespace s1
 	}
       }
     
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (seqBuilder->GetSequence(),
-										 newIdentToRegIDsImp,
-										 newIdentToRegIDsExp));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (seqBuilder->GetSequence(),
+								 newIdentToRegIDsImp,
+								 newIdentToRegIDsExp));
       
       return newSeqOp;
     }
@@ -738,10 +738,10 @@ namespace s1
 						   const SequenceOpPtr& seqOpIf,
 						   const SequenceOpPtr& seqOpElse)
     {
-      boost::shared_ptr<intermediate::SequenceOpBlock> ifBlock (
+      boost::intrusive_ptr<intermediate::SequenceOpBlock> ifBlock (
 	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpIf));
       assert (ifBlock);
-      boost::shared_ptr<intermediate::SequenceOpBlock> elseBlock (
+      boost::intrusive_ptr<intermediate::SequenceOpBlock> elseBlock (
 	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpElse));
       assert (elseBlock);
       
@@ -809,9 +809,9 @@ namespace s1
 	  SequenceOpPtr augmentedIfOp (AugmentBranchBlockWithRenames ("if", newIfOps[f], ifRenames, f));
 	  SequenceOpPtr augmentedElseOp (AugmentBranchBlockWithRenames ("else", newElseOps[f], elseRenames, f));
 	  
-	  SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBranch> (conditionReg,
-										      augmentedIfOp,
-										      augmentedElseOp));
+	  SequenceOpPtr newSeqOp (new intermediate::SequenceOpBranch (conditionReg,
+								      augmentedIfOp,
+								      augmentedElseOp));
 	  parent.outputSeqBuilder[f]->AddOp (newSeqOp);
 	}
 	else
@@ -826,7 +826,7 @@ namespace s1
 						  const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 						  const SequenceOpPtr& seqOpBody)
     {
-      boost::shared_ptr<intermediate::SequenceOpBlock> body (
+      boost::intrusive_ptr<intermediate::SequenceOpBlock> body (
 	boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpBody));
       assert (body);
 
@@ -994,19 +994,19 @@ namespace s1
 	    newLoopedRegs.push_back (loopedReg);
 	}
 	
-        SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBlock> (newOps[f].seqBuilder->GetSequence(),
-                                                                                   newOps[f].identToRegs_imp,
-                                                                                   newOps[f].identToRegs_exp));
-	SequenceOpPtr newWhileOp (boost::make_shared<intermediate::SequenceOpWhile> (conditionReg,
-										     newLoopedRegs,
-										     newSeqOp));
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (newOps[f].seqBuilder->GetSequence(),
+                                                                   newOps[f].identToRegs_imp,
+                                                                   newOps[f].identToRegs_exp));
+	SequenceOpPtr newWhileOp (new intermediate::SequenceOpWhile (conditionReg,
+								     newLoopedRegs,
+								     newSeqOp));
 	parent.outputSeqBuilder[f]->AddOp (newWhileOp);
       }
     }
     
     void SequenceSplitter::InputVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
-      SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpReturn> (outParamVals));
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpReturn (outParamVals));
       
       /* 'return': only execute on fragment frequency */
       for(const RegisterPtr& reg : outParamVals)
@@ -1083,9 +1083,9 @@ namespace s1
 	std::vector<RegisterPtr> newInParams (inParams);
 	newInParams.insert (newInParams.end(), transferIn[f].begin(), transferIn[f].end());
 	
-	SequenceOpPtr newOp (boost::make_shared<intermediate::SequenceOpFunctionCall> (freqFuncIdents[f],
-										       newInParams,
-										       newOutParams));
+	SequenceOpPtr newOp (new intermediate::SequenceOpFunctionCall (freqFuncIdents[f],
+								       newInParams,
+								       newOutParams));
 	parent.outputSeqBuilder[f]->AddOp (newOp);
       }
     }
@@ -1126,9 +1126,9 @@ namespace s1
 	unsigned int commonFreqs = PromoteAll (highestFreq, inParams);
 	
 	parent.SetRegAvailability (destination, commonFreqs);
-	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBuiltinCall> (destination,
-											  what,
-											  inParams));
+	SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
+									 what,
+									 inParams));
 	AddOpToSequences (newSeqOp, commonFreqs);
       }
       else
@@ -1136,9 +1136,9 @@ namespace s1
 	PromoteAll (freqFragment, inParams);
 	
 	parent.SetRegAvailability (destination, freqFlagF);
-	SequenceOpPtr newSeqOp (boost::make_shared<intermediate::SequenceOpBuiltinCall> (destination,
-											  what,
-											  inParams));
+	SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
+									 what,
+									 inParams));
 	parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
       }
     }
