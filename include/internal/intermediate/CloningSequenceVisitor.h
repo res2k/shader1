@@ -134,10 +134,10 @@ namespace s1
 			  const std::vector<RegisterPtr>& inParams);
     protected:
       class BlockNestingSequenceVisitor;
-      void NestedBlock (CloningSequenceVisitor* handlingVisitor,
-			const SequencePtr& seq,
-			const Sequence::IdentifierToRegMap& identToReg_imp,
-			const Sequence::IdentifierToRegMap& identToReg_exp);
+      virtual void NestedBlock (CloningSequenceVisitor* handlingVisitor,
+			        const SequencePtr& seq,
+			        const Sequence::IdentifierToRegMap& identToReg_imp,
+			        const Sequence::IdentifierToRegMap& identToReg_exp);
       
       SequenceOpPtr visitedOp;
       
