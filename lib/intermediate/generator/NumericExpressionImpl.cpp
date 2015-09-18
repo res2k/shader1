@@ -83,7 +83,6 @@ namespace s1
         {
           throw Exception (NumberParseError);
         }
-        val = (val * static_cast<T> (base));
 
         if (negative)
         {
