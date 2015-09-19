@@ -194,11 +194,6 @@ namespace s1
 #ifdef S1_HAVE_RVALUES
     /// Move reference from \a other
     Ptr (Ptr&& other) : obj (other.detach()) { }
-#if !defined(DOXYGEN_RUN) && !defined(S1_HAVE_RVALUES)
-    /// Move reference from \a other
-    template<typename T2>
-    Ptr (TransferRefPtr<T2>&& other) : obj (other.detach()) { }
-#endif
 #endif
     /// Releases reference
     ~Ptr()
