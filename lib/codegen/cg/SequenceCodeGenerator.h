@@ -207,10 +207,20 @@ namespace s1
       typedef boost::unordered_map<RegisterPtr, RegisterOriginPair> RegisterOriginsMap;
       RegisterOriginsMap registerOrigins;
       
-      std::string GetOutputRegisterName (const RegisterPtr& reg);
+      /// Flags for GetOutputRegisterName() methods
+      enum
+      {
+        /// Always force a variable to be declared
+        rfForceVariable = 0x1
+      };
+      std::string GetOutputRegisterName (const RegisterPtr& reg, unsigned int flags = 0);
       bool GetOutputRegisterName (const RegisterPtr& reg,
 				  std::string& name,
-				  const std::string& initializer);
+				  const std::string& initializer,
+                                  unsigned int flags = 0);
+      void EmitDeclaration (const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,
+                            const std::string& name,
+                            const std::string& initializer);
     public:
       SequenceCodeGenerator (const intermediate::Sequence& seq,
 			     ImportedNameResolver* nameRes,

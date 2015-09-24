@@ -968,11 +968,11 @@ namespace s1
       intermediate::RegisterSet readRegisters (seqOpBody->GetReadRegisters());
       for(const RegisterPtr& reg : writtenRegisters)
       {
-	owner->GetOutputRegisterName (reg);
+	owner->GetOutputRegisterName (reg, rfForceVariable);
       }
       for(const RegisterPtr& reg : readRegisters)
       {
-	owner->GetOutputRegisterName (reg);
+	owner->GetOutputRegisterName (reg, rfForceVariable);
       }
       
       bool oldEmitEmptyBlocks = emitEmptyBlocks;
@@ -1203,43 +1203,62 @@ namespace s1
       return strings;
     }
     
-    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr)
+    std::string CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr,
+                                                                           unsigned int flags)
     {
       std::string cgName;
-      GetOutputRegisterName (regPtr, cgName, std::string ());
+      GetOutputRegisterName (regPtr, cgName, std::string (), flags);
       return cgName;
     }
 
     bool CgGenerator::SequenceCodeGenerator::GetOutputRegisterName (const RegisterPtr& regPtr,
 								    std::string& name,
-								    const std::string& initializer)
+								    const std::string& initializer,
+                                                                    unsigned int flags)
     {
       RegistersToIDMap::iterator regIt = seenRegisters.find (regPtr);
       if (regIt != seenRegisters.end())
       {
-	name = regIt->second;
+        name = regIt->second;
+        if ((flags & rfForceVariable) != 0)
+        {
+          // Make sure we have a variable of 'cgName' declared
+          std::string cgName (NameToCgIdentifier (regPtr->GetName ()));
+          if (cgName != name)
+          {
+            EmitDeclaration (regPtr->GetOriginalType (), cgName, name);
+            seenRegisters[regPtr] = cgName;
+            name = cgName;
+          }
+        }
 	return false;
       }
       
       std::string cgName (NameToCgIdentifier (regPtr->GetName ()));
       seenRegisters[regPtr] = cgName;
       
+      EmitDeclaration (regPtr->GetOriginalType (), cgName, initializer);
+      name = cgName;
+      return true;
+    }
+
+    void CgGenerator::SequenceCodeGenerator::EmitDeclaration (
+      const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,
+      const std::string& name, const std::string& initializer)
+    {
       std::string typeSuffix;
-      std::string cgType (TypeToCgType (regPtr->GetOriginalType(), typeSuffix));
+      std::string cgType (TypeToCgType (type, typeSuffix));
       std::string declLine (cgType);
       declLine.append (" ");
-      declLine.append (cgName);
+      declLine.append (name);
       declLine.append (typeSuffix);
       if (!initializer.empty())
       {
-	declLine.append (" = ");
-	declLine.append (initializer);
+        declLine.append (" = ");
+        declLine.append (initializer);
       }
       declLine.append (";");
       strings->AddString (declLine);
-      
-      name = cgName;
-      return true;
     }
   } // namespace codegen
 } // namespace s1
