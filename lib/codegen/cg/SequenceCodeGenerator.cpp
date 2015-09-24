@@ -1242,22 +1242,24 @@ namespace s1
       return true;
     }
 
+    static format::StaticFormatter FormatDeclaration ("{0} {1}{2};");
+    static format::StaticFormatter FormatDeclarationInit ("{0} {1}{2} = {3};");
+
     void CgGenerator::SequenceCodeGenerator::EmitDeclaration (
       const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,
       const std::string& name, const std::string& initializer)
     {
       std::string typeSuffix;
       std::string cgType (TypeToCgType (type, typeSuffix));
-      std::string declLine (cgType);
-      declLine.append (" ");
-      declLine.append (name);
-      declLine.append (typeSuffix);
-      if (!initializer.empty())
+      std::string declLine;
+      if (!initializer.empty ())
       {
-        declLine.append (" = ");
-        declLine.append (initializer);
+        FormatDeclarationInit (declLine, cgType, name, typeSuffix, initializer);
       }
-      declLine.append (";");
+      else
+      {
+        FormatDeclaration (declLine, cgType, name, typeSuffix);
+      }
       strings->AddString (declLine);
     }
   } // namespace codegen
