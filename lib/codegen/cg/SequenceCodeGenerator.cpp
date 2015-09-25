@@ -847,8 +847,8 @@ namespace s1
       }
     }
 
-    static format::StaticFormatter FormatImpMapEntry (" {0} -> {1}\n");
-    static format::StaticFormatter FormatExpMapEntry (" {0} <- {1}\n");
+    static format::StaticFormatter FormatImpMapEntry (" {1} -> \"{0}\"\n");
+    static format::StaticFormatter FormatExpMapEntry (" {1} <- \"{0}\"\n");
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
 								      const Sequence::IdentifierToRegMap& identToRegID_imp,
@@ -1076,6 +1076,9 @@ namespace s1
     {
     }
     
+    static format::StaticFormatter FormatSeqImpEntry (" \"{0}\" -> {1}\n");
+    static format::StaticFormatter FormatSeqExpEntry (" \"{0}\" <- {1}\n");
+
     StringsArrayPtr CgGenerator::SequenceCodeGenerator::Generate ()
     {
       strings = boost::make_shared<StringsArray> ();
@@ -1096,7 +1099,7 @@ namespace s1
           for (const intermediate::Sequence::RegisterImpMappings::value_type& imp : imports)
           {
             uc::String s;
-            FormatImpMapEntry (s, imp.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (imp.second));
+            FormatSeqImpEntry (s, imp.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (imp.second));
             impString.append (s);
           }
         }
@@ -1192,7 +1195,7 @@ namespace s1
           for (const intermediate::Sequence::RegisterExpMappings::value_type& expPair : exports)
           {
             uc::String s;
-            FormatExpMapEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
+            FormatSeqExpEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
             expString.append (s);
           }
         }
