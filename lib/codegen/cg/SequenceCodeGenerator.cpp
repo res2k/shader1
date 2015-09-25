@@ -839,10 +839,10 @@ namespace s1
 	EmitBinary (destination, source1, source2, "<=");
 	break;
       case GT:
-	EmitBinary (destination, source1, source2, ">=");
+	EmitBinary (destination, source1, source2, ">");
 	break;
       case GE:
-	EmitBinary (destination, source1, source2, ">");
+	EmitBinary (destination, source1, source2, ">=");
 	break;
       }
     }
