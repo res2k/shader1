@@ -254,15 +254,26 @@ namespace s1
           assert (globalVarReg != globalVarRegsIn.end ());
           newImpMap[globalIn] = globalVarReg->second;
         }
+        else
+        {
+          originalNameToGlobal[impIt->second->GetOriginalName ()] = globalIn;
+        }
       }
 
       Sequence::IdentifierToRegMap newExpMap (identToReg_exp);
       for(const uc::String& globalOut : globalVarNamesOut)
       {
         const auto expIt = newExpMap.find (globalOut);
-        if (expIt == newImpMap.end ())
+        if (expIt == newExpMap.end ())
         {
-          newExpMap[globalOut] = GetWriteGlobalOutReg (globalOut);
+          //newExpMap[globalOut] = GetWriteGlobalOutReg (globalOut);
+          const auto globalVarReg = globalVarRegsOut.find (globalOut);
+          assert (globalVarReg != globalVarRegsOut.end ());
+          newExpMap[globalOut] = globalVarReg->second;
+        }
+        else
+        {
+          originalNameToGlobal[expIt->second->GetOriginalName ()] = globalOut;
         }
       }
 
