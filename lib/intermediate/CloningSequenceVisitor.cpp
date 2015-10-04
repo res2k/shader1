@@ -473,6 +473,13 @@ namespace s1
 					 const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 					 const SequenceOpPtr& seqOpBody)
     {
+      typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
+      std::vector<RegPair> newLoopedRegs;
+      for(const RegPair& loopedReg : loopedRegs)
+      {
+        newLoopedRegs.emplace_back (MapRegisterIn (loopedReg.first), loopedReg.second);
+      }
+
       SequenceOpPtr newSeqOpBody;
       if (seqOpBody)
       {
@@ -487,11 +494,9 @@ namespace s1
 	newSeqOpBody = newSeq->GetOp (0);
       }
       
-      typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
-      std::vector<RegPair> newLoopedRegs;
-      for(const RegPair& loopedReg : loopedRegs)
+      for(RegPair& loopedReg : newLoopedRegs)
       {
-	newLoopedRegs.emplace_back (MapRegisterIn (loopedReg.first), MapRegisterOut (loopedReg.second));
+        loopedReg.second = MapRegisterOut (loopedReg.second);
       }
       
       SequenceOpPtr newOp (new SequenceOpWhile (MapRegisterIn (conditionReg),
