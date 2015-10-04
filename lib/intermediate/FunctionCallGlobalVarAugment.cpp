@@ -225,6 +225,7 @@ namespace s1
         newLoopedRegs.emplace (globalVarInIt->second, globalVarOutIt->second);
       }
 
+      loopBlock = true;
       CloningSequenceVisitor::OpWhile (conditionReg,
                                        std::vector<LoopedRegPair> (newLoopedRegs.begin (), newLoopedRegs.end ()),
                                        seqOpBody);
@@ -285,6 +286,22 @@ namespace s1
                                                     const Sequence::IdentifierToRegMap& identToReg_imp,
                                                     const Sequence::IdentifierToRegMap& identToReg_exp)
     {
+      if (loopBlock)
+      {
+        loopBlock = false;
+
+        for (const uc::String& globalOut : globalVarNamesOut)
+        {
+          auto globalVarInIt = globalVarRegsIn.find (globalOut);
+          assert (globalVarInIt != globalVarRegsIn.end ());
+          auto globalVarOutIt = globalVarRegsOut.find (globalOut);
+          assert (globalVarOutIt != globalVarRegsOut.end ());
+
+          // Also map 'out' regs to 'in' regs so the former get read in the loop body.
+          globalVarInIt->second = globalVarOutIt->second;
+        }
+      }
+
       Sequence::IdentifierToRegMap newImpMap (identToReg_imp);
       for (const uc::String& globalIn : globalVarNamesIn)
       {

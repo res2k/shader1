@@ -68,6 +68,7 @@ namespace s1
       typedef boost::unordered_map<uc::String, uc::String> OriginalNameToGlobalMap;
       /// Map of original register name to global name
       OriginalNameToGlobalMap originalNameToGlobal;
+      bool loopBlock = false;
 
       virtual void NestedBlock (CloningSequenceVisitor* handlingVisitor,
                                 const SequencePtr& seq,
