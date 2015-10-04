@@ -65,9 +65,6 @@ namespace s1
       /// Map of original register name to global name
       OriginalNameToGlobalMap originalNameToGlobal;
 
-      /// Helper: Get writeable output register for a global
-      RegisterPtr GetWriteGlobalOutReg (const uc::String& globalOut);
-
       virtual void NestedBlock (CloningSequenceVisitor* handlingVisitor,
                                 const SequencePtr& seq,
                                 const Sequence::IdentifierToRegMap& identToReg_imp,

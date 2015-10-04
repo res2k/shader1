@@ -243,32 +243,15 @@ namespace s1
       std::vector<RegisterPtr> newOutParams (outParams);
       for(const uc::String& globalOut : globalVarNamesOut)
       {
-        RegisterPtr newReg = GetWriteGlobalOutReg (globalOut);
+        auto globalVarRegOutIt = globalVarRegsOut.find (globalOut);
+        assert (globalVarRegOutIt != globalVarRegsOut.end ());
+        RegisterPtr newReg = globalVarRegOutIt->second;
         newOutParams.push_back (newReg);
       }
 
       CloningSequenceVisitor::OpFunctionCall (funcIdent, newInParams, newOutParams);
     }
 
-    RegisterPtr FunctionCallGlobalVarAugment::GetWriteGlobalOutReg (const uc::String& globalOut)
-    {
-      GlobalVarRegsMap::const_iterator globalVarRegOutIt = globalVarRegsOut.find (globalOut);
-      RegisterPtr reg;
-      if (globalVarRegOutIt != globalVarRegsOut.end ())
-      {
-        // Register was assigned previously
-        reg = globalVarRegOutIt->second;
-      }
-      else
-      {
-        // Register was never assigned before, create
-        const auto globalVarInIt = globalVarRegsIn.find (globalOut);
-        assert (globalVarInIt != globalVarRegsIn.end ());
-        reg = globalVarInIt->second;
-      }
-      return newSequenceBuilder->AllocateRegister (reg);
-    }
-    
     void FunctionCallGlobalVarAugment::NestedBlock (CloningSequenceVisitor* handlingVisitor,
                                                     const SequencePtr& seq,
                                                     const Sequence::IdentifierToRegMap& identToReg_imp,
@@ -296,7 +279,6 @@ namespace s1
         const auto expIt = newExpMap.find (globalOut);
         if (expIt == newExpMap.end ())
         {
-          //newExpMap[globalOut] = GetWriteGlobalOutReg (globalOut);
           const auto globalVarReg = globalVarRegsOut.find (globalOut);
           assert (globalVarReg != globalVarRegsOut.end ());
           newExpMap[globalOut] = globalVarReg->second;
