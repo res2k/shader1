@@ -42,6 +42,10 @@ namespace s1
       void PreVisitOp (const SequenceOpPtr& op);
       void VisitEnd ();
 
+      void OpWhile (const RegisterPtr& conditionReg,
+                    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+                    const SequenceOpPtr& seqOpBody);
+
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
       void OpFunctionCall (const uc::String& funcIdent,
         const std::vector<RegisterPtr>& inParams,

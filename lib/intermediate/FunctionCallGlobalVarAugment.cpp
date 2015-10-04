@@ -202,6 +202,34 @@ namespace s1
       }
     }
 
+    typedef std::pair<RegisterPtr, RegisterPtr> LoopedRegPair;
+
+    void FunctionCallGlobalVarAugment::OpWhile (const RegisterPtr& conditionReg,
+                                                const std::vector<LoopedRegPair>& loopedRegs,
+                                                const SequenceOpPtr& seqOpBody)
+    {
+      // Add all non-const global vars to looped regs
+      boost::unordered_set<LoopedRegPair> newLoopedRegs;
+      for (const auto& loopedReg : loopedRegs)
+      {
+        // Map to new regs to make duplicate elimination work
+        newLoopedRegs.emplace (MapRegisterIn (loopedReg.first), MapRegisterOut (loopedReg.second));
+      }
+      // Mark all globals as looped regs
+      for (const uc::String& globalOut : globalVarNamesOut)
+      {
+        auto globalVarInIt = globalVarRegsIn.find (globalOut);
+        assert (globalVarInIt != globalVarRegsIn.end ());
+        auto globalVarOutIt = globalVarRegsOut.find (globalOut);
+        assert (globalVarOutIt != globalVarRegsOut.end ());
+        newLoopedRegs.emplace (globalVarInIt->second, globalVarOutIt->second);
+      }
+
+      CloningSequenceVisitor::OpWhile (conditionReg,
+                                       std::vector<LoopedRegPair> (newLoopedRegs.begin (), newLoopedRegs.end ()),
+                                       seqOpBody);
+    }
+
     void FunctionCallGlobalVarAugment::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
       // Obtain current registers for all "output" global vars
