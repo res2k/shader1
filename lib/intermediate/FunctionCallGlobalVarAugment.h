@@ -39,6 +39,7 @@ namespace s1
       RegisterPtr MapRegisterIn (const RegisterPtr& reg);
       RegisterPtr MapRegisterOut (const RegisterPtr& reg);
       void AddOpToSequence (const SequenceOpPtr& seqOp);
+      void PreVisitOp (const SequenceOpPtr& op);
       void VisitEnd ();
 
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
@@ -58,6 +59,8 @@ namespace s1
       GlobalVarRegsMap globalVarRegsIn;
       /// Map of global name to (output) register
       GlobalVarRegsMap globalVarRegsOut;
+      /// Previous set of global var output registers
+      GlobalVarRegsMap globalVarRegsOutPrev;
       typedef boost::unordered_map<uc::String, uc::String> OriginalNameToGlobalMap;
       /// Map of original register name to global name
       OriginalNameToGlobalMap originalNameToGlobal;

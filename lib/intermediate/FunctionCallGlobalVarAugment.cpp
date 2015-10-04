@@ -116,17 +116,8 @@ namespace s1
       {
         GlobalVarRegsMap::const_iterator globalVarIt = globalVarRegsOut.find (globalName);
         RegisterPtr newReg;
-        if (globalVarIt != globalVarRegsOut.end ())
-        {
-          // Get a new generation of the register
-          newReg = newSequenceBuilder->AllocateRegister (globalVarIt->second);
-        }
-        else
-        {
-          // Register was never written
-          newReg = newSequenceBuilder->AllocateRegister (reg);
-        }
-        return newReg;
+        assert (globalVarIt != globalVarRegsOut.end ());
+        return globalVarIt->second;
       }
       return CloningSequenceVisitor::MapRegister (reg);
     }
@@ -136,13 +127,52 @@ namespace s1
       CloningSequenceVisitor::AddOpToSequence (seqOp);
 
       // Update map of current global var registers based on original names of written regs
-      for(RegisterPtr reg : seqOp->GetWrittenRegisters ())
+      auto writtenRegs = seqOp->GetWrittenRegisters ();
+      for(const auto& globalName : globalVarNamesOut)
       {
-        OriginalNameToGlobalMap::const_iterator origNameGlobal = originalNameToGlobal.find (reg->GetOriginalName ());
-        if (origNameGlobal == originalNameToGlobal.end ()) continue;
-        const uc::String& globalName = origNameGlobal->second;
-        globalVarRegsIn[globalName] = reg;
-        globalVarRegsOut[globalName] = reg;
+        GlobalVarRegsMap::const_iterator globalVarReg = globalVarRegsOut.find (globalName);
+        assert (globalVarReg != globalVarRegsOut.end ());
+        if (writtenRegs.find (globalVarReg->second) == writtenRegs.end ())
+        {
+          // Pretend we never set a new output register
+          GlobalVarRegsMap::const_iterator prevGlobalVarReg = globalVarRegsOutPrev.find (globalName);
+          if (prevGlobalVarReg != globalVarRegsOutPrev.end ())
+            globalVarRegsOut[globalName] = prevGlobalVarReg->second;
+          else
+            globalVarRegsOut.erase (globalName);
+        }
+        else
+        {
+          globalVarRegsIn[globalName] = globalVarReg->second;
+        }
+      }
+    }
+
+    void FunctionCallGlobalVarAugment::PreVisitOp (const SequenceOpPtr& op)
+    {
+      CloningSequenceVisitor::PreVisitOp (op);
+
+      /* - Prepare new regs for alls globals, store in globalVarRegsOut
+         - Previous regs are stored in globalVarRegsOutPrev
+         - AddOpToSequence() will 'undo' the new register assignment if it was unnecessary
+      */
+
+      globalVarRegsOutPrev.clear ();
+      // Update map of current global var registers based on original names of written regs
+      for(const auto& globalName : globalVarNamesOut)
+      {
+        {
+          GlobalVarRegsMap::const_iterator globalVarReg = globalVarRegsOut.find (globalName);
+          if (globalVarReg != globalVarRegsOut.end ())
+          {
+            globalVarRegsOutPrev[globalName] = globalVarReg->second;
+          }
+        }
+        {
+          GlobalVarRegsMap::const_iterator globalVarReg = globalVarRegsIn.find (globalName);
+          assert (globalVarReg != globalVarRegsIn.end ());
+          globalVarRegsOut[globalName] = newSequenceBuilder->AllocateRegister (globalVarReg->second);
+        }
       }
     }
 
