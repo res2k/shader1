@@ -22,6 +22,7 @@
 #include "parser/SemanticsHandler.h"
 
 #include <boost/container/deque.hpp>
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -41,6 +42,8 @@ namespace s1
       typedef parser::SemanticsHandler::TypePtr TypePtr;
       
       class Register
+        : public boost::intrusive_ref_counter<Register,
+                                              boost::thread_unsafe_counter>
       {
       protected:
 	friend class Sequence;
@@ -60,7 +63,7 @@ namespace s1
 	
 	const TypePtr& GetOriginalType () const { return originalType; }
       };
-      typedef boost::shared_ptr<Register> RegisterPtr;
+      typedef boost::intrusive_ptr<Register> RegisterPtr;
       typedef boost::unordered_set<RegisterPtr> RegisterSet;
       
       typedef boost::unordered_map<uc::String, RegisterPtr> IdentifierToRegMap;

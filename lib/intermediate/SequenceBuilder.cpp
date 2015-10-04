@@ -68,7 +68,7 @@ namespace s1
     RegisterPtr SequenceBuilder::AllocateRegister (const TypePtr& originalType,
                                                    const uc::String& name)
     {
-      RegisterPtr reg (boost::make_shared<Register> (name, originalType));
+      RegisterPtr reg (new Register (name, originalType));
       return reg;
     }
     
@@ -76,7 +76,7 @@ namespace s1
     {
       if (!oldReg) return RegisterPtr ();
       
-      RegisterPtr reg (boost::make_shared<Register> (*oldReg));
+      RegisterPtr reg (new Register (*oldReg));
       return reg;
     }
 
