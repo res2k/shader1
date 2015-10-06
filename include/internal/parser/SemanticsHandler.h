@@ -243,7 +243,7 @@ namespace s1
 	virtual NamePtr AddTypeAlias (TypePtr aliasedType,
 	  const uc::String& identifier) = 0;
 	  
-        /// Type of a format parameter
+        /// Type of a formal parameter
         enum FormalParameterType
         {
           /// User-defined parameter
