@@ -69,19 +69,11 @@ namespace s1
 	const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
 	
 	ExpressionPtr paramExpr;
-        switch (param.paramType)
-        {
-        case SemanticsHandler::Scope::ptUser:
-          if (actual < params.size())
-            paramExpr = params[actual++];
-          else
-            paramExpr = param.defaultValue;
-          break;
-        case SemanticsHandler::Scope::ptAutoGlobal:
+        assert (param.paramType == SemanticsHandler::Scope::ptUser);
+        if (actual < params.size())
+          paramExpr = params[actual++];
+        else
           paramExpr = param.defaultValue;
-          break;
-        }
-	
 	actualParams.push_back (paramExpr);
       }
     }
