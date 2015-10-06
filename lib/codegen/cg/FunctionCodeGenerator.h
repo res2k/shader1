@@ -56,7 +56,8 @@ namespace s1
 	void Add (const char* attr, const std::string& attrStr);
       };
     public:
-      StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
+      StringsArrayPtr Generate (const char* identifier,
+                                const intermediate::ProgramFunctionPtr& func,
 				const intermediate::Program::OutputParameters& output,
 				const intermediate::Program::ParameterArraySizes& paramArraySizes,
 				bool doTransfer,

@@ -61,15 +61,24 @@ namespace s1
       {
 	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
 	FunctionCodeGenerator funcGen;
-	resultStrings->AddStrings (*(funcGen.Generate (func,
-						       func->IsEntryFunction()
-							 ? prog->GetOutputParameters()
-							 : intermediate::Program::OutputParameters(),
-						       func->IsEntryFunction()
-							 ? prog->GetParameterArraySizes()
-							 : intermediate::Program::ParameterArraySizes(),
-						       transferValues.size() > 0,
-						       frequency)));
+        if (func->IsEntryFunction ())
+        {
+          resultStrings->AddStrings (*(funcGen.Generate ("main",
+                                                         func,
+                                                         prog->GetOutputParameters (),
+                                                         prog->GetParameterArraySizes (),
+                                                         transferValues.size () > 0,
+                                                         frequency)));
+        }
+        else
+        {
+          resultStrings->AddStrings (*(funcGen.Generate (NameToCgIdentifier (func->GetIdentifier ()).c_str(),
+                                                         func,
+                                                         intermediate::Program::OutputParameters (),
+                                                         intermediate::Program::ParameterArraySizes (),
+                                                         transferValues.size () > 0,
+                                                         frequency)));
+        }
 	resultStrings->AddString (std::string ());
       }
       

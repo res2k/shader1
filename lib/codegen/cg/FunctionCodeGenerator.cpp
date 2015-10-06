@@ -41,7 +41,8 @@ namespace s1
       paramStr.append (attrStr);
     }
 	  
-    StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
+    StringsArrayPtr CgGenerator::FunctionCodeGenerator::Generate (const char* identifier,
+                                                                  const intermediate::ProgramFunctionPtr& func,
 								  const intermediate::Program::OutputParameters& output,
 								  const intermediate::Program::ParameterArraySizes& paramArraySizes,
 								  bool doTransfer,
@@ -55,7 +56,6 @@ namespace s1
       std::vector<std::string> outParamIdents;
       {
 	std::string typeSuffix;
-	std::string identifier (NameToCgIdentifier (func->GetIdentifier()));
 	
 	std::string funcDecl ("void ");
 	funcDecl.append (identifier);
