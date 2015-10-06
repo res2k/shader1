@@ -281,6 +281,19 @@ namespace s1
       return *this;
     }
 
+    String operator+ (const String& s1, const String& s2)
+    {
+      if (s1.isEmpty ())
+        return s2;
+      else if (s2.isEmpty ())
+        return s1;
+      String newString;
+      newString.reserve (s1.length () + s2.length ());
+      newString.append (s1);
+      newString.append (s2);
+      return std::move (newString);
+    }
+
     bool String::operator==(const String& other) const
     {
       if (length() != other.length()) return false;
