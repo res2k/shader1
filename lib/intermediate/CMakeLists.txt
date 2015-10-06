@@ -23,11 +23,11 @@ file(GLOB intermediate_sources
      ../../include/internal/intermediate/SequenceBuilder.h
      ../../include/internal/intermediate/SequenceVisitor.h
      ../../include/internal/intermediate/forwarddecl.h)
-file(GLOB generator_sources generator/*.h generator/*.cpp)
-file(GLOB seqop_sources SequenceOp/*.h SequenceOp/*.cpp ../include/internal/intermediate/SequenceOp/*.h)
+
 include_directories(generator .)
-s1_add_library(intermediate_generator SOURCES ${generator_sources})
-s1_add_library(intermediate_seqop SOURCES ${seqop_sources})
+add_subdirectory(generator)
+add_subdirectory(SequenceOp)
+
 s1_add_library(intermediate
                SOURCES ${intermediate_sources}
                LINK intermediate_generator intermediate_seqop parser)
