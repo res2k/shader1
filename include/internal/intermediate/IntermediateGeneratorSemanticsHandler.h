@@ -84,6 +84,10 @@ namespace s1
       /// Create a sequence containing global vars initialization
       SequencePtr CreateGlobalVarInitializationSeq (NameImplSet& exportedNames);
 
+      ProgramFunctionPtr SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
+                                                  const TypePtr& returnType,
+                                                  const Scope::FunctionFormalParameters& params);
+
       /// Whether the intermediate program was marked "completed"
       bool completed;
       uc::String entryFunction;
@@ -175,15 +179,7 @@ namespace s1
       void CompleteProgram ();
       ProgramPtr GetProgram ();
 
-    #ifdef _MSC_VER
-    #  pragma warning(push)
-    #  pragma warning(disable : 4800)
-    #endif
       void SetEntryFunction (const uc::String& entryFunction) { this->entryFunction = entryFunction; }
-      bool IsEntryFunction (const uc::String& entryFunction) const { return this->entryFunction == entryFunction; }
-    #ifdef _MSC_VER
-    #  pragma warning(pop)
-    #endif
       
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */

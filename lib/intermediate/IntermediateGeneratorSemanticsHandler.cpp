@@ -24,7 +24,9 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
+#include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "intermediate/SequenceOp/SequenceOpCast.h"
+#include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
 #include "parser/Exception.h"
@@ -321,7 +323,74 @@ namespace s1
       exportedNames = blockImpl->GetExportedNames();
       return blockImpl->GetSequence();
     }
-    
+
+    ProgramFunctionPtr IntermediateGeneratorSemanticsHandler::SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
+                                                                                       const TypePtr& returnType,
+                                                                                       const Scope::FunctionFormalParameters& params)
+    {
+      std::vector<NamePtr> globalVars (globalScope->GetAllVars ());
+      SequencePtr entryFuncSeq;
+
+      // Generate a call to real entry function, forwarding parameters
+      {
+        SequenceBuilderPtr entrySeqBuilder (boost::make_shared<SequenceBuilder> ());
+        std::vector<RegisterPtr> inParams;
+        std::vector<RegisterPtr> outParams;
+        for (const auto& param : params)
+        {
+          RegisterPtr paramReg;
+          if ((param.dir & Scope::dirIn) != 0)
+          {
+            paramReg = AllocateRegister (*entrySeqBuilder, param.type, Imported, param.identifier);
+            entrySeqBuilder->SetImport (paramReg, param.identifier);
+            inParams.push_back (paramReg);
+          }
+          if ((param.dir & Scope::dirOut) != 0)
+          {
+            if (paramReg)
+              paramReg = AllocateRegister (*entrySeqBuilder, paramReg);
+            else
+              paramReg = AllocateRegister (*entrySeqBuilder, param.type, Imported, param.identifier);
+            entrySeqBuilder->SetExport (param.identifier, paramReg);
+            outParams.push_back (paramReg);
+          }
+        }
+        entrySeqBuilder->AddOp (new SequenceOpFunctionCall (realEntryIdentifier, inParams, outParams));
+        entryFuncSeq = entrySeqBuilder->GetSequence ();
+      }
+
+      // Create global var initialization sequence
+      {
+        NameImplSet initSeqExported;
+        SequencePtr initSeq (CreateGlobalVarInitializationSeq (initSeqExported));
+
+        SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+        PrependGlobalsInit prependVisitor (newSeqBuilder, entryFuncSeq, initSeq);
+        entryFuncSeq->Visit (prependVisitor);
+        entryFuncSeq = newSeqBuilder->GetSequence ();
+      }
+
+      // Perform static var augmentation
+      {
+        // Create a new sequence...
+        SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
+        // ...containing the original function sequence, augment with global var arguments
+        {
+          FunctionCallGlobalVarAugment augment (newSeqBuilder, entryFuncSeq,
+                                                globalVars);
+          entryFuncSeq->Visit (augment);
+        }
+        entryFuncSeq = newSeqBuilder->GetSequence ();
+      }
+
+      ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ("$EntryFunction",
+                                                                        "$EntryFunction",
+                                                                        params,
+                                                                        entryFuncSeq,
+                                                                        true));
+      return newFunc;
+    }
+
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
 									 const TypePtr& type,
 									 RegisterClassification classify,
@@ -478,6 +547,7 @@ namespace s1
       S1_ASSERT(completed, ProgramPtr ());
 
       ProgramPtr newProg (boost::make_shared <Program> ());
+      ScopeImpl::FunctionInfoPtr entryFunction;
       if (globalScope)
       {
         // Collect global vars
@@ -487,6 +557,18 @@ namespace s1
 	     funcIt != functions.end();
 	     ++funcIt)
 	{
+          if ((*funcIt)->originalIdentifier == this->entryFunction)
+          {
+            if (!entryFunction)
+            {
+              entryFunction = *funcIt;
+            }
+            else
+            {
+              // TODO: Err if entry function is ambiguous
+            }
+          }
+
 	  boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
 	  
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
@@ -502,37 +584,6 @@ namespace s1
           
           SequencePtr funcSeq (blockImpl->GetSequence ());
 
-          if (IsEntryFunction ((*funcIt)->originalIdentifier))
-          {
-            // Create a new sequence...
-            SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
-            // ...containing the original function sequence, prepended by the globals initialization
-            {
-              NameImplSet initSeqExported;
-              SequencePtr initSeq (CreateGlobalVarInitializationSeq (initSeqExported));
-
-              PrependGlobalsInit prependVisitor (newSeqBuilder, funcSeq, initSeq);
-              funcSeq->Visit (prependVisitor);
-            }
-            funcSeq = newSeqBuilder->GetSequence();
-            
-            // Globals are contained in entry func, so remove the corresponding formal args
-            {
-              parser::SemanticsHandler::Scope::FunctionFormalParameters::iterator paramsIt (params.begin());
-              while (paramsIt != params.end())
-              {
-                if (paramsIt->paramType == parser::SemanticsHandler::Scope::ptAutoGlobal)
-                {
-                  paramsIt = params.erase (paramsIt);
-                }
-                else
-                {
-                  ++paramsIt;
-                }
-              }
-            }
-          }
-          else
           {
             size_t inputInsertPos = 0;
             while (inputInsertPos < params.size())
@@ -583,9 +634,16 @@ namespace s1
 									    (*funcIt)->identifier,
 									    params,
 									    funcSeq,
-									    IsEntryFunction ((*funcIt)->originalIdentifier)));
+									    false));
 	  newProg->AddFunction (newFunc);
 	}
+        // TODO: Err if no entry function was given
+        if (entryFunction)
+        {
+          newProg->AddFunction (SynthesizeEntryFunction (entryFunction->identifier,
+                                                         entryFunction->returnType,
+                                                         entryFunction->params));
+        }
       }
       return newProg;
     }
