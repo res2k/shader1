@@ -18,6 +18,7 @@
 #include "base/common.h"
 #include "FunctionCallGlobalVarAugment.h"
 
+#include "base/format/Formatter.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 
@@ -25,11 +26,14 @@ namespace s1
 {
   namespace intermediate
   {
+    format::StaticFormatter FormatLevelSuffix ("{0}$B{1}");
+
     FunctionCallGlobalVarAugment::FunctionCallGlobalVarAugment (
       const SequenceBuilderPtr& newSequenceBuilder,
       const SequencePtr& oldSeq,
-      const std::vector<IntermediateGeneratorSemanticsHandler::NamePtr>& globals)
-      : CloningSequenceVisitor (newSequenceBuilder), globals (globals)
+      const std::vector<IntermediateGeneratorSemanticsHandler::NamePtr>& globals,
+      int level)
+      : CloningSequenceVisitor (newSequenceBuilder), level (level), globals (globals)
     {
       typedef boost::unordered_map<uc::String, RegisterPtr> ImportsMap;
       ImportsMap importsMap;
@@ -57,10 +61,20 @@ namespace s1
           if (!reg)
           {
             // We need to create a register
+            uc::String regName;
+            if (level > 0)
+            {
+              // Add a unique suffix to avoid name conflicts
+              FormatLevelSuffix (regName, globalIdent, level);
+            }
+            else
+            {
+              regName = globalIdent;
+            }
             reg =
               IntermediateGeneratorSemanticsHandler::AllocateRegister (
                 *newSequenceBuilder, global->GetValueType (),
-                IntermediateGeneratorSemanticsHandler::Imported, globalIdent);
+                IntermediateGeneratorSemanticsHandler::Imported, regName);
             if (originalName.isEmpty ())
               originalName = reg->GetOriginalName ();
           }
@@ -171,7 +185,8 @@ namespace s1
         {
           GlobalVarRegsMap::const_iterator globalVarReg = globalVarRegsIn.find (globalName);
           assert (globalVarReg != globalVarRegsIn.end ());
-          globalVarRegsOut[globalName] = newSequenceBuilder->AllocateRegister (globalVarReg->second);
+          RegisterPtr newReg = newSequenceBuilder->AllocateRegister (globalVarReg->second);
+          globalVarRegsOut[globalName] = newReg;
         }
       }
     }
@@ -341,7 +356,7 @@ namespace s1
       const SequencePtr& oldSequence,
       const RegisterMap& regMap)
     {
-      return new FunctionCallGlobalVarAugment (newSequenceBuilder, oldSequence, globals);
+      return new FunctionCallGlobalVarAugment (newSequenceBuilder, oldSequence, globals, level+1);
     }
 
     CloningSequenceVisitor* FunctionCallGlobalVarAugment::Clone (const SequenceBuilderPtr& newSequenceBuilder,

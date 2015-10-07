@@ -34,7 +34,8 @@ namespace s1
     public:
       FunctionCallGlobalVarAugment (const SequenceBuilderPtr& newSequenceBuilder,
                                     const SequencePtr& oldSeq,
-                                    const std::vector<IntermediateGeneratorSemanticsHandler::NamePtr>& globals);
+                                    const std::vector<IntermediateGeneratorSemanticsHandler::NamePtr>& globals,
+                                    int level = 0);
 
       RegisterPtr MapRegisterIn (const RegisterPtr& reg);
       RegisterPtr MapRegisterOut (const RegisterPtr& reg);
@@ -51,6 +52,8 @@ namespace s1
         const std::vector<RegisterPtr>& inParams,
         const std::vector<RegisterPtr>& outParams);
     protected:
+      /// Nesting level, used to generate unique register names
+      int level;
       /// All globals
       std::vector<IntermediateGeneratorSemanticsHandler::NamePtr> globals;
       /// Names of global vars that are read
