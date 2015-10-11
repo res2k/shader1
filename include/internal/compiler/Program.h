@@ -44,18 +44,17 @@ namespace s1
     intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
     intermediate::ProgramPtr intermediateProg;
     
-    boost::unordered_map<uc::String, unsigned int> freqFlagMap;
-    boost::unordered_map<uc::String, size_t> arraySizeMap;
     intermediate::ProgramPtr splitProgs[splitter::freqNum];
     
     void SetProgramOutputParameters ();
   public:
-    void SetInputParameterFrequencyFlags (const uc::String& param,
-					  unsigned int frequencyFlags);
-    void SetInputArrayParameterSize (const uc::String& param, size_t size);
+    typedef boost::unordered_map<uc::String, unsigned int> FreqFlagMap;
+    typedef boost::unordered_map<uc::String, size_t> ArraySizeMap;
     
     Compiler::Backend::ProgramPtr GetCompiledProgram (const uc::String& entryFunction,
                                                       const OptionsPtr& compilerOptions,
+                                                      const FreqFlagMap& inputParamFreqs,
+                                                      const ArraySizeMap& arraySizes,
                                                       const Compiler::BackendPtr& backend,
 						      Backend::CompileTarget target);
     

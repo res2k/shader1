@@ -58,7 +58,7 @@ namespace s1
       const OutputParameters& GetOutputParameters () const;
       
       typedef boost::unordered_map<uc::String, size_t> ParameterArraySizes;
-      void SetParameterArraySize (const uc::String& name, size_t size);
+      void SetParameterArraySizes (const ParameterArraySizes& sizes);
       const ParameterArraySizes& GetParameterArraySizes () const;
       
       // @@@ Actualls, should perhaps better be in splitter ...

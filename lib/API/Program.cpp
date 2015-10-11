@@ -50,27 +50,27 @@ namespace s1
       {
         std::istringstream inputStream (source, std::ios_base::in | std::ios_base::binary);
         wrapped_program = compiler.CreateProgram (inputStream);
-        
-        for(const InputFreqMapType::value_type& inputFreq : inputFreqMap)
-        {
-          uc::String ucParam (uc::String::fromUTF8 (inputFreq.first));
-          wrapped_program->SetInputParameterFrequencyFlags (ucParam, 1 << inputFreq.second);
-        }
-        for(const InputSizeMapType::value_type& inputSize : inputSizeMap)
-        {
-          uc::String ucParam (uc::String::fromUTF8 (inputSize.first));
-          wrapped_program->SetInputArrayParameterSize (ucParam, 1 << inputSize.second);
-        }
       }
       
+      Compiler::Program::FreqFlagMap inputFreqFlags;
+      for(const InputFreqMapType::value_type& inputFreq : inputFreqMap)
+      {
+        uc::String ucParam (uc::String::fromUTF8 (inputFreq.first));
+        inputFreqFlags.emplace (ucParam, 1 << inputFreq.second);
+      }
+      Compiler::Program::ArraySizeMap inputArraySizes;
+      for(const InputSizeMapType::value_type& inputSize : inputSizeMap)
+      {
+        uc::String ucParam (uc::String::fromUTF8 (inputSize.first));
+        inputArraySizes.emplace (ucParam, inputSize.second);
+      }
       uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
-      return wrapped_program->GetCompiledProgram (entryFunctionU, options, backend, target);
+      return wrapped_program->GetCompiledProgram (entryFunctionU, options, inputFreqFlags, inputArraySizes, backend, target);
     }
 
     s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
     {
       this->options.reset (new s1::Compiler::Options (GetLibrary(), *(options.get())));
-      Dirty ();
       return S1_SUCCESS;
     }
     const s1::Compiler::OptionsPtr& Program::GetOptions() const { return options; }
@@ -79,7 +79,6 @@ namespace s1
     {
       // TODO: Function name validation
       entryFunction = entry;
-      Dirty();
       return S1_SUCCESS;
     }
     s1_ResultCode Program::GetEntry (const char*& entry) const
@@ -100,7 +99,6 @@ namespace s1
         return S1_E_INVALID_FREQUENCY;
       }
       inputFreqMap[param] = new_freq;
-      Dirty();
       return S1_SUCCESS;
     }
     s1_ResultCode Program::GetInputFrequency (const char* param, s1_InputFrequency& freq) const
@@ -124,7 +122,6 @@ namespace s1
     {
       // TODO: Parameter validation
       inputSizeMap[param] = size;
-      Dirty();
       return S1_SUCCESS;
     }
     s1_ResultCode Program::GetInputArraySize (const char* param, size_t& size) const

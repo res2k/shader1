@@ -41,15 +41,7 @@ namespace s1
       {
 	newProgram->SetOutputParameter (outputParam->first, outputParam->second);
       }      
-      {
-	const intermediate::Program::ParameterArraySizes& progArraySizes = program->GetParameterArraySizes ();
-	for (intermediate::Program::ParameterArraySizes::const_iterator paramArraySize = progArraySizes.begin();
-	     paramArraySize != progArraySizes.end();
-	     ++paramArraySize)
-	{
-	  newProgram->SetParameterArraySize (paramArraySize->first, paramArraySize->second);
-	}
-      }
+      newProgram->SetParameterArraySizes (program->GetParameterArraySizes ());
       
       for (size_t f = 0; f < program->GetNumFunctions(); f++)
       {

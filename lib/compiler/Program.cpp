@@ -88,20 +88,10 @@ namespace s1
     intermediateProg->SetOutputParameter (fragmentOutput, intermediate::Program::Color);
   }
 
-  void Compiler::Program::SetInputParameterFrequencyFlags (const uc::String& param,
-							   unsigned int frequencyFlags)
-  {
-    freqFlagMap[param] = frequencyFlags;
-  }
-
-  void Compiler::Program::SetInputArrayParameterSize (const uc::String& param,
-						      size_t size)
-  {
-    arraySizeMap[param] = size;
-  }
-  
   Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const uc::String& entryFunction,
                                                                        const OptionsPtr& compilerOptions,
+                                                                       const FreqFlagMap& inputParamFreqs,
+                                                                       const ArraySizeMap& arraySizes,
                                                                        const Compiler::BackendPtr& backend,
 								       Backend::CompileTarget target)
   {
@@ -110,21 +100,17 @@ namespace s1
       intermediateProg = intermediateHandler.GetProgram(entryFunction);
       SetProgramOutputParameters ();
       
-      typedef std::pair<uc::String, size_t> ParamArraySizePair;
-      for(ParamArraySizePair paramArraySize : arraySizeMap)
-      {
-	intermediateProg->SetParameterArraySize (paramArraySize.first, paramArraySize.second);
-      }
-      
-      optimize::Optimizer opt;
-      opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));
-      opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Options::optDeadCodeElimination));
-      opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Options::optConstantFolding));
-      intermediateProg = opt.ApplyOptimizations (intermediateProg);
-      
       for (unsigned int n = 0; n < splitter::freqNum; n++)
 	splitProgs[n] = intermediate::ProgramPtr();
     }
+
+    intermediateProg->SetParameterArraySizes (arraySizes);
+
+    optimize::Optimizer opt;
+    opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));
+    opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Options::optDeadCodeElimination));
+    opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Options::optConstantFolding));
+    intermediate::ProgramPtr optProg = opt.ApplyOptimizations (intermediateProg);
 
     switch (target)
     {
@@ -136,12 +122,12 @@ namespace s1
 	  splitter::ProgramSplitter splitter;
 	  
 	  typedef std::pair<uc::String, unsigned int> FreqFlagPair;
-	  for(FreqFlagPair freqFlag : freqFlagMap)
+	  for(FreqFlagPair freqFlag : inputParamFreqs)
 	  {
 	    splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);
 	  }
 	  
-	  splitter.SetInputProgram (intermediateProg);
+	  splitter.SetInputProgram (optProg);
 	  splitter.PerformSplit();
 	  
 	  optimize::Optimizer opt;
@@ -157,7 +143,7 @@ namespace s1
       }
       break;
     case Backend::targetUnsplit:
-      return backend->GenerateProgram (target, intermediateProg);
+      return backend->GenerateProgram (target, optProg);
     }
     
     assert (false);

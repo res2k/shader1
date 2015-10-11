@@ -55,9 +55,9 @@ namespace s1
       return outputParams;
     }
 
-    void Program::SetParameterArraySize (const uc::String& name, size_t size)
+    void Program::SetParameterArraySizes (const Program::ParameterArraySizes& sizes)
     {
-      paramArraySizes[name] = size;
+      paramArraySizes = sizes;
     }
     
     const Program::ParameterArraySizes& Program::GetParameterArraySizes () const
