@@ -50,14 +50,7 @@ namespace s1
       Compiler::ProgramPtr wrapped_program;
       void Dirty();
     public:
-      Program(s1::Library* lib, Compiler& compiler, const std::string& source)
-        : LibraryObject (lib),
-          compiler (compiler),
-          options (new s1::Compiler::Options (lib)),
-          source (source),
-          entryFunction ("main")
-      {
-      }
+      Program (s1::Library* lib, Compiler& compiler, const std::string& source);
 
       Compiler::Backend::ProgramPtr GetCompiledProgram (const Compiler::BackendPtr& backend,
                                                         Compiler::Backend::CompileTarget target);

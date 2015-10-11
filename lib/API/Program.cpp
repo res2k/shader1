@@ -28,6 +28,15 @@ namespace s1
 {
   namespace api_impl
   {
+    Program::Program(s1::Library* lib, Compiler& compiler, const std::string& source)
+      : LibraryObject (lib),
+        compiler (compiler),
+        options (new s1::Compiler::Options (lib)),
+        source (source),
+        entryFunction ("main")
+    {
+    }
+
     void Program::Dirty()
     {
       wrapped_program.reset();
@@ -40,9 +49,7 @@ namespace s1
       if (!wrapped_program)
       {
         std::istringstream inputStream (source, std::ios_base::in | std::ios_base::binary);
-        uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
-        wrapped_program = compiler.CreateProgram (inputStream, entryFunctionU);
-        wrapped_program->SetEntryFunctionName (entryFunctionU);
+        wrapped_program = compiler.CreateProgram (inputStream);
         
         for(const InputFreqMapType::value_type& inputFreq : inputFreqMap)
         {
@@ -56,7 +63,8 @@ namespace s1
         }
       }
       
-      return wrapped_program->GetCompiledProgram (options, backend, target);
+      uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
+      return wrapped_program->GetCompiledProgram (entryFunctionU, options, backend, target);
     }
 
     s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)

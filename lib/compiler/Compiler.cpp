@@ -38,9 +38,9 @@ namespace s1
     return BackendPtr (new compiler::BackendCg (lib));
   }
 
-  Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input, const uc::String& entryFunction)
+  Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input)
   {
     uc::Stream uniStream (input);
-    return ProgramPtr (new Program (&uniStream, entryFunction));
+    return ProgramPtr (new Program (&uniStream));
   }
 } // namespace s1

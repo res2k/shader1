@@ -542,7 +542,7 @@ namespace s1
       completed = true;
     }
 
-    ProgramPtr IntermediateGeneratorSemanticsHandler::GetProgram ()
+    ProgramPtr IntermediateGeneratorSemanticsHandler::GetProgram (const uc::String& entryFunctionName)
     {
       S1_ASSERT(completed, ProgramPtr ());
 
@@ -557,7 +557,7 @@ namespace s1
 	     funcIt != functions.end();
 	     ++funcIt)
 	{
-          if ((*funcIt)->originalIdentifier == this->entryFunction)
+          if ((*funcIt)->originalIdentifier == entryFunctionName)
           {
             if (!entryFunction)
             {

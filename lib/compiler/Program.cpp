@@ -34,12 +34,11 @@
 
 namespace s1
 {
-  Compiler::Program::Program (uc::Stream* inputStream, const uc::String& entryFunction)
+  Compiler::Program::Program (uc::Stream* inputStream)
   {
     compiler::ErrorHandler errorHandler; // TODO: real error handler
     Lexer lexer (*inputStream, errorHandler);
     
-    intermediateHandler.SetEntryFunction (entryFunction);
     Parser parser (lexer, intermediateHandler, errorHandler);
     parser.Parse ();
     intermediateHandler.CompleteProgram();
@@ -101,19 +100,14 @@ namespace s1
     arraySizeMap[param] = size;
   }
   
-  void Compiler::Program::SetEntryFunctionName (const uc::String& name)
-  {
-    intermediateHandler.SetEntryFunction (name);
-    intermediateProg = intermediate::ProgramPtr();
-  }
-
-  Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const OptionsPtr& compilerOptions,
+  Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const uc::String& entryFunction,
+                                                                       const OptionsPtr& compilerOptions,
                                                                        const Compiler::BackendPtr& backend,
 								       Backend::CompileTarget target)
   {
     if (!intermediateProg)
     {
-      intermediateProg = intermediateHandler.GetProgram();
+      intermediateProg = intermediateHandler.GetProgram(entryFunction);
       SetProgramOutputParameters ();
       
       typedef std::pair<uc::String, size_t> ParamArraySizePair;

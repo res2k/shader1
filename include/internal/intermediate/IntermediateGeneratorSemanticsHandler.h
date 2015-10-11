@@ -90,7 +90,6 @@ namespace s1
 
       /// Whether the intermediate program was marked "completed"
       bool completed;
-      uc::String entryFunction;
     public:
       /**\name Type utilities
        * @{ */
@@ -177,10 +176,8 @@ namespace s1
 
       /// Mark the program as “completed”. Required before GetProgram() is called
       void CompleteProgram ();
-      ProgramPtr GetProgram ();
+      ProgramPtr GetProgram (const uc::String& entryFunctionName);
 
-      void SetEntryFunction (const uc::String& entryFunction) { this->entryFunction = entryFunction; }
-      
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */
       TypePtr CreateType (BaseType type);

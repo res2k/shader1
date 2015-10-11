@@ -37,7 +37,7 @@ namespace s1
   protected:
     friend class Compiler;
     
-    Program (uc::Stream* inputStream, const uc::String& entryFunction);
+    Program (uc::Stream* inputStream);
     
     OptionsPtr compilerOptions;
     
@@ -53,9 +53,9 @@ namespace s1
     void SetInputParameterFrequencyFlags (const uc::String& param,
 					  unsigned int frequencyFlags);
     void SetInputArrayParameterSize (const uc::String& param, size_t size);
-    void SetEntryFunctionName (const uc::String& name);
     
-    Compiler::Backend::ProgramPtr GetCompiledProgram (const OptionsPtr& compilerOptions,
+    Compiler::Backend::ProgramPtr GetCompiledProgram (const uc::String& entryFunction,
+                                                      const OptionsPtr& compilerOptions,
                                                       const Compiler::BackendPtr& backend,
 						      Backend::CompileTarget target);
     
