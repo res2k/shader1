@@ -20,7 +20,7 @@
 
 #include "base/format/Formatter.h"
 #include "codegen/CgGenerator.h"
-#include "codegen/StringsArray.h"
+#include "codegen/common/StringsArray.h"
 #include "intermediate/ProgramFunction.h"
 #include "intermediate/Sequence.h"
 #include "intermediate/SequenceVisitor.h"

@@ -19,7 +19,7 @@
 #define __CODEGEN_FUNCTIONCODEGENERATOR_H__
 
 #include "codegen/CgGenerator.h"
-#include "codegen/StringsArray.h"
+#include "codegen/common/StringsArray.h"
 #include "intermediate/forwarddecl.h"
 #include "SequenceCodeGenerator.h"
 
