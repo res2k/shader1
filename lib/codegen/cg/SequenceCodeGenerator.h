@@ -20,6 +20,7 @@
 
 #include "base/format/Formatter.h"
 #include "codegen/CgGenerator.h"
+#include "codegen/common/AnnotatingSequenceCodeGenerator.h"
 #include "codegen/common/StringsArray.h"
 #include "intermediate/ProgramFunction.h"
 #include "intermediate/Sequence.h"
@@ -40,7 +41,7 @@ namespace s1
       virtual std::string GetExportedNameIdentifier (const uc::String& name) = 0;
     };
     
-    class CgGenerator::SequenceCodeGenerator
+    class CgGenerator::SequenceCodeGenerator : public AnnotatingSequenceCodeGenerator
     {
     protected:
       typedef intermediate::RegisterPtr RegisterPtr;
@@ -60,29 +61,13 @@ namespace s1
 	std::string GetExportedNameIdentifier (const uc::String& name);
       };
       
-      class CodegenVisitor : public intermediate::SequenceVisitor
+      class CodegenVisitor : public AnnotatingSequenceCodeGenerator::Visitor
       {
+        typedef AnnotatingSequenceCodeGenerator::Visitor AnnotatingVisitor;
 	friend class SequenceCodeGenerator;
 	
 	SequenceCodeGenerator* owner;
-	StringsArrayPtr target;
 	bool emitEmptyBlocks;
-
-        // Write a debug comment to the output.
-        void DebugComment(const uc::String& str);
-
-      #define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
-        BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
-        BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
-      #define _DECLARE_DEBUG_COMMENT(Z, ArgNum, Data)                                 \
-        template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>         \
-        void DebugComment (const char* opStr                                          \
-          BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const;
-
-        BOOST_PP_REPEAT(BOOST_PP_DEC(FORMATTER_MAX_ARGS), _DECLARE_DEBUG_COMMENT, _)
-
-      #undef _DECLARE_DEBUG_COMMENT
-      #undef _GENERATE_METHOD_PARAM
 
 	void EmitAssign (const RegisterPtr& destination,
 			 const char* value);
@@ -193,11 +178,9 @@ namespace s1
 			    const std::vector<RegisterPtr>& inParams);
       };
       
-      const intermediate::Sequence& seq;
       ImportedNameResolver* nameRes;
       const intermediate::ProgramFunction::TransferMappings& transferIn;
       const intermediate::ProgramFunction::TransferMappings& transferOut;
-      StringsArrayPtr strings;
       const std::vector<std::string>& outParams;
       
       typedef boost::unordered_map<RegisterPtr, std::string> RegistersToIDMap;

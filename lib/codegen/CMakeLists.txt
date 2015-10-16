@@ -5,8 +5,12 @@ IF(S1LIB_PDB)
 ENDIF()
 set(codegen_sources
 	CgGenerator.cpp
+        common/AnnotatingSequenceCodeGenerator.cpp
+        common/BasicSequenceCodeGenerator.cpp
 	common/StringsArray.cpp
 	../../include/internal/codegen/CgGenerator.h
+        ../../include/internal/codegen/common/AnnotatingSequenceCodeGenerator.h
+        ../../include/internal/codegen/common/BasicSequenceCodeGenerator.h
 	../../include/internal/codegen/common/StringsArray.h)
 s1_add_library(codegen
                SOURCES ${codegen_sources}

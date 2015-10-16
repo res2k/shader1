@@ -24,10 +24,7 @@
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"
 
-#include <boost/call_traits.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/preprocessor/arithmetic/mul.hpp>
-#include <boost/preprocessor/seq/for_each.hpp>
 #include <sstream>
 #include <stdio.h>
 
@@ -122,289 +119,8 @@ namespace s1
 
     CgGenerator::SequenceCodeGenerator::CodegenVisitor::CodegenVisitor (SequenceCodeGenerator* owner,
 									const StringsArrayPtr& target)
-     : owner (owner), target (target), emitEmptyBlocks (false)
+     : AnnotatingVisitor (target), owner (owner), emitEmptyBlocks (false)
     {
-    }
-
-    namespace
-    {
-      template<typename T>
-      struct DebugCommentArgHelper
-      {
-        static typename boost::call_traits<T>::param_type FormatArg(typename boost::call_traits<T>::param_type value)
-        { return value;  }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<bool>
-      {
-        static const char* FormatArg(bool value)
-        { return value ? "true" : "false";  }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::RegisterPtr>
-      {
-        static const uc::String& FormatArg(const intermediate::RegisterPtr& value)
-        { return value->GetName(); }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::BasicType>
-      {
-        static const char* FormatArg(intermediate::BasicType value)
-        {
-          switch (value)
-          {
-          case s1::intermediate::Bool:
-            return "Bool";
-          case s1::intermediate::Int:
-            return "Int";
-          case s1::intermediate::UInt:
-            return "UInt";
-          case s1::intermediate::Float:
-            return "Float";
-          default:
-            break;
-          }
-          return "???";
-        }
-      };
-
-      template<typename T>
-      struct DebugCommentArgHelper<std::vector<T> >
-      {
-        static uc::String FormatArg (const std::vector<T>& vec)
-        {
-          format::Formatter<> fmtItem ("{0}");
-          uc::String result ("[");
-          bool first = true;
-          for (const T& item : vec)
-          {
-            uc::String itemStr;
-            if (!first) result.append (", ");
-            first = false;
-            fmtItem (itemStr, DebugCommentArgHelper<T>::FormatArg (item));
-            result.append (itemStr);
-          }
-          result.append ("]");
-          return result;
-        }
-      };
-
-      static format::StaticFormatter FormatPair ("({0}, {1})");
-
-      template<typename T, typename U>
-      struct DebugCommentArgHelper<std::pair<T, U> >
-      {
-        static uc::String FormatArg (const std::pair<T, U>& pair)
-        {
-          uc::String result;
-          FormatPair (result,
-            DebugCommentArgHelper<T>::FormatArg (pair.first),
-            DebugCommentArgHelper<U>::FormatArg (pair.second));
-          return result;
-        }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::SequenceVisitor::ArithmeticOp>
-      {
-        static const char* FormatArg(intermediate::SequenceVisitor::ArithmeticOp value)
-        {
-          switch (value)
-          {
-          case intermediate::SequenceVisitor::Add:
-            return "Add";
-          case intermediate::SequenceVisitor::Sub:
-            return "Sub";
-          case intermediate::SequenceVisitor::Mul:
-            return "Mul";
-          case intermediate::SequenceVisitor::Div:
-            return "Div";
-          case intermediate::SequenceVisitor::Mod:
-            return "Mod";
-          default:
-            break;
-          }
-          return "???";
-        }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::SequenceVisitor::LogicOp>
-      {
-        static const char* FormatArg(intermediate::SequenceVisitor::LogicOp value)
-        {
-          switch (value)
-          {
-          case intermediate::SequenceVisitor::And:
-            return "And";
-          case intermediate::SequenceVisitor::Or:
-            return "Or";
-          default:
-            break;
-          }
-          return "???";
-        }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::SequenceVisitor::UnaryOp>
-      {
-        static const char* FormatArg(intermediate::SequenceVisitor::UnaryOp value)
-        {
-          switch (value)
-          {
-          case intermediate::SequenceVisitor::Neg:
-            return "Neg";
-          case intermediate::SequenceVisitor::Inv:
-            return "Inv";
-          case intermediate::SequenceVisitor::Not:
-            return "Not";
-          default:
-            break;
-          }
-          return "???";
-        }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::SequenceVisitor::CompareOp>
-      {
-        static const char* FormatArg(intermediate::SequenceVisitor::CompareOp value)
-        {
-          switch (value)
-          {
-          case intermediate::SequenceVisitor::Eq:
-            return "Eq";
-          case intermediate::SequenceVisitor::NE:
-            return "NE";
-          case intermediate::SequenceVisitor::LT:
-            return "LT";
-          case intermediate::SequenceVisitor::LE:
-            return "LE";
-          case intermediate::SequenceVisitor::GT:
-            return "GT";
-          case intermediate::SequenceVisitor::GE:
-            return "GE";
-          default:
-            break;
-          }
-          return "???";
-        }
-      };
-
-      template<>
-      struct DebugCommentArgHelper<intermediate::BuiltinFunction>
-      {
-        static const char* FormatArg(intermediate::BuiltinFunction value)
-        {
-          switch (value)
-          {
-          case intermediate::dot:
-            return "dot";
-          case intermediate::cross:
-            return "cross";
-          case intermediate::normalize:
-            return "normalize";
-          case intermediate::length:
-            return "length";
-          case intermediate::mul:
-            return "mul";
-          case intermediate::tex1D:
-            return "tex1D";
-          case intermediate::tex2D:
-            return "tex2D";
-          case intermediate::tex3D:
-            return "tex3D";
-          case intermediate::texCUBE:
-            return "texCUBE";
-          case intermediate::min:
-            return "min";
-          case intermediate::max:
-            return "max";
-          case intermediate::pow:
-            return "pow";
-          default:
-            break;
-          }
-          return "???";
-        }
-      };
-    }
-
-    // TODO: Perhaps rather a run-time option?
-#ifdef _DEBUG
-#define ENABLE_DEBUG_COMMENTS
-#endif
-
-#define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
-  BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
-  BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
-
-#ifdef ENABLE_DEBUG_COMMENTS
-  #define _GENERATE_FMT_PLACEHOLDER(Z, N, Data)                                       \
-    BOOST_PP_IF(N, ",", "") " {" BOOST_PP_STRINGIZE(BOOST_PP_INC(BOOST_PP_MUL(N, 2))) \
-    "}={" BOOST_PP_STRINGIZE(BOOST_PP_MUL(BOOST_PP_INC(N), 2))   "}"
-  #define _GENERATE_FMT_ARGUMENT(Z, N, Data)      \
-    BOOST_PP_COMMA() BOOST_PP_CAT(name, N)        \
-    BOOST_PP_COMMA() DebugCommentArgHelper<BOOST_PP_CAT(A, N)>::FormatArg (BOOST_PP_CAT(a, N))
-
-  #define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                              \
-    template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::DebugComment (const char* opStr  \
-      BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
-    {                                                                                         \
-      static format::StaticFormatter fmt ("// {0} ->"                                         \
-        BOOST_PP_REPEAT_FROM_TO_ ## Z (0, BOOST_PP_INC(ArgNum),                               \
-          _GENERATE_FMT_PLACEHOLDER, _));                                                     \
-      uc::String commentStr;                                                                  \
-      fmt (commentStr, opStr                                                                  \
-        BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_FMT_ARGUMENT, _));             \
-      target->AddString (commentStr);                                                         \
-    } 
-  #else
-  #define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                              \
-    template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::DebugComment (const char* opStr  \
-      BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
-    {                                                                                         \
-    }
-  #endif
-
-    BOOST_PP_REPEAT (BOOST_PP_DEC (FORMATTER_MAX_ARGS), _DEFINE_DEBUG_COMMENT, _)
-
-  #undef _DEFINE_DEBUG_COMMENT
-
-  #define _GENERATE_INVOKE_ARG(R, Data, Elem)     \
-    BOOST_PP_COMMA() BOOST_PP_STRINGIZE(Elem) BOOST_PP_COMMA() (Elem)
-  #define DEBUG_COMMENT(Op, Seq)    \
-    DebugComment (Op BOOST_PP_SEQ_FOR_EACH(_GENERATE_INVOKE_ARG, _, Seq));
-  
-    void CgGenerator::SequenceCodeGenerator::CodegenVisitor::DebugComment (const uc::String& str)
-    {
-      uc::String remainder (str);
-      bool firstLine = true;
-      uc::String line;
-      while (!remainder.isEmpty ())
-      {
-        line = (firstLine ? "/* " : "   ");
-        firstLine = false;
-        uc::String::size_type lfPos = remainder.indexOf ('\n');
-        if (lfPos == uc::String::npos)
-        {
-          line.append (remainder);
-          line.append (" */");
-          target->AddString (line);
-          return;
-        }
-        line.append (remainder.data (), lfPos);
-        target->AddString (line);
-        remainder = uc::String (remainder, lfPos + 1);
-        if (remainder.isEmpty())
-          target->AddString (" */");
-      }
     }
 
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::EmitAssign (const RegisterPtr& destination,
@@ -488,7 +204,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterPtr& destination,
 									  bool value)
     {
-      DEBUG_COMMENT ("ConstBool", (destination)(value));
+      AnnotatingVisitor::OpConstBool (destination, value);
       const char* valueStr = value ? "true" : "false";
       PseudoAssign (destination, valueStr);
     }
@@ -496,7 +212,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstInt (const RegisterPtr& destination,
 									 int value)
     {
-      DEBUG_COMMENT ("ConstInt", (destination)(value));
+      AnnotatingVisitor::OpConstInt (destination, value);
       std::stringstream valueStrStream;
       valueStrStream << value;
       PseudoAssign (destination, valueStrStream.str().c_str());
@@ -505,7 +221,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstUInt (const RegisterPtr& destination,
 									  unsigned int value)
     {
-      DEBUG_COMMENT ("ConstUInt", (destination)(value));
+      AnnotatingVisitor::OpConstUInt (destination, value);
       std::stringstream valueStrStream;
       valueStrStream << value;
       PseudoAssign (destination, valueStrStream.str().c_str());
@@ -514,7 +230,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpConstFloat (const RegisterPtr& destination,
 									   float value)
     {
-      DEBUG_COMMENT ("ConstFloat", (destination)(value));
+      AnnotatingVisitor::OpConstFloat (destination, value);
       std::stringstream valueStrStream;
       valueStrStream << value;
       PseudoAssign (destination, valueStrStream.str().c_str());
@@ -523,7 +239,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpAssign (const RegisterPtr& destination,
 								       const RegisterPtr& source)
     {
-      DEBUG_COMMENT ("Assign", (destination)(source));
+      AnnotatingVisitor::OpAssign (destination, source);
       std::string sourceName (owner->GetOutputRegisterName (source));
       EmitAssign (destination, sourceName.c_str());
     }
@@ -533,7 +249,7 @@ namespace s1
 								     intermediate::BasicType destType,
 								     const RegisterPtr& source)
     {
-      DEBUG_COMMENT ("Cast", (destination)(destType)(source));
+      AnnotatingVisitor::OpCast (destination, destType, source);
       // Check if the destination register type matches the source register type
       bool typeMatch (false);
       if (destination->GetOriginalType()->GetTypeClass()
@@ -579,7 +295,7 @@ namespace s1
 									   intermediate::BasicType compType,
 									   const std::vector<RegisterPtr>& sources)
     {
-      DEBUG_COMMENT ("MakeVector", (destination)(compType)(sources));
+      AnnotatingVisitor::OpMakeVector (destination, compType, sources);
       std::string paramsStr;
       bool one_source (true);
       {
@@ -645,7 +361,7 @@ namespace s1
 									   unsigned int matrixCols,
 									   const std::vector<RegisterPtr>& sources)
     {
-      DEBUG_COMMENT ("MakeMatrix", (destination)(compType)(matrixRows)(matrixCols)(sources));
+      AnnotatingVisitor::OpMakeMatrix (destination, compType, matrixRows, matrixCols, sources);
       std::string paramsStr;
       ParamHelper params (paramsStr);
       for (std::vector<RegisterPtr>::const_iterator source (sources.begin());
@@ -679,7 +395,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpMakeArray (const RegisterPtr& destination,
 									  const std::vector<RegisterPtr>& sources)
     {
-      DEBUG_COMMENT ("MakeArray", (destination)(sources));
+      AnnotatingVisitor::OpMakeArray (destination, sources);
       std::string elementsStr ("{ ");
       ParamHelper elements (elementsStr);
       for (std::vector<RegisterPtr>::const_iterator source (sources.begin());
@@ -697,7 +413,7 @@ namespace s1
 										    const RegisterPtr& source,
 										    const RegisterPtr& index)
     {
-      DEBUG_COMMENT ("ExtractArrayElement", (destination)(source)(index));
+      AnnotatingVisitor::OpExtractArrayElement (destination, source, index);
       std::string sourceName (owner->GetOutputRegisterName (source));
       sourceName.append ("[");
       sourceName.append (owner->GetOutputRegisterName (index));
@@ -710,7 +426,7 @@ namespace s1
 										   const RegisterPtr& index,
 										   const RegisterPtr& newValue)
     {
-      DEBUG_COMMENT ("ChangeArrayElement", (destination)(source)(index)(newValue));
+      AnnotatingVisitor::OpChangeArrayElement (destination, source, index, newValue);
       EmitAssign (destination, owner->GetOutputRegisterName (source).c_str());
       std::string changeDest (owner->GetOutputRegisterName (destination));
       changeDest.append ("[");
@@ -722,7 +438,7 @@ namespace s1
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpGetArrayLength (const RegisterPtr& destination,
 									       const RegisterPtr& array)
     {
-      DEBUG_COMMENT ("GetArrayLength", (destination)(array));
+      AnnotatingVisitor::OpGetArrayLength (destination, array);
       std::string sourceName (owner->GetOutputRegisterName (array));
       sourceName.append (".length");
       EmitAssign (destination, sourceName.c_str());
@@ -730,10 +446,10 @@ namespace s1
 			 
 				    
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpExtractVectorComponent (const RegisterPtr& destination,
-										       const RegisterPtr& source,
-										       unsigned int comp)
+                                                                                       const RegisterPtr& source,
+                                                                                       unsigned int comp)
     {
-      DEBUG_COMMENT ("ExtractVectorComponent", (destination)(source)(comp));
+      AnnotatingVisitor::OpExtractVectorComponent (destination, source, comp);
       std::string sourceName (owner->GetOutputRegisterName (source));
       sourceName.append (".");
       sourceName.append (vecCompStr[comp]);
@@ -758,7 +474,7 @@ namespace s1
 								      const RegisterPtr& source1,
 								      const RegisterPtr& source2)
     {
-      DEBUG_COMMENT ("Arith", (destination)(op)(source1)(source2));
+      AnnotatingVisitor::OpArith (destination, op, source1, source2);
       switch (op)
       {
       case Add:
@@ -785,7 +501,7 @@ namespace s1
 								      const RegisterPtr& source1,
 								      const RegisterPtr& source2)
     {
-      DEBUG_COMMENT ("Logic", (destination)(op)(source1)(source2));
+      AnnotatingVisitor::OpLogic (destination, op, source1, source2);
       switch (op)
       {
       case And:
@@ -802,7 +518,7 @@ namespace s1
 								      UnaryOp op,
 								      const RegisterPtr& source)
     {
-      DEBUG_COMMENT ("Unary", (destination)(op)(source));
+      AnnotatingVisitor::OpUnary (destination, op, source);
       switch (op)
       {
       case Inv:
@@ -823,7 +539,7 @@ namespace s1
 									const RegisterPtr& source1,
 									const RegisterPtr& source2)
     {
-      DEBUG_COMMENT ("Compare", (destination)(op)(source1)(source2));
+      AnnotatingVisitor::OpCompare (destination, op, source1, source2);
       switch (op)
       {
       case Eq:
@@ -854,25 +570,7 @@ namespace s1
 								      const Sequence::IdentifierToRegMap& identToRegID_imp,
 								      const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
-    #ifdef ENABLE_DEBUG_COMMENTS
-      {
-        uc::String impString ("Import map:\n");
-        if (identToRegID_imp.empty ())
-        {
-          impString.append (" <empty>");
-        }
-        else
-        {
-          for (const Sequence::IdentifierToRegMap::value_type& impPair : identToRegID_imp)
-          {
-            uc::String s;
-            FormatImpMapEntry (s, impPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (impPair.second));
-            impString.append (s);
-          }
-        }
-        DebugComment (impString);
-      }
-    #endif // ENABLE_DEBUG_COMMENTS
+      AnnotatingVisitor::BeforeOpBlock (identToRegID_imp);
 
       // Generate registers for 'exported' variables
       intermediate::RegisterSet writtenRegisters (seq->GetExportOuterRegs (identToRegID_exp));
@@ -894,32 +592,14 @@ namespace s1
 	target->AddString ("}");
       }
 
-    #ifdef ENABLE_DEBUG_COMMENTS
-      {
-        uc::String expString ("Export map:\n");
-        if (identToRegID_exp.empty ())
-        {
-          expString.append (" <empty>");
-        }
-        else
-        {
-          for (const Sequence::IdentifierToRegMap::value_type& expPair : identToRegID_exp)
-          {
-            uc::String s;
-            FormatExpMapEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
-            expString.append (s);
-          }
-        }
-        DebugComment (expString);
-      }
-    #endif // ENABLE_DEBUG_COMMENTS
+      AnnotatingVisitor::AfterOpBlock (identToRegID_exp);
     }
 		      
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpBranch (const RegisterPtr& conditionReg,
 								       const intermediate::SequenceOpPtr& seqOpIf,
 								       const intermediate::SequenceOpPtr& seqOpElse)
     {
-      DEBUG_COMMENT ("If", (conditionReg));
+      AnnotatingVisitor::OpBranch (conditionReg, seqOpIf, seqOpElse);
       // Generate registers for variables 'exported' by either branch
       {
 	intermediate::RegisterSet ifRegs (seqOpIf->GetWrittenRegisters());
@@ -956,7 +636,7 @@ namespace s1
 								      const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
 								      const intermediate::SequenceOpPtr& seqOpBody)
     {
-      DEBUG_COMMENT ("While", (conditionReg)(loopedRegs));
+      AnnotatingVisitor::OpWhile (conditionReg, loopedRegs, seqOpBody);
       for (size_t i = 0; i < loopedRegs.size(); i++)
       {
 	// Before entering, copy original registers to their writeable counterparts
@@ -987,7 +667,7 @@ namespace s1
     
     void CgGenerator::SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
-      DEBUG_COMMENT ("Return", (outParamVals));
+      AnnotatingVisitor::OpReturn (outParamVals);
       assert (outParamVals.size() == owner->outParams.size());
       for (size_t i = 0; i < outParamVals.size(); i++)
 	EmitAssign (owner->outParams[i].c_str(), outParamVals[i]);
@@ -998,7 +678,7 @@ namespace s1
 									     const std::vector<RegisterPtr>& inParams,
 									     const std::vector<RegisterPtr>& outParams)
     {
-      DEBUG_COMMENT ("FunctionCall", (funcIdent)(inParams)(outParams));
+      AnnotatingVisitor::OpFunctionCall (funcIdent, inParams, outParams);
       std::string line;
       line.append (NameToCgIdentifier (funcIdent));
       line.append (" (");
@@ -1023,7 +703,7 @@ namespace s1
 									    intermediate:: BuiltinFunction what,
 									    const std::vector<RegisterPtr>& inParams)
     {
-      DEBUG_COMMENT ("BuiltinCall", (destination)(what)(inParams));
+      AnnotatingVisitor::OpBuiltinCall (destination, what, inParams);
       std::string exprStr;
       switch (what)
       {
@@ -1072,13 +752,10 @@ namespace s1
 							       const intermediate::ProgramFunction::TransferMappings& transferIn,
 							       const intermediate::ProgramFunction::TransferMappings& transferOut,
 							       const std::vector<std::string>& outParams)
-     : seq (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut), outParams (outParams)
+     : AnnotatingSequenceCodeGenerator (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut), outParams (outParams)
     {
     }
     
-    static format::StaticFormatter FormatSeqImpEntry (" \"{0}\" -> {1}\n");
-    static format::StaticFormatter FormatSeqExpEntry (" \"{0}\" <- {1}\n");
-
     StringsArrayPtr CgGenerator::SequenceCodeGenerator::Generate ()
     {
       strings = boost::make_shared<StringsArray> ();
@@ -1086,26 +763,7 @@ namespace s1
       
       CodegenVisitor visitor (this, strings);
 
-    #ifdef ENABLE_DEBUG_COMMENTS
-      {
-        const intermediate::Sequence::RegisterImpMappings& imports = seq.GetImports();
-        uc::String impString ("Imports:\n");
-        if (imports.empty ())
-        {
-          impString.append (" <empty>");
-        }
-        else
-        {
-          for (const intermediate::Sequence::RegisterImpMappings::value_type& imp : imports)
-          {
-            uc::String s;
-            FormatSeqImpEntry (s, imp.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (imp.second));
-            impString.append (s);
-          }
-        }
-        visitor.DebugComment (impString);
-      }
-    #endif // ENABLE_DEBUG_COMMENTS
+      BeforeSequence (visitor);
 
       // 'Import' variables from parent generator
       {
@@ -1181,27 +839,8 @@ namespace s1
       {
 	visitor.EmitAssign (assignment.first.c_str(), assignment.second);
       }
-      
-    #ifdef ENABLE_DEBUG_COMMENTS
-      {
-        const intermediate::Sequence::RegisterExpMappings& exports = seq.GetExports();
-        uc::String expString ("Exports:\n");
-        if (exports.empty ())
-        {
-          expString.append (" <empty>");
-        }
-        else
-        {
-          for (const intermediate::Sequence::RegisterExpMappings::value_type& expPair : exports)
-          {
-            uc::String s;
-            FormatSeqExpEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
-            expString.append (s);
-          }
-        }
-        visitor.DebugComment (expString);
-      }
-    #endif // ENABLE_DEBUG_COMMENTS
+
+      AfterSequence (visitor);
 
       return strings;
     }
