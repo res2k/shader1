@@ -27,7 +27,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 // Test ASCII formatting to std::string
 class FormatStdStringTestSuite : public CxxTest::TestSuite 

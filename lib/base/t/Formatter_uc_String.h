@@ -21,7 +21,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 // Test formatting to s1::uc::String
 class FormatUcStringsTestSuite : public CxxTest::TestSuite 
