@@ -341,7 +341,7 @@ namespace s1
       template<typename SinkType, typename ...Args>
       class FormatArgAccessHelper
       {
-        typedef std::tuple<const Args&...> ArgsTuple;
+        typedef std::tuple<typename boost::call_traits<Args>::param_type...> ArgsTuple;
         ArgsTuple args_tuple;
       public:
         FormatArgAccessHelper (const Args&... args)
