@@ -282,31 +282,78 @@ namespace s1
         }
       };
 
+      // Helper: get decayed tuple element type or none_t if index out of bounds
+      template<std::size_t Index, typename Tuple>
+      struct tuple_element_or_none;
+
+      template<bool InBounds, std::size_t Index, typename Tuple>
+      struct real_tuple_element_or_none
+      {
+        typedef boost::none_t type;
+      };
+      template<std::size_t Index, typename Tuple>
+      struct real_tuple_element_or_none<true, Index, Tuple>
+      {
+        typedef typename std::tuple_element<Index, Tuple>::type type;
+      };
+
+      template<std::size_t Index, typename Tuple>
+      struct tuple_element_or_none
+      {
+        typedef typename real_tuple_element_or_none<
+          Index < std::tuple_size<Tuple>::value, Index, Tuple>::type type;
+      };
+
+      template<std::size_t Index, typename Tuple>
+      struct decayed_tuple_element_or_none
+      {
+        typedef typename std::decay<typename tuple_element_or_none<Index, Tuple>::type>::type type;
+      };
+
+      // Helper: get tuple element or none if index out of bounds
+      template<bool InBounds, std::size_t Index>
+      struct real_tuple_get
+      {
+        template<typename Tuple>
+        static inline const boost::none_t& get (const Tuple&)
+        {
+          return boost::none;
+        }
+      };
+
+      template<std::size_t Index>
+      struct real_tuple_get<true, Index>
+      {
+        template<typename Tuple>
+        static inline typename tuple_element_or_none<Index, Tuple>::type const& get (const Tuple& t)
+        {
+          return std::get<Index> (t);
+        }
+      };
+
+      template< std::size_t I, typename Tuple>
+      static inline typename tuple_element_or_none<I, Tuple>::type const& tuple_get (const Tuple& t)
+      {
+        return real_tuple_get< I < std::tuple_size<Tuple>::value, I>::get (t);
+      }
+
       // Helper: Access specific formatting args
-      template<typename SinkType
-        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(FORMATTER_MAX_ARGS, typename A, = boost::none_t BOOST_PP_INTERCEPT)>
+      template<typename SinkType, typename ...Args>
       class FormatArgAccessHelper
       {
-        std::tuple<BOOST_PP_ENUM_BINARY_PARAMS (FORMATTER_MAX_ARGS,
-          typename boost::call_traits<A, >::param_type BOOST_PP_INTERCEPT)> args_tuple;
-
+        typedef std::tuple<const Args&...> ArgsTuple;
+        ArgsTuple args_tuple;
       public:
-
-      #define _CTOR_ARG(Z, N, Data)                                             \
-        BOOST_PP_COMMA_IF(N)                                                    \
-        typename boost::call_traits<BOOST_PP_CAT(A, N)>::param_type             \
-            BOOST_PP_CAT(a, N) = BOOST_PP_CAT(A, N)()
-
-        FormatArgAccessHelper (
-          BOOST_PP_REPEAT (FORMATTER_MAX_ARGS, _CTOR_ARG, _))
-          : args_tuple (BOOST_PP_ENUM_PARAMS(FORMATTER_MAX_ARGS, a))
+        FormatArgAccessHelper (const Args&... args)
+          : args_tuple (args...)
         {}
-      #undef _CTOR_ARG
 
+      #define _ARG_HELPER(Arg)                                                      \
+          ArgHelper<SinkType, decayed_tuple_element_or_none<Arg, ArgsTuple>::type>
       #define _ARG_FORMATTED_SIZE(Arg)                                              \
-          return ArgHelper<SinkType, BOOST_PP_CAT(A, Arg)>::FormattedSize (std::get<Arg> (args_tuple));
+          return _ARG_HELPER(Arg)::FormattedSize (tuple_get<Arg> (args_tuple));
       #define _ARG_EMIT(Arg)                                                        \
-          ArgHelper<SinkType, BOOST_PP_CAT(A, Arg)>::Emit (sink, std::get<Arg> (args_tuple)); break;
+          _ARG_HELPER(Arg)::Emit (sink, tuple_get<Arg> (args_tuple)); break;
       #define _DO_SWITCH_ARG(Z, N, Macro)                                           \
           case N: Macro (N); break;
       #define _SWITCH_ARG(MaxArg, Macro)                                            \
@@ -333,6 +380,7 @@ namespace s1
           }
         }
 
+      #undef _ARG_HELPER
       #undef _ARG_FORMATTED_SIZE
       #undef _ARG_EMIT
       #undef _DO_SWITCH_ARG
