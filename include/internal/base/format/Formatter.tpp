@@ -100,12 +100,11 @@ namespace s1
       {
       public:
         typedef typename SinkType::DestType ArgType;
-        ArgHelper (const ArgType&) {}
-        size_t FormattedSize (const ArgType& arg) const
+        static size_t FormattedSize (const ArgType& arg)
         {
           return arg.size();
         }
-        void Emit (SinkType& sink, const ArgType& arg)
+        static void Emit (SinkType& sink, const ArgType& arg)
         {
           sink.append (arg);
         }
@@ -117,9 +116,8 @@ namespace s1
       {
       public:
         typedef typename SinkType::value_type ArgType[N];
-        ArgHelper (const ArgType&) {}
-        size_t FormattedSize (const ArgType&) const { return N-1; }
-        void Emit (SinkType& sink, const ArgType& arg)
+        static size_t FormattedSize (const ArgType&) { return N-1; }
+        static void Emit (SinkType& sink, const ArgType& arg)
         {
           sink.append (arg, N - 1 /* excluding NUL */);
         }
@@ -129,10 +127,8 @@ namespace s1
       class ArgHelper<SinkType, CharType[N]>
       {
       public:
-        typedef CharType ArgType[N];
-        ArgHelper (const CharType*) {}
-        size_t FormattedSize (const CharType*) const { return N-1; }
-        void Emit (SinkType& sink, const CharType* arg)
+        static size_t FormattedSize (const CharType*) { return N-1; }
+        static void Emit (SinkType& sink, const CharType* arg)
         {
           for (size_t i = 0; i < N; i++)
           {
@@ -151,14 +147,13 @@ namespace s1
       {
       public:
         typedef CharType const* ArgType;
-        ArgHelper (const ArgType) {}
-        size_t FormattedSize (ArgType arg) const
+        static size_t FormattedSize (ArgType arg)
         {
           size_t len (0);
           while (*arg) { arg++; len++; }
           return len;
         }
-        void Emit (SinkType& sink, ArgType arg)
+        static void Emit (SinkType& sink, ArgType arg)
         {
           while (*arg)
           {
@@ -205,9 +200,8 @@ namespace s1
       {
       public:
         typedef T ArgType;
-        ArgHelperInt (const ArgType) {}
-        size_t FormattedSize (ArgType arg) const { return IntDigitsHelper<T>::value; }
-        void Emit (SinkType& sink, ArgType arg)
+        static size_t FormattedSize (ArgType arg) { return IntDigitsHelper<T>::value; }
+        static void Emit (SinkType& sink, ArgType arg)
         {
           enum { num_digits = IntDigitsHelper<T>::value };
           typedef typename SinkType::value_type CharType;
@@ -234,17 +228,11 @@ namespace s1
       template<typename SinkType>
       class ArgHelper<SinkType, int> : public ArgHelperInt<SinkType, int>
       {
-        typedef ArgHelperInt<SinkType, int> Super;
-      public:
-        ArgHelper (int v) : Super (v) {}
       };
       // Unsigned integer
       template<typename SinkType>
       class ArgHelper<SinkType, unsigned int> : public ArgHelperInt<SinkType, unsigned int>
       {
-        typedef ArgHelperInt<SinkType, unsigned int> Super;
-      public:
-        ArgHelper (unsigned int v) : Super (v) {}
       };
 
       //
@@ -257,7 +245,7 @@ namespace s1
         typedef boost::container::static_vector<char, 32> string_type;
         static string_type ConvertValue (T value);
       public:
-        size_t FormattedSize (T) const
+        static size_t FormattedSize (T)
         {
           return std::numeric_limits<T>::max_digits10 + 2;
         }
@@ -267,8 +255,7 @@ namespace s1
       class ArgHelper<SinkType, float> : public ArgHelperFloat<float>
       {
       public:
-        ArgHelper (float value) {}
-        void Emit (SinkType& sink, float value)
+        static void Emit (SinkType& sink, float value)
         {
           string_type convertedStr (ConvertValue (value));
           sink.append (convertedStr.data(), convertedStr.size());
@@ -284,13 +271,12 @@ namespace s1
           throw std::logic_error ("Invalid format argument index");
         }
       public:
-        ArgHelper (const boost::none_t&) {}
-        size_t FormattedSize (const boost::none_t&) const
+        static size_t FormattedSize (const boost::none_t&)
         {
           Throw ();
           return 0;
         }
-        void Emit (SinkType& sink, const boost::none_t&)
+        static void Emit (SinkType& sink, const boost::none_t&)
         {
           Throw ();
         }
@@ -304,32 +290,23 @@ namespace s1
         std::tuple<BOOST_PP_ENUM_BINARY_PARAMS (FORMATTER_MAX_ARGS,
           typename boost::call_traits<A, >::param_type BOOST_PP_INTERCEPT)> args_tuple;
 
-#define _ARG_HELPER_MEMBER(Z, N, Data)                                           \
-            ArgHelper<SinkType, BOOST_PP_CAT(A, N)> BOOST_PP_CAT(ah, N);
-        BOOST_PP_REPEAT(FORMATTER_MAX_ARGS, _ARG_HELPER_MEMBER, _)
-#undef _ARG_HELPER_MEMBER
-
       public:
 
       #define _CTOR_ARG(Z, N, Data)                                             \
         BOOST_PP_COMMA_IF(N)                                                    \
         typename boost::call_traits<BOOST_PP_CAT(A, N)>::param_type             \
             BOOST_PP_CAT(a, N) = BOOST_PP_CAT(A, N)()
-      #define _CTOR_AH_INIT(Z, N, Data)                                         \
-          , BOOST_PP_CAT(ah, N) (BOOST_PP_CAT(a, N))
 
         FormatArgAccessHelper (
           BOOST_PP_REPEAT (FORMATTER_MAX_ARGS, _CTOR_ARG, _))
           : args_tuple (BOOST_PP_ENUM_PARAMS(FORMATTER_MAX_ARGS, a))
-            BOOST_PP_REPEAT (FORMATTER_MAX_ARGS, _CTOR_AH_INIT, _)
         {}
       #undef _CTOR_ARG
-      #undef _CTOR_AH_INIT
 
       #define _ARG_FORMATTED_SIZE(Arg)                                              \
-          return BOOST_PP_CAT(ah, Arg).FormattedSize (std::get<Arg> (args_tuple));
+          return ArgHelper<SinkType, BOOST_PP_CAT(A, Arg)>::FormattedSize (std::get<Arg> (args_tuple));
       #define _ARG_EMIT(Arg)                                                        \
-          BOOST_PP_CAT(ah, Arg).Emit (sink, std::get<Arg> (args_tuple)); break;
+          ArgHelper<SinkType, BOOST_PP_CAT(A, Arg)>::Emit (sink, std::get<Arg> (args_tuple)); break;
       #define _DO_SWITCH_ARG(Z, N, Macro)                                           \
           case N: Macro (N); break;
       #define _SWITCH_ARG(MaxArg, Macro)                                            \
