@@ -21,6 +21,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include "base/format/Formatter.h"
 #include "codegen/common/BasicSequenceCodeGenerator.h"
 
+#include <boost/preprocessor/arithmetic/div.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/enum_params.hpp>
 #include <boost/preprocessor/repeat.hpp>
@@ -39,6 +40,8 @@ namespace s1
 
         // Write a debug comment to the output.
         void DebugComment(const uc::String& str);
+
+#define COMMENT_MAX_ARGS    BOOST_PP_DIV(FORMATTER_MAX_ARGS, 2)
 
 #define _GENERATE_METHOD_PARAM(Z, N, Data)                              \
         BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \

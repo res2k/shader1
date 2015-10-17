@@ -16,10 +16,10 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
 #include "base/common.h"
+#include "codegen/common/AnnotatingSequenceCodeGenerator.h"
 
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
-#include "codegen/common/AnnotatingSequenceCodeGenerator.h"
 
 #include <boost/call_traits.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -73,7 +73,7 @@ namespace s1
     }
 #endif
 
-    BOOST_PP_REPEAT (BOOST_PP_DEC (FORMATTER_MAX_ARGS), _DEFINE_DEBUG_COMMENT, _)
+    BOOST_PP_REPEAT (BOOST_PP_DEC (COMMENT_MAX_ARGS), _DEFINE_DEBUG_COMMENT, _)
 
 #undef _DEFINE_DEBUG_COMMENT
 
