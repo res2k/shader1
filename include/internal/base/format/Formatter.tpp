@@ -463,6 +463,8 @@ namespace s1
     template<typename DestType, typename ...Args>
     void Formatter<FormatStringType>::operator() (DestType& dest, const Args&... a) const
     {
+      static_assert (sizeof...(Args) <= FORMATTER_MAX_ARGS, "Unsupported formatter argument count");
+
       typedef Sink<DestType> SinkType;
       detail::FormatArgAccessHelper<SinkType, Args...> arg_access (a...);
       size_t output_size (0);
