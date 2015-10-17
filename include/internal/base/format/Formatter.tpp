@@ -21,8 +21,14 @@
 #ifndef __BASE_FORMAT_FORMATTER_TPP__
 #define __BASE_FORMAT_FORMATTER_TPP__
 
+#include <boost/call_traits.hpp>
 #include <boost/container/static_vector.hpp>
 #include <boost/optional.hpp>
+#include <boost/preprocessor/facilities/intercept.hpp>
+#include <boost/preprocessor/repeat.hpp>
+#include <boost/preprocessor/repetition/enum_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_signed.hpp>
 
@@ -124,15 +130,16 @@ namespace s1
       {
       public:
         typedef CharType ArgType[N];
-        ArgHelper (const ArgType&) {}
-        size_t FormattedSize (const ArgType&) const { return N-1; }
-        void Emit (SinkType& sink, const ArgType& arg)
+        ArgHelper (const CharType*) {}
+        size_t FormattedSize (const CharType*) const { return N-1; }
+        void Emit (SinkType& sink, const CharType* arg)
         {
-          for (size_t i = 0; i < N-1 /* excluding NUL */; i++)
+          for (size_t i = 0; i < N; i++)
           {
             /* No explicit cast -
              * compiler time warnings/runtime bounds check errors are desired */
             typename SinkType::value_type c = arg[i];
+            if (!c) break;
             sink.push_back (c);
           }
         }
@@ -267,6 +274,93 @@ namespace s1
           sink.append (convertedStr.data(), convertedStr.size());
         }
       };
+
+      // For FormatArgAccessHelper
+      template<typename SinkType>
+      class ArgHelper<SinkType, boost::none_t>
+      {
+        static void Throw ()
+        {
+          throw std::logic_error ("Invalid format argument index");
+        }
+      public:
+        ArgHelper (const boost::none_t&) {}
+        size_t FormattedSize (const boost::none_t&) const
+        {
+          Throw ();
+          return 0;
+        }
+        void Emit (SinkType& sink, const boost::none_t&)
+        {
+          Throw ();
+        }
+      };
+
+      // Helper: Access specific formatting args
+      template<typename SinkType
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(FORMATTER_MAX_ARGS, typename A, = boost::none_t BOOST_PP_INTERCEPT)>
+      class FormatArgAccessHelper
+      {
+        std::tuple<BOOST_PP_ENUM_BINARY_PARAMS (FORMATTER_MAX_ARGS,
+          typename boost::call_traits<A, >::param_type BOOST_PP_INTERCEPT)> args_tuple;
+
+#define _ARG_HELPER_MEMBER(Z, N, Data)                                           \
+            ArgHelper<SinkType, BOOST_PP_CAT(A, N)> BOOST_PP_CAT(ah, N);
+        BOOST_PP_REPEAT(FORMATTER_MAX_ARGS, _ARG_HELPER_MEMBER, _)
+#undef _ARG_HELPER_MEMBER
+
+      public:
+
+      #define _CTOR_ARG(Z, N, Data)                                             \
+        BOOST_PP_COMMA_IF(N)                                                    \
+        typename boost::call_traits<BOOST_PP_CAT(A, N)>::param_type             \
+            BOOST_PP_CAT(a, N) = BOOST_PP_CAT(A, N)()
+      #define _CTOR_AH_INIT(Z, N, Data)                                         \
+          , BOOST_PP_CAT(ah, N) (BOOST_PP_CAT(a, N))
+
+        FormatArgAccessHelper (
+          BOOST_PP_REPEAT (FORMATTER_MAX_ARGS, _CTOR_ARG, _))
+          : args_tuple (BOOST_PP_ENUM_PARAMS(FORMATTER_MAX_ARGS, a))
+            BOOST_PP_REPEAT (FORMATTER_MAX_ARGS, _CTOR_AH_INIT, _)
+        {}
+      #undef _CTOR_ARG
+      #undef _CTOR_AH_INIT
+
+      #define _ARG_FORMATTED_SIZE(Arg)                                              \
+          return BOOST_PP_CAT(ah, Arg).FormattedSize (std::get<Arg> (args_tuple));
+      #define _ARG_EMIT(Arg)                                                        \
+          BOOST_PP_CAT(ah, Arg).Emit (sink, std::get<Arg> (args_tuple)); break;
+      #define _DO_SWITCH_ARG(Z, N, Macro)                                           \
+          case N: Macro (N); break;
+      #define _SWITCH_ARG(MaxArg, Macro)                                            \
+          BOOST_PP_REPEAT(MaxArg, _DO_SWITCH_ARG, Macro)
+
+        size_t FormattedSize (size_t index) const
+        {
+          switch(index)
+          {
+            _SWITCH_ARG(FORMATTER_MAX_ARGS, _ARG_FORMATTED_SIZE)
+          default:
+            throw std::logic_error ("Invalid format argument index");
+          }
+          return 0;
+        }
+
+        void Emit (SinkType& sink, size_t index)
+        {
+          switch(index)
+          {
+            _SWITCH_ARG(FORMATTER_MAX_ARGS, _ARG_EMIT)
+          default:
+            throw std::logic_error ("Invalid format argument index");
+          }
+        }
+
+      #undef _ARG_FORMATTED_SIZE
+      #undef _ARG_EMIT
+      #undef _DO_SWITCH_ARG
+      #undef _SWITCH_ARG
+      };
     } // namespace detail
 
     template<typename FormatStringType>
@@ -340,77 +434,38 @@ namespace s1
       ParseFormat (format, format + std::char_traits<CharType>::length (format));
     }
 
-#define _ARGHELPER_EMIT(Z, Arg, Data)                                        \
-    detail::ArgHelper<SinkType, BOOST_PP_CAT(A, Arg)>                        \
-      BOOST_PP_CAT(ah, Arg) (BOOST_PP_CAT(a, Arg));
-
-#define _DO_SWITCH_FORMATTER_INDEX(Z, N, Macro)                              \
-    case N: Macro (N); break;
-#define _SWITCH_FORMATTER_INDEX(Z, MaxArg, Macro)                            \
-    BOOST_PP_REPEAT_ ## Z(MaxArg, _DO_SWITCH_FORMATTER_INDEX, Macro)
-
-#define _FORMATTER_INDEX_EMIT(Arg)                                           \
-    BOOST_PP_CAT(ah, Arg).Emit (sink, BOOST_PP_CAT(a, Arg))
-#define _FORMATTER_INDEX_ADD_SIZE(Arg)                                       \
-    output_size += BOOST_PP_CAT(ah, Arg).FormattedSize (BOOST_PP_CAT(a, Arg))
-
-#define _DEFINE_FORMATTER_OPERATOR(Z, ArgNum, Data)                          \
-    template<typename FormatStringType>                                      \
-    template<typename DestType                                               \
-      BOOST_PP_ENUM_TRAILING_PARAMS_Z(Z, ArgNum, typename A)>                \
-    void Formatter<FormatStringType>::operator() (DestType& dest             \
-      BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(Z, ArgNum, const A, & a)) const \
-    {                                                                        \
-      typedef Sink<DestType> SinkType;                                       \
-      BOOST_PP_REPEAT_ ## Z(ArgNum, _ARGHELPER_EMIT, _)                      \
-      size_t output_size (0);                                                \
-      for(const FormatPart& part : parts)                                    \
-      {                                                                      \
-        if (part.IsStringPart())                                             \
-        {                                                                    \
-          output_size += part.GetPartStringLen();                            \
-        }                                                                    \
-        else                                                                 \
-        {                                                                    \
-          switch(part.GetArgIndex())                                         \
-          {                                                                  \
-          _SWITCH_FORMATTER_INDEX(Z, ArgNum, _FORMATTER_INDEX_ADD_SIZE)      \
-          default:                                                           \
-            throw std::logic_error ("Invalid format argument index");        \
-          }                                                                  \
-        }                                                                    \
-      }                                                                      \
-      SinkType sink (dest, output_size);                                     \
-      for(const FormatPart& part : parts)                                    \
-      {                                                                      \
-        if (part.IsStringPart())                                             \
-        {                                                                    \
-          EmitPartString (sink, part);                                       \
-        }                                                                    \
-        else                                                                 \
-        {                                                                    \
-          switch(part.GetArgIndex())                                         \
-          {                                                                  \
-          _SWITCH_FORMATTER_INDEX(Z, ArgNum, _FORMATTER_INDEX_EMIT)          \
-          default:                                                           \
-            throw std::logic_error ("Invalid format argument index");        \
-          }                                                                  \
-        }                                                                    \
-      }                                                                      \
+    template<typename FormatStringType>
+    template<typename DestType, typename ...Args>
+    void Formatter<FormatStringType>::operator() (DestType& dest, const Args&... a) const
+    {
+      typedef Sink<DestType> SinkType;
+      detail::FormatArgAccessHelper<SinkType, Args...> arg_access (a...);
+      size_t output_size (0);
+      for(const FormatPart& part : parts)
+      {
+        if (part.IsStringPart())
+        {
+          output_size += part.GetPartStringLen();
+        }
+        else
+        {
+          output_size += arg_access.FormattedSize (part.GetArgIndex ());
+        }
+      }
+      SinkType sink (dest, output_size);
+      for(const FormatPart& part : parts)
+      {
+        if (part.IsStringPart())
+        {
+          EmitPartString (sink, part);
+        }
+        else
+        {
+          arg_access.Emit (sink, part.GetArgIndex ());
+        }
+      }
     }
 
-  #ifdef _MSC_VER
-    #pragma warning (push)
-    #pragma warning (disable: 4065) // Disable warning in zero-arg formatter
-  #endif
-
-    BOOST_PP_REPEAT(FORMATTER_MAX_ARGS, _DEFINE_FORMATTER_OPERATOR, _)
-
-  #ifdef _MSC_VER
-    #pragma warning (pop)
-  #endif
-
-#undef _DEFINE_FORMATTER_OPERATOR
   } // namespace format
 } // namespace s1
 

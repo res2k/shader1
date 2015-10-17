@@ -22,9 +22,6 @@
 #define __BASE_FORMAT_FORMATTER_H__
 
 #include <boost/preprocessor/inc.hpp>
-#include <boost/preprocessor/repeat.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/once.hpp>
 
@@ -93,15 +90,14 @@ namespace s1
        */
       void CompactParsedFormat () { parts.shrink_to_fit (); }
 
-  #define _DECLARE_FORMATTER_OPERATOR(Z, ArgNum, Data)                         \
-      template<typename DestType                                               \
-        BOOST_PP_ENUM_TRAILING_PARAMS_Z(Z, ArgNum, typename A)>                \
-      void operator() (DestType& dest                                          \
-        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(Z, ArgNum, const A, & a)) const;
-
-      BOOST_PP_REPEAT(FORMATTER_MAX_ARGS, _DECLARE_FORMATTER_OPERATOR, _)
-
-  #undef _DECLARE_FORMATTER_OPERATOR
+      /**
+       * Actual formatting.
+       * \param dest Destination string.
+       * \param a Format arguments. Must have at least as many arguments as placeholders in
+       *   the format string were used!
+       */
+      template<typename DestType, typename ...Args>
+      void operator() (DestType& dest, const Args&... a) const;
     };
 
     /**
@@ -127,17 +123,17 @@ namespace s1
     public:
       StaticFormatter (const char* format) : format (format), formatterInit (BOOST_ONCE_INIT) {}
 
-  #define _DECLARE_FORMATTER_OPERATOR(Z, ArgNum, Data)                         \
-      template<typename DestType                                               \
-        BOOST_PP_ENUM_TRAILING_PARAMS_Z(Z, ArgNum, typename A)>                \
-      void operator() (DestType& dest                                          \
-        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(Z, ArgNum, const A, & a))       \
-      { GetFormatter() (dest                                                   \
-        BOOST_PP_ENUM_TRAILING_PARAMS_Z(Z, ArgNum, a)); }
-
-      BOOST_PP_REPEAT(FORMATTER_MAX_ARGS, _DECLARE_FORMATTER_OPERATOR, _)
-
-  #undef _DECLARE_FORMATTER_OPERATOR
+      /**
+      * Actual formatting.
+      * \param dest Destination string.
+      * \param a Format arguments. Must have at least as many arguments as placeholders in
+      *   the format string were used!
+      */
+      template<typename DestType, typename ...Args>
+      void operator() (DestType& dest, const Args&... a)
+      {
+        GetFormatter () (dest, a...);
+      }
     };
   } // namespace format
 } // namespace s1
