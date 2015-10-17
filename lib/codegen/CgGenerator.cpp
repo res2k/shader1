@@ -29,7 +29,7 @@
 
 #include <boost/multiprecision/cpp_int.hpp>
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {

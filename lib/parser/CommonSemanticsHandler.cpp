@@ -21,7 +21,7 @@
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Exception.h"
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {

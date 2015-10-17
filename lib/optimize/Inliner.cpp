@@ -27,7 +27,7 @@
 #include <boost/make_shared.hpp>
 #include <boost/unordered_map.hpp>
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {

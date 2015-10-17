@@ -29,7 +29,7 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {

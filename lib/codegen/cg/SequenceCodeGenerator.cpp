@@ -28,7 +28,7 @@
 #include <sstream>
 #include <stdio.h>
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {

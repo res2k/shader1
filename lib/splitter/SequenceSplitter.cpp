@@ -48,7 +48,7 @@
 #include <boost/make_shared.hpp>
 #include <iostream>
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 #ifdef _MSC_VER
 #include <intrin.h>

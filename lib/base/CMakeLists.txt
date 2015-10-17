@@ -25,7 +25,7 @@ set(base_sources
     ../../include/internal/base/uc/UTF16to8Transcoder.h
     ../../include/internal/base/uc/UTF8to16Transcoder.h
     ../../include/internal/base/format/Formatter.h
-    ../../include/internal/base/format/Formatter.txx
+    ../../include/internal/base/format/Formatter.tpp
     )
 s1_get_boost_link_libs(_BASE_LINK_BOOST thread)
 s1_add_library(base

@@ -36,7 +36,7 @@
 
 #include <boost/make_shared.hpp>
 
-#include "base/format/Formatter.txx"
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {
