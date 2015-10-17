@@ -22,6 +22,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include "base/format/uc_String.h"
 
 #include <boost/call_traits.hpp>
+#include <boost/preprocessor/arithmetic/mul.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 
 #include "base/format/Formatter.tpp"
