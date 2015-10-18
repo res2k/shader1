@@ -35,16 +35,10 @@ namespace s1
       : BasicSequenceCodeGenerator::Visitor (target)
     {}
 
-    // TODO: Perhaps rather a run-time option?
-#ifdef _DEBUG
-#define ENABLE_DEBUG_COMMENTS
-#endif
-
 #define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
   BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
   BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
 
-#ifdef ENABLE_DEBUG_COMMENTS
 #define _GENERATE_FMT_PLACEHOLDER(Z, N, Data)                                         \
     BOOST_PP_IF(N, ",", "") " {" BOOST_PP_STRINGIZE(BOOST_PP_INC(BOOST_PP_MUL(N, 2))) \
     "}={" BOOST_PP_STRINGIZE(BOOST_PP_MUL(BOOST_PP_INC(N), 2))   "}"
@@ -65,14 +59,6 @@ namespace s1
         BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_FMT_ARGUMENT, _));             \
       target->AddString (commentStr);                                                         \
     } 
-#else
-#define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                                \
-    template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
-    void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const char* opStr            \
-      BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
-    {                                                                                         \
-    }
-#endif
 
     BOOST_PP_REPEAT (BOOST_PP_DEC (COMMENT_MAX_ARGS), _DEFINE_DEBUG_COMMENT, _)
 
@@ -80,8 +66,11 @@ namespace s1
 
 #define _GENERATE_INVOKE_ARG(R, Data, Elem)     \
     BOOST_PP_COMMA() BOOST_PP_STRINGIZE(Elem) BOOST_PP_COMMA() (Elem)
-#define DEBUG_COMMENT(Op, Seq)    \
-    DebugComment (Op BOOST_PP_SEQ_FOR_EACH(_GENERATE_INVOKE_ARG, _, Seq));
+#define DEBUG_COMMENT(Op, Seq)                                                                \
+    if (debugCommentsEnabled)                                                                 \
+    {                                                                                         \
+      DebugComment (Op BOOST_PP_SEQ_FOR_EACH(_GENERATE_INVOKE_ARG, _, Seq));                  \
+    }
 
     void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const uc::String& str)
     {
@@ -450,45 +439,47 @@ namespace s1
 
     void AnnotatingSequenceCodeGenerator::Visitor::BeforeOpBlock (const Sequence::IdentifierToRegMap& identToRegID_imp)
     {
-#ifdef ENABLE_DEBUG_COMMENTS
-      uc::String impString ("Import map:\n");
-      if (identToRegID_imp.empty ())
+      if (debugCommentsEnabled)
       {
-        impString.append (" <empty>");
-      }
-      else
-      {
-        for (const Sequence::IdentifierToRegMap::value_type& impPair : identToRegID_imp)
+        uc::String impString ("Import map:\n");
+        if (identToRegID_imp.empty ())
         {
-          uc::String s;
-          FormatImpMapEntry (s, impPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (impPair.second));
-          impString.append (s);
+          impString.append (" <empty>");
         }
+        else
+        {
+          for (const Sequence::IdentifierToRegMap::value_type& impPair : identToRegID_imp)
+          {
+            uc::String s;
+            FormatImpMapEntry (s, impPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (impPair.second));
+            impString.append (s);
+          }
+        }
+        DebugComment (impString);
       }
-      DebugComment (impString);
-#endif // ENABLE_DEBUG_COMMENTS
     }
 
 
     void AnnotatingSequenceCodeGenerator::Visitor::AfterOpBlock (const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
-#ifdef ENABLE_DEBUG_COMMENTS
-      uc::String expString ("Export map:\n");
-      if (identToRegID_exp.empty ())
+      if (debugCommentsEnabled)
       {
-        expString.append (" <empty>");
-      }
-      else
-      {
-        for (const Sequence::IdentifierToRegMap::value_type& expPair : identToRegID_exp)
+        uc::String expString ("Export map:\n");
+        if (identToRegID_exp.empty ())
         {
-          uc::String s;
-          FormatExpMapEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
-          expString.append (s);
+          expString.append (" <empty>");
         }
+        else
+        {
+          for (const Sequence::IdentifierToRegMap::value_type& expPair : identToRegID_exp)
+          {
+            uc::String s;
+            FormatExpMapEntry (s, expPair.first, DebugCommentArgHelper<RegisterPtr>::FormatArg (expPair.second));
+            expString.append (s);
+          }
+        }
+        DebugComment (expString);
       }
-      DebugComment (expString);
-#endif // ENABLE_DEBUG_COMMENTS
     }
 
     void AnnotatingSequenceCodeGenerator::Visitor::OpBranch (const RegisterPtr& conditionReg,
@@ -536,6 +527,8 @@ namespace s1
 
     void AnnotatingSequenceCodeGenerator::BeforeSequence (Visitor& visitor)
     {
+      if (!visitor.GetDebugCommentsEnabled ()) return;
+
       const intermediate::Sequence::RegisterImpMappings& imports = seq.GetImports();
       uc::String impString ("Imports:\n");
       if (imports.empty ())
@@ -556,6 +549,8 @@ namespace s1
 
     void AnnotatingSequenceCodeGenerator::AfterSequence (Visitor& visitor)
     {
+      if (!visitor.GetDebugCommentsEnabled ()) return;
+
       const intermediate::Sequence::RegisterExpMappings& exports = seq.GetExports();
       uc::String expString ("Exports:\n");
       if (exports.empty ())

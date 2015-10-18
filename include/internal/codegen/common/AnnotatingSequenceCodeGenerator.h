@@ -38,7 +38,13 @@ namespace s1
       protected:
         friend class AnnotatingSequenceCodeGenerator;
 
-        // Write a debug comment to the output.
+        /// Whether debug comments are enabled
+        bool debugCommentsEnabled = false;
+
+        /**
+         * Write a debug comment to the output.
+         * \note Does not check debugCommentsEnabled itself.
+         */
         void DebugComment(const uc::String& str);
 
 #define COMMENT_MAX_ARGS    BOOST_PP_DIV(FORMATTER_MAX_ARGS, 2)
@@ -58,6 +64,11 @@ namespace s1
 
       public:
         Visitor (const StringsArrayPtr& target);
+
+        /// Enable/disable debug comments
+        void SetDebugCommentsEnabled (bool enabled) { debugCommentsEnabled = enabled; }
+        /// Returns whether debug comments are enabled/disabled
+        bool GetDebugCommentsEnabled () const { return debugCommentsEnabled; }
 
         void OpConstBool (const RegisterPtr& destination,
                           bool value) override;
