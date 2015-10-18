@@ -212,7 +212,11 @@ function(AutoBuildTest test_name)
 endfunction()
 
 # All C++11 features we require
-set(ALL_REQUIRED_CXX_FEATURES cxx_nullptr cxx_range_for cxx_rvalue_references)
+set(ALL_REQUIRED_CXX_FEATURES cxx_nullptr cxx_range_for cxx_rvalue_references
+    cxx_variadic_templates cxx_static_assert cxx_override cxx_auto_type)
+# Actually we also require cxx_nonstatic_member_init ... but CMake doesn't grant
+# it to MSVC 2013 since it's only partially supported there. However, it's still
+# sufficient for us.
 if(NOT S1_BUILD_SHARED)
   # For static builds, require C++11 features globally (to avoid conflicts
   # between lib and apps due to differing build flags)
