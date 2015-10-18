@@ -60,82 +60,82 @@ namespace s1
         Visitor (const StringsArrayPtr& target);
 
         void OpConstBool (const RegisterPtr& destination,
-                          bool value);
+                          bool value) override;
         void OpConstInt (const RegisterPtr& destination,
-                         int value);
+                         int value) override;
         void OpConstUInt (const RegisterPtr& destination,
-                          unsigned int value);
+                          unsigned int value) override;
         void OpConstFloat (const RegisterPtr& destination,
-                           float value);
+                           float value) override;
 
         void OpAssign (const RegisterPtr& destination,
-                       const RegisterPtr& source);
+                       const RegisterPtr& source) override;
 
         void OpCast (const RegisterPtr& destination,
                      intermediate::BasicType destType,
-                     const RegisterPtr& source);
+                     const RegisterPtr& source) override;
 
         void OpMakeVector (const RegisterPtr& destination,
                            intermediate::BasicType compType,
-                           const std::vector<RegisterPtr>& sources);
+                           const std::vector<RegisterPtr>& sources) override;
 
         void OpMakeMatrix (const RegisterPtr& destination,
                            intermediate::BasicType compType,
                            unsigned int matrixRows, unsigned int matrixCols,
-                           const std::vector<RegisterPtr>& sources);
+                           const std::vector<RegisterPtr>& sources) override;
 
         void OpMakeArray (const RegisterPtr& destination,
-                          const std::vector<RegisterPtr>& sources);
+                          const std::vector<RegisterPtr>& sources) override;
         void OpExtractArrayElement (const RegisterPtr& destination,
                                     const RegisterPtr& source,
-                                    const RegisterPtr& index);
+                                    const RegisterPtr& index) override;
         void OpChangeArrayElement (const RegisterPtr& destination,
                                    const RegisterPtr& source,
                                    const RegisterPtr& index,
-                                   const RegisterPtr& newValue);
+                                   const RegisterPtr& newValue) override;
         void OpGetArrayLength (const RegisterPtr& destination,
-                               const RegisterPtr& array);
+                               const RegisterPtr& array) override;
 
         void OpExtractVectorComponent (const RegisterPtr& destination,
                                        const RegisterPtr& source,
-                                       unsigned int comp);
+                                       unsigned int comp) override;
 
         void OpArith (const RegisterPtr& destination,
                       ArithmeticOp op,
                       const RegisterPtr& source1,
-                      const RegisterPtr& source2);
+                      const RegisterPtr& source2) override;
 
         void OpLogic (const RegisterPtr& destination,
                       LogicOp op,
                       const RegisterPtr& source1,
-                      const RegisterPtr& source2);
+                      const RegisterPtr& source2) override;
 
         void OpUnary (const RegisterPtr& destination,
                       UnaryOp op,
-                      const RegisterPtr& source);
+                      const RegisterPtr& source) override;
 
         void OpCompare (const RegisterPtr& destination,
                         CompareOp op,
                         const RegisterPtr& source1,
-                        const RegisterPtr& source2);
+                        const RegisterPtr& source2) override;
 
         void BeforeOpBlock (const Sequence::IdentifierToRegMap& identToRegID_imp);
         void AfterOpBlock (const Sequence::IdentifierToRegMap& identToRegID_exp);
 
         void OpBranch (const RegisterPtr& conditionReg,
                        const intermediate::SequenceOpPtr& seqOpIf,
-                       const intermediate::SequenceOpPtr& seqOpElse);
+                       const intermediate::SequenceOpPtr& seqOpElse) override;
         void OpWhile (const RegisterPtr& conditionReg,
                       const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-                      const intermediate::SequenceOpPtr& seqOpBody);
+                      const intermediate::SequenceOpPtr& seqOpBody) override;
 
-        void OpReturn (const std::vector<RegisterPtr>& outParamVals);
+        void OpReturn (const std::vector<RegisterPtr>& outParamVals) override;
         void OpFunctionCall (const uc::String& funcIdent,
                              const std::vector<RegisterPtr>& inParams,
-                             const std::vector<RegisterPtr>& outParams);
+                             const std::vector<RegisterPtr>& outParams) override;
         void OpBuiltinCall (const RegisterPtr& destination,
                             intermediate::BuiltinFunction what,
-                            const std::vector<RegisterPtr>& inParams);
+                            const std::vector<RegisterPtr>& inParams) override;
       };
 
       void BeforeSequence (Visitor& visitor);
