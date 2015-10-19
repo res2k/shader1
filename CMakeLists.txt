@@ -23,9 +23,10 @@ endif()
 
 find_package(CxxTest)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/s1_add_library.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/s1_add_cxxtest.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/s1_boost.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(s1_add_library)
+include(s1_add_cxxtest)
+include(s1_boost)
 
 if(CXXTEST_FOUND)
   include_directories(${CXXTEST_INCLUDE_DIR})
