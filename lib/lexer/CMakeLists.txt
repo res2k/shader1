@@ -1,6 +1,7 @@
-file(GLOB lexer_sources *.h *.cpp ../include/internal/lexer/*.h)
 s1_add_library(lexer
-               SOURCES ${lexer_sources}
+               SOURCES
+               Lexer.cpp
+               ../../include/internal/lexer/Lexer.h
                LINK base)
 IF(S1LIB_PDB)
   target_compile_options(lexer PRIVATE ${S1LIB_PDB})
