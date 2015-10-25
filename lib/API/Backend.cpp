@@ -64,11 +64,12 @@ s1_BackendOptions* s1_backendoptions_create (s1_Backend* backend)
   S1_ASSERT_MSG(backend, "NULL Backend", nullptr);
   s1::Compiler::Backend* backend_impl (s1::EvilUpcast<s1::Compiler::Backend> (backend));
 
-  s1::Compiler::Backend::OptionsPtr options (backend_impl->CreateOptions ());
-  if (!options)
-  {
-    return backend_impl->ReturnErrorCode (S1_E_OUT_OF_MEMORY, nullptr);
-  }
-  options->AddRef();
-  return backend_impl->ReturnSuccess (options->DowncastEvil<s1_BackendOptions> ());
+  return backend_impl->Try (
+    [=]()
+    {
+      s1::Compiler::Backend::OptionsPtr options (backend_impl->CreateOptions ());
+      options->AddRef();
+      return options->DowncastEvil<s1_BackendOptions> ();
+    },
+    nullptr);
 }

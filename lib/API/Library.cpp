@@ -57,15 +57,12 @@ s1_Options* s1_options_create (s1_Library* obj)
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
   
-  s1::Compiler::OptionsPtr options (lib->GetCompiler().CreateOptions());
-  if (!options)
-  {
-    lib->SetLastError (S1_E_OUT_OF_MEMORY);
-    return nullptr;
-  }
-  options->AddRef();
-  lib->SetLastError (S1_SUCCESS);
-  return options->DowncastEvil<s1_Options> ();
+  return lib->Try (
+    [=]() {
+      s1::Compiler::OptionsPtr options (lib->GetCompiler().CreateOptions());
+      options->AddRef();
+      return options->DowncastEvil<s1_Options> ();
+    }, nullptr);
 }
 
 s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
@@ -86,17 +83,14 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     return nullptr;
   }
   
-  std::string sourceStr (source, sourceSize);
-  boost::intrusive_ptr<s1::api_impl::Program> program (
-    new (std::nothrow) s1::api_impl::Program (lib, lib->GetCompiler(), sourceStr));
-  if (!program)
-  {
-    lib->SetLastError (S1_E_OUT_OF_MEMORY);
-    return nullptr;
-  }
-  program->AddRef();
-  lib->SetLastError (S1_SUCCESS);
-  return program->DowncastEvil<s1_Program> ();
+  return lib->Try (
+    [=]() {
+      std::string sourceStr (source, sourceSize);
+      boost::intrusive_ptr<s1::api_impl::Program> program (
+        new s1::api_impl::Program (lib, lib->GetCompiler (), sourceStr));
+      program->AddRef ();
+      return program->DowncastEvil<s1_Program> ();
+    }, nullptr);
 }
 
 s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
@@ -114,15 +108,11 @@ s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
     lib->SetLastError (S1_E_UNKNOWN_BACKEND);
     return nullptr;
   }
-  
-  s1::Compiler::BackendPtr backend_obj (lib->GetCompiler().CreateBackendCg());
-  if (!backend_obj)
-  {
-    lib->SetLastError (S1_E_OUT_OF_MEMORY);
-    return nullptr;
-  }
-  backend_obj->AddRef();
-  lib->SetLastError (S1_SUCCESS);
-  return backend_obj->DowncastEvil<s1_Backend> ();
-}
 
+  return lib->Try([=]()
+    {
+      s1::Compiler::BackendPtr backend_obj (lib->GetCompiler().CreateBackendCg());
+      backend_obj->AddRef();
+      return backend_obj->DowncastEvil<s1_Backend> ();
+    }, nullptr);
+}
