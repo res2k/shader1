@@ -20,6 +20,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
+#include "codegen/CgOptions.h"
 
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"
@@ -583,7 +584,8 @@ namespace s1
       intermediate::ProgramFunction::TransferMappings emptyMappings;
       SequenceCodeGenerator codegen (*seq, &nameRes,
 				     emptyMappings, emptyMappings,
-				     owner->outParams);
+				     owner->outParams,
+                                     owner->options);
       StringsArrayPtr blockStrings (codegen.Generate());
       if (emitEmptyBlocks || (blockStrings->Size() > 0))
       {
@@ -751,8 +753,10 @@ namespace s1
 							       ImportedNameResolver* nameRes,
 							       const intermediate::ProgramFunction::TransferMappings& transferIn,
 							       const intermediate::ProgramFunction::TransferMappings& transferOut,
-							       const std::vector<std::string>& outParams)
-     : AnnotatingSequenceCodeGenerator (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut), outParams (outParams)
+							       const std::vector<std::string>& outParams,
+                                                               const CgOptions& options)
+     : AnnotatingSequenceCodeGenerator (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut), outParams (outParams),
+       options (options)
     {
     }
     
@@ -762,6 +766,7 @@ namespace s1
       seenRegisters.clear();
       
       CodegenVisitor visitor (this, strings);
+      visitor.SetDebugCommentsEnabled (options.GetDebugAnnotationFlag (false));
 
       BeforeSequence (visitor);
 

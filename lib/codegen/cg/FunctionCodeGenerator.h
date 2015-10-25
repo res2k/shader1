@@ -27,8 +27,12 @@ namespace s1
 {
   namespace codegen
   {
+    class CgOptions;
+
     class CgGenerator::FunctionCodeGenerator
     {
+      const CgOptions& options;
+
       class BlockNameResolver : public ImportedNameResolver
       {
 	friend class FunctionCodeGenerator;
@@ -56,6 +60,8 @@ namespace s1
 	void Add (const char* attr, const std::string& attrStr);
       };
     public:
+      FunctionCodeGenerator (const CgOptions& options);
+
       StringsArrayPtr Generate (const char* identifier,
                                 const intermediate::ProgramFunctionPtr& func,
 				const intermediate::Program::OutputParameters& output,

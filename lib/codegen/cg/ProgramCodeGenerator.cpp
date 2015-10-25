@@ -30,6 +30,11 @@ namespace s1
 {
   namespace codegen
   {
+    CgGenerator::ProgramCodeGenerator::ProgramCodeGenerator (const CgOptions& options)
+      : options (options)
+    {
+    }
+
     StringsArrayPtr CgGenerator::ProgramCodeGenerator::Generate (const intermediate::ProgramPtr& prog,
 								 int frequency)
     {
@@ -60,7 +65,7 @@ namespace s1
       for (size_t i = 0; i < prog->GetNumFunctions(); i++)
       {
 	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
-	FunctionCodeGenerator funcGen;
+	FunctionCodeGenerator funcGen (options);
         if (func->IsEntryFunction ())
         {
           resultStrings->AddStrings (*(funcGen.Generate ("main",

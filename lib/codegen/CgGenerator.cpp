@@ -45,9 +45,10 @@ namespace s1
     }
     
     StringsArrayPtr CgGenerator::Generate (const intermediate::ProgramPtr& program,
-					   int frequency)
+					   int frequency,
+                                           const CgOptions& options)
     {
-      ProgramCodeGenerator progGen;
+      ProgramCodeGenerator progGen (options);
       return progGen.Generate (program, frequency);
     }
 

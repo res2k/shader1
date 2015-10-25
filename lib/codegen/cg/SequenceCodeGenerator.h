@@ -33,6 +33,8 @@ namespace s1
 {
   namespace codegen
   {
+    class CgOptions;
+
     struct ImportedNameResolver
     {
       virtual ~ImportedNameResolver() {}
@@ -182,6 +184,8 @@ namespace s1
       const intermediate::ProgramFunction::TransferMappings& transferIn;
       const intermediate::ProgramFunction::TransferMappings& transferOut;
       const std::vector<std::string>& outParams;
+      // Code generation options
+      const CgOptions& options;
       
       typedef boost::unordered_map<RegisterPtr, std::string> RegistersToIDMap;
       RegistersToIDMap seenRegisters;
@@ -209,9 +213,10 @@ namespace s1
 			     ImportedNameResolver* nameRes,
 			     const intermediate::ProgramFunction::TransferMappings& transferIn,
 			     const intermediate::ProgramFunction::TransferMappings& transferOut,
-			     const std::vector<std::string>& outParams);
+			     const std::vector<std::string>& outParams,
+                             const CgOptions& options);
       
-      StringsArrayPtr Generate ();
+      StringsArrayPtr Generate () override;
     };
   } // namespace codegen
 } // namespace s1

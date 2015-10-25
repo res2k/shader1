@@ -20,6 +20,7 @@
 #include "BackendCg.h"
 
 #include "codegen/CgGenerator.h"
+#include "codegen/CgOptions.h"
 
 #include <boost/make_shared.hpp>
 
@@ -54,7 +55,7 @@ namespace s1
       }
       
       codegen::CgGenerator codegen;
-      codegen::StringsArrayPtr outputProg (codegen.Generate (prog, freq));
+      codegen::StringsArrayPtr outputProg (codegen.Generate (prog, freq, codegen::CgOptions()));
       
       return ProgramPtr (new CgProgram (GetLibrary(), FlattenStringArray (outputProg)));
     }

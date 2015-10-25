@@ -31,6 +31,11 @@ namespace s1
 {
   namespace codegen
   {
+    CgGenerator::FunctionCodeGenerator::FunctionCodeGenerator (const CgOptions& options)
+      : options (options)
+    {
+    }
+
     void CgGenerator::FunctionCodeGenerator::ParamAdder::Add (const char* attr, const std::string& attrStr)
     {
       if (!firstParam)
@@ -183,7 +188,7 @@ namespace s1
 	}
       
       SequenceCodeGenerator seqGen (*(func->GetBody()), &nameRes, *transferIn, *transferOut,
-				    outParamIdents);
+				    outParamIdents, options);
       resultStrings->AddStrings (*(seqGen.Generate()), 2);
       
       resultStrings->AddString (std::string ("}"));

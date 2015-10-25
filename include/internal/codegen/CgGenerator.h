@@ -27,13 +27,16 @@ namespace s1
 {
   namespace codegen
   {
+    class CgOptions;
+
     class CgGenerator
     {
     public:
       CgGenerator ();
       
       StringsArrayPtr Generate (const intermediate::ProgramPtr& program,
-				int frequency);
+				int frequency,
+                                const CgOptions& options);
       
       /**\name Code generation helper functions
        * @{ */

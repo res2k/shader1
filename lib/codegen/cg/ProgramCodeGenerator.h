@@ -26,9 +26,14 @@ namespace s1
 {
   namespace codegen
   {
+    class CgOptions;
+
     class CgGenerator::ProgramCodeGenerator
     {
+      const CgOptions& options;
     public:
+      ProgramCodeGenerator (const CgOptions& options);
+
       StringsArrayPtr Generate (const intermediate::ProgramPtr& prog, int frequency);
     };
   } // namespace codegen
