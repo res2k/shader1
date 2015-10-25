@@ -1,4 +1,13 @@
-file(GLOB codegen_cg_sources cg/*.h cg/*.cpp)
+set(codegen_cg_sources
+    cg/CgOptions.cpp
+    cg/FunctionCodeGenerator.cpp
+    cg/ProgramCodeGenerator.cpp
+    cg/SequenceCodeGenerator.cpp
+    cg/FunctionCodeGenerator.h
+    cg/ProgramCodeGenerator.h
+    cg/SequenceCodeGenerator.h
+    ../../include/internal/codegen/CgOptions.h
+)
 s1_add_library(codegen_cg SOURCES ${codegen_cg_sources})
 IF(S1LIB_PDB)
   target_compile_options(codegen_cg PRIVATE ${S1LIB_PDB})

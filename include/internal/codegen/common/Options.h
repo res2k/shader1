@@ -43,6 +43,11 @@ namespace s1
         }
       };
     public:
+      /// Return value of debug annotation flag.
+      bool GetDebugAnnotationFlag (bool default) const
+      {
+        return debugAnnotationsFlag.get_value_or (default);
+      }
     };
   } // namespace codegen
 } // namespace s1
