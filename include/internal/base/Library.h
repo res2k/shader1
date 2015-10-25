@@ -43,6 +43,43 @@ namespace s1
     void SetLastError (s1_ResultCode code) { lastError = code; }
     
     Compiler& GetCompiler() { return compiler; }
+
+    /**
+    * Helper method to to set a library error code and return an appropriate
+    * \c s1_bool result.
+    */
+    inline s1_bool ReturnErrorCode (s1_ResultCode code)
+    {
+      SetLastError (code);
+      return S1_SUCCESSFUL(code);
+    }
+    /**
+    * Helper method to to set the library error code to #S1_SUCCESS
+    * and return the appropriate \c s1_bool result.
+    */
+    inline s1_bool ReturnSuccess ()
+    {
+      return ReturnErrorCode (S1_SUCCESS);
+    }
+
+    /**
+    * Helper method to to set a library error code and return an arbitrary result.
+    */
+    template<typename T>
+    inline const T& ReturnErrorCode (s1_ResultCode code, const T& result)
+    {
+      SetLastError (code);
+      return result;
+    }
+    /**
+    * Helper method to to set the library error code to #S1_SUCCESS
+    * and return an arbitrary result.
+    */
+    template<typename T>
+    inline const T& ReturnSuccess (const T& result)
+    {
+      return ReturnErrorCode (S1_SUCCESS, result);
+    }
   };
   typedef boost::intrusive_ptr<Library> LibraryPtr;
 } // namespace s1

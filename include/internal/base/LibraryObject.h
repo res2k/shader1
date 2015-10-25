@@ -40,8 +40,7 @@ namespace s1
      */
     inline s1_bool ReturnErrorCode (s1_ResultCode code)
     {
-      GetLibrary()->SetLastError (code);
-      return S1_SUCCESSFUL(code);
+      return lib->ReturnErrorCode (code);
     }
     /**
      * Helper method to to set the library error code to #S1_SUCCESS
@@ -58,8 +57,7 @@ namespace s1
     template<typename T>
     inline const T& ReturnErrorCode (s1_ResultCode code, const T& result)
     {
-      GetLibrary()->SetLastError (code);
-      return result;
+      return lib->ReturnErrorCode (code, result);
     }
     /**
      * Helper method to to set the library error code to #S1_SUCCESS
