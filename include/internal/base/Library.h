@@ -26,7 +26,10 @@
 
 #include "s1/Error.h"
 
+#include <boost/call_traits.hpp>
 #include <boost/intrusive_ptr.hpp>
+
+#include <type_traits>
 
 namespace s1
 {
@@ -79,6 +82,31 @@ namespace s1
     inline const T& ReturnSuccess (const T& result)
     {
       return ReturnErrorCode (S1_SUCCESS, result);
+    }
+
+    /**
+     * Helper method to execute a block of code, dealing with exceptions
+     * thrown. Sets the appropriate last error code.
+     */
+    template<typename Func>
+    inline typename std::result_of<Func()>::type Try (
+      Func func, typename boost::call_traits <typename std::result_of<Func()>::type>::param_type default)
+    {
+      try
+      {
+        auto result = func ();
+        SetLastError (S1_SUCCESS);
+        return std::move (result);
+      }
+      catch (std::bad_alloc)
+      {
+        SetLastError (S1_E_OUT_OF_MEMORY);
+      }
+      catch (...)
+      {
+        SetLastError (S1_E_FAILURE);
+      }
+      return default;
     }
   };
   typedef boost::intrusive_ptr<Library> LibraryPtr;
