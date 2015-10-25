@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "s1/Backend.h"
+#include "s1/BackendOptions.h"
 #include "s1/CompiledProgram.h"
 #include "s1/Error.h"
 #include "s1/Library.h"
@@ -101,6 +102,7 @@ public:
   arg_string_type inputFileName;
   arg_string_type entryName;
   arg_string_type backendStr;
+  arg_string_vec backendOptions;
   bool noSplit;
   typedef boost::unordered_map<arg_string_type, s1::InputFrequency> ParamMap;
   ParamMap paramFlags;
@@ -129,8 +131,10 @@ public:
       ("entry", bpo::wvalue<arg_string_type> (&entryName)->value_name("<function>")->default_value (to_wide (defaultEntry), defaultEntry),
         "Set program entry function")
       ("backend", bpo::wvalue<arg_string_type> (&backendStr)->value_name("<backend>")->default_value (to_wide (defaultBackend), defaultBackend),
-        "Select backend (target language)");
-    bpo::options_description param_desc ("Input parameter options");
+        "Select backend (target language)")
+      ("backend-option", bpo::wvalue<arg_string_vec> (&backendOptions)->composing()->value_name("<option>"),
+       "Specify backend-specific options");
+      bpo::options_description param_desc ("Input parameter options");
     param_desc.add_options ()
       ("param-uniform", bpo::wvalue<arg_string_vec> ()->composing()->value_name("<param>"),
         "Specify a parameter to be uniform input")
@@ -314,6 +318,27 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     std::cerr << "Invalid backend: " << to_local (options.backendStr) << std::endl;
     return 2;
   }
+
+  BackendOptions::Pointer backendOptions;
+  if (!options.backendOptions.empty ())
+  {
+    backendOptions = compilerBackend->CreateBackendOptions ();
+    if (!backendOptions)
+    {
+      std::cerr << "Error creating backend options object" << std::endl;
+    }
+    else
+    {
+      BOOST_FOREACH (const CommandLineOptions::arg_string_type& backendOptStr,
+                     options.backendOptions)
+      {
+        if (!backendOptions->SetFromStr (to_utf (backendOptStr).c_str ()))
+        {
+          std::cerr << "Error handling backend option: " << to_local (backendOptStr) << std::endl;
+        }
+      }
+    }
+  }
   
   std::string sourceStr;
   try
@@ -378,13 +403,13 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   if (options.noSplit)
   {
     CompiledProgram::Pointer compiled (
-      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_UNSPLIT));
+      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_UNSPLIT, backendOptions));
     std::cout << compiled->GetString() << std::endl;
   }
   else
   {
     CompiledProgram::Pointer compiledVP (
-      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP));
+      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP, backendOptions));
     std::cout << compiledVP->GetString() << std::endl;
     CompiledProgram::Pointer compiledFP (
       compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP));
