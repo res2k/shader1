@@ -3,6 +3,7 @@ CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE
 
 set(s1_sources
     Backend.cpp
+    BackendOptions.cpp
     CompiledProgram.cpp
     Library.cpp
     LibraryObject.cpp
@@ -10,6 +11,7 @@ set(s1_sources
     Options.cpp
     Program.cpp
     ../../include/s1/Backend.h
+    ../../include/s1/BackendOptions.h
     ../../include/s1/Library.h
     ../../include/s1/LibraryObject.h
     ../../include/s1/Options.h

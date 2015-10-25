@@ -52,6 +52,7 @@ enum s1_CompileTarget
   S1_TARGET_UNSPLIT = 0x100
 };
 
+S1TYPE_DECLARE_FWD(BackendOptions);
 S1TYPE_DECLARE_FWD(CompiledProgram);
 /**
  * Let a backend generate an actual shader code from a Shader1 program.
@@ -68,6 +69,18 @@ S1TYPE_DECLARE_FWD(CompiledProgram);
 S1_API(s1_CompiledProgram*) s1_backend_generate_program (s1_Backend* backend,
                                                          s1_Program* program,
                                                          enum s1_CompileTarget target);
+
+/**
+* Create a backend options object.
+* \param backend Backend this options object will be used with.
+* \returns A new backend options object.
+*   The returned object will already have a reference, release the reference
+*   using s1_release().
+* In case of an error, \NULL is returned and the error status is saved in the library's
+* last error code.
+* \memberof s1_Backend
+*/
+S1_API(s1_BackendOptions*) s1_backendoptions_create (s1_Backend* backend);
 
 #if defined(__cplusplus)
 namespace s1
@@ -97,6 +110,18 @@ namespace s1
       {
         return S1_RETURN_TRANSFER_REF (CompiledProgram,
           s1_backend_generate_program (this, program, target));
+      }
+
+      /**
+       * Create a backend options object.
+       * \returns A new backend options object.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+       */
+      S1_RETURN_TRANSFER_REF_TYPE(BackendOptions) CreateBackendOptions ()
+      {
+        return S1_RETURN_TRANSFER_REF (BackendOptions,
+                                       s1_backendoptions_create (this));
       }
     };
   S1_NS_CXXAPI_END

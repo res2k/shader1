@@ -73,6 +73,8 @@ namespace s1
     };
 
     Backend (Library* lib) : LibraryObject (lib) {}
+
+    virtual OptionsPtr CreateOptions () = 0;
     
     enum CompileTarget
     {

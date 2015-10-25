@@ -56,3 +56,16 @@ s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
   return backend_impl->ReturnSuccess (compiled_program->DowncastEvil<s1_CompiledProgram> ());
 }
 
+s1_BackendOptions* s1_backendoptions_create (s1_Backend* backend)
+{
+  S1_ASSERT_MSG(backend, "NULL Backend", nullptr);
+  s1::Compiler::Backend* backend_impl (s1::EvilUpcast<s1::Compiler::Backend> (backend));
+
+  s1::Compiler::Backend::OptionsPtr options (backend_impl->CreateOptions ());
+  if (!options)
+  {
+    return backend_impl->ReturnErrorCode (S1_E_OUT_OF_MEMORY, nullptr);
+  }
+  options->AddRef();
+  return backend_impl->ReturnSuccess (options->DowncastEvil<s1_BackendOptions> ());
+}
