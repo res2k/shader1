@@ -53,7 +53,8 @@ namespace s1
       Program (s1::Library* lib, Compiler& compiler, const std::string& source);
 
       Compiler::Backend::ProgramPtr GetCompiledProgram (const Compiler::BackendPtr& backend,
-                                                        Compiler::Backend::CompileTarget target);
+                                                        Compiler::Backend::CompileTarget target,
+                                                        Compiler::Backend::OptionsPtr backendOptions);
 
       /**\name Methods mapping to public API
        * @{ */

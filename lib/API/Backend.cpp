@@ -18,13 +18,15 @@
 #include "base/common.h"
 
 #include "s1/Backend.h"
+#include "s1/BackendOptions.h"
 
 #include "compiler/Backend.h"
 #include "Program.h"
 
 s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
                                                  s1_Program* program,
-                                                 s1_CompileTarget target)
+                                                 s1_CompileTarget target,
+                                                 s1_BackendOptions* options)
 {
   S1_ASSERT_MSG(backend, "NULL Backend", nullptr);
   s1::Compiler::Backend* backend_impl (s1::EvilUpcast<s1::Compiler::Backend> (backend));
@@ -44,9 +46,10 @@ s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
   default:
     return backend_impl->ReturnErrorCode (S1_E_INVALID_ARG_N (1), nullptr);
   }
-  
+
+  auto options_impl (s1::EvilUpcast<s1::Compiler::Backend::Options> (options));
   s1::Compiler::Backend::ProgramPtr compiled_program (
-    program_impl->GetCompiledProgram (backend_impl, impl_target));
+    program_impl->GetCompiledProgram (backend_impl, impl_target, options_impl));
   if (!compiled_program)
   {
     return backend_impl->ReturnErrorCode (S1_E_GENERATE_FAILED, nullptr);

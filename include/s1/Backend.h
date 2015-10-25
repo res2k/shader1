@@ -59,6 +59,7 @@ S1TYPE_DECLARE_FWD(CompiledProgram);
  * \param backend Backend that should generate the program.
  * \param program Program to generate code from.
  * \param target Targeted shader stage.
+ * \param options Optional backend options.
  * \returns A new compiled shader program or \NULL in case of an error.
  * The returned object will already have a reference, release the reference
  * using s1_release().
@@ -68,7 +69,8 @@ S1TYPE_DECLARE_FWD(CompiledProgram);
  */
 S1_API(s1_CompiledProgram*) s1_backend_generate_program (s1_Backend* backend,
                                                          s1_Program* program,
-                                                         enum s1_CompileTarget target);
+                                                         enum s1_CompileTarget target,
+                                                         s1_BackendOptions* options S1_ARG_DEFAULT(0));
 
 /**
 * Create a backend options object.
@@ -106,10 +108,11 @@ namespace s1
        * In that case the error status is saved in the library's
        * last error code.
        */
-      S1_RETURN_TRANSFER_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target)
+      S1_RETURN_TRANSFER_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target,
+                                                                    BackendOptions* options = 0)
       {
         return S1_RETURN_TRANSFER_REF (CompiledProgram,
-          s1_backend_generate_program (this, program, target));
+          s1_backend_generate_program (this, program, target, options));
       }
 
       /**

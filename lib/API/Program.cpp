@@ -43,7 +43,8 @@ namespace s1
     }
 
     Compiler::Backend::ProgramPtr Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
-                                                               Compiler::Backend::CompileTarget target)
+                                                               Compiler::Backend::CompileTarget target,
+                                                               Compiler::Backend::OptionsPtr backendOptions)
     {
       // FIXME!!!: This is rather inefficient!
       if (!wrapped_program)
@@ -66,7 +67,7 @@ namespace s1
       }
       uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
       return wrapped_program->GetCompiledProgram (entryFunctionU, options, inputFreqFlags, inputArraySizes, backend, target,
-                                                  Compiler::Backend::OptionsPtr ());
+                                                  backendOptions);
     }
 
     s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
