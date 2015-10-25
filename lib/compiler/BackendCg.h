@@ -19,6 +19,7 @@
 #define __COMPILER_BACKENDCG_H__
 
 #include "compiler/Backend.h"
+#include "codegen/CgOptions.h"
 
 namespace s1
 {
@@ -36,9 +37,16 @@ namespace s1
       public:
 	const std::string& GetProgramString ();
       };
+      class CgOptions : public OptionsImpl<codegen::CgOptions>
+      {
+      protected:
+        friend class BackendCg;
+        CgOptions (Library* lib) : OptionsImpl (lib) {}
+      };
     public:
       BackendCg (Library* lib);
     
+      OptionsPtr CreateOptions ();
       ProgramPtr GenerateProgram (CompileTarget target,
 				  const intermediate::ProgramPtr& prog,
                                   OptionsPtr options);

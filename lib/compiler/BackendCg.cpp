@@ -43,6 +43,11 @@ namespace s1
       return str;
     }
     
+    Compiler::Backend::OptionsPtr BackendCg::CreateOptions ()
+    {
+      return new CgOptions (GetLibrary());
+    }
+
     Compiler::Backend::ProgramPtr BackendCg::GenerateProgram (CompileTarget target,
 							      const intermediate::ProgramPtr& prog,
                                                               OptionsPtr options)
@@ -54,9 +59,23 @@ namespace s1
       case targetFP:	freq = splitter::freqFragment; 	break;
       default:						break;
       }
+
+      boost::intrusive_ptr<CgOptions> realOptions;
+      if (options)
+      {
+        // If options are provided, verify type
+        realOptions = boost::dynamic_pointer_cast<CgOptions> (options);
+        if (!realOptions)
+        {
+          // TODO: Throw/err with proper error code
+          return ProgramPtr ();
+        }
+      }
       
       codegen::CgGenerator codegen;
-      codegen::StringsArrayPtr outputProg (codegen.Generate (prog, freq, codegen::CgOptions()));
+      codegen::StringsArrayPtr outputProg (
+        codegen.Generate (prog, freq,
+                          realOptions ? realOptions->GetContainer() : codegen::CgOptions()));
       
       return ProgramPtr (new CgProgram (GetLibrary(), FlattenStringArray (outputProg)));
     }
