@@ -65,7 +65,8 @@ namespace s1
         inputArraySizes.emplace (ucParam, inputSize.second);
       }
       uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
-      return wrapped_program->GetCompiledProgram (entryFunctionU, options, inputFreqFlags, inputArraySizes, backend, target);
+      return wrapped_program->GetCompiledProgram (entryFunctionU, options, inputFreqFlags, inputArraySizes, backend, target,
+                                                  Compiler::Backend::OptionsPtr ());
     }
 
     s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)

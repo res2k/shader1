@@ -56,7 +56,8 @@ namespace s1
                                                       const FreqFlagMap& inputParamFreqs,
                                                       const ArraySizeMap& arraySizes,
                                                       const Compiler::BackendPtr& backend,
-						      Backend::CompileTarget target);
+						      Backend::CompileTarget target,
+                                                      Backend::OptionsPtr options);
     
     // @@@ Output: a "backend program"
     

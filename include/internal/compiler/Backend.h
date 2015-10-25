@@ -38,7 +38,40 @@ namespace s1
       virtual const std::string& GetProgramString () = 0;
     };
     typedef boost::intrusive_ptr<Program> ProgramPtr;
-    
+
+    class Options : public LibraryObject
+    {
+    protected:
+      typedef std::pair<uc::String, bool> FlagPair;
+      FlagPair ParseFlagPair (const uc::String& string);
+    public:
+      Options (Library* lib) : LibraryObject (lib) {}
+
+      virtual bool SetFromStr (const char* string) = 0;
+    };
+    typedef boost::intrusive_ptr<Options> OptionsPtr;
+
+    /// Default Options implementation backed by codegen options
+    template<typename CodegenOptions>
+    class OptionsImpl : public Options
+    {
+    protected:
+      CodegenOptions optionsContainer;
+    public:
+      OptionsImpl (Library* lib) : Options (lib) {}
+
+      bool SetFromStr (const char* string) override
+      {
+        uc::String string_u (string);
+        /* TODO: Check if string contains '=' or ' ', parse as a name/value
+         * pair then */
+        FlagPair flag = ParseFlagPair (string_u);
+        return optionsContainer.SetFlag (flag.first, flag.second);
+      }
+
+      const CodegenOptions& GetContainer () const { return optionsContainer; }
+    };
+
     Backend (Library* lib) : LibraryObject (lib) {}
     
     enum CompileTarget
@@ -48,7 +81,8 @@ namespace s1
       targetFP
     };
     virtual ProgramPtr GenerateProgram (CompileTarget target,
-					const intermediate::ProgramPtr& prog) = 0;
+					const intermediate::ProgramPtr& prog,
+                                        OptionsPtr options) = 0;
   };
 } // namespace s1
 

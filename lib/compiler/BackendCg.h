@@ -40,7 +40,8 @@ namespace s1
       BackendCg (Library* lib);
     
       ProgramPtr GenerateProgram (CompileTarget target,
-				  const intermediate::ProgramPtr& prog);
+				  const intermediate::ProgramPtr& prog,
+                                  OptionsPtr options);
     };
   } // namespace compiler
 } // namespace s1

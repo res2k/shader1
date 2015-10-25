@@ -1,4 +1,5 @@
 set(compiler_sources
+     Backend.cpp
      BackendCg.h
      BackendCg.cpp
      Compiler.cpp

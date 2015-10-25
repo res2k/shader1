@@ -44,7 +44,8 @@ namespace s1
     }
     
     Compiler::Backend::ProgramPtr BackendCg::GenerateProgram (CompileTarget target,
-							      const intermediate::ProgramPtr& prog)
+							      const intermediate::ProgramPtr& prog,
+                                                              OptionsPtr options)
     {
       int freq = -1;
       switch (target)

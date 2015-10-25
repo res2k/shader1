@@ -93,7 +93,8 @@ namespace s1
                                                                        const FreqFlagMap& inputParamFreqs,
                                                                        const ArraySizeMap& arraySizes,
                                                                        const Compiler::BackendPtr& backend,
-								       Backend::CompileTarget target)
+								       Backend::CompileTarget target,
+                                                                       Backend::OptionsPtr options)
   {
     if (!intermediateProg)
     {
@@ -139,11 +140,12 @@ namespace s1
 	}
 	
 	return backend->GenerateProgram (target,
-	  target == Backend::targetVP ? splitProgs[splitter::freqVertex] : splitProgs[splitter::freqFragment]);
+	  target == Backend::targetVP ? splitProgs[splitter::freqVertex] : splitProgs[splitter::freqFragment],
+          options);
       }
       break;
     case Backend::targetUnsplit:
-      return backend->GenerateProgram (target, optProg);
+      return backend->GenerateProgram (target, optProg, options);
     }
     
     assert (false);
