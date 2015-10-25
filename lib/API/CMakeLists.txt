@@ -12,6 +12,7 @@ set(s1_sources
     Program.cpp
     ../../include/s1/Backend.h
     ../../include/s1/BackendOptions.h
+    ../../include/s1/CompiledProgram.h
     ../../include/s1/Library.h
     ../../include/s1/LibraryObject.h
     ../../include/s1/Options.h
