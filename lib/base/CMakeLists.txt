@@ -12,6 +12,7 @@ set(base_sources
     ../../include/internal/base/Library.h
     ../../include/internal/base/LibraryObject.h
     ../../include/internal/base/Object.h
+    ../../include/internal/base/Result.h
     ../../include/internal/base/uc/Char.h
     ../../include/internal/base/uc/Exception.h
     ../../include/internal/base/uc/Stream.h
