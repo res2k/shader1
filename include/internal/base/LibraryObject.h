@@ -68,6 +68,22 @@ namespace s1
     {
       return ReturnErrorCode (S1_SUCCESS, result);
     }
+    //@{
+    /**
+     * Helper method to return a Result<> value.
+     * Sets error code from result and returns value from result or the default value.
+     */
+    template<typename T>
+    inline const T& Return (const Result<T>& result, typename boost::call_traits<T>::param_type defaultVal)
+    {
+      return lib->Return (result, defaultVal);
+    }
+    template<typename T, typename U>
+    inline T Return (Result<T>&& result, U&& defaultVal)
+    {
+      return lib->Return (std::move (result), std::forward<U> (defaultVal));
+    }
+    //@}
 
     /**
      * Helper method to execute a block of code, dealing with exceptions

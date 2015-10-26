@@ -22,6 +22,7 @@
 #define __BASE_LIBRARY_H__
 
 #include "base/Object.h"
+#include "base/Result.h"
 #include "compiler/Compiler.h"
 
 #include "s1/Error.h"
@@ -83,6 +84,24 @@ namespace s1
     {
       return ReturnErrorCode (S1_SUCCESS, result);
     }
+    //@{
+    /**
+     * Helper method to return a Result<> value.
+     * Sets error code from result and returns value from result or the default value.
+     */
+    template<typename T>
+    inline const T& Return (const Result<T>& result, typename boost::call_traits<T>::param_type defaultVal)
+    {
+      SetLastError (result.code());
+      return result.get_value_or (defaultVal);
+    }
+    template<typename T, typename U>
+    inline T Return (Result<T>&& result, U&& defaultVal)
+    {
+      SetLastError (result.code());
+      return result.value_or (std::forward<U> (defaultVal));
+    }
+    //@}
 
     /**
      * Helper method to execute a block of code, dealing with exceptions
