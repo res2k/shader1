@@ -35,7 +35,7 @@ namespace s1
     Library* GetLibrary() { return lib.get(); }
     
     /**
-     * Helper method to to set a library error code and return an appropriate
+     * Helper method to set a library error code and return an appropriate
      * \c s1_bool result.
      */
     inline s1_bool ReturnErrorCode (s1_ResultCode code)
@@ -43,7 +43,7 @@ namespace s1
       return lib->ReturnErrorCode (code);
     }
     /**
-     * Helper method to to set the library error code to #S1_SUCCESS
+     * Helper method to set the library error code to #S1_SUCCESS
      * and return the appropriate \c s1_bool result.
      */
     inline s1_bool ReturnSuccess ()
@@ -52,7 +52,7 @@ namespace s1
     }
 
     /**
-     * Helper method to to set a library error code and return an arbitrary result.
+     * Helper method to set a library error code and return an arbitrary result.
      */
     template<typename T>
     inline const T& ReturnErrorCode (s1_ResultCode code, const T& result)
@@ -60,7 +60,7 @@ namespace s1
       return lib->ReturnErrorCode (code, result);
     }
     /**
-     * Helper method to to set the library error code to #S1_SUCCESS
+     * Helper method to set the library error code to #S1_SUCCESS
      * and return an arbitrary result.
      */
     template<typename T>
