@@ -24,6 +24,7 @@
 #include "s1/Program.h"
 
 #include "base/LibraryObject.h"
+#include "base/Result.h"
 
 #include "compiler/Backend.h"
 #include "compiler/Program.h"
@@ -62,13 +63,13 @@ namespace s1
       const s1::Compiler::OptionsPtr& GetOptions() const;
       
       s1_ResultCode SetEntry (const char* entry);
-      s1_ResultCode GetEntry (const char*& entry) const;
+      Result<const char*> GetEntry () const;
       
       s1_ResultCode SetInputFrequency (const char* param, s1_InputFrequency freq);
-      s1_ResultCode GetInputFrequency (const char* param, s1_InputFrequency& freq) const;
+      Result<InputFrequency> GetInputFrequency (const char* param) const;
 
       s1_ResultCode SetInputArraySize (const char* param, size_t size);
-      s1_ResultCode GetInputArraySize (const char* param, size_t& size) const;
+      Result<size_t> GetInputArraySize (const char* param) const;
       /** @} */
     };
   } // namespace api_impl

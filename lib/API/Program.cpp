@@ -83,10 +83,9 @@ namespace s1
       entryFunction = entry;
       return S1_SUCCESS;
     }
-    s1_ResultCode Program::GetEntry (const char*& entry) const
+    Result<const char*> Program::GetEntry () const
     {
-      entry = entryFunction.c_str();
-      return S1_SUCCESS;
+      return entryFunction.c_str();
     }
     
     s1_ResultCode Program::SetInputFrequency (const char* param, s1_InputFrequency freq)
@@ -103,7 +102,7 @@ namespace s1
       inputFreqMap[param] = new_freq;
       return S1_SUCCESS;
     }
-    s1_ResultCode Program::GetInputFrequency (const char* param, s1_InputFrequency& freq) const
+    Result<InputFrequency> Program::GetInputFrequency (const char* param) const
     {
       InputFreqMapType::const_iterator it (inputFreqMap.find (param));
       if (it == inputFreqMap.end())
@@ -114,10 +113,10 @@ namespace s1
       switch (it->second)
       {
       default:
-      case s1::splitter::freqUniform:   freq = S1_FREQ_UNIFORM; break;
-      case s1::splitter::freqVertex:    freq = S1_FREQ_VERTEX; break;
+      case s1::splitter::freqUniform:   return S1_FREQ_UNIFORM; break;
+      case s1::splitter::freqVertex:    return S1_FREQ_VERTEX; break;
       }
-      return S1_SUCCESS;
+      return S1_E_FAILURE;
     }
 
     s1_ResultCode Program::SetInputArraySize (const char* param, size_t size)
@@ -126,7 +125,7 @@ namespace s1
       inputSizeMap[param] = size;
       return S1_SUCCESS;
     }
-    s1_ResultCode Program::GetInputArraySize (const char* param, size_t& size) const
+    Result<size_t> Program::GetInputArraySize (const char* param) const
     {
       InputSizeMapType::const_iterator it (inputSizeMap.find (param));
       if (it == inputSizeMap.end())
@@ -134,8 +133,7 @@ namespace s1
         // FIXME: Return default size instead
         return S1_E_UNKNOWN_PARAMETER;
       }
-      size = it->second;
-      return S1_SUCCESS;
+      return it->second;
     }
   } // namespace api_impl
 } // namespace s1
@@ -181,9 +179,7 @@ const char* s1_program_get_entry_function (s1_Program* program)
   S1_ASSERT_MSG(program, "NULL Program", nullptr);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
 
-  const char* entry (nullptr);
-  s1_ResultCode error (program_impl->GetEntry (entry));
-  return program_impl->ReturnErrorCode (error, entry);
+  return program_impl->Return (program_impl->GetEntry (), nullptr);
 }
 
 s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, s1_InputFrequency freq)
@@ -201,17 +197,16 @@ s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, 
 
 s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param)
 {
-  s1_InputFrequency freq (S1_FREQ_INVALID);
-  S1_ASSERT_MSG(program, "NULL Program", freq);
+  s1_InputFrequency errorFreq (S1_FREQ_INVALID);
+  S1_ASSERT_MSG(program, "NULL Program", errorFreq);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
 
   if (!param)
   {
-    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), freq);
+    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), errorFreq);
   }
 
-  s1_ResultCode error (program_impl->GetInputFrequency (param, freq));
-  return program_impl->ReturnErrorCode (error, freq);
+  return program_impl->Return (program_impl->GetInputFrequency (param), errorFreq);
 }
 
 s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size)
@@ -229,16 +224,15 @@ s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param,
 
 size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
 {
-  size_t size ((size_t)~0);
-  S1_ASSERT_MSG(program, "NULL Program", size);
+  const size_t errorSize ((size_t)~0);
+  S1_ASSERT_MSG(program, "NULL Program", errorSize);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
 
   if (!param)
   {
-    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), size);
+    return program_impl->Return<size_t> (S1_E_INVALID_ARG_N(0), errorSize);
   }
 
-  s1_ResultCode error (program_impl->GetInputArraySize (param, size));
-  return program_impl->ReturnErrorCode (error, size);
+  return program_impl->Return (program_impl->GetInputArraySize (param), errorSize);
 }
 
