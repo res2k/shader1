@@ -107,25 +107,18 @@ namespace s1
      * Helper method to execute a block of code, dealing with exceptions
      * thrown. Sets the appropriate last error code.
      */
-    template<typename Func>
-    inline typename std::result_of<Func()>::type Try (
-      Func func, typename boost::call_traits <typename std::result_of<Func()>::type>::param_type default)
+    template<typename T, typename Func>
+    inline Result<T> Try (Func func)
     {
       try
       {
-        auto result = func ();
-        SetLastError (S1_SUCCESS);
-        return std::move (result);
+        return func ();
       }
       catch (std::bad_alloc)
       {
-        SetLastError (S1_E_OUT_OF_MEMORY);
+        return S1_E_OUT_OF_MEMORY;
       }
-      catch (...)
-      {
-        SetLastError (S1_E_FAILURE);
-      }
-      return default;
+      return S1_E_FAILURE;
     }
   };
   typedef boost::intrusive_ptr<Library> LibraryPtr;

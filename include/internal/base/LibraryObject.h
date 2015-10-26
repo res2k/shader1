@@ -89,11 +89,10 @@ namespace s1
      * Helper method to execute a block of code, dealing with exceptions
      * thrown. Sets the appropriate last error code.
      */
-    template<typename Func>
-    inline typename std::result_of<Func()>::type Try (
-      Func func, typename boost::call_traits <typename std::result_of<Func()>::type>::param_type default)
+    template<typename T, typename Func>
+    inline Result<T> Try (Func func)
     {
-      return lib->Try (func, default);
+      return lib->Try<T> (func);
     }
   }; 
 } // namespace s1
