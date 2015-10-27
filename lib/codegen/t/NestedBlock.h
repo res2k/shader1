@@ -26,6 +26,7 @@
 #include "NameImpl.h"
 
 #include "codegen/CgGenerator.h"
+#include "codegen/CgOptions.h"
 #include "../cg/SequenceCodeGenerator.h"
 
 #include "StringSubstitute.h"
@@ -92,7 +93,8 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
       TestSequenceCodeGenerator (const Sequence& seq, ImportedNameResolver* nameRes)
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
-				std::vector<std::string> ()) {}
+				std::vector<std::string> (),
+                                CgOptions ()) {}
        
       using Superclass::GetOutputRegisterName;
     };

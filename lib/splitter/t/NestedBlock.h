@@ -57,7 +57,7 @@ public:
     
     s1::splitter::ProgramSplitter splitter;
 
-    s1::intermediate::ProgramPtr prog = semanticsHandler.GetProgram ();
+    s1::intermediate::ProgramPtr prog = semanticsHandler.GetProgram ("main");
     splitter.SetInputProgram (prog);
     splitter.PerformSplit();
 

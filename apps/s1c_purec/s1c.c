@@ -280,7 +280,7 @@ int main (const int argc, const char* const argv[])
   }
 
   {
-    s1_CompiledProgram* compiled_vp = s1_backend_generate_program (backend, program, S1_TARGET_VP);
+    s1_CompiledProgram* compiled_vp = s1_backend_generate_program (backend, program, S1_TARGET_VP, 0);
     if (!compiled_vp)
     {
       exit_code = 4;
@@ -293,7 +293,7 @@ int main (const int argc, const char* const argv[])
     }
   }
   {
-    s1_CompiledProgram* compiled_fp = s1_backend_generate_program (backend, program, S1_TARGET_FP);
+    s1_CompiledProgram* compiled_fp = s1_backend_generate_program (backend, program, S1_TARGET_FP, 0);
     if (!compiled_fp)
     {
       exit_code = 4;
