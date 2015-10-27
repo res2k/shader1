@@ -57,7 +57,7 @@ s1_Options* s1_options_create (s1_Library* obj)
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
   
-  return lib->Return (lib->Try<s1_Options*> (
+  return lib->Return (lib->Try (
     [=]() {
       s1::Compiler::OptionsPtr options (lib->GetCompiler().CreateOptions());
       options->AddRef();
@@ -83,7 +83,7 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     return nullptr;
   }
   
-  return lib->Return (lib->Try<s1_Program*> (
+  return lib->Return (lib->Try (
     [=]() {
       std::string sourceStr (source, sourceSize);
       boost::intrusive_ptr<s1::api_impl::Program> program (
@@ -109,7 +109,7 @@ s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
     return nullptr;
   }
 
-  return lib->Return (lib->Try<s1_Backend*> ([=]()
+  return lib->Return (lib->Try ([=]()
     {
       s1::Compiler::BackendPtr backend_obj (lib->GetCompiler().CreateBackendCg());
       backend_obj->AddRef();

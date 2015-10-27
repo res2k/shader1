@@ -34,6 +34,21 @@
 
 namespace s1
 {
+  namespace detail
+  {
+    template<typename T>
+    struct deduce_try_result
+    {
+      typedef Result<T> type;
+    };
+
+    template<typename T>
+    struct deduce_try_result<Result<T>>
+    {
+      typedef T type;
+    };
+  } // namespace detail
+
   class Library : public Object
   {
     s1_ResultCode lastError; // TODO: Store with thread affinity
@@ -107,8 +122,8 @@ namespace s1
      * Helper method to execute a block of code, dealing with exceptions
      * thrown. Sets the appropriate last error code.
      */
-    template<typename T, typename Func>
-    inline Result<T> Try (Func func)
+    template<typename Func>
+    inline typename detail::deduce_try_result<typename std::result_of<Func()>::type>::type Try (Func func)
     {
       try
       {
