@@ -21,6 +21,7 @@
 #ifndef __BASE_LIBRARY_H__
 #define __BASE_LIBRARY_H__
 
+#include "base/Exception.h"
 #include "base/Object.h"
 #include "base/Result.h"
 #include "compiler/Compiler.h"
@@ -132,6 +133,10 @@ namespace s1
       catch (std::bad_alloc)
       {
         return S1_E_OUT_OF_MEMORY;
+      }
+      catch (Exception& e)
+      {
+        return e.code ();
       }
       return S1_E_FAILURE;
     }

@@ -1,6 +1,7 @@
 set(base_sources
     format/Formatter.cpp
     ../../include/internal/base/common.h
+    ../../include/internal/base/Exception.h
     ../../include/internal/base/Library.h
     ../../include/internal/base/LibraryObject.h
     ../../include/internal/base/Object.h
