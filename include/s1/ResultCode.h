@@ -18,8 +18,8 @@
 /**\file
  * Result code definitions
  */
-#ifndef __S1_ERROR_H__
-#define __S1_ERROR_H__
+#ifndef __S1_RESULTCODE_H__
+#define __S1_RESULTCODE_H__
 
 /// Result code type
 typedef unsigned int s1_ResultCode;
@@ -220,4 +220,4 @@ namespace s1
 }
 #endif // defined(__cplusplus)
 
-#endif // __S1_ERROR_H__
+#endif // __S1_RESULTCODE_H__

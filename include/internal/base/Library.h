@@ -26,7 +26,7 @@
 #include "base/Result.h"
 #include "compiler/Compiler.h"
 
-#include "s1/Error.h"
+#include "s1/ResultCode.h"
 
 #include <boost/call_traits.hpp>
 #include <boost/intrusive_ptr.hpp>

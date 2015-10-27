@@ -17,6 +17,7 @@ set(s1_sources
     ../../include/s1/LibraryObject.h
     ../../include/s1/Options.h
     ../../include/s1/Program.h
+    ../../include/s1/ResultCode.h
     ../../include/s1/genObject/Object.h.template
     )
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)

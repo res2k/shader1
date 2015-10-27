@@ -21,7 +21,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #ifndef __BASE_EXCEPTION_H__
 #define __BASE_EXCEPTION_H__
 
-#include "s1/Error.h"
+#include "s1/ResultCode.h"
 
 #include <exception>
 

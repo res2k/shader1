@@ -32,9 +32,9 @@
 
 #include "s1/Backend.h"
 #include "s1/CompiledProgram.h"
-#include "s1/Error.h"
 #include "s1/Library.h"
 #include "s1/Options.h"
+#include "s1/ResultCode.h"
 
 #include <errno.h>
 #include <stdlib.h>
