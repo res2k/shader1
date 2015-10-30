@@ -1,0 +1,81 @@
+<!DOCTYPE codes_xml [
+  <!--ENTITY lsquo "&#x2018;">
+  <!ENTITY rsquo "&#x2019;">
+  <!ENTITY ndash "&#x2013;"-->
+  <!ENTITY lsquo "'">
+  <!ENTITY rsquo "'">
+  <!ENTITY ndash "-">
+]>
+<!--
+    Shader1
+    Copyright (c) 2015 Frank Richter
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+-->
+<codes>
+	<component name="BASE" value="0" descr="&lsquo;base&rsquo; errors" docgroup="General result codes">
+		<code name="SUCCESS" value="0" type="success">
+			<descr>Success.</descr>
+			<doc>
+			Result code for an unmitigated success.
+			\remarks Since an operation might succeed with the result code \em not being
+			S1_SUCCESS you should always use #S1_SUCCESSFUL to check a result code.
+			</doc>
+		</code>
+		<code name="E_FAILURE" value="0">
+			<descr>Generic failure.</descr>
+		</code>
+		<code name="E_OUT_OF_MEMORY" value="1">
+			<descr>Out of memory.</descr>
+		</code>
+		<code name="E_INVALID_ARG" value="2"
+		      name_ext="E_INVALID_ARG_N">
+			<descr>An argument was invalid.</descr>
+			<doc>
+			Some argument was invalid (eg a pointer was \NULL).
+			\remarks You need to use the #S1_ERROR_EQUAL flag to check for this error code.
+			</doc>
+			<doc_ext>
+			A specific argument was invalid (eg a pointer was \NULL).
+			\a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
+			has index 0. But note that for functions taking an object instance as the first argument that
+			argument is \em not included when counting the invalid argument number.
+			(This is not really incur a loss of information &ndash; in this case, there wouldn't be
+			a way to obtain a library to set the error code on anyway.)
+			</doc_ext>
+		</code>
+	</component>
+	<component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
+		<code name="E_INVALID_OPTIMIZATION" value="0">
+			<descr>The optimization option was invalid.</descr>
+		</code>
+	</component>
+	<component name="BACKEND" value="2" descr="backend-related" docgroup="Backend-related result codes">
+		<code name="E_UNKNOWN_BACKEND" value="0">
+			<descr>An unknown backend was requested.</descr>
+		</code>
+		<code name="E_GENERATE_FAILED" value="1">
+			<descr>Program generation failed.</descr>
+		</code>
+	</component>
+	<component name="PROGRAM" value="3" descr="program-related" docgroup="Program-related result codes">
+		<code name="E_INVALID_FREQUENCY" value="0">
+			<descr>An invalid input parameter frequency was given.</descr>
+		</code>
+		<code name="E_UNKNOWN_PARAMETER" value="1">
+			<descr>A program input parameter is not known.</descr>
+		</code>
+		<code name="E_INCOMPATIBLE" value="2">
+			<descr>The requested compatibility level is not supported.</descr>
+		</code>
+	</component>
+</codes>

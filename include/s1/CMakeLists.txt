@@ -4,7 +4,6 @@ if(CMAKE_GENERATOR MATCHES "Unix Makefiles")
                      COMMAND ${CMAKE_SOURCE_DIR}/build/generate_preprocessor_h.sh ${CMAKE_CURRENT_SOURCE_DIR}/genObject/Object.h.template -I${CMAKE_CURRENT_SOURCE_DIR}
                               | sed -e 's/BOOST_PP/_S1BOOSTPP/g' -e 's/BOOST_PREPROCESSOR/_S1BOOSTPP/g' > preprocessor.h
                      DEPENDS genObject/Object.h.template)
-  set_property(SOURCE preprocessor.h PROPERTY GENERATED YES)
 
   # Generate Object.h from Object.h.template:
   #  Replace BOOST_PP with _S1BOOSTPP
@@ -12,7 +11,6 @@ if(CMAKE_GENERATOR MATCHES "Unix Makefiles")
   add_custom_command(OUTPUT Object.h
                      COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/genObject/Object.h.template | grep -v "^#include" | sed -e "s-//#include-#include-" | sed -e 's/BOOST_PP/_S1BOOSTPP/g' > Object.h
                      DEPENDS genObject/Object.h.template preprocessor.h)
-  set_property(SOURCE Object.h PROPERTY GENERATED YES)
 
   add_custom_target(generate_Object DEPENDS Object.h)
 else()
@@ -20,11 +18,16 @@ else()
   add_custom_command(OUTPUT preprocessor.h
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/pregenerated/preprocessor.h preprocessor.h
 					 DEPENDS pregenerated/preprocessor.h)
-  set_property(SOURCE preprocessor.h PROPERTY GENERATED YES)
   add_custom_command(OUTPUT Object.h
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/pregenerated/Object.h Object.h
 					 DEPENDS pregenerated/Object.h)
-  set_property(SOURCE Object.h PROPERTY GENERATED YES)
   add_custom_target(generate_Object DEPENDS preprocessor.h Object.h
                     COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_Object")
 endif()
+
+add_custom_command(OUTPUT ResultCode.inc
+                   COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
+                      ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.xml
+                      ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.inc.tpl > ResultCode.inc
+                   DEPENDS ResultCode.xml ResultCode.inc.tpl)
+add_custom_target(generate_ResultCode DEPENDS ResultCode.inc)

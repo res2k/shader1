@@ -1,8 +1,7 @@
 add_custom_target(docs)
 
 find_package(Doxygen)
-find_package(PythonInterp)
-if(DOXYGEN_FOUND AND PYTHONINTERP_FOUND)
+if(DOXYGEN_FOUND)
   add_custom_target(merge_headers
     ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/treelink.py ${CMAKE_SOURCE_DIR}/include/s1 headers-merged/s1
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_BINARY_DIR}/include/s1/Object.h headers-merged/s1/Object.h

@@ -24,13 +24,13 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES G
 if(BUILD_SHARED_LIBS)
   s1_add_library(s1 SHARED
                  SOURCES ${s1_sources}
-                 DEPENDS generate_Object
+                 DEPENDS generate_Object generate_ResultCode
                  LINK base compiler)
   set_property(TARGET s1 APPEND PROPERTY LINK_FLAGS "${CXX_STATIC_LIBSTDCXX_FLAG} ${CXX_LINK_HIDE_OTHER_SYMBOLS}")
 else()
   s1_add_library(s1 STATIC 
                  SOURCES ${s1_sources}
-                 DEPENDS generate_Object
+                 DEPENDS generate_Object generate_ResultCode
                  LINK base compiler)
 endif()
 set(_ARCH "")

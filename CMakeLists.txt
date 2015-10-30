@@ -22,6 +22,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT MSVC)
 endif()
 
 find_package(CxxTest)
+find_package(PythonInterp REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(s1_add_library)
