@@ -16,7 +16,7 @@
 */
 
 /**\file
- * Result code definitions
+ * Result code type and check macro definitions
  */
 #ifndef __S1_RESULTCODE_H__
 #define __S1_RESULTCODE_H__
@@ -113,7 +113,7 @@ typedef unsigned int s1_ResultCode;
 /** @} */
 
 // Actual result code definitions, generated from XML
-#include "s1/ResultCode.inc"
+#include "s1/ResultCode_defs.h"
 
 #if defined(__cplusplus)
 namespace s1

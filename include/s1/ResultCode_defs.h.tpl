@@ -18,6 +18,12 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+/**\file
+ * Result code values
+ */
+#ifndef __S1_RESULTCODE_DEFS_H__
+#define __S1_RESULTCODE_DEFS_H__
+
 {{def comp_ident(comp)}}S1_RESULT_COMP_{{comp}}{{enddef}}
 {{def code_ident(name)}}S1_{{name}}{{enddef}}
 {{def code_make_def(comp, tag)}}{{if 'type' in tag.attrib and tag.attrib['type'] == 'success'}}S1_MAKE_SUCCESS{{else}}S1_MAKE_ERROR{{endif}}({{comp_ident(comp)}}, {{tag.attrib['value']}}){{enddef}}
@@ -53,3 +59,5 @@ def doclines(str):
 {{endfor}}
 /** @} */
 {{endfor}}
+
+#endif // __S1_RESULTCODE_DEFS_H__
