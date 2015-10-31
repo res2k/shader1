@@ -1,6 +1,12 @@
 # Supply a version script to hide all symbols but our own
 CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/ld-symbols.map")
 
+add_custom_command(OUTPUT ResultCode.cpp
+                   COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
+                      ${CMAKE_SOURCE_DIR}/include/s1/ResultCode.xml
+                      ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.cpp.tpl > ResultCode.cpp
+                   DEPENDS ${CMAKE_SOURCE_DIR}/include/s1/ResultCode.xml ResultCode.cpp.tpl)
+
 set(s1_sources
     Backend.cpp
     BackendOptions.cpp
@@ -10,6 +16,7 @@ set(s1_sources
     Object.cpp
     Options.cpp
     Program.cpp
+    ResultCode.cpp
     ../../include/s1/Backend.h
     ../../include/s1/BackendOptions.h
     ../../include/s1/CompiledProgram.h

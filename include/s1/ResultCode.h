@@ -21,6 +21,8 @@
 #ifndef __S1_RESULTCODE_H__
 #define __S1_RESULTCODE_H__
 
+#include "defs.h"
+
 /// Result code type
 typedef unsigned int s1_ResultCode;
 
@@ -115,11 +117,24 @@ typedef unsigned int s1_ResultCode;
 // Actual result code definitions, generated from XML
 #include "s1/ResultCode_defs.h"
 
+/**
+ * Get error code description for a result code.
+ * Returns a human-readable description for the result code \a code
+ * or \NULL if it's an unknown code.
+ */
+S1_API(const char*) s1_get_result_code_str (s1_ResultCode code);
+
 #if defined(__cplusplus)
 namespace s1
 {
   /// Result code type
   typedef s1_ResultCode ResultCode;
+
+  ///\copydoc s1_get_result_code_description
+  static inline const char* GetResultCodeStr (ResultCode code)
+  {
+    return s1_get_result_code_str (code);
+  }
 }
 #endif // defined(__cplusplus)
 
