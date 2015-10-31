@@ -87,6 +87,11 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
         static const ProgramFunction::TransferMappings m;
         return m;
       }
+      static const CgOptions& DefaultOptions()
+      {
+        static const CgOptions o;
+        return o;
+      }
     public:
       typedef SequenceCodeGenerator Superclass;
     
@@ -94,7 +99,7 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
 				std::vector<std::string> (),
-                                CgOptions ()) {}
+                                DefaultOptions ()) {}
        
       using Superclass::GetOutputRegisterName;
     };
