@@ -121,17 +121,6 @@ INLINE_INHERITED_MEMB  = NO
 
 FULL_PATH_NAMES        = YES
 
-# If the FULL_PATH_NAMES tag is set to YES then the STRIP_FROM_PATH tag
-# can be used to strip a user-defined part of the path. Stripping is
-# only done if one of the specified strings matches the left-hand part of
-# the path. The tag can be used to show relative paths in the file list.
-# If left blank the directory from which doxygen is run is used as the
-# path to strip. Note that you specify absolute paths here, but also
-# relative paths, which will be relative from the directory where doxygen is
-# started.
-
-STRIP_FROM_PATH        = $(MERGED_HEADERS)
-
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
 # the reader which header file to include in order to use a class.
