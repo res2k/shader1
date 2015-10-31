@@ -24,7 +24,7 @@
 <codes>
 	<component name="BASE" value="0" descr="&lsquo;base&rsquo; errors" docgroup="General result codes">
 		<code name="SUCCESS" value="0" type="success">
-			<descr>Success.</descr>
+			<descr>Success</descr>
 			<doc>
 			Result code for an unmitigated success.
 			\remarks Since an operation might succeed with the result code \em not being
@@ -32,14 +32,14 @@
 			</doc>
 		</code>
 		<code name="E_FAILURE" value="0">
-			<descr>Generic failure.</descr>
+			<descr>Generic failure</descr>
 		</code>
 		<code name="E_OUT_OF_MEMORY" value="1">
-			<descr>Out of memory.</descr>
+			<descr>Out of memory</descr>
 		</code>
 		<code name="E_INVALID_ARG" value="2"
 		      name_ext="E_INVALID_ARG_N">
-			<descr>An argument was invalid.</descr>
+			<descr>An argument was invalid</descr>
 			<doc>
 			Some argument was invalid (eg a pointer was \NULL).
 			\remarks You need to use the #S1_ERROR_EQUAL flag to check for this error code.
@@ -56,26 +56,26 @@
 	</component>
 	<component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
 		<code name="E_INVALID_OPTIMIZATION" value="0">
-			<descr>The optimization option was invalid.</descr>
+			<descr>The optimization option was invalid</descr>
 		</code>
 	</component>
 	<component name="BACKEND" value="2" descr="backend-related" docgroup="Backend-related result codes">
 		<code name="E_UNKNOWN_BACKEND" value="0">
-			<descr>An unknown backend was requested.</descr>
+			<descr>An unknown backend was requested</descr>
 		</code>
 		<code name="E_GENERATE_FAILED" value="1">
-			<descr>Program generation failed.</descr>
+			<descr>Program generation failed</descr>
 		</code>
 	</component>
 	<component name="PROGRAM" value="3" descr="program-related" docgroup="Program-related result codes">
 		<code name="E_INVALID_FREQUENCY" value="0">
-			<descr>An invalid input parameter frequency was given.</descr>
+			<descr>An invalid input parameter frequency was given</descr>
 		</code>
 		<code name="E_UNKNOWN_PARAMETER" value="1">
-			<descr>A program input parameter is not known.</descr>
+			<descr>A program input parameter is not known</descr>
 		</code>
 		<code name="E_INCOMPATIBLE" value="2">
-			<descr>The requested compatibility level is not supported.</descr>
+			<descr>The requested compatibility level is not supported</descr>
 		</code>
 	</component>
 </codes>
