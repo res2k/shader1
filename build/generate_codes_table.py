@@ -20,7 +20,7 @@ components = xml_tree.getroot().getchildren()
 
 last_empty = False
 for line in template.substitute(components=components).splitlines():
-    if not line:
+    if not line.strip():
         if not last_empty:
             print()
         last_empty = True
