@@ -22,3 +22,10 @@ DOT_PATH               = @DOXYGEN_DOT_EXECUTABLE@
 # ignored.
 
 INPUT_FILTER           = "@PYTHON_EXECUTABLE@ @CMAKE_CURRENT_SOURCE_DIR@/headerpp.py"
+
+# The INPUT tag can be used to specify the files and/or directories that contain
+# documented source files. You may enter file names like "myfile.cpp" or
+# directories like "/usr/src/myproject". Separate the files or directories
+# with spaces.
+
+INPUT                  = @CMAKE_CURRENT_BINARY_DIR@/headers-merged/s1
