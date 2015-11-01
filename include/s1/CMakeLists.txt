@@ -30,4 +30,5 @@ add_custom_command(OUTPUT ResultCode_defs.h
                       ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.xml
                       ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode_defs.h.tpl > ResultCode_defs.h
                    DEPENDS ResultCode.xml ResultCode_defs.h.tpl)
-add_custom_target(generate_ResultCode DEPENDS ResultCode_defs.h)
+add_custom_target(generate_ResultCode DEPENDS ResultCode_defs.h
+                  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_ResultCode")
