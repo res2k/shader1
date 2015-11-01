@@ -17,6 +17,8 @@ set(s1_sources
     Options.cpp
     Program.cpp
     ResultCode.cpp
+    ResultCodeHelper.cpp
+    ResultCodeHelper.h
     ../../include/s1/Backend.h
     ../../include/s1/BackendOptions.h
     ../../include/s1/CompiledProgram.h
@@ -28,6 +30,7 @@ set(s1_sources
     ../../include/s1/genObject/Object.h.template
     )
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)
+include_directories(.)
 if(BUILD_SHARED_LIBS)
   s1_add_library(s1 SHARED
                  SOURCES ${s1_sources}

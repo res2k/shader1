@@ -22,6 +22,8 @@
 
 #include "base/common.h"
 
+#include "ResultCodeHelper.h"
+
 {{def code_ident(name)}}S1_{{name}}{{enddef}}
 
 const char* s1_get_result_code_str (s1_ResultCode code)
@@ -31,7 +33,12 @@ const char* s1_get_result_code_str (s1_ResultCode code)
   {{for comp in components}}
   {{for code in comp.getchildren()}}
     case {{code_ident(code.attrib['name'])}}:
+    {{if 'name_ext' in code.attrib}}
+      return s1::detail::GetExtendedErrorDescr (code,
+        "{{code.find('descr').text}}");
+    {{else}}
       return "{{code.find('descr').text}}";
+    {{endif}}
   {{endfor}}
   {{endfor}}
   }
