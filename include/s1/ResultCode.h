@@ -34,13 +34,13 @@ typedef unsigned int s1_ResultCode;
  */
 #define S1_ERROR_FLAG                           0x80000000u
 /// \internal Shift value for error extra data
-#define _S1_ERROR_EXTRA_SHIFT                   20
+#define _S1_RESULT_EXTRA_SHIFT                  20
 /// \internal Mask value for error extra data
-#define _S1_ERROR_EXTRA_MASK                    0xff
+#define _S1_RESULT_EXTRA_MASK                   0xff
 /// \internal Combine a result code and extra data to produce a failure code
-#define _S1_MAKE_ERROR_X(Code, Extra)           ((Code) | ((Extra) << _S1_ERROR_EXTRA_SHIFT) | S1_ERROR_FLAG)
+#define _S1_MAKE_ERROR_X(Code, Extra)           ((Code) | ((Extra) << _S1_RESULT_EXTRA_SHIFT) | S1_ERROR_FLAG)
 /// \internal Combine a result code and extra data to produce a success code
-#define _S1_MAKE_SUCCESS_X(Code, Extra)         ((Code) | ((Extra) << _S1_ERROR_EXTRA_SHIFT))
+#define _S1_MAKE_SUCCESS_X(Code, Extra)         ((Code) | ((Extra) << _S1_RESULT_EXTRA_SHIFT))
 /// \internal Produce a failure code (without extra data)
 #define _S1_MAKE_ERROR(Code)                    _S1_MAKE_ERROR_X(Code, 0u)
 /// \internal Produce a success code (without extra data)
@@ -100,12 +100,12 @@ typedef unsigned int s1_ResultCode;
  * \hideinitializer
  * Extract the extra data from a result code.
  */
-#define S1_GET_EXTRA(Code)                      (((Code) >> _S1_RESULT_COMP_EXTRA) & _S1_RESULT_COMP_EXTRA)
+#define S1_GET_EXTRA(Code)                      (((Code) >> _S1_RESULT_EXTRA_SHIFT) & _S1_RESULT_EXTRA_MASK)
 /**\def S1_CLEAR_EXTRA(Code)
  * \hideinitializer
  * Return the result code with extra data cleared.
  */
-#define S1_CLEAR_EXTRA(Code)                    ((Code) & ~(_S1_ERROR_EXTRA_MASK << _S1_ERROR_EXTRA_SHIFT))
+#define S1_CLEAR_EXTRA(Code)                    ((Code) & ~(_S1_RESULT_EXTRA_MASK << _S1_RESULT_EXTRA_SHIFT))
 
 /**\def S1_ERROR_EQUAL(Code1, Code2)
  * \hideinitializer
