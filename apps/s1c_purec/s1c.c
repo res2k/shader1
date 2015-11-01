@@ -41,10 +41,26 @@
 #include <stdio.h>
 #include <string.h>
 
-static void print_lib_error (const char* message, s1_Library* lib)
+static const char* result_code_string (s1_ResultCode code)
+{
+  const char* error_str;
+  static char buf[16];
+
+  error_str = s1_get_result_code_str (code);
+  if (error_str) return error_str;
+  sprintf (buf, "0x%0.8x", code);
+  return buf;
+}
+
+static const char* lib_error_string (s1_Library* lib)
 {
   s1_ResultCode error = s1_library_get_last_error (lib);
-  fprintf (stderr, "%s: %0.8x\n", message, error);
+  return result_code_string (error);
+}
+
+static void print_lib_error (const char* message, s1_Library* lib)
+{
+  fprintf (stderr, "%s: %s\n", message, lib_error_string (lib));
 }
 
 static void print_syntax (const char* exec_name)
@@ -79,7 +95,7 @@ int main (const int argc, const char* const argv[])
   error = s1_create_library (&lib);
   if (!S1_SUCCESSFUL(error))
   {
-    fprintf (stderr, "failed to initialize library: %0.8x\n", error);
+    fprintf (stderr, "failed to initialize library: %s\n", result_code_string (error));
     return 2;
   }
 
@@ -121,8 +137,8 @@ int main (const int argc, const char* const argv[])
       {
         if (!s1_options_set_opt_flag_from_str (compiler_options, opt_str))
         {
-          fprintf (stderr, "failed to set optimization flag %s: error %0.8x\n",
-                   opt_str, s1_library_get_last_error (lib));
+          fprintf (stderr, "failed to set optimization flag %s: error %s\n",
+                   opt_str, lib_error_string (lib));
         }
       }
     }
@@ -156,7 +172,7 @@ int main (const int argc, const char* const argv[])
   if (!backend)
   {
     exit_code = 2;
-    print_lib_error ("failed to backends", lib);
+    print_lib_error ("failed to set backend", lib);
     goto cleanup_options;
   }
 
@@ -219,8 +235,8 @@ int main (const int argc, const char* const argv[])
       {
         if (!s1_program_set_input_frequency (program, argv[arg_num], S1_FREQ_VERTEX))
         {
-          fprintf (stderr, "failed to set input frequency for %s: error %0.8x\n",
-                    argv[arg_num], s1_library_get_last_error (lib));
+          fprintf (stderr, "failed to set input frequency for %s: error %s\n",
+                    argv[arg_num], lib_error_string (lib));
         }
       }
     }
@@ -231,8 +247,8 @@ int main (const int argc, const char* const argv[])
       {
         if (!s1_program_set_input_frequency (program, argv[arg_num], S1_FREQ_UNIFORM))
         {
-          fprintf (stderr, "failed to set input frequency for %s: error %0.8x\n",
-                    argv[arg_num], s1_library_get_last_error (lib));
+          fprintf (stderr, "failed to set input frequency for %s: error %s\n",
+                    argv[arg_num], lib_error_string (lib));
         }
       }
     }
@@ -255,8 +271,8 @@ int main (const int argc, const char* const argv[])
           {      
             if (!s1_program_set_input_array_size (program, param, size))
             {
-              fprintf (stderr, "failed to set input array size for %s: error %0.8x\n",
-                        param, s1_library_get_last_error (lib));
+              fprintf (stderr, "failed to set input array size for %s: error %s\n",
+                        param, lib_error_string (lib));
             }
           }
         }

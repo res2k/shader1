@@ -84,6 +84,23 @@ static inline std::wstring to_wide (const wchar_t* orig)
   return orig;
 }
 
+// Get string for a result code
+std::string ResultCodeString (ResultCode code)
+{
+  const char* s = GetResultCodeStr (code);
+  if (s) return s;
+
+  boost::cnv::spirit cnv;
+  return std::string ("0x")
+    + boost::convert<std::string> (static_cast<int> (code), // cast to work around convert<> build failure
+        cnv (boost::cnv::parameter::base = boost::cnv::base::hex)).value();
+}
+// Get result string for last library error
+std::string LastErrorString (Library* lib)
+{
+  return ResultCodeString (lib->GetLastError ());
+}
+
 // Some abstractions for char vs wchar_t
 #if defined(UNICODE)
 #define MainFunc  wmain
@@ -301,7 +318,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   ResultCode libErr (Library::Create (lib));
   if (!S1_SUCCESSFUL(libErr))
   {
-    // TODO: Print error code
+    std::cerr << "Failed to initialize library: " << ResultCodeString (libErr) << std::endl;
     return 2;
   }
   
@@ -315,7 +332,8 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   Backend::Pointer compilerBackend (lib->CreateBackend (to_utf (options.backendStr).c_str()));
   if (!compilerBackend)
   {
-    std::cerr << "Invalid backend: " << to_local (options.backendStr) << std::endl;
+    std::cerr << "Failed to create backend '" << to_local (options.backendStr) << "': "
+        << LastErrorString (lib) << std::endl;
     return 2;
   }
 
@@ -325,7 +343,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     backendOptions = compilerBackend->CreateBackendOptions ();
     if (!backendOptions)
     {
-      std::cerr << "Error creating backend options object" << std::endl;
+      std::cerr << "Error creating backend options object: " << LastErrorString (lib) << std::endl;
     }
     else
     {
@@ -334,7 +352,8 @@ int MainFunc (const int argc, const ArgChar* const argv[])
       {
         if (!backendOptions->SetFromStr (to_utf (backendOptStr).c_str ()))
         {
-          std::cerr << "Error handling backend option: " << to_local (backendOptStr) << std::endl;
+          std::cerr << "Error handling backend option '" << to_local (backendOptStr) << "': "
+              << LastErrorString (lib) << std::endl;
         }
       }
     }
@@ -383,7 +402,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   Program::Pointer compilerProg (lib->CreateProgramFromString (sourceStr.c_str(), sourceStr.size()));
   if (!compilerProg)
   {
-    std::cerr << "Error creating program" << std::endl;
+    std::cerr << "Error creating program: " << LastErrorString (lib) << std::endl;
     return 3;
   }
   compilerProg->SetEntryFunction (to_utf (options.entryName).c_str());
@@ -391,29 +410,56 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   
   BOOST_FOREACH(const CommandLineOptions::ParamMap::value_type& paramFlag, options.paramFlags)
   {
-    compilerProg->SetInputFrequency (to_utf (paramFlag.first).c_str(), paramFlag.second);
-    // TODO: Error checking
+    if (!compilerProg->SetInputFrequency (to_utf (paramFlag.first).c_str (), paramFlag.second))
+    {
+      std::cerr << "Error setting input type for '" << to_local (paramFlag.first) << "': "
+        << LastErrorString (lib) << std::endl;
+    }
   }
   BOOST_FOREACH(const CommandLineOptions::ParamArraySizeMap::value_type& paramSize, options.paramArraySizes)
   {
-    compilerProg->SetInputArraySize (to_utf (paramSize.first).c_str(), paramSize.second);
-    // TODO: Error checking
+    if (!compilerProg->SetInputArraySize (to_utf (paramSize.first).c_str (), paramSize.second))
+    {
+      std::cerr << "Error setting input array size for '" << to_local (paramSize.first) << "': "
+        << LastErrorString (lib) << std::endl;
+    }
   }
 
   if (options.noSplit)
   {
     CompiledProgram::Pointer compiled (
       compilerBackend->GenerateProgram (compilerProg, S1_TARGET_UNSPLIT, backendOptions));
-    std::cout << compiled->GetString() << std::endl;
+    if (!compiled)
+    {
+      std::cerr << "Failed to get unsplit program: " << LastErrorString (lib) << std::endl;
+    }
+    else
+    {
+      std::cout << compiled->GetString () << std::endl;
+    }
   }
   else
   {
     CompiledProgram::Pointer compiledVP (
       compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP, backendOptions));
-    std::cout << compiledVP->GetString() << std::endl;
+    if (!compiledVP)
+    {
+      std::cerr << "Failed to get vertex program: " << LastErrorString (lib) << std::endl;
+    }
+    else
+    {
+      std::cout << compiledVP->GetString () << std::endl;
+    }
     CompiledProgram::Pointer compiledFP (
       compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP));
-    std::cout << compiledFP->GetString () << std::endl;
+    if (!compiledFP)
+    {
+      std::cerr << "Failed to get fragment program: " << LastErrorString (lib) << std::endl;
+    }
+    else
+    {
+      std::cout << compiledFP->GetString () << std::endl;
+    }
   }
   return 0;
 }
