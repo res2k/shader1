@@ -31,4 +31,11 @@ public:
     // Non-existing result code
     TS_ASSERT_EQUALS(s1_get_result_code_str (0x12345678), nullptr);
   }
+
+  void testResultCodeExtDescr (void)
+  {
+    std::string base_descr (s1_get_result_code_str (S1_E_INVALID_ARG));
+    std::string ext_descr (s1_get_result_code_str (S1_E_INVALID_ARG_N (0)));
+    TS_ASSERT_DIFFERS(base_descr, ext_descr);
+  }
 };
