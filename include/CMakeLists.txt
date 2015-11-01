@@ -16,7 +16,8 @@ if(CXXTEST_FOUND)
   file(GLOB api_test_sources
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiLibrary.h
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiLibraryObject.h
-       ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiObject.h)
+       ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiObject.h
+       ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiResultCode.h)
   CXXTEST_ADD_TEST(test_Api test_Api.cpp
                    ${api_test_sources})
   target_link_libraries(test_Api api_testlib s1)
