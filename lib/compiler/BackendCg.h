@@ -19,7 +19,7 @@
 #define __COMPILER_BACKENDCG_H__
 
 #include "compiler/Backend.h"
-#include "codegen/CgOptions.h"
+#include "codegen/cg/CgOptions.h"
 
 namespace s1
 {

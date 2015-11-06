@@ -14,7 +14,7 @@ set(compiler_sources
      )
 s1_add_library(compiler
                SOURCES ${compiler_sources}
-               LINK lexer intermediate codegen optimize splitter)
+               LINK lexer intermediate codegen_cg optimize splitter)
 IF(S1LIB_PDB)
   target_compile_options(compiler PRIVATE ${S1LIB_PDB})
 ENDIF()

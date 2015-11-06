@@ -18,7 +18,7 @@
 #ifndef __CODEGEN_PROGRAMCODEGENERATOR_H__
 #define __CODEGEN_PROGRAMCODEGENERATOR_H__
 
-#include "codegen/CgGenerator.h"
+#include "codegen/cg/CgGenerator.h"
 #include "codegen/common/StringsArray.h"
 #include "intermediate/forwarddecl.h"
 

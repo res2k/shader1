@@ -20,7 +20,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
-#include "codegen/CgOptions.h"
+#include "codegen/cg/CgOptions.h"
 
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "SequenceCodeGenerator.h"

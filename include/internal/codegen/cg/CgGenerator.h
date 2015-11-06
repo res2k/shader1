@@ -21,7 +21,7 @@
 #include "intermediate/Program.h"
 #include "parser/SemanticsHandler.h"
 
-#include "common/StringsArray.h"
+#include "../common/StringsArray.h"
 
 namespace s1
 {

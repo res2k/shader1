@@ -19,8 +19,8 @@
 
 #include "BackendCg.h"
 
-#include "codegen/CgGenerator.h"
-#include "codegen/CgOptions.h"
+#include "codegen/cg/CgGenerator.h"
+#include "codegen/cg/CgOptions.h"
 
 #include <boost/make_shared.hpp>
 

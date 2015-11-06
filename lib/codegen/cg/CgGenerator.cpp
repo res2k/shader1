@@ -17,12 +17,12 @@
 
 #include "base/common.h"
 
-#include "codegen/CgGenerator.h"
+#include "codegen/cg/CgGenerator.h"
 
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 
-#include "cg/ProgramCodeGenerator.h"
+#include "ProgramCodeGenerator.h"
 
 #include <limits>
 #include <stdio.h>

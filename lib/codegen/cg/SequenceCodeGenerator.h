@@ -19,7 +19,7 @@
 #define __CODEGEN_SEQUENCECODEGENERATOR_H__
 
 #include "base/format/Formatter.h"
-#include "codegen/CgGenerator.h"
+#include "codegen/cg/CgGenerator.h"
 #include "codegen/common/AnnotatingSequenceCodeGenerator.h"
 #include "codegen/common/StringsArray.h"
 #include "intermediate/ProgramFunction.h"
