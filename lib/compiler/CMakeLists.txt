@@ -7,10 +7,10 @@ set(compiler_sources
      ErrorHandler.h
      Options.cpp
      Program.cpp
-     ../../include/internal/compiler/Backend.h
-     ../../include/internal/compiler/Compiler.h
-     ../../include/internal/compiler/Options.h
-     ../../include/internal/compiler/Program.h
+     ${S1_INC}/compiler/Backend.h
+     ${S1_INC}/compiler/Compiler.h
+     ${S1_INC}/compiler/Options.h
+     ${S1_INC}/compiler/Program.h
      )
 s1_add_library(compiler
                SOURCES ${compiler_sources}

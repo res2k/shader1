@@ -239,6 +239,8 @@ include_directories(include)
 
 if(NOT S1_PREBUILT)
   add_subdirectory(include)
+  set(S1_INC "${CMAKE_SOURCE_DIR}/include/internal")
+  set(S1_INC_PUBLIC "${CMAKE_SOURCE_DIR}/include/s1")
   add_subdirectory(lib)
 else()
   include("${S1_PREBUILT}/libs1.cmake")

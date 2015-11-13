@@ -7,8 +7,8 @@ set(codegen_cg_sources
     FunctionCodeGenerator.h
     ProgramCodeGenerator.h
     SequenceCodeGenerator.h
-    ../../../include/internal/codegen/cg/CgGenerator.h
-    ../../../include/internal/codegen/cg/CgOptions.h
+    ${S1_INC}/codegen/cg/CgGenerator.h
+    ${S1_INC}/codegen/cg/CgOptions.h
 )
 s1_add_library(codegen_cg
                SOURCES ${codegen_cg_sources}

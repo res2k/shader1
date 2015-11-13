@@ -11,18 +11,18 @@ file(GLOB intermediate_sources
      ProgramFunction.cpp
      Sequence.cpp
      SequenceBuilder.cpp
-     ../../include/internal/intermediate/BasicType.h
-     ../../include/internal/intermediate/BuiltinFunction.h
-     ../../include/internal/intermediate/CloningSequenceVisitor.h
-     ../../include/internal/intermediate/ErrorCode.h
-     ../../include/internal/intermediate/Exception.h
-     ../../include/internal/intermediate/IntermediateGeneratorSemanticsHandler.h
-     ../../include/internal/intermediate/Program.h
-     ../../include/internal/intermediate/ProgramFunction.h
-     ../../include/internal/intermediate/Sequence.h
-     ../../include/internal/intermediate/SequenceBuilder.h
-     ../../include/internal/intermediate/SequenceVisitor.h
-     ../../include/internal/intermediate/forwarddecl.h)
+     ${S1_INC}/intermediate/BasicType.h
+     ${S1_INC}/intermediate/BuiltinFunction.h
+     ${S1_INC}/intermediate/CloningSequenceVisitor.h
+     ${S1_INC}/intermediate/ErrorCode.h
+     ${S1_INC}/intermediate/Exception.h
+     ${S1_INC}/intermediate/IntermediateGeneratorSemanticsHandler.h
+     ${S1_INC}/intermediate/Program.h
+     ${S1_INC}/intermediate/ProgramFunction.h
+     ${S1_INC}/intermediate/Sequence.h
+     ${S1_INC}/intermediate/SequenceBuilder.h
+     ${S1_INC}/intermediate/SequenceVisitor.h
+     ${S1_INC}/intermediate/forwarddecl.h)
 
 include_directories(generator .)
 add_subdirectory(generator)

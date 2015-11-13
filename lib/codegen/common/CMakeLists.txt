@@ -2,11 +2,11 @@ set(codegen_common_sources
         AnnotatingSequenceCodeGenerator.cpp
         BasicSequenceCodeGenerator.cpp
 	StringsArray.cpp
-        ../../../include/internal/codegen/common/AnnotatingSequenceCodeGenerator.h
-        ../../../include/internal/codegen/common/BasicSequenceCodeGenerator.h
-        ../../../include/internal/codegen/common/Options.h
-        ../../../include/internal/codegen/common/OptionsBase.h
-	../../../include/internal/codegen/common/StringsArray.h)
+        ${S1_INC}/codegen/common/AnnotatingSequenceCodeGenerator.h
+        ${S1_INC}/codegen/common/BasicSequenceCodeGenerator.h
+        ${S1_INC}/codegen/common/Options.h
+        ${S1_INC}/codegen/common/OptionsBase.h
+        ${S1_INC}/codegen/common/StringsArray.h)
 s1_add_library(codegen_common
                SOURCES ${codegen_common_sources}
                LINK intermediate)

@@ -1,7 +1,7 @@
 s1_add_library(lexer
                SOURCES
                Lexer.cpp
-               ../../include/internal/lexer/Lexer.h
+               ${S1_INC}/lexer/Lexer.h
                LINK base)
 IF(S1LIB_PDB)
   target_compile_options(lexer PRIVATE ${S1LIB_PDB})

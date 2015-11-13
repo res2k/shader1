@@ -1,13 +1,13 @@
 set(base_sources
     format/Formatter.cpp
-    ../../include/internal/base/common.h
-    ../../include/internal/base/Exception.h
-    ../../include/internal/base/Library.h
-    ../../include/internal/base/LibraryObject.h
-    ../../include/internal/base/Object.h
-    ../../include/internal/base/Result.h
-    ../../include/internal/base/format/Formatter.h
-    ../../include/internal/base/format/Formatter.tpp
+    ${S1_INC}/base/common.h
+    ${S1_INC}/base/Exception.h
+    ${S1_INC}/base/Library.h
+    ${S1_INC}/base/LibraryObject.h
+    ${S1_INC}/base/Object.h
+    ${S1_INC}/base/Result.h
+    ${S1_INC}/base/format/Formatter.h
+    ${S1_INC}/base/format/Formatter.tpp
     )
 set(base_sources_uc_cpp
     uc/Char.cpp
@@ -20,18 +20,18 @@ set(base_sources_uc_cpp
     uc/UTF8to16Transcoder.cpp
     )
 set(base_sources_uc_h
-    ../../include/internal/base/uc/Char.h
-    ../../include/internal/base/uc/Exception.h
-    ../../include/internal/base/uc/Stream.h
-    ../../include/internal/base/uc/StreamEndOfInputException.h
-    ../../include/internal/base/uc/StreamException.h
-    ../../include/internal/base/uc/StreamInvalidCharacterException.h
-    ../../include/internal/base/uc/String.h
-    ../../include/internal/base/uc/UTF16Decoder.h
-    ../../include/internal/base/uc/UTF16Encoder.h
-    ../../include/internal/base/uc/UTF8Decoder.h
-    ../../include/internal/base/uc/UTF16to8Transcoder.h
-    ../../include/internal/base/uc/UTF8to16Transcoder.h
+    ${S1_INC}/base/uc/Char.h
+    ${S1_INC}/base/uc/Exception.h
+    ${S1_INC}/base/uc/Stream.h
+    ${S1_INC}/base/uc/StreamEndOfInputException.h
+    ${S1_INC}/base/uc/StreamException.h
+    ${S1_INC}/base/uc/StreamInvalidCharacterException.h
+    ${S1_INC}/base/uc/String.h
+    ${S1_INC}/base/uc/UTF16Decoder.h
+    ${S1_INC}/base/uc/UTF16Encoder.h
+    ${S1_INC}/base/uc/UTF8Decoder.h
+    ${S1_INC}/base/uc/UTF16to8Transcoder.h
+    ${S1_INC}/base/uc/UTF8to16Transcoder.h
     )
 s1_get_boost_link_libs(_BASE_LINK_BOOST thread)
 s1_add_library(base
