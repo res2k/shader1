@@ -1,9 +1,11 @@
 set(codegen_cg_sources
     CgGenerator.cpp
     CgOptions.cpp
+    CgTraits.cpp
     FunctionCodeGenerator.cpp
     ProgramCodeGenerator.cpp
     SequenceCodeGenerator.cpp
+    CgTraits.h
     FunctionCodeGenerator.h
     ProgramCodeGenerator.h
     SequenceCodeGenerator.h

@@ -21,19 +21,18 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #ifndef __CODEGEN_CG_CGOPTIONS_H__
 #define __CODEGEN_CG_CGOPTIONS_H__
 
-#include "codegen/common/Options.h"
+#include "codegen/sl/Options.h"
 
 namespace s1
 {
   namespace codegen
   {
-    class CgOptions : public Options<CgOptions>
+    class CgOptions : public sl::Options
     {
     protected:
-      class CgDeclarations : public CommonDeclarations {};
+      class CgDeclarations : public SLDeclarations {};
       static CgDeclarations declarations;
-      friend class OptionsBase<CgOptions>;
-      const Declarations& GetDeclarations () const { return declarations;  }
+      const Declarations& GetDeclarations () const override { return declarations;  }
     public:
       CgOptions () {}
     };

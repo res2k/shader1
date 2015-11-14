@@ -19,8 +19,7 @@
 #define __CODEGEN_PROGRAMCODEGENERATOR_H__
 
 #include "codegen/cg/CgGenerator.h"
-#include "codegen/common/StringsArray.h"
-#include "intermediate/forwarddecl.h"
+#include "codegen/sl/ProgramCodeGenerator.h"
 
 namespace s1
 {
@@ -28,13 +27,13 @@ namespace s1
   {
     class CgOptions;
 
-    class CgGenerator::ProgramCodeGenerator
+    class CgGenerator::ProgramCodeGenerator : public sl::ProgramCodeGenerator
     {
-      const CgOptions& options;
+      const CgOptions& GetCgOptions () const;
+
+      std::unique_ptr<sl::FunctionCodeGenerator> CreateFunctionCodeGenerator () override;
     public:
       ProgramCodeGenerator (const CgOptions& options);
-
-      StringsArrayPtr Generate (const intermediate::ProgramPtr& prog, int frequency);
     };
   } // namespace codegen
 } // namespace s1

@@ -19,9 +19,7 @@
 #define __CODEGEN_FUNCTIONCODEGENERATOR_H__
 
 #include "codegen/cg/CgGenerator.h"
-#include "codegen/common/StringsArray.h"
-#include "intermediate/forwarddecl.h"
-#include "SequenceCodeGenerator.h"
+#include "codegen/sl/FunctionCodeGenerator.h"
 
 namespace s1
 {
@@ -29,45 +27,18 @@ namespace s1
   {
     class CgOptions;
 
-    class CgGenerator::FunctionCodeGenerator
+    class CgGenerator::FunctionCodeGenerator : public sl::FunctionCodeGenerator
     {
-      const CgOptions& options;
+    protected:
+      const CgOptions& GetCgOptions () const;
 
-      class BlockNameResolver : public ImportedNameResolver
-      {
-	friend class FunctionCodeGenerator;
-	
-	typedef boost::unordered_map<uc::String, std::string> FunctionParamsToIdentifier;
-	FunctionParamsToIdentifier inParamMap;
-	FunctionParamsToIdentifier outParamMap;
-      public:
-	std::string GetImportedNameIdentifier (const uc::String& name)
-	{ 
-	  return inParamMap[name];
-	}
-	std::string GetExportedNameIdentifier (const uc::String& name)
-	{ 
-	  return outParamMap[name];
-	}
-      };
-	
-      struct ParamAdder
-      {
-	bool firstParam;
-	std::string paramStr;
-	
-	ParamAdder () : firstParam (true) { }
-	void Add (const char* attr, const std::string& attrStr);
-      };
+      std::unique_ptr<sl::SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,
+                                                               sl::ImportedNameResolver* nameRes,
+                                                               const intermediate::ProgramFunction::TransferMappings& transferIn,
+                                                               const intermediate::ProgramFunction::TransferMappings& transferOut,
+                                                               const std::vector<std::string>& outParams) const override;
     public:
       FunctionCodeGenerator (const CgOptions& options);
-
-      StringsArrayPtr Generate (const char* identifier,
-                                const intermediate::ProgramFunctionPtr& func,
-				const intermediate::Program::OutputParameters& output,
-				const intermediate::Program::ParameterArraySizes& paramArraySizes,
-				bool doTransfer,
-				int frequency);
     };
   } // namespace codegen
 } // namespace s1

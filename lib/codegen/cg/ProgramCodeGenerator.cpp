@@ -19,76 +19,39 @@
 
 #include "ProgramCodeGenerator.h"
 
+#include "CgTraits.h"
+#include "FunctionCodeGenerator.h"
+
+#include "codegen/cg/CgOptions.h"
+
+#if 0
 #include "intermediate/Program.h"
 #include "FunctionCodeGenerator.h"
 #include "splitter/Frequency.h"
 
 #include <boost/make_shared.hpp>
 #include <string>
+#endif
 
 namespace s1
 {
   namespace codegen
   {
     CgGenerator::ProgramCodeGenerator::ProgramCodeGenerator (const CgOptions& options)
-      : options (options)
+      : sl::ProgramCodeGenerator (CgTraits::instance, options)
     {
     }
 
-    StringsArrayPtr CgGenerator::ProgramCodeGenerator::Generate (const intermediate::ProgramPtr& prog,
-								 int frequency)
+    const CgOptions& CgGenerator::ProgramCodeGenerator::GetCgOptions () const
     {
-      StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
-      
-      const intermediate::Program::TransferValues& transferValues (prog->GetTransferValues());
-      if ((frequency == splitter::freqVertex) && (transferValues.size() > 0))
-      {
-	resultStrings->AddString ("struct V2F");
-	resultStrings->AddString ("{");
-	for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin();
-	    transferVal != transferValues.end();
-	    ++transferVal)
-	{
-	  std::string identifierSuffix;
-	  std::string line ("  ");
-	  line.append (CgGenerator::TypeToCgType (transferVal->first, identifierSuffix));
-	  line.append (" ");
-	  line.append (CgGenerator::NameToCgIdentifier (transferVal->second));
-	  line.append (identifierSuffix);
-	  line.append (";");
-	  resultStrings->AddString (line);
-	}
-	resultStrings->AddString ("};");
-	resultStrings->AddString (std::string ());
-      }
-      
-      for (size_t i = 0; i < prog->GetNumFunctions(); i++)
-      {
-	intermediate::ProgramFunctionPtr func (prog->GetFunction (i));
-	FunctionCodeGenerator funcGen (options);
-        if (func->IsEntryFunction ())
-        {
-          resultStrings->AddStrings (*(funcGen.Generate ("main",
-                                                         func,
-                                                         prog->GetOutputParameters (),
-                                                         prog->GetParameterArraySizes (),
-                                                         transferValues.size () > 0,
-                                                         frequency)));
-        }
-        else
-        {
-          resultStrings->AddStrings (*(funcGen.Generate (NameToCgIdentifier (func->GetIdentifier ()).c_str(),
-                                                         func,
-                                                         intermediate::Program::OutputParameters (),
-                                                         intermediate::Program::ParameterArraySizes (),
-                                                         transferValues.size () > 0,
-                                                         frequency)));
-        }
-	resultStrings->AddString (std::string ());
-      }
-      
-      return resultStrings;
+      return static_cast<const CgOptions&> (options);
     }
+
+    std::unique_ptr<sl::FunctionCodeGenerator> CgGenerator::ProgramCodeGenerator::CreateFunctionCodeGenerator ()
+    {
+      return std::unique_ptr<sl::FunctionCodeGenerator> (new FunctionCodeGenerator (GetCgOptions()));
+    }
+
   } // namespace codegen
 } // namespace s1
 
