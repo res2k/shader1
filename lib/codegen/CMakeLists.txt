@@ -1,4 +1,5 @@
 add_subdirectory(common)
+add_subdirectory(sl)
 add_subdirectory(cg)
 
 if(CXXTEST_FOUND)
