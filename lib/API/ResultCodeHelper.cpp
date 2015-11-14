@@ -25,6 +25,8 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include <memory>
 
+#include "base/format/Formatter.tpp"
+
 namespace s1
 {
   namespace detail
