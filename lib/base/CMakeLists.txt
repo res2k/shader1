@@ -36,7 +36,7 @@ set(base_sources_uc_h
 s1_get_boost_link_libs(_BASE_LINK_BOOST thread)
 s1_add_library(base
                SOURCES ${base_sources} ${base_sources_uc_cpp} ${base_sources_uc_h}
-               DEPENDS generate_Object
+               DEPENDS generate_Object generate_ResultCode
                LINK ${_BASE_LINK_BOOST})
 source_group("uc Headers" FILES ${base_sources_uc_h})
 source_group("uc Sources" FILES ${base_sources_uc_cpp})
