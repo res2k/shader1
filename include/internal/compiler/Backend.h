@@ -22,6 +22,7 @@
 
 #include "Compiler.h"
 
+#include "codegen/common/StringsArray.h"
 #include "intermediate/forwarddecl.h"
 #include "splitter/Frequency.h"
 
@@ -29,6 +30,9 @@ namespace s1
 {
   class Compiler::Backend : public LibraryObject
   {
+  protected:
+    /// Join the strings arrays with newlines.
+    static std::string FlattenStringArray (const codegen::StringsArrayPtr& strings);
   public:
     class Program : public LibraryObject
     {
@@ -38,6 +42,20 @@ namespace s1
       virtual const std::string& GetProgramString () = 0;
     };
     typedef boost::intrusive_ptr<Program> ProgramPtr;
+
+    /// Default program implementation (simply returning a string)
+    class ProgramImpl : public Program
+    {
+      std::string programString;
+    public:
+      ProgramImpl (Library* lib, const std::string& programString)
+        : Program (lib), programString (programString) {}
+
+      const std::string& GetProgramString ()
+      {
+        return programString; 
+      }
+    };
 
     class Options : public LibraryObject
     {

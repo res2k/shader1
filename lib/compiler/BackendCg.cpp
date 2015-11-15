@@ -32,17 +32,6 @@ namespace s1
     {
     }
     
-    static std::string FlattenStringArray (const codegen::StringsArrayPtr& strings)
-    {
-      std::string str;
-      for (size_t i = 0; i < strings->Size(); i++)
-      {
-	str.append (strings->Get (i));
-	str.append ("\n");
-      }
-      return str;
-    }
-    
     Compiler::Backend::OptionsPtr BackendCg::CreateOptions ()
     {
       return new CgOptions (GetLibrary());
@@ -78,13 +67,6 @@ namespace s1
                           realOptions ? realOptions->GetContainer() : codegen::CgOptions()));
       
       return ProgramPtr (new CgProgram (GetLibrary(), FlattenStringArray (outputProg)));
-    }
-    
-    //-----------------------------------------------------------------------
-    
-    const std::string& BackendCg::CgProgram::GetProgramString ()
-    {
-      return programString;
     }
 
   } // namespace compiler

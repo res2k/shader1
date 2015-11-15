@@ -27,16 +27,8 @@ namespace s1
   {
     class BackendCg : public Compiler::Backend
     {
-      class CgProgram : public Program
-      {
-	std::string programString;
-      protected:
-        friend class BackendCg;
-	CgProgram (Library* lib, const std::string& programString)
-          : Program (lib), programString (programString) {}
-      public:
-	const std::string& GetProgramString ();
-      };
+      typedef ProgramImpl CgProgram;
+
       class CgOptions : public OptionsImpl<codegen::CgOptions>
       {
       protected:
