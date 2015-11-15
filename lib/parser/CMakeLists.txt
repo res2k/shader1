@@ -1,4 +1,12 @@
-file(GLOB parser_sources *.h *.cpp ../include/internal/parser/*.h)
+set(parser_sources
+    CommonSemanticsHandler.cpp
+    Parser.cpp
+    ${S1_INC}/parser/CommonSemanticsHandler.h
+    ${S1_INC}/parser/ErrorCode.h
+    ${S1_INC}/parser/ErrorHandler.h
+    ${S1_INC}/parser/Exception.h
+    ${S1_INC}/parser/Parser.h
+    ${S1_INC}/parser/SemanticsHandler.h)
 s1_add_library(parser
                SOURCES ${parser_sources}
                LINK lexer)
