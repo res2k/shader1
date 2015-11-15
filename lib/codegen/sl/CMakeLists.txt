@@ -2,6 +2,7 @@ set(codegen_sl_sources
     FunctionCodeGenerator.cpp
     ProgramCodeGenerator.cpp
     SequenceCodeGenerator.cpp
+    Traits.cpp
     ${S1_INC}/codegen/sl/FunctionCodeGenerator.h
     ${S1_INC}/codegen/sl/Options.h
     ${S1_INC}/codegen/sl/ProgramCodeGenerator.h

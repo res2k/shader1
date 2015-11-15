@@ -43,7 +43,6 @@ namespace s1
       static std::string TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
 				       std::string& identifierSuffix,
 				       const std::string& sizeStr = std::string());
-      static std::string NameToCgIdentifier (const uc::String& str);
       /** @} */
     protected:
       class ProgramCodeGenerator;

@@ -38,7 +38,6 @@ namespace s1
 
       CgTraits ();
 
-      uc::String ConvertIdentifier (const uc::String& identifier) const override;
       uc::String TypeString (intermediate::BasicType type) const override;
       std::pair<uc::String, uc::String> TypeString (const parser::SemanticsHandler::TypePtr& type,
                                                     const size_t* arraySize) const override;

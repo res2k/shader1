@@ -35,11 +35,6 @@ namespace s1
     {
     }
 
-    uc::String CgTraits::ConvertIdentifier (const uc::String& identifier) const
-    {
-      return CgGenerator::NameToCgIdentifier (identifier).c_str ();
-    }
-
     uc::String CgTraits::TypeString (intermediate::BasicType type) const
     {
       switch (type)
