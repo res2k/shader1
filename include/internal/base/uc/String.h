@@ -108,7 +108,10 @@ namespace s1
       static String fromUTF8 (const char* s, size_t len = (size_t)~0);
       static String fromUTF32 (const Char32* s, size_t len = (size_t)~0);
 
+      /// Check if string starts with the given string.
       bool startsWith (const String& s) const;
+      /// Check if string starts with the given ASCII string.
+      bool startsWith (const char* s, size_t len = (size_t)~0) const;
       size_type indexOf (Char32 ch) const;
 
       enum NormalizationMode

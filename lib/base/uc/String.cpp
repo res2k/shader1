@@ -412,6 +412,17 @@ namespace s1
       if (s.length() > length()) return false;
       return Char_traits::compare (data(), s.data(), s.length()) == 0;
     }
+
+    bool String::startsWith (const char* s, size_t len) const
+    {
+      if (len == (size_t)~0) len = std::char_traits<char>::length (s);
+      if (len > length()) return false;
+      for (size_type i = 0; i < static_cast<size_type> (len); i++)
+      {
+        if ((*this)[i] != s[i]) return false;
+      }
+      return true;
+    }
     
     String::size_type String::indexOf (Char32 ch) const
     {
