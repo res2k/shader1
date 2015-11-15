@@ -53,4 +53,13 @@ static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 // Used all over the place
 #include "uc/String.h"
 
+// Customize boost::math error handlers
+#define BOOST_MATH_DOMAIN_ERROR_POLICY user_error
+#define BOOST_MATH_POLE_ERROR_POLICY user_error
+#define BOOST_MATH_OVERFLOW_ERROR_POLICY user_error
+#define BOOST_MATH_EVALUATION_ERROR_POLICY user_error
+#define BOOST_MATH_ROUNDING_ERROR_POLICY user_error
+
+// Include math_error_handler.h to get actual declarations for error handlers
+
 #endif // __BASE_COMMON_H__

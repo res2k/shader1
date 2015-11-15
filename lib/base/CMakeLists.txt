@@ -1,9 +1,11 @@
 set(base_sources
+    math_error_handler.cpp
     format/Formatter.cpp
     ${S1_INC}/base/common.h
     ${S1_INC}/base/Exception.h
     ${S1_INC}/base/Library.h
     ${S1_INC}/base/LibraryObject.h
+    ${S1_INC}/base/math_error_handler.h
     ${S1_INC}/base/Object.h
     ${S1_INC}/base/Result.h
     ${S1_INC}/base/format/Formatter.h

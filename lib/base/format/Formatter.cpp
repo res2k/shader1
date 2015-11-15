@@ -19,6 +19,7 @@
 
 #include "base/format/Formatter.h"
 #include "base/format/Formatter.tpp"
+#include "base/math_error_handler.h"
 
 #include <boost/convert.hpp>
 #include <boost/convert/spirit.hpp>
