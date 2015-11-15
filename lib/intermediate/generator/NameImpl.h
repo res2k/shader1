@@ -26,41 +26,25 @@ namespace s1
 {
   namespace intermediate
   {
-    struct IntermediateGeneratorSemanticsHandler::NameImpl : public Name
+    struct IntermediateGeneratorSemanticsHandler::NameImpl : public CommonName
     {
       boost::weak_ptr<ScopeImpl> ownerScope;
-      uc::String identifier;
-      NameType type;
       
-      /* Variables/Constants: type of variable/constant
-	* Functions: type of return value
-	* Type aliases: aliased type
-	*/
-      boost::shared_ptr<TypeImpl> valueType;
-      // Variables/Constants: value
-      ExpressionPtr varValue;
-      // Distinguish between variable/constant
-      bool varConstant;
       // Output parameter
-      bool isOutputParam;
+      bool isOutputParam = false;
       
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
 		const uc::String& identifier, NameType type,
 		const boost::shared_ptr<TypeImpl>& typeOfName)
-	: ownerScope (ownerScope), identifier (identifier), type (type), valueType (typeOfName) {}
+	: CommonName (identifier, type, typeOfName), ownerScope (ownerScope) {}
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
 		const uc::String& identifier,
 		const boost::shared_ptr<TypeImpl>& typeOfName,
 		ExpressionPtr value, bool constant, bool isOutputParam = false)
-	: ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),
-	  varValue (value), varConstant (constant), isOutputParam (isOutputParam) {}
-      
-      NameType GetType() { return type; }
-      TypePtr GetAliasedType()
-      { return type == TypeAlias ? boost::static_pointer_cast<Type> (valueType) : TypePtr (); }
-      const uc::String& GetIdentifier () { return identifier; }
-      bool IsConstantVariable () { return (type == Variable) && varConstant; }
-      TypePtr GetValueType () { return valueType; }
+	: CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope),
+          isOutputParam (isOutputParam) {}
+
+      TypeImplPtr GetValueType () const { return boost::static_pointer_cast<TypeImpl> (valueType); }
     };
   } // namespace intermediate
 } // namespace s1

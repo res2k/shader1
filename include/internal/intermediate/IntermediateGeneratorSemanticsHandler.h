@@ -29,7 +29,8 @@ namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler : public s1::parser::SemanticsHandler
+    class IntermediateGeneratorSemanticsHandler :
+      public s1::parser::CommonSemanticsHandler
     {
     protected:
       friend class ProgramFunction;
@@ -94,42 +95,22 @@ namespace s1
       /**\name Type utilities
        * @{ */
       static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
-      static BaseType DetectNumericType (const uc::String& numericStr);
       static std::string GetTypeString (const TypePtr& type);
       /**@}*/
       
       /**\name Attribute utilities
        * @{ */
-      struct Attribute
+      struct Attribute : public CommonSemanticsHandler::Attribute
       {
-	enum AttrClass
-	{
-	  Unknown,
-	  
-	  arrayLength,
-	  
-	  matrixRow,
-	  matrixCol,
-	  matrixTranspose,
-	  matrixInvert,
-	  
-	  vectorSwizzle
-	};
-	AttrClass attrClass;
-	unsigned char swizzleCompNum;
-	unsigned char swizzleComps;
-	
-	Attribute (AttrClass ac) : attrClass (ac), swizzleCompNum (0), swizzleComps (0) {}
-	Attribute (unsigned char swizNum, unsigned char comp1 = 0, unsigned char comp2 = 0,
-		   unsigned char comp3 = 0, unsigned char comp4 = 0)
-	 : attrClass (vectorSwizzle), swizzleCompNum (swizNum),
-	   swizzleComps ((comp1 & 3) | ((comp2 & 3) << 2) | ((comp3 & 3) << 4) | ((comp4 & 3) << 6))
-	{}
-	
-	unsigned char GetSwizzleComp (unsigned char num) const
-	{ return (swizzleComps >> (num*2)) & 3; }
+        using CommonSemanticsHandler::Attribute::Attribute;
+        Attribute (const CommonSemanticsHandler::Attribute& other)
+          : CommonSemanticsHandler::Attribute (other) {}
+        Attribute (CommonSemanticsHandler::Attribute&& other)
+          : CommonSemanticsHandler::Attribute (std::move (other)) {}
+
+        unsigned char GetSwizzleComp (unsigned char num) const
+        { return (swizzleComps >> (num*2)) & 3; }
       };
-      static Attribute IdentifyAttribute (const uc::String& attributeStr);
       TypeImplPtr GetAttributeType (const TypeImplPtr& expressionType,
 				    const Attribute& attr);
       /** @} */

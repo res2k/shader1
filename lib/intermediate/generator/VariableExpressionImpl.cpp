@@ -49,7 +49,7 @@ namespace s1
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetValueType()
     {
-      return name->valueType;
+      return name->GetValueType ();
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
