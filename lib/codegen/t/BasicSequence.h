@@ -24,8 +24,8 @@
 #include "BlockImpl.h"
 #include "NameImpl.h"
 
-#include "codegen/CgGenerator.h"
-#include "codegen/CgOptions.h"
+#include "codegen/cg/CgGenerator.h"
+#include "codegen/cg/CgOptions.h"
 #include "../cg/SequenceCodeGenerator.h"
 
 #include "StringSubstitute.h"
@@ -55,7 +55,7 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
     };
   };
   
-  class TestImportedNameResolver : public ImportedNameResolver
+  class TestImportedNameResolver : public sl::ImportedNameResolver
   {
   public:
     std::string GetImportedNameIdentifier (const s1::uc::String& name)
@@ -84,7 +84,7 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
     public:
       typedef SequenceCodeGenerator Superclass;
     
-      TestSequenceCodeGenerator (const Sequence& seq, ImportedNameResolver* nameRes)
+      TestSequenceCodeGenerator (const Sequence& seq, sl::ImportedNameResolver* nameRes)
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
 				std::vector<std::string> (),

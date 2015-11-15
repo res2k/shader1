@@ -25,8 +25,9 @@
 #include "BlockImpl.h"
 #include "NameImpl.h"
 
-#include "codegen/CgGenerator.h"
-#include "codegen/CgOptions.h"
+#include "codegen/cg/CgGenerator.h"
+#include "codegen/cg/CgOptions.h"
+#include "../cg/CgTraits.h"
 #include "../cg/SequenceCodeGenerator.h"
 
 #include "StringSubstitute.h"
@@ -66,7 +67,7 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
     };
   };
   
-  class TestImportedNameResolver : public ImportedNameResolver
+  class TestImportedNameResolver : public sl::ImportedNameResolver
   {
   public:
     std::string GetImportedNameIdentifier (const s1::uc::String& name)
@@ -95,7 +96,7 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
     public:
       typedef SequenceCodeGenerator Superclass;
     
-      TestSequenceCodeGenerator (const Sequence& seq, ImportedNameResolver* nameRes)
+      TestSequenceCodeGenerator (const Sequence& seq, sl::ImportedNameResolver* nameRes)
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
 				std::vector<std::string> (),
@@ -141,8 +142,8 @@ public:
     StringsArrayPtr generateResult (seqGen.Generate ());
     
     StringStringMap substMap;
-    substMap["A"] = CgGenerator::NameToCgIdentifier (
-      testBlockImpl->sequenceBuilder->GetIdentifierRegister ("a")->GetName ());
+    CgTraits::instance.ConvertIdentifier (testBlockImpl->sequenceBuilder->GetIdentifierRegister ("a")->GetName ())
+      .toUTF8String (substMap["A"]);
     TS_ASSERT_EQUALS(generateResult->Size(), 4);
     unsigned int l = 0;
     if (l >= generateResult->Size()) return;
