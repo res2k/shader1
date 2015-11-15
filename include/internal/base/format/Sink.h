@@ -29,6 +29,7 @@ namespace s1
     class Sink
     {
     public:
+      /*
       typedef DestTypeT DestType;
       typedef typename DestType::value_type value_type;
       Sink (DestType& dest, size_t output_size);
@@ -36,6 +37,7 @@ namespace s1
       void append (const value_type* s, size_t n);
       void append (const DestType& s);
       void push_back (value_type c);
+      */
     };
   } // namespace format
 } // namespace s1
