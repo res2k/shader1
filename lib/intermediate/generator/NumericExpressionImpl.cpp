@@ -114,11 +114,11 @@ namespace s1
         throw Exception (NumberParseError);
       }
 
-      if (str.startsWith (uc::String ("0x")) || str.startsWith (uc::String ("0X")))
+      if (str.startsWith ("0x") || str.startsWith ("0X"))
       {
         return ParseNumber<T> (16, str, 2, str.length(), false);
       }
-      else if (str.startsWith (uc::String ("-")))
+      else if (str.startsWith ("-"))
       {
         return ParseNumber<T> (10, str, 1, str.length(), true);
       }

@@ -224,7 +224,7 @@ namespace s1
       
     CommonSemanticsHandler::BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
     {
-      if (numericStr.startsWith (uc::String ("0x")) || numericStr.startsWith (uc::String ("0X")))
+      if (numericStr.startsWith ("0x") || numericStr.startsWith ("0X"))
       {
 	// Hex number: always unsigned int
 	return UInt;
@@ -237,7 +237,7 @@ namespace s1
 	return Float;
       }
       // Can only be an integer
-      return numericStr.startsWith (uc::String ("-")) ? Int : UInt;
+      return numericStr.startsWith ("-") ? Int : UInt;
     }
     
     CommonSemanticsHandler::Attribute CommonSemanticsHandler::IdentifyAttribute (const uc::String& attributeStr)
