@@ -98,7 +98,10 @@ std::string ResultCodeString (ResultCode code)
 // Get result string for last library error
 std::string LastErrorString (Library* lib)
 {
-  return ResultCodeString (lib->GetLastError ());
+  std::string s (ResultCodeString (lib->GetLastError ()));
+  const char* info = lib->GetLastErrorInfo ();
+  if (info) s.append ((boost::format (": %1%") % info).str ());
+  return s;
 }
 
 // Some abstractions for char vs wchar_t
