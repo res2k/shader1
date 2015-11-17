@@ -52,7 +52,7 @@ namespace s1
                                           emptyMappings, emptyMappings,
                                           outParams,
                                           GetCgOptions()));
-      return p;
+      return std::move (p);
     }
 
   } // namespace codegen

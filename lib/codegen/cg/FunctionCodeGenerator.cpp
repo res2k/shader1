@@ -57,7 +57,7 @@ namespace s1
     {
       std::unique_ptr<SequenceCodeGenerator> p;
       p.reset (new SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, GetCgOptions()));
-      return p;
+      return std::move (p);
     }
   } // namespace codegen
 } // namespace s1
