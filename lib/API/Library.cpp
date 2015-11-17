@@ -52,6 +52,12 @@ void s1_library_clear_last_error (s1_Library* lib)
   s1::EvilUpcast<s1::Library> (lib)->SetLastError (S1_SUCCESS);
 }
 
+const char* s1_library_get_last_error_info (s1_Library* lib)
+{
+  S1_ASSERT_MSG(lib, "NULL Library", nullptr);
+  return s1::EvilUpcast<s1::Library> (lib)->GetLastErrorInfo();
+}
+
 s1_Options* s1_options_create (s1_Library* obj)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);

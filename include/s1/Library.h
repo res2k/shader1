@@ -63,6 +63,16 @@ S1_API(s1_ResultCode) s1_library_get_last_error (s1_Library* lib);
  * \memberof s1_Library
  */
 S1_API(void) s1_library_clear_last_error (s1_Library* lib);
+/**
+ * Return additional information for the last error code set by a function.
+ * In some cases, additional information for an error result is available.
+ * This function will return any such information, or \null if none is
+ * available.
+ * String is only guaranteed valid until the next S1 function call.
+ * \param lib Library request error code from.
+ * \memberof s1_Library
+ */
+S1_API(const char*) s1_library_get_last_error_info (s1_Library* lib);
 
 S1TYPE_DECLARE_FWD(Options);
 /**
@@ -195,7 +205,18 @@ namespace s1
       {
         s1_library_clear_last_error (this);
       }
-      
+      /**
+       * Return additional information for the last error code set by a function.
+       * In some cases, additional information for an error result is available.
+       * This function will return any such information, or \null if none is
+       * available.
+       * String is only guaranteed valid until the next S1 function call.
+       */
+      const char* GetLastErrorInfo ()
+      {
+        return s1_library_get_last_error_info (this);
+      }
+
       /**
        * Create a compiler options objects.
        * \returns The new compiler options objects.
