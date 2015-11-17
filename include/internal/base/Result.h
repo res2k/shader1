@@ -37,6 +37,8 @@ namespace s1
   {
     /// Result code
     ResultCode resultCode;
+    /// Error info
+    boost::optional<std::string> resultErrorInfo;
     /// Return value
     boost::optional<T> val;
   public:
@@ -45,7 +47,10 @@ namespace s1
     /**
      * Construct from error code.
      */
-    Result (ResultCode resultCode) : resultCode (resultCode) {}
+    Result (ResultCode resultCode, const char* errorInfo = nullptr) : resultCode (resultCode)
+    {
+      if (errorInfo) resultErrorInfo.emplace (errorInfo);
+    }
     //@{
     /**
     * Default constructor with value and optional result code.
@@ -96,6 +101,8 @@ namespace s1
 
     /// Get result code.
     ResultCode code () const { return resultCode;  }
+    /// Get optional error info.
+    const char* errorInfo () const { return resultErrorInfo ? resultErrorInfo->c_str () : nullptr; }
 
     //@{
     /**
