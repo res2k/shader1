@@ -138,6 +138,10 @@ namespace s1
       {
         return e.code ();
       }
+      catch (std::exception& e)
+      {
+        return { S1_E_FAILURE, e.what () };
+      }
       return S1_E_FAILURE;
     }
   };
