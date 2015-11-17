@@ -46,7 +46,7 @@ namespace s1
     template<typename T>
     struct deduce_try_result<Result<T>>
     {
-      typedef T type;
+      typedef Result<T> type;
     };
   } // namespace detail
 
