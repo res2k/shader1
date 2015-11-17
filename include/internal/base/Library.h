@@ -52,7 +52,9 @@ namespace s1
 
   class Library : public Object
   {
-    s1_ResultCode lastError; // TODO: Store with thread affinity
+    // TODO: Store error info with thread affinity
+    s1_ResultCode lastError;
+    std::string errorInfo;
     /// The internal factory object
     Compiler compiler;  // TODO: Can probably be removed
   public:
@@ -60,7 +62,22 @@ namespace s1
     
     // TODO: Store stuff like memory allocator, global options etc... here
     s1_ResultCode GetLastError () { return lastError; }
-    void SetLastError (s1_ResultCode code) { lastError = code; }
+    const char* GetLastErrorInfo ()
+    {
+      return errorInfo.empty () ? nullptr : errorInfo.c_str ();
+    }
+    void SetLastError (s1_ResultCode code, const char* info = nullptr)
+    {
+      lastError = code;
+      if (info)
+      {
+        errorInfo = info;
+      }
+      else
+      {
+        errorInfo.clear ();
+      }
+    }
     
     Compiler& GetCompiler() { return compiler; }
 
@@ -108,13 +125,13 @@ namespace s1
     template<typename T>
     inline const T& Return (const Result<T>& result, typename boost::call_traits<T>::param_type defaultVal)
     {
-      SetLastError (result.code());
+      SetLastError (result.code(), result.errorInfo());
       return result.get_value_or (defaultVal);
     }
     template<typename T, typename U>
     inline T Return (Result<T>&& result, U&& defaultVal)
     {
-      SetLastError (result.code());
+      SetLastError (result.code(), result.errorInfo());
       return result.value_or (std::forward<U> (defaultVal));
     }
     //@}
