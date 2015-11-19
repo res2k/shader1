@@ -51,6 +51,7 @@ namespace s1
       inline String (Char32 c);
       inline String (const Char32* s);
       inline String (String&& s);
+      inline String (const Char* begin, const Char* end);
       ~String ();
 
       inline String& append (const char* s);
@@ -139,6 +140,18 @@ namespace s1
       };
 
       friend void swap (String& s1, String& s2);
+
+      /**\name Simplistic STL iterator support
+       * @{ */
+      typedef const Char* iterator;
+      typedef const Char* const_iterator;
+      iterator begin () { return data (); }
+      const_iterator begin () const { return data (); }
+      const_iterator cbegin () const { return data (); }
+      iterator end () { return data () + length (); }
+      const_iterator end () const { return data () + length (); }
+      const_iterator cend () const { return data () + length (); }
+      /** @} */
     private:
       friend class CharacterIterator;
 
@@ -261,6 +274,11 @@ namespace s1
         d.buffer = s.d.buffer;
         s.d.buffer = s.internalBuffer;
       }
+    }
+
+    String::String (const Char* begin, const Char* end) : d (0, 0, internalBuffer)
+    {
+      append (begin, end - begin);
     }
 
     String& String::append (const char* s)
