@@ -21,9 +21,11 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
+#include "base/uc/boost_convert.h"
 
 #include <boost/convert.hpp>
-#include <boost/convert/spirit.hpp>
+#include <boost/convert/strtol.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include "base/format/Formatter.tpp"
 
@@ -68,10 +70,10 @@ namespace s1
       uc::String sizeStr;
       if (arraySize)
       {
-        boost::cnv::spirit cnv;
-        if (auto s = boost::convert<std::string> (static_cast<unsigned long> (*arraySize), cnv))
+        boost::cnv::strtol cnv;
+        if (auto s = boost::convert<uc::String> (boost::numeric_cast<long> (*arraySize), cnv))
         {
-          sizeStr = s->c_str ();
+          sizeStr = std::move (*s);
         }
       }
 
