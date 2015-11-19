@@ -22,6 +22,7 @@ set(base_sources_uc_cpp
     uc/UTF8to16Transcoder.cpp
     )
 set(base_sources_uc_h
+    ${S1_INC}/base/uc/boost_convert.h
     ${S1_INC}/base/uc/Char.h
     ${S1_INC}/base/uc/Exception.h
     ${S1_INC}/base/uc/Stream.h
