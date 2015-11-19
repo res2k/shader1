@@ -37,22 +37,10 @@ namespace s1
       StringsArrayPtr Generate (const intermediate::ProgramPtr& program,
 				int frequency,
                                 const CgOptions& options);
-      
-      /**\name Code generation helper functions
-       * @{ */
-      static std::string TypeToCgType (const parser::SemanticsHandler::TypePtr& type,
-				       std::string& identifierSuffix,
-				       const std::string& sizeStr = std::string());
-      /** @} */
     protected:
       class ProgramCodeGenerator;
       class FunctionCodeGenerator;
       class SequenceCodeGenerator;
-      
-      static const char cgTypeBool[];
-      static const char cgTypeInt[];
-      static const char cgTypeUInt[];
-      static const char cgTypeFloat[];
     };
   } // namespace codegen
 } // namespace s1
