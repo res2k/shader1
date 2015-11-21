@@ -8,6 +8,7 @@ set(base_sources
     ${S1_INC}/base/math_error_handler.h
     ${S1_INC}/base/Object.h
     ${S1_INC}/base/Result.h
+    ${S1_INC}/base/format/Sink.h
     ${S1_INC}/base/format/Formatter.h
     ${S1_INC}/base/format/Formatter.tpp
     )
