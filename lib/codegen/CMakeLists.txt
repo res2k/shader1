@@ -1,6 +1,7 @@
 add_subdirectory(common)
 add_subdirectory(sl)
 add_subdirectory(cg)
+add_subdirectory(glsl)
 
 if(CXXTEST_FOUND)
   file(GLOB codegen_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
