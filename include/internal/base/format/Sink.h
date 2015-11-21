@@ -29,15 +29,13 @@ namespace s1
     class Sink
     {
     public:
-      /*
       typedef DestTypeT DestType;
       typedef typename DestType::value_type value_type;
-      Sink (DestType& dest, size_t output_size);
+      Sink (DestType& dest, size_t output_size) { static_assert(false, "Missing specialization"); }
 
-      void append (const value_type* s, size_t n);
-      void append (const DestType& s);
-      void push_back (value_type c);
-      */
+      void append (const value_type* s, size_t n) { static_assert(false, "Missing specialization"); }
+      void append (const DestType& s) { static_assert(false, "Missing specialization"); }
+      void push_back (value_type c) { static_assert(false, "Missing specialization"); }
     };
   } // namespace format
 } // namespace s1
