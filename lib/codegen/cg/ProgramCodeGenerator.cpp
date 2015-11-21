@@ -24,15 +24,6 @@
 
 #include "codegen/cg/CgOptions.h"
 
-#if 0
-#include "intermediate/Program.h"
-#include "FunctionCodeGenerator.h"
-#include "splitter/Frequency.h"
-
-#include <boost/make_shared.hpp>
-#include <string>
-#endif
-
 namespace s1
 {
   namespace codegen
