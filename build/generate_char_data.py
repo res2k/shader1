@@ -115,7 +115,7 @@ OUTPUT_DIR = None
 
 def ProcessSetRanges(ranges, name):
   print >> sys.stderr, name + ":"
-  out_file = open (os.path.join (OUTPUT_DIR, 'ucd_{0}.inc'.format (name)), "w")
+  out_file = open (os.path.join (OUTPUT_DIR, '{0}.inc'.format (name)), "w")
   print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
   max_cp = 0
   for r in ranges:
@@ -259,7 +259,7 @@ def PrintMapRanges(out_file, prop_map, ranges, name, bytes_per_char, datatype):
 
 def ProcessMap(prop_map, name, datatype):
   print >> sys.stderr, name + ":"
-  out_file = open (os.path.join (OUTPUT_DIR, 'ucd_{0}.inc'.format (name)), "w")
+  out_file = open (os.path.join (OUTPUT_DIR, '{0}.inc'.format (name)), "w")
   print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
   max_cp = 0
   char_ranges = Range()

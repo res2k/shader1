@@ -555,9 +555,9 @@ namespace s1
     // Normalization
     //
 
-    #include "ucd_CanonicalDecomp.inc"
-    #include "ucd_CombiningClass.inc"
-    #include "ucd_NFD_QC_No.inc"
+    #include "ucd/CanonicalDecomp.inc"
+    #include "ucd/CombiningClass.inc"
+    #include "ucd/NFD_QC_No.inc"
 
     String String::Normalized (NormalizationMode mode)
     {

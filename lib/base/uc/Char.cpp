@@ -25,9 +25,9 @@ namespace s1
 {
   namespace uc
   {
-    #include "ucd_White_Space.inc"
-    #include "ucd_XID_Continue.inc"
-    #include "ucd_XID_Start.inc"
+    #include "ucd/White_Space.inc"
+    #include "ucd/XID_Continue.inc"
+    #include "ucd/XID_Start.inc"
 
     bool IsWhiteSpace (Char32 ch)
     {

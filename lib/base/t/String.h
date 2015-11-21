@@ -26,7 +26,7 @@
 
 typedef s1::uc::Char32 Char32;
 
-#include "NormalizationTestData.inc"
+#include "data/NormalizationTestData.inc"
 
 class StringTestSuite : public CxxTest::TestSuite 
 {
