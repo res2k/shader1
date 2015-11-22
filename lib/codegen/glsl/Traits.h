@@ -34,7 +34,8 @@ namespace s1
         uc::String typeStrBool;
         uc::String typeStrFloat;
         uc::String typeStrInt;
-        uc::String typeStrUInt;
+
+        const char* GetVecTypePrefix (intermediate::BasicType basetype) const;
       public:
         static Traits instance;
 

@@ -29,6 +29,8 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "base/format/Formatter.tpp"
 
+#include <assert.h>
+
 namespace s1
 {
   namespace codegen
@@ -39,10 +41,29 @@ namespace s1
 
       Traits::Traits ()
         : typeStrBool ("bool"),
-        typeStrFloat ("float"),
-        typeStrInt ("int"),
-        typeStrUInt ("unsigned int")
+          typeStrFloat ("float"),
+          typeStrInt ("int")
       {
+      }
+
+      const char* Traits::GetVecTypePrefix (intermediate::BasicType type) const
+      {
+        const char* prefix = "";
+
+        switch (type)
+        {
+        case intermediate::Bool:
+          prefix = "b";
+        case intermediate::UInt:
+          // TODO: unsigned integer - added some time between GLSL 1.10 and 4.50
+        case intermediate::Int:
+          prefix = "i";
+          break;
+        case intermediate::Float:
+          // default prefix
+          break;
+        }
+        return prefix;
       }
 
       uc::String Traits::TypeString (intermediate::BasicType type) const
@@ -53,31 +74,32 @@ namespace s1
           return typeStrBool;
         case intermediate::Float:
           return typeStrFloat;
+        case intermediate::UInt:
+          // TODO: unsigned integer - added some time between GLSL 1.10 and 4.50
         case intermediate::Int:
           return typeStrInt;
-        case intermediate::UInt:
-          return typeStrUInt;
         }
 
         return uc::String ();
       }
 
-      static format::StaticFormatter FormatTypeVector ("{0}{1}");
-      static format::StaticFormatter FormatTypeMatrix ("{0}{1}x{2}");
+      static format::StaticFormatter FormatTypeVector ("{0}vec{1}");
+      static format::StaticFormatter FormatTypeMatrix ("mat{0}x{1}");
       static format::StaticFormatter FormatSuffix ("{0}[{1}]");
 
       uc::String Traits::FormatVector (intermediate::BasicType type, unsigned int componentCount) const
       {
-        return FormatTypeVector.to<uc::String> (TypeString (type), componentCount);
+        return FormatTypeVector.to<uc::String> (GetVecTypePrefix (type), componentCount);
       }
 
       uc::String Traits::FormatMatrix (intermediate::BasicType type, unsigned int rowCount, unsigned int colCount) const
       {
-        return FormatTypeMatrix.to<uc::String> (TypeString (type), rowCount, colCount);
+        // FIXME: GLSL doesn't know non-float(double) matrices!
+        return FormatTypeMatrix.to<uc::String> (rowCount, colCount);
       }
 
       std::pair<uc::String, uc::String> Traits::TypeString (const parser::SemanticsHandler::TypePtr& type,
-                                                                const size_t* arraySize) const
+                                                            const size_t* arraySize) const
       {
         uc::String sizeStr;
         if (arraySize)
@@ -99,8 +121,10 @@ namespace s1
             {
             case parser::SemanticsHandler::Void:	typeStr = "void"; break;
             case parser::SemanticsHandler::Bool:	typeStr = typeStrBool; break;
-            case parser::SemanticsHandler::Int:	typeStr = typeStrInt; break;
-            case parser::SemanticsHandler::UInt:	typeStr = typeStrUInt; break;
+            case parser::SemanticsHandler::Int:
+            case parser::SemanticsHandler::UInt:
+              typeStr = typeStrInt;
+              break;
             case parser::SemanticsHandler::Float:	typeStr = typeStrFloat; break;
             }
           }
@@ -109,19 +133,18 @@ namespace s1
           {
             switch (type->GetSamplerType ())
             {
-            case parser::SemanticsHandler::_1D:	typeStr = "sampler1D"; break;
-            case parser::SemanticsHandler::_2D:	typeStr = "sampler2D"; break;
-            case parser::SemanticsHandler::_3D:	typeStr = "sampler3D"; break;
-            case parser::SemanticsHandler::CUBE:	typeStr = "samplerCUBE"; break;
+            case parser::SemanticsHandler::_1D:	  typeStr = "sampler1D"; break;
+            case parser::SemanticsHandler::_2D:	  typeStr = "sampler2D"; break;
+            case parser::SemanticsHandler::_3D:	  typeStr = "sampler3D"; break;
+            case parser::SemanticsHandler::CUBE:  typeStr = "samplerCube"; break;
             }
           }
           break;
         case parser::SemanticsHandler::Type::Array:
           {
             auto innerTypeStrs = TypeString (type->GetArrayVectorMatrixBaseType (), nullptr);
-            uc::String newSuffix;
-            FormatSuffix (newSuffix, innerTypeStrs.second, sizeStr);
-            return std::make_pair (std::move (innerTypeStrs.first), std::move (newSuffix));
+            return std::make_pair (std::move (innerTypeStrs.first),
+                                   FormatSuffix.to<uc::String> (innerTypeStrs.second, sizeStr));
           }
           break;
         case parser::SemanticsHandler::Type::Vector:
@@ -132,8 +155,7 @@ namespace s1
           break;
         case parser::SemanticsHandler::Type::Matrix:
           {
-            typeStr = FormatMatrix (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
-                                    type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
+            FormatTypeMatrix (typeStr, type->GetMatrixTypeRows (), type->GetMatrixTypeCols ());
           }
           break;
         }
