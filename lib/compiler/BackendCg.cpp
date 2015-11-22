@@ -30,6 +30,8 @@ namespace s1
   {
     BackendCg::BackendCg (Library* lib) : Backend (lib)
     {
+      defaultOptions = new CgOptions (GetLibrary (),
+                                      false /* annotate */);
     }
     
     Compiler::Backend::OptionsPtr BackendCg::CreateOptions ()
@@ -62,9 +64,11 @@ namespace s1
       }
       
       codegen::CgGenerator codegen;
+      codegen::CgOptions effectiveOptions;
+      if (realOptions) effectiveOptions = realOptions->GetContainer ();
+      effectiveOptions.SetAllUnsetFrom (defaultOptions->GetContainer ());
       codegen::StringsArrayPtr outputProg (
-        codegen.Generate (prog, freq,
-                          realOptions ? realOptions->GetContainer() : codegen::CgOptions()));
+        codegen.Generate (prog, freq, effectiveOptions));
       
       return ProgramPtr (new CgProgram (GetLibrary(), FlattenStringArray (outputProg)));
     }

@@ -36,7 +36,10 @@ namespace s1
         static GLSLDeclarations declarations;
         const Declarations& GetDeclarations () const override { return declarations; }
       public:
+        /// Constructor: all uninitialized
         Options () {}
+        /// Constructor: default values for all
+        Options (bool debugAnnotate) : sl::Options (debugAnnotate) {}
       };
     } //
   } // namespace codegen

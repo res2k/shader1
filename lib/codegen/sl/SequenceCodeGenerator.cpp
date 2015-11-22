@@ -732,7 +732,7 @@ namespace s1
         seenRegisters.clear ();
 
         CodegenVisitor visitor (this, strings);
-        visitor.SetDebugCommentsEnabled (options.GetDebugAnnotationFlag (false));
+        visitor.SetDebugCommentsEnabled (options.GetDebugAnnotationFlag ());
 
         BeforeSequence (visitor);
 

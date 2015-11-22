@@ -33,8 +33,11 @@ namespace s1
       {
       protected:
         friend class BackendGLSL;
-        GLSLOptions (Library* lib) : OptionsImpl (lib) {}
+        template<typename ...Defaults>
+        GLSLOptions (Library* lib, Defaults&&... defaults)
+          : OptionsImpl (lib, std::forward<Defaults> (defaults)...) {}
       };
+      boost::intrusive_ptr<GLSLOptions> defaultOptions;
     public:
       BackendGLSL (Library* lib);
     

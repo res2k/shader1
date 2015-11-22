@@ -37,7 +37,10 @@ namespace s1
         friend class OptionsBase<Options>;
         virtual const Declarations& GetDeclarations () const = 0;
       public:
+        /// Constructor: all uninitialized
         Options () {}
+        /// Constructor: default values for all
+        Options (bool debugAnnotate) : codegen::Options<sl::Options> (debugAnnotate) {}
       };
     } // namespace sl
   } // namespace codegen

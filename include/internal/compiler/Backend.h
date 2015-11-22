@@ -76,7 +76,9 @@ namespace s1
     protected:
       CodegenOptions optionsContainer;
     public:
-      OptionsImpl (Library* lib) : Options (lib) {}
+      template<typename ...Defaults>
+      OptionsImpl (Library* lib, Defaults&&... defaults)
+        : Options (lib), optionsContainer (std::forward<Defaults> (defaults)...) {}
 
       bool SetFromStr (const char* string) override
       {

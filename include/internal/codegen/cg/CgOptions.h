@@ -34,7 +34,10 @@ namespace s1
       static CgDeclarations declarations;
       const Declarations& GetDeclarations () const override { return declarations;  }
     public:
+      /// Constructor: all uninitialized
       CgOptions () {}
+      /// Constructor: default values for all
+      CgOptions (bool debugAnnotate) : Options (debugAnnotate) {}
     };
   } // namespace codegen
 } // namespace s1

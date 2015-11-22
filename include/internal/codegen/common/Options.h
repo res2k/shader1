@@ -43,10 +43,14 @@ namespace s1
         }
       };
     public:
+      /// Constructor: all uninitialized
+      Options () {}
+      /// Constructor: default values for all
+      Options (bool debugAnnotate) : debugAnnotationsFlag (debugAnnotate) {}
       /// Return value of debug annotation flag.
-      bool GetDebugAnnotationFlag (bool default) const
+      bool GetDebugAnnotationFlag () const
       {
-        return debugAnnotationsFlag.get_value_or (default);
+        return *debugAnnotationsFlag;
       }
     };
   } // namespace codegen

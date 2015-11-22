@@ -33,8 +33,12 @@ namespace s1
       {
       protected:
         friend class BackendCg;
-        CgOptions (Library* lib) : OptionsImpl (lib) {}
+
+        template<typename ...Defaults>
+        CgOptions (Library* lib, Defaults&&... defaults)
+          : OptionsImpl (lib, std::forward<Defaults> (defaults)...) {}
       };
+      boost::intrusive_ptr<CgOptions> defaultOptions;
     public:
       BackendCg (Library* lib);
     

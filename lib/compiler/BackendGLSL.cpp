@@ -30,6 +30,8 @@ namespace s1
   {
     BackendGLSL::BackendGLSL (Library* lib) : Backend (lib)
     {
+      defaultOptions = new GLSLOptions (GetLibrary (),
+                                        false /* annotate */);
     }
     
     Compiler::Backend::OptionsPtr BackendGLSL::CreateOptions ()
@@ -62,9 +64,11 @@ namespace s1
       }
       
       codegen::glsl::Generator codegen;
+      codegen::glsl::Options effectiveOptions;
+      if (realOptions) effectiveOptions = realOptions->GetContainer ();
+      effectiveOptions.SetAllUnsetFrom (defaultOptions->GetContainer ());
       codegen::StringsArrayPtr outputProg (
-        codegen.Generate (prog, freq,
-                          realOptions ? realOptions->GetContainer() : codegen::glsl::Options()));
+        codegen.Generate (prog, freq, effectiveOptions));
       
       return ProgramPtr (new GLSLProgram (GetLibrary(), FlattenStringArray (outputProg)));
     }
