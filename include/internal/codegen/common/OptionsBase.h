@@ -40,12 +40,19 @@ namespace s1
       class Declarations
       {
       public:
-        /// Data to access a flag option
-        struct FlagOption
+        /// Data to access an option
+        template<typename T>
+        struct Option
         {
           /// Setter function
-          std::function<void (OptionsBase*, bool)> set;
+          std::function<void (OptionsBase*, T)> set;
+          /// Getter function
+          std::function<boost::optional<T> (const OptionsBase*)> get;
+          /// Reset function
+          std::function<void (OptionsBase*)> reset;
         };
+        /// Data to access a flag option
+        typedef Option<bool> FlagOption;
         /// Registered flag options
         boost::unordered_map<uc::String, FlagOption> flags;
       protected:
@@ -57,7 +64,11 @@ namespace s1
         template<typename T>
         void RegisterFlag (const uc::String& name, boost::optional<bool> T::* flagMember)
         {
-          flags[name] = { [=] (OptionsBase* instance, bool value) { static_cast<T*> (instance)->*flagMember = value; } };
+          flags[name] = {
+            [=] (OptionsBase* instance, bool value) { static_cast<T*> (instance)->*flagMember = value; },
+            [=] (const OptionsBase* instance) { return static_cast<const T*> (instance)->*flagMember; },
+            [=] (OptionsBase* instance) { static_cast<T*> (instance)->*flagMember = boost::none; }
+          };
         }
       };
       const Declarations& InternalGetDeclarations () const
@@ -78,6 +89,26 @@ namespace s1
         if (flagsIt == flagsDecl.end ()) return false;
         flagsIt->second.set (this, value);
         return true;
+      }
+
+      /**
+       * Set all unset flag and option values to their respective values in
+       * \a other.
+       */
+      void SetAllUnsetFrom (const Derived& other)
+      {
+        {
+          const auto& flagsDecl = InternalGetDeclarations ().flags;
+          for (auto& flag : flagsDecl)
+          {
+            if (!flag.second.get (this))
+            {
+              auto other_flag = flag.second.get (&other);
+              if (other_flag)
+                flag.second.set (this, *other_flag);
+            }
+          }
+        }
       }
     };
   } // namespace codegen
