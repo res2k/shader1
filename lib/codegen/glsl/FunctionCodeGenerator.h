@@ -39,7 +39,7 @@ namespace s1
                                                                  const intermediate::ProgramFunction::TransferMappings& transferOut,
                                                                  const std::vector<std::string>& outParams) const override;
       public:
-        FunctionCodeGenerator (const Options& options);
+        FunctionCodeGenerator (const sl::Traits& traits, const Options& options);
       };
     } // namespace glsl
   } // namespace codegen

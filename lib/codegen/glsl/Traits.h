@@ -31,14 +31,12 @@ namespace s1
     {
       class Traits : public sl::Traits
       {
-        uc::String typeStrBool;
-        uc::String typeStrFloat;
-        uc::String typeStrInt;
+        static uc::String typeStrBool;
+        static uc::String typeStrFloat;
+        static uc::String typeStrInt;
 
         const char* GetVecTypePrefix (intermediate::BasicType basetype) const;
       public:
-        static Traits instance;
-
         Traits ();
 
         uc::String TypeString (intermediate::BasicType type) const override;

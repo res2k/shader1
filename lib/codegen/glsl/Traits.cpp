@@ -37,12 +37,11 @@ namespace s1
   {
     namespace glsl
     {
-      Traits Traits::instance;
+      uc::String Traits::typeStrBool ("bool");
+      uc::String Traits::typeStrFloat ("float");
+      uc::String Traits::typeStrInt ("int");
 
       Traits::Traits ()
-        : typeStrBool ("bool"),
-          typeStrFloat ("float"),
-          typeStrInt ("int")
       {
       }
 

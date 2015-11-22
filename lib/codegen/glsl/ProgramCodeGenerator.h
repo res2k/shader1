@@ -27,6 +27,7 @@ namespace s1
     namespace glsl
     {
       class Options;
+      class Traits;
 
       class ProgramCodeGenerator : public sl::ProgramCodeGenerator
       {
@@ -34,7 +35,7 @@ namespace s1
 
         std::unique_ptr<sl::FunctionCodeGenerator> CreateFunctionCodeGenerator () override;
       public:
-        ProgramCodeGenerator (const Options& options);
+        ProgramCodeGenerator (const Traits& traits, const Options& options);
       };
     } // namespace glsl
   } // namespace codegen

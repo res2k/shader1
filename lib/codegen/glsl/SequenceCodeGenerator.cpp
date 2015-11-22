@@ -34,8 +34,9 @@ namespace s1
                                                     const intermediate::ProgramFunction::TransferMappings& transferIn,
                                                     const intermediate::ProgramFunction::TransferMappings& transferOut,
                                                     const std::vector<std::string>& outParams,
+                                                    const sl::Traits& traits,
                                                     const Options& options)
-        : sl::SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, Traits::instance, options)
+        : sl::SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, traits, options)
       {
       }
 
@@ -53,7 +54,7 @@ namespace s1
         p.reset (new SequenceCodeGenerator (seq, nameRes,
                                             emptyMappings, emptyMappings,
                                             outParams,
-                                            GetOptions ()));
+                                            traits, GetOptions ()));
         return std::move (p);
       }
     } // namespace glsl

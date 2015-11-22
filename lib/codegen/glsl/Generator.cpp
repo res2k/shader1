@@ -20,6 +20,7 @@
 #include "codegen/glsl/Generator.h"
 
 #include "ProgramCodeGenerator.h"
+#include "Traits.h"
 
 namespace s1
 {
@@ -35,7 +36,8 @@ namespace s1
                                            int frequency,
                                            const Options& options)
       {
-        ProgramCodeGenerator progGen (options);
+        Traits traits;
+        ProgramCodeGenerator progGen (traits, options);
         return progGen.Generate (program, frequency);
       }
     } // namespace glsl

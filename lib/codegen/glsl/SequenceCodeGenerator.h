@@ -41,6 +41,7 @@ namespace s1
                                const intermediate::ProgramFunction::TransferMappings& transferIn,
                                const intermediate::ProgramFunction::TransferMappings& transferOut,
                                const std::vector<std::string>& outParams,
+                               const sl::Traits& traits,
                                const Options& options);
       };
     } // namespace glsl

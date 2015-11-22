@@ -30,8 +30,8 @@ namespace s1
   {
     namespace glsl
     {
-      ProgramCodeGenerator::ProgramCodeGenerator (const Options& options)
-        : sl::ProgramCodeGenerator (Traits::instance, options)
+      ProgramCodeGenerator::ProgramCodeGenerator (const Traits& traits, const Options& options)
+        : sl::ProgramCodeGenerator (traits, options)
       {
       }
 
@@ -42,7 +42,8 @@ namespace s1
 
       std::unique_ptr<sl::FunctionCodeGenerator> ProgramCodeGenerator::CreateFunctionCodeGenerator ()
       {
-        return std::unique_ptr<sl::FunctionCodeGenerator> (new FunctionCodeGenerator (GetOptions ()));
+        return std::unique_ptr<sl::FunctionCodeGenerator> (
+          new FunctionCodeGenerator (traits, GetOptions ()));
       }
     } // namespace glsl
   } // namespace codegen

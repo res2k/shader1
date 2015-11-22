@@ -30,8 +30,8 @@ namespace s1
   {
     namespace glsl
     {
-      FunctionCodeGenerator::FunctionCodeGenerator (const Options& options)
-        : sl::FunctionCodeGenerator (Traits::instance, options)
+      FunctionCodeGenerator::FunctionCodeGenerator (const sl::Traits& traits, const Options& options)
+        : sl::FunctionCodeGenerator (traits, options)
       {
       }
 
@@ -48,7 +48,7 @@ namespace s1
                                              const std::vector<std::string>& outParams) const
       {
         std::unique_ptr<SequenceCodeGenerator> p;
-        p.reset (new SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, GetOptions ()));
+        p.reset (new SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, traits, GetOptions ()));
         return std::move (p);
       }
     } // namespace glsl
