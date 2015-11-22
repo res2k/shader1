@@ -39,6 +39,9 @@ namespace s1
       CgTraits ();
 
       uc::String TypeString (intermediate::BasicType type) const override;
+      uc::String FormatVector (intermediate::BasicType type, unsigned int componentCount) const override;
+      uc::String FormatMatrix (intermediate::BasicType type, unsigned int rowCount,
+                               unsigned int colCount) const override;
       std::pair<uc::String, uc::String> TypeString (const parser::SemanticsHandler::TypePtr& type,
                                                     const size_t* arraySize) const override;
     };

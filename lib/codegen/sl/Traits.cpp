@@ -154,6 +154,27 @@ namespace s1
       {
         return IdentifierToASCII (identifier);
       }
+
+      intermediate::BasicType Traits::ConvertBasicType (parser::SemanticsHandler::BaseType type)
+      {
+        switch (type)
+        {
+        case s1::parser::SemanticsHandler::Void:
+          assert (false);
+          break;
+        case s1::parser::SemanticsHandler::Bool:
+          return intermediate::Bool;
+        case s1::parser::SemanticsHandler::Int:
+          return intermediate::Int;
+        case s1::parser::SemanticsHandler::UInt:
+          return intermediate::UInt;
+        case s1::parser::SemanticsHandler::Float:
+          return intermediate::Float;
+        }
+
+        // Something...
+        return intermediate::Int;
+      }
     } // namespace sl
   } // namespace codegen
 } // namespace s1

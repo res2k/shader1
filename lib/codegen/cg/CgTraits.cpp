@@ -64,6 +64,16 @@ namespace s1
     static format::StaticFormatter FormatTypeMatrix ("{0}{1}x{2}");
     static format::StaticFormatter FormatSuffix ("{0}[{1}]");
 
+    uc::String CgTraits::FormatVector (intermediate::BasicType type, unsigned int componentCount) const
+    {
+      return FormatTypeVector.to<uc::String> (TypeString (type), componentCount);
+    }
+
+    uc::String CgTraits::FormatMatrix (intermediate::BasicType type, unsigned int rowCount, unsigned int colCount) const
+    {
+      return FormatTypeMatrix.to<uc::String> (TypeString (type), rowCount, colCount);
+    }
+
     std::pair<uc::String, uc::String> CgTraits::TypeString (const parser::SemanticsHandler::TypePtr& type,
                                                             const size_t* arraySize) const
     {
@@ -114,14 +124,14 @@ namespace s1
       break;
       case parser::SemanticsHandler::Type::Vector:
         {
-          auto innerTypeStrs = TypeString (type->GetArrayVectorMatrixBaseType (), nullptr);
-          FormatTypeVector (typeStr, innerTypeStrs.first, type->GetVectorTypeComponents());
+          typeStr = FormatVector (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
+                                  type->GetVectorTypeComponents());
         }
         break;
       case parser::SemanticsHandler::Type::Matrix:
         {
-          auto innerTypeStrs = TypeString (type->GetArrayVectorMatrixBaseType (), nullptr);
-          FormatTypeMatrix (typeStr, innerTypeStrs.first, type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
+          typeStr = FormatMatrix (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
+                                  type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
         }
         break;
       }

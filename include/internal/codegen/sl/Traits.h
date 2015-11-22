@@ -46,6 +46,11 @@ namespace s1
 
         /// Return type string for a basic type.
         virtual uc::String TypeString (intermediate::BasicType type) const = 0;
+        /// Return type string for a vector type.
+        virtual uc::String FormatVector (intermediate::BasicType type, unsigned int componentCount) const = 0;
+        /// Return type string for a matrix type.
+        virtual uc::String FormatMatrix (intermediate::BasicType type, unsigned int rowCount,
+                                         unsigned int colCount) const = 0;
         /**
          * Return type string for a type.
          * \param type Type object.
@@ -55,6 +60,9 @@ namespace s1
          */
         virtual std::pair<uc::String, uc::String> TypeString (const parser::SemanticsHandler::TypePtr& type,
                                                               const size_t* arraySize) const = 0;
+      protected:
+        /// Helper function: obtain intermediate basic type from semantics basic type
+        static intermediate::BasicType ConvertBasicType (parser::SemanticsHandler::BaseType type);
       };
     } // namespace sl
   } // namespace codegen

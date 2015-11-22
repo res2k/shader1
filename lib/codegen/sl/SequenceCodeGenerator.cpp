@@ -292,8 +292,6 @@ namespace s1
         EmitFunctionCall (destination, owner->traits.TypeString (destType), sourceName.c_str ());
       }
 
-      static format::StaticFormatter FormatVector ("{0}{1}");
-
       void SequenceCodeGenerator::CodegenVisitor::OpMakeVector (const RegisterPtr& destination,
                                                                 intermediate::BasicType compType,
                                                                 const std::vector<RegisterPtr>& sources)
@@ -335,9 +333,9 @@ namespace s1
             }
           }
         }
-        uc::String typeStr;
-        FormatVector (typeStr, owner->traits.TypeString (compType), unsigned (sources.size ()));
-        EmitFunctionCall (destination, typeStr, paramsStr.c_str ());
+        EmitFunctionCall (destination,
+                          owner->traits.FormatVector (compType, unsigned (sources.size ())),
+                          paramsStr.c_str ());
       }
 
       static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
@@ -357,9 +355,9 @@ namespace s1
         {
           params.Add (owner->GetOutputRegisterName (*source));
         }
-        uc::String typeStr;
-        FormatMatrix (typeStr, owner->traits.TypeString (compType), matrixRows, matrixCols);
-        EmitFunctionCall (destination, typeStr, paramsStr.c_str ());
+        EmitFunctionCall (destination,
+                          owner->traits.FormatMatrix (compType, matrixRows, matrixCols),
+                          paramsStr.c_str ());
       }
 
 
