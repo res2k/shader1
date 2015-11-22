@@ -20,6 +20,7 @@
 #include "compiler/Compiler.h"
 
 #include "BackendCg.h"
+#include "BackendGLSL.h"
 #include "base/uc/Stream.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
@@ -33,9 +34,16 @@ namespace s1
     return OptionsPtr (new Options (lib));
   }
   
-  Compiler::BackendPtr Compiler::CreateBackendCg ()
+  Compiler::BackendPtr Compiler::CreateBackend (SupportedBackend backend)
   {
-    return BackendPtr (new compiler::BackendCg (lib));
+    switch (backend)
+    {
+    case beCg:
+      return BackendPtr (new compiler::BackendCg (lib));
+    case beGLSL:
+      return BackendPtr (new compiler::BackendGLSL (lib));
+    }
+    return BackendPtr ();
   }
 
   Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input)

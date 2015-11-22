@@ -39,8 +39,13 @@ namespace s1
     class Backend;
     typedef boost::intrusive_ptr<Backend> BackendPtr;
     
-    BackendPtr CreateBackendCg ();
-    
+    enum SupportedBackend
+    {
+      beCg,
+      beGLSL
+    };
+    BackendPtr CreateBackend (SupportedBackend backend);
+
     class Program;
     typedef boost::intrusive_ptr<Program> ProgramPtr;
     

@@ -109,7 +109,16 @@ s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
     lib->SetLastError (S1_E_INVALID_ARG_N (0));
     return nullptr;
   }
-  if (strcmp (backend, "cg") != 0)
+  s1::Compiler::SupportedBackend compiler_backend;
+  if (strcmp (backend, "cg") == 0)
+  {
+    compiler_backend = s1::Compiler::beCg;
+  }
+  else if (strcmp (backend, "glsl") == 0)
+  {
+    compiler_backend = s1::Compiler::beGLSL;
+  }
+  else
   {
     lib->SetLastError (S1_E_UNKNOWN_BACKEND);
     return nullptr;
@@ -117,7 +126,7 @@ s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
 
   return lib->Return (lib->Try ([=]()
     {
-      s1::Compiler::BackendPtr backend_obj (lib->GetCompiler().CreateBackendCg());
+      s1::Compiler::BackendPtr backend_obj (lib->GetCompiler().CreateBackend (compiler_backend));
       backend_obj->AddRef();
       return backend_obj->DowncastEvil<s1_Backend> ();
     }), nullptr);
