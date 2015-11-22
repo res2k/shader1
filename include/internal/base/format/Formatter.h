@@ -98,6 +98,20 @@ namespace s1
        */
       template<typename DestType, typename ...Args>
       void operator() (DestType& dest, const Args&... a) const;
+
+      /**
+       * Actual formatting.
+       * \param a Format arguments. Must have at least as many arguments as placeholders in
+       *   the format string were used!
+       * \returns Destination string.
+       */
+      template<typename DestType, typename ...Args>
+      DestType to (const Args&... a) const
+      {
+        DestType dest;
+        operator() (dest, a...);
+        return std::move (dest);
+      }
     };
 
     /**
@@ -133,6 +147,18 @@ namespace s1
       void operator() (DestType& dest, const Args&... a)
       {
         GetFormatter () (dest, a...);
+      }
+
+      /**
+       * Actual formatting.
+       * \param a Format arguments. Must have at least as many arguments as placeholders in
+       *   the format string were used!
+       * \returns Destination string.
+       */
+      template<typename DestType, typename ...Args>
+      DestType to (const Args&... a)
+      {
+        return GetFormatter ().to<DestType> (a...);
       }
     };
   } // namespace format
