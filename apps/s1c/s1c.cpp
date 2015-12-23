@@ -91,9 +91,8 @@ std::string ResultCodeString (ResultCode code)
   if (s) return s;
 
   boost::cnv::spirit cnv;
-  return std::string ("0x")
-    + boost::convert<std::string> (static_cast<int> (code), // cast to work around convert<> build failure
-        cnv (boost::cnv::parameter::base = boost::cnv::base::hex)).value();
+  return std::string ("0x") + boost::convert<std::string> (code,
+    cnv (boost::cnv::parameter::base = boost::cnv::base::hex)).value();
 }
 // Get result string for last library error
 std::string LastErrorString (Library* lib)
@@ -254,13 +253,13 @@ public:
             std::cerr << "Multiple array size specifications for parameter: " << to_local (paramName) << std::endl;
             paramsWarnedSize.insert (paramName);
           }
-          boost::optional<unsigned long> arraySize (boost::convert<unsigned long> (option.value[1].c_str(), boost::cnv::spirit ()));
+          boost::optional<size_t> arraySize (boost::convert<size_t> (option.value[1].c_str(), boost::cnv::spirit ()));
           if (!arraySize)
           {
             throw std::runtime_error ((boost::format ("Invalid array size '%2%' for parameter '%1%'")
                                        % to_local (paramName) % to_local (option.value[1])).str ());
           }
-          paramArraySizes[paramName] = boost::numeric_cast<size_t> (*arraySize);
+          paramArraySizes[paramName] = *arraySize;
         }
       }
 

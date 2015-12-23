@@ -33,14 +33,14 @@ namespace s1
     {
       typedef boost::cnv::spirit default_cnv_type;
 
-      boost::optional<unsigned long int> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd)
+      boost::optional<size_t> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd)
       {
-        return boost::convert<unsigned long int> (boost::cnv::range<const char*> (indexStrBegin, indexStrEnd), default_cnv_type ());
+        return boost::convert<size_t> (boost::cnv::range<const char*> (indexStrBegin, indexStrEnd), default_cnv_type ());
       }
 
-      boost::optional<unsigned long int> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd)
+      boost::optional<size_t> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd)
       {
-        return boost::convert<unsigned long int> (boost::cnv::range<const wchar_t*> (indexStrBegin, indexStrEnd), default_cnv_type ());
+        return boost::convert<size_t> (boost::cnv::range<const wchar_t*> (indexStrBegin, indexStrEnd), default_cnv_type ());
       }
 
       //---------------------------------------------------------------------

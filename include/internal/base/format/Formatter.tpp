@@ -43,8 +43,8 @@ namespace s1
       /**
        * Parse an argument index from a string
        * @{ */
-      boost::optional<unsigned long int> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd);
-      boost::optional<unsigned long int> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd);
+      boost::optional<size_t> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd);
+      boost::optional<size_t> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd);
       /** @} */
     } // namespace detail
 
