@@ -69,7 +69,9 @@ namespace s1
       Result<InputFrequency> GetInputFrequency (const char* param) const;
 
       s1_ResultCode SetInputArraySize (const char* param, size_t size);
-      Result<size_t> GetInputArraySize (const char* param) const;
+      // Workaround for ambiguities between size_t and ResultCode
+      typedef std::tuple<size_t> wrap_size_t;
+      Result<wrap_size_t> GetInputArraySize (const char* param) const;
       /** @} */
     };
   } // namespace api_impl
