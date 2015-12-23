@@ -38,7 +38,7 @@ if(WIN32)
   add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
-s1_find_boost(1.59)
+s1_find_boost(1.60)
 include_directories(${Boost_INCLUDE_DIRS})
 add_definitions("-DBOOST_ALL_NO_LIB")
 
