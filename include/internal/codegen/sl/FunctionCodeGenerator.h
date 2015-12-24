@@ -69,6 +69,16 @@ namespace s1
           void Add (const char* attr, const uc::String& attrStr);
         };
 
+        struct HandleParamResult
+        {
+          uc::String inParamStr;
+          uc::String inParamIdent;
+          uc::String outParamStr;
+          uc::String outParamIdent;
+        };
+        HandleParamResult DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
+                                                  const size_t* arraySize) const;
+
         virtual std::unique_ptr<SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,
                                                                      ImportedNameResolver* nameRes,
                                                                      const intermediate::ProgramFunction::TransferMappings& transferIn,

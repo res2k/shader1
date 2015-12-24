@@ -19,6 +19,7 @@
 
 #include "codegen/sl/FunctionCodeGenerator.h"
 
+#include "base/format/uc_String.h"
 #include "codegen/sl/SequenceCodeGenerator.h"
 #include "intermediate/ProgramFunction.h"
 #include "splitter/Frequency.h"
@@ -27,6 +28,8 @@
 #include <boost/optional.hpp>
 #include <string>
 #include <sstream>
+
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {
@@ -47,6 +50,43 @@ namespace s1
           firstParam = false;
         paramStr.append (attr);
         paramStr.append (attrStr);
+      }
+
+      static format::StaticFormatter FormatDefaultParamStr ("{0} {1}{2}");
+
+      FunctionCodeGenerator::HandleParamResult
+        FunctionCodeGenerator::DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
+                                                       const size_t* arraySize) const
+      {
+        HandleParamResult result;
+
+        uc::String typeSuffix;
+        uc::String paramStrBase;
+        {
+          auto typeStrings = traits.TypeString (param.type, arraySize);
+          paramStrBase = typeStrings.first;
+          typeSuffix = typeStrings.second;
+        }
+
+        if (param.dir & parser::SemanticsHandler::Scope::dirIn)
+        {
+          uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "I" : "i");
+          paramIdentDecorated.append (param.identifier);
+          uc::String paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
+          result.inParamStr = FormatDefaultParamStr.to<uc::String> (paramStrBase, paramIdent, typeSuffix);
+          result.inParamIdent = paramIdent;
+        }
+
+        if (param.dir & parser::SemanticsHandler::Scope::dirOut)
+        {
+          uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "O" : "o");
+          paramIdentDecorated.append (param.identifier);
+          uc::String paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
+          result.outParamStr = FormatDefaultParamStr.to<uc::String> (paramStrBase, paramIdent, typeSuffix);
+          result.outParamIdent = paramIdent;
+        }
+
+        return result;
       }
 
       StringsArrayPtr FunctionCodeGenerator::Generate (const char* identifier,
@@ -88,39 +128,18 @@ namespace s1
               }
             }
 
-            std::string typeSuffix;
-            std::string paramStrBase;
-            {
-              auto typeStrings = traits.TypeString (param->type, arraySize ? &(*arraySize) : nullptr);
-              typeStrings.first.toUTF8String (paramStrBase);
-              typeStrings.second.toUTF8String (typeSuffix);
-            }
-            paramStrBase.append (" ");
+            HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
 
-            if (param->dir & parser::SemanticsHandler::Scope::dirIn)
+            if (!handleRes.inParamStr.isEmpty())
             {
-              uc::String paramIdentDecorated (param->paramType == Scope::ptAutoGlobal ? "I" : "i");
-              paramIdentDecorated.append (param->identifier);
-              std::string paramIdent;
-              traits.ConvertIdentifier (paramIdentDecorated).toUTF8String (paramIdent);
-              std::string paramStr (paramStrBase);
-              paramStr.append (paramIdent);
-              paramStr.append (typeSuffix);
-              inParams.emplace_back (paramStr.c_str(), param->identifier);
-
-              nameRes.inParamMap[param->identifier] = uc::String (paramIdent.c_str ());
+              inParams.emplace_back (handleRes.inParamStr, param->identifier);
+              nameRes.inParamMap[param->identifier] = handleRes.inParamIdent;
             }
 
-            if (param->dir & parser::SemanticsHandler::Scope::dirOut)
+            if (!handleRes.outParamStr.isEmpty())
             {
-              uc::String paramIdentDecorated (param->paramType == Scope::ptAutoGlobal ? "O" : "o");
-              paramIdentDecorated.append (param->identifier);
-              std::string paramIdent;
-              traits.ConvertIdentifier (paramIdentDecorated).toUTF8String (paramIdent);
-              outParamIdents.push_back (paramIdent.c_str());
-              std::string paramStr (paramStrBase);
-              paramStr.append (paramIdent);
-              paramStr.append (typeSuffix);
+              outParamIdents.push_back (handleRes.outParamIdent);
+              uc::String paramStr = handleRes.outParamStr;
               intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
               if (outputInfo != output.end ())
               {
@@ -134,9 +153,9 @@ namespace s1
                   break;
                 }
               }
-              outParams.push_back (paramStr.c_str());
+              outParams.push_back (paramStr);
 
-              nameRes.outParamMap[param->identifier] = uc::String (paramIdent.c_str ());
+              nameRes.outParamMap[param->identifier] = handleRes.outParamIdent;
             }
           }
 
