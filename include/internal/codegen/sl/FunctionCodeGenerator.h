@@ -39,11 +39,14 @@ namespace s1
         const Traits& traits;
         const Options& options;
 
+        typedef parser::SemanticsHandler::Scope Scope;
+        typedef Scope::FunctionFormalParameters FunctionFormalParameters;
+
+        typedef boost::unordered_map<uc::String, std::string> FunctionParamsToIdentifier;
         class BlockNameResolver : public ImportedNameResolver
         {
           friend class FunctionCodeGenerator;
 
-          typedef boost::unordered_map<uc::String, std::string> FunctionParamsToIdentifier;
           FunctionParamsToIdentifier inParamMap;
           FunctionParamsToIdentifier outParamMap;
         public:
