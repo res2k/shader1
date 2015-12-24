@@ -126,8 +126,7 @@ namespace s1
       inputSizeMap[param] = size;
       return S1_SUCCESS;
     }
-
-    Result<Program::wrap_size_t> Program::GetInputArraySize (const char* param) const
+    Result<size_t> Program::GetInputArraySize (const char* param) const
     {
       InputSizeMapType::const_iterator it (inputSizeMap.find (param));
       if (it == inputSizeMap.end())
@@ -135,7 +134,7 @@ namespace s1
         // FIXME: Return default size instead
         return S1_E_UNKNOWN_PARAMETER;
       }
-      return wrap_size_t (it->second);
+      return it->second;
     }
   } // namespace api_impl
 } // namespace s1
@@ -230,18 +229,11 @@ size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
   S1_ASSERT_MSG(program, "NULL Program", errorSize);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
 
-  typedef s1::api_impl::Program::wrap_size_t wrap_size_t;
-  wrap_size_t retval;
   if (!param)
   {
-    retval = program_impl->Return<wrap_size_t> (S1_E_INVALID_ARG_N(0),
-                                                wrap_size_t (errorSize));
+    return program_impl->Return<size_t> (S1_E_INVALID_ARG_N(0), errorSize);
   }
-  else
-  {
-    retval = program_impl->Return (program_impl->GetInputArraySize (param),
-                                   wrap_size_t (errorSize));
-  }
-  return std::get<0> (retval);
+
+  return program_impl->Return (program_impl->GetInputArraySize (param), errorSize);
 }
 
