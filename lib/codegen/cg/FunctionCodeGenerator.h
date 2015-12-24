@@ -36,7 +36,7 @@ namespace s1
                                                                sl::ImportedNameResolver* nameRes,
                                                                const intermediate::ProgramFunction::TransferMappings& transferIn,
                                                                const intermediate::ProgramFunction::TransferMappings& transferOut,
-                                                               const std::vector<std::string>& outParams) const override;
+                                                               const std::vector<uc::String>& outParams) const override;
     public:
       FunctionCodeGenerator (const CgOptions& options);
     };

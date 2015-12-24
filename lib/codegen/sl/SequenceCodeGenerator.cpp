@@ -158,15 +158,12 @@ namespace s1
         }
       }
 
-      void SequenceCodeGenerator::CodegenVisitor::EmitAssign (const char* destination,
+      static format::StaticFormatter FormatAssign ("{0} = {1};");
+
+      void SequenceCodeGenerator::CodegenVisitor::EmitAssign (const uc::String& destination,
                                                               const RegisterPtr& value)
       {
-        std::string valueName (owner->GetOutputRegisterName (value));
-        std::string line (destination);
-        line.append (" = ");
-        line.append (valueName);
-        line.append (";");
-        target->AddString (line);
+        target->AddString (FormatAssign.to<uc::String> (destination, owner->GetOutputRegisterName (value).c_str()));
       }
 
       void SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterPtr& destination,
@@ -637,7 +634,7 @@ namespace s1
         AnnotatingVisitor::OpReturn (outParamVals);
         assert (outParamVals.size () == owner->outParams.size ());
         for (size_t i = 0; i < outParamVals.size (); i++)
-          EmitAssign (owner->outParams[i].c_str (), outParamVals[i]);
+          EmitAssign (owner->outParams[i], outParamVals[i]);
         target->AddString ("return;");
       }
 
@@ -718,7 +715,7 @@ namespace s1
                                                     ImportedNameResolver* nameRes,
                                                     const intermediate::ProgramFunction::TransferMappings& transferIn,
                                                     const intermediate::ProgramFunction::TransferMappings& transferOut,
-                                                    const std::vector<std::string>& outParams,
+                                                    const std::vector<uc::String>& outParams,
                                                     const Traits& traits,
                                                     const Options& options)
         : AnnotatingSequenceCodeGenerator (seq), nameRes (nameRes), transferIn (transferIn), transferOut (transferOut), outParams (outParams),

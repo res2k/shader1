@@ -45,7 +45,7 @@ namespace s1
                                              sl::ImportedNameResolver* nameRes,
                                              const intermediate::ProgramFunction::TransferMappings& transferIn,
                                              const intermediate::ProgramFunction::TransferMappings& transferOut,
-                                             const std::vector<std::string>& outParams) const
+                                             const std::vector<uc::String>& outParams) const
       {
         std::unique_ptr<SequenceCodeGenerator> p;
         p.reset (new SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, traits, GetOptions ()));

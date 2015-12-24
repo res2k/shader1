@@ -73,7 +73,7 @@ namespace s1
                                                                      ImportedNameResolver* nameRes,
                                                                      const intermediate::ProgramFunction::TransferMappings& transferIn,
                                                                      const intermediate::ProgramFunction::TransferMappings& transferOut,
-                                                                     const std::vector<std::string>& outParams) const = 0;
+                                                                     const std::vector<uc::String>& outParams) const = 0;
       public:
         FunctionCodeGenerator (const Traits& traits, const Options& options);
 

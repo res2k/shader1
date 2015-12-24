@@ -83,7 +83,7 @@ namespace s1
            */
           void PseudoAssign (const RegisterPtr& destination,
                              const char* value);
-          void EmitAssign (const char* destination,
+          void EmitAssign (const uc::String& destination,
                            const RegisterPtr& source);
           void EmitFunctionCall (const RegisterPtr& destination,
                                  const uc::String& function,
@@ -189,7 +189,7 @@ namespace s1
         ImportedNameResolver* nameRes;
         const intermediate::ProgramFunction::TransferMappings& transferIn;
         const intermediate::ProgramFunction::TransferMappings& transferOut;
-        const std::vector<std::string>& outParams;
+        const std::vector<uc::String>& outParams;
         const Traits& traits;
         // Code generation options
         const Options& options;
@@ -223,7 +223,7 @@ namespace s1
                                ImportedNameResolver* nameRes,
                                const intermediate::ProgramFunction::TransferMappings& transferIn,
                                const intermediate::ProgramFunction::TransferMappings& transferOut,
-                               const std::vector<std::string>& outParams,
+                               const std::vector<uc::String>& outParams,
                                const Traits& traits,
                                const Options& options);
 

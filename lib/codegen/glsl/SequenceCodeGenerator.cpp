@@ -33,7 +33,7 @@ namespace s1
                                                     sl::ImportedNameResolver* nameRes,
                                                     const intermediate::ProgramFunction::TransferMappings& transferIn,
                                                     const intermediate::ProgramFunction::TransferMappings& transferOut,
-                                                    const std::vector<std::string>& outParams,
+                                                    const std::vector<uc::String>& outParams,
                                                     const sl::Traits& traits,
                                                     const Options& options)
         : sl::SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, traits, options)

@@ -40,7 +40,7 @@ namespace s1
                              sl::ImportedNameResolver* nameRes,
 			     const intermediate::ProgramFunction::TransferMappings& transferIn,
 			     const intermediate::ProgramFunction::TransferMappings& transferOut,
-			     const std::vector<std::string>& outParams,
+			     const std::vector<uc::String>& outParams,
                              const CgOptions& options);
     };
   } // namespace codegen

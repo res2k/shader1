@@ -61,7 +61,7 @@ namespace s1
 
         BlockNameResolver nameRes;
         StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
-        std::vector<std::string> outParamIdents;
+        std::vector<uc::String> outParamIdents;
         {
           uc::String funcDecl ("void ");
           funcDecl.append (identifier);
@@ -70,8 +70,8 @@ namespace s1
           const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
 
           boost::unordered_set<uc::String> paramImports;
-          std::vector<std::pair<std::string, uc::String> > inParams;
-          std::vector<std::string> outParams;
+          std::vector<std::pair<uc::String, uc::String> > inParams;
+          std::vector<uc::String> outParams;
           const FunctionFormalParameters& params (func->GetParams ());
           for (FunctionFormalParameters::const_iterator param = params.begin ();
           param != params.end ();
@@ -106,7 +106,7 @@ namespace s1
               std::string paramStr (paramStrBase);
               paramStr.append (paramIdent);
               paramStr.append (typeSuffix);
-              inParams.emplace_back (paramStr, param->identifier);
+              inParams.emplace_back (paramStr.c_str(), param->identifier);
 
               nameRes.inParamMap[param->identifier] = uc::String (paramIdent.c_str ());
             }
@@ -117,7 +117,7 @@ namespace s1
               paramIdentDecorated.append (param->identifier);
               std::string paramIdent;
               traits.ConvertIdentifier (paramIdentDecorated).toUTF8String (paramIdent);
-              outParamIdents.push_back (paramIdent);
+              outParamIdents.push_back (paramIdent.c_str());
               std::string paramStr (paramStrBase);
               paramStr.append (paramIdent);
               paramStr.append (typeSuffix);
@@ -134,7 +134,7 @@ namespace s1
                   break;
                 }
               }
-              outParams.push_back (paramStr);
+              outParams.push_back (paramStr.c_str());
 
               nameRes.outParamMap[param->identifier] = uc::String (paramIdent.c_str ());
             }
@@ -150,12 +150,10 @@ namespace s1
               paramAdder.Add ("in ", "V2F v2f");
           }
 
-          for (std::vector<std::pair<std::string, uc::String> >::const_iterator inParam (inParams.begin ());
-          inParam != inParams.end ();
-            ++inParam)
+          for (const auto& inParam : inParams)
           {
             const char* variability = "in ";
-            intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam->second);
+            intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam.second);
             if (pf != paramFreqs.end ())
             {
               if (pf->second & splitter::freqFlagU)
@@ -164,13 +162,11 @@ namespace s1
                 variability = "varying in ";
             }
 
-            paramAdder.Add (variability, inParam->first.c_str());
+            paramAdder.Add (variability, inParam.first);
           }
-          for (std::vector<std::string>::const_iterator outParam (outParams.begin ());
-          outParam != outParams.end ();
-            ++outParam)
+          for (const auto& outParam : outParams)
           {
-            paramAdder.Add ("out ", outParam->c_str());
+            paramAdder.Add ("out ", outParam);
           }
 
           funcDecl.append (paramAdder.paramStr);
