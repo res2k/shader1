@@ -63,10 +63,10 @@ namespace s1
         struct ParamAdder
         {
           bool firstParam;
-          std::string paramStr;
+          uc::String paramStr;
 
           ParamAdder () : firstParam (true) { }
-          void Add (const char* attr, const std::string& attrStr);
+          void Add (const char* attr, const uc::String& attrStr);
         };
 
         virtual std::unique_ptr<SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,

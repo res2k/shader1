@@ -39,7 +39,7 @@ namespace s1
       {
       }
 
-      void FunctionCodeGenerator::ParamAdder::Add (const char* attr, const std::string& attrStr)
+      void FunctionCodeGenerator::ParamAdder::Add (const char* attr, const uc::String& attrStr)
       {
         if (!firstParam)
           paramStr.append (", ");
@@ -63,9 +63,7 @@ namespace s1
         StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
         std::vector<std::string> outParamIdents;
         {
-          std::string typeSuffix;
-
-          std::string funcDecl ("void ");
+          uc::String funcDecl ("void ");
           funcDecl.append (identifier);
           funcDecl.append (" (");
 
@@ -166,18 +164,17 @@ namespace s1
                 variability = "varying in ";
             }
 
-            paramAdder.Add (variability, inParam->first);
+            paramAdder.Add (variability, inParam->first.c_str());
           }
           for (std::vector<std::string>::const_iterator outParam (outParams.begin ());
           outParam != outParams.end ();
             ++outParam)
           {
-            paramAdder.Add ("out ", *outParam);
+            paramAdder.Add ("out ", outParam->c_str());
           }
 
           funcDecl.append (paramAdder.paramStr);
           funcDecl.append (")");
-          funcDecl.append (typeSuffix); // FIXME: Right?
           resultStrings->AddString (funcDecl);
         }
         resultStrings->AddString (std::string ("{"));
