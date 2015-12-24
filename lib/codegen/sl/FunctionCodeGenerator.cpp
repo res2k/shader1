@@ -89,6 +89,8 @@ namespace s1
         return result;
       }
 
+      static format::StaticFormatter FormatFuncDecl ("void {0} ({1})");
+
       StringsArrayPtr FunctionCodeGenerator::Generate (const char* identifier,
                                                        const intermediate::ProgramFunctionPtr& func,
                                                        const intermediate::Program::OutputParameters& output,
@@ -101,64 +103,7 @@ namespace s1
 
         BlockNameResolver nameRes;
         StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
-        std::vector<uc::String> outParamIdents;
         {
-          uc::String funcDecl ("void ");
-          funcDecl.append (identifier);
-          funcDecl.append (" (");
-
-          const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
-
-          boost::unordered_set<uc::String> paramImports;
-          std::vector<std::pair<uc::String, uc::String> > inParams;
-          std::vector<uc::String> outParams;
-          const FunctionFormalParameters& params (func->GetParams ());
-          for (FunctionFormalParameters::const_iterator param = params.begin ();
-          param != params.end ();
-            ++param)
-          {
-            paramImports.insert (param->identifier);
-
-            boost::optional<size_t> arraySize;
-            {
-              auto paramSize (paramArraySizes.find (param->identifier));
-              if (paramSize != paramArraySizes.end ())
-              {
-                arraySize = paramSize->second;
-              }
-            }
-
-            HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
-
-            if (!handleRes.inParamStr.isEmpty())
-            {
-              inParams.emplace_back (handleRes.inParamStr, param->identifier);
-              nameRes.inParamMap[param->identifier] = handleRes.inParamIdent;
-            }
-
-            if (!handleRes.outParamStr.isEmpty())
-            {
-              outParamIdents.push_back (handleRes.outParamIdent);
-              uc::String paramStr = handleRes.outParamStr;
-              intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
-              if (outputInfo != output.end ())
-              {
-                switch (outputInfo->second)
-                {
-                case intermediate::Program::Position:
-                  paramStr.append (" : POSITION");
-                  break;
-                case intermediate::Program::Color:
-                  paramStr.append (" : COLOR");
-                  break;
-                }
-              }
-              outParams.push_back (paramStr);
-
-              nameRes.outParamMap[param->identifier] = handleRes.outParamIdent;
-            }
-          }
-
           ParamAdder paramAdder;
 
           if (func->IsEntryFunction () && doTransfer)
@@ -169,28 +114,10 @@ namespace s1
               paramAdder.Add ("in ", "V2F v2f");
           }
 
-          for (const auto& inParam : inParams)
-          {
-            const char* variability = "in ";
-            intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam.second);
-            if (pf != paramFreqs.end ())
-            {
-              if (pf->second & splitter::freqFlagU)
-                variability = "uniform in ";
-              else if (pf->second & (splitter::freqFlagV | splitter::freqFlagF))
-                variability = "varying in ";
-            }
+          GenerateFunctionParams (func, output, paramArraySizes, paramAdder, resultStrings, nameRes.inParamMap, nameRes.outParamMap);
 
-            paramAdder.Add (variability, inParam.first);
-          }
-          for (const auto& outParam : outParams)
-          {
-            paramAdder.Add ("out ", outParam);
-          }
-
-          funcDecl.append (paramAdder.paramStr);
-          funcDecl.append (")");
-          resultStrings->AddString (funcDecl);
+          if (resultStrings->Size () != 0) resultStrings->AddString (uc::String ());
+          resultStrings->AddString (FormatFuncDecl.to<uc::String> (identifier, paramAdder.paramStr));
         }
         resultStrings->AddString (std::string ("{"));
 
@@ -204,6 +131,12 @@ namespace s1
             transferOut = &(func->GetTransferMappings ());
           else
             transferIn = &(func->GetTransferMappings ());
+        }
+
+        std::vector<uc::String> outParamIdents;
+        for (const auto& outParam : nameRes.outParamMap)
+        {
+          outParamIdents.emplace_back (outParam.second);
         }
 
         auto seqGen = CreateSeqGen (*(func->GetBody ()), &nameRes, *transferIn, *transferOut, outParamIdents);

@@ -23,6 +23,7 @@
 #include "SequenceCodeGenerator.h"
 
 #include "codegen/glsl/Options.h"
+#include "splitter/Frequency.h"
 
 namespace s1
 {
@@ -38,6 +39,85 @@ namespace s1
       const Options& FunctionCodeGenerator::GetOptions () const
       {
         return static_cast<const Options&> (options);
+      }
+
+      void FunctionCodeGenerator::GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
+                                                          const intermediate::Program::OutputParameters& output,
+                                                          const intermediate::Program::ParameterArraySizes& paramArraySizes,
+                                                          ParamAdder& funcParams,
+                                                          const StringsArrayPtr& preamble,
+                                                          FunctionParamsToIdentifier& inParamMap,
+                                                          FunctionParamsToIdentifier& outParamMap) const
+      {
+        const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
+
+        boost::unordered_set<uc::String> paramImports;
+        std::vector<std::pair<uc::String, uc::String> > inParams;
+        std::vector<uc::String> outParams;
+        const FunctionFormalParameters& params (func->GetParams ());
+        for (FunctionFormalParameters::const_iterator param = params.begin ();
+        param != params.end ();
+          ++param)
+        {
+          paramImports.insert (param->identifier);
+
+          boost::optional<size_t> arraySize;
+          {
+            auto paramSize (paramArraySizes.find (param->identifier));
+            if (paramSize != paramArraySizes.end ())
+            {
+              arraySize = paramSize->second;
+            }
+          }
+
+          HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
+
+          if (!handleRes.inParamStr.isEmpty())
+          {
+            inParams.emplace_back (handleRes.inParamStr, param->identifier);
+            inParamMap[param->identifier] = handleRes.inParamIdent;
+          }
+
+          if (!handleRes.outParamStr.isEmpty())
+          {
+            uc::String paramStr = handleRes.outParamStr;
+            intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
+            if (outputInfo != output.end ())
+            {
+              switch (outputInfo->second)
+              {
+              case intermediate::Program::Position:
+                paramStr.append (" : POSITION");
+                break;
+              case intermediate::Program::Color:
+                paramStr.append (" : COLOR");
+                break;
+              }
+            }
+            outParams.push_back (paramStr);
+
+            outParamMap[param->identifier] = handleRes.outParamIdent;
+          }
+        }
+
+        for (const auto& inParam : inParams)
+        {
+          const char* variability = "in ";
+          intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam.second);
+          if (pf != paramFreqs.end ())
+          {
+            if (pf->second & splitter::freqFlagU)
+              variability = "uniform in ";
+            else if (pf->second & (splitter::freqFlagV | splitter::freqFlagF))
+              variability = "varying in ";
+          }
+
+          funcParams.Add (variability, inParam.first);
+        }
+        for (const auto& outParam : outParams)
+        {
+          funcParams.Add ("out ", outParam);
+        }
       }
 
       std::unique_ptr<sl::SequenceCodeGenerator>

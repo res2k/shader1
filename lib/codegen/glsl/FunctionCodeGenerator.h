@@ -33,6 +33,14 @@ namespace s1
       protected:
         const Options& GetOptions () const;
 
+        void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
+                                     const intermediate::Program::OutputParameters& output,
+                                     const intermediate::Program::ParameterArraySizes& paramArraySizes,
+                                     ParamAdder& funcParams,
+                                     const StringsArrayPtr& preamble,
+                                     FunctionParamsToIdentifier& inParamMap,
+                                     FunctionParamsToIdentifier& outParamMap) const override;
+
         std::unique_ptr<sl::SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,
                                                                  sl::ImportedNameResolver* nameRes,
                                                                  const intermediate::ProgramFunction::TransferMappings& transferIn,

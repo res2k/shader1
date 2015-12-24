@@ -79,6 +79,14 @@ namespace s1
         HandleParamResult DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
                                                   const size_t* arraySize) const;
 
+        virtual void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
+                                             const intermediate::Program::OutputParameters& output,
+                                             const intermediate::Program::ParameterArraySizes& paramArraySizes,
+                                             ParamAdder& funcParams,
+                                             const StringsArrayPtr& preamble,
+                                             FunctionParamsToIdentifier& inParamMap,
+                                             FunctionParamsToIdentifier& outParamMap) const = 0;
+
         virtual std::unique_ptr<SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,
                                                                      ImportedNameResolver* nameRes,
                                                                      const intermediate::ProgramFunction::TransferMappings& transferIn,
