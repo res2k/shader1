@@ -42,7 +42,7 @@ namespace s1
         typedef parser::SemanticsHandler::Scope Scope;
         typedef Scope::FunctionFormalParameters FunctionFormalParameters;
 
-        typedef boost::unordered_map<uc::String, std::string> FunctionParamsToIdentifier;
+        typedef boost::unordered_map<uc::String, uc::String> FunctionParamsToIdentifier;
         class BlockNameResolver : public ImportedNameResolver
         {
           friend class FunctionCodeGenerator;
@@ -50,11 +50,11 @@ namespace s1
           FunctionParamsToIdentifier inParamMap;
           FunctionParamsToIdentifier outParamMap;
         public:
-          std::string GetImportedNameIdentifier (const uc::String& name)
+          uc::String GetImportedNameIdentifier (const uc::String& name) override
           {
             return inParamMap[name];
           }
-          std::string GetExportedNameIdentifier (const uc::String& name)
+          uc::String GetExportedNameIdentifier (const uc::String& name) override
           {
             return outParamMap[name];
           }

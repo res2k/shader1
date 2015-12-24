@@ -44,20 +44,20 @@ namespace s1
         const Sequence::IdentifierToRegMap& identToRegID_exp)
         : owner (owner), identToRegID_imp (identToRegID_imp), identToRegID_exp (identToRegID_exp) {}
 
-      std::string SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const uc::String& name)
+      uc::String SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetImportedNameIdentifier (const uc::String& name)
       {
         Sequence::IdentifierToRegMap::const_iterator regIt = identToRegID_imp.find (name);
         if (regIt != identToRegID_imp.end ())
-          return owner->GetOutputRegisterName (regIt->second);
-        return std::string ();
+          return uc::String (owner->GetOutputRegisterName (regIt->second).c_str ());
+        return uc::String ();
       }
 
-      std::string SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const uc::String& name)
+      uc::String SequenceCodeGenerator::SequenceIdentifiersToRegIDsNameResolver::GetExportedNameIdentifier (const uc::String& name)
       {
         Sequence::IdentifierToRegMap::const_iterator regIt = identToRegID_exp.find (name);
         if (regIt != identToRegID_exp.end ())
-          return owner->GetOutputRegisterName (regIt->second);
-        return std::string ();
+          return uc::String (owner->GetOutputRegisterName (regIt->second).c_str ());
+        return uc::String ();
       }
 
       //-----------------------------------------------------------------------
@@ -743,10 +743,10 @@ namespace s1
           import != imports.end ();
             ++import)
           {
-            std::string parentID = nameRes->GetImportedNameIdentifier (import->first);
+            uc::String parentID = nameRes->GetImportedNameIdentifier (import->first);
             if (parentID.size () > 0)
             {
-              seenRegisters[import->second] = parentID.c_str ();
+              parentID.toUTF8String (seenRegisters[import->second]);
             }
             /* else: no ID, value is undefined; leave undefined in this block, too */
           }
@@ -788,16 +788,18 @@ namespace s1
           exportVar != exports.end ();
             ++exportVar)
           {
-            std::string parentID = nameRes->GetExportedNameIdentifier (exportVar->first);
+            uc::String parentID = nameRes->GetExportedNameIdentifier (exportVar->first);
             if (parentID.size () > 0)
             {
+              std::string parentID_s;
+              parentID.toUTF8String (parentID_s);
               RegistersToIDMap::iterator regIt = seenRegisters.find (exportVar->second);
               if (regIt == seenRegisters.end ())
                 // Register has no name yet, override variable name with output value name
-                seenRegisters[exportVar->second] = parentID.c_str ();
+                seenRegisters[exportVar->second] = parentID_s;
               else
                 // Assign at end
-                endAssignments.emplace_back (parentID, exportVar->second);
+                endAssignments.emplace_back (parentID_s, exportVar->second);
             }
             /* else: no ID, value is undefined; no assign */
           }

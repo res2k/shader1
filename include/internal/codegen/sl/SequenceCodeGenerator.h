@@ -42,8 +42,8 @@ namespace s1
       {
         virtual ~ImportedNameResolver () {}
 
-        virtual std::string GetImportedNameIdentifier (const uc::String& name) = 0;
-        virtual std::string GetExportedNameIdentifier (const uc::String& name) = 0;
+        virtual uc::String GetImportedNameIdentifier (const uc::String& name) = 0;
+        virtual uc::String GetExportedNameIdentifier (const uc::String& name) = 0;
       };
 
       class SequenceCodeGenerator : public AnnotatingSequenceCodeGenerator
@@ -62,8 +62,8 @@ namespace s1
                                                    const Sequence::IdentifierToRegMap& identToRegID_imp,
                                                    const Sequence::IdentifierToRegMap& identToRegID_exp);
 
-          std::string GetImportedNameIdentifier (const uc::String& name);
-          std::string GetExportedNameIdentifier (const uc::String& name);
+          uc::String GetImportedNameIdentifier (const uc::String& name) override;
+          uc::String GetExportedNameIdentifier (const uc::String& name) override;
         };
 
         class CodegenVisitor : public AnnotatingSequenceCodeGenerator::Visitor

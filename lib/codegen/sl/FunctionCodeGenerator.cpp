@@ -110,7 +110,7 @@ namespace s1
               paramStr.append (typeSuffix);
               inParams.emplace_back (paramStr, param->identifier);
 
-              nameRes.inParamMap[param->identifier] = paramIdent;
+              nameRes.inParamMap[param->identifier] = uc::String (paramIdent.c_str ());
             }
 
             if (param->dir & parser::SemanticsHandler::Scope::dirOut)
@@ -138,7 +138,7 @@ namespace s1
               }
               outParams.push_back (paramStr);
 
-              nameRes.outParamMap[param->identifier] = paramIdent;
+              nameRes.outParamMap[param->identifier] = uc::String (paramIdent.c_str ());
             }
           }
 
