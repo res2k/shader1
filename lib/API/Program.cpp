@@ -134,7 +134,7 @@ namespace s1
         // FIXME: Return default size instead
         return S1_E_UNKNOWN_PARAMETER;
       }
-      return it->second;
+      return wrap_size_t (it->second);
     }
   } // namespace api_impl
 } // namespace s1
