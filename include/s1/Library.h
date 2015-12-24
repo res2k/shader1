@@ -186,7 +186,7 @@ namespace s1
       static ResultCode Create (Pointer& lib)
       {
         s1_Library* p (0);
-        ResultCode err = s1_create_library (&p);
+        ResultCode err = static_cast<ResultCode> (s1_create_library (&p));
         lib.take (p);
         return err;
       }
@@ -196,7 +196,7 @@ namespace s1
       */
       s1::ResultCode GetLastError()
       {
-        return s1_library_get_last_error (this);
+        return static_cast<ResultCode> (s1_library_get_last_error (this));
       }
       /**
        * Reset the last error code (to #S1_SUCCESS).

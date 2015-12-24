@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/ResultCode_internal.h"
 
 #include "BackendGLSL.h"
 

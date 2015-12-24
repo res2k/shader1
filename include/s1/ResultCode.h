@@ -26,6 +26,10 @@
 /// Result code type
 typedef unsigned int s1_ResultCode;
 
+#if !defined(_S1_MAKE_RESULT)
+#define _S1_MAKE_RESULT(X)  (X)
+#endif
+
 /**\def S1_ERROR_FLAG
  * \hideinitializer
  * Flag set on result codes to indicate a failure code.
@@ -38,9 +42,9 @@ typedef unsigned int s1_ResultCode;
 /// \internal Mask value for error extra data
 #define _S1_RESULT_EXTRA_MASK                   0xff
 /// \internal Combine a result code and extra data to produce a failure code
-#define _S1_MAKE_ERROR_X(Code, Extra)           ((Code) | ((Extra) << _S1_RESULT_EXTRA_SHIFT) | S1_ERROR_FLAG)
+#define _S1_MAKE_ERROR_X(Code, Extra)           _S1_MAKE_RESULT((Code) | ((Extra) << _S1_RESULT_EXTRA_SHIFT) | S1_ERROR_FLAG)
 /// \internal Combine a result code and extra data to produce a success code
-#define _S1_MAKE_SUCCESS_X(Code, Extra)         ((Code) | ((Extra) << _S1_RESULT_EXTRA_SHIFT))
+#define _S1_MAKE_SUCCESS_X(Code, Extra)         _S1_MAKE_RESULT((Code) | ((Extra) << _S1_RESULT_EXTRA_SHIFT))
 /// \internal Produce a failure code (without extra data)
 #define _S1_MAKE_ERROR(Code)                    _S1_MAKE_ERROR_X(Code, 0u)
 /// \internal Produce a success code (without extra data)
@@ -127,8 +131,13 @@ S1_API(const char*) s1_get_result_code_str (s1_ResultCode code);
 #if defined(__cplusplus)
 namespace s1
 {
+#if !defined(S1_BUILD) \
+  || defined(DOXYGEN_RUN)
   /// Result code type
   typedef s1_ResultCode ResultCode;
+#else
+  enum ResultCode : s1_ResultCode;
+#endif
 
   ///\copydoc s1_get_result_code_description
   static inline const char* GetResultCodeStr (ResultCode code)

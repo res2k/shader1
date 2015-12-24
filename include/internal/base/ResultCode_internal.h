@@ -15,19 +15,14 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#include "base/common.h"
-#include "base/ResultCode_internal.h"
+/**\file
+ * Internal result code macro definitions
+ */
+#ifndef __S1_RESULTCODE_INTERNAL_H__
+#define __S1_RESULTCODE_INTERNAL_H__
 
-#include "s1/CompiledProgram.h"
+#define _S1_MAKE_RESULT(X)  (static_cast<::s1::ResultCode> (X))
 
-#include "compiler/Backend.h"
+#include "s1/ResultCode.h"
 
-const char* s1_compiledprogram_get_string (s1_CompiledProgram* program)
-{
-  S1_ASSERT_MSG(program, "NULL CompiledProgram", nullptr);
-  s1::Compiler::Backend::Program* program_impl (s1::EvilUpcast<s1::Compiler::Backend::Program> (program));
-
-  return program_impl->Return (program_impl->Try ([=]() {
-      return program_impl->GetProgramString().c_str();
-    }), nullptr);
-}
+#endif // __S1_RESULTCODE_INTERNAL_H__

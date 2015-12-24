@@ -15,9 +15,11 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+#include "base/common.h"
+#include "base/ResultCode_internal.h"
+
 #include "s1/Library.h"
 
-#include "base/common.h"
 #include "base/Library.h"
 
 #include "compiler/Backend.h"

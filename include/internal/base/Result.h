@@ -21,7 +21,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #ifndef __BASE_RESULT_H__
 #define __BASE_RESULT_H__
 
-#include "s1/ResultCode.h"
+#include "ResultCode_internal.h"
 
 #include <boost/call_traits.hpp>
 #include <boost/optional.hpp>

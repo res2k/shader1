@@ -35,7 +35,7 @@ namespace s1
     struct ExtraDescrCache
     {
       boost::mutex mutex;
-      boost::unordered_map<ResultCode, std::unique_ptr<char[]>> descr;
+      boost::unordered_map<s1_ResultCode, std::unique_ptr<char[]>> descr;
     };
 
     static boost::once_flag extraDescrCacheInit;
@@ -43,7 +43,7 @@ namespace s1
 
     format::StaticFormatter FormatExtDescr ("{0} ({1})");
 
-    const char* GetExtendedErrorDescr (ResultCode code, const char* baseDescr)
+    const char* GetExtendedErrorDescr (s1_ResultCode code, const char* baseDescr)
     {
       unsigned int extra = S1_GET_EXTRA (code);
       if (extra == 0)
