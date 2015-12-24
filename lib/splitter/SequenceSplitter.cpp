@@ -1065,6 +1065,7 @@ namespace s1
 	  transferOut[f].push_back (reg);
 	  transferIn[f+1].push_back (reg);
 	  parent.transferRegs[f].push_back (reg);
+          parent.SetRegAvailability (reg, 1 << (f + 1));
 	}
       }
       
