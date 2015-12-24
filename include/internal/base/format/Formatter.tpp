@@ -422,7 +422,7 @@ namespace s1
               // Parse index
               if (argEnd > p)
               {
-                boost::optional<unsigned long int> index (detail::ParseArgumentIndex (p, argEnd));
+                boost::optional<size_t> index (detail::ParseArgumentIndex (p, argEnd));
                 if (!index) throw std::logic_error ("Invalid format placeholder");
                 parts.push_back (FormatPart (*index));
               }
