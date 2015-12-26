@@ -46,7 +46,7 @@ namespace s1
       StringsArrayPtr resultStrings = boost::make_shared<StringsArray> ();
 
       const intermediate::Program::TransferValues& transferValues (prog->GetTransferValues ());
-      if ((frequency == splitter::freqVertex) && (transferValues.size () > 0))
+      if (transferValues.size () > 0)
       {
         resultStrings->AddString ("struct V2F");
         resultStrings->AddString ("{");
