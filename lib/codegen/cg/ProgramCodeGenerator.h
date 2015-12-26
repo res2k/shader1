@@ -31,6 +31,7 @@ namespace s1
     {
       const CgOptions& GetCgOptions () const;
 
+      StringsArrayPtr GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency) override;
       std::unique_ptr<sl::FunctionCodeGenerator> CreateFunctionCodeGenerator () override;
     public:
       ProgramCodeGenerator (const CgOptions& options);

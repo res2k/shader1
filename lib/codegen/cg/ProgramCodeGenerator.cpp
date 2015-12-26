@@ -23,6 +23,9 @@
 #include "FunctionCodeGenerator.h"
 
 #include "codegen/cg/CgOptions.h"
+#include "splitter/Frequency.h"
+
+#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -36,6 +39,36 @@ namespace s1
     const CgOptions& CgGenerator::ProgramCodeGenerator::GetCgOptions () const
     {
       return static_cast<const CgOptions&> (options);
+    }
+
+    StringsArrayPtr CgGenerator::ProgramCodeGenerator::GeneratePreamble (const intermediate::ProgramPtr & prog, int frequency)
+    {
+      StringsArrayPtr resultStrings = boost::make_shared<StringsArray> ();
+
+      const intermediate::Program::TransferValues& transferValues (prog->GetTransferValues ());
+      if ((frequency == splitter::freqVertex) && (transferValues.size () > 0))
+      {
+        resultStrings->AddString ("struct V2F");
+        resultStrings->AddString ("{");
+        for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin ();
+        transferVal != transferValues.end ();
+          ++transferVal)
+        {
+          std::string identifierSuffix;
+          std::string line ("  ");
+          auto typeStrings = traits.TypeString (transferVal->first, nullptr);
+          typeStrings.first.toUTF8String (line);
+          line.append (" ");
+          uc::String identStr = traits.ConvertIdentifier (transferVal->second);
+          identStr.toUTF8String (line);
+          typeStrings.second.toUTF8String (line);
+          line.append (";");
+          resultStrings->AddString (line);
+        }
+        resultStrings->AddString ("};");
+        resultStrings->AddString (std::string ());
+      }
+      return resultStrings;
     }
 
     std::unique_ptr<sl::FunctionCodeGenerator> CgGenerator::ProgramCodeGenerator::CreateFunctionCodeGenerator ()

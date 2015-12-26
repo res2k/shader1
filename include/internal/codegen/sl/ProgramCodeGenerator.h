@@ -37,6 +37,7 @@ namespace s1
         const Traits& traits;
         const Options& options;
 
+        virtual StringsArrayPtr GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency) = 0;
         virtual std::unique_ptr<FunctionCodeGenerator> CreateFunctionCodeGenerator () = 0;
       public:
         ProgramCodeGenerator (const Traits& traits, const Options& options);

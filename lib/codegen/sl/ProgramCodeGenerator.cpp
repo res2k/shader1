@@ -43,30 +43,13 @@ namespace s1
       {
         StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
 
-        const intermediate::Program::TransferValues& transferValues (prog->GetTransferValues ());
-        if ((frequency == splitter::freqVertex) && (transferValues.size () > 0))
+        if (StringsArrayPtr preamble = GeneratePreamble (prog, frequency))
         {
-          resultStrings->AddString ("struct V2F");
-          resultStrings->AddString ("{");
-          for (intermediate::Program::TransferValues::const_iterator transferVal = transferValues.begin ();
-          transferVal != transferValues.end ();
-            ++transferVal)
-          {
-            std::string identifierSuffix;
-            std::string line ("  ");
-            auto typeStrings = traits.TypeString (transferVal->first, nullptr);
-            typeStrings.first.toUTF8String (line);
-            line.append (" ");
-            uc::String identStr = traits.ConvertIdentifier (transferVal->second);
-            identStr.toUTF8String (line);
-            typeStrings.second.toUTF8String (line);
-            line.append (";");
-            resultStrings->AddString (line);
-          }
-          resultStrings->AddString ("};");
-          resultStrings->AddString (std::string ());
+          resultStrings->AddStrings (*preamble);
+          if (resultStrings->Size () > 0) resultStrings->AddString ("");
         }
 
+        const intermediate::Program::TransferValues& transferValues (prog->GetTransferValues ());
         for (size_t i = 0; i < prog->GetNumFunctions (); i++)
         {
           intermediate::ProgramFunctionPtr func (prog->GetFunction (i));

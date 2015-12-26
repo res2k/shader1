@@ -39,6 +39,12 @@ namespace s1
       {
         return static_cast<const Options&> (options);
       }
+      
+      StringsArrayPtr ProgramCodeGenerator::GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency)
+      {
+        // TODO: Generate globals for values passed from VP to FP
+        return StringsArrayPtr ();
+      }
 
       std::unique_ptr<sl::FunctionCodeGenerator> ProgramCodeGenerator::CreateFunctionCodeGenerator ()
       {
