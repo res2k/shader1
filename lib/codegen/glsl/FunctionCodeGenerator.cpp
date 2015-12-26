@@ -80,38 +80,14 @@ namespace s1
 
           if (!handleRes.outParamStr.isEmpty())
           {
-            uc::String paramStr = handleRes.outParamStr;
-            intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
-            if (outputInfo != output.end ())
-            {
-              switch (outputInfo->second)
-              {
-              case intermediate::Program::Position:
-                paramStr.append (" : POSITION");
-                break;
-              case intermediate::Program::Color:
-                paramStr.append (" : COLOR");
-                break;
-              }
-            }
-            outParams.push_back (paramStr);
-
+            outParams.push_back (handleRes.outParamStr);
             outParamMap[param->identifier] = handleRes.outParamIdent;
           }
         }
 
         for (const auto& inParam : inParams)
         {
-          const char* variability = "in ";
-          intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam.second);
-          if (pf != paramFreqs.end ())
-          {
-            if (pf->second & splitter::freqFlagU)
-              variability = "uniform in ";
-            else if (pf->second & (splitter::freqFlagV | splitter::freqFlagF))
-              variability = "varying in ";
-          }
-
+          const char* variability = "const in ";
           funcParams.Add (variability, inParam.first);
         }
         for (const auto& outParam : outParams)
