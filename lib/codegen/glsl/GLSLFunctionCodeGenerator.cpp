@@ -17,12 +17,12 @@
 
 #include "base/common.h"
 
-#include "FunctionCodeGenerator.h"
+#include "GLSLFunctionCodeGenerator.h"
 
-#include "Traits.h"
-#include "SequenceCodeGenerator.h"
+#include "GLSLTraits.h"
+#include "GLSLSequenceCodeGenerator.h"
 
-#include "codegen/glsl/Options.h"
+#include "codegen/glsl/GLSLOptions.h"
 #include "splitter/Frequency.h"
 
 namespace s1

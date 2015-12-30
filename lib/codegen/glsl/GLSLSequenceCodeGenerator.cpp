@@ -17,11 +17,11 @@
 
 #include "base/common.h"
 
-#include "SequenceCodeGenerator.h"
+#include "GLSLSequenceCodeGenerator.h"
 
-#include "Traits.h"
+#include "GLSLTraits.h"
 
-#include "codegen/glsl/Options.h"
+#include "codegen/glsl/GLSLOptions.h"
 
 namespace s1
 {

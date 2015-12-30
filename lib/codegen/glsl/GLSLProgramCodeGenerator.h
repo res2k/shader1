@@ -18,7 +18,7 @@
 #ifndef __CODEGEN_GLSL_PROGRAMCODEGENERATOR_H__
 #define __CODEGEN_GLSL_PROGRAMCODEGENERATOR_H__
 
-#include "codegen/sl/ProgramCodeGenerator.h"
+#include "codegen/sl/SLProgramCodeGenerator.h"
 
 namespace s1
 {

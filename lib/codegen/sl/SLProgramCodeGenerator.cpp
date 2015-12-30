@@ -17,10 +17,10 @@
 
 #include "base/common.h"
 
-#include "codegen/sl/ProgramCodeGenerator.h"
+#include "codegen/sl/SLProgramCodeGenerator.h"
 
-#include "codegen/sl/Traits.h"
-#include "codegen/sl/FunctionCodeGenerator.h"
+#include "codegen/sl/SLTraits.h"
+#include "codegen/sl/SLFunctionCodeGenerator.h"
 #include "intermediate/Program.h"
 #include "splitter/Frequency.h"
 

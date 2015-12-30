@@ -17,7 +17,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "base/common.h"
 
-#include "codegen/sl/Traits.h"
+#include "codegen/sl/SLTraits.h"
 
 #include <boost/multiprecision/cpp_int.hpp>
 

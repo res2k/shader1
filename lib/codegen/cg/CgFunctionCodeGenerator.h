@@ -19,7 +19,7 @@
 #define __CODEGEN_FUNCTIONCODEGENERATOR_H__
 
 #include "codegen/cg/CgGenerator.h"
-#include "codegen/sl/FunctionCodeGenerator.h"
+#include "codegen/sl/SLFunctionCodeGenerator.h"
 
 namespace s1
 {

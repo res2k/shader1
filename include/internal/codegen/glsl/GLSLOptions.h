@@ -21,7 +21,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #ifndef __CODEGEN_GLSL_OPTIONS_H__
 #define __CODEGEN_GLSL_OPTIONS_H__
 
-#include "codegen/sl/Options.h"
+#include "codegen/sl/SLOptions.h"
 
 namespace s1
 {

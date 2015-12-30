@@ -19,11 +19,11 @@
 #define __CODEGEN_SL_FUNCTIONCODEGENERATOR_H__
 
 #include "codegen/common/StringsArray.h"
-#include "codegen/sl/Traits.h"
+#include "codegen/sl/SLTraits.h"
 #include "intermediate/forwarddecl.h"
 #include "intermediate/Program.h"
 
-#include "SequenceCodeGenerator.h"
+#include "SLSequenceCodeGenerator.h"
 
 namespace s1
 {

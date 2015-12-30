@@ -2,13 +2,13 @@ set(codegen_cg_sources
     CgGenerator.cpp
     CgOptions.cpp
     CgTraits.cpp
-    FunctionCodeGenerator.cpp
-    ProgramCodeGenerator.cpp
-    SequenceCodeGenerator.cpp
+    CgFunctionCodeGenerator.cpp
+    CgProgramCodeGenerator.cpp
+    CgSequenceCodeGenerator.cpp
     CgTraits.h
-    FunctionCodeGenerator.h
-    ProgramCodeGenerator.h
-    SequenceCodeGenerator.h
+    CgFunctionCodeGenerator.h
+    CgProgramCodeGenerator.h
+    CgSequenceCodeGenerator.h
     ${S1_INC}/codegen/cg/CgGenerator.h
     ${S1_INC}/codegen/cg/CgOptions.h
 )

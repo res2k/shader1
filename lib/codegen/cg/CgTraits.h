@@ -21,7 +21,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #ifndef __CODEGEN_CG_CGTRAITS_H__
 #define __CODEGEN_CG_CGTRAITS_H__
 
-#include "codegen/sl/Traits.h"
+#include "codegen/sl/SLTraits.h"
 
 namespace s1
 {

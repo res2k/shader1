@@ -1,16 +1,16 @@
 set(codegen_glsl_sources
-    FunctionCodeGenerator.cpp
-    Generator.cpp
-    Options.cpp
-    ProgramCodeGenerator.cpp
-    SequenceCodeGenerator.cpp
-    Traits.cpp
-    FunctionCodeGenerator.h
-    ProgramCodeGenerator.h
-    SequenceCodeGenerator.h
-    Traits.h
-    ${S1_INC}/codegen/glsl/Generator.h
-    ${S1_INC}/codegen/glsl/Options.h
+    GLSLFunctionCodeGenerator.cpp
+    GLSLGenerator.cpp
+    GLSLOptions.cpp
+    GLSLProgramCodeGenerator.cpp
+    GLSLSequenceCodeGenerator.cpp
+    GLSLTraits.cpp
+    GLSLFunctionCodeGenerator.h
+    GLSLProgramCodeGenerator.h
+    GLSLSequenceCodeGenerator.h
+    GLSLTraits.h
+    ${S1_INC}/codegen/glsl/GLSLGenerator.h
+    ${S1_INC}/codegen/glsl/GLSLOptions.h
 )
 s1_add_library(codegen_glsl
                SOURCES ${codegen_glsl_sources}

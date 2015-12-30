@@ -17,7 +17,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "base/common.h"
 
-#include "codegen/glsl/Options.h"
+#include "codegen/glsl/GLSLOptions.h"
 
 namespace s1
 {

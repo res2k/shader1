@@ -17,10 +17,10 @@
 
 #include "base/common.h"
 
-#include "FunctionCodeGenerator.h"
+#include "CgFunctionCodeGenerator.h"
 
 #include "CgTraits.h"
-#include "SequenceCodeGenerator.h"
+#include "CgSequenceCodeGenerator.h"
 
 #include "codegen/cg/CgOptions.h"
 #include "splitter/Frequency.h"

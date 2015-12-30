@@ -18,7 +18,7 @@
 #ifndef __CODEGEN_GLSL_SEQUENCECODEGENERATOR_H__
 #define __CODEGEN_GLSL_SEQUENCECODEGENERATOR_H__
 
-#include "codegen/sl/SequenceCodeGenerator.h"
+#include "codegen/sl/SLSequenceCodeGenerator.h"
 
 namespace s1
 {

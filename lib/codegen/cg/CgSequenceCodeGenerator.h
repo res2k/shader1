@@ -19,7 +19,7 @@
 #define __CODEGEN_SEQUENCECODEGENERATOR_H__
 
 #include "codegen/cg/CgGenerator.h"
-#include "codegen/sl/SequenceCodeGenerator.h"
+#include "codegen/sl/SLSequenceCodeGenerator.h"
 
 namespace s1
 {

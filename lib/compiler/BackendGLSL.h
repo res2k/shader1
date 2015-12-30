@@ -19,7 +19,7 @@
 #define __COMPILER_BACKENDGLSL_H__
 
 #include "compiler/Backend.h"
-#include "codegen/glsl/Options.h"
+#include "codegen/glsl/GLSLOptions.h"
 
 namespace s1
 {

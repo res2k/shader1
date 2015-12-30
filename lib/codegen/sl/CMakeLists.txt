@@ -1,13 +1,13 @@
 set(codegen_sl_sources
-    FunctionCodeGenerator.cpp
-    ProgramCodeGenerator.cpp
-    SequenceCodeGenerator.cpp
-    Traits.cpp
-    ${S1_INC}/codegen/sl/FunctionCodeGenerator.h
-    ${S1_INC}/codegen/sl/Options.h
-    ${S1_INC}/codegen/sl/ProgramCodeGenerator.h
-    ${S1_INC}/codegen/sl/SequenceCodeGenerator.h
-    ${S1_INC}/codegen/sl/Traits.h
+    SLFunctionCodeGenerator.cpp
+    SLProgramCodeGenerator.cpp
+    SLSequenceCodeGenerator.cpp
+    SLTraits.cpp
+    ${S1_INC}/codegen/sl/SLFunctionCodeGenerator.h
+    ${S1_INC}/codegen/sl/SLOptions.h
+    ${S1_INC}/codegen/sl/SLProgramCodeGenerator.h
+    ${S1_INC}/codegen/sl/SLSequenceCodeGenerator.h
+    ${S1_INC}/codegen/sl/SLTraits.h
 )
 s1_add_library(codegen_sl
                SOURCES ${codegen_sl_sources}

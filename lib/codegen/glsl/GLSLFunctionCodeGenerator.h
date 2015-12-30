@@ -18,7 +18,7 @@
 #ifndef __CODEGEN_GLSL_FUNCTIONCODEGENERATOR_H__
 #define __CODEGEN_GLSL_FUNCTIONCODEGENERATOR_H__
 
-#include "codegen/sl/FunctionCodeGenerator.h"
+#include "codegen/sl/SLFunctionCodeGenerator.h"
 
 namespace s1
 {

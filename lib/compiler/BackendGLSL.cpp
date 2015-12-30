@@ -20,8 +20,8 @@
 
 #include "BackendGLSL.h"
 
-#include "codegen/glsl/Generator.h"
-#include "codegen/glsl/Options.h"
+#include "codegen/glsl/GLSLGenerator.h"
+#include "codegen/glsl/GLSLOptions.h"
 
 #include <boost/make_shared.hpp>
 

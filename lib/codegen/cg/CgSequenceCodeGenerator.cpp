@@ -17,7 +17,7 @@
 
 #include "base/common.h"
 
-#include "SequenceCodeGenerator.h"
+#include "CgSequenceCodeGenerator.h"
 
 #include "CgTraits.h"
 

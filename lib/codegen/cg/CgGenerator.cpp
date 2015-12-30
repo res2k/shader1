@@ -19,7 +19,7 @@
 
 #include "codegen/cg/CgGenerator.h"
 
-#include "ProgramCodeGenerator.h"
+#include "CgProgramCodeGenerator.h"
 
 namespace s1
 {

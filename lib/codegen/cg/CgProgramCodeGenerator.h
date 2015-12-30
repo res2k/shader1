@@ -19,7 +19,7 @@
 #define __CODEGEN_PROGRAMCODEGENERATOR_H__
 
 #include "codegen/cg/CgGenerator.h"
-#include "codegen/sl/ProgramCodeGenerator.h"
+#include "codegen/sl/SLProgramCodeGenerator.h"
 
 namespace s1
 {

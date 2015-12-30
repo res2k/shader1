@@ -17,13 +17,13 @@
 
 #include "base/common.h"
 
-#include "codegen/sl/SequenceCodeGenerator.h"
+#include "codegen/sl/SLSequenceCodeGenerator.h"
 
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
-#include "codegen/sl/Traits.h"
-#include "codegen/sl/Options.h"
+#include "codegen/sl/SLTraits.h"
+#include "codegen/sl/SLOptions.h"
 
 #include "intermediate/SequenceOp/SequenceOp.h"
 

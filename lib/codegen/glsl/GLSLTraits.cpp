@@ -17,7 +17,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "base/common.h"
 
-#include "Traits.h"
+#include "GLSLTraits.h"
 
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
