@@ -80,8 +80,7 @@ namespace s1
                                                   const size_t* arraySize) const;
 
         virtual void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
-                                             const intermediate::Program::OutputParameters& output,
-                                             const intermediate::Program::ParameterArraySizes& paramArraySizes,
+                                             const intermediate::ProgramPtr& prog,
                                              ParamAdder& funcParams,
                                              FunctionParamsToIdentifier& inParamMap,
                                              FunctionParamsToIdentifier& outParamMap) const = 0;
@@ -96,9 +95,7 @@ namespace s1
 
         StringsArrayPtr Generate (const char* identifier,
                                   const intermediate::ProgramFunctionPtr& func,
-                                  const intermediate::Program::OutputParameters& output,
-                                  const intermediate::Program::ParameterArraySizes& paramArraySizes,
-                                  bool doTransfer,
+                                  const intermediate::ProgramPtr& prog,
                                   int frequency);
       };
     } // namespace sl

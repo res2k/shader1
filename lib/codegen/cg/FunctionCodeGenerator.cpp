@@ -40,12 +40,13 @@ namespace s1
     }
 
     void CgGenerator::FunctionCodeGenerator::GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
-                                                                     const intermediate::Program::OutputParameters& output,
-                                                                     const intermediate::Program::ParameterArraySizes& paramArraySizes,
+                                                                     const intermediate::ProgramPtr& prog,
                                                                      ParamAdder& funcParams,
                                                                      FunctionParamsToIdentifier& inParamMap,
                                                                      FunctionParamsToIdentifier& outParamMap) const
     {
+      const intermediate::Program::OutputParameters& output = prog->GetOutputParameters ();
+      const intermediate::Program::ParameterArraySizes& paramArraySizes = prog->GetParameterArraySizes ();
       const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
 
       boost::unordered_set<uc::String> paramImports;

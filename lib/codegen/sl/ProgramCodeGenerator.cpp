@@ -56,23 +56,13 @@ namespace s1
           auto funcGen = CreateFunctionCodeGenerator ();
           if (func->IsEntryFunction ())
           {
-            resultStrings->AddStrings (*(funcGen->Generate ("main",
-                                                            func,
-                                                            prog->GetOutputParameters (),
-                                                            prog->GetParameterArraySizes (),
-                                                            transferValues.size () > 0,
-                                                            frequency)));
+            resultStrings->AddStrings (*(funcGen->Generate ("main", func, prog, frequency)));
           }
           else
           {
             std::string funcName;
             traits.ConvertIdentifier (func->GetIdentifier ()).toUTF8String (funcName);
-            resultStrings->AddStrings (*(funcGen->Generate (funcName.c_str (),
-                                                            func,
-                                                            intermediate::Program::OutputParameters (),
-                                                            intermediate::Program::ParameterArraySizes (),
-                                                            transferValues.size () > 0,
-                                                            frequency)));
+            resultStrings->AddStrings (*(funcGen->Generate (funcName.c_str (), func, prog, frequency)));
           }
           resultStrings->AddString (std::string ());
         }

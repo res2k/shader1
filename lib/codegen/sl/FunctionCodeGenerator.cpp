@@ -93,13 +93,14 @@ namespace s1
 
       StringsArrayPtr FunctionCodeGenerator::Generate (const char* identifier,
                                                        const intermediate::ProgramFunctionPtr& func,
-                                                       const intermediate::Program::OutputParameters& output,
-                                                       const intermediate::Program::ParameterArraySizes& paramArraySizes,
-                                                       bool doTransfer,
+                                                       const intermediate::ProgramPtr& prog,
                                                        int frequency)
       {
         typedef parser::SemanticsHandler::Scope Scope;
         typedef Scope::FunctionFormalParameters FunctionFormalParameters;
+
+        const intermediate::Program::TransferValues& transferValues = prog->GetTransferValues ();
+        bool doTransfer = !transferValues.empty ();
 
         BlockNameResolver nameRes;
         StringsArrayPtr resultStrings (boost::make_shared<StringsArray> ());
@@ -114,7 +115,7 @@ namespace s1
               paramAdder.Add ("in ", "V2F v2f");
           }
 
-          GenerateFunctionParams (func, output, paramArraySizes, paramAdder, nameRes.inParamMap, nameRes.outParamMap);
+          GenerateFunctionParams (func, prog, paramAdder, nameRes.inParamMap, nameRes.outParamMap);
 
           if (resultStrings->Size () != 0) resultStrings->AddString (uc::String ());
           resultStrings->AddString (FormatFuncDecl.to<uc::String> (identifier, paramAdder.paramStr));

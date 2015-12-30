@@ -33,8 +33,7 @@ namespace s1
       const CgOptions& GetCgOptions () const;
 
       void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
-                                   const intermediate::Program::OutputParameters& output,
-                                   const intermediate::Program::ParameterArraySizes& paramArraySizes,
+                                   const intermediate::ProgramPtr& prog,
                                    ParamAdder& funcParams,
                                    FunctionParamsToIdentifier& inParamMap,
                                    FunctionParamsToIdentifier& outParamMap) const override;
