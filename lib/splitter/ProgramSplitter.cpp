@@ -167,6 +167,7 @@ namespace s1
 	    // Synthesize new parameters
 	    {
 	      parser::SemanticsHandler::Scope::FunctionFormalParameter paramV;
+              paramV.paramType = parser::SemanticsHandler::Scope::ptAutoTransfer;
 	      paramV.dir = parser::SemanticsHandler::Scope::dirOut;
 	      paramV.identifier = transferIdent;
 	      paramV.type = reg->GetOriginalType();
@@ -176,7 +177,8 @@ namespace s1
 	    }
 	    {
 	      parser::SemanticsHandler::Scope::FunctionFormalParameter paramF;
-	      paramF.dir = parser::SemanticsHandler::Scope::dirIn;
+              paramF.paramType = parser::SemanticsHandler::Scope::ptAutoTransfer;
+              paramF.dir = parser::SemanticsHandler::Scope::dirIn;
 	      paramF.identifier = transferIdent;
 	      paramF.type = reg->GetOriginalType();
 	      extraParams[freqFragment].push_back (paramF);

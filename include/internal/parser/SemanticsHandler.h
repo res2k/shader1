@@ -250,6 +250,8 @@ namespace s1
           ptUser,
           /// Automatically generated parameter, representing a global var
           ptAutoGlobal,
+          /// Automatically generated parameter for a transfer value
+          ptAutoTransfer,
 
           /// All types greater or equal than this identify auto-added parameters
           ptFirstAutoType = ptAutoGlobal
