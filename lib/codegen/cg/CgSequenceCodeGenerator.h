@@ -30,7 +30,6 @@ namespace s1
     class CgGenerator::SequenceCodeGenerator : public sl::SequenceCodeGenerator
     {
     protected:
-    protected:
       const CgOptions& GetCgOptions () const;
 
       std::unique_ptr<sl::SequenceCodeGenerator> CreateForBlock (const intermediate::Sequence& seq,
