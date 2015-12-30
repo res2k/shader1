@@ -36,7 +36,6 @@ namespace s1
                                    const intermediate::Program::OutputParameters& output,
                                    const intermediate::Program::ParameterArraySizes& paramArraySizes,
                                    ParamAdder& funcParams,
-                                   const StringsArrayPtr& preamble,
                                    FunctionParamsToIdentifier& inParamMap,
                                    FunctionParamsToIdentifier& outParamMap) const override;
 

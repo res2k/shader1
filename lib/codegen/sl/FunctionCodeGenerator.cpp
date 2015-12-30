@@ -114,7 +114,7 @@ namespace s1
               paramAdder.Add ("in ", "V2F v2f");
           }
 
-          GenerateFunctionParams (func, output, paramArraySizes, paramAdder, resultStrings, nameRes.inParamMap, nameRes.outParamMap);
+          GenerateFunctionParams (func, output, paramArraySizes, paramAdder, nameRes.inParamMap, nameRes.outParamMap);
 
           if (resultStrings->Size () != 0) resultStrings->AddString (uc::String ());
           resultStrings->AddString (FormatFuncDecl.to<uc::String> (identifier, paramAdder.paramStr));
