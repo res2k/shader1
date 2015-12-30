@@ -35,6 +35,9 @@ namespace s1
 
         std::unique_ptr<sl::SequenceCodeGenerator> CreateForBlock (const intermediate::Sequence& seq,
                                                                    sl::ImportedNameResolver* nameRes) const override;
+
+        std::vector<InputTransferPair> GenerateTransfersIn () const override;
+        std::vector<OutputTransferPair> GenerateTransfersOut () const override;
       public:
         SequenceCodeGenerator (const intermediate::Sequence& seq,
                                sl::ImportedNameResolver* nameRes,

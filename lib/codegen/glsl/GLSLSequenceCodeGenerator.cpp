@@ -57,6 +57,22 @@ namespace s1
                                             traits, GetOptions ()));
         return std::move (p);
       }
+
+      std::vector<SequenceCodeGenerator::InputTransferPair>
+        SequenceCodeGenerator::GenerateTransfersIn () const
+      {
+        std::vector<SequenceCodeGenerator::InputTransferPair> result;
+        // TODO: Generate
+        return result;
+      }
+
+      std::vector<SequenceCodeGenerator::OutputTransferPair>
+        SequenceCodeGenerator::GenerateTransfersOut () const
+      {
+        std::vector<SequenceCodeGenerator::OutputTransferPair> result;
+        // TODO: Generate
+        return result;
+      }
     } // namespace glsl
   } // namespace codegen
 } // namespace s1

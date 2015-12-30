@@ -81,6 +81,7 @@ namespace s1
 
         virtual void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
                                              const intermediate::ProgramPtr& prog,
+                                             int frequency,
                                              ParamAdder& funcParams,
                                              FunctionParamsToIdentifier& inParamMap,
                                              FunctionParamsToIdentifier& outParamMap) const = 0;

@@ -218,6 +218,14 @@ namespace s1
 
         virtual std::unique_ptr<SequenceCodeGenerator> CreateForBlock (const intermediate::Sequence& seq,
                                                                        ImportedNameResolver* nameRes) const = 0;
+
+        // Generate input transfers: any accesses to a register will be redirected to the paired identifier
+        typedef std::pair<RegisterPtr, uc::String> InputTransferPair;
+        virtual std::vector<InputTransferPair> GenerateTransfersIn () const = 0;
+
+        // Generate output transfers: at the end, generate assignments to the identifier from the paired register
+        typedef std::pair<uc::String, RegisterPtr> OutputTransferPair;
+        virtual std::vector<OutputTransferPair> GenerateTransfersOut () const = 0;
       public:
         SequenceCodeGenerator (const intermediate::Sequence& seq,
                                ImportedNameResolver* nameRes,

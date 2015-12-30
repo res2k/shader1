@@ -41,6 +41,7 @@ namespace s1
 
     void CgGenerator::FunctionCodeGenerator::GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
                                                                      const intermediate::ProgramPtr& prog,
+                                                                     int frequency,
                                                                      ParamAdder& funcParams,
                                                                      FunctionParamsToIdentifier& inParamMap,
                                                                      FunctionParamsToIdentifier& outParamMap) const
@@ -96,6 +97,16 @@ namespace s1
 
           outParamMap[param->identifier] = handleRes.outParamIdent;
         }
+      }
+
+      const intermediate::Program::TransferValues& transferValues = prog->GetTransferValues ();
+
+      if (func->IsEntryFunction () && !transferValues.empty ())
+      {
+        if (frequency == splitter::freqVertex)
+          funcParams.Add ("out ", "V2F v2f");
+        else
+          funcParams.Add ("in ", "V2F v2f");
       }
 
       for (const auto& inParam : inParams)

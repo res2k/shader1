@@ -107,15 +107,7 @@ namespace s1
         {
           ParamAdder paramAdder;
 
-          if (func->IsEntryFunction () && doTransfer)
-          {
-            if (frequency == splitter::freqVertex)
-              paramAdder.Add ("out ", "V2F v2f");
-            else
-              paramAdder.Add ("in ", "V2F v2f");
-          }
-
-          GenerateFunctionParams (func, prog, paramAdder, nameRes.inParamMap, nameRes.outParamMap);
+          GenerateFunctionParams (func, prog, frequency, paramAdder, nameRes.inParamMap, nameRes.outParamMap);
 
           if (resultStrings->Size () != 0) resultStrings->AddString (uc::String ());
           resultStrings->AddString (FormatFuncDecl.to<uc::String> (identifier, paramAdder.paramStr));

@@ -750,32 +750,30 @@ namespace s1
         }
         // Generate transfer ops
         {
-          for (intermediate::ProgramFunction::TransferMappings::const_iterator transfer = transferIn.begin ();
-          transfer != transferIn.end ();
-            ++transfer)
+          std::vector<InputTransferPair> inTransferMappings = GenerateTransfersIn ();
+          for (const auto& inMapping : inTransferMappings)
           {
-            std::string transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
-            traits.ConvertIdentifier (transfer->first).toUTF8String (transferIdent);
-            seenRegisters[transfer->second] = transferIdent.c_str ();
+            std::string transferIdent;
+            inMapping.second.toUTF8String (transferIdent);
+            seenRegisters.emplace (inMapping.first, transferIdent.c_str ());
           }
         }
         typedef std::pair<std::string, RegisterPtr> EndAssignmentPair;
         std::vector<EndAssignmentPair> endAssignments;
         // Generate transfer ops
         {
-          for (intermediate::ProgramFunction::TransferMappings::const_iterator transfer = transferOut.begin ();
-          transfer != transferOut.end ();
-            ++transfer)
+          std::vector<OutputTransferPair> outTransferMappings = GenerateTransfersOut ();
+          for (const auto& outMapping : outTransferMappings)
           {
-            std::string transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
-            traits.ConvertIdentifier (transfer->first).toUTF8String (transferIdent);
-            RegistersToIDMap::iterator regIt = seenRegisters.find (transfer->second);
+            std::string transferIdent;
+            outMapping.first.toUTF8String (transferIdent);
+            RegistersToIDMap::iterator regIt = seenRegisters.find (outMapping.second);
             if (regIt == seenRegisters.end ())
               // Register has no name yet, override variable name with transfer value name
-              seenRegisters[transfer->second] = transferIdent.c_str ();
+              seenRegisters.emplace (outMapping.second, transferIdent.c_str ());
             else
               // Assign at end
-              endAssignments.emplace_back (transferIdent, transfer->second);
+              endAssignments.emplace_back (transferIdent, outMapping.second);
           }
         }
         // 'Export' variables to outer scope

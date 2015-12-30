@@ -43,6 +43,7 @@ namespace s1
 
       void FunctionCodeGenerator::GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
                                                           const intermediate::ProgramPtr& prog,
+                                                          int frequency,
                                                           ParamAdder& funcParams,
                                                           FunctionParamsToIdentifier& inParamMap,
                                                           FunctionParamsToIdentifier& outParamMap) const

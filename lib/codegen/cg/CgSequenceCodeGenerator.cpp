@@ -55,5 +55,30 @@ namespace s1
       return std::move (p);
     }
 
+    std::vector<CgGenerator::SequenceCodeGenerator::InputTransferPair>
+      CgGenerator::SequenceCodeGenerator::GenerateTransfersIn () const
+    {
+      std::vector<CgGenerator::SequenceCodeGenerator::InputTransferPair> result;
+      for (const auto& transfer : transferIn)
+      {
+        uc::String transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
+        transferIdent.append (traits.ConvertIdentifier (transfer.first));
+        result.emplace_back (transfer.second, transferIdent);
+      }
+      return result;
+    }
+
+    std::vector<CgGenerator::SequenceCodeGenerator::OutputTransferPair>
+      CgGenerator::SequenceCodeGenerator::GenerateTransfersOut () const
+    {
+      std::vector<CgGenerator::SequenceCodeGenerator::OutputTransferPair> result;
+      for (const auto& transfer : transferOut)
+      {
+        uc::String transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
+        transferIdent.append (traits.ConvertIdentifier (transfer.first));
+        result.emplace_back (transferIdent, transfer.second);
+      }
+      return result;
+    }
   } // namespace codegen
 } // namespace s1
