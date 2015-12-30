@@ -42,17 +42,19 @@ namespace s1
       {
       }
 
-      void FunctionCodeGenerator::ParamAdder::Add (const char* attr, const uc::String& attrStr)
+      static format::StaticFormatter FormatParam ("{0} {1} {2}{3}");
+
+      void FunctionCodeGenerator::ParamAdder::Add (const char* attr,
+                                                   const uc::String& type,
+                                                   const uc::String& identifier,
+                                                   const uc::String& suffix)
       {
         if (!firstParam)
           paramStr.append (", ");
         else
           firstParam = false;
-        paramStr.append (attr);
-        paramStr.append (attrStr);
+        paramStr.append (FormatParam.to<uc::String> (attr, type, identifier, suffix));
       }
-
-      static format::StaticFormatter FormatDefaultParamStr ("{0} {1}{2}");
 
       FunctionCodeGenerator::HandleParamResult
         FunctionCodeGenerator::DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
@@ -73,8 +75,7 @@ namespace s1
           uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "I" : "i");
           paramIdentDecorated.append (param.identifier);
           uc::String paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
-          result.inParamStr = FormatDefaultParamStr.to<uc::String> (paramStrBase, paramIdent, typeSuffix);
-          result.inParamIdent = paramIdent;
+          result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
         if (param.dir & parser::SemanticsHandler::Scope::dirOut)
@@ -82,8 +83,7 @@ namespace s1
           uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "O" : "o");
           paramIdentDecorated.append (param.identifier);
           uc::String paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
-          result.outParamStr = FormatDefaultParamStr.to<uc::String> (paramStrBase, paramIdent, typeSuffix);
-          result.outParamIdent = paramIdent;
+          result.outParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
         return result;

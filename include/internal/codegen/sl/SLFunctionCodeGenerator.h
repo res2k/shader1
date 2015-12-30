@@ -60,21 +60,31 @@ namespace s1
           }
         };
 
+        // type, identifier, suffix
+        struct ParamInfo
+        {
+          uc::String type;
+          uc::String identifier;
+          uc::String suffix;
+        };
         struct ParamAdder
         {
           bool firstParam;
           uc::String paramStr;
 
           ParamAdder () : firstParam (true) { }
-          void Add (const char* attr, const uc::String& attrStr);
+          void Add (const char* attr, const uc::String& type, const uc::String& identifier,
+                    const uc::String& suffix = uc::String ());
+          void Add (const char* attr, const ParamInfo& info)
+          {
+            Add (attr, info.type, info.identifier, info.suffix);
+          }
         };
 
         struct HandleParamResult
         {
-          uc::String inParamStr;
-          uc::String inParamIdent;
-          uc::String outParamStr;
-          uc::String outParamIdent;
+          ParamInfo inParam;
+          ParamInfo outParam;
         };
         HandleParamResult DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
                                                   const size_t* arraySize) const;

@@ -53,8 +53,8 @@ namespace s1
         const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
 
         boost::unordered_set<uc::String> paramImports;
-        std::vector<std::pair<uc::String, uc::String> > inParams;
-        std::vector<uc::String> outParams;
+        std::vector<std::pair<ParamInfo, uc::String> > inParams;
+        std::vector<ParamInfo> outParams;
         const FunctionFormalParameters& params (func->GetParams ());
         for (FunctionFormalParameters::const_iterator param = params.begin ();
         param != params.end ();
@@ -73,27 +73,27 @@ namespace s1
 
           HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
 
-          if (!handleRes.inParamStr.isEmpty())
+          if (!handleRes.inParam.identifier.isEmpty())
           {
-            inParams.emplace_back (handleRes.inParamStr, param->identifier);
-            inParamMap[param->identifier] = handleRes.inParamIdent;
+            inParams.emplace_back (handleRes.inParam, param->identifier);
+            inParamMap[param->identifier] = handleRes.inParam.identifier;
           }
 
-          if (!handleRes.outParamStr.isEmpty())
+          if (!handleRes.outParam.identifier.isEmpty())
           {
-            outParams.push_back (handleRes.outParamStr);
-            outParamMap[param->identifier] = handleRes.outParamIdent;
+            outParams.push_back (handleRes.outParam);
+            outParamMap[param->identifier] = handleRes.outParam.identifier;
           }
         }
 
         for (const auto& inParam : inParams)
         {
-          const char* variability = "const in ";
+          const char* variability = "const in";
           funcParams.Add (variability, inParam.first);
         }
         for (const auto& outParam : outParams)
         {
-          funcParams.Add ("out ", outParam);
+          funcParams.Add ("out", outParam);
         }
       }
 

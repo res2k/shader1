@@ -51,8 +51,8 @@ namespace s1
       const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
 
       boost::unordered_set<uc::String> paramImports;
-      std::vector<std::pair<uc::String, uc::String> > inParams;
-      std::vector<uc::String> outParams;
+      std::vector<std::pair<ParamInfo, uc::String> > inParams;
+      std::vector<ParamInfo> outParams;
       const FunctionFormalParameters& params (func->GetParams ());
       for (FunctionFormalParameters::const_iterator param = params.begin ();
       param != params.end ();
@@ -71,31 +71,31 @@ namespace s1
 
         HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
 
-        if (!handleRes.inParamStr.isEmpty())
+        if (!handleRes.inParam.identifier.isEmpty())
         {
-          inParams.emplace_back (handleRes.inParamStr, param->identifier);
-          inParamMap[param->identifier] = handleRes.inParamIdent;
+          inParams.emplace_back (handleRes.inParam, param->identifier);
+          inParamMap[param->identifier] = handleRes.inParam.identifier;
         }
 
-        if (!handleRes.outParamStr.isEmpty())
+        if (!handleRes.outParam.identifier.isEmpty())
         {
-          uc::String paramStr = handleRes.outParamStr;
+          ParamInfo paramInfo = handleRes.outParam;
           intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
           if (outputInfo != output.end ())
           {
             switch (outputInfo->second)
             {
             case intermediate::Program::Position:
-              paramStr.append (" : POSITION");
+              paramInfo.suffix.append (" : POSITION");
               break;
             case intermediate::Program::Color:
-              paramStr.append (" : COLOR");
+              paramInfo.suffix.append (" : COLOR");
               break;
             }
           }
-          outParams.push_back (paramStr);
+          outParams.push_back (paramInfo);
 
-          outParamMap[param->identifier] = handleRes.outParamIdent;
+          outParamMap[param->identifier] = handleRes.outParam.identifier;
         }
       }
 
@@ -104,28 +104,28 @@ namespace s1
       if (func->IsEntryFunction () && !transferValues.empty ())
       {
         if (frequency == splitter::freqVertex)
-          funcParams.Add ("out ", "V2F v2f");
+          funcParams.Add ("out", "V2F", "v2f");
         else
-          funcParams.Add ("in ", "V2F v2f");
+          funcParams.Add ("in", "V2F", "v2f");
       }
 
       for (const auto& inParam : inParams)
       {
-        const char* variability = "in ";
+        const char* variability = "in";
         intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator pf = paramFreqs.find (inParam.second);
         if (pf != paramFreqs.end ())
         {
           if (pf->second & splitter::freqFlagU)
-            variability = "uniform in ";
+            variability = "uniform in";
           else if (pf->second & (splitter::freqFlagV | splitter::freqFlagF))
-            variability = "varying in ";
+            variability = "varying in";
         }
 
         funcParams.Add (variability, inParam.first);
       }
       for (const auto& outParam : outParams)
       {
-        funcParams.Add ("out ", outParam);
+        funcParams.Add ("out", outParam);
       }
     }
 
