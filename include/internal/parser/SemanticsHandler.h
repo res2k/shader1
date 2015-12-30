@@ -249,7 +249,10 @@ namespace s1
           /// User-defined parameter
           ptUser,
           /// Automatically generated parameter, representing a global var
-          ptAutoGlobal
+          ptAutoGlobal,
+
+          /// All types greater or equal than this identify auto-added parameters
+          ptFirstAutoType = ptAutoGlobal
         };
 	enum FormalParameterDirection
 	{

@@ -87,7 +87,8 @@ namespace s1
           ParamInfo outParam;
         };
         HandleParamResult DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
-                                                  const size_t* arraySize) const;
+                                                  const size_t* arraySize,
+                                                  bool userInputVerbatim) const;
 
         virtual void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
                                              const intermediate::ProgramPtr& prog,

@@ -23,6 +23,7 @@
 #include "CgSequenceCodeGenerator.h"
 
 #include "codegen/cg/CgOptions.h"
+#include "codegen/common/UniqueIdentifiersSet.h"
 #include "splitter/Frequency.h"
 
 namespace s1
@@ -50,6 +51,7 @@ namespace s1
       const intermediate::Program::ParameterArraySizes& paramArraySizes = prog->GetParameterArraySizes ();
       const intermediate::ProgramFunction::ParameterFrequencyMap& paramFreqs (func->GetParameterFrequencies ());
 
+      UniqueIdentifiersSet uniqueIDs;
       boost::unordered_set<uc::String> paramImports;
       std::vector<std::pair<ParamInfo, uc::String> > inParams;
       std::vector<ParamInfo> outParams;
@@ -69,10 +71,12 @@ namespace s1
           }
         }
 
-        HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
+        HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr,
+                                                              func->IsEntryFunction());
 
         if (!handleRes.inParam.identifier.isEmpty())
         {
+          uniqueIDs.MakeUnique (handleRes.inParam.identifier);
           inParams.emplace_back (handleRes.inParam, param->identifier);
           inParamMap[param->identifier] = handleRes.inParam.identifier;
         }
@@ -80,6 +84,7 @@ namespace s1
         if (!handleRes.outParam.identifier.isEmpty())
         {
           ParamInfo paramInfo = handleRes.outParam;
+          uniqueIDs.MakeUnique (paramInfo.identifier);
           intermediate::Program::OutputParameters::const_iterator outputInfo = output.find (param->identifier);
           if (outputInfo != output.end ())
           {
@@ -95,7 +100,7 @@ namespace s1
           }
           outParams.push_back (paramInfo);
 
-          outParamMap[param->identifier] = handleRes.outParam.identifier;
+          outParamMap[param->identifier] = paramInfo.identifier;
         }
       }
 
@@ -103,10 +108,11 @@ namespace s1
 
       if (func->IsEntryFunction () && !transferValues.empty ())
       {
+        v2fName = uniqueIDs.Get ("v2f");
         if (frequency == splitter::freqVertex)
-          funcParams.Add ("out", "V2F", "v2f");
+          funcParams.Add ("out", "V2F", v2fName);
         else
-          funcParams.Add ("in", "V2F", "v2f");
+          funcParams.Add ("in", "V2F", v2fName);
       }
 
       for (const auto& inParam : inParams)
@@ -137,7 +143,7 @@ namespace s1
                                                         const std::vector<uc::String>& outParams) const
     {
       std::unique_ptr<SequenceCodeGenerator> p;
-      p.reset (new SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, GetCgOptions()));
+      p.reset (new SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, GetCgOptions(), v2fName));
       return std::move (p);
     }
   } // namespace codegen

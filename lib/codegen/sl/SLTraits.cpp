@@ -71,8 +71,27 @@ namespace s1
         return delta_type (k + (rfc3492_base - rfc3492_tmin + 1) * delta / (delta + int (rfc3492_skew))).convert_to<size_t> ();
       }
 
-      uc::String Traits::IdentifierToASCII (const uc::String& identifier)
+      static inline bool IsIdentifierASCII (const uc::String& identifier)
       {
+        uc::String::CharacterIterator idIt (identifier);
+        if (!idIt.hasNext ()) return false;
+
+        uc::Char32 ch = idIt.next32PostInc ();
+        if (!(((ch >= 'A') && (ch <= 'Z')) || ((ch >= 'a') && (ch <= 'z')) || (ch == '_'))) return false;
+
+        while (idIt.hasNext ())
+        {
+          uc::Char32 ch = idIt.next32PostInc ();
+          if (!IsAsciiIdentifierChar (ch) && (ch != '_')) return false;
+        }
+        return true;
+      }
+
+      uc::String Traits::IdentifierToASCII (const uc::String& identifier, bool preferVerbatim)
+      {
+        // Return valid identifiers verbatim
+        if (preferVerbatim && IsIdentifierASCII (identifier)) return identifier;
+
         uc::String basic_str;
         basic_str.reserve (identifier.length ());
         // An implementation of the punycode algorithm, see RFC 3492
@@ -80,7 +99,7 @@ namespace s1
         while (idIt.hasNext ())
         {
           uc::Char32 ch = idIt.next32PostInc ();
-          // Valid Cg identifier character?
+          // Valid ASCII identifier character?
           if (IsAsciiIdentifierChar (ch))
           {
             basic_str.append (ch);
@@ -150,9 +169,9 @@ namespace s1
         return outStr;
       }
 
-      uc::String Traits::ConvertIdentifier (const uc::String& identifier) const
+      uc::String Traits::ConvertIdentifier (const uc::String& identifier, bool preferVerbatim) const
       {
-        return IdentifierToASCII (identifier);
+        return IdentifierToASCII (identifier, preferVerbatim);
       }
 
       intermediate::BasicType Traits::ConvertBasicType (parser::SemanticsHandler::BaseType type)

@@ -58,7 +58,8 @@ namespace s1
 
       FunctionCodeGenerator::HandleParamResult
         FunctionCodeGenerator::DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
-                                                       const size_t* arraySize) const
+                                                       const size_t* arraySize,
+                                                       bool userInputVerbatim) const
       {
         HandleParamResult result;
 
@@ -72,17 +73,33 @@ namespace s1
 
         if (param.dir & parser::SemanticsHandler::Scope::dirIn)
         {
-          uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "I" : "i");
-          paramIdentDecorated.append (param.identifier);
-          uc::String paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
+          uc::String paramIdent;
+          if (!userInputVerbatim || (param.paramType >= Scope::ptAutoGlobal))
+          {
+            uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "I" : "i");
+            paramIdentDecorated.append (param.identifier);
+            paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
+          }
+          else
+          {
+            paramIdent = traits.ConvertIdentifier (param.identifier, true);
+          }
           result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
         if (param.dir & parser::SemanticsHandler::Scope::dirOut)
         {
-          uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "O" : "o");
-          paramIdentDecorated.append (param.identifier);
-          uc::String paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
+          uc::String paramIdent;
+          if (!userInputVerbatim || (param.paramType >= Scope::ptAutoGlobal))
+          {
+            uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "O" : "o");
+            paramIdentDecorated.append (param.identifier);
+            paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
+          }
+          else
+          {
+            paramIdent = traits.ConvertIdentifier (param.identifier, true);
+          }
           result.outParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 

@@ -71,7 +71,8 @@ namespace s1
             }
           }
 
-          HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr);
+          HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr,
+                                                                func->IsEntryFunction());
 
           if (!handleRes.inParam.identifier.isEmpty())
           {

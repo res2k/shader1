@@ -30,6 +30,8 @@ namespace s1
     class CgGenerator::SequenceCodeGenerator : public sl::SequenceCodeGenerator
     {
     protected:
+      uc::String v2fName;
+
       const CgOptions& GetCgOptions () const;
 
       std::unique_ptr<sl::SequenceCodeGenerator> CreateForBlock (const intermediate::Sequence& seq,
@@ -43,7 +45,8 @@ namespace s1
 			     const intermediate::ProgramFunction::TransferMappings& transferIn,
 			     const intermediate::ProgramFunction::TransferMappings& transferOut,
 			     const std::vector<uc::String>& outParams,
-                             const CgOptions& options);
+                             const CgOptions& options,
+                             const uc::String& v2fName);
     };
   } // namespace codegen
 } // namespace s1

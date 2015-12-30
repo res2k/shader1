@@ -32,8 +32,10 @@ namespace s1
 							       const intermediate::ProgramFunction::TransferMappings& transferIn,
 							       const intermediate::ProgramFunction::TransferMappings& transferOut,
 							       const std::vector<uc::String>& outParams,
-                                                               const CgOptions& options)
-     : sl::SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, CgTraits::instance, options)
+                                                               const CgOptions& options,
+                                                               const uc::String& v2fName)
+     : sl::SequenceCodeGenerator (seq, nameRes, transferIn, transferOut, outParams, CgTraits::instance, options),
+       v2fName (v2fName)
     {
     }
 
@@ -51,9 +53,11 @@ namespace s1
       p.reset (new SequenceCodeGenerator (seq, nameRes,
                                           emptyMappings, emptyMappings,
                                           outParams,
-                                          GetCgOptions()));
+                                          GetCgOptions(), v2fName));
       return std::move (p);
     }
+
+    static format::StaticFormatter FormatTransferID ("{0}.{1}");
 
     std::vector<CgGenerator::SequenceCodeGenerator::InputTransferPair>
       CgGenerator::SequenceCodeGenerator::GenerateTransfersIn () const
@@ -61,9 +65,8 @@ namespace s1
       std::vector<CgGenerator::SequenceCodeGenerator::InputTransferPair> result;
       for (const auto& transfer : transferIn)
       {
-        uc::String transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
-        transferIdent.append (traits.ConvertIdentifier (transfer.first));
-        result.emplace_back (transfer.second, transferIdent);
+        result.emplace_back (transfer.second,
+                             FormatTransferID.to<uc::String> (v2fName, traits.ConvertIdentifier (transfer.first)));
       }
       return result;
     }
@@ -74,9 +77,8 @@ namespace s1
       std::vector<CgGenerator::SequenceCodeGenerator::OutputTransferPair> result;
       for (const auto& transfer : transferOut)
       {
-        uc::String transferIdent ("v2f."); // @@@ FIXME: hardcoded prefix
-        transferIdent.append (traits.ConvertIdentifier (transfer.first));
-        result.emplace_back (transferIdent, transfer.second);
+        result.emplace_back (FormatTransferID.to<uc::String> (v2fName, traits.ConvertIdentifier (transfer.first)),
+                             transfer.second);
       }
       return result;
     }

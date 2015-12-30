@@ -39,10 +39,10 @@ namespace s1
          * Encode an identifier such that it only consists of ASCII alphanumeric chars
          * and underscores (and does not begin with a number).
          */
-        static uc::String IdentifierToASCII (const uc::String& identifier);
+        static uc::String IdentifierToASCII (const uc::String& identifier, bool preferVerbatim);
 
         /// Convert identifier to a string suitable in the target language
-        virtual uc::String ConvertIdentifier (const uc::String& identifier) const;
+        virtual uc::String ConvertIdentifier (const uc::String& identifier, bool preferVerbatim = false) const;
 
         /// Return type string for a basic type.
         virtual uc::String TypeString (intermediate::BasicType type) const = 0;

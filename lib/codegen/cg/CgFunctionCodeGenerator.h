@@ -30,6 +30,7 @@ namespace s1
     class CgGenerator::FunctionCodeGenerator : public sl::FunctionCodeGenerator
     {
     protected:
+      uc::String v2fName;
       const CgOptions& GetCgOptions () const;
 
       void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
