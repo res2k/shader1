@@ -46,7 +46,7 @@ namespace s1
                                                           int frequency,
                                                           ParamAdder& funcParams,
                                                           FunctionParamsToIdentifier& inParamMap,
-                                                          FunctionParamsToIdentifier& outParamMap) const
+                                                          FunctionParamsToIdentifier& outParamMap)
       {
         const intermediate::Program::OutputParameters& output = prog->GetOutputParameters ();
         const intermediate::Program::ParameterArraySizes& paramArraySizes = prog->GetParameterArraySizes ();

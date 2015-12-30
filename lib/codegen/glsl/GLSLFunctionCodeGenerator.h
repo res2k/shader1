@@ -38,7 +38,7 @@ namespace s1
                                      int frequency,
                                      ParamAdder& funcParams,
                                      FunctionParamsToIdentifier& inParamMap,
-                                     FunctionParamsToIdentifier& outParamMap) const override;
+                                     FunctionParamsToIdentifier& outParamMap) override;
 
         std::unique_ptr<sl::SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,
                                                                  sl::ImportedNameResolver* nameRes,

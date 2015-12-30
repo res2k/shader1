@@ -94,7 +94,7 @@ namespace s1
                                              int frequency,
                                              ParamAdder& funcParams,
                                              FunctionParamsToIdentifier& inParamMap,
-                                             FunctionParamsToIdentifier& outParamMap) const = 0;
+                                             FunctionParamsToIdentifier& outParamMap) = 0;
 
         virtual std::unique_ptr<SequenceCodeGenerator> CreateSeqGen (const intermediate::Sequence& seq,
                                                                      ImportedNameResolver* nameRes,
