@@ -22,7 +22,13 @@
 #include "GLSLTraits.h"
 #include "GLSLFunctionCodeGenerator.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "codegen/glsl/GLSLOptions.h"
+
+#include "boost/make_shared.hpp"
+
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {
@@ -42,8 +48,58 @@ namespace s1
       
       StringsArrayPtr ProgramCodeGenerator::GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency)
       {
+        StringsArrayPtr resultStrings = boost::make_shared<StringsArray> ();
+
+        // Obtain entry function
+        for (size_t f = 0, f_num = prog->GetNumFunctions (); f < f_num; f++)
+        {
+          auto func = prog->GetFunction (f);
+          if (func->IsEntryFunction ())
+          {
+            GenerateEntryFunctionInputs (*resultStrings, func, prog->GetParameterArraySizes ());
+            break;
+          }
+        }
+
         // TODO: Generate globals for values passed from VP to FP
-        return StringsArrayPtr ();
+        return resultStrings;
+      }
+
+      static format::StaticFormatter FormatInputVar ("uniform {0} {1}{2};");
+
+      void ProgramCodeGenerator::GenerateEntryFunctionInputs (StringsArray& strings,
+                                                              intermediate::ProgramFunctionPtr& func,
+                                                              const intermediate::Program::ParameterArraySizes& paramArraySizes)
+      {
+        const auto& params = func->GetParams ();
+        for (const auto& param : params)
+        {
+          if (param.dir & parser::SemanticsHandler::Scope::dirIn)
+          {
+            // TODO: Emit global vars
+            if (param.paramType < parser::SemanticsHandler::Scope::ptAutoGlobal)
+            {
+              boost::optional<size_t> arraySize;
+              {
+                auto paramSize (paramArraySizes.find (param.identifier));
+                if (paramSize != paramArraySizes.end ())
+                {
+                  arraySize = paramSize->second;
+                }
+              }
+              uc::String typeSuffix;
+              uc::String paramStrBase;
+              {
+                auto typeStrings = traits.TypeString (param.type, arraySize ? &(*arraySize) : nullptr);
+                paramStrBase = typeStrings.first;
+                typeSuffix = typeStrings.second;
+              }
+              uc::String paramIdent = traits.ConvertIdentifier (param.identifier, true);
+              strings.AddString (FormatInputVar.to<uc::String> (paramStrBase, paramIdent, typeSuffix));
+            }
+            //result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
+          }
+        }
       }
 
       std::unique_ptr<sl::FunctionCodeGenerator> ProgramCodeGenerator::CreateFunctionCodeGenerator ()

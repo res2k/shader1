@@ -19,6 +19,7 @@
 #define __CODEGEN_GLSL_PROGRAMCODEGENERATOR_H__
 
 #include "codegen/sl/SLProgramCodeGenerator.h"
+#include "intermediate/Program.h"
 
 namespace s1
 {
@@ -34,6 +35,8 @@ namespace s1
         const Options& GetOptions () const;
 
         StringsArrayPtr GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency) override;
+        void GenerateEntryFunctionInputs (StringsArray& strings, intermediate::ProgramFunctionPtr& func,
+          const intermediate::Program::ParameterArraySizes& paramArraySizes);
         std::unique_ptr<sl::FunctionCodeGenerator> CreateFunctionCodeGenerator () override;
       public:
         ProgramCodeGenerator (const Traits& traits, const Options& options);
