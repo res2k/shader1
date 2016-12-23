@@ -33,6 +33,10 @@ namespace s1
       protected:
         const Options& GetOptions () const;
 
+        HandleParamResult HandleMainParameter(const intermediate::Program::OutputParameters& output,
+          const Scope::FunctionFormalParameter& param,
+          const size_t* arraySize) const;
+
         void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
                                      const intermediate::ProgramPtr& prog,
                                      int frequency,

@@ -41,6 +41,73 @@ namespace s1
         return static_cast<const Options&> (options);
       }
 
+      FunctionCodeGenerator::HandleParamResult
+        FunctionCodeGenerator::HandleMainParameter (const intermediate::Program::OutputParameters& output,
+          const Scope::FunctionFormalParameter& param,
+          const size_t* arraySize) const
+      {
+        HandleParamResult result;
+
+        uc::String typeSuffix;
+        uc::String paramStrBase;
+        {
+          auto typeStrings = traits.TypeString(param.type, arraySize);
+          paramStrBase = typeStrings.first;
+          typeSuffix = typeStrings.second;
+        }
+
+        if (param.dir & parser::SemanticsHandler::Scope::dirIn)
+        {
+          // TODO: Emit global vars
+          uc::String paramIdent;
+          if (param.paramType >= Scope::ptAutoGlobal)
+          {
+            uc::String paramIdentDecorated(param.paramType == Scope::ptAutoGlobal ? "I" : "i");
+            paramIdentDecorated.append(param.identifier);
+            paramIdent = traits.ConvertIdentifier(paramIdentDecorated);
+          }
+          else
+          {
+            paramIdent = traits.ConvertIdentifier(param.identifier, true);
+          }
+          result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
+        }
+
+        if (param.dir & parser::SemanticsHandler::Scope::dirOut)
+        {
+          uc::String paramIdent;
+          if (param.paramType >= Scope::ptAutoGlobal)
+          {
+            uc::String paramIdentDecorated(param.paramType == Scope::ptAutoGlobal ? "O" : "o");
+            paramIdentDecorated.append(param.identifier);
+            paramIdent = traits.ConvertIdentifier(paramIdentDecorated);
+          }
+          else
+          {
+            paramIdent = traits.ConvertIdentifier(param.identifier, true);
+          }
+          assert(!paramIdent.isEmpty());
+          {
+            intermediate::Program::OutputParameters::const_iterator outputInfo = output.find(param.identifier);
+            if (outputInfo != output.end())
+            {
+              switch (outputInfo->second)
+              {
+              case intermediate::Program::Position:
+                paramIdent = "gl_Position";
+                break;
+              case intermediate::Program::Color:
+                paramIdent = "gl_FragColor";
+                break;
+              }
+            }
+          }
+          result.outParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
+        }
+
+        return result;
+      }
+
       void FunctionCodeGenerator::GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,
                                                           const intermediate::ProgramPtr& prog,
                                                           int frequency,
@@ -71,19 +138,36 @@ namespace s1
             }
           }
 
-          HandleParamResult handleRes = DefaultHandleParameter (*param, arraySize ? &(*arraySize) : nullptr,
-                                                                func->IsEntryFunction());
-
-          if (!handleRes.inParam.identifier.isEmpty())
+          if (!func->IsEntryFunction())
           {
-            inParams.emplace_back (handleRes.inParam, param->identifier);
-            inParamMap[param->identifier] = handleRes.inParam.identifier;
+            HandleParamResult handleRes = DefaultHandleParameter(*param, arraySize ? &(*arraySize) : nullptr,
+              false);
+
+            if (!handleRes.inParam.identifier.isEmpty())
+            {
+              inParams.emplace_back(handleRes.inParam, param->identifier);
+              inParamMap[param->identifier] = handleRes.inParam.identifier;
+            }
+
+            if (!handleRes.outParam.identifier.isEmpty())
+            {
+              outParams.push_back(handleRes.outParam);
+              outParamMap[param->identifier] = handleRes.outParam.identifier;
+            }
           }
-
-          if (!handleRes.outParam.identifier.isEmpty())
+          else
           {
-            outParams.push_back (handleRes.outParam);
-            outParamMap[param->identifier] = handleRes.outParam.identifier;
+            HandleParamResult handleRes = HandleMainParameter(output, *param, arraySize ? &(*arraySize) : nullptr);
+
+            if (!handleRes.inParam.identifier.isEmpty())
+            {
+              inParamMap[param->identifier] = handleRes.inParam.identifier;
+            }
+
+            if (!handleRes.outParam.identifier.isEmpty())
+            {
+              outParamMap[param->identifier] = handleRes.outParam.identifier;
+            }
           }
         }
 
