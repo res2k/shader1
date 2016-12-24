@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2016 Frank Richter
 
 
     This software is provided 'as-is', without any express or implied
@@ -57,13 +57,8 @@ enum
   defaultEnableOptimizationLevel = 2
 };
 
-/* Helper: Convert a wide string to UTF-8.
- * Hijack some program_options functions for that. */
-static inline std::string to_utf (const std::wstring& orig)
-{
-  return boost::to_utf8 (orig);
-}
-
+/* Helper: Convert a wide string to local 8-bit encoding.
+ * Hijack a program_options function for that. */
 static inline std::string to_local (const std::wstring& orig)
 {
   return boost::to_local_8_bit (orig);
@@ -278,7 +273,7 @@ public:
             if (optLevel)
               compilerOpts->SetOptLevel (*optLevel);
             else
-              compilerOpts->SetOptFlagFromStr (to_utf (optArg).c_str ());
+              compilerOpts->SetOptFlagFromStr (optArg.c_str ());
           }
         }
       }
@@ -331,7 +326,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   boost::optional<int> result = options.Parse (argc, argv, compilerOpts);
   if (result) return *result;
   
-  Backend::Pointer compilerBackend (lib->CreateBackend (to_utf (options.backendStr).c_str()));
+  Backend::Pointer compilerBackend (lib->CreateBackend (options.backendStr.c_str()));
   if (!compilerBackend)
   {
     std::cerr << "Failed to create backend '" << to_local (options.backendStr) << "': "
@@ -352,7 +347,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
       BOOST_FOREACH (const CommandLineOptions::arg_string_type& backendOptStr,
                      options.backendOptions)
       {
-        if (!backendOptions->SetFromStr (to_utf (backendOptStr).c_str ()))
+        if (!backendOptions->SetFromStr (backendOptStr.c_str ()))
         {
           std::cerr << "Error handling backend option '" << to_local (backendOptStr) << "': "
               << LastErrorString (lib) << std::endl;
@@ -407,12 +402,12 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     std::cerr << "Error creating program: " << LastErrorString (lib) << std::endl;
     return 3;
   }
-  compilerProg->SetEntryFunction (to_utf (options.entryName).c_str());
+  compilerProg->SetEntryFunction (options.entryName.c_str());
   compilerProg->SetOptions (compilerOpts);
   
   BOOST_FOREACH(const CommandLineOptions::ParamMap::value_type& paramFlag, options.paramFlags)
   {
-    if (!compilerProg->SetInputFrequency (to_utf (paramFlag.first).c_str (), paramFlag.second))
+    if (!compilerProg->SetInputFrequency (paramFlag.first.c_str (), paramFlag.second))
     {
       std::cerr << "Error setting input type for '" << to_local (paramFlag.first) << "': "
         << LastErrorString (lib) << std::endl;
@@ -420,7 +415,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   }
   BOOST_FOREACH(const CommandLineOptions::ParamArraySizeMap::value_type& paramSize, options.paramArraySizes)
   {
-    if (!compilerProg->SetInputArraySize (to_utf (paramSize.first).c_str (), paramSize.second))
+    if (!compilerProg->SetInputArraySize (paramSize.first.c_str (), paramSize.second))
     {
       std::cerr << "Error setting input array size for '" << to_local (paramSize.first) << "': "
         << LastErrorString (lib) << std::endl;
