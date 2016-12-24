@@ -43,9 +43,9 @@ namespace s1
       s1::Compiler::OptionsPtr options; // TODO: Ideally, this would be copy-on-write
       std::string source;
       std::string entryFunction;
-      typedef boost::unordered_map<std::string, s1::splitter::Frequency> InputFreqMapType;
+      typedef boost::unordered_map<uc::String, s1::splitter::Frequency> InputFreqMapType;
       InputFreqMapType inputFreqMap;
-      typedef boost::unordered_map<std::string, size_t> InputSizeMapType;
+      typedef boost::unordered_map<uc::String, size_t> InputSizeMapType;
       InputSizeMapType inputSizeMap;
       
       Compiler::ProgramPtr wrapped_program;
@@ -62,14 +62,14 @@ namespace s1
       s1_ResultCode SetOptions (const s1::Compiler::OptionsPtr& options);
       const s1::Compiler::OptionsPtr& GetOptions() const;
       
-      s1_ResultCode SetEntry (const char* entry);
+      s1_ResultCode SetEntry (const uc::String& entry);
       Result<const char*> GetEntry () const;
       
-      s1_ResultCode SetInputFrequency (const char* param, s1_InputFrequency freq);
-      Result<InputFrequency> GetInputFrequency (const char* param) const;
+      s1_ResultCode SetInputFrequency (const uc::String& param, s1_InputFrequency freq);
+      Result<InputFrequency> GetInputFrequency (const uc::String& param) const;
 
-      s1_ResultCode SetInputArraySize (const char* param, size_t size);
-      Result<size_t> GetInputArraySize (const char* param) const;
+      s1_ResultCode SetInputArraySize (const uc::String& param, size_t size);
+      Result<size_t> GetInputArraySize (const uc::String& param) const;
       /** @} */
     };
   } // namespace api_impl

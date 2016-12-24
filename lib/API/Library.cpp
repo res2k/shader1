@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2016 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -21,14 +21,14 @@
 #include "s1/Library.h"
 
 #include "base/Library.h"
-
+#include "base/uc/String_optional.h"
 #include "compiler/Backend.h"
 #include "compiler/Options.h"
 
 #include "Program.h"
 
 #include <new>
-#include <string.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 s1_ResultCode s1_create_library (s1_Library** out)
 {
@@ -101,7 +101,7 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     }), nullptr);
 }
 
-s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
+static s1_Backend* s1_backend_create_ucs (s1_Library* obj, s1::uc::String_optional backend)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
@@ -112,11 +112,11 @@ s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
     return nullptr;
   }
   s1::Compiler::SupportedBackend compiler_backend;
-  if (strcmp (backend, "cg") == 0)
+  if (boost::algorithm::equals (*backend, "cg"))
   {
     compiler_backend = s1::Compiler::beCg;
   }
-  else if (strcmp (backend, "glsl") == 0)
+  else if (boost::algorithm::equals (*backend, "glsl"))
   {
     compiler_backend = s1::Compiler::beGLSL;
   }
@@ -132,4 +132,24 @@ s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
       backend_obj->AddRef();
       return backend_obj->DowncastEvil<s1_Backend> ();
     }), nullptr);
+}
+
+s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
+{
+  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
+}
+
+s1_Backend* s1_backend_create_ws (s1_Library* obj, const wchar_t* backend)
+{
+  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
+}
+
+s1_Backend* s1_backend_create_u16 (s1_Library* obj, const s1_char16* backend)
+{
+  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
+}
+
+s1_Backend* s1_backend_create_u32 (s1_Library* obj, const s1_char32* backend)
+{
+  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
 }

@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2016 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@
 
 #include "Program.h"
 
+#include "base/uc/String_optional.h"
 #include "compiler/Program.h"
 #include "splitter/Frequency.h"
 
@@ -57,14 +58,12 @@ namespace s1
       Compiler::Program::FreqFlagMap inputFreqFlags;
       for(const InputFreqMapType::value_type& inputFreq : inputFreqMap)
       {
-        uc::String ucParam (uc::String::fromUTF8 (inputFreq.first));
-        inputFreqFlags.emplace (ucParam, 1 << inputFreq.second);
+        inputFreqFlags.emplace (inputFreq.first, 1 << inputFreq.second);
       }
       Compiler::Program::ArraySizeMap inputArraySizes;
       for(const InputSizeMapType::value_type& inputSize : inputSizeMap)
       {
-        uc::String ucParam (uc::String::fromUTF8 (inputSize.first));
-        inputArraySizes.emplace (ucParam, inputSize.second);
+        inputArraySizes.emplace (inputSize.first, inputSize.second);
       }
       uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
       return wrapped_program->GetCompiledProgram (entryFunctionU, options, inputFreqFlags, inputArraySizes, backend, target,
@@ -78,10 +77,11 @@ namespace s1
     }
     const s1::Compiler::OptionsPtr& Program::GetOptions() const { return options; }
     
-    s1_ResultCode Program::SetEntry (const char* entry)
+    s1_ResultCode Program::SetEntry (const uc::String& entry)
     {
       // TODO: Function name validation
-      entryFunction = entry;
+      entryFunction.clear ();
+      entry.toUTF8String (entryFunction);
       return S1_SUCCESS;
     }
     Result<const char*> Program::GetEntry () const
@@ -89,7 +89,7 @@ namespace s1
       return entryFunction.c_str();
     }
     
-    s1_ResultCode Program::SetInputFrequency (const char* param, s1_InputFrequency freq)
+    s1_ResultCode Program::SetInputFrequency (const uc::String& param, s1_InputFrequency freq)
     {
       // TODO: Parameter validation
       s1::splitter::Frequency new_freq;
@@ -103,7 +103,7 @@ namespace s1
       inputFreqMap[param] = new_freq;
       return S1_SUCCESS;
     }
-    Result<InputFrequency> Program::GetInputFrequency (const char* param) const
+    Result<InputFrequency> Program::GetInputFrequency (const uc::String& param) const
     {
       InputFreqMapType::const_iterator it (inputFreqMap.find (param));
       if (it == inputFreqMap.end())
@@ -120,13 +120,13 @@ namespace s1
       return S1_E_FAILURE;
     }
 
-    s1_ResultCode Program::SetInputArraySize (const char* param, size_t size)
+    s1_ResultCode Program::SetInputArraySize (const uc::String& param, size_t size)
     {
       // TODO: Parameter validation
       inputSizeMap[param] = size;
       return S1_SUCCESS;
     }
-    Result<size_t> Program::GetInputArraySize (const char* param) const
+    Result<size_t> Program::GetInputArraySize (const uc::String& param) const
     {
       InputSizeMapType::const_iterator it (inputSizeMap.find (param));
       if (it == inputSizeMap.end())
@@ -162,7 +162,7 @@ s1_Options* s1_program_get_options (s1_Program* program)
   return program_impl->ReturnSuccess (options_impl->DowncastEvil<s1_Options> ());
 }
 
-s1_bool s1_program_set_entry_function (s1_Program* program, const char* name)
+static s1_bool s1_program_set_entry_function_ucs (s1_Program* program, s1::uc::String_optional name)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
@@ -172,7 +172,27 @@ s1_bool s1_program_set_entry_function (s1_Program* program, const char* name)
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
 
-  return program_impl->ReturnErrorCode (program_impl->SetEntry (name));
+  return program_impl->ReturnErrorCode (program_impl->SetEntry (*name));
+}
+
+s1_bool s1_program_set_entry_function (s1_Program* program, const char* name)
+{
+  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
+}
+
+s1_bool s1_program_set_entry_function_ws (s1_Program* program, const wchar_t* name)
+{
+  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
+}
+
+s1_bool s1_program_set_entry_function_u16 (s1_Program* program, const s1_char16* name)
+{
+  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
+}
+
+s1_bool s1_program_set_entry_function_u32 (s1_Program* program, const s1_char32* name)
+{
+  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
 }
 
 const char* s1_program_get_entry_function (s1_Program* program)
@@ -183,7 +203,7 @@ const char* s1_program_get_entry_function (s1_Program* program)
   return program_impl->Return (program_impl->GetEntry (), nullptr);
 }
 
-s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, s1_InputFrequency freq)
+static s1_bool s1_program_set_input_frequency_ucs (s1_Program* program, s1::uc::String_optional param, s1_InputFrequency freq)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
@@ -193,10 +213,30 @@ s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, 
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
 
-  return program_impl->ReturnErrorCode (program_impl->SetInputFrequency (param, freq));
+  return program_impl->ReturnErrorCode (program_impl->SetInputFrequency (*param, freq));
 }
 
-s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param)
+s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, s1_InputFrequency freq)
+{
+  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
+}
+
+s1_bool s1_program_set_input_frequency_ws (s1_Program* program, const wchar_t* param, s1_InputFrequency freq)
+{
+  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
+}
+
+s1_bool s1_program_set_input_frequency_u16 (s1_Program* program, const s1_char16* param, s1_InputFrequency freq)
+{
+  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
+}
+
+s1_bool s1_program_set_input_frequency_u32 (s1_Program* program, const s1_char32* param, s1_InputFrequency freq)
+{
+  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
+}
+
+static s1_InputFrequency s1_program_get_input_frequency_ucs (s1_Program* program, s1::uc::String_optional param)
 {
   s1_InputFrequency errorFreq (S1_FREQ_INVALID);
   S1_ASSERT_MSG(program, "NULL Program", errorFreq);
@@ -207,10 +247,30 @@ s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const cha
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), errorFreq);
   }
 
-  return program_impl->Return (program_impl->GetInputFrequency (param), errorFreq);
+  return program_impl->Return (program_impl->GetInputFrequency (*param), errorFreq);
 }
 
-s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size)
+s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param)
+{
+  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
+}
+
+s1_InputFrequency s1_program_get_input_frequency_ws (s1_Program* program, const wchar_t* param)
+{
+  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
+}
+
+s1_InputFrequency s1_program_get_input_frequency_u16 (s1_Program* program, const s1_char16* param)
+{
+  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
+}
+
+s1_InputFrequency s1_program_get_input_frequency_u32 (s1_Program* program, const s1_char32* param)
+{
+  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
+}
+
+static s1_bool s1_program_set_input_array_size_ucs (s1_Program* program, s1::uc::String_optional param, size_t size)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
@@ -220,10 +280,30 @@ s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param,
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
 
-  return program_impl->ReturnErrorCode (program_impl->SetInputArraySize (param, size));
+  return program_impl->ReturnErrorCode (program_impl->SetInputArraySize (*param, size));
 }
 
-size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
+s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size)
+{
+  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
+}
+
+s1_bool s1_program_set_input_array_size_ws (s1_Program* program, const wchar_t* param, size_t size)
+{
+  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
+}
+
+s1_bool s1_program_set_input_array_size_u16 (s1_Program* program, const s1_char16* param, size_t size)
+{
+  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
+}
+
+s1_bool s1_program_set_input_array_size_u32 (s1_Program* program, const s1_char32* param, size_t size)
+{
+  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
+}
+
+static size_t s1_program_get_input_array_size_ucs (s1_Program* program, s1::uc::String_optional param)
 {
   const size_t errorSize ((size_t)~0);
   S1_ASSERT_MSG(program, "NULL Program", errorSize);
@@ -234,6 +314,25 @@ size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
     return program_impl->Return<size_t> (S1_E_INVALID_ARG_N(0), errorSize);
   }
 
-  return program_impl->Return (program_impl->GetInputArraySize (param), errorSize);
+  return program_impl->Return (program_impl->GetInputArraySize (*param), errorSize);
 }
 
+size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
+{
+  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
+}
+
+size_t s1_program_get_input_array_size_ws (s1_Program* program, const wchar_t* param)
+{
+  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
+}
+
+size_t s1_program_get_input_array_size_u16 (s1_Program* program, const s1_char16* param)
+{
+  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
+}
+
+size_t s1_program_get_input_array_size_u32 (s1_Program* program, const s1_char32* param)
+{
+  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
+}

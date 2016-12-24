@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2016 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -143,6 +143,7 @@ S1_API(s1_Program*) s1_program_create_from_string (s1_Library* lib, const char* 
                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
 S1TYPE_DECLARE_FWD(Backend);
+//@{
 /**
  * Create a backend object.
  * \param lib Parent library.
@@ -156,6 +157,10 @@ S1TYPE_DECLARE_FWD(Backend);
  * \memberof s1_Library
  */
 S1_API(s1_Backend*) s1_backend_create (s1_Library* lib, const char* backend);
+S1_API(s1_Backend*) s1_backend_create_ws (s1_Library* lib, const wchar_t* backend);
+S1_API(s1_Backend*) s1_backend_create_u16 (s1_Library* lib, const s1_char16* backend);
+S1_API(s1_Backend*) s1_backend_create_u32 (s1_Library* lib, const s1_char32* backend);
+//@}
 
 #if defined(__cplusplus)
 namespace s1
@@ -245,6 +250,7 @@ namespace s1
         return S1_RETURN_TRANSFER_REF(Program,
           s1_program_create_from_string (this, source, sourceSize, compatLevel));
       }
+      //@{
       /**
        * Create a backend object.
        * \param backend Name of the backend to create.
@@ -258,6 +264,22 @@ namespace s1
         return S1_RETURN_TRANSFER_REF(Backend,
           s1_backend_create (this, backend));
       }
+      S1_RETURN_TRANSFER_REF_TYPE (Backend) CreateBackend (const wchar_t* backend)
+      {
+        return S1_RETURN_TRANSFER_REF (Backend,
+          s1_backend_create_ws (this, backend));
+      }
+      S1_RETURN_TRANSFER_REF_TYPE (Backend) CreateBackend (const s1_char16* backend)
+      {
+        return S1_RETURN_TRANSFER_REF (Backend,
+          s1_backend_create_u16 (this, backend));
+      }
+      S1_RETURN_TRANSFER_REF_TYPE (Backend) CreateBackend (const s1_char32* backend)
+      {
+        return S1_RETURN_TRANSFER_REF (Backend,
+          s1_backend_create_u32 (this, backend));
+      }
+      //@}
     };
   S1_NS_CXXAPI_END
 
