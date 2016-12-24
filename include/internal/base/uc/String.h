@@ -52,6 +52,7 @@ namespace s1
       inline String (const Char32* s);
       inline String (String&& s);
       inline String (const Char* begin, const Char* end);
+      inline String (const wchar_t* s);
       ~String ();
 
       inline String& append (const char* s);
@@ -279,6 +280,17 @@ namespace s1
     String::String (const Char* begin, const Char* end) : d (0, 0, internalBuffer)
     {
       append (begin, end - begin);
+    }
+
+    String::String (const wchar_t* s) : d (0, 0, internalBuffer)
+    {
+    #if CXX_SIZEOF_WCHAR_T == 2
+      append (reinterpret_cast<const s1_char16*> (s));
+    #elif CXX_SIZEOF_WCHAR_T == 4
+      append (reinterpret_cast<const s1_char32*> (s));
+    #else
+      #error Unsupported wchar_t size
+    #endif
     }
 
     String& String::append (const char* s)

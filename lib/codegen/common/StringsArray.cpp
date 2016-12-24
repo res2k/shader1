@@ -15,6 +15,7 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+#include "base/common.h"
 #include "codegen/common/StringsArray.h"
 
 #include <string>
