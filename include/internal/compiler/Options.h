@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2016 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -45,9 +45,9 @@ namespace s1
     
     void SetOptimizationLevel (int level);
     
-    bool ParseOptimizationFlagString (const char* flagStr, Optimization& opt, bool& flag);
+    bool ParseOptimizationFlagString (const uc::String& flagStr, Optimization& opt, bool& flag);
     
-    bool SetOptimizationFlagFromStr (const char* flagStr)
+    bool SetOptimizationFlagFromStr (const uc::String& flagStr)
     {
       Optimization opt;
       bool flag;

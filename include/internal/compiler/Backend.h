@@ -65,7 +65,7 @@ namespace s1
     public:
       Options (Library* lib) : LibraryObject (lib) {}
 
-      virtual bool SetFromStr (const char* string) = 0;
+      virtual bool SetFromStr (const uc::String& string) = 0;
     };
     typedef boost::intrusive_ptr<Options> OptionsPtr;
 
@@ -80,12 +80,11 @@ namespace s1
       OptionsImpl (Library* lib, Defaults&&... defaults)
         : Options (lib), optionsContainer (std::forward<Defaults> (defaults)...) {}
 
-      bool SetFromStr (const char* string) override
+      bool SetFromStr (const uc::String& string) override
       {
-        uc::String string_u (string);
         /* TODO: Check if string contains '=' or ' ', parse as a name/value
          * pair then */
-        FlagPair flag = ParseFlagPair (string_u);
+        FlagPair flag = ParseFlagPair (string);
         return optionsContainer.SetFlag (flag.first, flag.second);
       }
 

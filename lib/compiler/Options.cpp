@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2016 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 
 #include "compiler/Options.h"
 
-#include <string.h>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/make_shared.hpp>
 
 namespace s1
@@ -54,28 +54,29 @@ namespace s1
     optimizeFlags[optConstantFolding] = level > 0;
   }
   
-  bool Compiler::Options::ParseOptimizationFlagString (const char* flagStr, Optimization& opt, bool& flag)
+  bool Compiler::Options::ParseOptimizationFlagString (const uc::String& flagStr, Optimization& opt, bool& flag)
   {
     bool flagVal = true;
-    if (strncmp (flagStr, "no-", 3) == 0)
+    uc::String flag_substr = flagStr;
+    if (boost::algorithm::starts_with (flag_substr, "no-"))
     {
       flagVal = false;
-      flagStr += 3;
+      flag_substr = uc::String (flag_substr, 3);
     }
     
-    if (strcmp (flagStr, "inline-blocks") == 0)
+    if (boost::algorithm::equals (flag_substr, "inline-blocks"))
     {
       opt = optBlockInlining;
       flag = flagVal;
       return true;
     }
-    else if (strcmp (flagStr, "dce") == 0)
+    else if (boost::algorithm::equals (flag_substr, "dce"))
     {
       opt = optDeadCodeElimination;
       flag = flagVal;
       return true;
     }
-    else if (strcmp (flagStr, "constant-folding") == 0)
+    else if (boost::algorithm::equals (flag_substr, "constant-folding"))
     {
       opt = optConstantFolding;
       flag = flagVal;
