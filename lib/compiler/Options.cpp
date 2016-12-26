@@ -52,6 +52,7 @@ namespace s1
     optimizeFlags[optBlockInlining] = level > 0;
     optimizeFlags[optDeadCodeElimination] = level > 0;
     optimizeFlags[optConstantFolding] = level > 0;
+    optimizeFlags[optUnusedArgumentRemoval] = level > 0;
   }
   
   bool Compiler::Options::ParseOptimizationFlagString (const uc::String& flagStr, Optimization& opt, bool& flag)
@@ -79,6 +80,12 @@ namespace s1
     else if (boost::algorithm::equals (flag_substr, "constant-folding"))
     {
       opt = optConstantFolding;
+      flag = flagVal;
+      return true;
+    }
+    else if (boost::algorithm::equals (flag_substr, "unused-argument-removal"))
+    {
+      opt = optUnusedArgumentRemoval;
       flag = flagVal;
       return true;
     }

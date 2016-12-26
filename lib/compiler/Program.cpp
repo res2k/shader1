@@ -112,6 +112,7 @@ namespace s1
     opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));
     opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Options::optDeadCodeElimination));
     opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Options::optConstantFolding));
+    opt.SetUnusedArgumentRemoval (compilerOptions->GetOptimizationFlag (Options::optUnusedArgumentRemoval));
     intermediate::ProgramPtr optProg = opt.ApplyOptimizations (intermediateProg);
 
     switch (target)
@@ -136,7 +137,8 @@ namespace s1
 	  opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));
 	  opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Options::optDeadCodeElimination));
 	  opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Options::optConstantFolding));
-	  splitProgs[splitter::freqVertex] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqVertex));
+          opt.SetUnusedArgumentRemoval (compilerOptions->GetOptimizationFlag (Options::optUnusedArgumentRemoval));
+          splitProgs[splitter::freqVertex] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqVertex));
 	  splitProgs[splitter::freqFragment] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqFragment));
 	}
 	

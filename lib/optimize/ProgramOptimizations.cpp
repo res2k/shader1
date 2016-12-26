@@ -33,56 +33,64 @@ namespace s1
     intermediate::ProgramPtr ProgramOptimizations::Apply (unsigned int optimizations,
                                                           intermediate::ProgramPtr inputProg)
     {
-      auto newProgram = CloningHelper::CloneProgramMeta (inputProg);
-
-      for (size_t f = 0; f < inputProg->GetNumFunctions (); f++)
+      auto program = inputProg;
+      bool optimizeSequences = true;
+      while (optimizeSequences)
       {
-        intermediate::ProgramFunctionPtr func (inputProg->GetFunction (f));
+        auto newProgram = CloningHelper::CloneProgramMeta (program);
 
-        intermediate::RegisterSet usedRegs;
-        const intermediate::Sequence::RegisterExpMappings seqExports (func->GetBody ()->GetExports ());
-        // Collect function outputs, mark them as 'used' for DCE
-        for (const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : func->GetParams ())
+        for (size_t f = 0; f < program->GetNumFunctions (); f++)
         {
-          if ((param.dir & parser::SemanticsHandler::Scope::dirOut) != 0)
+          intermediate::ProgramFunctionPtr func (program->GetFunction (f));
+
+          intermediate::RegisterSet usedRegs;
+          const intermediate::Sequence::RegisterExpMappings seqExports (func->GetBody ()->GetExports ());
+          // Collect function outputs, mark them as 'used' for DCE
+          for (const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : func->GetParams ())
           {
-            const intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (param.identifier);
-            if (exp == seqExports.end ()) continue;
-            usedRegs.insert (exp->second);
+            if ((param.dir & parser::SemanticsHandler::Scope::dirOut) != 0)
+            {
+              const intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (param.identifier);
+              if (exp == seqExports.end ()) continue;
+              usedRegs.insert (exp->second);
+            }
           }
+          // Also, all transferred regs must be considered 'used'
+          for (const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings ())
+          {
+            usedRegs.insert (tmp.second);
+          }
+
+          intermediate::SequencePtr newBody;
+          SequenceOptimizations::Apply (optimizations, newBody, func->GetBody (), usedRegs);
+
+          intermediate::ProgramFunctionPtr newFunc (
+            boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier (),
+                                                               func->GetIdentifier (),
+                                                               func->GetParams (),
+                                                               newBody,
+                                                               func->IsEntryFunction ()));
+
+          for (const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings ())
+          {
+            newFunc->SetTransferMapping (tmp.first, tmp.second);
+          }
+
+          for (intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator paramFreq = func->GetParameterFrequencies ().begin ();
+               paramFreq != func->GetParameterFrequencies ().end ();
+               ++paramFreq)
+          {
+            newFunc->SetParameterFrequency (paramFreq->first, paramFreq->second);
+          }
+
+          newProgram->AddFunction (newFunc);
         }
-        // Also, all transferred regs must be considered 'used'
-        for (const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings ())
-        {
-          usedRegs.insert (tmp.second);
-        }
 
-        intermediate::SequencePtr newBody;
-        SequenceOptimizations::Apply (optimizations, newBody, func->GetBody (), usedRegs);
-
-        intermediate::ProgramFunctionPtr newFunc (
-          boost::make_shared<intermediate::ProgramFunction> (func->GetOriginalIdentifier (),
-                                                             func->GetIdentifier (),
-                                                             func->GetParams (),
-                                                             newBody,
-                                                             func->IsEntryFunction ()));
-
-        for (const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings ())
-        {
-          newFunc->SetTransferMapping (tmp.first, tmp.second);
-        }
-
-        for (intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator paramFreq = func->GetParameterFrequencies ().begin ();
-             paramFreq != func->GetParameterFrequencies ().end ();
-             ++paramFreq)
-        {
-          newFunc->SetParameterFrequency (paramFreq->first, paramFreq->second);
-        }
-
-        newProgram->AddFunction (newFunc);
+        // TODO: Apply whole program optimization here
+        program = newProgram;
+        optimizeSequences = program != newProgram;
       }
-
-      return newProgram;
+      return program;
     }
   } // namespace optimize
 } // namespace s1

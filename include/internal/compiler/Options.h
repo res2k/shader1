@@ -33,6 +33,7 @@ namespace s1
       optBlockInlining = S1_OPT_BLOCK_INLINING,
       optDeadCodeElimination = S1_OPT_DEAD_CODE_ELIMINATION,
       optConstantFolding = S1_OPT_CONSTANT_FOLDING,
+      optUnusedArgumentRemoval = S1_OPT_UNUSED_ARGUMENT_REMOVAL,
       
       numOptimizations
     };

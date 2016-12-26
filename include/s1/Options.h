@@ -43,7 +43,9 @@ enum s1_Optimization
   /// Dead code elimination option
   S1_OPT_DEAD_CODE_ELIMINATION = 1,
   /// Constant folding option
-  S1_OPT_CONSTANT_FOLDING = 2
+  S1_OPT_CONSTANT_FOLDING = 2,
+  /// Removal of unused function input/unwritten function output arguments option
+  S1_OPT_UNUSED_ARGUMENT_REMOVAL = 3
 };
 
 /**
