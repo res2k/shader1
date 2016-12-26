@@ -1,4 +1,27 @@
-file(GLOB optimize_sources *.h *.cpp ../include/internal/optimize/*.h)
+set(optimize_sources
+	CloningHelper.h
+	CommonSequenceVisitor.h
+	OptimizeSequenceConstantFolding.h
+	OptimizeSequenceDeadCodeEliminate.h
+	OptimizeSequenceInlineBlocks.h
+	OptimizeSequenceStep.h
+	ProgramOptimizations.h
+	SequenceOptimizations.h
+	CloningHelper.cpp
+	ConstantFolding.cpp
+	DeadCodeElimination.cpp
+	Inliner.cpp
+	Optimizer.cpp
+	OptimizeSequenceConstantFolding.cpp
+	OptimizeSequenceDeadCodeEliminate.cpp
+	OptimizeSequenceInlineBlocks.cpp
+	ProgramOptimizations.cpp
+	SequenceOptimizations.cpp
+	${S1_INC}/optimize/ConstantFolding.h
+	${S1_INC}/optimize/DeadCodeElimination.h
+	${S1_INC}/optimize/Inliner.h
+	${S1_INC}/optimize/Optimizer.h
+	)
 s1_add_library(optimize
                SOURCES ${optimize_sources}
                LINK intermediate)

@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2016 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,18 +15,22 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#include "base/common.h"
-#include "optimize/Optimizer.h"
+#ifndef __CLONINGHELPER_H__
+#define __CLONINGHELPER_H__
 
-#include "ProgramOptimizations.h"
+#include "intermediate/forwarddecl.h"
 
 namespace s1
 {
   namespace optimize
   {
-    intermediate::ProgramPtr Optimizer::ApplyOptimizations (const intermediate::ProgramPtr& program)
+    class CloningHelper
     {
-      return ProgramOptimizations::Apply (optimizations, program);
-    }
+    public:
+      /// Clone a program's "metadata" (excludes functions)
+      static intermediate::ProgramPtr CloneProgramMeta (intermediate::ProgramPtr inputProg);
+    };
   } // namespace optimize
 } // namespace s1
+
+#endif // __CLONINGHELPER_H__
