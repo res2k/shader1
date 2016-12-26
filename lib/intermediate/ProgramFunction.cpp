@@ -42,6 +42,21 @@ namespace s1
     {
       transferMappings.emplace_back (transferVal, programReg);
     }
+
+    void ProgramFunction::AddTransferMappings (const TransferMappings& mappings)
+    {
+      transferMappings.reserve (transferMappings.size () + mappings.size ());
+      for (const auto& m : mappings)
+      {
+        SetTransferMapping (m.first, m.second);
+      }
+    }
+
+    void ProgramFunction::AddParameterFrequencies (const ParameterFrequencyMap& freqs)
+    {
+      paramFreqMap.reserve (paramFreqMap.size () + freqs.size ());
+      paramFreqMap.insert (freqs.begin (), freqs.end ());
+    }
   } // namespace intermediate
 } // namespace s1
 

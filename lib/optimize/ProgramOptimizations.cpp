@@ -71,17 +71,8 @@ namespace s1
                                                                newBody,
                                                                func->IsEntryFunction ()));
 
-          for (const intermediate::ProgramFunction::TransferMappingPair& tmp : func->GetTransferMappings ())
-          {
-            newFunc->SetTransferMapping (tmp.first, tmp.second);
-          }
-
-          for (intermediate::ProgramFunction::ParameterFrequencyMap::const_iterator paramFreq = func->GetParameterFrequencies ().begin ();
-               paramFreq != func->GetParameterFrequencies ().end ();
-               ++paramFreq)
-          {
-            newFunc->SetParameterFrequency (paramFreq->first, paramFreq->second);
-          }
+          newFunc->AddTransferMappings (func->GetTransferMappings ());
+          newFunc->AddParameterFrequencies (func->GetParameterFrequencies ());
 
           newProgram->AddFunction (newFunc);
         }

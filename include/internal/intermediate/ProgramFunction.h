@@ -57,12 +57,16 @@ namespace s1
       typedef std::pair<uc::String, RegisterPtr> TransferMappingPair;
       typedef std::vector<TransferMappingPair> TransferMappings;
       const TransferMappings& GetTransferMappings () const { return transferMappings; }
+      /// Add multiple transfer mappings
+      void AddTransferMappings (const TransferMappings& mappings);
       
       void SetParameterFrequency (const uc::String& param, int freq)
       { paramFreqMap[param] = freq; }
       typedef boost::unordered_map<uc::String, int> ParameterFrequencyMap;
       const ParameterFrequencyMap& GetParameterFrequencies() const
       { return paramFreqMap; }
+      /// Add multiple parameter frequencies
+      void AddParameterFrequencies (const ParameterFrequencyMap& freqs);
     private:
       TransferMappings transferMappings;
       ParameterFrequencyMap paramFreqMap;
