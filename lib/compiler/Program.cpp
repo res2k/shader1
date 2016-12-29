@@ -89,6 +89,16 @@ namespace s1
     intermediateProg->SetOutputParameter (fragmentOutput, intermediate::Program::Color);
   }
 
+  static optimize::Optimizer CreateOptimizer (Compiler::OptionsPtr compilerOptions)
+  {
+    optimize::Optimizer opt;
+    opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Compiler::Options::optBlockInlining));
+    opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Compiler::Options::optDeadCodeElimination));
+    opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Compiler::Options::optConstantFolding));
+    opt.SetUnusedArgumentRemoval (compilerOptions->GetOptimizationFlag (Compiler::Options::optUnusedArgumentRemoval));
+    return opt;
+  }
+
   Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const uc::String& entryFunction,
                                                                        const OptionsPtr& compilerOptions,
                                                                        const FreqFlagMap& inputParamFreqs,
@@ -108,11 +118,7 @@ namespace s1
 
     intermediateProg->SetParameterArraySizes (arraySizes);
 
-    optimize::Optimizer opt;
-    opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));
-    opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Options::optDeadCodeElimination));
-    opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Options::optConstantFolding));
-    opt.SetUnusedArgumentRemoval (compilerOptions->GetOptimizationFlag (Options::optUnusedArgumentRemoval));
+    optimize::Optimizer opt = CreateOptimizer (compilerOptions);
     intermediate::ProgramPtr optProg = opt.ApplyOptimizations (intermediateProg);
 
     switch (target)
@@ -133,11 +139,7 @@ namespace s1
 	  splitter.SetInputProgram (optProg);
 	  splitter.PerformSplit();
 	  
-	  optimize::Optimizer opt;
-	  opt.SetInlineBlocks (compilerOptions->GetOptimizationFlag (Options::optBlockInlining));
-	  opt.SetDeadCodeElimination (compilerOptions->GetOptimizationFlag (Options::optDeadCodeElimination));
-	  opt.SetConstantFolding (compilerOptions->GetOptimizationFlag (Options::optConstantFolding));
-          opt.SetUnusedArgumentRemoval (compilerOptions->GetOptimizationFlag (Options::optUnusedArgumentRemoval));
+          optimize::Optimizer opt = CreateOptimizer (compilerOptions);
           splitProgs[splitter::freqVertex] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqVertex));
 	  splitProgs[splitter::freqFragment] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqFragment));
 	}
