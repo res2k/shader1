@@ -76,7 +76,7 @@ namespace s1
       /// Make sure memory for at least \a minCapacity characters is reserved
       void reserve (size_type minCapacity)
       {
-        reserveInternal (minCapacity + 1);
+        reserveInternal (OverflowCheckAdd (minCapacity, 1u, max_size()));
       }
       /**
        * Make sure memory for the current string length plus \a additionalCapacity characters is reserved.
@@ -85,7 +85,7 @@ namespace s1
       void reserveExtra (size_t additionalCapacity);
       void shrink_to_fit()
       {
-        ResizeBuffer (length() + 1);
+        ResizeBuffer (OverflowCheckAdd (length(), 1u, max_size()));
       }
       const Char* data() const { return d.buffer; }
 
@@ -215,6 +215,15 @@ namespace s1
       {
         if (IsBufferUnique () && (d.capacity >= minCapacity)) return;
         ResizeBuffer (minCapacity);
+      }
+
+      // Helper function for overflow checks
+      template<typename A, typename B>
+      static inline A OverflowCheckAdd (A a, B b, A maxValue)
+      {
+        if ((b > maxValue) || ((maxValue - b) < a))
+          throw std::length_error ("String length overflow");
+        return static_cast<A> (a + b);
       }
     };
   } // namespace uc
