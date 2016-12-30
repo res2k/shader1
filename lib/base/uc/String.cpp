@@ -407,6 +407,9 @@ namespace s1
       const Char32* end = utf32_str + len;
       while (p < end)
       {
+        size_t remaining = end - p;
+        if ((s.capacity () - s.length ()) < remaining)
+          s.reserveExtra (remaining);
         s.append (*p++);
       }
       s.shrink_to_fit();

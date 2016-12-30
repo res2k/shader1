@@ -218,6 +218,7 @@ namespace s1
         if (IsBufferUnique () && (d.capacity >= minCapacity)) return;
         ResizeBuffer (minCapacity);
       }
+      size_type capacity () const { return d.capacity; }
 
       // Helper function for overflow checks
       template<typename A, typename B>
