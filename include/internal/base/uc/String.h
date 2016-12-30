@@ -76,8 +76,7 @@ namespace s1
       /// Make sure memory for at least \a minCapacity characters is reserved
       void reserve (size_type minCapacity)
       {
-        if (IsBufferUnique() && (d.capacity >= minCapacity)) return;
-        ResizeBuffer (minCapacity);
+        reserveInternal (minCapacity + 1);
       }
       /**
        * Make sure memory for the current string length plus \a additionalCapacity characters is reserved.
@@ -86,7 +85,7 @@ namespace s1
       void reserveExtra (size_t additionalCapacity);
       void shrink_to_fit()
       {
-        ResizeBuffer (length());
+        ResizeBuffer (length() + 1);
       }
       const Char* data() const { return d.buffer; }
 
@@ -212,6 +211,11 @@ namespace s1
 
       Char* writePtr() { return d.buffer; }
       void setLength (size_type len) { d.length = len; }
+      void reserveInternal (size_type minCapacity)
+      {
+        if (IsBufferUnique () && (d.capacity >= minCapacity)) return;
+        ResizeBuffer (minCapacity);
+      }
     };
   } // namespace uc
 } // namespace s1
@@ -231,19 +235,20 @@ namespace s1
   {
     String::String() : d (0, 0, internalBuffer)
     {
+      internalBuffer[0] = 0;
     }
 
-    String::String (const char* s) : d (0, 0, internalBuffer)
+    String::String (const char* s) : String ()
     {
       append (s);
     }
 
-    String::String (const Char* s) : d (0, 0, internalBuffer)
+    String::String (const Char* s) : String ()
     {
       append (s);
     }
 
-    String::String (const String& s, size_type start) : d (0, 0, internalBuffer)
+    String::String (const String& s, size_type start) : String ()
     {
       if (start < s.length())
       {
@@ -251,17 +256,17 @@ namespace s1
       }
     }
 
-    String::String (Char32 c) : d (0, 0, internalBuffer)
+    String::String (Char32 c) : String ()
     {
       append (c);
     }
 
-    String::String (const Char32* s) : d (0, 0, internalBuffer)
+    String::String (const Char32* s) : String ()
     {
       append (s);
     }
 
-    String::String (String&& s) : d (0, 0, internalBuffer)
+    String::String (String&& s) : String ()
     {
       bool otherBufferInternal = s.IsBufferInternal();
       std::swap (d.capacity, s.d.capacity);
@@ -277,12 +282,12 @@ namespace s1
       }
     }
 
-    String::String (const Char* begin, const Char* end) : d (0, 0, internalBuffer)
+    String::String (const Char* begin, const Char* end) : String ()
     {
       append (begin, end - begin);
     }
 
-    String::String (const wchar_t* s) : d (0, 0, internalBuffer)
+    String::String (const wchar_t* s) : String ()
     {
     #if CXX_SIZEOF_WCHAR_T == 2
       append (reinterpret_cast<const s1_char16*> (s));

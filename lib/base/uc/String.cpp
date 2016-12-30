@@ -90,7 +90,7 @@ namespace s1
     // Lazy shortcut
     typedef char_traits<Char> Char_traits;
 
-    String::String (const String& s) : d (0, 0, internalBuffer)
+    String::String (const String& s) : String ()
     {
       if (s.IsBufferInternal())
       {
@@ -120,6 +120,7 @@ namespace s1
         *dest++ = *s++;
       }
       d.length = newLength;
+      d.buffer[d.length] = 0;
       return *this;
     }
 
@@ -147,6 +148,7 @@ namespace s1
       }
       Char_traits::copy (d.buffer + d.length, s, n);
       d.length = newLength;
+      d.buffer[d.length] = 0;
       return *this;
     }
 
@@ -170,6 +172,7 @@ namespace s1
         assert (result >= 0);
       }
       d.length = newLength;
+      d.buffer[d.length] = 0;
       return *this;
     }
 
@@ -180,6 +183,7 @@ namespace s1
       reserve (newLength);
       d.buffer[length()] = c;
       d.length = newLength;
+      d.buffer[d.length] = 0;
       return *this;
     }
 
@@ -196,6 +200,7 @@ namespace s1
       assert (result >= 0);
       assert (dst == dstEnd);
       d.length = newLength;
+      d.buffer[d.length] = 0;
       return *this;
     }
 
@@ -214,6 +219,7 @@ namespace s1
         *dest++ = *s++;
       }
       d.length = newLength;
+      d.buffer[d.length] = 0;
       return *this;
     }
 
@@ -244,9 +250,10 @@ namespace s1
       {
         if (other.IsBufferInternal())
         {
-          ResizeBuffer (other.d.length);
+          ResizeBuffer (other.d.length + 1);
           Char_traits::copy (d.buffer, other.d.buffer, other.d.length);
           d.length = other.d.length;
+          d.buffer[d.length] = 0;
         }
         else
         {
@@ -381,6 +388,7 @@ namespace s1
       #endif
       }
       while (false/*result < 0*/);
+      *output = 0;
       s.setLength (OverflowCheckAdd (size_type (0), static_cast<size_t> (output - outputStart), max_size()));
       s.shrink_to_fit();
       

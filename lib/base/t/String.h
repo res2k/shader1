@@ -58,6 +58,7 @@ public:
     TS_ASSERT(empty.isEmpty());
     TS_ASSERT_EQUALS(empty.length(), 0);
     TS_ASSERT_EQUALS(empty.size(), 0);
+    TS_ASSERT_EQUALS(empty.data()[empty.size()], 0);
   }
 
   void testEmpty2 (void)
@@ -66,6 +67,7 @@ public:
     TS_ASSERT(empty.isEmpty());
     TS_ASSERT_EQUALS(empty.length(), 0);
     TS_ASSERT_EQUALS(empty.size(), 0);
+    TS_ASSERT_EQUALS(empty.data()[empty.size()], 0);
   }
 
   void testEmpty3 (void)
@@ -75,6 +77,7 @@ public:
     TS_ASSERT(empty.isEmpty());
     TS_ASSERT_EQUALS(empty.length(), 0);
     TS_ASSERT_EQUALS(empty.size(), 0);
+    TS_ASSERT_EQUALS(empty.data()[empty.size()], 0);
   }
 
   void testOneChar1 (void)
@@ -83,6 +86,7 @@ public:
     TS_ASSERT(!str.isEmpty());
     TS_ASSERT_EQUALS(str.length(), 1);
     TS_ASSERT_EQUALS(str[0], 'a');
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   void testOneChar2 (void)
@@ -92,6 +96,7 @@ public:
     TS_ASSERT(!str.isEmpty());
     TS_ASSERT_EQUALS(str.length(), 1);
     TS_ASSERT_EQUALS(str[0], 'a');
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   void testOneChar3 (void)
@@ -100,6 +105,7 @@ public:
     TS_ASSERT(!str.isEmpty());
     TS_ASSERT_EQUALS(str.length(), 1);
     TS_ASSERT_EQUALS(str[0], 'a');
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   void testMultiChar1 (void)
@@ -109,6 +115,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   void testMultiChar2 (void)
@@ -119,6 +126,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   void testUTF32Single (void)
@@ -130,6 +138,7 @@ public:
     TS_ASSERT_EQUALS(str.length(), 2);
     TS_ASSERT_EQUALS(str, str_utf16);
     TS_ASSERT_EQUALS(str.countChar32(), 1);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   void testUTF32Multi (void)
@@ -142,6 +151,7 @@ public:
     TS_ASSERT_EQUALS(str.length(), 4);
     TS_ASSERT_EQUALS(str, str_utf16);
     TS_ASSERT_EQUALS(str.countChar32(), 2);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
   
   // Test fromUTF8 with ASCII input
@@ -153,6 +163,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with a character encoded in 2 bytes
@@ -164,6 +175,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with characters encoded in 3 bytes
@@ -175,6 +187,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with characters encoded in 4 bytes
@@ -186,6 +199,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with malformed input (overlong encoding)
@@ -197,6 +211,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with malformed input (broken encoding)
@@ -208,6 +223,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with malformed input (broken encoding)
@@ -219,6 +235,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with malformed input (encoded surrogate half)
@@ -230,6 +247,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test fromUTF8 with malformed input (encoded surrogate half)
@@ -241,6 +259,7 @@ public:
     s1::uc::String str_utf16 (chars_utf16);
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
+    TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
   // Test toUTF8String with ASCII output
@@ -483,5 +502,20 @@ public:
     TS_ASSERT_DIFFERS (s1_copy, s2_copy);
     TS_ASSERT_EQUALS (s2_copy, s1);
     TS_ASSERT_EQUALS (s1_copy, s2);
+  }
+
+  // Test null termination
+  void testNullTerm1 ()
+  {
+    s1::uc::String str ("XXX");
+    TS_ASSERT_EQUALS (str.data ()[str.size ()], 0);
+    str = "Y";
+    TS_ASSERT_EQUALS (str.data ()[str.size ()], 0);
+  }
+
+  void testNullTerm2 ()
+  {
+    s1::uc::String str = MakeLongString ();
+    TS_ASSERT_EQUALS (str.data ()[str.size ()], 0);
   }
 };
