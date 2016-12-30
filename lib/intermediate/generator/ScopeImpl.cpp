@@ -142,14 +142,21 @@ namespace s1
       // Decorate identifier with type info (so each overload gets a unique name)
       uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
+      int lastDir = -1;
       for (FunctionFormalParameters::const_iterator param (params.begin());
 	   param != params.end();
 	   ++param)
       {
 	std::string decorationString;
-	char dirStr[2] = { 0, 0 };
-	dirStr[0] = param->dir + '0';
-	decorationString.append (dirStr);
+        if (param->dir != lastDir)
+        {
+          char dirStr[3] = { 0, 0, 0 };
+          int c = 0;
+          if (lastDir != -1) dirStr[c++] = '_';
+          dirStr[c] = param->dir + '0';
+          decorationString.append (dirStr);
+          lastDir = param->dir;
+        }
 	TypeImplPtr typeImpl (boost::static_pointer_cast<TypeImpl> (param->type));
 	decorationString.append (handler->GetTypeString (typeImpl));
 	identifierDecorated.append (decorationString.c_str());
