@@ -21,6 +21,8 @@
 #include "SequenceBuilder.h"
 #include "SequenceVisitor.h"
 
+#include "SequenceOp/SequenceOp.h"
+
 namespace s1
 {
   namespace intermediate
