@@ -240,7 +240,7 @@ namespace s1
 
     void String::reserveExtra (size_t additionalCapacity)
     {
-      reserveInternal (OverflowCheckAdd (length (), additionalCapacity, max_size () - 1));
+      reserveInternal (OverflowCheckAdd (length (), additionalCapacity, max_size () - 1) + 1);
     }
 
     String& String::operator= (const String& other)
