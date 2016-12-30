@@ -81,9 +81,27 @@ namespace s1
     {
     }
 
-    format::StaticFormatter FormatTSArray ("a{0}");
-    format::StaticFormatter FormatTSVector ("v{0}{1}");
-    format::StaticFormatter FormatTSMatrix ("m{0}{1}x{2}");
+    format::StaticFormatter FormatTSArray ("A{0}");
+
+    static inline std::string GetBaseTypeString (parser::SemanticsHandler::BaseType base, unsigned int rows, unsigned int cols)
+    {
+      char typeStr[3] = { 0, 0, 0 };
+      // 1st char: base type
+      switch (base)
+      {
+      case parser::SemanticsHandler::Void:    typeStr[0] = 'V'; break;
+      case parser::SemanticsHandler::Bool:    typeStr[0] = 'B'; break;
+      case parser::SemanticsHandler::Int:     typeStr[0] = 'I'; break;
+      case parser::SemanticsHandler::UInt:    typeStr[0] = 'U'; break;
+      case parser::SemanticsHandler::Float:   typeStr[0] = 'F'; break;
+      }
+      if ((rows == 0) && (cols == 0)) return typeStr;
+      // 2nd char: encode dimensions
+      assert (rows < 5);
+      assert (cols < 5);
+      typeStr[1] = 'a' + (rows + (cols * 5));
+      return typeStr;
+    }
 
     std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypeImplPtr& type)
     {
@@ -91,14 +109,7 @@ namespace s1
       {
 	case TypeImpl::Base:
 	{
-	  switch (type->base)
-	  {
-	    case Void: return "V";
-	    case Bool: return "B";
-	    case Int: return "I";
-	    case UInt: return "U";
-	    case Float: return "F";
-	  }
+          return GetBaseTypeString (type->base, 0, 0);
 	}
 	break;
       case TypeImpl::Sampler:
@@ -120,19 +131,18 @@ namespace s1
 	}
       case TypeImpl::Vector:
 	{
-          std::string s;
-          FormatTSVector (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)), type->vectorDim);
-	  return s;
+          auto compType = boost::static_pointer_cast<TypeImpl> (type->avmBase);
+          S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
+          return GetBaseTypeString (compType->base, type->vectorDim, 0);
 	}
       case TypeImpl::Matrix:
 	{
-          std::string s;
-          FormatTSMatrix (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)),
-                              type->matrixCols, type->matrixRows);
-          return s;
+          auto compType = boost::static_pointer_cast<TypeImpl> (type->avmBase);
+          S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
+          return GetBaseTypeString (compType->base, type->matrixRows, type->matrixCols);
 	}
       }
-      assert (false);
+      S1_ASSERT (false, std::string());
       return std::string ();
     }
     
