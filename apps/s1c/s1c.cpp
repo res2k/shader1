@@ -455,7 +455,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
       std::cout << compiledVP->GetString () << std::endl;
     }
     CompiledProgram::Pointer compiledFP (
-      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP));
+      compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP, backendOptions));
     if (!compiledFP)
     {
       std::cerr << "Failed to get fragment program: " << LastErrorString (lib) << std::endl;
