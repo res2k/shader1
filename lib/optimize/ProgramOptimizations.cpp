@@ -23,8 +23,12 @@
 
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
+#include "optimize/Optimizer.h"
+#include "optimize/UnusedFunctionArgumentRemoval.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/optional.hpp>
+#include <boost/utility/in_place_factory.hpp>
 
 namespace s1
 {
@@ -37,6 +41,12 @@ namespace s1
       bool optimizeSequences = true;
       while (optimizeSequences)
       {
+        // Whole program optimizers
+        boost::optional<UnusedFunctionArgumentRemoval> ufar;
+        if (optimizations & Optimizer::optUnusedArgumentRemoval)
+          ufar = boost::in_place (program);
+        bool programOptApplied = false;
+
         auto newProgram = CloningHelper::CloneProgramMeta (program);
 
         for (size_t f = 0; f < program->GetNumFunctions (); f++)
@@ -74,12 +84,19 @@ namespace s1
           newFunc->AddTransferMappings (func->GetTransferMappings ());
           newFunc->AddParameterFrequencies (func->GetParameterFrequencies ());
 
+          // Apply whole program optimizations
+          if (ufar)
+          {
+            auto optFunc = ufar->Apply (newFunc);
+            programOptApplied |= optFunc != newFunc;
+            newFunc = optFunc;
+          }
+
           newProgram->AddFunction (newFunc);
         }
 
-        // TODO: Apply whole program optimization here
         program = newProgram;
-        optimizeSequences = program != newProgram;
+        optimizeSequences = programOptApplied;
       }
       return program;
     }

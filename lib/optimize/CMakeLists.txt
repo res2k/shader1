@@ -17,10 +17,12 @@ set(optimize_sources
 	OptimizeSequenceInlineBlocks.cpp
 	ProgramOptimizations.cpp
 	SequenceOptimizations.cpp
+	UnusedFunctionArgumentRemoval.cpp
 	${S1_INC}/optimize/ConstantFolding.h
 	${S1_INC}/optimize/DeadCodeElimination.h
 	${S1_INC}/optimize/Inliner.h
 	${S1_INC}/optimize/Optimizer.h
+	${S1_INC}/optimize/UnusedFunctionArgumentRemoval.h
 	)
 s1_add_library(optimize
                SOURCES ${optimize_sources}
