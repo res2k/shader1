@@ -55,7 +55,8 @@ namespace s1
       return sig;
     }
 
-    static format::StaticFormatter FormatTransferIdent ("transferP${0}");
+    static format::StaticFormatter FormatTransferIdent ("tf${0}");
+    static format::StaticFormatter FormatTransferIdentN ("tf${0}${1}");
     
     void ProgramSplitter::GetSplitFunctions (const uc::String& originalIdent,
 					     const std::vector<unsigned int>& inputParamFreqFlags,
@@ -157,12 +158,17 @@ namespace s1
 	  // Turn values 'transferred' by the function into extra output/input paramerts
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParams[freqNum];
 	  const std::vector<intermediate::RegisterPtr>& transfers = seqSplit.GetTransferRegs (freqVertex);
-	  unsigned int n = 0;
+          boost::unordered_set<uc::String> seenTransferIdents;
 	  for (const intermediate::RegisterPtr& reg : transfers)
 	  {
 	    // Generate unique parameter identifier
 	    uc::String transferIdent;
-            FormatTransferIdent (transferIdent, n++);
+            FormatTransferIdent (transferIdent, reg->GetName());
+            unsigned int n = 0;
+            while (seenTransferIdents.find (transferIdent) != seenTransferIdents.end ())
+            {
+              FormatTransferIdentN (transferIdent, reg->GetName (), n++);
+            }
 	    
 	    // Synthesize new parameters
 	    {
