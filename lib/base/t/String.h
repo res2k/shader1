@@ -317,9 +317,8 @@ public:
     for (i = 32; i < 128; i++)
     {
       strASCII[i - 32] = static_cast<Char32> (i);
-      i++;
     }
-    strASCII[i++] = 0;
+    strASCII[i - 32] = 0;
 
     s1::uc::String source (s1::uc::String::fromUTF32 (strASCII, -1));
     s1::uc::String normalized (source.Normalized (s1::uc::String::normNFD));
