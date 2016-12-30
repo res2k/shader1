@@ -125,6 +125,7 @@ public:
 
   CommandLineOptions () : noSplit(false) {}
   boost::optional<int> Parse (const int argc, const ArgChar* const argv[],
+                              Library* lib,
                               Options* compilerOpts)
   {
     const char* defaultEntry = "main";
@@ -263,17 +264,23 @@ public:
         arg_string_vec optArgs = vm["opt"].as<arg_string_vec> ();
         BOOST_FOREACH (const arg_string_type& optArg, optArgs)
         {
+          bool parseRes = false;
           if (optArg.empty ())
           {
-            compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
+            parseRes = compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
           }
           else
           {
             boost::optional<int> optLevel (boost::convert<int> (optArg, boost::cnv::spirit ()));
             if (optLevel)
-              compilerOpts->SetOptLevel (*optLevel);
+              parseRes = compilerOpts->SetOptLevel (*optLevel);
             else
-              compilerOpts->SetOptFlagFromStr (optArg.c_str ());
+              parseRes = compilerOpts->SetOptFlagFromStr (optArg.c_str ());
+          }
+          if (!parseRes)
+          {
+            throw std::runtime_error ((boost::format ("optimization option '%1%': %2%")
+                                       % to_local (optArg) % LastErrorString (lib)).str ());
           }
         }
       }
@@ -323,7 +330,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   compilerOpts->SetOptLevel (defaultOptimizationLevel);
 
   CommandLineOptions options;
-  boost::optional<int> result = options.Parse (argc, argv, compilerOpts);
+  boost::optional<int> result = options.Parse (argc, argv, lib, compilerOpts);
   if (result) return *result;
   
   Backend::Pointer compilerBackend (lib->CreateBackend (options.backendStr.c_str()));
