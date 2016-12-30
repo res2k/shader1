@@ -90,6 +90,7 @@ namespace s1
       else
       {
         RefBufferData(s.BufferDataPtr());
+        heapBuffer = s.heapBuffer;
         d = s.d;
       }
     }
@@ -105,13 +106,13 @@ namespace s1
 
       size_type newLength = OverflowCheckAdd (length(), n, max_size () - 1);
       reserveInternal (newLength + 1);
-      Char* dest = d.buffer + d.length;
+      Char* dest = bufferPtr () + d.length;
       for (size_type i = 0; i < n; i++)
       {
         *dest++ = *s++;
       }
       d.length = newLength;
-      d.buffer[d.length] = 0;
+      bufferPtr()[d.length] = 0;
       return *this;
     }
 
@@ -125,21 +126,21 @@ namespace s1
       if (n == 0) return *this;
 
       size_type newLength = OverflowCheckAdd (length(), n, max_size () - 1);
-      if ((s >= d.buffer) && (s < d.buffer + d.length))
+      if ((s >= bufferPtr ()) && (s < bufferPtr () + d.length))
       {
         // Special case self-appending
-        ptrdiff_t s_pos = s - d.buffer;
+        ptrdiff_t s_pos = s - bufferPtr ();
         reserveInternal (newLength + 1);
         // ...because the pointer may change.
-        s = d.buffer + s_pos;
+        s = bufferPtr() + s_pos;
       }
       else
       {
         reserveInternal (newLength + 1);
       }
-      Char_traits::copy (d.buffer + d.length, s, n);
+      Char_traits::copy (bufferPtr() + d.length, s, n);
       d.length = newLength;
-      d.buffer[d.length] = 0;
+      bufferPtr()[d.length] = 0;
       return *this;
     }
 
@@ -160,7 +161,7 @@ namespace s1
       }
       newLength = OverflowCheckAdd (newLength, needExtra, max_size () - 1);
       reserveInternal (newLength + 1);
-      Char* dst = d.buffer + length ();
+      Char* dst = bufferPtr () + length ();
       Char* dstEnd = dst + needExtra;
       UTF16Encoder enc;
       for (size_type i = 0; i < n; i++)
@@ -169,7 +170,7 @@ namespace s1
         assert (result >= 0);
       }
       d.length = newLength;
-      d.buffer[d.length] = 0;
+      *dst = 0;
       return *this;
     }
 
@@ -178,9 +179,10 @@ namespace s1
       c = static_cast<Char> (SanitizeChar16 (c));
       size_type newLength = OverflowCheckAdd (length(), 1u, max_size () - 1);
       reserveInternal (newLength + 1);
-      d.buffer[length()] = c;
+      auto buf = bufferPtr ();
+      buf[length ()] = c;
       d.length = newLength;
-      d.buffer[d.length] = 0;
+      buf[d.length] = 0;
       return *this;
     }
 
@@ -190,14 +192,14 @@ namespace s1
       unsigned char n = UTF16Encoder::EncodedSize (c);
       size_type newLength = OverflowCheckAdd (length(), n, max_size () - 1);
       reserveInternal (newLength + 1);
-      Char* dst = d.buffer + d.length;
+      Char* dst = bufferPtr () + d.length;
       Char* dstEnd = dst + n;
       UTF16Encoder enc;
       UTF16Encoder::EncodeResult result = enc (c, dst, dstEnd);
       assert (result >= 0);
       assert (dst == dstEnd);
       d.length = newLength;
-      d.buffer[d.length] = 0;
+      *dst = 0;
       return *this;
     }
 
@@ -209,14 +211,14 @@ namespace s1
       if (before > length()) before = length();
       size_type newLength = OverflowCheckAdd (length(), n, max_size () - 1);
       reserveInternal (newLength + 1);
-      Char_traits::move (writePtr () + before + n, writePtr () + before, length () - before);
-      Char* dest = d.buffer + before;
+      Char* dest = bufferPtr () + before;
+      Char_traits::move (dest + n, dest, length () - before);
       for (size_type i = 0; i < n; i++)
       {
         *dest++ = *s++;
       }
       d.length = newLength;
-      d.buffer[d.length] = 0;
+      bufferPtr()[d.length] = 0;
       return *this;
     }
 
@@ -224,7 +226,7 @@ namespace s1
     {
       if (d.length == 0) return 0;
       size_type total (0);
-      const Char* p = d.buffer;
+      const Char* p = bufferPtr();
       const Char* pEnd = p + d.length;
       while (p < pEnd)
       {
@@ -248,15 +250,17 @@ namespace s1
         if (other.IsBufferInternal())
         {
           ResizeBuffer (other.d.length + 1);
-          Char_traits::copy (d.buffer, other.d.buffer, other.d.length);
+          auto buf = bufferPtr ();
+          Char_traits::copy (buf, other.bufferPtr(), other.d.length);
           d.length = other.d.length;
-          d.buffer[d.length] = 0;
+          buf[d.length] = 0;
         }
         else
         {
           RefBufferData(other.BufferDataPtr());
           FreeBuffer();
           d = other.d;
+          heapBuffer = other.heapBuffer;
         }
       }
       return *this;
@@ -278,8 +282,7 @@ namespace s1
         }
         else
         {
-          d.buffer = other.d.buffer;
-          other.d.buffer = other.internalBuffer;
+          heapBuffer = other.heapBuffer;
         }
       }
       return *this;
@@ -312,7 +315,7 @@ namespace s1
       char buf[256];
       char* output;
       char* outputEnd = buf + sizeof (buf);
-      const Char16* input = d.buffer;
+      const Char16* input = bufferPtr();
       const Char16* inputEnd = input + d.length;
       UTF16to8Transcoder transcoder;
       UTF16to8Transcoder::TranscodeResult result;
@@ -341,7 +344,7 @@ namespace s1
       s.reserveInternal (OverflowCheckAdd (size_type (0), len, max_size() - 1) + 1);
       const char* input = utf8_str;
       const char* inputEnd = utf8_str + len;
-      Char* outputStart = s.writePtr();
+      Char* outputStart = s.bufferPtr();
       Char* output = outputStart;
       Char* outputEnd = output + len;
       
@@ -464,7 +467,6 @@ namespace s1
       if (!IsBufferInternal())
       {
         ReleaseBufferData (BufferDataPtr());
-        d.buffer = internalBuffer;
         d.capacity = InternalBufferSize;
       }
     }
@@ -478,9 +480,9 @@ namespace s1
         if (!currentIsInternal)
         {
           assert (capacity < d.capacity); // Otherwise, couldn't use internal buffer
-	  Char_traits::copy (internalBuffer, d.buffer, capacity);
-          ReleaseBufferData (BufferDataPtr());
-          d.buffer = internalBuffer;
+          auto oldData = BufferDataPtr();
+	  Char_traits::copy (reinterpret_cast<Char*> (internalBuffer), oldData->data, capacity);
+          ReleaseBufferData (oldData);
         }
       }
       else
@@ -491,8 +493,8 @@ namespace s1
           // Allocate new buffer
           AllocatedBufferData* newBuffer = AllocBufferData (capacity);
           RefBufferData (newBuffer);
-	  Char_traits::copy (newBuffer->data, internalBuffer, d.capacity);
-          d.buffer = newBuffer->data;
+	  Char_traits::copy (newBuffer->data, bufferPtr(), d.capacity);
+          heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer->data);
         }
         else
         {
@@ -503,13 +505,13 @@ namespace s1
             AllocatedBufferData* newBuffer = AllocBufferData (capacity);
             RefBufferData (newBuffer);
             Char_traits::copy (newBuffer->data, data->data, std::min (d.length, capacity));
-            d.buffer = newBuffer->data;
+            heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer->data);
             ReleaseBufferData (data);
           }
           else
           {
             if (d.capacity == capacity) return;
-            d.buffer = ReallocBufferData(BufferDataPtr(), capacity)->data;
+            heapBuffer = reinterpret_cast<buffer_value_type*> (ReallocBufferData(BufferDataPtr(), capacity)->data);
           }
         }
       }
@@ -520,7 +522,7 @@ namespace s1
     {
       assert (!IsBufferInternal());
       return reinterpret_cast<AllocatedBufferData*> (
-        reinterpret_cast<char*> (d.buffer) - offsetof (AllocatedBufferData, data));
+        reinterpret_cast<char*> (heapBuffer) - offsetof (AllocatedBufferData, data));
     }
     
     String::AllocatedBufferData* String::AllocBufferData (size_type numChars)
@@ -741,32 +743,10 @@ namespace s1
 
     void swap (String& s1, String& s2)
     {
-      unsigned int buffersCase = (s1.IsBufferInternal () ? 1 : 0)
-        | (s2.IsBufferInternal () ? 2 : 0);
       std::swap (s1.d, s2.d);
-      switch (buffersCase)
-      {
-      case 0:
-        /* Both buffers external:
-         * Swapping 'd' was enough */
-        break;
-      case 1:
-        // s1 buffer was internal
-        Char_traits::copy (s2.internalBuffer, s1.internalBuffer, String::InternalBufferSize);
-        s2.d.buffer = s2.internalBuffer;
-        break;
-      case 2:
-        // s2 buffer was internal
-        Char_traits::copy (s1.internalBuffer, s2.internalBuffer, String::InternalBufferSize);
-        s1.d.buffer = s1.internalBuffer;
-        break;
-      case 3:
-        // Both buffers internal
-        std::swap (s1.internalBuffer, s2.internalBuffer);
-        s1.d.buffer = s1.internalBuffer;
-        s2.d.buffer = s2.internalBuffer;
-        break;
-      }
+      /* heapBuffer is in an union with internalBuffer, so swapping that 
+       * takes care of external pointer as well */
+      std::swap (s1.internalBuffer, s2.internalBuffer);
     }
   } // namespace uc
 } // namespace s1

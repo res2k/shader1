@@ -87,7 +87,7 @@ namespace s1
       {
         ResizeBuffer (OverflowCheckAdd (length(), 1u, max_size()));
       }
-      const Char* data() const { return d.buffer; }
+      const Char* data() const { return bufferPtr(); }
 
       String& operator= (const String& other);
       String& operator= (String&& other);
@@ -97,7 +97,7 @@ namespace s1
       Char operator[] (size_type index) const
       {
         assert (index < d.length);
-        return d.buffer[index];
+        return bufferPtr()[index];
       }
 
       void toUTF8String (std::string& dest) const;
@@ -155,25 +155,22 @@ namespace s1
     private:
       friend class CharacterIterator;
 
+      /* Hack to allow string to be readable in debugger.
+       * (At least VS versions prior to 2015.
+       * The latter's debugger correctly displays char16_t strings.) */
+#if defined(_MSC_VER) && (_MSC_VER < 1900) && defined(_DEBUG)
+      typedef wchar_t buffer_value_type;
+#else
+      typedef value_type buffer_value_type;
+#endif
+
       struct Data
       {
         size_type length;
         size_type capacity;
-        /* Hack to allow string to be readable in debugger.
-         * (At least VS versions prioer to 2015.
-         * The latter's debugger correctly displays char16_t strings.) */
-      #if defined(_MSC_VER) && (_MSC_VER < 1900) && defined(_DEBUG)
-        union
-        {
-          value_type* buffer;
-          const wchar_t* _buffer_w;
-        };
-      #else
-        value_type* buffer;
-      #endif
 
-        Data (size_type length, size_type capacity, value_type* buffer)
-          : length (length), capacity (capacity), buffer (buffer) { }
+        Data (size_type length, size_type capacity)
+          : length (length), capacity (capacity) { }
       } d;
 
       typedef boost::atomic<boost::uint32_t> ref_count_type;
@@ -181,7 +178,11 @@ namespace s1
       BOOST_STATIC_CONSTANT(size_type, DesiredInstanceSize = 64);
       BOOST_STATIC_CONSTANT(size_type, InternalBufferSize = (DesiredInstanceSize - sizeof(Data))/sizeof(value_type));
 
-      value_type internalBuffer[InternalBufferSize];
+      union
+      {
+        buffer_value_type internalBuffer[InternalBufferSize];
+        buffer_value_type* heapBuffer;
+      };
       struct AllocatedBufferData
       {
         ref_count_type refCount;
@@ -197,7 +198,7 @@ namespace s1
       AllocatedBufferData* BufferDataPtr() const;
       /// Returns whether buffer is internal
       bool IsBufferInternal() const
-      { return (d.buffer == internalBuffer); }
+      { return (d.capacity <= InternalBufferSize); }
       /// Returns whether we alone own the buffer pointer
       bool IsBufferUnique() const
       { return IsBufferInternal() || (BufferDataPtr()->refCount.load() == 1); }
@@ -209,7 +210,8 @@ namespace s1
       // Release a reference to some buffer data. Frees if necessary
       void ReleaseBufferData (AllocatedBufferData* data);
 
-      Char* writePtr() { return d.buffer; }
+      Char* bufferPtr() { return reinterpret_cast<Char*> (IsBufferInternal() ? internalBuffer : heapBuffer); }
+      const Char* bufferPtr() const { return reinterpret_cast<const Char*> (IsBufferInternal() ? internalBuffer : heapBuffer); }
       void setLength (size_type len) { d.length = len; }
       void reserveInternal (size_type minCapacity)
       {
@@ -242,8 +244,9 @@ namespace s1
 {
   namespace uc
   {
-    String::String() : d (0, 0, internalBuffer)
+    String::String() : d (0, 0)
     {
+      assert (IsBufferInternal ());
       internalBuffer[0] = 0;
     }
 
@@ -286,8 +289,7 @@ namespace s1
       }
       else
       {
-        d.buffer = s.d.buffer;
-        s.d.buffer = s.internalBuffer;
+        heapBuffer = s.heapBuffer;
       }
     }
 
