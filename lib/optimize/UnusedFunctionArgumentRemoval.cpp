@@ -234,8 +234,10 @@ namespace s1
       }
 
       paramUsage.all.resize (params.size ());
+#if BOOST_VERSION >= 106200
       paramUsage.input.reserve (params.size () / 2);
       paramUsage.output.reserve (params.size () / 2);
+#endif // BOOST_VERSION
       size_t paramIndex = 0;
       for (const auto& param : params)
       {
