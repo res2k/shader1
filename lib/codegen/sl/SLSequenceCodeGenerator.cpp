@@ -266,10 +266,10 @@ namespace s1
         AnnotatingVisitor::OpCast (destination, destType, source);
         // Check if the destination register type matches the source register type
         bool typeMatch (false);
-        if (destination->GetOriginalType ()->GetTypeClass ()
+        if (source->GetOriginalType ()->GetTypeClass ()
             == parser::SemanticsHandler::Type::Base)
         {
-          switch (destination->GetOriginalType ()->GetBaseType ())
+          switch (source->GetOriginalType ()->GetBaseType ())
           {
           case parser::SemanticsHandler::Bool:    typeMatch = (destType == intermediate::Bool);  break;
           case parser::SemanticsHandler::Int:     typeMatch = (destType == intermediate::Int);   break;
