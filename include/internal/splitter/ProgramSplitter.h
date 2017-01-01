@@ -86,7 +86,6 @@ namespace s1
 			    const intermediate::SequencePtr& sequence,
 			    int freq);
 			    
-      class RecursionChecker;
       bool CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func);
     public:
       ProgramSplitter ();
