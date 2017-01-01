@@ -130,11 +130,16 @@ namespace s1
 	  newFunc->funcName[freqFragment] = funcFName;
 	  
 	  // Fake all inputs to fragment frequency
-	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
-	  {
-	    seqSplit.SetInputFreqFlags (funcParams[i].identifier,
-					(inputParamFreqFlags[i] & freqFlagU) | freqFlagF);
-	  }
+          for (size_t i = 0, f = 0; i < inputParamFreqFlags.size (); f++)
+          {
+            S1_ASSERT(f < funcParams.size (), result);
+            if (funcParams[f].dir & parser::SemanticsHandler::Scope::dirIn)
+            {
+              seqSplit.SetInputFreqFlags (funcParams[f].identifier,
+                                          (inputParamFreqFlags[i] & freqFlagU) | freqFlagF);
+              i++;
+            }
+          }
 
 	  seqSplit.PerformSplit();
 	  
@@ -148,12 +153,16 @@ namespace s1
 	{
 	  // Connect the parameter frequencies to actual inputs
 	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
-	  for (size_t i = 0; i < inputParamFreqFlags.size(); i++)
-	  {
-            if (!(funcParams[i].dir & parser::SemanticsHandler::Scope::dirIn)) continue;
-	    seqSplit.SetInputFreqFlags (funcParams[i].identifier, inputParamFreqFlags[i]);
-	  }
-	  
+          for (size_t i = 0, f = 0; i < inputParamFreqFlags.size (); f++)
+          {
+            S1_ASSERT(f < funcParams.size (), result);
+            if (funcParams[f].dir & parser::SemanticsHandler::Scope::dirIn)
+            {
+              seqSplit.SetInputFreqFlags (funcParams[f].identifier, inputParamFreqFlags[i]);
+              i++;
+            }
+          }
+
 	  seqSplit.PerformSplit();
 	  
 	  // Turn values 'transferred' by the function into extra output/input paramerts
