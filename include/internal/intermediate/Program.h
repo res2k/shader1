@@ -19,8 +19,10 @@
 #define __INTERMEDIATE_PROGRAM_H__
 
 #include "forwarddecl.h"
+#include "FunctionGraph.h"
 #include "IntermediateGeneratorSemanticsHandler.h"
 
+#include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 #include <vector>
 
@@ -60,6 +62,9 @@ namespace s1
       typedef boost::unordered_map<uc::String, size_t> ParameterArraySizes;
       void SetParameterArraySizes (const ParameterArraySizes& sizes);
       const ParameterArraySizes& GetParameterArraySizes () const;
+
+      /// Return function graph for program
+      const FunctionGraph& GetFunctionGraph ();
       
       // @@@ Actualls, should perhaps better be in splitter ...
       static int GetTargetFrequency (ParameterTarget target);
@@ -67,6 +72,7 @@ namespace s1
       TransferValues transferValues;
       OutputParameters outputParams;
       ParameterArraySizes paramArraySizes;
+      boost::optional<FunctionGraph> functionGraph;
     };
   } // namespace intermediate
 } // namespace s1

@@ -20,6 +20,8 @@
 
 #include "splitter/Frequency.h"
 
+#include <boost/utility/in_place_factory.hpp>
+
 namespace s1
 {
   namespace intermediate
@@ -63,6 +65,13 @@ namespace s1
     const Program::ParameterArraySizes& Program::GetParameterArraySizes () const
     {
       return paramArraySizes;
+    }
+
+    const FunctionGraph& Program::GetFunctionGraph ()
+    {
+      if (!functionGraph)
+        functionGraph = boost::in_place<> (*this);
+      return *functionGraph;
     }
     
     int Program::GetTargetFrequency (ParameterTarget target)

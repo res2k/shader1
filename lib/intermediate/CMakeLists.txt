@@ -4,6 +4,7 @@ file(GLOB intermediate_sources
      PrependGlobalsInit.h
      CloningSequenceVisitor.cpp
      FunctionCallGlobalVarAugment.cpp
+     FunctionGraph.cpp
      IntermediateGeneratorSemanticsHandler.cpp
      IntermediateGeneratorSemanticsHandler_SetupBuiltins.cpp
      PrependGlobalsInit.cpp
@@ -16,6 +17,7 @@ file(GLOB intermediate_sources
      ${S1_INC}/intermediate/CloningSequenceVisitor.h
      ${S1_INC}/intermediate/ErrorCode.h
      ${S1_INC}/intermediate/Exception.h
+     ${S1_INC}/intermediate/FunctionGraph.h
      ${S1_INC}/intermediate/IntermediateGeneratorSemanticsHandler.h
      ${S1_INC}/intermediate/NullVisitor.h
      ${S1_INC}/intermediate/Program.h
