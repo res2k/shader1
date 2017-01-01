@@ -17,6 +17,7 @@ file(GLOB intermediate_sources
      ${S1_INC}/intermediate/ErrorCode.h
      ${S1_INC}/intermediate/Exception.h
      ${S1_INC}/intermediate/IntermediateGeneratorSemanticsHandler.h
+     ${S1_INC}/intermediate/NullVisitor.h
      ${S1_INC}/intermediate/Program.h
      ${S1_INC}/intermediate/ProgramFunction.h
      ${S1_INC}/intermediate/Sequence.h
