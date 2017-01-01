@@ -1273,7 +1273,7 @@ namespace s1
 	}
 	// Imported regs: guess from type.
 	// Local regs: assume uniform
-	int defaultFreq = isImported ? GetDefaultFrequencyForType (reg->GetOriginalType()) : isImported;
+	int defaultFreq = isImported ? GetDefaultFrequencyForType (reg->GetOriginalType()) : freqUniform;
 	
 	unsigned int defaultAvail = 1 << defaultFreq;
 	regAvailability[reg] = defaultAvail;
