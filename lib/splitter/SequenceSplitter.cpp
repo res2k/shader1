@@ -1036,19 +1036,14 @@ namespace s1
       {
 	inputParamFreqFlags.push_back (parent.GetRegAvailability (reg));
       }
-      uc::String freqFuncIdents[freqNum];
-      std::vector<unsigned int> outputParamFreqs;
-      std::vector<ProgramSplitter::FunctionTransferValues> transferValues[freqNum-1];
-      parent.progSplit.GetSplitFunctions (funcIdent, inputParamFreqFlags, freqFuncIdents,
-					  outputParamFreqs,
-					  transferValues);
+      auto splitResult = parent.progSplit.GetSplitFunctions (funcIdent, inputParamFreqFlags);
 	
       // Set availability of output values
-      assert (outputParamFreqs.size() == outParams.size());
+      assert (splitResult.outputParamFreqs.size() == outParams.size());
       for (size_t i = 0; i < outParams.size(); i++)
       {
 	const RegisterPtr& reg = outParams[i];
-	parent.SetRegAvailability (reg, outputParamFreqs[i]);
+	parent.SetRegAvailability (reg, splitResult.outputParamFreqs[i]);
       }
       
       // Generate lists of registers used for 'transfer' between frequencies
@@ -1056,7 +1051,7 @@ namespace s1
       std::vector<RegisterPtr> transferOut[freqNum];
       for (int f = 0; f < freqNum-1; f++)
       {
-	for(const ProgramSplitter::FunctionTransferValues& tfv : transferValues[f])
+	for(const ProgramSplitter::FunctionTransferValues& tfv : splitResult.transferValues[f])
 	{
 	  uc::String transferIdent (parent.GetTransferIdent ());
 	  
@@ -1072,7 +1067,7 @@ namespace s1
       
       for (int f = 0; f < freqNum; f++)
       {
-	if (freqFuncIdents[f].isEmpty()) continue;
+	if (splitResult.idents[f].isEmpty()) continue;
 	
 	// @@@ Somewhat crude: propagate all input vars to frequency of function split.
 	// (Needed for recursive funcs)
@@ -1084,7 +1079,7 @@ namespace s1
 	std::vector<RegisterPtr> newInParams (inParams);
 	newInParams.insert (newInParams.end(), transferIn[f].begin(), transferIn[f].end());
 	
-	SequenceOpPtr newOp (new intermediate::SequenceOpFunctionCall (freqFuncIdents[f],
+	SequenceOpPtr newOp (new intermediate::SequenceOpFunctionCall (splitResult.idents[f],
 								       newInParams,
 								       newOutParams));
 	parent.outputSeqBuilder[f]->AddOp (newOp);

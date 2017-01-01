@@ -58,12 +58,11 @@ namespace s1
     static format::StaticFormatter FormatTransferIdent ("tf${0}");
     static format::StaticFormatter FormatTransferIdentN ("tf${0}${1}");
     
-    void ProgramSplitter::GetSplitFunctions (const uc::String& originalIdent,
-					     const std::vector<unsigned int>& inputParamFreqFlags,
-					     uc::String freqFuncIdents[freqNum],
-					     std::vector<unsigned int>& outputParamFreqs,
-					     std::vector<FunctionTransferValues> transferValues[freqNum-1])
+    ProgramSplitter::SplitFunctionsResult ProgramSplitter::GetSplitFunctions (
+      const uc::String& originalIdent, const std::vector<unsigned int>& inputParamFreqFlags)
     {
+      SplitFunctionsResult result;
+
       std::string freqSig (FreqFlagsSignature (inputParamFreqFlags));
       
       uc::String decoratedIdent (originalIdent);
@@ -75,10 +74,10 @@ namespace s1
       {
 	SplitFunctionInfoPtr funcInfo (splitFuncInfo->second);
 	for (int f = 0; f < freqNum; f++)
-	  freqFuncIdents[f] = funcInfo->funcName[f];
-	outputParamFreqs = funcInfo->outputParamFreqs;
+          result.idents[f] = funcInfo->funcName[f];
+        result.outputParamFreqs = funcInfo->outputParamFreqs;
 	for (int f = 0; f < freqNum-1; f++)
-	  transferValues[f] = funcInfo->transferValues[f];
+          result.transferValues[f] = funcInfo->transferValues[f];
       }
       else
       {
@@ -120,14 +119,14 @@ namespace s1
 	    intermediate::RegisterPtr seqRegID (exp->second);
 	    //outputParamFreqs.push_back (seqSplit.GetLocalRegFreqFlags (seqRegID));
 	    #endif
-	    outputParamFreqs.push_back (freqFlagF);
+            result.outputParamFreqs.push_back (freqFlagF);
 	  }
-	  newFunc->outputParamFreqs = outputParamFreqs;
+	  newFunc->outputParamFreqs = result.outputParamFreqs;
       
 	  // Generate 'split' functions
 	  uc::String funcFName ("fragment_");
 	  funcFName.append (decoratedIdent);
-	  freqFuncIdents[freqFragment] = funcFName;
+          result.idents[freqFragment] = funcFName;
 	  newFunc->funcName[freqFragment] = funcFName;
 	  
 	  // Fake all inputs to fragment frequency
@@ -195,9 +194,9 @@ namespace s1
 	    // Also return transfer info
 	    FunctionTransferValues newTransferValue;
 	    newTransferValue.valueType = reg->GetOriginalType();
-	    transferValues[freqVertex].push_back (newTransferValue);
+            result.transferValues[freqVertex].push_back (newTransferValue);
 	  }
-	  newFunc->transferValues[freqVertex] = transferValues[freqVertex];
+	  newFunc->transferValues[freqVertex] = result.transferValues[freqVertex];
 	  
 	  // Extract output parameters, to return output value frequencies
 	  const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
@@ -209,15 +208,15 @@ namespace s1
 	    if (exp == seqExports.end())
 	    {
 	      // Output param is never written...
-	      outputParamFreqs.push_back (freqFlagU);
+              result.outputParamFreqs.push_back (freqFlagU);
 	    }
 	    else
 	    {
 	      intermediate::RegisterPtr seqRegID (exp->second);
-	      outputParamFreqs.push_back (seqSplit.GetRegAvailability (seqRegID));
+              result.outputParamFreqs.push_back (seqSplit.GetRegAvailability (seqRegID));
 	    }
 	  }
-	  newFunc->outputParamFreqs = outputParamFreqs;
+	  newFunc->outputParamFreqs = result.outputParamFreqs;
       
 	  // Generate 'split' functions
 	  for (int f = 0; f < freqNum; f++)
@@ -231,11 +230,12 @@ namespace s1
 	    uc::String funcName (freqPrefix[f]);
 	    funcName.append (decoratedIdent);
 	    AddFreqFunction (funcName, progFunc, extraParams[f], seq, f);
-	    freqFuncIdents[f] = funcName;
+            result.idents[f] = funcName;
 	    newFunc->funcName[f] = funcName;
 	  }
 	}
       }
+      return result;
     }
     
     intermediate::ProgramFunctionPtr ProgramSplitter::FindProgramFunction (const uc::String& ident)

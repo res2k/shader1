@@ -54,21 +54,27 @@ namespace s1
       typedef boost::shared_ptr<SplitFunctionInfo> SplitFunctionInfoPtr;
       typedef boost::unordered_map<uc::String, SplitFunctionInfoPtr> SplitFunctionInfoMap;
       SplitFunctionInfoMap splitFunctions;
+
+      struct SplitFunctionsResult
+      {
+        /// Identifiers of function variants for the different frequencies
+        uc::String idents[freqNum];
+        /// Frequency flags of return values.
+        std::vector<unsigned int> outputParamFreqs;
+        /**
+         * Values function needs transferred between frequencies.
+         * Each transferred value corresponds to an extra output parameter in the source frequency
+         * and an extra input parameter in the destination frequency.
+         */
+        std::vector<FunctionTransferValues> transferValues[freqNum - 1];
+      };
       /**
        * \param originalIdent Original identifier of function.
        * \param inputParamFreqs Frequency flags of function input parameters.
-       * \param freqFuncIdents Output: Identifiers of function variants for the different frequencies.
-       * \param returnFreq Output: Receives frequency flags of return value.
        * \param outputParamFreqs Output: Receives frequency flags of output parameters.
-       * \param transferFlags Output: Values function needs transferred between frequencies.
-       *   Each transferred value corresponds to an extra output parameter in the source frequency
-       *   and an extra input parameter in the destination frequency.
        */
-      void GetSplitFunctions (const uc::String& originalIdent,
-			      const std::vector<unsigned int>& inputParamFreqFlags,
-			      uc::String freqFuncIdents[freqNum],
-			      std::vector<unsigned int>& outputParamFreqs,
-			      std::vector<FunctionTransferValues> transferValues[freqNum-1]);
+      SplitFunctionsResult GetSplitFunctions (const uc::String& originalIdent,
+                                              const std::vector<unsigned int>& inputParamFreqFlags);
 			      
       intermediate::ProgramFunctionPtr FindProgramFunction (const uc::String& ident);
       
