@@ -1068,10 +1068,9 @@ namespace s1
       for (int f = 0; f < freqNum; f++)
       {
 	if (splitResult.idents[f].isEmpty()) continue;
-	
-	// @@@ Somewhat crude: propagate all input vars to frequency of function split.
-	// (Needed for recursive funcs)
-	PromoteAll (freqFragment, inParams);
+
+        if (splitResult.forceInputPropagation)
+          PromoteAll (f, inParams);
 	
 	// Add 'transfer' parameters to function call
 	std::vector<RegisterPtr> newOutParams (outParams);

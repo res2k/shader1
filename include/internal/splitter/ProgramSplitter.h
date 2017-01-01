@@ -67,6 +67,8 @@ namespace s1
          * and an extra input parameter in the destination frequency.
          */
         std::vector<FunctionTransferValues> transferValues[freqNum - 1];
+        /// Force propagation of all inputs to split function frequency
+        bool forceInputPropagation = false;
       };
       /**
        * \param originalIdent Original identifier of function.

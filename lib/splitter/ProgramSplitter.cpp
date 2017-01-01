@@ -141,6 +141,8 @@ namespace s1
 	  // Generate 'split' functions
 	  parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
 	  AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence()->GetSequence(), freqFragment);
+
+          result.forceInputPropagation = true;
 	}
 	else
 	{
