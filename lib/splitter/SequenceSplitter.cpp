@@ -86,8 +86,7 @@ namespace s1
     #ifdef _MSC_VER
       {
 	unsigned long index;
-	_BitScanReverse (&index, availabilityFlag);
-	f = index - 1;
+	f = _BitScanReverse (&index, availabilityFlag) ? index : -1;
       }
     #else
       f = (CHAR_BIT * sizeof (unsigned int) - __builtin_clz (availabilityFlag) - 1);
