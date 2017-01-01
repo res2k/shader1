@@ -63,7 +63,24 @@ namespace s1
     {
       SplitFunctionsResult result;
 
-      std::string freqSig (FreqFlagsSignature (inputParamFreqFlags));
+      intermediate::ProgramFunctionPtr progFunc = FindProgramFunction (originalIdent);
+      bool isRecursive = CheckFuncRecursive (progFunc);
+      std::string freqSig;
+
+      /* Recursion is tricky.
+         For now, just force recursive functions to fragment frequency.
+         (This will be suboptimal in certain cases, but it is comparatively
+         easy to implement ...)
+      */
+      if (isRecursive)
+      {
+        std::vector<unsigned int> overrideInputParamFreqFlags (inputParamFreqFlags.size (), freqFlagF);
+        freqSig = FreqFlagsSignature (overrideInputParamFreqFlags);
+      }
+      else
+      {
+        freqSig = FreqFlagsSignature (inputParamFreqFlags);
+      }
       
       uc::String decoratedIdent (originalIdent);
       decoratedIdent.append ("$");
@@ -84,26 +101,12 @@ namespace s1
 	SplitFunctionInfoPtr newFunc (boost::make_shared<SplitFunctionInfo> ());
 	splitFunctions[decoratedIdent] = newFunc;
 	
-	intermediate::ProgramFunctionPtr progFunc = FindProgramFunction (originalIdent);
-	
 	// FIXME: it's rather desireable to also emit 'uniform' functions
 	SequenceSplitter seqSplit (*this, true);
 	seqSplit.SetInputSequence (progFunc->GetBody());
 	
-	bool isRecursive = CheckFuncRecursive (progFunc);
 	if (isRecursive)
 	{
-	  /* Recursion is tricky.
-	     For now, just force recursive functions to fragment frequency.
-	     (This will be suboptimal in certain cases, but it is comparatively
-	     easy to implement ...)
-	     @@@ Force SequenceSplitter to promote all inputs to fragment!
-	     -> Could also let SequenceSplitter deal with transfers by having 
-	        promote the 'transfer' args
-	     -> Effectively, could give every variant of a func a distinctive
-	        arguments list...?
-	   */
-	  
 	  /* Fake output parameter frequencies to 'fragment'
 	     (so the recursive call will have something) */
 	  const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
