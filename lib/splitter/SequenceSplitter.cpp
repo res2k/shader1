@@ -974,32 +974,39 @@ namespace s1
          should be emitted.
          So the right way to fix this would be to make sure the ops affecting the conditions
          are replicated in *all* sequences ... */
+      bool onlyUniform = highestFreq == freqUniform;
       SplitBlock (body->GetSequence(),
                   body->GetImportIdentToRegs(),
                   body->GetExportIdentToRegs(),
                   newOps, true,
-                  true);
-      for (int f = 0; f < freqNum; f++)
+                  !onlyUniform);
       {
-        if (f == freqUniform) continue;
-        if ((combinedFreqs & (1 << f)) == 0) continue;
-        assert(newOps[f].seqBuilder != 0);
+        assert((combinedFreqs & (1 << highestFreq)) != 0);
+        assert(newOps[highestFreq].seqBuilder != 0);
         
         std::vector<LoopedReg> newLoopedRegs;
         for(const LoopedReg& loopedReg : loopedRegs)
         {
           unsigned int avail = parent.GetRegAvailability (loopedReg.second);
-          if ((avail & ((1 << f) | freqFlagU)) != 0)
+          if ((avail & ((1 << highestFreq) | freqFlagU)) != 0)
             newLoopedRegs.push_back (loopedReg);
         }
         
-        SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (newOps[f].seqBuilder->GetSequence(),
-                                                                   newOps[f].identToRegs_imp,
-                                                                   newOps[f].identToRegs_exp));
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (newOps[highestFreq].seqBuilder->GetSequence(),
+                                                                   newOps[highestFreq].identToRegs_imp,
+                                                                   newOps[highestFreq].identToRegs_exp));
         SequenceOpPtr newWhileOp (new intermediate::SequenceOpWhile (conditionReg,
                                                                      newLoopedRegs,
                                                                      newSeqOp));
-        parent.outputSeqBuilder[f]->AddOp (newWhileOp);
+        parent.outputSeqBuilder[highestFreq]->AddOp (newWhileOp);
+      }
+      // Force registers availability after loop to be of highest freq only
+      for (const LoopedReg& loopedReg : loopedRegs)
+      {
+        /* Note: don't promote.
+         * Per emission above registers should only be written on highest freq anyway.
+         * Promotion would only introduce unnecessary transfers... */
+        parent.SetRegAvailability (loopedReg.second, 1 << highestFreq);
       }
     }
     
