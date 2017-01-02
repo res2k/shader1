@@ -42,14 +42,14 @@ namespace s1
       friend class SequenceSplitter;
       struct FunctionTransferValues
       {
-	parser::SemanticsHandler::TypePtr valueType;
-	// Probably sensible: std::vector<size_t> usedArgs;
+        parser::SemanticsHandler::TypePtr valueType;
+        // Probably sensible: std::vector<size_t> usedArgs;
       };
       struct SplitFunctionInfo
       {
-	uc::String funcName[freqNum];
-	std::vector<unsigned int> outputParamFreqs;
-	std::vector<FunctionTransferValues> transferValues[freqNum-1];
+        uc::String funcName[freqNum];
+        std::vector<unsigned int> outputParamFreqs;
+        std::vector<FunctionTransferValues> transferValues[freqNum-1];
       };
       typedef boost::shared_ptr<SplitFunctionInfo> SplitFunctionInfoPtr;
       typedef boost::unordered_map<uc::String, SplitFunctionInfoPtr> SplitFunctionInfoMap;
@@ -77,24 +77,24 @@ namespace s1
        */
       SplitFunctionsResult GetSplitFunctions (const uc::String& originalIdent,
                                               const std::vector<unsigned int>& inputParamFreqFlags);
-			      
+
       intermediate::ProgramFunctionPtr FindProgramFunction (const uc::String& ident);
       
       void AddFreqFunction (const uc::String& funcName,
-			    const intermediate::ProgramFunctionPtr& originalFunc,
-			    const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
-			    const intermediate::SequencePtr& sequence,
-			    int freq);
-			    
+                            const intermediate::ProgramFunctionPtr& originalFunc,
+                            const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
+                            const intermediate::SequencePtr& sequence,
+                            int freq);
+                            
       bool CheckFuncRecursive (const intermediate::ProgramFunctionPtr& func);
     public:
       ProgramSplitter ();
-      
+
       void SetInputProgram (const intermediate::ProgramPtr& program);
       void SetInputFreqFlags (const uc::String& inpName, unsigned int flags);
-      
+
       void PerformSplit ();
-      
+
       const intermediate::ProgramPtr& GetOutputProgram (int frequency);
     };
   } // namespace splitter

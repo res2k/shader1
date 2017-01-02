@@ -40,11 +40,11 @@ public:
     std::istringstream in (
       "void main()"
       "{"
-	"float x;"
-	"{"
-	  "x = 0.5;"
-	"}"
-	"float y = x;"
+        "float x;"
+        "{"
+          "x = 0.5;"
+        "}"
+        "float y = x;"
       "}"
     );
     s1::uc::Stream ustream (in);
@@ -66,9 +66,9 @@ public:
       s1::intermediate::ProgramPtr outProg = splitter.GetOutputProgram (f);
       for (size_t func = 0; func < outProg->GetNumFunctions(); func++)
       {
-	s1::intermediate::ProgramFunctionPtr mainFunc = outProg->GetFunction (func);
-	VerifyRegsAssignedOnce (mainFunc->GetBody());
-	//VerifyRegsWrittenBeforeRead ();
+        s1::intermediate::ProgramFunctionPtr mainFunc = outProg->GetFunction (func);
+        VerifyRegsAssignedOnce (mainFunc->GetBody());
+        //VerifyRegsWrittenBeforeRead ();
       }
     }
   }

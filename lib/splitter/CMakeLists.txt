@@ -9,7 +9,7 @@ ENDIF()
 if(CXXTEST_FOUND)
   file(GLOB splitter_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
   s1_add_cxxtest(test_Splitter
-		 SOURCES ${splitter_test_sources}
+                 SOURCES ${splitter_test_sources}
                  DEPENDS intermediate splitter)
 endif()
 
