@@ -645,7 +645,6 @@ namespace s1
       Sequence::RegisterExpMappings newExports;
       Sequence::RegisterExpMappings& seqExports (seqBuilder->GetExports());
       Sequence::IdentifierToRegMap newIdentToRegIDsExp (splitRes.identToRegs_exp);
-      std::vector<RegisterPtr> writtenRegs;
       for (Sequence::RegisterExpMappings::iterator seqExp (seqExports.begin());
             seqExp != seqExports.end();
             ++seqExp)
@@ -659,7 +658,6 @@ namespace s1
           newExports[seqExp->first] = seqExp->second;
           Sequence::IdentifierToRegMap::const_iterator expReg = newIdentToRegIDsExp.find (seqExp->first);
           assert (expReg != newIdentToRegIDsExp.end());
-          writtenRegs.push_back (expReg->second);
           continue;
         }
         uc::String newIdent (oldReg->GetName());
@@ -673,12 +671,9 @@ namespace s1
         
         parent.SetRegAvailability (newReg, 1 << f);
         outputs.emplace_back (oldReg, newReg);
-        writtenRegs.push_back (newReg);
       }
       seqExports = newExports;
     
-      std::vector<RegisterPtr> readRegs;
-      readRegs.insert (readRegs.begin(), seqBuilder->GetAllReadRegisters().begin(), seqBuilder->GetAllReadRegisters().end());
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (seqBuilder->GetSequence(),
                                                                  splitRes.identToRegs_imp,
                                                                  newIdentToRegIDsExp));
@@ -695,10 +690,6 @@ namespace s1
       Sequence::IdentifierToRegMap newIdentToRegIDsImp (splitRes.identToRegs_imp);
       Sequence::IdentifierToRegMap newIdentToRegIDsExp (splitRes.identToRegs_exp);
       
-      std::vector<RegisterPtr> readRegs;
-      readRegs.insert (readRegs.begin(), seqBuilder->GetAllReadRegisters().begin(), seqBuilder->GetAllReadRegisters().end());
-      std::vector<RegisterPtr> writtenRegs;
-      writtenRegs.insert (writtenRegs.begin(), seqBuilder->GetAllWrittenRegisters().begin(), seqBuilder->GetAllWrittenRegisters().end());
       for (int g = 0; g < f; g++)
       {
         for(const RegisterPair& rename : renames[g])
@@ -716,10 +707,7 @@ namespace s1
           RegisterPtr newReg (seqBuilder->AllocateRegister (srcRegPtr->GetOriginalType(), newIdent));
           seqBuilder->SetImport (newReg, srcRegPtr->GetName());
           seqBuilder->SetExport (dstRegPtr->GetName(), newReg);
-          
-          writtenRegs.push_back (rename.first);
-          readRegs.push_back (rename.second);
-          
+
           newIdentToRegIDsImp[srcRegPtr->GetName()] = rename.second;
           newIdentToRegIDsExp[dstRegPtr->GetName()] = rename.first;
           
