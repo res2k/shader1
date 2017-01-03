@@ -131,6 +131,11 @@ namespace s1
       }
     }
 
+    const SequenceBuilder::RegisterImpMappings& SequenceBuilder::GetImports () const
+    {
+      return sequence->imports;
+    }
+
     SequenceBuilder::RegisterExpMappings& SequenceBuilder::GetExports ()
     {
       return sequence->exports;
