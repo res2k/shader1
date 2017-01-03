@@ -723,7 +723,7 @@ namespace s1
           newIdentToRegIDsImp[srcRegPtr->GetName()] = rename.second;
           newIdentToRegIDsExp[dstRegPtr->GetName()] = rename.first;
           
-          parent.SetRegAvailability (rename.first, 1 << f);
+          parent.SetRegAvailability (rename.first, parent.GetRegAvailability (rename.first));
         }
       }
     
