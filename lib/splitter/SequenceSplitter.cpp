@@ -634,7 +634,8 @@ namespace s1
       }
     }
 
-    void SequenceSplitter::InputVisitor::EmitUnconditionalBranchBlock (const char* suffix,
+    void SequenceSplitter::InputVisitor::EmitUnconditionalBranchBlock (SequencePtr origSeq,
+                                                                       const char* suffix,
                                                                        const SplitResult& splitRes,
                                                                        int f,
                                                                        RenamedBranchOutputs& outputs)
@@ -650,7 +651,7 @@ namespace s1
             ++seqExp)
       {
         //RegisterPtr oldReg (parent.inputSeq->GetIdentifierRegister (seqExp->first));
-        RegisterPtr oldReg (parent.inputSeq->GetExport (seqExp->first));
+        RegisterPtr oldReg (origSeq->GetExport (seqExp->first));
         if (!oldReg)
         {
           /* Happens for transfer regs created by block splitting.
@@ -815,8 +816,8 @@ namespace s1
         }
         else
         {
-          EmitUnconditionalBranchBlock ("if", newIfOps[f], f, ifRenames[f]);
-          EmitUnconditionalBranchBlock ("else", newElseOps[f], f, elseRenames[f]);
+          EmitUnconditionalBranchBlock (ifBlock->GetSequence (), "if", newIfOps[f], f, ifRenames[f]);
+          EmitUnconditionalBranchBlock (elseBlock->GetSequence (), "else", newElseOps[f], f, elseRenames[f]);
         }
       }
     }

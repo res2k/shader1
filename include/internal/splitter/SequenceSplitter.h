@@ -77,7 +77,9 @@ namespace s1
         
         typedef std::pair<RegisterPtr, RegisterPtr> RegisterPair;
         typedef std::vector<RegisterPair> RenamedBranchOutputs;
-        void EmitUnconditionalBranchBlock (const char* suffix, const SplitResult& splitRes, int f,
+        void EmitUnconditionalBranchBlock (SequencePtr origSeq, const char* suffix,
+                                           const SplitResult& splitRes,
+                                           int f,
                                            RenamedBranchOutputs& outputs);
         SequenceOpPtr AugmentBranchBlockWithRenames (const char* suffix,
                                                      const SplitResult& splitRes,
