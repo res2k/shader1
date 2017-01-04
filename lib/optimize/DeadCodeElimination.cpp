@@ -460,9 +460,13 @@ namespace s1
       }
       
       usedRegisters.insert (conditionReg);
+      usedRegisters.insert (writtenRegisters.begin (), writtenRegisters.end ());
       CommonSequenceVisitor::OpWhile (conditionReg, loopedRegs, seqOpBody);
-      // @@@ Might DCE on the nested sequence not have eliminated some of these regs?
       usedRegisters.insert (readRegisters.begin(), readRegisters.end());
+      /* TODO: Tagging all loop registers as 'used' diminishes the effectiveness
+       * of the DCE.
+       * However, to compute which registers are truly "used" we need a more
+       * sophisticated approach: a graph of register dependencies. */
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpReturn (const std::vector<RegisterPtr>& outParamVals)
