@@ -31,8 +31,8 @@ namespace s1
       intermediate::RegisterSet usedRegisters;
     public:
       DeadCodeChecker (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-		       const intermediate::RegisterSet& usedRegistersSeed,
-		       bool& seqChanged)
+                       const intermediate::RegisterSet& usedRegistersSeed,
+                       bool& seqChanged)
        : CommonSequenceVisitor (outputSeqBuilder),
          seqChanged (seqChanged),
          usedRegisters (usedRegistersSeed)
@@ -40,288 +40,288 @@ namespace s1
       }
       
       CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
-				    const RegisterMap& regMap)
+                                    const RegisterMap& regMap)
       {
-	intermediate::RegisterSet newUsedRegisters;
-	for(const RegisterPtr& reg : usedRegisters)
-	{
-	  RegisterMap::const_iterator newSeqReg = regMap.find (reg);
-	  if (newSeqReg != regMap.end())
-	  {
-	    newUsedRegisters.insert (newSeqReg->second);
-	  }
-	}
-	return new DeadCodeChecker (newSequenceBuilder, newUsedRegisters, seqChanged);
+        intermediate::RegisterSet newUsedRegisters;
+        for(const RegisterPtr& reg : usedRegisters)
+        {
+          RegisterMap::const_iterator newSeqReg = regMap.find (reg);
+          if (newSeqReg != regMap.end())
+          {
+            newUsedRegisters.insert (newSeqReg->second);
+          }
+        }
+        return new DeadCodeChecker (newSequenceBuilder, newUsedRegisters, seqChanged);
       }
       
       bool VisitBackwards() const { return true; }
       
       void PostVisitSequence (CommonSequenceVisitor* visitor,
-			      const intermediate::SequenceBuilderPtr& newSequenceBuilder,
-			      const RegisterMap& regMap)
+                              const intermediate::SequenceBuilderPtr& newSequenceBuilder,
+                              const RegisterMap& regMap)
       {
-	newSequenceBuilder->CleanUnusedImportsExports();
+        newSequenceBuilder->CleanUnusedImportsExports();
       }
       
       void AddOpToSequence (const SequenceOpPtr& seqOp)
       {
-	// DeadCodeChecker is meant to use with reverse Sequence visiting,
-	// so to 'add' an op, insert it at the beginning
-	newSequenceBuilder->FrontInsertOp (seqOp);
+        // DeadCodeChecker is meant to use with reverse Sequence visiting,
+        // so to 'add' an op, insert it at the beginning
+        newSequenceBuilder->FrontInsertOp (seqOp);
       }
       
       void OpConstBool (const RegisterPtr& destination,
-			bool value);
+                        bool value);
       void OpConstInt (const RegisterPtr& destination,
-			int value);
+                        int value);
       void OpConstUInt (const RegisterPtr& destination,
-			unsigned int value);
+                        unsigned int value);
       void OpConstFloat (const RegisterPtr& destination,
-			  float value);
-				
+                          float value);
+                                
       void OpAssign (const RegisterPtr& destination,
-		      const RegisterPtr& source);
-				
+                      const RegisterPtr& source);
+                                
       void OpCast (const RegisterPtr& destination,
-		    intermediate::BasicType destType,
-		    const RegisterPtr& source);
+                    intermediate::BasicType destType,
+                    const RegisterPtr& source);
 
       void OpMakeVector (const RegisterPtr& destination,
-			  intermediate::BasicType compType,
-			  const std::vector<RegisterPtr>& sources);
-				    
+                          intermediate::BasicType compType,
+                          const std::vector<RegisterPtr>& sources);
+                                    
       void OpMakeMatrix (const RegisterPtr& destination,
-			  intermediate::BasicType compType,
-			  unsigned int matrixRows, unsigned int matrixCols,
-			  const std::vector<RegisterPtr>& sources);
-				    
+                          intermediate::BasicType compType,
+                          unsigned int matrixRows, unsigned int matrixCols,
+                          const std::vector<RegisterPtr>& sources);
+                                    
       void OpMakeArray (const RegisterPtr& destination,
-			const std::vector<RegisterPtr>& sources);
+                        const std::vector<RegisterPtr>& sources);
       void OpExtractArrayElement (const RegisterPtr& destination,
-				  const RegisterPtr& source,
-				  const RegisterPtr& index);
+                                  const RegisterPtr& source,
+                                  const RegisterPtr& index);
       void OpChangeArrayElement (const RegisterPtr& destination,
-				  const RegisterPtr& source,
-				  const RegisterPtr& index,
-				  const RegisterPtr& newValue);
+                                  const RegisterPtr& source,
+                                  const RegisterPtr& index,
+                                  const RegisterPtr& newValue);
       void OpGetArrayLength (const RegisterPtr& destination,
-			      const RegisterPtr& array);
+                              const RegisterPtr& array);
 
       void OpExtractVectorComponent (const RegisterPtr& destination,
-				      const RegisterPtr& source,
-				      unsigned int comp);
-				    
+                                      const RegisterPtr& source,
+                                      unsigned int comp);
+                                    
       void OpArith (const RegisterPtr& destination,
-		    ArithmeticOp op,
-		    const RegisterPtr& source1,
-		    const RegisterPtr& source2);
+                    ArithmeticOp op,
+                    const RegisterPtr& source1,
+                    const RegisterPtr& source2);
 
       void OpLogic (const RegisterPtr& destination,
-		    LogicOp op,
-		    const RegisterPtr& source1,
-		    const RegisterPtr& source2);
+                    LogicOp op,
+                    const RegisterPtr& source1,
+                    const RegisterPtr& source2);
 
       void OpUnary (const RegisterPtr& destination,
-		    UnaryOp op,
-		    const RegisterPtr& source);
-			      
+                    UnaryOp op,
+                    const RegisterPtr& source);
+                              
       void OpCompare (const RegisterPtr& destination,
-		      CompareOp op,
-		      const RegisterPtr& source1,
-		      const RegisterPtr& source2);
-			
+                      CompareOp op,
+                      const RegisterPtr& source1,
+                      const RegisterPtr& source2);
+                        
       void OpBlock (const intermediate::SequencePtr& seq,
-		    const Sequence::IdentifierToRegMap& identToRegID_imp,
-		    const Sequence::IdentifierToRegMap& identToRegID_exp);
-		    
+                    const Sequence::IdentifierToRegMap& identToRegID_imp,
+                    const Sequence::IdentifierToRegMap& identToRegID_exp);
+                    
       void OpBranch (const RegisterPtr& conditionReg,
-		      const intermediate::SequenceOpPtr& seqOpIf,
-		      const intermediate::SequenceOpPtr& seqOpElse);
+                      const intermediate::SequenceOpPtr& seqOpIf,
+                      const intermediate::SequenceOpPtr& seqOpElse);
       void OpWhile (const RegisterPtr& conditionReg,
-		    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-		    const intermediate::SequenceOpPtr& seqOpBody);
-		    
+                    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+                    const intermediate::SequenceOpPtr& seqOpBody);
+                    
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
       void OpFunctionCall (const uc::String& funcIdent,
-			    const std::vector<RegisterPtr>& inParams,
-			    const std::vector<RegisterPtr>& outParams);
+                            const std::vector<RegisterPtr>& inParams,
+                            const std::vector<RegisterPtr>& outParams);
       void OpBuiltinCall (const RegisterPtr& destination,
-			  intermediate::BuiltinFunction what,
-			  const std::vector<RegisterPtr>& inParams);
+                          intermediate::BuiltinFunction what,
+                          const std::vector<RegisterPtr>& inParams);
     };
     
     void DeadCodeElimination::DeadCodeChecker::OpConstBool (const RegisterPtr& destination,
-							    bool value)
+                                                            bool value)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       CommonSequenceVisitor::OpConstBool (destination, value);
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpConstInt (const RegisterPtr& destination,
-							   int value)
+                                                           int value)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       CommonSequenceVisitor::OpConstInt (destination, value);
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpConstUInt (const RegisterPtr& destination,
-							    unsigned int value)
+                                                            unsigned int value)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       CommonSequenceVisitor::OpConstUInt (destination, value);
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpConstFloat (const RegisterPtr& destination,
-							     float value)
+                                                             float value)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       CommonSequenceVisitor::OpConstFloat (destination, value);
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpAssign (const RegisterPtr& destination,
-							 const RegisterPtr& source)
+                                                         const RegisterPtr& source)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source);
       CommonSequenceVisitor::OpAssign (destination, source);
     }
-			      
+                              
     void DeadCodeElimination::DeadCodeChecker::OpCast (const RegisterPtr& destination,
-						       intermediate::BasicType destType,
-						       const RegisterPtr& source)
+                                                       intermediate::BasicType destType,
+                                                       const RegisterPtr& source)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source);
       CommonSequenceVisitor::OpCast (destination, destType, source);
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpMakeVector (const RegisterPtr& destination,
-							     intermediate::BasicType compType,
-							     const std::vector<RegisterPtr>& sources)
+                                                             intermediate::BasicType compType,
+                                                             const std::vector<RegisterPtr>& sources)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (sources.begin(), sources.end());
       CommonSequenceVisitor::OpMakeVector (destination, compType, sources);
     }
-				  
+                                  
     void DeadCodeElimination::DeadCodeChecker::OpMakeMatrix (const RegisterPtr& destination,
-							     intermediate::BasicType compType,
-							     unsigned int matrixRows, unsigned int matrixCols,
-							     const std::vector<RegisterPtr>& sources)
+                                                             intermediate::BasicType compType,
+                                                             unsigned int matrixRows, unsigned int matrixCols,
+                                                             const std::vector<RegisterPtr>& sources)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (sources.begin(), sources.end());
       CommonSequenceVisitor::OpMakeMatrix (destination, compType, matrixRows, matrixCols, sources);
     }
-				  
+                                  
     void DeadCodeElimination::DeadCodeChecker::OpMakeArray (const RegisterPtr& destination,
-							    const std::vector<RegisterPtr>& sources)
+                                                            const std::vector<RegisterPtr>& sources)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (sources.begin(), sources.end());
       CommonSequenceVisitor::OpMakeArray (destination, sources);
     }
-				  
+                                  
     void DeadCodeElimination::DeadCodeChecker::OpExtractArrayElement (const RegisterPtr& destination,
-								      const RegisterPtr& source,
-								      const RegisterPtr& index)
+                                                                      const RegisterPtr& source,
+                                                                      const RegisterPtr& index)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source);
       usedRegisters.insert (index);
       CommonSequenceVisitor::OpExtractArrayElement (destination, source, index);
     }
-				  
+                                  
     void DeadCodeElimination::DeadCodeChecker::OpChangeArrayElement (const RegisterPtr& destination,
-								     const RegisterPtr& source,
-								     const RegisterPtr& index,
-								     const RegisterPtr& newValue)
+                                                                     const RegisterPtr& source,
+                                                                     const RegisterPtr& index,
+                                                                     const RegisterPtr& newValue)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source);
       usedRegisters.insert (index);
       usedRegisters.insert (newValue);
       CommonSequenceVisitor::OpChangeArrayElement (destination, source, index, newValue);
     }
-				  
+                                  
     void DeadCodeElimination::DeadCodeChecker::OpGetArrayLength (const RegisterPtr& destination,
-								 const RegisterPtr& array)
+                                                                 const RegisterPtr& array)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (array);
       CommonSequenceVisitor::OpGetArrayLength (destination, array);
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpExtractVectorComponent (const RegisterPtr& destination,
-									 const RegisterPtr& source,
-									 unsigned int comp)
+                                                                         const RegisterPtr& source,
+                                                                         unsigned int comp)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source);
       CommonSequenceVisitor::OpExtractVectorComponent (destination, source, comp);
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpArith (const RegisterPtr& destination,
-							ArithmeticOp op,
-							const RegisterPtr& source1,
-							const RegisterPtr& source2)
+                                                        ArithmeticOp op,
+                                                        const RegisterPtr& source1,
+                                                        const RegisterPtr& source2)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source1);
       usedRegisters.insert (source2);
@@ -329,14 +329,14 @@ namespace s1
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpLogic (const RegisterPtr& destination,
-							LogicOp op,
-							const RegisterPtr& source1,
-							const RegisterPtr& source2)
+                                                        LogicOp op,
+                                                        const RegisterPtr& source1,
+                                                        const RegisterPtr& source2)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source1);
       usedRegisters.insert (source2);
@@ -344,48 +344,48 @@ namespace s1
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpUnary (const RegisterPtr& destination,
-							UnaryOp op,
-							const RegisterPtr& source)
+                                                        UnaryOp op,
+                                                        const RegisterPtr& source)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source);
       CommonSequenceVisitor::OpUnary (destination, op, source);
     }
-			    
+                            
     void DeadCodeElimination::DeadCodeChecker::OpCompare (const RegisterPtr& destination,
-							  CompareOp op,
-							  const RegisterPtr& source1,
-							  const RegisterPtr& source2)
+                                                          CompareOp op,
+                                                          const RegisterPtr& source1,
+                                                          const RegisterPtr& source2)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (source1);
       usedRegisters.insert (source2);
       CommonSequenceVisitor::OpCompare (destination, op, source1, source2);
     }
-		      
+                      
     void DeadCodeElimination::DeadCodeChecker::OpBlock (const intermediate::SequencePtr& seq,
-							const Sequence::IdentifierToRegMap& identToRegID_imp,
-							const Sequence::IdentifierToRegMap& identToRegID_exp)
+                                                        const Sequence::IdentifierToRegMap& identToRegID_imp,
+                                                        const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
       intermediate::RegisterSet sequenceExported (seq->GetExportOuterRegs (identToRegID_exp));
       size_t exportedUsed = 0;
       for(const RegisterPtr& reg : sequenceExported)
       {
-	if (usedRegisters.count (reg) > 0)
-	  exportedUsed++;
+        if (usedRegisters.count (reg) > 0)
+          exportedUsed++;
       }
       if (exportedUsed == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       intermediate::RegisterSet sequenceImported (seq->GetExportOuterRegs (identToRegID_exp));
       usedRegisters.insert (sequenceImported.begin(), sequenceImported.end());
@@ -394,35 +394,35 @@ namespace s1
          Though probably not necessary as DCE is  usually applied _after_ inlining...
        */
     }
-		  
+                  
     void DeadCodeElimination::DeadCodeChecker::OpBranch (const RegisterPtr& conditionReg,
-							 const intermediate::SequenceOpPtr& seqOpIf,
-							 const intermediate::SequenceOpPtr& seqOpElse)
+                                                         const intermediate::SequenceOpPtr& seqOpIf,
+                                                         const intermediate::SequenceOpPtr& seqOpElse)
     {
       intermediate::RegisterSet readRegisters;
       intermediate::RegisterSet writtenRegisters;
       if (seqOpIf)
       {
-	readRegisters = seqOpIf->GetReadRegisters();
-	writtenRegisters = seqOpIf->GetWrittenRegisters();
+        readRegisters = seqOpIf->GetReadRegisters();
+        writtenRegisters = seqOpIf->GetWrittenRegisters();
       }
       if (seqOpElse)
       {
-	intermediate::RegisterSet elseReadRegs (seqOpElse->GetReadRegisters());
-	readRegisters.insert (elseReadRegs.begin(), elseReadRegs.end());
-	intermediate::RegisterSet elseWrittenRegs (seqOpElse->GetWrittenRegisters());
-	writtenRegisters.insert (elseWrittenRegs.begin(), elseWrittenRegs.end());
+        intermediate::RegisterSet elseReadRegs (seqOpElse->GetReadRegisters());
+        readRegisters.insert (elseReadRegs.begin(), elseReadRegs.end());
+        intermediate::RegisterSet elseWrittenRegs (seqOpElse->GetWrittenRegisters());
+        writtenRegisters.insert (elseWrittenRegs.begin(), elseWrittenRegs.end());
       }
       size_t writtenRegsUsed = 0;
       for(const RegisterPtr& reg : writtenRegisters)
       {
-	if (usedRegisters.count (reg) > 0)
-	  writtenRegsUsed++;
+        if (usedRegisters.count (reg) > 0)
+          writtenRegsUsed++;
       }
       if (writtenRegsUsed == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       
       usedRegisters.insert (conditionReg);
@@ -431,32 +431,32 @@ namespace s1
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpWhile (const RegisterPtr& conditionReg,
-							const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-							const intermediate::SequenceOpPtr& seqOpBody)
+                                                        const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+                                                        const intermediate::SequenceOpPtr& seqOpBody)
     {
       intermediate::RegisterSet readRegisters;
       intermediate::RegisterSet writtenRegisters;
       if (seqOpBody)
       {
-	readRegisters = seqOpBody->GetReadRegisters();
-	writtenRegisters = seqOpBody->GetWrittenRegisters();
+        readRegisters = seqOpBody->GetReadRegisters();
+        writtenRegisters = seqOpBody->GetWrittenRegisters();
       }
       typedef std::pair<RegisterPtr, RegisterPtr> RegPair;
       for(const RegPair& loopPair : loopedRegs)
       {
-	readRegisters.insert (loopPair.first);
-	writtenRegisters.insert (loopPair.second);
+        readRegisters.insert (loopPair.first);
+        writtenRegisters.insert (loopPair.second);
       }
       size_t writtenRegsUsed = 0;
       for(const RegisterPtr& reg : writtenRegisters)
       {
-	if (usedRegisters.count (reg) > 0)
-	  writtenRegsUsed++;
+        if (usedRegisters.count (reg) > 0)
+          writtenRegsUsed++;
       }
       if (writtenRegsUsed == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       
       usedRegisters.insert (conditionReg);
@@ -472,32 +472,32 @@ namespace s1
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpFunctionCall (const uc::String& funcIdent,
-							       const std::vector<RegisterPtr>& inParams,
-							       const std::vector<RegisterPtr>& outParams)
+                                                               const std::vector<RegisterPtr>& inParams,
+                                                               const std::vector<RegisterPtr>& outParams)
     {
       size_t outParamsUsed = 0;
       for(const RegisterPtr& reg : outParams)
       {
-	if (usedRegisters.count (reg) > 0)
-	  outParamsUsed++;
+        if (usedRegisters.count (reg) > 0)
+          outParamsUsed++;
       }
       if (outParamsUsed == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (inParams.begin(), inParams.end());
       CommonSequenceVisitor::OpFunctionCall (funcIdent, inParams, outParams);
     }
     
     void DeadCodeElimination::DeadCodeChecker::OpBuiltinCall (const RegisterPtr& destination,
-							      intermediate::BuiltinFunction what,
-							      const std::vector<RegisterPtr>& inParams)
+                                                              intermediate::BuiltinFunction what,
+                                                              const std::vector<RegisterPtr>& inParams)
     {
       if (usedRegisters.count (destination) == 0)
       {
-	seqChanged = true;
-	return;
+        seqChanged = true;
+        return;
       }
       usedRegisters.insert (inParams.begin(), inParams.end());
       CommonSequenceVisitor::OpBuiltinCall (destination, what, inParams);
@@ -506,8 +506,8 @@ namespace s1
     //-----------------------------------------------------------------------
     
     bool DeadCodeElimination::EliminateDeadCode (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-						 const intermediate::SequencePtr& inputSeq,
-						 const intermediate::RegisterSet& usedRegistersSeed)
+                                                 const intermediate::SequencePtr& inputSeq,
+                                                 const intermediate::RegisterSet& usedRegistersSeed)
     {
       bool seqChanged (false);
       DeadCodeChecker checker (outputSeqBuilder, usedRegistersSeed, seqChanged);
