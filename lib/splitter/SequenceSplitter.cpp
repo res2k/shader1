@@ -276,7 +276,20 @@ namespace s1
       unsigned int srcAvail = parent.GetRegAvailability (source);
       
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpAssign (destination, source));
-      parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
+      /* Hack: If op is _also_ executed in uniform freq,
+         _only_ add op to uniform freq - uniform ops will later be
+         copied into vertex and fragment ops anyway */
+      unsigned int freqMask = srcAvail;
+      if (freqMask & freqFlagU) freqMask = freqFlagU;
+      for (int f = 0; f < freqNum; f++)
+      {
+        if (freqMask & (1 << f))
+        {
+          parent.outputSeqBuilder[f]->AddOp (newSeqOp);
+        }
+      }
+      // Copy full availability when assigning, can reduce needed transfers
+      parent.SetRegAvailability (destination, srcAvail);
     }
     
     void SequenceSplitter::InputVisitor::OpCast (const RegisterPtr& destination,
