@@ -1215,6 +1215,15 @@ namespace s1
           }
         }
 
+        /* Make sure none of their outputs are remain "uniform only" */
+        const auto& uniformExports = outputSeqBuilder[freqUniform]->GetExports ();
+        for (const auto& uniformExp : uniformExports)
+        {
+          unsigned int avail = GetRegAvailability (uniformExp.second);
+          avail &= ~freqFlagU;
+          SetRegAvailability (uniformExp.second, avail ? avail : freqFlagV | freqFlagF);
+        }
+
         for (size_t i = outputSeqBuilder[freqUniform]->GetNumOps(); i-- > 0; )
         {
           SequenceOpPtr uniOp (outputSeqBuilder[freqUniform]->GetOp (i));
