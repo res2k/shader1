@@ -23,6 +23,7 @@
  */
 
 #include "base/config.h"
+#include "base/cxx_features.h"
 #include <boost/cstdint.hpp> // must be include before any unicode/ headers to avoid macro conflict
 
 /**\def S1_APPROX_DIGITS(Type)

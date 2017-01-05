@@ -24,6 +24,8 @@
 
 #include <boost/container/small_vector.hpp>
 
+#include <iostream>
+
 #if defined (_WIN32)
 #include <Windows.h>
 #endif
@@ -209,9 +211,7 @@ namespace s1
   {
     GlobalDebugMessageHandler globalHandler;
 
-    static void CleanupDebugMessageHandler (DebugMessageHandler* p) { /* do nothing */ }
-
-    boost::thread_specific_ptr<DebugMessageHandler> threadHandler (&CleanupDebugMessageHandler);
+    S1_THREAD_LOCAL DebugMessageHandler* threadHandler = nullptr;
   } // namespace detail
 
   void DefaultDebugMessageHandler::PrintMessage (const uc::String& str)

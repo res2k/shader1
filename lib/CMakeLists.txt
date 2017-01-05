@@ -1,6 +1,15 @@
 add_definitions(-DS1_BUILD)
 set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
 
+include(WriteCompilerDetectionHeader)
+# We want a compatibility macro for cxx_thread_local
+write_compiler_detection_header(
+  FILE "${CMAKE_BINARY_DIR}/include/internal/base/cxx_features.h"
+  PREFIX S1
+  COMPILERS ${CMAKE_CXX_COMPILER_ID}
+  FEATURES cxx_thread_local
+)
+
 if(MSVC)
   # Disable some warnings
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355")

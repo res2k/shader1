@@ -25,8 +25,6 @@
 
 #include "uc/String.h"
 
-#include <boost/thread.hpp>
-
 #include <mutex>
 
 namespace s1
@@ -94,7 +92,7 @@ namespace s1
   namespace detail
   {
     /// Thread-specific debug message handler
-    extern boost::thread_specific_ptr<DebugMessageHandler> threadHandler;
+    extern S1_THREAD_LOCAL DebugMessageHandler* threadHandler;
   } // namespace detail
 
   /// Helper: Sets a "scope" for a temporary thread-specific debug message handler
@@ -103,12 +101,12 @@ namespace s1
   public:
     ScopedThreadDebugMessageHandler (DebugMessageHandler& handler)
     {
-      prevHandler = detail::threadHandler.get ();
-      detail::threadHandler.reset (&handler);
+      prevHandler = detail::threadHandler;
+      detail::threadHandler = &handler;
     }
     ~ScopedThreadDebugMessageHandler ()
     {
-      detail::threadHandler.reset (prevHandler);
+      detail::threadHandler = prevHandler;
     }
   private:
     DebugMessageHandler* prevHandler;
@@ -120,9 +118,9 @@ namespace s1
     void PrintMessage (T msg)
     {
       // First, try thread-specific handler
-      if (auto th = threadHandler.get ())
+      if (threadHandler)
       {
-        if (th->PrintMessage (msg)) return;
+        if (threadHandler->PrintMessage (msg)) return;
       }
       // Next, the global handler
       if (AccessGlobalDebugMessageHandler ([=](const DebugMessageHandler& h) { return h.PrintMessage (msg); }))
