@@ -68,20 +68,27 @@ namespace s1
 #include <assert.h>
 /// \internal For use as S1_ASSERT \a "ret" value for functions returning \c void
 #define S1_ASSERT_RET_VOID
-#define _S1_ASSERT_MSG(x, msg, ret)                           \
+#define _S1_ASSERT_MSG_PRINT(x, msg)                          \
+  if (!(x))                                                   \
+  {                                                           \
+    ::s1::detail::PrintAssert (_S1_ASSERT_STR(__FILE__),      \
+                                __LINE__,                     \
+                                _S1_ASSERT_STR(#x),           \
+                                msg);                         \
+  }
+#define _S1_ASSERT_MSG_RET(x, ret)      if (!(x)) { return ret; }
+#define S1_ASSERT(x, ret)                                     \
   do {                                                        \
-    if (!(x))                                                 \
-    {                                                         \
-      ::s1::detail::PrintAssert (_S1_ASSERT_STR(__FILE__),    \
-                                 __LINE__,                    \
-                                 _S1_ASSERT_STR(#x),          \
-                                 msg);                        \
-    }                                                         \
-    if (msg) { assert ((x) && !!msg); } else { assert (x); }  \
-    if (!(x)) { return ret; }                                 \
+    _S1_ASSERT_MSG_PRINT(x, nullptr)                          \
+    assert (x);                                               \
+    _S1_ASSERT_MSG_RET(x, ret)                                \
   } while(0)
-#define S1_ASSERT(x, ret)            _S1_ASSERT_MSG(x, nullptr, ret)
-#define S1_ASSERT_MSG(x, msg, ret)   _S1_ASSERT_MSG(x, _S1_ASSERT_STR(msg), ret)
+#define S1_ASSERT_MSG(x, msg, ret)                            \
+  do {                                                        \
+    _S1_ASSERT_MSG_PRINT(x, _S1_ASSERT_STR(msg))              \
+    assert ((x) && msg);                                      \
+    _S1_ASSERT_MSG_RET(x, ret)                                \
+  } while(0)
 
 // Used all over the place
 #include "uc/String.h"
