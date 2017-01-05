@@ -2,7 +2,7 @@
 # different build flags in different places), so we wrap it's usage.
 
 # List of all the Boost libs we use anywhere in the source tree
-set(_S1_BOOST_USED_LIBS filesystem iostreams program_options system thread)
+set(_S1_BOOST_USED_LIBS filesystem iostreams program_options system)
 
 macro(s1_find_boost VERSION)
   if(ARGN)
@@ -22,23 +22,6 @@ set(BOOST_THREAD_BOOSTDEP system)
 set(BOOST_IOSTREAMS_SOURCES
     ${BOOST_ROOT}/libs/iostreams/src/file_descriptor.cpp
     ${BOOST_ROOT}/libs/iostreams/src/mapped_file.cpp)
-
-# Sources for boost_thread
-file(GLOB thread_sources_all ${BOOST_ROOT}/libs/thread/src/*.cpp)
-if(WIN32)
-  set(thread_sources_platform_thread ${BOOST_ROOT}/libs/thread/src/win32/thread.cpp)
-  # FIXME?: What tss to use when not building as DLL...
-  set(thread_sources_platform_tss ${BOOST_ROOT}/libs/thread/src/win32/tss_dll.cpp)
-  set(BOOST_THREAD_TSS_DLL_COMPILE_DEFS "BOOST_THREAD_BUILD_DLL") # Set that flag on that source _only_
-  set(thread_sources_platform "${thread_sources_platform_thread};${thread_sources_platform_tss}")
-else()
-  find_package(Threads)
-  if(CMAKE_USE_PTHREADS_INIT)
-    file(GLOB thread_sources_platform ${BOOST_ROOT}/libs/thread/src/pthread/*.cpp)
-    set(BOOST_THREAD_DEPENDS ${CMAKE_THREAD_LIBS_INIT})
-  endif()
-endif()
-set(BOOST_THREAD_SOURCES "${thread_sources_all};${thread_sources_platform}")
 
 function(s1_get_boost_link_libs VAR)
   set(link_libs)
