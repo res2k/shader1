@@ -55,7 +55,8 @@ namespace s1
         + charsToFormatUint
         + (message ? assert_char_traits::length (message) : 0)
         + 1;
-      boost::container::small_vector<assert_char, 256> buf (bufSize, 0);
+      boost::container::small_vector<assert_char, 256> buf;
+      buf.resize (bufSize, 0);
 
       if (message)
       {
