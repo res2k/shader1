@@ -42,7 +42,7 @@ namespace cxxapi
     static Pointer Create (s1::cxxapi::Library* lib)
     {
       ::TestLO* p (CreateTestLO (lib));
-      return S1_RETURN_TRANSFER_REF(::TestLO, p);
+      return S1_RETURN_MOVE_REF(::TestLO, p);
     }
   };
 } // namespace cxxapi

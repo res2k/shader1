@@ -108,10 +108,10 @@ namespace s1
        * In that case the error status is saved in the library's
        * last error code.
        */
-      S1_RETURN_TRANSFER_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target,
+      S1_RETURN_MOVE_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target,
                                                                     BackendOptions* options = 0)
       {
-        return S1_RETURN_TRANSFER_REF (CompiledProgram,
+        return S1_RETURN_MOVE_REF (CompiledProgram,
           s1_backend_generate_program (this, program, target, options));
       }
 
@@ -121,9 +121,9 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      S1_RETURN_TRANSFER_REF_TYPE(BackendOptions) CreateBackendOptions ()
+      S1_RETURN_MOVE_REF_TYPE(BackendOptions) CreateBackendOptions ()
       {
-        return S1_RETURN_TRANSFER_REF (BackendOptions,
+        return S1_RETURN_MOVE_REF (BackendOptions,
                                        s1_backendoptions_create (this));
       }
     };

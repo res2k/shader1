@@ -96,20 +96,20 @@ namespace s1
    * This smart pointer \em always assumes ownership.
    */
   template<typename T>
-  class TransferRefPtr
+  class MoveRefPtr
   {
   private:
     T* obj;
   public:
     /// Construct with a \NULL pointer.
-    TransferRefPtr () : obj (0) {}
+    MoveRefPtr () : obj (0) {}
     /// Construct from \a p, never adding a reference
-    TransferRefPtr (T* p) : obj (p) { }
+    MoveRefPtr (T* p) : obj (p) { }
     /// Move reference from \a other
     template<typename T2>
-    TransferRefPtr (const TransferRefPtr<T2>& other) : obj (const_cast<TransferRefPtr&> (other).detach()) { }
+    MoveRefPtr (const MoveRefPtr<T2>& other) : obj (const_cast<MoveRefPtr&> (other).detach()) { }
     /// Releases reference
-    ~TransferRefPtr ()
+    ~MoveRefPtr ()
     {
       if (obj) cxxapi::ReleasePtr (obj);
     }
@@ -147,9 +147,9 @@ namespace s1
     }
     
     /// Move reference from \a other
-    TransferRefPtr& operator= (const TransferRefPtr& other)
+    MoveRefPtr& operator= (const MoveRefPtr& other)
     {
-      take (const_cast<TransferRefPtr&> (other).detach());
+      take (const_cast<MoveRefPtr&> (other).detach());
       return *this;
     }
 
@@ -187,7 +187,7 @@ namespace s1
 #if !defined(DOXYGEN_RUN) && !defined(S1_HAVE_RVALUES)
     /// Move reference from \a other
     template<typename T2>
-    Ptr (const TransferRefPtr<T2>& other) : obj (const_cast<TransferRefPtr<T2>&> (other).detach()) { }
+    Ptr (const MoveRefPtr<T2>& other) : obj (const_cast<MoveRefPtr<T2>&> (other).detach()) { }
 #endif
     /// Copy from \a other, adding a reference
     Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
@@ -262,9 +262,9 @@ namespace s1
 #if !defined(DOXYGEN_RUN) && !defined(S1_HAVE_RVALUES)
     /// Move reference from \a other
     template<typename T2>
-    Ptr& operator= (const TransferRefPtr<T2>& other)
+    Ptr& operator= (const MoveRefPtr<T2>& other)
     {
-      take (const_cast<TransferRefPtr<T2>&> (other).detach());
+      take (const_cast<MoveRefPtr<T2>&> (other).detach());
       return *this;
     }
 #endif
@@ -292,17 +292,17 @@ namespace s1
 
 /* Helper macro resolving to return type for pointers from API that already
  * have a reference.
- * Note: S1_RETURN_TRANSFER_REF() is a macro so it gets inlined on MSVC */
+ * Note: S1_RETURN_MOVE_REF() is a macro so it gets inlined on MSVC */
 #ifdef S1_HAVE_RVALUES
   // Prefer Ptr<> if we have rvalues. Also plays nicer with 'auto'
-  #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
+  #define S1_RETURN_MOVE_REF_TYPE(Type)                            \
       ::s1::Ptr< Type >
-  #define S1_RETURN_TRANSFER_REF(Type, p)                              \
+  #define S1_RETURN_MOVE_REF(Type, p)                              \
       ::s1::Ptr<Type> ((p), ::s1::Ptr< Type >::TakeTag ())
 #else
-  #define S1_RETURN_TRANSFER_REF_TYPE(Type)                            \
-      ::s1::TransferRefPtr< Type >
-  #define S1_RETURN_TRANSFER_REF(Type, p)                              \
+  #define S1_RETURN_MOVE_REF_TYPE(Type)                            \
+      ::s1::MoveRefPtr< Type >
+  #define S1_RETURN_MOVE_REF(Type, p)                              \
       (p)
 #endif
 

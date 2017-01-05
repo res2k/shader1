@@ -228,9 +228,9 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
       */
-      S1_RETURN_TRANSFER_REF_TYPE(Options) CreateOptions ()
+      S1_RETURN_MOVE_REF_TYPE(Options) CreateOptions ()
       {
-        return S1_RETURN_TRANSFER_REF(Options, s1_options_create (this));
+        return S1_RETURN_MOVE_REF(Options, s1_options_create (this));
       }
       
       /**
@@ -243,11 +243,11 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      S1_RETURN_TRANSFER_REF_TYPE(Program) CreateProgramFromString (const char* source,
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromString (const char* source,
                                                                     size_t sourceSize,
                                                                     unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
-        return S1_RETURN_TRANSFER_REF(Program,
+        return S1_RETURN_MOVE_REF(Program,
           s1_program_create_from_string (this, source, sourceSize, compatLevel));
       }
       //@{
@@ -259,24 +259,24 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      S1_RETURN_TRANSFER_REF_TYPE(Backend) CreateBackend (const char* backend)
+      S1_RETURN_MOVE_REF_TYPE(Backend) CreateBackend (const char* backend)
       {
-        return S1_RETURN_TRANSFER_REF(Backend,
+        return S1_RETURN_MOVE_REF(Backend,
           s1_backend_create (this, backend));
       }
-      S1_RETURN_TRANSFER_REF_TYPE (Backend) CreateBackend (const wchar_t* backend)
+      S1_RETURN_MOVE_REF_TYPE (Backend) CreateBackend (const wchar_t* backend)
       {
-        return S1_RETURN_TRANSFER_REF (Backend,
+        return S1_RETURN_MOVE_REF (Backend,
           s1_backend_create_ws (this, backend));
       }
-      S1_RETURN_TRANSFER_REF_TYPE (Backend) CreateBackend (const s1_char16* backend)
+      S1_RETURN_MOVE_REF_TYPE (Backend) CreateBackend (const s1_char16* backend)
       {
-        return S1_RETURN_TRANSFER_REF (Backend,
+        return S1_RETURN_MOVE_REF (Backend,
           s1_backend_create_u16 (this, backend));
       }
-      S1_RETURN_TRANSFER_REF_TYPE (Backend) CreateBackend (const s1_char32* backend)
+      S1_RETURN_MOVE_REF_TYPE (Backend) CreateBackend (const s1_char32* backend)
       {
-        return S1_RETURN_TRANSFER_REF (Backend,
+        return S1_RETURN_MOVE_REF (Backend,
           s1_backend_create_u32 (this, backend));
       }
       //@}

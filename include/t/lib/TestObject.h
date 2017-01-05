@@ -46,7 +46,7 @@ namespace cxxapi
     static Pointer Create (int v)
     {
       ::TestA* p (CreateTestA (v));
-      return S1_RETURN_TRANSFER_REF(TestA, p);
+      return S1_RETURN_MOVE_REF(TestA, p);
     }
     
     int GetValue ()
@@ -63,7 +63,7 @@ namespace cxxapi
     static Pointer Create (int v, int v2)
     {
       ::TestA2* p (CreateTestA2 (v, v2));
-      return S1_RETURN_TRANSFER_REF(TestA2, p);
+      return S1_RETURN_MOVE_REF(TestA2, p);
     }
     
     int GetValue2 ()
