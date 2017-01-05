@@ -94,7 +94,10 @@ namespace s1
     {
       return lib->Try (func);
     }
-  }; 
+
+    /// Debug message handler access
+    DebugMessageHandler& GetDebugMessageHandler () { return lib->GetDebugMessageHandler (); }
+  };
 } // namespace s1
 
 #endif // __BASE_LIBRARYOBJECT_H__

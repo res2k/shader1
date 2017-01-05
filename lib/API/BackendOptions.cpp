@@ -27,6 +27,7 @@ static s1_bool s1_backendoptions_set_from_str_ucs (s1_BackendOptions* options, s
 {
   S1_ASSERT_MSG(options, "NULL BackendOptions", false);
   auto backend_options_impl (s1::EvilUpcast<s1::Compiler::Backend::Options> (options));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (backend_options_impl->GetDebugMessageHandler ());
   if (!str)
   {
     return backend_options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N (0));

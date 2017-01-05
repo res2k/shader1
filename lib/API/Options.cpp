@@ -27,6 +27,7 @@ s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt, s1_bo
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
   if (int (opt) >= int (s1::Compiler::Options::numOptimizations))
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
@@ -39,6 +40,7 @@ s1_bool s1_options_get_opt_flag (s1_Options* options, s1_Optimization opt)
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
   if (int (opt) >= int (s1::Compiler::Options::numOptimizations))
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
@@ -51,6 +53,7 @@ s1_bool s1_options_set_opt_level (s1_Options* options, int level)
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
   if (level < 0)
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
@@ -64,6 +67,7 @@ static s1_bool s1_options_parse_opt_flag_str_ucs (s1_Options* options, s1::uc::S
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
   if (!flagStr)
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
@@ -115,6 +119,7 @@ static s1_bool s1_options_set_opt_flag_from_str_ucs (s1_Options* options, s1::uc
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
   if (!flagStr)
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));

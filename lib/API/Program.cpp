@@ -143,6 +143,7 @@ s1_bool s1_program_set_options (s1_Program* program, s1_Options* options)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   if (!options)
   {
@@ -157,6 +158,7 @@ s1_Options* s1_program_get_options (s1_Program* program)
 {
   S1_ASSERT_MSG(program, "NULL Program", nullptr);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   s1::Compiler::OptionsPtr options_impl (program_impl->GetOptions());
   return program_impl->ReturnSuccess (options_impl->DowncastEvil<s1_Options> ());
@@ -166,6 +168,7 @@ static s1_bool s1_program_set_entry_function_ucs (s1_Program* program, s1::uc::S
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   if (!name)
   {
@@ -199,6 +202,7 @@ const char* s1_program_get_entry_function (s1_Program* program)
 {
   S1_ASSERT_MSG(program, "NULL Program", nullptr);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   return program_impl->Return (program_impl->GetEntry (), nullptr);
 }
@@ -207,6 +211,7 @@ static s1_bool s1_program_set_input_frequency_ucs (s1_Program* program, s1::uc::
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   if (!param)
   {
@@ -241,6 +246,7 @@ static s1_InputFrequency s1_program_get_input_frequency_ucs (s1_Program* program
   s1_InputFrequency errorFreq (S1_FREQ_INVALID);
   S1_ASSERT_MSG(program, "NULL Program", errorFreq);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   if (!param)
   {
@@ -274,6 +280,7 @@ static s1_bool s1_program_set_input_array_size_ucs (s1_Program* program, s1::uc:
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   if (!param)
   {
@@ -308,6 +315,7 @@ static size_t s1_program_get_input_array_size_ucs (s1_Program* program, s1::uc::
   const size_t errorSize ((size_t)~0);
   S1_ASSERT_MSG(program, "NULL Program", errorSize);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   if (!param)
   {

@@ -46,19 +46,25 @@ s1_ResultCode s1_library_get_last_error (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library",
                 S1_MAKE_ERROR(S1_RESULT_COMP_BASE, 0xbad1));
-  return s1::EvilUpcast<s1::Library> (lib)->GetLastError();
+  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (libImpl->GetDebugMessageHandler ());
+  return libImpl->GetLastError();
 }
 
 void s1_library_clear_last_error (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library", S1_ASSERT_RET_VOID);
-  s1::EvilUpcast<s1::Library> (lib)->SetLastError (S1_SUCCESS);
+  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (libImpl->GetDebugMessageHandler ());
+  libImpl->SetLastError (S1_SUCCESS);
 }
 
 const char* s1_library_get_last_error_info (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library", nullptr);
-  return s1::EvilUpcast<s1::Library> (lib)->GetLastErrorInfo();
+  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (libImpl->GetDebugMessageHandler ());
+  return libImpl->GetLastErrorInfo();
 }
 
 void s1_library_set_debug_message_handler (s1_Library* lib,
@@ -100,7 +106,8 @@ s1_Options* s1_options_create (s1_Library* obj)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
-  
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
   return lib->Return (lib->Try (
     [=]() {
       s1::Compiler::OptionsPtr options (lib->GetCompiler().CreateOptions());
@@ -114,7 +121,8 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
-  
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
   if (!source)
   {
     lib->SetLastError (S1_E_INVALID_ARG_N (0));
@@ -141,7 +149,8 @@ static s1_Backend* s1_backend_create_ucs (s1_Library* obj, s1::uc::String_option
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
-  
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
   if (!backend)
   {
     lib->SetLastError (S1_E_INVALID_ARG_N (0));

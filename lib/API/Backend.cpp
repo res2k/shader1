@@ -31,6 +31,7 @@ s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
 {
   S1_ASSERT_MSG(backend, "NULL Backend", nullptr);
   s1::Compiler::Backend* backend_impl (s1::EvilUpcast<s1::Compiler::Backend> (backend));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (backend_impl->GetDebugMessageHandler ());
 
   return backend_impl->Return (backend_impl->Try (
     [=]() -> s1::Result<s1_CompiledProgram*>
@@ -68,6 +69,7 @@ s1_BackendOptions* s1_backendoptions_create (s1_Backend* backend)
 {
   S1_ASSERT_MSG(backend, "NULL Backend", nullptr);
   s1::Compiler::Backend* backend_impl (s1::EvilUpcast<s1::Compiler::Backend> (backend));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (backend_impl->GetDebugMessageHandler ());
 
   return backend_impl->Return (backend_impl->Try (
     [=]()
