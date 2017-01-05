@@ -21,6 +21,7 @@
 #include "compiler/Options.h"
 #include "compiler/Program.h"
 
+#include "base/DebugMessageHandler.h"
 #include "base/uc/Stream.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"
@@ -73,16 +74,16 @@ namespace s1
           fragmentOutput = param.identifier;
         else
         {
-          // Make 'proper' warning
-          std::cerr << "Entry function has too many 'float4' outputs" << std::endl;
+          // TODO: Make 'proper' warning
+          s1::PrintDebugMessage ("Entry function has too many 'float4' outputs");
         }
       }
     }
     
     if (vertexOutput.isEmpty() || fragmentOutput.isEmpty())
     {
-      // Make 'proper' warning
-      std::cerr << "Entry function has not enough 'float4' outputs" << std::endl;
+      // TODO: Make 'proper' warning
+      s1::PrintDebugMessage ("Entry function has not enough 'float4' outputs");
     }
     
     intermediateProg->SetOutputParameter (vertexOutput, intermediate::Program::Position);
