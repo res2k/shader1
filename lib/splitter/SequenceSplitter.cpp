@@ -19,6 +19,7 @@
 
 #include "splitter/SequenceSplitter.h"
 
+#include "base/DebugMessageHandler.h"
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
@@ -1271,7 +1272,9 @@ namespace s1
       assert (false);
       return 0;
     }
-    
+
+    format::StaticFormatter FormatRegisterWarning ("Register {0} has no associated availability, using '{1}'");
+
     unsigned int SequenceSplitter::GetRegAvailability (const RegisterPtr& reg)
     {
       AvailabilityMap::const_iterator avail = regAvailability.find (reg);
@@ -1301,11 +1304,8 @@ namespace s1
         {
           const char* const defFreqName[freqNum] = { "uniform",  "vertex", "fragment" };
           const uc::String& regName = reg->GetName();
-          std::string regNameStr;
-          regName.toUTF8String (regNameStr);
-          // FIXME: use a special 'warning' mechanism for this
-          std::cerr << "Register " << regNameStr << " has no associated availability, using '"
-            << defFreqName[defaultFreq] << "'" << std::endl;
+          // FIXME: Or better use some special 'warning' mechanism for this?
+          s1::PrintDebugMessage (FormatRegisterWarning.to<uc::String> (regName, defFreqName[defaultFreq]));
         }
         return defaultAvail;
       }
