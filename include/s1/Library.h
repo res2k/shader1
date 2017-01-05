@@ -23,6 +23,7 @@
 
 #include "s1/warn_off.h"
 
+#include "s1/DebugMessageHandler.h"
 #include "s1/Object.h"
 #include "s1/Ptr.h"
 #include "s1/ResultCode.h"
@@ -73,6 +74,47 @@ S1_API(void) s1_library_clear_last_error (s1_Library* lib);
  * \memberof s1_Library
  */
 S1_API(const char*) s1_library_get_last_error_info (s1_Library* lib);
+
+/**
+ * Set library debug message handler.
+ * \param lib Library to set error handler on.
+ * \param handler Handler function receiving UTF-8 strings.
+ * \param userContext User-defined context value.
+ * \sa s1_set_debug_message_handler
+ */
+S1_API(void) s1_library_set_debug_message_handler (
+  s1_Library* lib, s1_debug_message_handler_func handler, uintptr_t userContext);
+/**
+ * Set global debug message handler.
+ * \param lib Library to set error handler on.
+ * \param handler Handler function receiving wide strings.
+ * \param userContext User-defined context value.
+ * \sa s1_set_debug_message_handler_ws
+ */
+S1_API(void) s1_library_set_debug_message_handler_ws (
+  s1_Library* lib, s1_debug_message_handler_ws_func handler, uintptr_t userContext);
+
+/**
+ * Obtain UTF-8 version of library debug message handler.
+ * \param lib Library to get error handler from.
+ * \param userContextPtr Optional argument to receive "user context" value.
+ * \returns UTF-8 version of global debug message handler, or \NULL if none set
+ *   (this includes a wide string version being set).
+ * \sa s1_get_debug_message_handler
+ */
+S1_API(s1_debug_message_handler_func) s1_library_get_debug_message_handler (
+  s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (0));
+/**
+ * Obtain wide string version of global debug message handler.
+ * \param lib Library to get error handler from.
+ * \param userContextPtr Optional argument to receive "user context" value.
+ * \returns wide string version of global debug message handler, or \NULL if none set
+ *   (this includes an UTF-8 version being set).
+ * \sa s1_get_debug_message_handler_ws
+ */
+S1_API(s1_debug_message_handler_ws_func) s1_library_get_debug_message_handler_ws (
+  s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (0));
+
 
 S1TYPE_DECLARE_FWD(Options);
 /**
@@ -221,6 +263,40 @@ namespace s1
       {
         return s1_library_get_last_error_info (this);
       }
+
+      ///\copydoc s1_set_debug_message_handler
+      void SetDebugMessageHandler (s1_debug_message_handler_func handler, uintptr_t userContext)
+      {
+        return s1_library_set_debug_message_handler (this, handler, userContext);
+      }
+      ///\copydoc s1_set_debug_message_handler_ws
+      void SetDebugMessageHandlerWS (s1_debug_message_handler_ws_func handler, uintptr_t userContext)
+      {
+        return s1_library_set_debug_message_handler_ws (this, handler, userContext);
+      }
+
+      //@{
+      ///\copydoc s1_get_debug_message_handler
+      s1_debug_message_handler_func GetDebugMessageHandler ()
+      {
+        return s1_library_get_debug_message_handler (this);
+      }
+      s1_debug_message_handler_func GetDebugMessageHandler (uintptr_t& userContext)
+      {
+        return s1_library_get_debug_message_handler (this, &userContext);
+      }
+      //@}
+      //@{
+      ///\copydoc s1_get_debug_message_handler_ws
+      s1_debug_message_handler_ws_func GetDebugMessageHandlerWS ()
+      {
+        return s1_library_get_debug_message_handler_ws (this);
+      }
+      s1_debug_message_handler_ws_func GetDebugMessageHandlerWS (uintptr_t& userContext)
+      {
+        return s1_library_get_debug_message_handler_ws (this, &userContext);
+      }
+      //@}
 
       /**
        * Create a compiler options objects.

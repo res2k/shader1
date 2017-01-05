@@ -21,6 +21,7 @@
 #ifndef __BASE_LIBRARY_H__
 #define __BASE_LIBRARY_H__
 
+#include "base/DebugMessageHandler.h"
 #include "base/Exception.h"
 #include "base/Object.h"
 #include "base/Result.h"
@@ -55,6 +56,8 @@ namespace s1
     // TODO: Store error info with thread affinity
     s1_ResultCode lastError;
     std::string errorInfo;
+    /// Message handler settings
+    DebugMessageHandler messageHandler;
     /// The internal factory object
     Compiler compiler;  // TODO: Can probably be removed
   public:
@@ -161,6 +164,9 @@ namespace s1
       }
       return S1_E_FAILURE;
     }
+
+    /// Debug message handler access
+    DebugMessageHandler& GetDebugMessageHandler () { return messageHandler; }
   };
   typedef boost::intrusive_ptr<Library> LibraryPtr;
 } // namespace s1

@@ -1,7 +1,9 @@
 set(base_sources
+    DebugMessageHandler.cpp
     math_error_handler.cpp
     format/Formatter.cpp
     ${S1_INC}/base/common.h
+    ${S1_INC}/base/DebugMessageHandler.h
     ${S1_INC}/base/Exception.h
     ${S1_INC}/base/Library.h
     ${S1_INC}/base/LibraryObject.h
