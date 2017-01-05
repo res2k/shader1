@@ -80,15 +80,17 @@ S1_API(const char*) s1_library_get_last_error_info (s1_Library* lib);
  * \param lib Library to set error handler on.
  * \param handler Handler function receiving UTF-8 strings.
  * \param userContext User-defined context value.
+ * \memberof s1_Library
  * \sa s1_set_debug_message_handler
  */
 S1_API(void) s1_library_set_debug_message_handler (
   s1_Library* lib, s1_debug_message_handler_func handler, uintptr_t userContext);
 /**
- * Set global debug message handler.
+ * Set library debug message handler.
  * \param lib Library to set error handler on.
  * \param handler Handler function receiving wide strings.
  * \param userContext User-defined context value.
+ * \memberof s1_Library
  * \sa s1_set_debug_message_handler_ws
  */
 S1_API(void) s1_library_set_debug_message_handler_ws (
@@ -100,6 +102,7 @@ S1_API(void) s1_library_set_debug_message_handler_ws (
  * \param userContextPtr Optional argument to receive "user context" value.
  * \returns UTF-8 version of global debug message handler, or \NULL if none set
  *   (this includes a wide string version being set).
+ * \memberof s1_Library
  * \sa s1_get_debug_message_handler
  */
 S1_API(s1_debug_message_handler_func) s1_library_get_debug_message_handler (
@@ -110,6 +113,7 @@ S1_API(s1_debug_message_handler_func) s1_library_get_debug_message_handler (
  * \param userContextPtr Optional argument to receive "user context" value.
  * \returns wide string version of global debug message handler, or \NULL if none set
  *   (this includes an UTF-8 version being set).
+ * \memberof s1_Library
  * \sa s1_get_debug_message_handler_ws
  */
 S1_API(s1_debug_message_handler_ws_func) s1_library_get_debug_message_handler_ws (
@@ -264,39 +268,71 @@ namespace s1
         return s1_library_get_last_error_info (this);
       }
 
-      ///\copydoc s1_set_debug_message_handler
+      /**
+       * Set library debug message handler.
+       * \param handler Handler function receiving UTF-8 strings.
+       * \param userContext User-defined context value.
+       * \sa s1::SetDebugMessageHandler
+       */
       void SetDebugMessageHandler (s1_debug_message_handler_func handler, uintptr_t userContext)
       {
         return s1_library_set_debug_message_handler (this, handler, userContext);
       }
-      ///\copydoc s1_set_debug_message_handler_ws
+      /**
+       * Set library debug message handler.
+       * \param handler Handler function receiving wide strings.
+       * \param userContext User-defined context value.
+       * \sa s1::SetDebugMessageHandlerWS
+       */
       void SetDebugMessageHandlerWS (s1_debug_message_handler_ws_func handler, uintptr_t userContext)
       {
         return s1_library_set_debug_message_handler_ws (this, handler, userContext);
       }
 
-      //@{
-      ///\copydoc s1_get_debug_message_handler
+      /**
+       * Obtain UTF-8 version of library debug message handler.
+       * \returns UTF-8 version of global debug message handler, or \NULL if none set
+       *   (this includes a wide string version being set).
+       * \sa s1::GetDebugMessageHandler
+       */
       s1_debug_message_handler_func GetDebugMessageHandler ()
       {
         return s1_library_get_debug_message_handler (this);
       }
+      /**
+      * Obtain UTF-8 version of library debug message handler.
+      * \param userContextPtr Argument to receive "user context" value.
+      * \returns UTF-8 version of global debug message handler, or \NULL if none set
+      *   (this includes a wide string version being set).
+      * \sa s1::GetDebugMessageHandler
+      */
       s1_debug_message_handler_func GetDebugMessageHandler (uintptr_t& userContext)
       {
         return s1_library_get_debug_message_handler (this, &userContext);
       }
-      //@}
-      //@{
-      ///\copydoc s1_get_debug_message_handler_ws
+
+      /**
+       * Obtain wide string version of global debug message handler.
+       * \param userContextPtr Optional argument to receive "user context" value.
+       * \returns wide string version of global debug message handler, or \NULL if none set
+       *   (this includes an UTF-8 version being set).
+       * \sa s1::GetDebugMessageHandlerWS
+       */
       s1_debug_message_handler_ws_func GetDebugMessageHandlerWS ()
       {
         return s1_library_get_debug_message_handler_ws (this);
       }
+      /**
+       * Obtain wide string version of global debug message handler.
+       * \param userContextPtr Optional argument to receive "user context" value.
+       * \returns wide string version of global debug message handler, or \NULL if none set
+       *   (this includes an UTF-8 version being set).
+       * \sa s1::GetDebugMessageHandlerWS
+       */
       s1_debug_message_handler_ws_func GetDebugMessageHandlerWS (uintptr_t& userContext)
       {
         return s1_library_get_debug_message_handler_ws (this, &userContext);
       }
-      //@}
 
       /**
        * Create a compiler options objects.
