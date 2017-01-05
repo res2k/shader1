@@ -150,6 +150,8 @@ if(MSVC)
   set(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}${CXX_ZO}")
   # New option in VC 12. Needed when more than one project writes to a PDB
   CxxCompilerFlagString (CXX_PDB_SYNC "/FS")
+  # Interpret source files as UTF-8
+  CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "/utf-8")
 endif()
 
 # Build everything with -fPIC to allow linking into shared libs
