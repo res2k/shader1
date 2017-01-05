@@ -69,13 +69,13 @@ namespace s1
       const SequenceOpPtr& seqOpElse)
     {
       auto seqIf = boost::dynamic_pointer_cast<SequenceOpBlock> (seqOpIf);
-      S1_ASSERT_RET_VOID(seqIf);
+      S1_ASSERT(seqIf, S1_ASSERT_RET_VOID);
       seqIf->Visit (*this);
 
       if (seqOpElse)
       {
         auto seqElse = boost::dynamic_pointer_cast<SequenceOpBlock> (seqOpElse);
-        S1_ASSERT_RET_VOID (seqOpElse);
+        S1_ASSERT(seqElse, S1_ASSERT_RET_VOID);
         seqElse->Visit (*this);
       }
     }
@@ -85,7 +85,7 @@ namespace s1
       const SequenceOpPtr& seqOpBody)
     {
       auto seqBody = boost::dynamic_pointer_cast<SequenceOpBlock> (seqOpBody);
-      S1_ASSERT_RET_VOID (seqBody);
+      S1_ASSERT(seqBody, S1_ASSERT_RET_VOID);
       seqBody->Visit (*this);
     }
 
@@ -157,9 +157,9 @@ namespace s1
           {
             // Add edge from currentFunc to calledIdent to graph
             auto currentVertexIt = identToVertex.find (currentIdent);
-            S1_ASSERT_RET_VOID(currentVertexIt != identToVertex.end ());
+            S1_ASSERT(currentVertexIt != identToVertex.end (), S1_ASSERT_RET_VOID);
             auto calledVertexIt = identToVertex.find (calledIdent);
-            S1_ASSERT_RET_VOID(calledVertexIt != identToVertex.end ());
+            S1_ASSERT(calledVertexIt != identToVertex.end (), S1_ASSERT_RET_VOID);
             boost::add_edge (currentVertexIt->second, calledVertexIt->second, graph);
             // "Simple" recursion: handle straight away
             if (currentIdent == calledIdent)

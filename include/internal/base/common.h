@@ -40,6 +40,7 @@ static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 
 // Debugging helpers
 #include <assert.h>
+/// \internal For use as S1_ASSERT \a "ret" value for functions returning \c void
 #define S1_ASSERT_RET_VOID
 #define S1_ASSERT(x, ret)            { assert (x); if (!(x)) { return ret; } }
 // TODO: Implement custom assertion messages
