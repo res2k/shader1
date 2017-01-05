@@ -59,23 +59,23 @@ namespace s1
       const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = func->GetParams();
       for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : funcParams)
       {
-	if (!(param.dir & parser::SemanticsHandler::Scope::dirOut)) continue;
-	
-	// Look for float4 output
-	if (param.type->GetTypeClass() != parser::SemanticsHandler::Type::Vector) continue;
-	if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != parser::SemanticsHandler::Float) continue;
-	if (param.type->GetVectorTypeComponents() != 4) continue;
-	
-	// Parameter qualifies
-	if (vertexOutput.isEmpty())
-	  vertexOutput = param.identifier;
-	else if (fragmentOutput.isEmpty())
-	  fragmentOutput = param.identifier;
-	else
-	{
-	  // Make 'proper' warning
-	  std::cerr << "Entry function has too many 'float4' outputs" << std::endl;
-	}
+        if (!(param.dir & parser::SemanticsHandler::Scope::dirOut)) continue;
+        
+        // Look for float4 output
+        if (param.type->GetTypeClass() != parser::SemanticsHandler::Type::Vector) continue;
+        if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != parser::SemanticsHandler::Float) continue;
+        if (param.type->GetVectorTypeComponents() != 4) continue;
+        
+        // Parameter qualifies
+        if (vertexOutput.isEmpty())
+          vertexOutput = param.identifier;
+        else if (fragmentOutput.isEmpty())
+          fragmentOutput = param.identifier;
+        else
+        {
+          // Make 'proper' warning
+          std::cerr << "Entry function has too many 'float4' outputs" << std::endl;
+        }
       }
     }
     
@@ -104,7 +104,7 @@ namespace s1
                                                                        const FreqFlagMap& inputParamFreqs,
                                                                        const ArraySizeMap& arraySizes,
                                                                        const Compiler::BackendPtr& backend,
-								       Backend::CompileTarget target,
+                                                                       Backend::CompileTarget target,
                                                                        Backend::OptionsPtr options)
   {
     if (!intermediateProg)
@@ -113,7 +113,7 @@ namespace s1
       SetProgramOutputParameters ();
       
       for (unsigned int n = 0; n < splitter::freqNum; n++)
-	splitProgs[n] = intermediate::ProgramPtr();
+        splitProgs[n] = intermediate::ProgramPtr();
     }
 
     intermediateProg->SetParameterArraySizes (arraySizes);
@@ -126,26 +126,26 @@ namespace s1
     case Backend::targetVP:
     case Backend::targetFP:
       {
-	if (!splitProgs[splitter::freqVertex] || !splitProgs[splitter::freqFragment])
-	{
-	  splitter::ProgramSplitter splitter;
-	  
-	  typedef std::pair<uc::String, unsigned int> FreqFlagPair;
-	  for(FreqFlagPair freqFlag : inputParamFreqs)
-	  {
-	    splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);
-	  }
-	  
-	  splitter.SetInputProgram (optProg);
-	  splitter.PerformSplit();
-	  
+        if (!splitProgs[splitter::freqVertex] || !splitProgs[splitter::freqFragment])
+        {
+          splitter::ProgramSplitter splitter;
+          
+          typedef std::pair<uc::String, unsigned int> FreqFlagPair;
+          for(FreqFlagPair freqFlag : inputParamFreqs)
+          {
+            splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);
+          }
+          
+          splitter.SetInputProgram (optProg);
+          splitter.PerformSplit();
+          
           optimize::Optimizer opt = CreateOptimizer (compilerOptions);
           splitProgs[splitter::freqVertex] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqVertex));
-	  splitProgs[splitter::freqFragment] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqFragment));
-	}
-	
-	return backend->GenerateProgram (target,
-	  target == Backend::targetVP ? splitProgs[splitter::freqVertex] : splitProgs[splitter::freqFragment],
+          splitProgs[splitter::freqFragment] = opt.ApplyOptimizations (splitter.GetOutputProgram (splitter::freqFragment));
+        }
+        
+        return backend->GenerateProgram (target,
+          target == Backend::targetVP ? splitProgs[splitter::freqVertex] : splitProgs[splitter::freqFragment],
           options);
       }
       break;
