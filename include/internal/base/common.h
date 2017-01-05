@@ -38,18 +38,50 @@ static const size_t charsToFormatUint = S1_APPROX_DIGITS(unsigned int);
 // Add 1 for '-'
 static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
 
+//
 // Debugging helpers
-#include <assert.h>
-/// \internal For use as S1_ASSERT \a "ret" value for functions returning \c void
-#define S1_ASSERT_RET_VOID
-#define S1_ASSERT(x, ret)            { assert (x); if (!(x)) { return ret; } }
-// TODO: Implement custom assertion messages
-#define S1_ASSERT_MSG(x, msg, ret)   S1_ASSERT(x, ret)
+//
 
 // Provide _DEBUG on all platforms
 #if !defined(NDEBUG) && !defined(_DEBUG)
   #define _DEBUG
 #endif
+
+namespace s1
+{
+  namespace detail
+  {
+  #if defined(_WIN32)
+    typedef wchar_t assert_char;
+    #define _S1_ASSERT_STR(S)     _S1_ASSERT_STR_2(S)
+    #define _S1_ASSERT_STR_2(S)   L ## S
+  #else
+    typedef char assert_char;
+    #define _S1_ASSERT_STR(S)     S
+  #endif
+
+    /// Print assertion using current debug message handler
+    void PrintAssert (const assert_char* filename, int line, const assert_char* condition, const assert_char* message = nullptr);
+  } // namespace detail
+} // namespace s1
+
+#include <assert.h>
+/// \internal For use as S1_ASSERT \a "ret" value for functions returning \c void
+#define S1_ASSERT_RET_VOID
+#define _S1_ASSERT_MSG(x, msg, ret)                           \
+  do {                                                        \
+    if (!(x))                                                 \
+    {                                                         \
+      ::s1::detail::PrintAssert (_S1_ASSERT_STR(__FILE__),    \
+                                 __LINE__,                    \
+                                 _S1_ASSERT_STR(#x),          \
+                                 msg);                        \
+    }                                                         \
+    if (msg) { assert ((x) && !!msg); } else { assert (x); }  \
+    if (!(x)) { return ret; }                                 \
+  } while(0)
+#define S1_ASSERT(x, ret)            _S1_ASSERT_MSG(x, nullptr, ret)
+#define S1_ASSERT_MSG(x, msg, ret)   _S1_ASSERT_MSG(x, _S1_ASSERT_STR(msg), ret)
 
 // Used all over the place
 #include "uc/String.h"
