@@ -27,6 +27,8 @@
 
 #include <boost/thread.hpp>
 
+#include <mutex>
+
 namespace s1
 {
   /// Wrapper for debug message handler functions
@@ -74,7 +76,7 @@ namespace s1
     /// Global debug message handler
     struct GlobalDebugMessageHandler
     {
-      boost::mutex mutex;
+      std::mutex mutex;
       DebugMessageHandler handler;
     };
     extern GlobalDebugMessageHandler globalHandler;
@@ -85,7 +87,7 @@ namespace s1
   template<typename F>
   static typename std::result_of<F (DebugMessageHandler&)>::type AccessGlobalDebugMessageHandler (F function)
   {
-    boost::lock_guard<boost::mutex> lock_globalHandler (detail::globalHandler.mutex);
+    std::lock_guard<std::mutex> lock_globalHandler (detail::globalHandler.mutex);
     return function (detail::globalHandler.handler);
   }
 

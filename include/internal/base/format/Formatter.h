@@ -23,8 +23,8 @@
 
 #include <boost/preprocessor/inc.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/thread/once.hpp>
 
+#include <mutex>
 #include <vector>
 
 #include "FormatStringTraits.h"
@@ -120,7 +120,7 @@ namespace s1
     class StaticFormatter
     {
       const char* format;
-      boost::once_flag formatterInit;
+      std::once_flag formatterInit;
       boost::scoped_ptr<Formatter<> > formatter;
 
       static void NewFormatter (StaticFormatter* this_)
@@ -131,11 +131,11 @@ namespace s1
 
       const Formatter<>& GetFormatter ()
       {
-        boost::call_once (formatterInit, &NewFormatter, this);
+        std::call_once (formatterInit, &NewFormatter, this);
         return *formatter;
       }
     public:
-      StaticFormatter (const char* format) : format (format), formatterInit (BOOST_ONCE_INIT) {}
+      StaticFormatter (const char* format) : format (format) {}
 
       /**
       * Actual formatting.

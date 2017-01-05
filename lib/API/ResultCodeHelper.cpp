@@ -21,9 +21,9 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include "base/format/Formatter.h"
 
 #include <boost/unordered_map.hpp>
-#include <boost/thread.hpp>
 
 #include <memory>
+#include <mutex>
 
 #include "base/format/Formatter.tpp"
 #include "base/format/std_string.h"
@@ -34,11 +34,11 @@ namespace s1
   {
     struct ExtraDescrCache
     {
-      boost::mutex mutex;
+      std::mutex mutex;
       boost::unordered_map<s1_ResultCode, std::unique_ptr<char[]>> descr;
     };
 
-    static boost::once_flag extraDescrCacheInit;
+    static std::once_flag extraDescrCacheInit;
     static std::unique_ptr<ExtraDescrCache> extraDescrCache;
 
     format::StaticFormatter FormatExtDescr ("{0} ({1})");
@@ -52,8 +52,8 @@ namespace s1
       }
       else
       {
-        boost::call_once (extraDescrCacheInit, []() { extraDescrCache.reset (new ExtraDescrCache); });
-        boost::lock_guard<boost::mutex> lock_extraDescrCache (extraDescrCache->mutex);
+        std::call_once (extraDescrCacheInit, []() { extraDescrCache.reset (new ExtraDescrCache); });
+        std::lock_guard<std::mutex> lock_extraDescrCache (extraDescrCache->mutex);
         auto cacheIt = extraDescrCache->descr.find (code);
         if (cacheIt == extraDescrCache->descr.end ())
         {
