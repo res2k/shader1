@@ -26,7 +26,11 @@ set(BOOST_IOSTREAMS_SOURCES
 # Sources for boost_thread
 file(GLOB thread_sources_all ${BOOST_ROOT}/libs/thread/src/*.cpp)
 if(WIN32)
-  file(GLOB thread_sources_platform ${BOOST_ROOT}/libs/thread/src/win32/*.cpp)
+  set(thread_sources_platform_thread ${BOOST_ROOT}/libs/thread/src/win32/thread.cpp)
+  # FIXME?: What tss to use when not building as DLL...
+  set(thread_sources_platform_tss ${BOOST_ROOT}/libs/thread/src/win32/tss_dll.cpp)
+  set(BOOST_THREAD_TSS_DLL_COMPILE_DEFS "BOOST_THREAD_BUILD_DLL") # Set that flag on that source _only_
+  set(thread_sources_platform "${thread_sources_platform_thread};${thread_sources_platform_tss}")
 else()
   find_package(Threads)
   if(CMAKE_USE_PTHREADS_INIT)
@@ -65,6 +69,11 @@ function(s1_get_boost_link_libs VAR)
         s1_add_library(${private_target_name} STATIC
                        SOURCES ${lib_sources})
         target_compile_definitions(${private_target_name} PUBLIC "-DBOOST_${lib_upper}_STATIC_LINK=1" ${BOOST_${lib_upper}_DEFS})
+        foreach(src ${lib_sources})
+          get_filename_component(source_name ${src} NAME_WE)
+          string(TOUPPER "${source_name}" source_name_upper)
+          set_property(SOURCE "${src}" PROPERTY COMPILE_DEFINITIONS_DEBUG "${BOOST_${lib_upper}_${source_name_upper}_COMPILE_DEFS}")
+        endforeach()
         if(BOOST_${lib_upper}_DEPENDS)
           target_link_libraries(${private_target_name} PUBLIC ${BOOST_${lib_upper}_DEPENDS})
         endif()
