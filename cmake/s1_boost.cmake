@@ -19,9 +19,12 @@ set(BOOST_FILESYSTEM_BOOSTDEP system)
 set(BOOST_THREAD_BOOSTDEP system)
 
 # Sources for boost_iostreams
-set(BOOST_IOSTREAMS_SOURCES
-    ${BOOST_ROOT}/libs/iostreams/src/file_descriptor.cpp
-    ${BOOST_ROOT}/libs/iostreams/src/mapped_file.cpp)
+set(iostreams_src "${BOOST_ROOT}/libs/iostreams/src")
+if(IS_DIRECTORY ${iostreams_src})
+  set(BOOST_IOSTREAMS_SOURCES
+      ${iostreams_src}/file_descriptor.cpp
+      ${iostreams_src}/mapped_file.cpp)
+endif()
 
 function(s1_get_boost_link_libs VAR)
   set(link_libs)
