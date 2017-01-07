@@ -349,7 +349,7 @@ namespace s1
         {}
 
       #define _ARG_HELPER(Arg)                                                      \
-          ArgHelper<SinkType, decayed_tuple_element_or_none<Arg, ArgsTuple>::type>
+          ArgHelper<SinkType, typename decayed_tuple_element_or_none<Arg, ArgsTuple>::type>
       #define _ARG_FORMATTED_SIZE(Arg)                                              \
           return _ARG_HELPER(Arg)::FormattedSize (tuple_get<Arg> (args_tuple));
       #define _ARG_EMIT(Arg)                                                        \
