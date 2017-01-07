@@ -34,12 +34,12 @@ namespace s1
       /// Flag value for 'debug annotations' option
       boost::optional<bool> debugAnnotationsFlag;
 
-      class CommonDeclarations : public Declarations
+      class CommonDeclarations : public OptionsBase<Derived>::Declarations
       {
       public:
         CommonDeclarations ()
         {
-          RegisterFlag ("annotate", &Options::debugAnnotationsFlag);
+          this->RegisterFlag ("annotate", &Options::debugAnnotationsFlag);
         }
       };
     public:
