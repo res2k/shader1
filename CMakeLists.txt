@@ -1,5 +1,8 @@
 PROJECT(s1)
 cmake_minimum_required(VERSION 3.1.0)
+if(POLICY CMP0060)
+  cmake_policy(SET CMP0060 NEW)
+endif()
 
 # CMake cache variables we will augment with out own detected settings
 set(OVERRIDE_CACHE_VARS CXX_FLAGS
