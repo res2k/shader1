@@ -104,6 +104,7 @@ namespace s1
        * Let a backend generate an actual shader code from a Shader1 program.
        * \param target Targeted shader stage.
        * \param program Program to generate code from.
+       * \param options Optional backend options.
        * \returns A new compiled shader program or \NULL in case of an error.
        * In that case the error status is saved in the library's
        * last error code.

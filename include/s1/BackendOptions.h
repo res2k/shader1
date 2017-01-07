@@ -40,7 +40,7 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_BackendOptions);
  * Parse and set a backend option from a string.
  * Useful for e.g. command line parsing.
  * \param options Backend options object.
- * \param flagStr Backend option string. 
+ * \param str Backend option string. 
  * \returns Whether setting the optimization level succeeded.
  * In case of an error, the error status is saved in the library's
  * last error code.
@@ -73,8 +73,7 @@ namespace s1
       /**
        * Parse and set a backend option from a string.
        * Useful for e.g. command line parsing.
-       * \param options Backend options object.
-       * \param flagStr Backend option string. 
+       * \param str Backend option string. 
        * \returns Whether setting the optimization level succeeded.
        * In case of an error, the error status is saved in the library's
        * last error code.

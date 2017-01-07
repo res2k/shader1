@@ -139,7 +139,7 @@ namespace s1
   enum ResultCode : s1_ResultCode;
 #endif
 
-  ///\copydoc s1_get_result_code_description
+  ///\copydoc s1_get_result_code_str
   static inline const char* GetResultCodeStr (ResultCode code)
   {
     return s1_get_result_code_str (code);
