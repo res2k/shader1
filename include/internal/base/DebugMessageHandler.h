@@ -132,15 +132,15 @@ namespace s1
 
   //@{
   /// Print a debug message.
-  static void PrintDebugMessage (const uc::String& str)
+  static inline void PrintDebugMessage (const uc::String& str)
   {
     detail::PrintMessage (str);
   }
-  static void PrintDebugMessage (const wchar_t* str)
+  static inline void PrintDebugMessage (const wchar_t* str)
   {
     detail::PrintMessage (str);
   }
-  static void PrintDebugMessage (const char* str)
+  static inline void PrintDebugMessage (const char* str)
   {
     detail::PrintMessage (str);
   }

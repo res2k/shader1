@@ -43,12 +43,12 @@ namespace s1
     uc::UTF8Decoder decoder;
 #if CXX_SIZEOF_WCHAR_T == 2
     uc::UTF16Encoder encoder;
-#endif
     size_t outputPos = 0;
+#endif
     while (strPos < str + strLen)
     {
       uc::Char32 nextChar;
-      if (decoder (strPos, str + strLen, nextChar) != uc::UTF16Decoder::drSuccess)
+      if (decoder (strPos, str + strLen, nextChar) != uc::UTF8Decoder::drSuccess)
       {
         break;
       }
@@ -119,7 +119,7 @@ namespace s1
     #elif CXX_SIZEOF_WCHAR_T == 4
       boost::container::small_vector<wchar_t, 256> buf;
       buf.reserve (str.size () + 1);
-      String::CharacterIterator it (str);
+      uc::String::CharacterIterator it (str);
       while (it.hasNext ())
       {
         buf.push_back (static_cast<wchar_t> (it.next32PostInc ()));
@@ -179,7 +179,7 @@ namespace s1
           buf_utf8.push_back (0);
           char* buf_ptr = buf_utf8.data () + outputPos;
           auto encodeResult = encoder (nextChar, buf_ptr, buf_ptr + (buf_utf8.size () - outputPos));
-          fullyEncoded = encodeResult = uc::UTF8Encoder::erSuccess;
+          fullyEncoded = (encodeResult = uc::UTF8Encoder::erSuccess);
           outputPos = buf_ptr - buf_utf8.data ();
           if (!fullyEncoded && (encodeResult != uc::UTF8Encoder::erOutputOverflow)) break;
         } while (!fullyEncoded);
