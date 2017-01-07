@@ -31,72 +31,6 @@ namespace s1
 {
   namespace codegen
   {
-    AnnotatingSequenceCodeGenerator::Visitor::Visitor (const StringsArrayPtr& target)
-      : BasicSequenceCodeGenerator::Visitor (target)
-    {}
-
-#define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
-  BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
-  BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
-
-#define _GENERATE_FMT_PLACEHOLDER(Z, N, Data)                                         \
-    BOOST_PP_IF(N, ",", "") " {" BOOST_PP_STRINGIZE(BOOST_PP_INC(BOOST_PP_MUL(N, 2))) \
-    "}={" BOOST_PP_STRINGIZE(BOOST_PP_MUL(BOOST_PP_INC(N), 2))   "}"
-#define _GENERATE_FMT_ARGUMENT(Z, N, Data)        \
-    BOOST_PP_COMMA() BOOST_PP_CAT(name, N)        \
-    BOOST_PP_COMMA() DebugCommentArgHelper<BOOST_PP_CAT(A, N)>::FormatArg (BOOST_PP_CAT(a, N))
-
-#define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                                \
-    template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
-    void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const char* opStr            \
-      BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
-    {                                                                                         \
-      static format::StaticFormatter fmt ("// {0} ->"                                         \
-        BOOST_PP_REPEAT_FROM_TO_ ## Z (0, BOOST_PP_INC(ArgNum),                               \
-          _GENERATE_FMT_PLACEHOLDER, _));                                                     \
-      uc::String commentStr;                                                                  \
-      fmt (commentStr, opStr                                                                  \
-        BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_FMT_ARGUMENT, _));             \
-      target->AddString (commentStr);                                                         \
-    } 
-
-    BOOST_PP_REPEAT (BOOST_PP_DEC (COMMENT_MAX_ARGS), _DEFINE_DEBUG_COMMENT, _)
-
-#undef _DEFINE_DEBUG_COMMENT
-
-#define _GENERATE_INVOKE_ARG(R, Data, Elem)     \
-    BOOST_PP_COMMA() BOOST_PP_STRINGIZE(Elem) BOOST_PP_COMMA() (Elem)
-#define DEBUG_COMMENT(Op, Seq)                                                                \
-    if (debugCommentsEnabled)                                                                 \
-    {                                                                                         \
-      DebugComment (Op BOOST_PP_SEQ_FOR_EACH(_GENERATE_INVOKE_ARG, _, Seq));                  \
-    }
-
-    void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const uc::String& str)
-    {
-      uc::String remainder (str);
-      bool firstLine = true;
-      uc::String line;
-      while (!remainder.isEmpty ())
-      {
-        line = (firstLine ? "/* " : "   ");
-        firstLine = false;
-        uc::String::size_type lfPos = remainder.indexOf ('\n');
-        if (lfPos == uc::String::npos)
-        {
-          line.append (remainder);
-          line.append (" */");
-          target->AddString (line);
-          return;
-        }
-        line.append (remainder.data (), lfPos);
-        target->AddString (line);
-        remainder = uc::String (remainder, lfPos + 1);
-        if (remainder.isEmpty())
-          target->AddString (" */");
-      }
-    }
-
     namespace
     {
       template<typename T>
@@ -303,6 +237,72 @@ namespace s1
           return "???";
         }
       };
+    }
+
+    AnnotatingSequenceCodeGenerator::Visitor::Visitor (const StringsArrayPtr& target)
+      : BasicSequenceCodeGenerator::Visitor (target)
+    {}
+
+#define _GENERATE_METHOD_PARAM(Z, N, Data)                        \
+  BOOST_PP_COMMA() const char* BOOST_PP_CAT(name, N)              \
+  BOOST_PP_COMMA() BOOST_PP_CAT(const A, N)& BOOST_PP_CAT(a, N)
+
+#define _GENERATE_FMT_PLACEHOLDER(Z, N, Data)                                         \
+    BOOST_PP_IF(N, ",", "") " {" BOOST_PP_STRINGIZE(BOOST_PP_INC(BOOST_PP_MUL(N, 2))) \
+    "}={" BOOST_PP_STRINGIZE(BOOST_PP_MUL(BOOST_PP_INC(N), 2))   "}"
+#define _GENERATE_FMT_ARGUMENT(Z, N, Data)        \
+    BOOST_PP_COMMA() BOOST_PP_CAT(name, N)        \
+    BOOST_PP_COMMA() DebugCommentArgHelper<BOOST_PP_CAT(A, N)>::FormatArg (BOOST_PP_CAT(a, N))
+
+#define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                                \
+    template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
+    void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const char* opStr            \
+      BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
+    {                                                                                         \
+      static format::StaticFormatter fmt ("// {0} ->"                                         \
+        BOOST_PP_REPEAT_FROM_TO_ ## Z (0, BOOST_PP_INC(ArgNum),                               \
+          _GENERATE_FMT_PLACEHOLDER, _));                                                     \
+      uc::String commentStr;                                                                  \
+      fmt (commentStr, opStr                                                                  \
+        BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_FMT_ARGUMENT, _));             \
+      target->AddString (commentStr);                                                         \
+    }
+
+    BOOST_PP_REPEAT (BOOST_PP_DEC (COMMENT_MAX_ARGS), _DEFINE_DEBUG_COMMENT, _)
+
+#undef _DEFINE_DEBUG_COMMENT
+
+#define _GENERATE_INVOKE_ARG(R, Data, Elem)     \
+    BOOST_PP_COMMA() BOOST_PP_STRINGIZE(Elem) BOOST_PP_COMMA() (Elem)
+#define DEBUG_COMMENT(Op, Seq)                                                                \
+    if (debugCommentsEnabled)                                                                 \
+    {                                                                                         \
+      DebugComment (Op BOOST_PP_SEQ_FOR_EACH(_GENERATE_INVOKE_ARG, _, Seq));                  \
+    }
+
+    void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const uc::String& str)
+    {
+      uc::String remainder (str);
+      bool firstLine = true;
+      uc::String line;
+      while (!remainder.isEmpty ())
+      {
+        line = (firstLine ? "/* " : "   ");
+        firstLine = false;
+        uc::String::size_type lfPos = remainder.indexOf ('\n');
+        if (lfPos == uc::String::npos)
+        {
+          line.append (remainder);
+          line.append (" */");
+          target->AddString (line);
+          return;
+        }
+        line.append (remainder.data (), lfPos);
+        target->AddString (line);
+        remainder = uc::String (remainder, lfPos + 1);
+        if (remainder.isEmpty())
+          target->AddString (" */");
+      }
     }
 
     void AnnotatingSequenceCodeGenerator::Visitor::OpConstBool (const RegisterPtr& destination,
