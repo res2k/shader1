@@ -24,6 +24,7 @@
 #include "Char.h"
 
 #include <limits>
+#include <stdexcept>
 #include <string>
 #include <string.h>
 
