@@ -65,8 +65,7 @@ namespace s1
       {
         inputArraySizes.emplace (inputSize.first, inputSize.second);
       }
-      uc::String entryFunctionU (uc::String::fromUTF8 (entryFunction));
-      return wrapped_program->GetCompiledProgram (entryFunctionU, options, inputFreqFlags, inputArraySizes, backend, target,
+      return wrapped_program->GetCompiledProgram (entryFunction.GetUCS(), options, inputFreqFlags, inputArraySizes, backend, target,
                                                   backendOptions);
     }
 
@@ -80,13 +79,12 @@ namespace s1
     s1_ResultCode Program::SetEntry (const uc::String& entry)
     {
       // TODO: Function name validation
-      entryFunction.clear ();
-      entry.toUTF8String (entryFunction);
+      entryFunction = entry;
       return S1_SUCCESS;
     }
     Result<const char*> Program::GetEntry () const
     {
-      return entryFunction.c_str();
+      return entryFunction.GetUTF8();
     }
     
     s1_ResultCode Program::SetInputFrequency (const uc::String& param, s1_InputFrequency freq)

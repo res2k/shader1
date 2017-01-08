@@ -20,6 +20,8 @@ set(s1_sources
     ResultCode.cpp
     ResultCodeHelper.cpp
     ResultCodeHelper.h
+    StringWrapper.cpp
+    StringWrapper.h
     ${S1_INC_PUBLIC}/Backend.h
     ${S1_INC_PUBLIC}/BackendOptions.h
     ${S1_INC_PUBLIC}/CompiledProgram.h

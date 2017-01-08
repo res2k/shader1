@@ -30,6 +30,8 @@
 #include "compiler/Program.h"
 #include "compiler/Options.h"
 
+#include "StringWrapper.h"
+
 #include <boost/unordered_map.hpp>
 
 namespace s1
@@ -42,7 +44,7 @@ namespace s1
       Compiler& compiler;
       s1::Compiler::OptionsPtr options; // TODO: Ideally, this would be copy-on-write
       std::string source;
-      std::string entryFunction;
+      StringWrapper entryFunction;
       typedef boost::unordered_map<uc::String, s1::splitter::Frequency> InputFreqMapType;
       InputFreqMapType inputFreqMap;
       typedef boost::unordered_map<uc::String, size_t> InputSizeMapType;
