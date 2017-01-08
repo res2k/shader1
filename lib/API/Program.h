@@ -65,7 +65,7 @@ namespace s1
       const s1::Compiler::OptionsPtr& GetOptions() const;
       
       s1_ResultCode SetEntry (const uc::String& entry);
-      Result<const char*> GetEntry () const;
+      Result<const StringWrapper&> GetEntry () const;
       
       s1_ResultCode SetInputFrequency (const uc::String& param, s1_InputFrequency freq);
       Result<InputFrequency> GetInputFrequency (const uc::String& param) const;

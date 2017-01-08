@@ -83,6 +83,7 @@ S1_API(s1_bool) s1_program_set_entry_function_ws (s1_Program* program, const wch
 S1_API(s1_bool) s1_program_set_entry_function_u16 (s1_Program* program, const s1_char16* name);
 S1_API(s1_bool) s1_program_set_entry_function_u32 (s1_Program* program, const s1_char32* name);
 //@}
+//@{
 /**
  * Get the entry function of a program.
  * \param program Program object.
@@ -95,6 +96,10 @@ S1_API(s1_bool) s1_program_set_entry_function_u32 (s1_Program* program, const s1
  * \memberof s1_Program
  */
 S1_API(const char*) s1_program_get_entry_function (s1_Program* program);
+S1_API(const wchar_t*) s1_program_get_entry_function_ws (s1_Program* program);
+S1_API(const s1_char16*) s1_program_get_entry_function_u16 (s1_Program* program);
+S1_API(const s1_char32*) s1_program_get_entry_function_u32 (s1_Program* program);
+//@}
 
 /// Variation frequency of a program input variable
 enum s1_InputFrequency
@@ -270,6 +275,7 @@ namespace s1
       }
       //@}
 
+      //@{
       /**
        * Get the entry function of a program.
        * \returns The program's entry function or \NULL in case if an error.
@@ -283,6 +289,19 @@ namespace s1
       {
         return s1_program_get_entry_function (this);
       }
+      const wchar_t* GetEntryFunctionWS ()
+      {
+        return s1_program_get_entry_function_ws (this);
+      }
+      const s1_char16* GetEntryFunctionU16 ()
+      {
+        return s1_program_get_entry_function_u16 (this);
+      }
+      const s1_char32* GetEntryFunctionU32 ()
+      {
+        return s1_program_get_entry_function_u32 (this);
+      }
+      //@}
 
       //@{
       /**

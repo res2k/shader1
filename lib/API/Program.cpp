@@ -82,9 +82,9 @@ namespace s1
       entryFunction = entry;
       return S1_SUCCESS;
     }
-    Result<const char*> Program::GetEntry () const
+    Result<const StringWrapper&> Program::GetEntry () const
     {
-      return entryFunction.GetUTF8();
+      return entryFunction;
     }
     
     s1_ResultCode Program::SetInputFrequency (const uc::String& param, s1_InputFrequency freq)
@@ -196,13 +196,39 @@ s1_bool s1_program_set_entry_function_u32 (s1_Program* program, const s1_char32*
   return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
 }
 
-const char* s1_program_get_entry_function (s1_Program* program)
+template<typename F>
+static typename std::result_of<F(const s1::api_impl::StringWrapper& sw)>::type
+s1_program_get_entry_function_filtering (s1_Program* program, F filterFunc)
 {
   S1_ASSERT_MSG(program, "NULL Program", nullptr);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  return program_impl->Return (program_impl->GetEntry (), nullptr);
+  return program_impl->Return (program_impl->GetEntry ().filter (filterFunc), nullptr);
+}
+
+const char* s1_program_get_entry_function (s1_Program* program)
+{
+  return s1_program_get_entry_function_filtering (program,
+    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetUTF8 (); });
+}
+
+const wchar_t* s1_program_get_entry_function_ws (s1_Program* program)
+{
+  return s1_program_get_entry_function_filtering (program,
+    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetWS (); });
+}
+
+const s1_char16* s1_program_get_entry_function_u16 (s1_Program* program)
+{
+  return s1_program_get_entry_function_filtering (program,
+    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetUTF16 (); });
+}
+
+const s1_char32* s1_program_get_entry_function_u32 (s1_Program* program)
+{
+  return s1_program_get_entry_function_filtering (program,
+    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetUTF32 (); });
 }
 
 static s1_bool s1_program_set_input_frequency_ucs (s1_Program* program, s1::uc::String_optional param, s1_InputFrequency freq)
