@@ -124,6 +124,19 @@ namespace s1
     const value_type& get_value_or (const value_type& v) const { return val.get_value_or (v); }
     value_type& get_value_or (value_type& v) { return val.get_value_or (v); }
     //@}
+
+    /// Apply a "filter" functor to this result's value, if it contains one
+    template<typename F>
+    Result<typename std::result_of<F (T)>::type> filter (F func)
+    {
+      typedef Result<typename std::result_of<F (T)>::type> result_type;
+      if (val)
+        return result_type (func (*val), resultCode);
+      else if (resultErrorInfo)
+        return result_type (resultCode, resultErrorInfo->c_str());
+      else
+        return result_type (resultCode);
+    }
   };
 
 } // namespace s1
