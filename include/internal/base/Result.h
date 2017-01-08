@@ -56,10 +56,9 @@ namespace s1
     * Default constructor with value and optional result code.
     * Result code default to #S1_SUCCESS.
     */
-    Result (const value_type& value, ResultCode resultCode = S1_SUCCESS)
-      : resultCode (resultCode), val (value) {}
-    Result (value_type&& value, ResultCode resultCode = S1_SUCCESS)
-      : resultCode (resultCode), val (std::move (value)) {}
+    template <class U>
+    Result (U&& value, ResultCode resultCode = S1_SUCCESS)
+      : resultCode (resultCode), val (std::forward<U> (value)) {}
     //@}
     Result (const Result& other) : resultCode (other.resultCode), val (other.val) {}
     Result (Result&& other) : resultCode (other.resultCode), val (std::move (other.val)) {}
@@ -85,16 +84,11 @@ namespace s1
     }
     //@{
     /// Convenience: Assign a result value. Sets result code to #S1_SUCCESS.
-    Result& operator= (typename boost::call_traits<value_type>::param_type value)
+    template <class U>
+    Result& operator= (U&& value)
     {
       resultCode = S1_SUCCESS;
-      val = value;
-      return *this;
-    }
-    Result& operator= (value_type&& value)
-    {
-      resultCode = S1_SUCCESS;
-      val = std::move (value);
+      val = std::forward<U> (value);
       return *this;
     }
     //@}
