@@ -3,9 +3,9 @@ CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE
 
 add_custom_command(OUTPUT ResultCode.cpp
                    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
-                      ${CMAKE_SOURCE_DIR}/include/s1/ResultCode.xml
+                      ${S1_INC_PUBLIC}/ResultCode.xml
                       ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.cpp.tpl > ResultCode.cpp
-                   DEPENDS ${CMAKE_SOURCE_DIR}/include/s1/ResultCode.xml ResultCode.cpp.tpl)
+                   DEPENDS ${S1_INC_PUBLIC}/ResultCode.xml ResultCode.cpp.tpl)
 
 set(s1_sources
     Backend.cpp
@@ -20,15 +20,15 @@ set(s1_sources
     ResultCode.cpp
     ResultCodeHelper.cpp
     ResultCodeHelper.h
-    ../../include/s1/Backend.h
-    ../../include/s1/BackendOptions.h
-    ../../include/s1/CompiledProgram.h
-    ../../include/s1/Library.h
-    ../../include/s1/LibraryObject.h
-    ../../include/s1/Options.h
-    ../../include/s1/Program.h
-    ../../include/s1/ResultCode.h
-    ../../include/s1/genObject/Object.h.template
+    ${S1_INC_PUBLIC}/Backend.h
+    ${S1_INC_PUBLIC}/BackendOptions.h
+    ${S1_INC_PUBLIC}/CompiledProgram.h
+    ${S1_INC_PUBLIC}/Library.h
+    ${S1_INC_PUBLIC}/LibraryObject.h
+    ${S1_INC_PUBLIC}/Options.h
+    ${S1_INC_PUBLIC}/Program.h
+    ${S1_INC_PUBLIC}/ResultCode.h
+    ${S1_INC_PUBLIC}/genObject/Object.h.template
     )
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)
 include_directories(.)
