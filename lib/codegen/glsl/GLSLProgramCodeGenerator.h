@@ -35,8 +35,8 @@ namespace s1
         const Options& GetOptions () const;
 
         StringsArrayPtr GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency) override;
-        void GenerateEntryFunctionInputs (StringsArray& strings, intermediate::ProgramFunctionPtr& func,
-          const intermediate::Program::ParameterArraySizes& paramArraySizes);
+        void GenerateEntryFunctionInputs (StringsArray& strings, int progFreq, const intermediate::ProgramPtr& prog,
+                                          intermediate::ProgramFunctionPtr& func);
         std::unique_ptr<sl::FunctionCodeGenerator> CreateFunctionCodeGenerator () override;
       public:
         ProgramCodeGenerator (const Traits& traits, const Options& options);

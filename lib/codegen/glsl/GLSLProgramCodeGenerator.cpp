@@ -25,6 +25,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 #include "codegen/glsl/GLSLOptions.h"
+#include "splitter/Frequency.h"
 
 #include "boost/make_shared.hpp"
 
@@ -56,7 +57,7 @@ namespace s1
           auto func = prog->GetFunction (f);
           if (func->IsEntryFunction ())
           {
-            GenerateEntryFunctionInputs (*resultStrings, func, prog->GetParameterArraySizes ());
+            GenerateEntryFunctionInputs (*resultStrings, frequency, prog, func);
             break;
           }
         }
@@ -65,13 +66,17 @@ namespace s1
         return resultStrings;
       }
 
-      static format::StaticFormatter FormatInputVar ("uniform {0} {1}{2};");
+      static format::StaticFormatter FormatInputVarU ("uniform {0} {1}{2};");
+      static format::StaticFormatter FormatInputVarV ("attribute {0} {1}{2};");
 
       void ProgramCodeGenerator::GenerateEntryFunctionInputs (StringsArray& strings,
-                                                              intermediate::ProgramFunctionPtr& func,
-                                                              const intermediate::Program::ParameterArraySizes& paramArraySizes)
+                                                              int progFreq,
+                                                              const intermediate::ProgramPtr& prog,
+                                                              intermediate::ProgramFunctionPtr& func)
       {
+        const auto& paramArraySizes = prog->GetParameterArraySizes ();
         const auto& params = func->GetParams ();
+        const auto& paramFreqs = func->GetParameterFrequencies ();
         for (const auto& param : params)
         {
           if (param.dir & parser::SemanticsHandler::Scope::dirIn)
@@ -95,7 +100,20 @@ namespace s1
                 typeSuffix = typeStrings.second;
               }
               uc::String paramIdent = traits.ConvertIdentifier (param.identifier, true);
-              strings.AddString (FormatInputVar.to<uc::String> (paramStrBase, paramIdent, typeSuffix));
+              auto paramFreqIt = paramFreqs.find (param.identifier);
+              int freqFlags = paramFreqIt != paramFreqs.end () ? paramFreqIt->second : splitter::freqFlagU;
+              if ((freqFlags & splitter::freqFlagU) != 0)
+              {
+                strings.AddString (FormatInputVarU.to<uc::String> (paramStrBase, paramIdent, typeSuffix));
+              }
+              else if ((progFreq == splitter::freqVertex) && ((freqFlags & splitter::freqFlagV) != 0))
+              {
+                strings.AddString (FormatInputVarV.to<uc::String> (paramStrBase, paramIdent, typeSuffix));
+              }
+              else if ((progFreq == splitter::freqFragment) && ((freqFlags & splitter::freqFlagF) != 0))
+              {
+                strings.AddString (FormatInputVarU.to<uc::String> (paramStrBase, paramIdent, typeSuffix));
+              }
             }
             //result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
           }
