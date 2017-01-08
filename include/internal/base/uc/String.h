@@ -95,6 +95,7 @@ namespace s1
       friend String operator+ (const String& s1, const String& s2);
       String& operator+= (Char32 ch) { return append (ch); }
       bool operator==(const String& other) const;
+      bool operator!=(const String& other) const;
       Char operator[] (size_type index) const
       {
         assert (index < d.length);

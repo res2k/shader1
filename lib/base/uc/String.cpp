@@ -308,6 +308,11 @@ namespace s1
       return Char_traits::compare (data(), other.data(), length()) == 0;
     }
 
+    bool String::operator!=(const String& other) const
+    {
+      return !(*this == other);
+    }
+
     void String::toUTF8String (std::string& dest) const
     {
       std::string::size_type destReserve = OverflowCheckAdd (dest.size(), length(), dest.max_size ());
