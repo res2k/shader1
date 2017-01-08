@@ -42,6 +42,7 @@ namespace s1
       friend class SequenceSplitter;
       struct FunctionTransferValues
       {
+        uc::String identifier;
         parser::SemanticsHandler::TypePtr valueType;
         // Probably sensible: std::vector<size_t> usedArgs;
       };

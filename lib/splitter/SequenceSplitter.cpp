@@ -1062,7 +1062,7 @@ namespace s1
       {
         for(const ProgramSplitter::FunctionTransferValues& tfv : splitResult.transferValues[f])
         {
-          uc::String transferIdent (parent.GetTransferIdent ());
+          uc::String transferIdent (parent.GetTransferIdent (tfv.identifier));
           
           RegisterPtr reg (parent.AllocateRegister (tfv.valueType, transferIdent));
           

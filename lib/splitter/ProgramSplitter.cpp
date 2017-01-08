@@ -207,6 +207,7 @@ namespace s1
             
             // Also return transfer info
             FunctionTransferValues newTransferValue;
+            newTransferValue.identifier = reg->GetName ();
             newTransferValue.valueType = reg->GetOriginalType();
             result.transferValues[freqVertex].push_back (newTransferValue);
           }
