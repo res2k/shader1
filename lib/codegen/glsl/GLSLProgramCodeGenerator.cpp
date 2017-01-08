@@ -47,6 +47,8 @@ namespace s1
         return static_cast<const Options&> (options);
       }
       
+      static format::StaticFormatter FormatTransferVal ("varying {0} v2f_{1}{2};");
+
       StringsArrayPtr ProgramCodeGenerator::GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency)
       {
         StringsArrayPtr resultStrings = boost::make_shared<StringsArray> ();
@@ -62,7 +64,20 @@ namespace s1
           }
         }
 
-        // TODO: Generate globals for values passed from VP to FP
+        // Generate globals for values passed from VP to FP
+        const auto& transfers = prog->GetTransferValues ();
+        for (const auto& transferVal : transfers)
+        {
+          uc::String typeSuffix;
+          uc::String paramStrBase;
+          {
+            auto typeStrings = traits.TypeString (transferVal.first, nullptr);
+            paramStrBase = typeStrings.first;
+            typeSuffix = typeStrings.second;
+          }
+          uc::String transferIdent = traits.ConvertIdentifier (transferVal.second);
+          resultStrings->AddString (FormatTransferVal.to<uc::String> (paramStrBase, transferIdent, typeSuffix));
+        }
         return resultStrings;
       }
 

@@ -58,11 +58,17 @@ namespace s1
         return std::move (p);
       }
 
+      static format::StaticFormatter FormatTransferID ("v2f_{0}");
+
       std::vector<SequenceCodeGenerator::InputTransferPair>
         SequenceCodeGenerator::GenerateTransfersIn () const
       {
         std::vector<SequenceCodeGenerator::InputTransferPair> result;
-        // TODO: Generate
+        for (const auto& transfer : transferIn)
+        {
+          result.emplace_back (transfer.second,
+                               FormatTransferID.to<uc::String> (traits.ConvertIdentifier (transfer.first)));
+        }
         return result;
       }
 
@@ -70,7 +76,11 @@ namespace s1
         SequenceCodeGenerator::GenerateTransfersOut () const
       {
         std::vector<SequenceCodeGenerator::OutputTransferPair> result;
-        // TODO: Generate
+        for (const auto& transfer : transferOut)
+        {
+          result.emplace_back (FormatTransferID.to<uc::String> (traits.ConvertIdentifier (transfer.first)),
+                               transfer.second);
+        }
         return result;
       }
     } // namespace glsl
