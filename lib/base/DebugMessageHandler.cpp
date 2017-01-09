@@ -62,7 +62,7 @@ namespace s1
         auto encodeResult = encoder (nextChar,
                                      reinterpret_cast<uc::Char16*&> (buf_ptr),
                                      reinterpret_cast<uc::Char16*> (buf_ptr + (buf_ws.size () - outputPos)));
-        fullyEncoded = encodeResult = uc::UTF16Encoder::erSuccess;
+        fullyEncoded = encodeResult == uc::UTF16Encoder::erSuccess;
         outputPos = buf_ptr - buf_ws.data ();
         if (!fullyEncoded && (encodeResult != uc::UTF16Encoder::erOutputOverflow)) break;
       } while (!fullyEncoded);
@@ -179,7 +179,7 @@ namespace s1
           buf_utf8.push_back (0);
           char* buf_ptr = buf_utf8.data () + outputPos;
           auto encodeResult = encoder (nextChar, buf_ptr, buf_ptr + (buf_utf8.size () - outputPos));
-          fullyEncoded = (encodeResult = uc::UTF8Encoder::erSuccess);
+          fullyEncoded = encodeResult == uc::UTF8Encoder::erSuccess;
           outputPos = buf_ptr - buf_utf8.data ();
           if (!fullyEncoded && (encodeResult != uc::UTF8Encoder::erOutputOverflow)) break;
         } while (!fullyEncoded);
