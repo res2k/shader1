@@ -25,6 +25,7 @@
 #include "base/uc/String.h"
 
 #include <algorithm>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/container/vector.hpp>
 #include <boost/functional/hash.hpp>
 
@@ -430,12 +431,7 @@ namespace s1
     bool String::startsWith (const char* s, size_t len) const
     {
       if (len == (size_t)~0) len = std::char_traits<char>::length (s);
-      if (len > length()) return false;
-      for (size_type i = 0; i < static_cast<size_type> (len); i++)
-      {
-        if ((*this)[i] != s[i]) return false;
-      }
-      return true;
+      return boost::algorithm::starts_with (*this, boost::make_iterator_range (s, s+len));
     }
     
     String::size_type String::indexOf (Char32 ch) const

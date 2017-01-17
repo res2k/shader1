@@ -61,7 +61,7 @@ namespace s1
       for (uc::String::size_type i = begin; i < end; i++)
       {
         unsigned int digitVal = 0;
-        uc::Char digit = str[i];
+        uc::Char digit = str.data()[i];
         if ((digit >= '0') && (digit <= '9'))
         {
           digitVal = digit - '0';
@@ -133,9 +133,10 @@ namespace s1
       // Convert string to ASCII
       uc::String::size_type strLen = str.length();
       char* strAsc = (char*)alloca (strLen + 1);
+      auto str_buf = str.data ();
       for (uc::String::size_type i = 0; i < strLen; i++)
       {
-        uc::Char ch = str[i];
+        uc::Char ch = str_buf[i];
         if (ch >= 128)
         {
           // Outside ASCII range, can't parse

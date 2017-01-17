@@ -96,11 +96,6 @@ namespace s1
       String& operator+= (Char32 ch) { return append (ch); }
       bool operator==(const String& other) const;
       bool operator!=(const String& other) const;
-      Char operator[] (size_type index) const
-      {
-        assert (index < d.length);
-        return bufferPtr()[index];
-      }
 
       void toUTF8String (std::string& dest) const;
 

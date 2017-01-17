@@ -262,7 +262,8 @@ namespace s1
 	// Attribute too long for a swizzle
 	return Attribute (Attribute::Unknown);
       unsigned char attr[4];
-      switch (attributeStr[0])
+      auto attributeStrBuf = attributeStr.data ();
+      switch (attributeStrBuf[0])
       {
       case 'x':
       case 'y':
@@ -273,7 +274,7 @@ namespace s1
 	  for (uc::String::size_type i = 0; i < attributeStr.length(); i++)
 	  {
 	    unsigned char comp;
-	    switch (attributeStr[i])
+	    switch (attributeStrBuf[i])
 	    {
 	    case 'x': comp = 0; break;
 	    case 'y': comp = 1; break;
@@ -296,7 +297,7 @@ namespace s1
 	  for (uc::String::size_type i = 0; i < attributeStr.length(); i++)
 	  {
 	    unsigned char comp;
-	    switch (attributeStr[i])
+	    switch (attributeStrBuf[i])
 	    {
 	    case 'r': comp = 0; break;
 	    case 'g': comp = 1; break;

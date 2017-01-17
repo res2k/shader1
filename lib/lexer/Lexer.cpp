@@ -329,27 +329,28 @@ KEYWORDS
       }
       if (typeCandidate != Invalid)
       {
+        auto dimensionsBuf = dimensions.data ();
 	if ((dimensions.length() == 1)
-	    && (dimensions[0] >= '1')
-	    && (dimensions[0] <= '4'))
+	    && (dimensionsBuf[0] >= '1')
+	    && (dimensionsBuf[0] <= '4'))
 	{
 	  // It's a vector!
 	  currentToken.typeOrID = typeCandidate;
 	  currentToken.typeClass = Vector;
-	  currentToken.dimension1 = dimensions[0] - '1' + 1;
+	  currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
 	}
 	else if ((dimensions.length() == 3)
-	    && (dimensions[0] >= '1')
-	    && (dimensions[0] <= '4')
-	    && (dimensions[1] == 'x')
-	    && (dimensions[2] >= '1')
-	    && (dimensions[2] <= '4'))
+	    && (dimensionsBuf[0] >= '1')
+	    && (dimensionsBuf[0] <= '4')
+	    && (dimensionsBuf[1] == 'x')
+	    && (dimensionsBuf[2] >= '1')
+	    && (dimensionsBuf[2] <= '4'))
 	{
 	  // It's a matrix!
 	  currentToken.typeOrID = typeCandidate;
 	  currentToken.typeClass = Matrix;
-	  currentToken.dimension1 = dimensions[0] - '1' + 1;
-	  currentToken.dimension2 = dimensions[2] - '1' + 1;
+	  currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
+	  currentToken.dimension2 = dimensionsBuf[2] - '1' + 1;
 	}
       }
     }
