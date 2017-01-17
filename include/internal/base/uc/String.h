@@ -74,13 +74,13 @@ namespace s1
       bool isEmpty() const { return length() == 0; }
       size_type countChar32() const;
 
-      /// Make sure memory for at least \a minCapacity characters is reserved
+      /// Make sure memory for at least \a minCapacity code units is reserved
       void reserve (size_type minCapacity)
       {
         reserveInternal (OverflowCheckAdd (minCapacity, 1u, max_size()));
       }
       /**
-       * Make sure memory for the current string length plus \a additionalCapacity characters is reserved.
+       * Make sure memory for the current string length plus \a additionalCapacity code units is reserved.
        * \remarks May throw if \a additionalCapacity is too large.
        */
       void reserveExtra (size_t additionalCapacity);
@@ -135,9 +135,9 @@ namespace s1
 
         /// Set iterator to start
         void setToStart () { pos = 0; }
-        /// Whether additional characters are available
+        /// Whether additional code points are available
         bool hasNext() const { return pos < str.length(); }
-        /// Get currently pointed-to character, then advance to next char
+        /// Get currently pointed-to code point, then advance to next
         Char32 next32PostInc();
       };
 
@@ -191,9 +191,9 @@ namespace s1
         value_type data[1];
       };
 
-      /// Free the character buffer
+      /// Free the code unit buffer
       void FreeBuffer ();
-      /// Resize the character buffer
+      /// Resize the code unit buffer
       void ResizeBuffer (size_type capacity);
 
       /// Get pointer to AllocatedBufferData object

@@ -16,7 +16,7 @@
 */
 
 /**\file
- * Unicode character types
+ * Unicode-related types
  */
 #ifndef __BASE_UC_CHAR_H__
 #define __BASE_UC_CHAR_H__
@@ -27,8 +27,11 @@ namespace s1
 {
   namespace uc
   {
+    /// UTF-16 code unit
     typedef s1_char16 Char16;
+    /// UTF-32 code unit
     typedef s1_char32 Char32;
+    /// Type of a single code unit in strings
     typedef Char16 Char;
 
     static const Char32 InvalidChar32 = (Char32)~0u;
@@ -40,18 +43,18 @@ namespace s1
     static const Char MaxChar16 = 0xffff;
     static const Char32 MaxChar = 0x10ffff;
 
-    /**\name Character class checks
+    /**\name Code point class checks
      * @{ */
-    /// Check whether a character is a whitespace character
+    /// Check whether a code point is a whitespace code point
     bool IsWhiteSpace (Char32 ch);
-    /// Check whether a character is an ID start character
+    /// Check whether a code point is an ID start code point
     bool IsIDStart (Char32 ch);
-    /// Check whether a character is an ID continue character
+    /// Check whether a code point is an ID continue code point
     bool IsIDContinue (Char32 ch);
     /** @} */
 
     /**
-     * Sanitize a character. 
+     * Sanitize a code point.
      * Returns \c ReplacementChar if \a ch not a valid Char16
      * value.
      */

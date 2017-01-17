@@ -93,9 +93,9 @@
 typedef int s1_bool;
 
 #ifdef S1_HAVE_CHARXX_T
-/// UTF-16 character type
+/// UTF-16 code unit type
 typedef char16_t s1_char16;
-/// UTF-32 character type
+/// UTF-32 code unit type
 typedef char32_t s1_char32;
 #else
 typedef uint16_t s1_char16;
