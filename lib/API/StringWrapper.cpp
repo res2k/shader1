@@ -26,10 +26,11 @@ namespace s1
     {
       if (!haveUTF8)
       {
-        str.toUTF8String (strUTF8);
+        new (storeStrUTF8) std::string;
+        str.toUTF8String (GetStrUTF8());
         haveUTF8 = true;
       }
-      return strUTF8.c_str ();
+      return GetStrUTF8().c_str ();
     }
 
     const s1_char16* StringWrapper::GetUTF16 () const
@@ -41,15 +42,16 @@ namespace s1
     {
       if (!haveUTF32)
       {
-        strUTF32.reserve (str.size ());
+        new (storeStrUTF32) c32string;
+        GetStrUTF32().reserve (str.size ());
         uc::String::CharacterIterator charIt (str);
         while (charIt.hasNext ())
         {
-          strUTF32.push_back (charIt.next32PostInc ());
+          GetStrUTF32().push_back (charIt.next32PostInc ());
         }
         haveUTF32 = true;
       }
-      return strUTF32.c_str ();
+      return GetStrUTF32().c_str ();
     }
 
     const wchar_t* StringWrapper::GetWS () const

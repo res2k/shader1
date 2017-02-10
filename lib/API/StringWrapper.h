@@ -41,22 +41,37 @@ namespace s1
       mutable bool haveUTF32 : 1;
 
       /// UTF-8 encoded version
-      mutable std::string strUTF8;
+      mutable alignas(std::string) uint8_t storeStrUTF8[sizeof(std::string)];
+      typedef std::basic_string<s1_char32> c32string;
       /// UTF-32 encoded version
-      mutable std::basic_string<s1_char32> strUTF32;
+      mutable alignas(c32string) uint8_t storeStrUTF32[sizeof (c32string)];
+
+      /// Get UTF-8 string instance
+      std::string& GetStrUTF8 () const
+      { return *(reinterpret_cast<std::string*> (storeStrUTF8)); }
+      /// Get UTF-32 string instance
+      c32string& GetStrUTF32 () const
+      { return *(reinterpret_cast<c32string*> (storeStrUTF32)); }
 
       /// Clear all encoded strings
       void Clear ()
       {
-        haveUTF8 = false;
-        haveUTF32 = false;
-        strUTF8.clear ();
-        strUTF32.clear ();
+        if (haveUTF8)
+        {
+          GetStrUTF8().~basic_string ();
+          haveUTF8 = false;
+        }
+        if (haveUTF32)
+        {
+          GetStrUTF32 ().~c32string ();
+          haveUTF32 = false;
+        }
       }
     public:
       StringWrapper () : haveUTF8 (false), haveUTF32 (false) {}
       StringWrapper (const uc::String& s) : str (s), haveUTF8 (false), haveUTF32 (false) {}
       StringWrapper (uc::String&& s) : str (std::move (s)), haveUTF8 (false), haveUTF32 (false) {}
+      ~StringWrapper () { Clear (); }
 
       StringWrapper& operator= (const uc::String& s)
       {
