@@ -101,7 +101,7 @@ namespace s1
 
       static String fromUTF8 (const std::string& s)
       {
-        return fromUTF8 (s.c_str());
+        return fromUTF8 (s.c_str(), s.size());
       }
       static String fromUTF8 (const char* s, size_t len = (size_t)~0);
       static String fromUTF32 (const Char32* s, size_t len = (size_t)~0);
