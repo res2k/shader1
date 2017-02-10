@@ -34,25 +34,25 @@ namespace s1
 
     static inline String_optional make_String_optional (const char* s)
     {
-      if (s) return String_optional (boost::in_place (s));
+      if (s) return String_optional (boost::in_place (String::fromUntrustedUTF (s)));
       return boost::none;
     }
 
     static inline String_optional make_String_optional (const s1_char16* s)
     {
-      if (s) return String_optional (boost::in_place (s));
+      if (s) return String_optional (boost::in_place (String::fromUntrustedUTF (s)));
       return boost::none;
     }
 
     static inline String_optional make_String_optional (const s1_char32* s)
     {
-      if (s) return String_optional (boost::in_place (s));
+      if (s) return String_optional (boost::in_place (String::fromUntrustedUTF (s)));
       return boost::none;
     }
 
     static inline String_optional make_String_optional (const wchar_t* s)
     {
-      if (s) return String_optional (boost::in_place (s));
+      if (s) return String_optional (boost::in_place (String::fromUntrustedWS (s)));
       return boost::none;
     }
   } // namespace uc
