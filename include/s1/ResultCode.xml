@@ -40,6 +40,7 @@
 		<code name="E_INVALID_ARG" value="2"
 		      name_ext="E_INVALID_ARG_N">
 			<descr>An argument was invalid</descr>
+			<descr_ext>An argument was invalid ({0})</descr_ext>
 			<doc>
 			Some argument was invalid (eg a pointer was \NULL).
 			\remarks You need to use the #S1_ERROR_EQUAL macro to check for this error code.

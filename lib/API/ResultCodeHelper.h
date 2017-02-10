@@ -28,7 +28,8 @@ namespace s1
      * Provide an error description for an 'extended' error code
      * (includes some numerical extra info).
      */
-    const char* GetExtendedErrorDescr (s1_ResultCode code, const char* baseDescr);
+    const char* GetExtendedErrorDescr (s1_ResultCode code, const char* baseDescr,
+                                       const char* extDescr);
   } // namespace detail
 } // namespace s1
 

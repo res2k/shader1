@@ -41,9 +41,7 @@ namespace s1
     static std::once_flag extraDescrCacheInit;
     static std::unique_ptr<ExtraDescrCache> extraDescrCache;
 
-    format::StaticFormatter FormatExtDescr ("{0} ({1})");
-
-    const char* GetExtendedErrorDescr (s1_ResultCode code, const char* baseDescr)
+    const char* GetExtendedErrorDescr (s1_ResultCode code, const char* baseDescr, const char* extDescr)
     {
       unsigned int extra = S1_GET_EXTRA (code);
       if (extra == 0)
@@ -57,8 +55,8 @@ namespace s1
         auto cacheIt = extraDescrCache->descr.find (code);
         if (cacheIt == extraDescrCache->descr.end ())
         {
-          std::string formattedDescr;
-          FormatExtDescr (formattedDescr, baseDescr, extra);
+          format::Formatter<> formatExtDescr (extDescr);
+          std::string formattedDescr = formatExtDescr.to<std::string> (extra);
           size_t n = formattedDescr.size ();
           std::unique_ptr<char[]> storeDescr (new char[n + 1]);
           memcpy (storeDescr.get (), formattedDescr.c_str (), n + 1);

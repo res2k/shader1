@@ -35,7 +35,7 @@ const char* s1_get_result_code_str (s1_ResultCode code)
     case {{code_ident(code.attrib['name'])}}:
     {{if 'name_ext' in code.attrib}}
       return s1::detail::GetExtendedErrorDescr (code,
-        "{{code.find('descr').text}}");
+        "{{code.find('descr').text}}", "{{code.find('descr_ext').text}}");
     {{else}}
       return "{{code.find('descr').text}}";
     {{endif}}
