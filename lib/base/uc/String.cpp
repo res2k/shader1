@@ -351,6 +351,15 @@ namespace s1
       return convertUTF32 (utf32_str, len).str;
     }
 
+    String String::fromUntrustedWS (const wchar_t* s, size_t len)
+    {
+    #if CXX_SIZEOF_WCHAR_T == 2
+      return fromUntrustedUTF (reinterpret_cast<const Char16*> (s), len);
+    #elif CXX_SIZEOF_WCHAR_T == 4
+      return fromUntrustedUTF (reinterpret_cast<const Char32*> (s), len);
+    #endif
+    }
+
     String::ConversionResult<char> String::convertUTF8 (const char* utf8_str, size_t len)
     {
       if (len == (size_t)~0) len = std::char_traits<char>::length (utf8_str);

@@ -106,6 +106,21 @@ namespace s1
       static String fromUTF8 (const char* s, size_t len = (size_t)~0);
       static String fromUTF32 (const Char32* s, size_t len = (size_t)~0);
 
+      //@{
+      /**
+       * UTF conversion from 'untrusted' sources.
+       * Employs convertUTF8/convertUTF16/convertUTF32, so input is checked
+       * for invalid encodings.
+       */
+      static String fromUntrustedUTF (const char* s, size_t len = (size_t)~0)
+      { return convertUTF8 (s, len).str; }
+      static String fromUntrustedUTF (const Char16* s, size_t len = (size_t)~0)
+      { return convertUTF16 (s, len).str; }
+      static String fromUntrustedUTF (const Char32* s, size_t len = (size_t)~0)
+      { return convertUTF32 (s, len).str; }
+      static String fromUntrustedWS (const wchar_t* s, size_t len = (size_t)~0);
+      //@}
+
       /**\name Conversion from UTF
        * These methods check the input for invalid encodings, replace those with
        * ReplacementChar and return the location of the first wrong input.
