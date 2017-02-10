@@ -106,7 +106,7 @@ S1_API(void) s1_library_set_debug_message_handler_ws (
  * \sa \ref debug_message_handlers
  */
 S1_API(s1_debug_message_handler_func) s1_library_get_debug_message_handler (
-  s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (0));
+  s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
 /**
  * Obtain wide string version of global debug message handler.
  * \param lib Library to get error handler from.
@@ -117,7 +117,7 @@ S1_API(s1_debug_message_handler_func) s1_library_get_debug_message_handler (
  * \sa \ref debug_message_handlers
  */
 S1_API(s1_debug_message_handler_ws_func) s1_library_get_debug_message_handler_ws (
-  s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (0));
+  s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
 
 
 S1TYPE_DECLARE_FWD(Options);

@@ -72,6 +72,19 @@
  * Defined if compiler supports rvalue types.
  */
 #define S1_HAVE_RVALUES
+/**\def S1_HAVE_NULLPTR
+ * Defined if compiler supports nullptr.
+ */
+#define S1_HAVE_NULLPTR
+
+/**\def S1_NULL
+ * \NULL pointer value for arguments etc.
+ */
+#if defined(S1_HAVE_NULLPTR)
+#define S1_NULL    nullptr
+#else
+#define S1_NULL    NULL
+#endif
 
 // On some MSVC versions we need to pull in some header to get charXX_t
 #if defined(_MSC_VER)

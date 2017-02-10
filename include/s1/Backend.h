@@ -70,7 +70,7 @@ S1TYPE_DECLARE_FWD(CompiledProgram);
 S1_API(s1_CompiledProgram*) s1_backend_generate_program (s1_Backend* backend,
                                                          s1_Program* program,
                                                          enum s1_CompileTarget target,
-                                                         s1_BackendOptions* options S1_ARG_DEFAULT(0));
+                                                         s1_BackendOptions* options S1_ARG_DEFAULT(S1_NULL));
 
 /**
 * Create a backend options object.
@@ -110,7 +110,7 @@ namespace s1
        * last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(CompiledProgram) GenerateProgram (Program* program, s1_CompileTarget target,
-                                                                    BackendOptions* options = 0)
+                                                                BackendOptions* options = S1_NULL)
       {
         return S1_RETURN_MOVE_REF (CompiledProgram,
           s1_backend_generate_program (this, program, target, options));

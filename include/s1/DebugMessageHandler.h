@@ -80,7 +80,7 @@ S1_API(void) s1_set_debug_message_handler_ws (s1_debug_message_handler_ws_func h
  *   (this includes a wide string variant being set).
  * \sa \ref debug_message_handlers
  */
-S1_API(s1_debug_message_handler_func) s1_get_debug_message_handler (uintptr_t* userContextPtr S1_ARG_DEFAULT (0));
+S1_API(s1_debug_message_handler_func) s1_get_debug_message_handler (uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
 /**
  * Obtain wide string variant of global debug message handler.
  * \param userContextPtr Optional argument to receive "user context" value.
@@ -88,7 +88,7 @@ S1_API(s1_debug_message_handler_func) s1_get_debug_message_handler (uintptr_t* u
  *   (this includes an UTF-8 variant being set).
  * \sa \ref debug_message_handlers
  */
-S1_API(s1_debug_message_handler_ws_func) s1_get_debug_message_handler_ws (uintptr_t* userContextPtr S1_ARG_DEFAULT (0));
+S1_API(s1_debug_message_handler_ws_func) s1_get_debug_message_handler_ws (uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
 
 /**
  * Default debug message handler (UTF-8 variant).

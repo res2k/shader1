@@ -42,7 +42,7 @@ namespace s1
         template<typename U>
         static Yes tester(U* p, typename U::Sentinel = typename U::Sentinel());
 
-        enum { Result = sizeof(tester((T*)0)) != sizeof(No) };
+        enum { Result = sizeof(tester((T*)S1_NULL)) != sizeof(No) };
       };
 
       // Call s1_release() for 'unknown' types - let compiler sort it out
@@ -102,7 +102,7 @@ namespace s1
     T* obj;
   public:
     /// Construct with a \NULL pointer.
-    MoveRefPtr () : obj (0) {}
+    MoveRefPtr () : obj (S1_NULL) {}
     /// Construct from \a p, never adding a reference
     MoveRefPtr (T* p) : obj (p) { }
     /// Move reference from \a other
@@ -142,7 +142,7 @@ namespace s1
     T* detach()
     {
       T* p (obj);
-      obj = 0;
+      obj = S1_NULL;
       return p;
     }
     
@@ -175,7 +175,7 @@ namespace s1
     T* obj;
   public:
     /// Construct with a \NULL pointer.
-    Ptr () : obj (0) {}
+    Ptr () : obj (S1_NULL) {}
     /// Construct from \a p, adding a reference
     Ptr (T* p) : obj (p)
     {
@@ -190,7 +190,7 @@ namespace s1
     Ptr (const MoveRefPtr<T2>& other) : obj (const_cast<MoveRefPtr<T2>&> (other).detach()) { }
 #endif
     /// Copy from \a other, adding a reference
-    Ptr (const Ptr& other) : obj (0) { reset (other.obj); }
+    Ptr (const Ptr& other) : obj (S1_NULL) { reset (other.obj); }
 #ifdef S1_HAVE_RVALUES
     /// Move reference from \a other
     Ptr (Ptr&& other) : obj (other.detach()) { }
@@ -207,7 +207,7 @@ namespace s1
      * To the new pointer a reference is added, and from the old
      * pointer a reference is removed.
      */
-    void reset (T* p = 0)
+    void reset (T* p = S1_NULL)
     {
       if (p) s1_add_ref (p);
       if (obj) cxxapi::ReleasePtr (obj);
@@ -249,7 +249,7 @@ namespace s1
     T* detach()
     {
       T* p (obj);
-      obj = 0;
+      obj = S1_NULL;
       return p;
     }
     
