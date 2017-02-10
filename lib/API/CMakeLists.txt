@@ -59,3 +59,16 @@ if(MSVC)
   set_target_properties(s1 PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 endif()
 
+if(CXXTEST_FOUND)
+  if(BUILD_SHARED_LIBS)
+    s1_add_library(s1_test STATIC
+                   SOURCES ${s1_sources}
+                   LINK base compiler)
+    set(_S1_TEST_DEP s1_test)
+  else()
+    set(_S1_TEST_DEP s1)
+  endif()
+  s1_add_cxxtest(test_ApiImpl
+                 SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/StringWrapper.h
+                 DEPENDS ${_S1_TEST_DEP})
+endif()
