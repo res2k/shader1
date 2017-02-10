@@ -73,7 +73,7 @@ namespace s1
        */
       const char* GetString ()
       {
-        return s1_compiledprogram_get_string (this);;
+        return s1_compiledprogram_get_string (this);
       }
 
     };
