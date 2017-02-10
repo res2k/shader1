@@ -56,7 +56,7 @@ namespace s1
         if (cacheIt == extraDescrCache->descr.end ())
         {
           format::Formatter<> formatExtDescr (extDescr);
-          std::string formattedDescr = formatExtDescr.to<std::string> (extra);
+          std::string formattedDescr = formatExtDescr.to<std::string> (extra - 1); // The _N macro generator always adds 1
           size_t n = formattedDescr.size ();
           std::unique_ptr<char[]> storeDescr (new char[n + 1]);
           memcpy (storeDescr.get (), formattedDescr.c_str (), n + 1);
