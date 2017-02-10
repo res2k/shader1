@@ -85,7 +85,7 @@ public:
     s1::uc::String str ("a");
     TS_ASSERT(!str.isEmpty());
     TS_ASSERT_EQUALS(str.length(), 1);
-    TS_ASSERT_EQUALS(str[0], 'a');
+    TS_ASSERT_EQUALS(str.data()[0], 'a');
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
@@ -95,7 +95,7 @@ public:
     s1::uc::String str (aStr);
     TS_ASSERT(!str.isEmpty());
     TS_ASSERT_EQUALS(str.length(), 1);
-    TS_ASSERT_EQUALS(str[0], 'a');
+    TS_ASSERT_EQUALS(str.data()[0], 'a');
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
@@ -104,7 +104,7 @@ public:
     s1::uc::String str ('a');
     TS_ASSERT(!str.isEmpty());
     TS_ASSERT_EQUALS(str.length(), 1);
-    TS_ASSERT_EQUALS(str[0], 'a');
+    TS_ASSERT_EQUALS(str.data()[0], 'a');
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
