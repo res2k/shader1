@@ -106,6 +106,36 @@ namespace s1
       static String fromUTF8 (const char* s, size_t len = (size_t)~0);
       static String fromUTF32 (const Char32* s, size_t len = (size_t)~0);
 
+      /**\name Conversion from UTF
+       * These methods check the input for invalid encodings, replace those with
+       * ReplacementChar and return the location of the first wrong input.
+       * @{ */
+      enum ConversionError
+      {
+        /// Conversion successful
+        ceSuccess = 0,
+        /// Incomplete input sequence
+        ceCharacterIncomplete = 1,
+        /// Invalid character (surrogate half)
+        ceCharacterInvalid = 2,
+        /// Encoding invalid for character (overlong)
+        ceEncodingInvalid = 3
+      };
+      template<typename Ch>
+      struct ConversionResult
+      {
+        /// Converted string
+        String str;
+        /// Pointer past first invalid input, if any
+        const Ch* invalidPos = nullptr;
+        /// Code of first error
+        ConversionError error = ceSuccess;
+      };
+      static ConversionResult<char> convertUTF8 (const char* s, size_t len = (size_t)~0);
+      static ConversionResult<Char16> convertUTF16 (const Char16* s, size_t len = (size_t)~0);
+      static ConversionResult<Char32> convertUTF32 (const Char32* s, size_t len = (size_t)~0);
+      /** @} */
+
       /// Check if string starts with the given string.
       bool startsWith (const String& s) const;
       /// Check if string starts with the given ASCII string.

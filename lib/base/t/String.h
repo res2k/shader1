@@ -166,6 +166,20 @@ public:
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
+  // Test convertUTF8 with ASCII input
+  void testUTF8Simple_convert ()
+  {
+    const char chars_utf8[] = "Hello";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'H', 'e', 'l', 'l', 'o', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 5);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
+  }
+
   // Test fromUTF8 with a character encoded in 2 bytes
   void testUTF8Encoded2 ()
   {
@@ -176,6 +190,20 @@ public:
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
+  }
+
+  // Test convertUTF8 with a character encoded in 2 bytes
+  void testUTF8Encoded2_convert ()
+  {
+    const char chars_utf8[] = "H\xc3\xabllo";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 5);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
   }
 
   // Test fromUTF8 with characters encoded in 3 bytes
@@ -190,6 +218,20 @@ public:
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
+  // Test convertUTF8 with characters encoded in 3 bytes
+  void testUTF8Encoded3_convert ()
+  {
+    const char chars_utf8[] = "He\xe1\xb8\xb7\xe1\xb8\xb7o";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'H', 'e', 0x1e37, 0x1e37, 'o', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 5);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
+  }
+
   // Test fromUTF8 with characters encoded in 4 bytes
   void testUTF8Encoded4 ()
   {
@@ -200,6 +242,20 @@ public:
     TS_ASSERT_EQUALS(str.length(), 5);
     TS_ASSERT_EQUALS(str, str_utf16);
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
+  }
+
+  // Test convertUTF8 with characters encoded in 4 bytes
+  void testUTF8Encoded4_convert ()
+  {
+    const char chars_utf8[] = "\xf0\x9f\x98\x80 \xf0\x9f\x92\xa9";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 0xd83d, 0xde00, ' ', 0xd83d, 0xdca9, 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 5);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
   }
 
   // Test fromUTF8 with malformed input (overlong encoding)
@@ -214,6 +270,20 @@ public:
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
+  // Test convertUTF8 with malformed input (overlong encoding)
+  void testUTF8Malformed1_convert ()
+  {
+    const char chars_utf8[] = "a\xc0\x8a" "b";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+3));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceEncodingInvalid);
+  }
+
   // Test fromUTF8 with malformed input (broken encoding)
   void testUTF8Malformed2 ()
   {
@@ -224,6 +294,20 @@ public:
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
+  }
+
+  // Test convertUTF8 with malformed input (broken encoding)
+  void testUTF8Malformed2_convert ()
+  {
+    const char chars_utf8[] = "a\xc3" "b";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterIncomplete);
   }
 
   // Test fromUTF8 with malformed input (broken encoding)
@@ -238,6 +322,20 @@ public:
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
+  // Test convertUTF8 with malformed input (broken encoding)
+  void testUTF8Malformed2b_convert ()
+  {
+    const char chars_utf8[] = "a\xab" "b";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterIncomplete);
+  }
+
   // Test fromUTF8 with malformed input (encoded surrogate half)
   void testUTF8Malformed3 ()
   {
@@ -250,6 +348,20 @@ public:
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
   }
 
+  // Test convertUTF8 with malformed input (encoded surrogate half)
+  void testUTF8Malformed3_convert ()
+  {
+    const char chars_utf8[] = "a\xed\xa0\x80" "b";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+4));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
+  }
+
   // Test fromUTF8 with malformed input (encoded surrogate half)
   void testUTF8Malformed4 ()
   {
@@ -260,6 +372,152 @@ public:
     TS_ASSERT_EQUALS(str.length(), 3);
     TS_ASSERT_EQUALS(str, str_utf16);
     TS_ASSERT_EQUALS(str.data()[str.size()], 0);
+  }
+
+  // Test convertUTF8 with malformed input (encoded surrogate half)
+  void testUTF8Malformed4_convert ()
+  {
+    const char chars_utf8[] = "a\xed\xb0\x80" "b";
+    auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
+    const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
+    s1::uc::String str_utf16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str, str_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.data()[convert_res.str.size()], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+4));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
+  }
+
+  // Test convertUTF16 with some basic input
+  void testUTF16_convert ()
+  {
+    const s1::uc::Char16 chars_utf16[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
+    auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 5);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'H');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xeb);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'l');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 'l');
+    TS_ASSERT_EQUALS(convert_res.str.data()[4], 'o');
+    TS_ASSERT_EQUALS(convert_res.str.data()[5], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
+  }
+
+  // Test convertUTF16 with some input with surrogates
+  void testUTF16Surrogates_convert ()
+  {
+    const s1::uc::Char16 chars_utf16[] = { 'x', 0xd83d, 0xde00, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 4);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xd83d);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 0xde00);
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[4], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
+  }
+
+  // Test convertUTF16 with some malformed input (surrogate half)
+  void testUTF16Malformed1_convert ()
+  {
+    const s1::uc::Char16 chars_utf16[] = { 'x', 0xd83d, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf16+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterIncomplete);
+  }
+
+  // Test convertUTF16 with some malformed input (surrogate half)
+  void testUTF16Malformed2_convert ()
+  {
+    const s1::uc::Char16 chars_utf16[] = { 'x', 0xde00, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf16+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
+  }
+
+  // Test convertUTF32 with some basic input
+  void testUTF32_convert ()
+  {
+    const s1::uc::Char32 chars_utf32[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
+    auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 5);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'H');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xeb);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'l');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 'l');
+    TS_ASSERT_EQUALS(convert_res.str.data()[4], 'o');
+    TS_ASSERT_EQUALS(convert_res.str.data()[5], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), 0);
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceSuccess);
+  }
+
+  // Test convertUTF32 with some malformed input (surrogates)
+  void testUTF32Malformed1_convert ()
+  {
+    const s1::uc::Char32 chars_utf32[] = { 'x', 0xd83d, 0xde00, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 4);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[4], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf32+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
+  }
+
+  // Test convertUTF32 with some malformed input (surrogate half)
+  void testUTF32Malformed2_convert ()
+  {
+    const s1::uc::Char32 chars_utf32[] = { 'x', 0xd83d, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf32+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
+  }
+
+  // Test convertUTF32 with some malformed input (surrogate half)
+  void testUTF32Malformed3_convert ()
+  {
+    const s1::uc::Char32 chars_utf32[] = { 'x', 0xde00, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf32+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
+  }
+
+  // Test convertUTF32 with some malformed input (invalid code point)
+  void testUTF32Malformed4_convert ()
+  {
+    const s1::uc::Char32 chars_utf32[] = { 'x', 0xffffff, 'y', 0 };
+    auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
+    TS_ASSERT_EQUALS(convert_res.str.length(), 3);
+    TS_ASSERT_EQUALS(convert_res.str.data()[0], 'x');
+    TS_ASSERT_EQUALS(convert_res.str.data()[1], 0xfffd);
+    TS_ASSERT_EQUALS(convert_res.str.data()[2], 'y');
+    TS_ASSERT_EQUALS(convert_res.str.data()[3], 0);
+    TS_ASSERT_EQUALS(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf32+2));
+    TS_ASSERT_EQUALS(convert_res.error, s1::uc::String::ceCharacterInvalid);
   }
 
   // Test toUTF8String with ASCII output
