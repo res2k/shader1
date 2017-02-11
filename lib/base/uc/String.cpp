@@ -28,7 +28,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/container/vector.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/optional.hpp>
 
 #include <stddef.h>
 
@@ -343,12 +342,27 @@ namespace s1
 
     String String::fromUTF8 (const char* utf8_str, size_t len)
     {
-      return convertUTF8 (utf8_str, len).str;
+      return convertUTF8 ([&](ConversionError, const void*){}, utf8_str, len);
     }
 
     String String::fromUTF32 (const Char32* utf32_str, size_t len)
     {
-      return convertUTF32 (utf32_str, len).str;
+      return convertUTF32 ([&](ConversionError, const void*){}, utf32_str, len);
+    }
+
+    String String::fromUntrustedUTF (const char* s, size_t len)
+    {
+      return convertUTF8 ([&](ConversionError, const void*){}, s, len);
+    }
+
+    String String::fromUntrustedUTF (const Char16* s, size_t len)
+    {
+      return convertUTF16 ([&](ConversionError, const void*){}, s, len);
+    }
+
+    String String::fromUntrustedUTF (const Char32* s, size_t len)
+    {
+      return convertUTF32 ([&](ConversionError, const void*){}, s, len);
     }
 
     String String::fromUntrustedWS (const wchar_t* s, size_t len)
@@ -362,18 +376,57 @@ namespace s1
 
     String::ConversionResult<char> String::convertUTF8 (const char* utf8_str, size_t len)
     {
+      bool errorSet = false;
+      ConversionResult<char> res;
+      res.str =
+        convertUTF8 ([&](ConversionError error, const char* pos)
+                     {
+                       if (!errorSet)
+                       {
+                         res.error = error;
+                         res.invalidPos = pos;
+                         errorSet = true;
+                       }
+                     },
+                     utf8_str, len);
+
+      return res;
+    }
+
+    template<typename ErrorFunc>
+    String String::convertUTF8 (ErrorFunc error, const char* utf8_str, size_t len)
+    {
       if (len == (size_t)~0) len = std::char_traits<char>::length (utf8_str);
 
-      ConversionResult<char> res;
+      auto map_conversion_error =
+        [](UTF8to16Transcoder::TranscodeResult result)
+        {
+          switch (result)
+          {
+          case UTF8to16Transcoder::trOutputOverflow:
+            /* Should not happen */
+          case UTF8to16Transcoder::trSuccess:
+            break;
+          case UTF8to16Transcoder::trInputUnderrun:
+          case UTF8to16Transcoder::trCharacterIncomplete:
+            return ceCharacterIncomplete;
+          case UTF8to16Transcoder::trCharacterInvalid:
+            return ceCharacterInvalid;
+          case UTF8to16Transcoder::trEncodingInvalid:
+            return ceEncodingInvalid;
+          }
+          return ceSuccess;
+        };
+
+      String str;
       /* When converting from UTF-8, the string in UTF-16 will never have
-      * more code units than bytes in the original string */
-      res.str.reserveInternal (OverflowCheckAdd (size_type (0), len, max_size() - 1) + 1);
+       * more code units than bytes in the original string */
+      str.reserveInternal (OverflowCheckAdd (size_type (0), len, max_size() - 1) + 1);
       const char* input = utf8_str;
       const char* inputEnd = utf8_str + len;
-      Char* outputStart = res.str.bufferPtr();
+      Char* outputStart = str.bufferPtr();
       Char* output = outputStart;
       Char* outputEnd = output + len;
-      boost::optional<std::pair<const char*, UTF8to16Transcoder::TranscodeResult>> firstInvalid;
 
       UTF8to16Transcoder transcoder;
       UTF8to16Transcoder::TranscodeResult result;
@@ -396,9 +449,9 @@ namespace s1
           outputEnd = outputStart + newLen;
         }
       #endif
-        if ((result != UTF8to16Transcoder::trSuccess) && !firstInvalid)
+        if (result != UTF8to16Transcoder::trSuccess)
         {
-          firstInvalid = std::make_pair (input, result);
+          error (map_conversion_error (result), input);
         }
       }
       do
@@ -417,55 +470,51 @@ namespace s1
           outputEnd = outputStart + newLen;
         }
       #endif
-        if ((result != UTF8to16Transcoder::trSuccess) && !firstInvalid)
+        if (result != UTF8to16Transcoder::trSuccess)
         {
-          firstInvalid = std::make_pair (input, result);
+          error (map_conversion_error (result), input);
         }
       }
       while (false/*result < 0*/);
       *output = 0;
-      res.str.setLength (OverflowCheckAdd (size_type (0), static_cast<size_t> (output - outputStart), max_size() - 1));
-      res.str.shrink_to_fit();
+      str.setLength (OverflowCheckAdd (size_type (0), static_cast<size_t> (output - outputStart), max_size() - 1));
+      str.shrink_to_fit();
 
-      if (firstInvalid)
-      {
-        res.invalidPos = firstInvalid->first;
-        switch (firstInvalid->second)
-        {
-        case UTF8to16Transcoder::trOutputOverflow:
-          /* Should not happen */
-        case UTF8to16Transcoder::trSuccess:
-          res.error = ceSuccess;
-          break;
-        case UTF8to16Transcoder::trInputUnderrun:
-        case UTF8to16Transcoder::trCharacterIncomplete:
-          res.error = ceCharacterIncomplete;
-          break;
-        case UTF8to16Transcoder::trCharacterInvalid:
-          res.error = ceCharacterInvalid;
-          break;
-        case UTF8to16Transcoder::trEncodingInvalid:
-          res.error = ceEncodingInvalid;
-          break;
-        }
-      }
-
-      return res;
+      return str;
     }
 
     String::ConversionResult<Char16> String::convertUTF16 (const Char16* s, size_t len)
     {
+      bool errorSet = false;
+      ConversionResult<Char16> res;
+      res.str =
+        convertUTF16 ([&](ConversionError error, const Char16* pos)
+                      {
+                        if (!errorSet)
+                        {
+                          res.error = error;
+                          res.invalidPos = pos;
+                          errorSet = true;
+                        }
+                      },
+                     s, len);
+
+      return res;
+    }
+
+    template<typename ErrorFunc>
+    String String::convertUTF16 (ErrorFunc error, const Char16* s, size_t len)
+    {
       if (len == (size_t)~0) len = std::char_traits<Char16>::length (s);
 
-      ConversionResult<Char16> res;
-      res.str.reserve (len);
-      res.str.setLength (len);
+      String str;
+      str.reserve (len);
+      str.setLength (len);
 
       const Char16* p = s;
       const Char16* end = s + len;
-      Char16* out_p = res.str.bufferPtr ();
+      Char16* out_p = str.bufferPtr ();
       bool expectTailSurrogate = false;
-      boost::optional<std::pair<const Char16*, ConversionError>> firstInvalid;
       while (p < end)
       {
         Char16 ch = *p;
@@ -485,7 +534,7 @@ namespace s1
             *out_p++ = ReplacementChar;
             // Emit char we encountered
             *out_p++ = ch;
-            if (!firstInvalid) firstInvalid = std::make_pair (p, ceCharacterIncomplete);
+            error (ceCharacterIncomplete, p);
             expectTailSurrogate = isLeadSurrogate;
           }
         }
@@ -495,7 +544,7 @@ namespace s1
           {
             // Replace unexpected tail surrogate
             *out_p++ = ReplacementChar;
-            if (!firstInvalid) firstInvalid = std::make_pair (p+1, ceCharacterInvalid);
+            error (ceCharacterInvalid, p+1);
           }
           else
           {
@@ -505,50 +554,57 @@ namespace s1
         }
         p++;
       }
-      if (expectTailSurrogate && !firstInvalid)
+      if (expectTailSurrogate)
       {
-        firstInvalid = std::make_pair (p, ceCharacterIncomplete);
+        error (ceCharacterIncomplete, p);
       }
       *out_p = 0;
 
-      if (firstInvalid)
-      {
-        res.invalidPos = firstInvalid->first;
-        res.error = firstInvalid->second;
-      }
-
-      return res;
+      return str;
     }
 
     String::ConversionResult<Char32> String::convertUTF32 (const Char32* s, size_t len)
     {
+      bool errorSet = false;
+      ConversionResult<Char32> res;
+      res.str =
+        convertUTF32 ([&](ConversionError error, const Char32* pos)
+                      {
+                        if (!errorSet)
+                        {
+                          res.error = error;
+                          res.invalidPos = pos;
+                          errorSet = true;
+                        }
+                      },
+                      s, len);
+
+      return res;
+    }
+
+    template<typename ErrorFunc>
+    String String::convertUTF32 (ErrorFunc error, const Char32* s, size_t len)
+    {
       if (len == (size_t)~0) len = std::char_traits<Char32>::length (s);
 
-      ConversionResult<Char32> res;
+      String str;
       const Char32* p = s;
       const Char32* end = s + len;
-      boost::optional<std::pair<const Char32*, ConversionError>> firstInvalid;
       while (p < end)
       {
         size_t remaining = end - p;
-        if ((res.str.capacity () - res.str.length ()) < remaining)
-          res.str.reserveExtra (remaining);
+        if ((str.capacity () - str.length ()) < remaining)
+          str.reserveExtra (remaining);
         Char32 ch = *p++;
-        res.str.append (ch);
-        if (!firstInvalid && (res.str.bufferPtr ()[res.str.size () - 1] != ch))
+        str.append (ch);
+        if (str.bufferPtr ()[str.size () - 1] != ch)
         {
-          firstInvalid = std::make_pair (p, ceCharacterInvalid);
+          error (ceCharacterInvalid, p);
         }
       }
 
-      res.str.shrink_to_fit();
-      if (firstInvalid)
-      {
-        res.invalidPos = firstInvalid->first;
-        res.error = firstInvalid->second;
-      }
-
-      return res;
+      str.shrink_to_fit();
+      return str;
     }
 
     bool String::startsWith (const String& s) const

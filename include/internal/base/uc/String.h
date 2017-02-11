@@ -112,12 +112,9 @@ namespace s1
        * Employs convertUTF8/convertUTF16/convertUTF32, so input is checked
        * for invalid encodings.
        */
-      static String fromUntrustedUTF (const char* s, size_t len = (size_t)~0)
-      { return convertUTF8 (s, len).str; }
-      static String fromUntrustedUTF (const Char16* s, size_t len = (size_t)~0)
-      { return convertUTF16 (s, len).str; }
-      static String fromUntrustedUTF (const Char32* s, size_t len = (size_t)~0)
-      { return convertUTF32 (s, len).str; }
+      static String fromUntrustedUTF (const char* s, size_t len = (size_t)~0);
+      static String fromUntrustedUTF (const Char16* s, size_t len = (size_t)~0);
+      static String fromUntrustedUTF (const Char32* s, size_t len = (size_t)~0);
       static String fromUntrustedWS (const wchar_t* s, size_t len = (size_t)~0);
       //@}
 
@@ -261,6 +258,16 @@ namespace s1
         ResizeBuffer (minCapacity);
       }
       size_type capacity () const { return d.capacity; }
+
+      //@{
+      /// UTF conversion with customizable error handling
+      template<typename ErrorFunc>
+      static String convertUTF8 (ErrorFunc error, const char* s, size_t len = (size_t)~0);
+      template<typename ErrorFunc>
+      static String convertUTF16 (ErrorFunc error, const Char16* s, size_t len = (size_t)~0);
+      template<typename ErrorFunc>
+      static String convertUTF32 (ErrorFunc error, const Char32* s, size_t len = (size_t)~0);
+      //@}
 
       // Helper function for overflow checks
       template<typename A, typename B>
