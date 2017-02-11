@@ -1,4 +1,4 @@
-<!DOCTYPE codes_xml [
+<!DOCTYPE codes [
   <!--ENTITY lsquo "&#x2018;">
   <!ENTITY rsquo "&#x2019;">
   <!ENTITY ndash "&#x2013;"-->
@@ -53,6 +53,24 @@
 			(This does not really incur a loss of information as there wouldn't be
 			a way to obtain a library to set the error code on anyway.)
 			</doc_ext>
+		</code>
+		<code name="S_INPUT_INCOMPLETE" value="10" type="success">
+			<descr>Incomplete sequence in input</descr>
+			<doc>
+			The input contained an incomplete sequence of code units.
+			</doc>
+		</code>
+		<code name="S_CODE_POINT_INVALID" value="11" type="success">
+			<descr>Invalid code point in input</descr>
+			<doc>
+			The input contained an invalid code point (e.g. a surrogate half).
+			</doc>
+		</code>
+		<code name="S_ENCODING_INVALID" value="12" type="success">
+			<descr>Invalid encoding for a code point in input</descr>
+			<doc>
+			The input contained an invalid encoding for a code point (overlong encoding).
+			</doc>
 		</code>
 	</component>
 	<component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">

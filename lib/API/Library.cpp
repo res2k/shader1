@@ -27,6 +27,7 @@
 #include "compiler/Options.h"
 
 #include "Program.h"
+#include "StringObj.h"
 
 #include <new>
 #include <boost/algorithm/string/predicate.hpp>
@@ -197,4 +198,42 @@ s1_Backend* s1_backend_create_u16 (s1_Library* obj, const s1_char16* backend)
 s1_Backend* s1_backend_create_u32 (s1_Library* obj, const s1_char32* backend)
 {
   return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
+}
+
+template<typename Ch>
+static s1_String* s1_string_create_internal (s1_Library* obj, const Ch* string, const Ch** invalidPos)
+{
+  S1_ASSERT_MSG(obj, "NULL Library", nullptr);
+  s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
+  if (!string) return lib->ReturnErrorCode (S1_E_INVALID_ARG_N (0), nullptr);
+
+  return lib->Return (lib->Try (
+    [=]() {
+      boost::intrusive_ptr<s1::api_impl::String> newString;
+      s1::ResultCode createResult = s1::api_impl::String::Create (newString, lib, string, invalidPos);
+      if (newString) newString->AddRef ();
+      return s1::Result<s1_String*> (newString->DowncastEvil<s1_String> (), createResult);
+    }), nullptr);
+}
+
+s1_String* s1_string_create (s1_Library* obj, const char* string, const char** invalidPos)
+{
+  return s1_string_create_internal (obj, string, invalidPos);
+}
+
+s1_String* s1_string_create_u16 (s1_Library* obj, const s1_char16* string, const s1_char16** invalidPos)
+{
+  return s1_string_create_internal (obj, string, invalidPos);
+}
+
+s1_String* s1_string_create_u32 (s1_Library* obj, const s1_char32* string, const s1_char32** invalidPos)
+{
+  return s1_string_create_internal (obj, string, invalidPos);
+}
+
+s1_String* s1_string_create_wcs (s1_Library* obj, const wchar_t* string, const wchar_t** invalidPos)
+{
+  return s1_string_create_internal (obj, string, invalidPos);
 }

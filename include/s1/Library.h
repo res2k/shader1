@@ -208,6 +208,34 @@ S1_API(s1_Backend*) s1_backend_create_u16 (s1_Library* lib, const s1_char16* bac
 S1_API(s1_Backend*) s1_backend_create_u32 (s1_Library* lib, const s1_char32* backend);
 //@}
 
+S1TYPE_DECLARE_FWD(String);
+//@{
+/**
+ * Create a string object.
+ * \param lib Parent library.
+ * \param string Contents of the string. Passing \NULL will result in an error.
+ * \param invalidPos Optionally returns position of the (first) invalid input.
+ * \returns A new string object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of a decoding error a valid String object will be returned; however,
+ * place holder characters will be present in the string. \a invalidPos will point
+ * to the position of the (first) invalid input and an appropriate error
+ * status is saved in the library's last error code.
+ * In case of other errors, \NULL is returned and the error status is saved in
+ * the library's last error code.
+ * \memberof s1_Library
+ */
+S1_API(s1_String*) s1_string_create (s1_Library* lib, const char* string,
+                                     const char** invalidPos S1_ARG_DEFAULT(S1_NULL));
+S1_API(s1_String*) s1_string_create_wcs (s1_Library* lib, const wchar_t* string,
+                                         const wchar_t** invalidPos S1_ARG_DEFAULT (S1_NULL));
+S1_API(s1_String*) s1_string_create_u16 (s1_Library* lib, const s1_char16* string,
+                                         const s1_char16** invalidPos S1_ARG_DEFAULT (S1_NULL));
+S1_API(s1_String*) s1_string_create_u32 (s1_Library* lib, const s1_char32* string,
+                                         const s1_char32** invalidPos S1_ARG_DEFAULT (S1_NULL));
+//@}
+
 #if defined(__cplusplus)
 namespace s1
 {
@@ -389,6 +417,71 @@ namespace s1
       {
         return S1_RETURN_MOVE_REF (Backend,
           s1_backend_create_u32 (this, backend));
+      }
+      //@}
+
+      //@{
+      /** Create a string object.
+       * \param string Contents of the string. Passing \NULL will result in an error.
+       * \returns A new string object.
+       * In case of a decoding error a valid String object will be returned; however,
+       * place holder characters will be present in the string. An appropriate error
+       * status is saved in the library's last error code.
+       * In case of other errors, \NULL is returned and the error status is saved in
+       * the library's last error code.
+       */
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const char* string)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create (this, string));
+      }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const wchar_t* string)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create_wcs (this, string));
+      }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const s1_char16* string)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create_u16 (this, string));
+      }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const s1_char32* string)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create_u32 (this, string));
+      }
+      //@}
+      //@{
+      /** Create a string object.
+       * \param string Contents of the string. Passing \NULL will result in an error.
+       * \param invalidPos Returns position of the (first) invalid input, if any.
+       * \returns A new string object.
+       * In case of a decoding error a valid String object will be returned; however,
+       * place holder characters will be present in the string. \a invalidPos will point
+       * to the position of the (first) invalid input and an appropriate error
+       * status is saved in the library's last error code.
+       * In case of other errors, \NULL is returned and the error status is saved in
+       * the library's last error code.
+       */
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const char* string, const char*& invalidPos)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create (this, string, &invalidPos));
+      }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const wchar_t* string, const wchar_t*& invalidPos)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create_wcs (this, string, &invalidPos));
+      }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const s1_char16* string, const s1_char16*& invalidPos)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create_u16 (this, string, &invalidPos));
+      }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (const s1_char32* string, const s1_char32*& invalidPos)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create_u32 (this, string, &invalidPos));
       }
       //@}
     };
