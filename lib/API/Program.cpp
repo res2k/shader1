@@ -34,9 +34,13 @@ namespace s1
       : LibraryObject (lib),
         compiler (compiler),
         options (new s1::Compiler::Options (lib)),
-        source (source),
-        entryFunction ("main")
+        source (source)
     {
+      s1::ResultCode err = String::Create (entryFunction, lib, "main", nullptr);
+      if (!S1_SUCCESSFUL(err))
+      {
+        throw Exception (err);
+      }
     }
 
     void Program::Dirty()
@@ -65,7 +69,7 @@ namespace s1
       {
         inputArraySizes.emplace (inputSize.first, inputSize.second);
       }
-      return wrapped_program->GetCompiledProgram (entryFunction.GetUCS(), options, inputFreqFlags, inputArraySizes, backend, target,
+      return wrapped_program->GetCompiledProgram (entryFunction->StrUCS(), options, inputFreqFlags, inputArraySizes, backend, target,
                                                   backendOptions);
     }
 
@@ -76,15 +80,15 @@ namespace s1
     }
     const s1::Compiler::OptionsPtr& Program::GetOptions() const { return options; }
     
-    s1_ResultCode Program::SetEntry (const uc::String& entry)
+    s1_ResultCode Program::SetEntry (boost::intrusive_ptr<String> entry)
     {
       // TODO: Function name validation
       entryFunction = entry;
       return S1_SUCCESS;
     }
-    Result<const StringWrapper&> Program::GetEntry () const
+    Result<String*> Program::GetEntry () const
     {
-      return entryFunction;
+      return entryFunction.get();
     }
     
     s1_ResultCode Program::SetInputFrequency (const uc::String& param, s1_InputFrequency freq)
@@ -173,7 +177,11 @@ static s1_bool s1_program_set_entry_function_ucs (s1_Program* program, s1::uc::S
     return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
   }
 
-  return program_impl->ReturnErrorCode (program_impl->SetEntry (*name));
+  boost::intrusive_ptr<s1::api_impl::String> strObj;
+  s1::ResultCode createRes = s1::api_impl::String::Create (strObj, program_impl->GetLibrary (), std::move (*name));
+  if (S1_FAILED(createRes)) return program_impl->ReturnErrorCode (createRes);
+
+  return program_impl->ReturnErrorCode (program_impl->SetEntry (strObj));
 }
 
 s1_bool s1_program_set_entry_function (s1_Program* program, const char* name)
@@ -197,7 +205,7 @@ s1_bool s1_program_set_entry_function_u32 (s1_Program* program, const s1_char32*
 }
 
 template<typename F>
-static typename std::result_of<F(const s1::api_impl::StringWrapper& sw)>::type
+static typename std::result_of<F(s1::api_impl::String* str)>::type
 s1_program_get_entry_function_filtering (s1_Program* program, F filterFunc)
 {
   S1_ASSERT_MSG(program, "NULL Program", nullptr);
@@ -210,25 +218,25 @@ s1_program_get_entry_function_filtering (s1_Program* program, F filterFunc)
 const char* s1_program_get_entry_function (s1_Program* program)
 {
   return s1_program_get_entry_function_filtering (program,
-    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetUTF8 (); });
+    [=](s1::api_impl::String* str) { return str->Str(); });
 }
 
 const wchar_t* s1_program_get_entry_function_ws (s1_Program* program)
 {
   return s1_program_get_entry_function_filtering (program,
-    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetWS (); });
+    [=](s1::api_impl::String* str) { return str->StrWCS(); });
 }
 
 const s1_char16* s1_program_get_entry_function_u16 (s1_Program* program)
 {
   return s1_program_get_entry_function_filtering (program,
-    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetUTF16 (); });
+    [=](s1::api_impl::String* str) { return str->StrU16(); });
 }
 
 const s1_char32* s1_program_get_entry_function_u32 (s1_Program* program)
 {
   return s1_program_get_entry_function_filtering (program,
-    [=](const s1::api_impl::StringWrapper& sw) { return sw.GetUTF32 (); });
+    [=](s1::api_impl::String* str) { return str->StrU32(); });
 }
 
 static s1_bool s1_program_set_input_frequency_ucs (s1_Program* program, s1::uc::String_optional param, s1_InputFrequency freq)
