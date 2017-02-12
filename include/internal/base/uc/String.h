@@ -148,6 +148,9 @@ namespace s1
       static ConversionResult<Char32> convertUTF32 (const Char32* s, size_t len = (size_t)~0);
       /** @} */
 
+      /// Convert from local 8-bit encoding.
+      static String fromLocal8Bit (const char* s, size_t len = (size_t)~0);
+
       /// Check if string starts with the given string.
       bool startsWith (const String& s) const;
       /// Check if string starts with the given ASCII string.

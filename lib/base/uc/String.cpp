@@ -607,6 +607,101 @@ namespace s1
       return str;
     }
 
+    String String::fromLocal8Bit (const char* s, size_t len)
+    {
+      if (len == (size_t)~0) len = std::char_traits<char>::length (s);
+
+    #if !defined(_MSC_VER)
+      /* MSVC >= 2015 has mbrtoc16(), but that only converts from UTF-8,
+       * not local multibyte... */
+    #define USE_MBRTOC16
+    #endif
+
+      String str;
+      /* Is there an encoding where the output UTF-16 has more code points
+       * than the input has bytes? */
+      str.reserveInternal (OverflowCheckAdd (size_type (0), len, max_size() - 1) + 1);
+      const char* input = s;
+      const char* inputEnd = s + len;
+      Char* outputStart = str.bufferPtr();
+      Char* output = outputStart;
+      Char* outputEnd = output + len;
+      mbstate_t mbs = mbstate_t ();
+    #if !defined(USE_MBRTOC16) && defined(S1_WCHAR_IS_UTF32)
+      uc::UTF16Encoder enc;
+    #endif
+
+      while ((input < inputEnd) && (output < outputEnd))
+      {
+      #if defined(USE_MBRTOC16) || defined(S1_WCHAR_IS_UTF16)
+      #if defined(USE_MBRTOC16)
+        size_t convRes = mbrtoc16 (output, input, inputEnd - input, &mbs);
+      #else
+        size_t convRes = mbrtowc (reinterpret_cast<wchar_t*> (output), input, inputEnd - input, &mbs);
+      #endif
+        switch (convRes)
+        {
+        default:
+          // Input was consumed, output generated
+          output++;
+          input += convRes;
+          break;
+        case 0:
+          // Null terminator encountered
+          input = inputEnd;
+          break;
+        case (size_t)-1:
+          // Encoding error
+          *output++ = ReplacementChar;
+          input++;
+          mbs = mbstate_t ();
+          break;
+        case (size_t)-2:
+          // Input incomplete
+          *output++ = ReplacementChar;
+          input = inputEnd;
+          break;
+        case (size_t)-3:
+          // No input consumed, but output generated
+          output++;
+          break;
+        }
+      #elif defined(S1_WCHAR_IS_UTF32)
+        wchar_t ch;
+        size_t convRes = mbrtowc (&ch, input, inputEnd - input, &mbs);
+        switch (convRes)
+        {
+        default:
+          // Input was consumed, output generated
+          enc (ch, output, outputEnd);
+          input += convRes;
+          break;
+        case 0:
+          // Null terminator encountered
+          input = inputEnd;
+          break;
+        case (size_t)-1:
+          // Encoding error
+          *output++ = ReplacementChar;
+          input++;
+          mbs = mbstate_t ();
+          break;
+        case (size_t)-2:
+          // Input incomplete
+          *output++ = ReplacementChar;
+          input = inputEnd;
+          break;
+        }
+      #endif
+      }
+      *output = 0;
+      str.setLength (OverflowCheckAdd (size_type (0), static_cast<size_t> (output - outputStart), max_size() - 1));
+      str.shrink_to_fit();
+      return str;
+
+    #undef USE_MBRTOC16
+    }
+
     bool String::startsWith (const String& s) const
     {
       if (s.length() > length()) return false;
