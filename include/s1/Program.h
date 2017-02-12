@@ -57,8 +57,7 @@ S1_API(s1_bool) s1_program_set_options (s1_Program* program, s1_Options* options
  * Get program compilation options.
  * \param program Program object.
  * \returns The program compilation options.
- *   The returned object will already have a reference, release the reference
- *   using s1_release().
+ * Does \em not add a reference to the returned object.
  * In case of an error, \NULL is returned and the error status is saved in the library's
  * last error code.
  * \remarks You will \em not get back the object passed to s1_program_set_options().
