@@ -350,12 +350,10 @@ namespace s1
 
     String::String (const wchar_t* s) : String ()
     {
-    #if CXX_SIZEOF_WCHAR_T == 2
+    #if defined(S1_WCHAR_IS_UTF16)
       append (reinterpret_cast<const s1_char16*> (s));
-    #elif CXX_SIZEOF_WCHAR_T == 4
+    #elif defined(S1_WCHAR_IS_UTF32)
       append (reinterpret_cast<const s1_char32*> (s));
-    #else
-      #error Unsupported wchar_t size
     #endif
     }
 

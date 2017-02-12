@@ -56,9 +56,9 @@ namespace s1
 
     const wchar_t* StringWrapper::GetWS () const
     {
-    #if CXX_SIZEOF_WCHAR_T == 2
+    #if defined(S1_WCHAR_IS_UTF16)
       return reinterpret_cast<const wchar_t*> (GetUTF16 ());
-    #elif CXX_SIZEOF_WCHAR_T == 4
+    #elif defined(S1_WCHAR_IS_UTF32)
       return reinterpret_cast<const wchar_t*> (GetUTF32 ());
     #else
       return nullptr;

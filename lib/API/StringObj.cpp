@@ -80,9 +80,9 @@ namespace s1
 
     ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos)
     {
-#if CXX_SIZEOF_WCHAR_T == 2
+#if defined(S1_WCHAR_IS_UTF16)
       auto result = uc::String::convertUTF16 (reinterpret_cast<const s1_char16*> (str));
-#elif CXX_SIZEOF_WCHAR_T == 4
+#elif defined(S1_WCHAR_IS_UTF32)
       auto result = uc::String::convertUTF32 (reinterpret_cast<const s1_char32*> (str));
 #endif
       strObj.reset (new String (std::move (result.str), lib));

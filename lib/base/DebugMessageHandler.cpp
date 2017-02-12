@@ -41,7 +41,7 @@ namespace s1
     buf_ws.reserve (strLen);
     const char* strPos = str;
     uc::UTF8Decoder decoder;
-#if CXX_SIZEOF_WCHAR_T == 2
+#if defined(S1_WCHAR_IS_UTF16)
     uc::UTF16Encoder encoder;
     size_t outputPos = 0;
 #endif
@@ -53,7 +53,7 @@ namespace s1
         break;
       }
 
-#if CXX_SIZEOF_WCHAR_T == 2
+#if defined(S1_WCHAR_IS_UTF16)
       bool fullyEncoded = false;
       do
       {
@@ -114,9 +114,9 @@ namespace s1
   {
     if (handlerWide)
     {
-    #if CXX_SIZEOF_WCHAR_T == 2
+    #if defined(S1_WCHAR_IS_UTF16)
       handlerWide (reinterpret_cast<const wchar_t*> (str.data ()), context);
-    #elif CXX_SIZEOF_WCHAR_T == 4
+    #elif defined(S1_WCHAR_IS_UTF32)
       boost::container::small_vector<wchar_t, 256> buf;
       buf.reserve (str.size () + 1);
       uc::String::CharacterIterator it (str);
@@ -154,7 +154,7 @@ namespace s1
       boost::container::small_vector<char, 256> buf_utf8;
       buf_utf8.reserve (strLen);
       const wchar_t* strPos = str;
-    #if CXX_SIZEOF_WCHAR_T == 2
+    #if defined(S1_WCHAR_IS_UTF16)
       uc::UTF16Decoder decoder;
     #endif
       uc::UTF8Encoder encoder;
@@ -162,7 +162,7 @@ namespace s1
       while (strPos < str + strLen)
       {
         uc::Char32 nextChar;
-      #if CXX_SIZEOF_WCHAR_T == 2
+      #if defined(S1_WCHAR_IS_UTF16)
         if (decoder (reinterpret_cast<const uc::Char16*&> (strPos),
                      reinterpret_cast<const uc::Char16*> (str + strLen), nextChar)
             != uc::UTF16Decoder::drSuccess)
@@ -216,7 +216,7 @@ namespace s1
 
   void DefaultDebugMessageHandler::PrintMessage (const uc::String& str)
   {
-  #if CXX_SIZEOF_WCHAR_T == 2
+  #if defined(S1_WCHAR_IS_UTF16)
     PrintMessage (reinterpret_cast<const wchar_t*> (str.data ()));
   #else
     std::string s_utf8;

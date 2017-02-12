@@ -91,6 +91,16 @@ namespace s1
     _S1_ASSERT_MSG_RET(x, ret)                                \
   } while(0)
 
+// Definitions for wchar_t encoding.
+// Assumes a world where wchar_t is always some UTF.
+#if CXX_SIZEOF_WCHAR_T == 2
+#define S1_WCHAR_IS_UTF16
+#elif CXX_SIZEOF_WCHAR_T == 4
+#define S1_WCHAR_IS_UTF32
+#else
+#error Unsupported wchar_t size
+#endif
+
 // Used all over the place
 #include "uc/String.h"
 
