@@ -28,15 +28,42 @@
 
 #include "Program.h"
 #include "StringObj.h"
+#include "StringWrapper.h"
 
 #include <new>
 #include <boost/algorithm/string/predicate.hpp>
+
+namespace s1
+{
+  namespace api_impl
+  {
+    class Library : public s1::Library
+    {
+      boost::optional<StringWrapper> lastErrorInfo;
+    public:
+      const char* GetLastErrorInfo ()
+      {
+        auto ucs_info = s1::Library::GetLastErrorInfo ();
+        if (ucs_info)
+        {
+          lastErrorInfo = *ucs_info;
+          return lastErrorInfo->GetUTF8 ();
+        }
+        else
+        {
+          lastErrorInfo = boost::none;
+          return nullptr;
+        }
+      }
+    };
+  } // namespace api_impl
+} // namespace s1
 
 s1_ResultCode s1_create_library (s1_Library** out)
 {
   if (!out) return S1_E_INVALID_ARG_N(0);
   
-  s1::Library* new_lib (new (std::nothrow) s1::Library);
+  s1::Library* new_lib (new (std::nothrow) s1::api_impl::Library);
   if (!new_lib) return S1_E_OUT_OF_MEMORY;
   new_lib->AddRef();
   *out = new_lib->DowncastEvil<s1_Library> ();
@@ -47,7 +74,7 @@ s1_ResultCode s1_library_get_last_error (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library",
                 S1_MAKE_ERROR(S1_RESULT_COMP_BASE, 0xbad1));
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   s1::ScopedThreadDebugMessageHandler setMsgHandler (libImpl->GetDebugMessageHandler ());
   return libImpl->GetLastError();
 }
@@ -55,7 +82,7 @@ s1_ResultCode s1_library_get_last_error (s1_Library* lib)
 void s1_library_clear_last_error (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library", S1_ASSERT_RET_VOID);
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   s1::ScopedThreadDebugMessageHandler setMsgHandler (libImpl->GetDebugMessageHandler ());
   libImpl->SetLastError (S1_SUCCESS);
 }
@@ -63,7 +90,7 @@ void s1_library_clear_last_error (s1_Library* lib)
 const char* s1_library_get_last_error_info (s1_Library* lib)
 {
   S1_ASSERT_MSG(lib, "NULL Library", nullptr);
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   s1::ScopedThreadDebugMessageHandler setMsgHandler (libImpl->GetDebugMessageHandler ());
   return libImpl->GetLastErrorInfo();
 }
@@ -73,7 +100,7 @@ void s1_library_set_debug_message_handler (s1_Library* lib,
                                            uintptr_t userContext)
 {
   S1_ASSERT_MSG (lib, "NULL Library", S1_ASSERT_RET_VOID);
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   libImpl->GetDebugMessageHandler ().SetHandler (handler, userContext);
 }
 
@@ -82,7 +109,7 @@ void s1_library_set_debug_message_handler_ws (s1_Library* lib,
                                               uintptr_t userContext)
 {
   S1_ASSERT_MSG (lib, "NULL Library", S1_ASSERT_RET_VOID);
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   libImpl->GetDebugMessageHandler ().SetHandlerWS (handler, userContext);
 }
 
@@ -90,7 +117,7 @@ s1_debug_message_handler_func s1_library_get_debug_message_handler (s1_Library* 
                                                                     uintptr_t* userContextPtr)
 {
   S1_ASSERT_MSG (lib, "NULL Library", nullptr);
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   return libImpl->GetDebugMessageHandler ().GetHandler (userContextPtr);
 }
 
@@ -98,7 +125,7 @@ s1_debug_message_handler_ws_func s1_library_get_debug_message_handler_ws (s1_Lib
                                                                           uintptr_t* userContextPtr)
 {
   S1_ASSERT_MSG (lib, "NULL Library", nullptr);
-  auto libImpl = s1::EvilUpcast<s1::Library> (lib);
+  auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
   return libImpl->GetDebugMessageHandler ().GetHandlerWS (userContextPtr);
 }
 
@@ -106,7 +133,7 @@ s1_debug_message_handler_ws_func s1_library_get_debug_message_handler_ws (s1_Lib
 s1_Options* s1_options_create (s1_Library* obj)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
-  s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
 
   return lib->Return (lib->Try (
@@ -121,7 +148,7 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
                                            size_t sourceSize, unsigned int compatLevel)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
-  s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
 
   if (!source)
@@ -149,7 +176,7 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
 static s1_Backend* s1_backend_create_ucs (s1_Library* obj, s1::uc::String_optional backend)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
-  s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
 
   if (!backend)
@@ -204,7 +231,7 @@ template<typename Ch>
 static s1_String* s1_string_create_internal (s1_Library* obj, const Ch* string, const Ch** invalidPos)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
-  s1::Library* lib (s1::EvilUpcast<s1::Library> (obj));
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
 
   if (!string) return lib->ReturnErrorCode (S1_E_INVALID_ARG_N (0), nullptr);

@@ -55,7 +55,7 @@ namespace s1
   {
     // TODO: Store error info with thread affinity
     s1_ResultCode lastError;
-    std::string errorInfo;
+    boost::optional<uc::String> errorInfo;
     /// Message handler settings
     DebugMessageHandler messageHandler;
     /// The internal factory object
@@ -65,20 +65,20 @@ namespace s1
     
     // TODO: Store stuff like memory allocator, global options etc... here
     s1_ResultCode GetLastError () { return lastError; }
-    const char* GetLastErrorInfo ()
+    const uc::String* GetLastErrorInfo ()
     {
-      return errorInfo.empty () ? nullptr : errorInfo.c_str ();
+      return errorInfo ? &(*errorInfo) : nullptr;
     }
-    void SetLastError (s1_ResultCode code, const char* info = nullptr)
+    void SetLastError (s1_ResultCode code, const uc::String* info = nullptr)
     {
       lastError = code;
       if (info)
       {
-        errorInfo = info;
+        errorInfo = *info;
       }
       else
       {
-        errorInfo.clear ();
+        errorInfo = boost::none;
       }
     }
     
@@ -160,7 +160,7 @@ namespace s1
       }
       catch (std::exception& e)
       {
-        return { S1_E_FAILURE, e.what () };
+        return { S1_E_FAILURE, uc::String::fromLocal8Bit (e.what ()) };
       }
       return S1_E_FAILURE;
     }
