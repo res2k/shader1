@@ -54,7 +54,7 @@ namespace s1
       return GetStrUTF32().c_str ();
     }
 
-    const wchar_t* StringWrapper::GetWS () const
+    const wchar_t* StringWrapper::GetWCS () const
     {
     #if defined(S1_WCHAR_IS_UTF16)
       return reinterpret_cast<const wchar_t*> (GetUTF16 ());

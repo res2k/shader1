@@ -32,8 +32,8 @@ public:
     TS_ASSERT_EQUALS (empty.GetUTF16 ()[0], 0);
     TS_ASSERT_EQUALS (std::char_traits<char32_t>::length (empty.GetUTF32 ()), 0);
     TS_ASSERT_EQUALS (empty.GetUTF32 ()[0], 0);
-    TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (empty.GetWS ()), 0);
-    TS_ASSERT_EQUALS (empty.GetWS ()[0], 0);
+    TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (empty.GetWCS ()), 0);
+    TS_ASSERT_EQUALS (empty.GetWCS ()[0], 0);
   }
 
   void testAscii (void)
@@ -60,13 +60,13 @@ public:
     TS_ASSERT_EQUALS (hello.GetUTF32 ()[3], 'l');
     TS_ASSERT_EQUALS (hello.GetUTF32 ()[4], 'o');
     TS_ASSERT_EQUALS (hello.GetUTF32 ()[5], 0);
-    TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (hello.GetWS ()), 5);
-    TS_ASSERT_EQUALS (hello.GetWS ()[0], 'H');
-    TS_ASSERT_EQUALS (hello.GetWS ()[1], 'e');
-    TS_ASSERT_EQUALS (hello.GetWS ()[2], 'l');
-    TS_ASSERT_EQUALS (hello.GetWS ()[3], 'l');
-    TS_ASSERT_EQUALS (hello.GetWS ()[4], 'o');
-    TS_ASSERT_EQUALS (hello.GetWS ()[5], 0);
+    TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (hello.GetWCS ()), 5);
+    TS_ASSERT_EQUALS (hello.GetWCS ()[0], 'H');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[1], 'e');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[2], 'l');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[3], 'l');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[4], 'o');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[5], 0);
   }
 
   void testUnicode1 (void)
@@ -95,13 +95,13 @@ public:
     TS_ASSERT_EQUALS (hello.GetUTF32 ()[3], 'l');
     TS_ASSERT_EQUALS (hello.GetUTF32 ()[4], 'o');
     TS_ASSERT_EQUALS (hello.GetUTF32 ()[5], 0);
-    TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (hello.GetWS ()), 5);
-    TS_ASSERT_EQUALS (hello.GetWS ()[0], 'H');
-    TS_ASSERT_EQUALS (hello.GetWS ()[1], 0xeb);
-    TS_ASSERT_EQUALS (hello.GetWS ()[2], 'l');
-    TS_ASSERT_EQUALS (hello.GetWS ()[3], 'l');
-    TS_ASSERT_EQUALS (hello.GetWS ()[4], 'o');
-    TS_ASSERT_EQUALS (hello.GetWS ()[5], 0);
+    TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (hello.GetWCS ()), 5);
+    TS_ASSERT_EQUALS (hello.GetWCS ()[0], 'H');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[1], 0xeb);
+    TS_ASSERT_EQUALS (hello.GetWCS ()[2], 'l');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[3], 'l');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[4], 'o');
+    TS_ASSERT_EQUALS (hello.GetWCS ()[5], 0);
   }
 
   void testUnicode2 (void)

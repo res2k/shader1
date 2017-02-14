@@ -58,7 +58,7 @@ namespace s1
       const char* Str () const { return str.GetUTF8 (); }
       const s1_char16* StrU16 () const { return str.GetUTF16 (); }
       const s1_char32* StrU32 () const { return str.GetUTF32 (); }
-      const wchar_t* StrWCS () const { return str.GetWS (); }
+      const wchar_t* StrWCS () const { return str.GetWCS (); }
     };
   } // namespace api_impl
 } // namespace s1

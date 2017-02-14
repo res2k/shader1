@@ -101,7 +101,7 @@ namespace s1
       /// Get string, UTF-32 encoded
       const s1_char32* GetUTF32 () const;
       /// Get string, as wide string
-      const wchar_t* GetWS () const;
+      const wchar_t* GetWCS () const;
     };
   } // namespace api_impl
 } // namespace s1
