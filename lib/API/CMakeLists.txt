@@ -20,6 +20,7 @@ set(s1_sources
     ResultCode.cpp
     ResultCodeHelper.cpp
     ResultCodeHelper.h
+    StringArg.h
     StringObj.cpp
     StringObj.h
     StringWrapper.cpp
@@ -33,6 +34,7 @@ set(s1_sources
     ${S1_INC_PUBLIC}/Program.h
     ${S1_INC_PUBLIC}/ResultCode.h
     ${S1_INC_PUBLIC}/String.h
+    ${S1_INC_PUBLIC}/StringArg.h
     ${S1_INC_PUBLIC}/genObject/Object.h.template
     )
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)

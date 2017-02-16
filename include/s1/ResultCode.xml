@@ -54,6 +54,23 @@
 			a way to obtain a library to set the error code on anyway.)
 			</doc_ext>
 		</code>
+		<code name="E_STRING_TOO_LONG" value="3"
+		      name_ext="E_STRING_TOO_LONG_N">
+			<descr>A string argument was too long</descr>
+			<descr_ext>A string argument was too long ({0})</descr_ext>
+			<doc>
+			A string argument was too long (longer than S1_STRING_ARG_MAX_N).
+			\remarks You need to use the #S1_ERROR_EQUAL macro to check for this error code.
+			</doc>
+			<doc_ext>
+			A specific string argument was too long (longer than S1_STRING_ARG_MAX_N).
+			\a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
+			has index 0. But note that for functions taking an object instance as the first argument that
+			argument is \em not included when counting the invalid argument number.
+			(This does not really incur a loss of information as there wouldn't be
+			a way to obtain a library to set the error code on anyway.)
+			</doc_ext>
+		</code>
 		<code name="S_INPUT_INCOMPLETE" value="10" type="success">
 			<descr>Incomplete sequence in input</descr>
 			<doc>
