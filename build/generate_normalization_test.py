@@ -32,7 +32,7 @@ parser.add_argument('-o', '--out', dest='out_dir', required=True, help='Output d
 args = parser.parse_args()
 
 test_data = []
-with open(LocateUCDData (args.ucd_dir, [], "NormalizationTest.txt"), "r") as f:
+with open(LocateUCDData (args.ucd_dir, [], "NormalizationTest.txt"), "r", encoding='utf-8') as f:
   for line in f:
     if line.startswith('@'): continue
     # Remove comment
@@ -60,19 +60,19 @@ def FormatSeq(seq):
   return s + '0'
 
 out_file = open (os.path.join (args.out_dir, 'NormalizationTestData.inc'), "w")
-print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
+print('// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver), file=out_file)
 test_items = []
 n = 0
 for item in test_data:
   # We only check NFD normalization, so skip any items were it's not different from the source
   if set(item[0]) == set(item[2]): continue
-  print >> out_file, 'const Char32 normalizationTestData_source_{0}[] = {{ {1} }};'.format (n, FormatSeq (item[0]))
-  print >> out_file, 'const Char32 normalizationTestData_nfd_{0}[] = {{ {1} }};'.format (n, FormatSeq (item[2]))
+  print('const Char32 normalizationTestData_source_{0}[] = {{ {1} }};'.format (n, FormatSeq (item[0])), file=out_file)
+  print('const Char32 normalizationTestData_nfd_{0}[] = {{ {1} }};'.format (n, FormatSeq (item[2])), file=out_file)
   test_items.append(n)
   n += 1
-print >> out_file, 'struct NormalizationTestItem {\n\tconst Char32* source;\n\tconst Char32* nfd;\n};'
-print >> out_file, 'static const NormalizationTestItem normalizationTestData[] = {'
+print('struct NormalizationTestItem {\n\tconst Char32* source;\n\tconst Char32* nfd;\n};', file=out_file)
+print('static const NormalizationTestItem normalizationTestData[] = {', file=out_file)
 for item in test_items:
   # We only check NFD normalization, so skip any items were it's not different from the source
-  print >> out_file, '\t// {0}\n\t{{ normalizationTestData_source_{0}, normalizationTestData_nfd_{0} }},'.format (item)
-print >> out_file, '};'
+  print('\t// {0}\n\t{{ normalizationTestData_source_{0}, normalizationTestData_nfd_{0} }},'.format (item), file=out_file)
+print('};', file=out_file)

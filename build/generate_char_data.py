@@ -106,17 +106,17 @@ def PrintSetRanges(out_file, split, name, bytes_per_char):
     char_type = 'Char16'
   else:
     char_type = 'Char32'
-  print >> out_file, 'static const {0} ucd_{1}[{2} * 2] = {{'.format (char_type, name, len(split))
+  print('static const {0} ucd_{1}[{2} * 2] = {{'.format (char_type, name, len(split)), file=out_file)
   for c in split:
-    print >> out_file, '\t{0}, {1},'.format (hex(c[0]), hex(c[1]))
-  print >> out_file, "};"
+    print('\t{0}, {1},'.format (hex(c[0]), hex(c[1])), file=out_file)
+  print("};", file=out_file)
 
 OUTPUT_DIR = None
 
 def ProcessSetRanges(ranges, name):
-  print >> sys.stderr, name + ":"
+  print(name + ":", file=sys.stderr)
   out_file = open (os.path.join (OUTPUT_DIR, '{0}.inc'.format (name)), "w")
-  print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
+  print('// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver), file=out_file)
   max_cp = 0
   for r in ranges:
     max_cp = max(max_cp, r[0], r[1])
@@ -126,7 +126,7 @@ def ProcessSetRanges(ranges, name):
   elif max_cp >= 0x100:
     bytes_per_char = 2
   queries = int(math.ceil(math.log(len(ranges), 2)))
-  print >> sys.stderr, "queries:", queries
+  print("queries:", queries, file=sys.stderr)
   PrintSetRanges (out_file, ranges, name, bytes_per_char)
 
 class Data_UI8_per_CP(object):
@@ -161,22 +161,24 @@ class Data_CP_Seq(object):
   def WriteExtraMapDataDecl(self, out_file):
     self.ofs_for_cp = {}
     n = 0
-    for cp, seq in self.prop_map.iteritems():
+    for cp in sorted(self.prop_map.keys()):
+      seq = self.prop_map[cp]
       if len(seq) == 1: continue
       self.ofs_for_cp[cp] = n
       n += len(seq)
-    print >> out_file, '\tChar32 seqdata[{0}];'.format (n)
+    print('\tChar32 seqdata[{0}];'.format (n), file=out_file)
     return True
 
   def WriteExtraMapData(self, out_file):
-    print >> out_file, '\t{'
-    for cp, seq in self.prop_map.iteritems():
+    print('\t{', file=out_file)
+    for cp in sorted(self.prop_map.keys()):
+      seq = self.prop_map[cp]
       if len(seq) == 1: continue
       s = ""
       for seq_cp in seq:
         s = s + '{0}, '.format (hex (seq_cp))
-      print >> out_file, '\t\t{0}'.format (s.rstrip())
-    print >> out_file, '\t},'
+      print('\t\t{0}'.format (s.rstrip()), file=out_file)
+    print('\t},', file=out_file)
 
   def StrForCP(self, cp):
     if cp in self.prop_map:
@@ -219,48 +221,48 @@ def PrintMapRanges(out_file, prop_map, ranges, name, bytes_per_char, datatype):
   save_data = datatype (prop_map)
 
   # Map data struct
-  print >> out_file, 'static const struct _ucd_{0}'.format (name)
-  print >> out_file, '{'
-  print >> out_file, '\t{0} key[{1}*2];'.format (char_type, len(ranges))
-  print >> out_file, '\tunsigned int idx[{0}];'.format (len(ranges))
-  print >> out_file, '\t{0} data[{1}];'.format (datatype.type_str, data_size)
+  print('static const struct _ucd_{0}'.format (name), file=out_file)
+  print('{', file=out_file)
+  print('\t{0} key[{1}*2];'.format (char_type, len(ranges)), file=out_file)
+  print('\tunsigned int idx[{0}];'.format (len(ranges)), file=out_file)
+  print('\t{0} data[{1}];'.format (datatype.type_str, data_size), file=out_file)
   have_extra_data = save_data.WriteExtraMapDataDecl(out_file)
-  print >> out_file, '}} ucd_{0} = {{'.format (name)
+  print('}} ucd_{0} = {{'.format (name), file=out_file)
 
-  print >> out_file, '\t{'
+  print('\t{', file=out_file)
   for c in ranges:
-    print >> out_file, '\t\t{0}, {1},'.format (hex(c[0]), hex(c[1]))
-  print >> out_file, '\t},'
-  print >> out_file, '\t{'
+    print('\t\t{0}, {1},'.format (hex(c[0]), hex(c[1])), file=out_file)
+  print('\t},', file=out_file)
+  print('\t{', file=out_file)
   i = 0
   for c in ranges:
-    print >> out_file, '\t\t{0},'.format (i)
+    print('\t\t{0},'.format (i), file=out_file)
     i = i + c[1] - c[0] + 1
-  print >> out_file, '\t},'
-  print >> out_file, '\t{'
+  print('\t},', file=out_file)
+  print('\t{', file=out_file)
   for c in ranges:
-    print >> out_file, '\t\t// {0} - {1}'.format (hex(c[0]), hex(c[1]))
+    print('\t\t// {0} - {1}'.format (hex(c[0]), hex(c[1])), file=out_file)
     n = 0
     s = ""
     for cp in range(c[0], c[1]+1):
       if s and (n % 8 == 0):
-        print >> out_file, '\t\t{0}'.format (s.rstrip())
+        print('\t\t{0}'.format (s.rstrip()), file=out_file)
         s = ''
       s = s + save_data.StrForCP (cp) + ', '
       n = n + 1
     if s:
-      print >> out_file, '\t\t{0}'.format (s.rstrip())
+      print('\t\t{0}'.format (s.rstrip()), file=out_file)
   if have_extra_data:
-    print >> out_file, '\t}, '
+    print('\t}, ', file=out_file)
   else:
-    print >> out_file, '\t}'
+    print('\t}', file=out_file)
   save_data.WriteExtraMapData(out_file)
-  print >> out_file, '};'
+  print('};', file=out_file)
 
 def ProcessMap(prop_map, name, datatype):
-  print >> sys.stderr, name + ":"
+  print(name + ":", file=sys.stderr)
   out_file = open (os.path.join (OUTPUT_DIR, '{0}.inc'.format (name)), "w")
-  print >> out_file, '// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver)
+  print('// Generated on {0} from Unicode {1} data'.format(datetime.datetime.now(), args.ucver), file=out_file)
   max_cp = 0
   char_ranges = Range()
   for cp in sorted(prop_map):
@@ -282,12 +284,12 @@ def ProcessMap(prop_map, name, datatype):
     s = len(compressed_ranges) * (bytes_per_char * 2 + 4)
     for r in compressed_ranges:
       s = s + datatype.RangeDataSize (r, prop_map)
-    print >> sys.stderr, b, queries, s
+    print(b, queries, s, file=sys.stderr)
     if s < min_size:
       min_size = s
       min_b = b
       min_ranges = compressed_ranges
-  print >> sys.stderr, "min:", min_b, min_size, min_ranges
+  print("min:", min_b, min_size, min_ranges, file=sys.stderr)
   PrintMapRanges (out_file, prop_map, min_ranges, name, bytes_per_char, datatype)
 
 
@@ -307,8 +309,7 @@ def LocateUCDData(ucddir, subdirs, filename):
   return fullpath
 
 
-parser = argparse.ArgumentParser(description='Process UCD data',
-                                 epilog='Generated C++ code is written to stdout')
+parser = argparse.ArgumentParser(description='Process UCD data')
 parser.add_argument('-d', '--ucd', dest='ucd_dir', required=True, help='UCD directory')
 parser.add_argument('-u', '--ucver', dest='ucver', required=True, help='Unicode version')
 parser.add_argument('-o', '--out', dest='out_dir', required=True, help='Output directory')
@@ -359,7 +360,7 @@ def RecursivelyResolveDecompositions():
   while do_resolve:
     do_resolve = False
     new_canonical_decomp = {}
-    for cp, decomp in canonical_decomp.iteritems():
+    for cp, decomp in canonical_decomp.items():
       new_decomp = []
       for dcp in decomp:
         if dcp in canonical_decomp:
