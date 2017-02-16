@@ -90,9 +90,9 @@ namespace s1
      * thrown. Sets the appropriate last error code.
      */
     template<typename Func>
-    inline typename detail::deduce_try_result<typename std::result_of<Func()>::type>::type Try (Func func)
+    static inline typename detail::deduce_try_result<typename std::result_of<Func()>::type>::type Try (Func func)
     {
-      return lib->Try (func);
+      return Library::Try (func);
     }
 
     /// Debug message handler access
