@@ -22,6 +22,7 @@
 #include <string>
 
 #include "base/uc/String.h"
+#include "base/uc/StringOverflowException.h"
 #include "uc_String_Trait.h"
 
 typedef s1::uc::Char32 Char32;
@@ -699,7 +700,7 @@ public:
   {
     s1::uc::String str ("foo");
     TS_ASSERT_THROWS(str.append ("dummy", s1::uc::String::max_size()-1),
-      std::length_error);
+                     s1::uc::StringOverflowException);
   }
 
   // Test small string swapping
