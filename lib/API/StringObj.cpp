@@ -94,7 +94,7 @@ namespace s1
 } // namespace s1
 
 template<typename Ch>
-static s1_ResultCode s1_string_create_independent_internal (s1_String** newStrObj, const Ch* string, const Ch** invalidPos)
+static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrObj, const Ch* string, const Ch** invalidPos)
 {
   if (!newStrObj) return S1_E_INVALID_ARG_N (0);
 
@@ -111,24 +111,24 @@ static s1_ResultCode s1_string_create_independent_internal (s1_String** newStrOb
     }).code();
 }
 
-S1_API(s1_ResultCode) s1_string_create_independent (s1_String** newStrObj, const char* string, const char** invalidPos)
+S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, const char* string, const char** invalidPos)
 {
-  return s1_string_create_independent_internal (newStrObj, string, invalidPos);
+  return s1_string_independent_create_internal (newStrObj, string, invalidPos);
 }
 
-S1_API(s1_ResultCode) s1_string_create_independent_wcs (s1_String** newStrObj, const wchar_t* string, const wchar_t** invalidPos)
+S1_API(s1_ResultCode) s1_string_independent_create_wcs (s1_String** newStrObj, const wchar_t* string, const wchar_t** invalidPos)
 {
-  return s1_string_create_independent_internal (newStrObj, string, invalidPos);
+  return s1_string_independent_create_internal (newStrObj, string, invalidPos);
 }
 
-S1_API(s1_ResultCode) s1_string_create_independent_u16 (s1_String** newStrObj, const s1_char16* string, const s1_char16** invalidPos)
+S1_API(s1_ResultCode) s1_string_independent_create_u16 (s1_String** newStrObj, const s1_char16* string, const s1_char16** invalidPos)
 {
-  return s1_string_create_independent_internal (newStrObj, string, invalidPos);
+  return s1_string_independent_create_internal (newStrObj, string, invalidPos);
 }
 
-S1_API(s1_ResultCode) s1_string_create_independent_u32 (s1_String** newStrObj, const s1_char32* string, const s1_char32** invalidPos)
+S1_API(s1_ResultCode) s1_string_independent_create_u32 (s1_String** newStrObj, const s1_char32* string, const s1_char32** invalidPos)
 {
-  return s1_string_create_independent_internal (newStrObj, string, invalidPos);
+  return s1_string_independent_create_internal (newStrObj, string, invalidPos);
 }
 
 const char* s1_string_u8 (s1_String* string)

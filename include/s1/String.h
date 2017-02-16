@@ -57,13 +57,13 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_String);
  * In case of other errors, \a newStrObj is set to \NULL is returned and the error
  * status is returned.
  */
-S1_API(s1_ResultCode) s1_string_create_independent (s1_String** newStrObj, const char* string,
+S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, const char* string,
                                                     const char** invalidPos S1_ARG_DEFAULT (S1_NULL));
-S1_API(s1_ResultCode) s1_string_create_independent_wcs (s1_String** newStrObj, const wchar_t* string,
+S1_API(s1_ResultCode) s1_string_independent_create_wcs (s1_String** newStrObj, const wchar_t* string,
                                                         const wchar_t** invalidPos S1_ARG_DEFAULT (S1_NULL));
-S1_API(s1_ResultCode) s1_string_create_independent_u16 (s1_String** newStrObj, const s1_char16* string,
+S1_API(s1_ResultCode) s1_string_independent_create_u16 (s1_String** newStrObj, const s1_char16* string,
                                                         const s1_char16** invalidPos S1_ARG_DEFAULT (S1_NULL));
-S1_API(s1_ResultCode) s1_string_create_independent_u32 (s1_String** newStrObj, const s1_char32* string,
+S1_API(s1_ResultCode) s1_string_independent_create_u32 (s1_String** newStrObj, const s1_char32* string,
                                                         const s1_char32** invalidPos S1_ARG_DEFAULT (S1_NULL));
 //@}
 
@@ -112,7 +112,7 @@ namespace s1
      * user.
      * \remarks A String object may or may not be attached to a library; thus querying
      * the library (via s1::LibraryObject::GetLibrary) may legitimately return \NULL.
-     * \createdby s1::Library::CreateString(), s1::String::CreateIndependent
+     * \createdby s1::Library::CreateString(), s1::String::IndependentCreate
      */
     class String : public LibraryObject
     {
@@ -132,31 +132,31 @@ namespace s1
        * In case of other errors, \a newStrObj is set to \NULL is returned and the error
        * status is returned.
        */
-      static ResultCode CreateIndependent (Pointer& strObj, const char* string)
+      static ResultCode IndependentCreate (Pointer& strObj, const char* string)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent (&p, string));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create (&p, string));
         strObj.take (p);
         return err;
       }
-      static ResultCode CreateIndependent (Pointer& strObj, const wchar_t* string)
+      static ResultCode IndependentCreate (Pointer& strObj, const wchar_t* string)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent_wcs (&p, string));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_wcs (&p, string));
         strObj.take (p);
         return err;
       }
-      static ResultCode CreateIndependent (Pointer& strObj, const s1_char16* string)
+      static ResultCode IndependentCreate (Pointer& strObj, const s1_char16* string)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent_u16 (&p, string));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_u16 (&p, string));
         strObj.take (p);
         return err;
       }
-      static ResultCode CreateIndependent (Pointer& strObj, const s1_char32* string)
+      static ResultCode IndependentCreate (Pointer& strObj, const s1_char32* string)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent_u32 (&p, string));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_u32 (&p, string));
         strObj.take (p);
         return err;
       }
@@ -176,31 +176,31 @@ namespace s1
        * In case of other errors, \a newStrObj is set to \NULL is returned and the error
        * status is returned.
        */
-      static ResultCode CreateIndependent (Pointer& strObj, const char* string, const char*& invalidPos)
+      static ResultCode IndependentCreate (Pointer& strObj, const char* string, const char*& invalidPos)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent (&p, string, &invalidPos));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create (&p, string, &invalidPos));
         strObj.take (p);
         return err;
       }
-      static ResultCode CreateIndependent (Pointer& strObj, const wchar_t* string, const wchar_t*& invalidPos)
+      static ResultCode IndependentCreate (Pointer& strObj, const wchar_t* string, const wchar_t*& invalidPos)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent_wcs (&p, string, &invalidPos));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_wcs (&p, string, &invalidPos));
         strObj.take (p);
         return err;
       }
-      static ResultCode CreateIndependent (Pointer& strObj, const s1_char16* string, const s1_char16*& invalidPos)
+      static ResultCode IndependentCreate (Pointer& strObj, const s1_char16* string, const s1_char16*& invalidPos)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent_u16 (&p, string, &invalidPos));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_u16 (&p, string, &invalidPos));
         strObj.take (p);
         return err;
       }
-      static ResultCode CreateIndependent (Pointer& strObj, const s1_char32* string, const s1_char32*& invalidPos)
+      static ResultCode IndependentCreate (Pointer& strObj, const s1_char32* string, const s1_char32*& invalidPos)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_create_independent_u32 (&p, string, &invalidPos));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_u32 (&p, string, &invalidPos));
         strObj.take (p);
         return err;
       }
