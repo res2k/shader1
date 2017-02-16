@@ -26,7 +26,7 @@
 
 #include "codegen/cg/CgGenerator.h"
 #include "codegen/cg/CgOptions.h"
-#include "../cg/SequenceCodeGenerator.h"
+#include "../cg/CgSequenceCodeGenerator.h"
 
 #include "StringSubstitute.h"
 
@@ -58,10 +58,10 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
   class TestImportedNameResolver : public sl::ImportedNameResolver
   {
   public:
-    std::string GetImportedNameIdentifier (const s1::uc::String& name)
-    { return std::string(); }	
-    std::string GetExportedNameIdentifier (const s1::uc::String& name)
-    { return std::string(); }	
+    s1::uc::String GetImportedNameIdentifier (const s1::uc::String& name)
+    { return s1::uc::String(); }	
+    s1::uc::String GetExportedNameIdentifier (const s1::uc::String& name)
+    { return s1::uc::String(); }	
   };
   
   class TestCodeGenerator : public CgGenerator
@@ -87,8 +87,8 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
       TestSequenceCodeGenerator (const Sequence& seq, sl::ImportedNameResolver* nameRes)
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
-				std::vector<std::string> (),
-                                DefaultOptions ()) {}
+				std::vector<s1::uc::String> (),
+                                DefaultOptions (), "v2f") {}
        
       using Superclass::GetOutputRegisterName;
     };

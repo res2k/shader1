@@ -19,8 +19,8 @@
 #include "base/common.h"
 
 #include "codegen/cg/CgGenerator.h"
+#include "../cg/CgSequenceCodeGenerator.h"
 #include "../cg/CgTraits.h"
-#include "../cg/SequenceCodeGenerator.h"
 
 using namespace s1::codegen;
 
