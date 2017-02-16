@@ -38,7 +38,7 @@ namespace s1
     /// Result code
     ResultCode resultCode;
     /// Error info
-    boost::optional<uc::String> resultErrorInfo;
+    std::unique_ptr<uc::String> resultErrorInfo;
     /// Return value
     boost::optional<T> val;
   public:
@@ -47,10 +47,11 @@ namespace s1
     /**
      * Construct from error code.
      */
-    Result (ResultCode resultCode, boost::optional<uc::String>&& errorInfo = boost::none)
-      : resultCode (resultCode), resultErrorInfo (std::move (errorInfo)) { }
-    Result (ResultCode resultCode, const boost::optional<uc::String>& errorInfo)
-      : resultCode (resultCode), resultErrorInfo (errorInfo) { }
+    Result (ResultCode resultCode) : resultCode (resultCode) {}
+    Result (ResultCode resultCode, uc::String&& errorInfo)
+      : resultCode (resultCode), resultErrorInfo (new uc::String (std::move (errorInfo))) { }
+    Result (ResultCode resultCode, const uc::String& errorInfo)
+      : resultCode (resultCode), resultErrorInfo (new uc::String (errorInfo)) { }
     //@{
     /**
     * Default constructor with value and optional result code.
@@ -60,8 +61,14 @@ namespace s1
     Result (U&& value, ResultCode resultCode = S1_SUCCESS)
       : resultCode (resultCode), val (std::forward<U> (value)) {}
     //@}
-    Result (const Result& other) : resultCode (other.resultCode), val (other.val) {}
-    Result (Result&& other) : resultCode (other.resultCode), val (std::move (other.val)) {}
+    Result (const Result& other) : resultCode (other.resultCode), val (other.val)
+    {
+      if (other.resultErrorInfo)
+        resultErrorInfo.reset (new uc::String (*other.resultErrorInfo));
+    }
+    Result (Result&& other)
+      : resultCode (other.resultCode), resultErrorInfo (std::move (other.resultErrorInfo)),
+        val (std::move (other.val)) {}
 
     Result& operator= (const Result& other)
     {
@@ -96,7 +103,7 @@ namespace s1
     /// Get result code.
     ResultCode code () const { return resultCode;  }
     /// Get optional error info.
-    const uc::String* errorInfo () const { return resultErrorInfo ? &(*resultErrorInfo) : nullptr; }
+    const uc::String* errorInfo () const { return resultErrorInfo.get(); }
 
     //@{
     /**
@@ -133,7 +140,7 @@ namespace s1
       if (val)
         return result_type (func (*val), resultCode);
       else if (resultErrorInfo)
-        return result_type (resultCode, resultErrorInfo);
+        return result_type (resultCode, *resultErrorInfo);
       else
         return result_type (resultCode);
     }
