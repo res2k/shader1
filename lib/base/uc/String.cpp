@@ -21,8 +21,8 @@
 #include "base/uc/UTF16Encoder.h"
 #include "base/uc/UTF16to8Transcoder.h"
 #include "base/uc/UTF8to16Transcoder.h"
-#include "base/uc/Exception.h"
 #include "base/uc/String.h"
+#include "base/uc/StringOverflowException.h"
 
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
@@ -838,6 +838,11 @@ namespace s1
         boost::atomic_thread_fence(boost::memory_order_acquire);
         free (data);
       }
+    }
+
+    void String::ThrowStringOverflowException ()
+    {
+      throw StringOverflowException ();
     }
 
     //

@@ -24,7 +24,6 @@
 #include "Char.h"
 
 #include <limits>
-#include <stdexcept>
 #include <string>
 #include <string.h>
 
@@ -277,9 +276,10 @@ namespace s1
       static inline A OverflowCheckAdd (A a, B b, A maxValue)
       {
         if ((b > maxValue) || ((maxValue - b) < a))
-          throw std::length_error ("String length overflow");
+          ThrowStringOverflowException ();
         return static_cast<A> (a + b);
       }
+      static void ThrowStringOverflowException ();
     };
   } // namespace uc
 } // namespace s1

@@ -21,6 +21,7 @@ set(base_sources_uc_cpp
     uc/char_traits.h
     uc/Exception.cpp
     uc/String.cpp
+    uc/StringOverflowException.cpp
     uc/Stream.cpp
     uc/StreamException.cpp
     uc/UTF16to8Transcoder.cpp
@@ -35,6 +36,7 @@ set(base_sources_uc_h
     ${S1_INC}/base/uc/StreamException.h
     ${S1_INC}/base/uc/StreamInvalidCharacterException.h
     ${S1_INC}/base/uc/String.h
+    ${S1_INC}/base/uc/StringOverflowException.h
     ${S1_INC}/base/uc/UTF16Decoder.h
     ${S1_INC}/base/uc/UTF16Encoder.h
     ${S1_INC}/base/uc/UTF8Decoder.h
