@@ -23,6 +23,8 @@
 #include "base/uc/String_optional.h"
 #include "compiler/Options.h"
 
+#include "StringArg.h"
+
 s1_bool s1_options_set_opt_flag (s1_Options* options, s1_Optimization opt, s1_bool enable)
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
@@ -62,16 +64,12 @@ s1_bool s1_options_set_opt_level (s1_Options* options, int level)
   return options_impl->ReturnSuccess();
 }
     
-static s1_bool s1_options_parse_opt_flag_str_ucs (s1_Options* options, s1::uc::String_optional flagStr,
-                                                  s1_Optimization* opt, s1_bool* flag)
+s1_bool s1_options_parse_opt_flag_str (s1_Options* options, s1_StringArg flagStr,
+                                       s1_Optimization* opt, s1_bool* flag)
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
-  if (!flagStr)
-  {
-    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
-  }
   if (!opt)
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(1));
@@ -80,73 +78,34 @@ static s1_bool s1_options_parse_opt_flag_str_ucs (s1_Options* options, s1::uc::S
   {
     return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(2));
   }
-  s1::Compiler::Options::Optimization parsed_opt;
-  bool parsed_flag;
-  if (!options_impl->ParseOptimizationFlagString (*flagStr, parsed_opt, parsed_flag))
-  {
-    return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
-  }
-  *opt = (s1_Optimization)parsed_opt;
-  *flag = parsed_flag;
-  return options_impl->ReturnSuccess();
+
+  return options_impl->Return (options_impl->Try (
+    [=]() -> s1::Result<bool> {
+      s1::Compiler::Options::Optimization parsed_opt;
+      bool parsed_flag;
+      if (!options_impl->ParseOptimizationFlagString (s1::api_impl::ResolveStringArg (flagStr, 0),
+                                                      parsed_opt, parsed_flag))
+      {
+        return S1_E_INVALID_OPTIMIZATION;
+      }
+      *opt = (s1_Optimization)parsed_opt;
+      *flag = parsed_flag;
+      return true;
+    }), false);
 }
 
-s1_bool s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
-                                       s1_Optimization* opt, s1_bool* flag)
-{
-  return s1_options_parse_opt_flag_str_ucs (options, s1::uc::make_String_optional (flagStr), opt, flag);
-}
-
-s1_bool s1_options_parse_opt_flag_str_ws (s1_Options* options, const wchar_t* flagStr,
-                                          s1_Optimization* opt, s1_bool* flag)
-{
-  return s1_options_parse_opt_flag_str_ucs (options, s1::uc::make_String_optional (flagStr), opt, flag);
-}
-
-s1_bool s1_options_parse_opt_flag_str_u16 (s1_Options* options, const s1_char16* flagStr,
-                                           s1_Optimization* opt, s1_bool* flag)
-{
-  return s1_options_parse_opt_flag_str_ucs (options, s1::uc::make_String_optional (flagStr), opt, flag);
-}
-
-s1_bool s1_options_parse_opt_flag_str_u32 (s1_Options* options, const s1_char32* flagStr,
-                                           s1_Optimization* opt, s1_bool* flag)
-{
-  return s1_options_parse_opt_flag_str_ucs (options, s1::uc::make_String_optional (flagStr), opt, flag);
-}
-
-static s1_bool s1_options_set_opt_flag_from_str_ucs (s1_Options* options, s1::uc::String_optional flagStr)
+s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, s1_StringArg flagStr)
 {
   S1_ASSERT_MSG(options, "NULL Options", false);
   s1::Compiler::Options* options_impl (s1::EvilUpcast<s1::Compiler::Options> (options));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (options_impl->GetDebugMessageHandler ());
-  if (!flagStr)
-  {
-    return options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
-  }
-  if (!options_impl->SetOptimizationFlagFromStr (*flagStr))
-  {
-    return options_impl->ReturnErrorCode (S1_E_INVALID_OPTIMIZATION);
-  }
-  return options_impl->ReturnSuccess();
-}
 
-s1_bool s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagStr)
-{
-  return s1_options_set_opt_flag_from_str_ucs (options, s1::uc::make_String_optional (flagStr));
-}
-
-s1_bool s1_options_set_opt_flag_from_str_ws (s1_Options* options, const wchar_t* flagStr)
-{
-  return s1_options_set_opt_flag_from_str_ucs (options, s1::uc::make_String_optional (flagStr));
-}
-
-s1_bool s1_options_set_opt_flag_from_str_u16 (s1_Options* options, const s1_char16* flagStr)
-{
-  return s1_options_set_opt_flag_from_str_ucs (options, s1::uc::make_String_optional (flagStr));
-}
-
-s1_bool s1_options_set_opt_flag_from_str_u32 (s1_Options* options, const s1_char32* flagStr)
-{
-  return s1_options_set_opt_flag_from_str_ucs (options, s1::uc::make_String_optional (flagStr));
+  return options_impl->Return (options_impl->Try (
+    [=]() -> s1::Result<bool> {
+      if (!options_impl->SetOptimizationFlagFromStr (s1::api_impl::ResolveStringArg (flagStr, 0)))
+      {
+        return S1_E_INVALID_OPTIMIZATION;
+      }
+      return true;
+    }), false);
 }

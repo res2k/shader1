@@ -24,6 +24,7 @@
 #include "s1/warn_off.h"
 
 #include "s1/LibraryObject.h"
+#include "s1/StringArg.h"
 
 #define S1TYPE_INFO_s1_Program   (S1_TYPE_MAKE_NAME(Program), S1TYPE_INFO_s1_LibraryObject)
 /**
@@ -65,7 +66,8 @@ S1_API(s1_bool) s1_program_set_options (s1_Program* program, s1_Options* options
  */
 S1_API(s1_Options*) s1_program_get_options (s1_Program* program);
 
-//@{
+S1TYPE_DECLARE_FWD(String);
+
 /**
  * Set the entry function of a program.
  * \param program Program object.
@@ -77,11 +79,7 @@ S1_API(s1_Options*) s1_program_get_options (s1_Program* program);
  * input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
-S1_API(s1_bool) s1_program_set_entry_function (s1_Program* program, const char* name);
-S1_API(s1_bool) s1_program_set_entry_function_ws (s1_Program* program, const wchar_t* name);
-S1_API(s1_bool) s1_program_set_entry_function_u16 (s1_Program* program, const s1_char16* name);
-S1_API(s1_bool) s1_program_set_entry_function_u32 (s1_Program* program, const s1_char32* name);
-//@}
+S1_API(s1_bool) s1_program_set_entry_function (s1_Program* program, s1_StringArg name);
 //@{
 /**
  * Get the entry function of a program.
@@ -111,7 +109,6 @@ enum s1_InputFrequency
   S1_FREQ_VERTEX = 1
 };
 
-//@{
 /**
  * Set the variation frequency of a program input variable.
  * \param program Program object.
@@ -126,12 +123,7 @@ enum s1_InputFrequency
  *  input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
-S1_API(s1_bool) s1_program_set_input_frequency (s1_Program* program, const char* param, enum s1_InputFrequency freq);
-S1_API(s1_bool) s1_program_set_input_frequency_ws (s1_Program* program, const wchar_t* param, enum s1_InputFrequency freq);
-S1_API(s1_bool) s1_program_set_input_frequency_u16 (s1_Program* program, const s1_char16* param, enum s1_InputFrequency freq);
-S1_API(s1_bool) s1_program_set_input_frequency_u32 (s1_Program* program, const s1_char32* param, enum s1_InputFrequency freq);
-//@}
-//@{
+S1_API(s1_bool) s1_program_set_input_frequency (s1_Program* program, s1_StringArg param, enum s1_InputFrequency freq);
 /**
  * Query the variation frequency of a program input variable.
  * \param program Program object.
@@ -143,13 +135,8 @@ S1_API(s1_bool) s1_program_set_input_frequency_u32 (s1_Program* program, const s
  *   given parameter a default frequency will be returned.
  * \memberof s1_Program
  */
-S1_API(enum s1_InputFrequency) s1_program_get_input_frequency (s1_Program* program, const char* param);
-S1_API(enum s1_InputFrequency) s1_program_get_input_frequency_ws (s1_Program* program, const wchar_t* param);
-S1_API(enum s1_InputFrequency) s1_program_get_input_frequency_u16 (s1_Program* program, const s1_char16* param);
-S1_API(enum s1_InputFrequency) s1_program_get_input_frequency_u32 (s1_Program* program, const s1_char32* param);
-//@}
+S1_API(enum s1_InputFrequency) s1_program_get_input_frequency (s1_Program* program, s1_StringArg param);
 
-//@{
 /* TODO: Should probably distinguish between an upper bound size (actual runtime size conveyed through
  * a distinct input uniform in the compiled program) and a fixed array size (actual runtime size is given). */
 /**
@@ -165,12 +152,7 @@ S1_API(enum s1_InputFrequency) s1_program_get_input_frequency_u32 (s1_Program* p
  *  input variables -- \ref input_vars_volatility.
  * \memberof s1_Program
  */
-S1_API(s1_bool) s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size);
-S1_API(s1_bool) s1_program_set_input_array_size_ws (s1_Program* program, const wchar_t* param, size_t size);
-S1_API(s1_bool) s1_program_set_input_array_size_u16 (s1_Program* program, const s1_char16* param, size_t size);
-S1_API(s1_bool) s1_program_set_input_array_size_u32 (s1_Program* program, const s1_char32* param, size_t size);
-//@}
-//@{
+S1_API(s1_bool) s1_program_set_input_array_size (s1_Program* program, s1_StringArg param, size_t size);
 /**
  * Get the size of an array program input variable.
  * \param program Program object.
@@ -180,11 +162,7 @@ S1_API(s1_bool) s1_program_set_input_array_size_u32 (s1_Program* program, const 
  * last error code.
  * \memberof s1_Program
  */
-S1_API(size_t) s1_program_get_input_array_size (s1_Program* program, const char* param);
-S1_API(size_t) s1_program_get_input_array_size_ws (s1_Program* program, const wchar_t* param);
-S1_API(size_t) s1_program_get_input_array_size_u16 (s1_Program* program, const s1_char16* param);
-S1_API(size_t) s1_program_get_input_array_size_u32 (s1_Program* program, const s1_char32* param);
-//@}
+S1_API(size_t) s1_program_get_input_array_size (s1_Program* program, s1_StringArg param);
 
 //TODO: Lots of inspection/query functions
 
@@ -246,7 +224,6 @@ namespace s1
         return s1_program_get_options (this);
       }
 
-      //@{
       /**
        * Set the entry function of a program.
        * \param name Entry function name.
@@ -256,23 +233,10 @@ namespace s1
        * \remarks Changing the entry function will affect the reported available
        * input variables -- \ref input_vars_volatility.
        */
-      bool SetEntryFunction (const char* name)
+      bool SetEntryFunction (StringArg name)
       {
         return s1_program_set_entry_function (this, name) != 0;
       }
-      bool SetEntryFunction (const wchar_t* name)
-      {
-        return s1_program_set_entry_function_ws (this, name) != 0;
-      }
-      bool SetEntryFunction (const s1_char16* name)
-      {
-        return s1_program_set_entry_function_u16 (this, name) != 0;
-      }
-      bool SetEntryFunction (const s1_char32* name)
-      {
-        return s1_program_set_entry_function_u32 (this, name) != 0;
-      }
-      //@}
 
       //@{
       /**
@@ -302,7 +266,6 @@ namespace s1
       }
       //@}
 
-      //@{
       /**
        * Set the variation frequency of a program input variable.
        * \param param Input parameter name.
@@ -315,25 +278,11 @@ namespace s1
        *  - Changing an input variation frequency will affect the reported available
        *  input variables -- \ref input_vars_volatility.
        */
-      bool SetInputFrequency (const char* param, InputFrequency freq)
+      bool SetInputFrequency (StringArg param, InputFrequency freq)
       {
         return s1_program_set_input_frequency (this, param, freq) != 0;
       }
-      bool SetInputFrequency (const wchar_t* param, InputFrequency freq)
-      {
-        return s1_program_set_input_frequency_ws (this, param, freq) != 0;
-      }
-      bool SetInputFrequency (const s1_char16* param, InputFrequency freq)
-      {
-        return s1_program_set_input_frequency_u16 (this, param, freq) != 0;
-      }
-      bool SetInputFrequency (const s1_char32* param, InputFrequency freq)
-      {
-        return s1_program_set_input_frequency_u32 (this, param, freq) != 0;
-      }
-      //@}
 
-      //@{
       /**
        * Query the variation frequency of a program input variable.
        * \param param Input parameter name.
@@ -343,25 +292,11 @@ namespace s1
        * \remarks If a variation frequency wasn't explicitly set for the
        *   given parameter a default frequency will be returned.
        */
-      InputFrequency GetInputFrequency (const char* param)
+      InputFrequency GetInputFrequency (StringArg param)
       {
         return s1_program_get_input_frequency (this, param);
       }
-      InputFrequency GetInputFrequency (const wchar_t* param)
-      {
-        return s1_program_get_input_frequency_ws (this, param);
-      }
-      InputFrequency GetInputFrequency (const s1_char16* param)
-      {
-        return s1_program_get_input_frequency_u16 (this, param);
-      }
-      InputFrequency GetInputFrequency (const s1_char32* param)
-      {
-        return s1_program_get_input_frequency_u32 (this, param);
-      }
-      //@}
 
-      //@{
       /**
        * Set the size of an array program input variable.
        * \param param Array input parameter name.
@@ -373,24 +308,10 @@ namespace s1
        * - Changing an input array size will affect the reported available
        * input variables -- \ref input_vars_volatility.
        */
-      bool SetInputArraySize (const char* param, size_t size)
+      bool SetInputArraySize (StringArg param, size_t size)
       {
         return s1_program_set_input_array_size (this, param, size) != 0;
       }
-      bool SetInputArraySize (const wchar_t* param, size_t size)
-      {
-        return s1_program_set_input_array_size_ws (this, param, size) != 0;
-      }
-      bool SetInputArraySize (const s1_char16* param, size_t size)
-      {
-        return s1_program_set_input_array_size_u16 (this, param, size) != 0;
-      }
-      bool SetInputArraySize (const s1_char32* param, size_t size)
-      {
-        return s1_program_set_input_array_size_u32 (this, param, size) != 0;
-      }
-      //@}
-      //@{
       /**
        * Get the size of an array program input variable.
        * \param param Array input parameter name.
@@ -398,11 +319,10 @@ namespace s1
        * In that case the error status is saved in the library's
        * last error code.
        */
-      size_t GetInputArraySize (const char* param)
+      size_t GetInputArraySize (StringArg param)
       {
         return s1_program_get_input_array_size (this, param);
       }
-      //@}
 
     };
   S1_NS_CXXAPI_END

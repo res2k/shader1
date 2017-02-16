@@ -24,6 +24,9 @@
 #include "compiler/Program.h"
 #include "splitter/Frequency.h"
 
+#include "StringArg.h"
+#include "StringObj.h"
+
 #include <sstream>
 
 namespace s1
@@ -166,42 +169,26 @@ s1_Options* s1_program_get_options (s1_Program* program)
   return program_impl->ReturnSuccess (options_impl->DowncastEvil<s1_Options> ());
 }
 
-static s1_bool s1_program_set_entry_function_ucs (s1_Program* program, s1::uc::String_optional name)
+s1_bool s1_program_set_entry_function (s1_Program* program, s1_StringArg string)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  if (!name)
+  s1::api_impl::ResolveStringArg resolve_str (string, 0);
+  if (auto strObj = resolve_str.GetStringObj ())
   {
-    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
+    return program_impl->ReturnErrorCode (program_impl->SetEntry (strObj));
   }
 
-  boost::intrusive_ptr<s1::api_impl::String> strObj;
-  s1::ResultCode createRes = s1::api_impl::String::Create (strObj, program_impl->GetLibrary (), std::move (*name));
-  if (S1_FAILED(createRes)) return program_impl->ReturnErrorCode (createRes);
-
-  return program_impl->ReturnErrorCode (program_impl->SetEntry (strObj));
-}
-
-s1_bool s1_program_set_entry_function (s1_Program* program, const char* name)
-{
-  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
-}
-
-s1_bool s1_program_set_entry_function_ws (s1_Program* program, const wchar_t* name)
-{
-  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
-}
-
-s1_bool s1_program_set_entry_function_u16 (s1_Program* program, const s1_char16* name)
-{
-  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
-}
-
-s1_bool s1_program_set_entry_function_u32 (s1_Program* program, const s1_char32* name)
-{
-  return s1_program_set_entry_function_ucs (program, s1::uc::make_String_optional (name));
+  return program_impl->Return (program_impl->Try (
+    [=]() -> s1::Result<bool> {
+      boost::intrusive_ptr<s1::api_impl::String> strObj;
+      s1::ResultCode createRes =
+        s1::api_impl::String::Create (strObj, program_impl->GetLibrary (), resolve_str.GetString ());
+      if (S1_FAILED(createRes)) return createRes;
+      return program_impl->SetEntry (strObj);
+    }), false);
 }
 
 template<typename F>
@@ -239,140 +226,58 @@ const s1_char32* s1_program_get_entry_function_u32 (s1_Program* program)
     [=](s1::api_impl::String* str) { return str->StrU32(); });
 }
 
-static s1_bool s1_program_set_input_frequency_ucs (s1_Program* program, s1::uc::String_optional param, s1_InputFrequency freq)
+s1_String* s1_program_get_entry_function_strobj (s1_Program* program)
+{
+  return s1_program_get_entry_function_filtering (program,
+    [=](s1::api_impl::String* str) { return str->DowncastEvil<s1_String> (); });
+}
+
+s1_bool s1_program_set_input_frequency (s1_Program* program, s1_StringArg param, s1_InputFrequency freq)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  if (!param)
-  {
-    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
-  }
-
-  return program_impl->ReturnErrorCode (program_impl->SetInputFrequency (*param, freq));
+  return program_impl->Return (program_impl->Try (
+    [=]() -> s1::Result<bool> {
+      return program_impl->SetInputFrequency (s1::api_impl::ResolveStringArg (param, 0), freq);
+    }), false);
 }
 
-s1_bool s1_program_set_input_frequency (s1_Program* program, const char* param, s1_InputFrequency freq)
-{
-  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
-}
-
-s1_bool s1_program_set_input_frequency_ws (s1_Program* program, const wchar_t* param, s1_InputFrequency freq)
-{
-  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
-}
-
-s1_bool s1_program_set_input_frequency_u16 (s1_Program* program, const s1_char16* param, s1_InputFrequency freq)
-{
-  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
-}
-
-s1_bool s1_program_set_input_frequency_u32 (s1_Program* program, const s1_char32* param, s1_InputFrequency freq)
-{
-  return s1_program_set_input_frequency_ucs (program, s1::uc::make_String_optional (param), freq);
-}
-
-static s1_InputFrequency s1_program_get_input_frequency_ucs (s1_Program* program, s1::uc::String_optional param)
+s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, s1_StringArg param)
 {
   s1_InputFrequency errorFreq (S1_FREQ_INVALID);
   S1_ASSERT_MSG(program, "NULL Program", errorFreq);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  if (!param)
-  {
-    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0), errorFreq);
-  }
-
-  return program_impl->Return (program_impl->GetInputFrequency (*param), errorFreq);
+  return program_impl->Return (program_impl->Try (
+      [=]() -> s1::Result<s1_InputFrequency> {
+      return program_impl->GetInputFrequency (s1::api_impl::ResolveStringArg (param, 0));
+    }), errorFreq);
 }
 
-s1_InputFrequency s1_program_get_input_frequency (s1_Program* program, const char* param)
-{
-  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
-}
-
-s1_InputFrequency s1_program_get_input_frequency_ws (s1_Program* program, const wchar_t* param)
-{
-  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
-}
-
-s1_InputFrequency s1_program_get_input_frequency_u16 (s1_Program* program, const s1_char16* param)
-{
-  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
-}
-
-s1_InputFrequency s1_program_get_input_frequency_u32 (s1_Program* program, const s1_char32* param)
-{
-  return s1_program_get_input_frequency_ucs (program, s1::uc::make_String_optional (param));
-}
-
-static s1_bool s1_program_set_input_array_size_ucs (s1_Program* program, s1::uc::String_optional param, size_t size)
+s1_bool s1_program_set_input_array_size (s1_Program* program, s1_StringArg param, size_t size)
 {
   S1_ASSERT_MSG(program, "NULL Program", false);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  if (!param)
-  {
-    return program_impl->ReturnErrorCode (S1_E_INVALID_ARG_N(0));
-  }
-
-  return program_impl->ReturnErrorCode (program_impl->SetInputArraySize (*param, size));
+  return program_impl->Return (program_impl->Try (
+    [=]() -> s1::Result<s1_bool> {
+      return program_impl->SetInputArraySize (s1::api_impl::ResolveStringArg (param, 0), size);
+    }), false);
 }
 
-s1_bool s1_program_set_input_array_size (s1_Program* program, const char* param, size_t size)
-{
-  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
-}
-
-s1_bool s1_program_set_input_array_size_ws (s1_Program* program, const wchar_t* param, size_t size)
-{
-  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
-}
-
-s1_bool s1_program_set_input_array_size_u16 (s1_Program* program, const s1_char16* param, size_t size)
-{
-  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
-}
-
-s1_bool s1_program_set_input_array_size_u32 (s1_Program* program, const s1_char32* param, size_t size)
-{
-  return s1_program_set_input_array_size_ucs (program, s1::uc::make_String_optional (param), size);
-}
-
-static size_t s1_program_get_input_array_size_ucs (s1_Program* program, s1::uc::String_optional param)
+size_t s1_program_get_input_array_size (s1_Program* program, s1_StringArg param)
 {
   const size_t errorSize ((size_t)~0);
   S1_ASSERT_MSG(program, "NULL Program", errorSize);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  if (!param)
-  {
-    return program_impl->Return<size_t> (S1_E_INVALID_ARG_N(0), errorSize);
-  }
-
-  return program_impl->Return (program_impl->GetInputArraySize (*param), errorSize);
-}
-
-size_t s1_program_get_input_array_size (s1_Program* program, const char* param)
-{
-  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
-}
-
-size_t s1_program_get_input_array_size_ws (s1_Program* program, const wchar_t* param)
-{
-  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
-}
-
-size_t s1_program_get_input_array_size_u16 (s1_Program* program, const s1_char16* param)
-{
-  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
-}
-
-size_t s1_program_get_input_array_size_u32 (s1_Program* program, const s1_char32* param)
-{
-  return s1_program_get_input_array_size_ucs (program, s1::uc::make_String_optional (param));
+  return program_impl->Return (program_impl->Try (
+    [=]() -> s1::Result<size_t> {
+      return program_impl->GetInputArraySize (s1::api_impl::ResolveStringArg (param, 0));
+    }), errorSize);
 }

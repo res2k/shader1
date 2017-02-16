@@ -24,6 +24,7 @@
 #include "s1/warn_off.h"
 
 #include "s1/LibraryObject.h"
+#include "s1/StringArg.h"
 
 #define S1TYPE_INFO_s1_BackendOptions   (S1_TYPE_MAKE_NAME(BackendOptions), S1TYPE_INFO_s1_LibraryObject)
 /**
@@ -35,7 +36,6 @@
  */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_BackendOptions);
 
-//@{
 /**
  * Parse and set a backend option from a string.
  * Useful for e.g. command line parsing.
@@ -46,11 +46,7 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_BackendOptions);
  * last error code.
  * \memberof s1_BackendOptions
  */
-S1_API(s1_bool) s1_backendoptions_set_from_str (s1_BackendOptions* options, const char* str);
-S1_API(s1_bool) s1_backendoptions_set_from_str_ws (s1_BackendOptions* options, const wchar_t* str);
-S1_API(s1_bool) s1_backendoptions_set_from_str_u16 (s1_BackendOptions* options, const s1_char16* str);
-S1_API(s1_bool) s1_backendoptions_set_from_str_u32 (s1_BackendOptions* options, const s1_char32* str);
-//@}
+S1_API(s1_bool) s1_backendoptions_set_from_str (s1_BackendOptions* options, s1_StringArg str);
 
 
 #if defined(__cplusplus)
@@ -69,7 +65,6 @@ namespace s1
       /// Smart pointer class for Options instances.
       typedef Ptr<BackendOptions> Pointer;
 
-      //@{
       /**
        * Parse and set a backend option from a string.
        * Useful for e.g. command line parsing.
@@ -78,23 +73,10 @@ namespace s1
        * In case of an error, the error status is saved in the library's
        * last error code.
        */
-      bool SetFromStr (const char* str)
+      bool SetFromStr (StringArg str)
       {
         return s1_backendoptions_set_from_str (this, str) != 0;
       }
-      bool SetFromStr (const wchar_t* str)
-      {
-        return s1_backendoptions_set_from_str_ws (this, str) != 0;
-      }
-      bool SetFromStr (const s1_char16* str)
-      {
-        return s1_backendoptions_set_from_str_u16 (this, str) != 0;
-      }
-      bool SetFromStr (const s1_char32* str)
-      {
-        return s1_backendoptions_set_from_str_u32 (this, str) != 0;
-      }
-      //@}
     };
   S1_NS_CXXAPI_END
 

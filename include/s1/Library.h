@@ -27,6 +27,7 @@
 #include "s1/Object.h"
 #include "s1/Ptr.h"
 #include "s1/ResultCode.h"
+#include "s1/StringArg.h"
 
 #define S1TYPE_INFO_s1_Library   (S1_TYPE_MAKE_NAME(Library), S1TYPE_INFO_s1_Object)
 /**
@@ -189,7 +190,6 @@ S1_API(s1_Program*) s1_program_create_from_string (s1_Library* lib, const char* 
                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
 S1TYPE_DECLARE_FWD(Backend);
-//@{
 /**
  * Create a backend object.
  * \param lib Parent library.
@@ -202,11 +202,7 @@ S1TYPE_DECLARE_FWD(Backend);
  * last error code.
  * \memberof s1_Library
  */
-S1_API(s1_Backend*) s1_backend_create (s1_Library* lib, const char* backend);
-S1_API(s1_Backend*) s1_backend_create_ws (s1_Library* lib, const wchar_t* backend);
-S1_API(s1_Backend*) s1_backend_create_u16 (s1_Library* lib, const s1_char16* backend);
-S1_API(s1_Backend*) s1_backend_create_u32 (s1_Library* lib, const s1_char32* backend);
-//@}
+S1_API(s1_Backend*) s1_backend_create (s1_Library* lib, s1_StringArg backend);
 
 S1TYPE_DECLARE_FWD(String);
 //@{
@@ -389,7 +385,6 @@ namespace s1
         return S1_RETURN_MOVE_REF(Program,
           s1_program_create_from_string (this, source, sourceSize, compatLevel));
       }
-      //@{
       /**
        * Create a backend object.
        * \param backend Name of the backend to create.
@@ -398,27 +393,11 @@ namespace s1
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
        */
-      S1_RETURN_MOVE_REF_TYPE(Backend) CreateBackend (const char* backend)
+      S1_RETURN_MOVE_REF_TYPE(Backend) CreateBackend (StringArg backend)
       {
         return S1_RETURN_MOVE_REF(Backend,
           s1_backend_create (this, backend));
       }
-      S1_RETURN_MOVE_REF_TYPE (Backend) CreateBackend (const wchar_t* backend)
-      {
-        return S1_RETURN_MOVE_REF (Backend,
-          s1_backend_create_ws (this, backend));
-      }
-      S1_RETURN_MOVE_REF_TYPE (Backend) CreateBackend (const s1_char16* backend)
-      {
-        return S1_RETURN_MOVE_REF (Backend,
-          s1_backend_create_u16 (this, backend));
-      }
-      S1_RETURN_MOVE_REF_TYPE (Backend) CreateBackend (const s1_char32* backend)
-      {
-        return S1_RETURN_MOVE_REF (Backend,
-          s1_backend_create_u32 (this, backend));
-      }
-      //@}
 
       //@{
       /** Create a string object.

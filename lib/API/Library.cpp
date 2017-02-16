@@ -27,6 +27,7 @@
 #include "compiler/Options.h"
 
 #include "Program.h"
+#include "StringArg.h"
 #include "StringObj.h"
 #include "StringWrapper.h"
 
@@ -173,58 +174,33 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     }), nullptr);
 }
 
-static s1_Backend* s1_backend_create_ucs (s1_Library* obj, s1::uc::String_optional backend)
+s1_Backend* s1_backend_create (s1_Library* obj, s1_StringArg backendStr)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);
   s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
 
-  if (!backend)
-  {
-    lib->SetLastError (S1_E_INVALID_ARG_N (0));
-    return nullptr;
-  }
-  s1::Compiler::SupportedBackend compiler_backend;
-  if (boost::algorithm::equals (*backend, "cg"))
-  {
-    compiler_backend = s1::Compiler::beCg;
-  }
-  else if (boost::algorithm::equals (*backend, "glsl"))
-  {
-    compiler_backend = s1::Compiler::beGLSL;
-  }
-  else
-  {
-    lib->SetLastError (S1_E_UNKNOWN_BACKEND);
-    return nullptr;
-  }
+  return lib->Return (lib->Try (
+    [=]() -> s1::Result<s1_Backend*> {
+      s1::api_impl::ResolveStringArg backend (backendStr, 0);
+      s1::Compiler::SupportedBackend compiler_backend;
+      if (boost::algorithm::equals (backend.GetString(), "cg"))
+      {
+        compiler_backend = s1::Compiler::beCg;
+      }
+      else if (boost::algorithm::equals (backend.GetString(), "glsl"))
+      {
+        compiler_backend = s1::Compiler::beGLSL;
+      }
+      else
+      {
+        return S1_E_UNKNOWN_BACKEND;
+      }
 
-  return lib->Return (lib->Try ([=]()
-    {
       s1::Compiler::BackendPtr backend_obj (lib->GetCompiler().CreateBackend (compiler_backend));
       backend_obj->AddRef();
       return backend_obj->DowncastEvil<s1_Backend> ();
     }), nullptr);
-}
-
-s1_Backend* s1_backend_create (s1_Library* obj, const char* backend)
-{
-  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
-}
-
-s1_Backend* s1_backend_create_ws (s1_Library* obj, const wchar_t* backend)
-{
-  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
-}
-
-s1_Backend* s1_backend_create_u16 (s1_Library* obj, const s1_char16* backend)
-{
-  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
-}
-
-s1_Backend* s1_backend_create_u32 (s1_Library* obj, const s1_char32* backend)
-{
-  return s1_backend_create_ucs (obj, s1::uc::make_String_optional (backend));
 }
 
 template<typename Ch>

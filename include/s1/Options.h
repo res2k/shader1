@@ -24,6 +24,7 @@
 #include "s1/warn_off.h"
 
 #include "s1/LibraryObject.h"
+#include "s1/StringArg.h"
 
 #define S1TYPE_INFO_s1_Options   (S1_TYPE_MAKE_NAME(Options), S1TYPE_INFO_s1_LibraryObject)
 /**
@@ -84,7 +85,8 @@ S1_API(s1_bool) s1_options_get_opt_flag (s1_Options* options, enum s1_Optimizati
  */
 S1_API(s1_bool) s1_options_set_opt_level (s1_Options* options, int level);
 
-//@{
+S1TYPE_DECLARE_FWD(String);
+
 /**
  * Parse an optimization flag from a string.
  * Useful for e.g. command line parsing.
@@ -99,17 +101,9 @@ S1_API(s1_bool) s1_options_set_opt_level (s1_Options* options, int level);
  * last error code.
  * \memberof s1_Options
  */
-S1_API(s1_bool) s1_options_parse_opt_flag_str (s1_Options* options, const char* flagStr,
+S1_API(s1_bool) s1_options_parse_opt_flag_str (s1_Options* options, s1_StringArg flagStr,
                                               enum s1_Optimization* opt, s1_bool* flag);
-S1_API(s1_bool) s1_options_parse_opt_flag_str_ws (s1_Options* options, const wchar_t* flagStr,
-                                                  enum s1_Optimization* opt, s1_bool* flag);
-S1_API(s1_bool) s1_options_parse_opt_flag_str_u16 (s1_Options* options, const s1_char16* flagStr,
-                                                   enum s1_Optimization* opt, s1_bool* flag);
-S1_API(s1_bool) s1_options_parse_opt_flag_str_u32 (s1_Options* options, const s1_char32* flagStr,
-                                                   enum s1_Optimization* opt, s1_bool* flag);
-//@}
 
-//@{
 /**
  * Parse and set an optimization flag from a string.
  * Useful for e.g. command line parsing.
@@ -121,11 +115,7 @@ S1_API(s1_bool) s1_options_parse_opt_flag_str_u32 (s1_Options* options, const s1
  * last error code.
  * \memberof s1_Options
  */
-S1_API(s1_bool) s1_options_set_opt_flag_from_str (s1_Options* options, const char* flagStr);
-S1_API(s1_bool) s1_options_set_opt_flag_from_str_ws (s1_Options* options, const wchar_t* flagStr);
-S1_API(s1_bool) s1_options_set_opt_flag_from_str_u16 (s1_Options* options, const s1_char16* flagStr);
-S1_API(s1_bool) s1_options_set_opt_flag_from_str_u32 (s1_Options* options, const s1_char32* flagStr);
-//@}
+S1_API(s1_bool) s1_options_set_opt_flag_from_str (s1_Options* options, s1_StringArg flagStr);
 
 
 #if defined(__cplusplus)
@@ -185,7 +175,6 @@ namespace s1
         return s1_options_set_opt_level (this, level) != 0;
       }
 
-      //@{
       /**
        * Parse an optimization flag from a string.
        * Useful for e.g. command line parsing.
@@ -198,7 +187,7 @@ namespace s1
        * In case of an error, the error status is saved in the library's
        * last error code.
        */
-      bool ParseOptFlagStr (const char* flagStr, s1_Optimization& opt, bool& flag)
+      bool ParseOptFlagStr (StringArg flagStr, s1_Optimization& opt, bool& flag)
       {
         s1_bool ret_flag;
         bool ret (s1_options_parse_opt_flag_str (this, flagStr, &opt, &ret_flag) != 0);
@@ -206,33 +195,7 @@ namespace s1
         flag = ret_flag != 0;
         return true;
       }
-      bool ParseOptFlagStr (const wchar_t* flagStr, s1_Optimization& opt, bool& flag)
-      {
-        s1_bool ret_flag;
-        bool ret (s1_options_parse_opt_flag_str_ws (this, flagStr, &opt, &ret_flag) != 0);
-        if (!ret) return false;
-        flag = ret_flag != 0;
-        return true;
-      }
-      bool ParseOptFlagStr (const s1_char16* flagStr, s1_Optimization& opt, bool& flag)
-      {
-        s1_bool ret_flag;
-        bool ret (s1_options_parse_opt_flag_str_u16 (this, flagStr, &opt, &ret_flag) != 0);
-        if (!ret) return false;
-        flag = ret_flag != 0;
-        return true;
-      }
-      bool ParseOptFlagStr (const s1_char32* flagStr, s1_Optimization& opt, bool& flag)
-      {
-        s1_bool ret_flag;
-        bool ret (s1_options_parse_opt_flag_str_u32 (this, flagStr, &opt, &ret_flag) != 0);
-        if (!ret) return false;
-        flag = ret_flag != 0;
-        return true;
-      }
-      //@}
 
-      //@{
       /**
        * Parse and set an optimization flag from a string.
        * Useful for e.g. command line parsing.
@@ -242,23 +205,10 @@ namespace s1
        * In case of an error, the error status is saved in the library's
        * last error code.
        */
-      bool SetOptFlagFromStr (const char* flagStr)
+      bool SetOptFlagFromStr (StringArg flagStr)
       {
         return s1_options_set_opt_flag_from_str (this, flagStr) != 0;
       }
-      bool SetOptFlagFromStr (const wchar_t* flagStr)
-      {
-        return s1_options_set_opt_flag_from_str_ws (this, flagStr) != 0;
-      }
-      bool SetOptFlagFromStr (const s1_char16* flagStr)
-      {
-        return s1_options_set_opt_flag_from_str_u16 (this, flagStr) != 0;
-      }
-      bool SetOptFlagFromStr (const s1_char32* flagStr)
-      {
-        return s1_options_set_opt_flag_from_str_u32 (this, flagStr) != 0;
-      }
-      //@}
     };
   S1_NS_CXXAPI_END
 

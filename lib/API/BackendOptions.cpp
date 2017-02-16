@@ -23,35 +23,17 @@
 #include "base/uc/String_optional.h"
 #include "compiler/Backend.h"
 
-static s1_bool s1_backendoptions_set_from_str_ucs (s1_BackendOptions* options, s1::uc::String_optional str)
+#include "StringArg.h"
+
+s1_bool s1_backendoptions_set_from_str (s1_BackendOptions* options, s1_StringArg str)
 {
   S1_ASSERT_MSG(options, "NULL BackendOptions", false);
   auto backend_options_impl (s1::EvilUpcast<s1::Compiler::Backend::Options> (options));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (backend_options_impl->GetDebugMessageHandler ());
-  if (!str)
-  {
-    return backend_options_impl->ReturnErrorCode (S1_E_INVALID_ARG_N (0));
-  }
-  bool result = backend_options_impl->SetFromStr (*str);
-  return backend_options_impl->ReturnErrorCode (result ? S1_SUCCESS : S1_E_FAILURE, result);
-}
 
-s1_bool s1_backendoptions_set_from_str (s1_BackendOptions* options, const char* str)
-{
-  return s1_backendoptions_set_from_str_ucs (options, s1::uc::make_String_optional (str));
-}
-
-s1_bool s1_backendoptions_set_from_str_ws (s1_BackendOptions* options, const wchar_t* str)
-{
-  return s1_backendoptions_set_from_str_ucs (options, s1::uc::make_String_optional (str));
-}
-
-s1_bool s1_backendoptions_set_from_str_u16 (s1_BackendOptions* options, const s1_char16* str)
-{
-  return s1_backendoptions_set_from_str_ucs (options, s1::uc::make_String_optional (str));
-}
-
-s1_bool s1_backendoptions_set_from_str_u32 (s1_BackendOptions* options, const s1_char32* str)
-{
-  return s1_backendoptions_set_from_str_ucs (options, s1::uc::make_String_optional (str));
+  return backend_options_impl->Return (backend_options_impl->Try (
+    [=]() {
+      bool result = backend_options_impl->SetFromStr (s1::api_impl::ResolveStringArg (str, 0));
+      return s1::Result<s1_bool> (result, result ? S1_SUCCESS : S1_E_FAILURE);
+    }), false);
 }
