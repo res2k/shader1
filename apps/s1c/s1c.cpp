@@ -275,7 +275,7 @@ public:
             if (optLevel)
               parseRes = compilerOpts->SetOptLevel (*optLevel);
             else
-              parseRes = compilerOpts->SetOptFlagFromStr (optArg.c_str ());
+              parseRes = compilerOpts->SetOptFlagFromStr (optArg);
           }
           if (!parseRes)
           {
@@ -333,7 +333,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   boost::optional<int> result = options.Parse (argc, argv, lib, compilerOpts);
   if (result) return *result;
   
-  Backend::Pointer compilerBackend (lib->CreateBackend (options.backendStr.c_str()));
+  Backend::Pointer compilerBackend (lib->CreateBackend (options.backendStr));
   if (!compilerBackend)
   {
     std::cerr << "Failed to create backend '" << to_local (options.backendStr) << "': "
@@ -354,7 +354,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
       BOOST_FOREACH (const CommandLineOptions::arg_string_type& backendOptStr,
                      options.backendOptions)
       {
-        if (!backendOptions->SetFromStr (backendOptStr.c_str ()))
+        if (!backendOptions->SetFromStr (backendOptStr))
         {
           std::cerr << "Error handling backend option '" << to_local (backendOptStr) << "': "
               << LastErrorString (lib) << std::endl;
@@ -409,12 +409,12 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     std::cerr << "Error creating program: " << LastErrorString (lib) << std::endl;
     return 3;
   }
-  compilerProg->SetEntryFunction (options.entryName.c_str());
+  compilerProg->SetEntryFunction (options.entryName);
   compilerProg->SetOptions (compilerOpts);
   
   BOOST_FOREACH(const CommandLineOptions::ParamMap::value_type& paramFlag, options.paramFlags)
   {
-    if (!compilerProg->SetInputFrequency (paramFlag.first.c_str (), paramFlag.second))
+    if (!compilerProg->SetInputFrequency (paramFlag.first, paramFlag.second))
     {
       std::cerr << "Error setting input type for '" << to_local (paramFlag.first) << "': "
         << LastErrorString (lib) << std::endl;
@@ -422,7 +422,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   }
   BOOST_FOREACH(const CommandLineOptions::ParamArraySizeMap::value_type& paramSize, options.paramArraySizes)
   {
-    if (!compilerProg->SetInputArraySize (paramSize.first.c_str (), paramSize.second))
+    if (!compilerProg->SetInputArraySize (paramSize.first, paramSize.second))
     {
       std::cerr << "Error setting input array size for '" << to_local (paramSize.first) << "': "
         << LastErrorString (lib) << std::endl;
