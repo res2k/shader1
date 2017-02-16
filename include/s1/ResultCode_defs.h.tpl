@@ -54,7 +54,7 @@ def doclines(str):
  * \hideinitializer
 {{if code.find('doc_ext') != None}}{{code.find('doc_ext').text|doclines}}{{else}}{{code.find('descr').text|doclines}}{{endif}}
  */
-#define {{code_ident(code.attrib['name_ext'])}}(N) {{code_make_def_ext(comp.attrib['name'], code, '(N ## u) + 1')}}
+#define {{code_ident(code.attrib['name_ext'])}}(N) {{code_make_def_ext(comp.attrib['name'], code, '((unsigned)N) + 1')}}
 {{endif}}
 {{endfor}}
 /** @} */
