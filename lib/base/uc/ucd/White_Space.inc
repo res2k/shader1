@@ -1,4 +1,4 @@
-// Generated on 2015-07-21 23:28:35.006116 from Unicode 8.0.0 data
+// Generated on 2017-02-16 23:49:12.926757 from Unicode 9.0.0 data
 static const Char16 ucd_White_Space[10 * 2] = {
 	0x9, 0xd,
 	0x20, 0x20,
