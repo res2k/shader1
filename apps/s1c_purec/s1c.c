@@ -135,7 +135,7 @@ int main (const int argc, const char* const argv[])
         s1_options_set_opt_level (compiler_options, *opt_str - '0');
       else
       {
-        if (!s1_options_set_opt_flag_from_str (compiler_options, opt_str))
+        if (!s1_options_set_opt_flag_from_str (compiler_options, s1_u8 (opt_str)))
         {
           fprintf (stderr, "failed to set optimization flag %s: error %s\n",
                    opt_str, lib_error_string (lib));
@@ -168,7 +168,7 @@ int main (const int argc, const char* const argv[])
     goto cleanup_options;
   }
   
-  backend = s1_backend_create (lib, backend_str);
+  backend = s1_backend_create (lib, s1_u8 (backend_str));
   if (!backend)
   {
     exit_code = 2;
@@ -211,7 +211,7 @@ int main (const int argc, const char* const argv[])
     print_lib_error ("failed to create program", lib);
     goto cleanup_backend;
   }
-  if (!s1_program_set_entry_function (program, entry_name))
+  if (!s1_program_set_entry_function (program, s1_u8 (entry_name)))
   {
     exit_code = 3;
     print_lib_error ("failed to set entry function", lib);
@@ -233,7 +233,7 @@ int main (const int argc, const char* const argv[])
       arg_num++;
       if (arg_num < argc)
       {
-        if (!s1_program_set_input_frequency (program, argv[arg_num], S1_FREQ_VERTEX))
+        if (!s1_program_set_input_frequency (program, s1_u8 (argv[arg_num]), S1_FREQ_VERTEX))
         {
           fprintf (stderr, "failed to set input frequency for %s: error %s\n",
                     argv[arg_num], lib_error_string (lib));
@@ -245,7 +245,7 @@ int main (const int argc, const char* const argv[])
       arg_num++;
       if (arg_num < argc)
       {
-        if (!s1_program_set_input_frequency (program, argv[arg_num], S1_FREQ_UNIFORM))
+        if (!s1_program_set_input_frequency (program, s1_u8 (argv[arg_num]), S1_FREQ_UNIFORM))
         {
           fprintf (stderr, "failed to set input frequency for %s: error %s\n",
                     argv[arg_num], lib_error_string (lib));
@@ -269,7 +269,7 @@ int main (const int argc, const char* const argv[])
           }
           else
           {      
-            if (!s1_program_set_input_array_size (program, param, size))
+            if (!s1_program_set_input_array_size (program, s1_u8 (param), size))
             {
               fprintf (stderr, "failed to set input array size for %s: error %s\n",
                         param, lib_error_string (lib));
