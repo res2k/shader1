@@ -87,7 +87,7 @@ namespace s1
         if (negative)
         {
           // Underflow check
-          if ((val - std::numeric_limits<T>::min()) > static_cast<T> (digitVal))
+          if (((val * static_cast<T> (base)) - std::numeric_limits<T>::min()) > static_cast<T> (digitVal))
           {
             throw Exception (NumberParseError);
           }
@@ -96,7 +96,7 @@ namespace s1
         else
         {
           // Overflow check
-          if ((std::numeric_limits<T>::max() - val) < static_cast<T> (digitVal))
+          if ((std::numeric_limits<T>::max() - (val * static_cast<T> (base))) < static_cast<T> (digitVal))
           {
             throw Exception (NumberParseError);
           }
