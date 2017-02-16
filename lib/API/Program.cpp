@@ -191,45 +191,15 @@ s1_bool s1_program_set_entry_function (s1_Program* program, s1_StringArg string)
     }), false);
 }
 
-template<typename F>
-static typename std::result_of<F(s1::api_impl::String* str)>::type
-s1_program_get_entry_function_filtering (s1_Program* program, F filterFunc)
+s1_String* s1_program_get_entry_function (s1_Program* program)
 {
   S1_ASSERT_MSG(program, "NULL Program", nullptr);
   s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
-  return program_impl->Return (program_impl->GetEntry ().filter (filterFunc), nullptr);
-}
-
-const char* s1_program_get_entry_function (s1_Program* program)
-{
-  return s1_program_get_entry_function_filtering (program,
-    [=](s1::api_impl::String* str) { return str->Str(); });
-}
-
-const wchar_t* s1_program_get_entry_function_ws (s1_Program* program)
-{
-  return s1_program_get_entry_function_filtering (program,
-    [=](s1::api_impl::String* str) { return str->StrWCS(); });
-}
-
-const s1_char16* s1_program_get_entry_function_u16 (s1_Program* program)
-{
-  return s1_program_get_entry_function_filtering (program,
-    [=](s1::api_impl::String* str) { return str->StrU16(); });
-}
-
-const s1_char32* s1_program_get_entry_function_u32 (s1_Program* program)
-{
-  return s1_program_get_entry_function_filtering (program,
-    [=](s1::api_impl::String* str) { return str->StrU32(); });
-}
-
-s1_String* s1_program_get_entry_function_strobj (s1_Program* program)
-{
-  return s1_program_get_entry_function_filtering (program,
-    [=](s1::api_impl::String* str) { return str->DowncastEvil<s1_String> (); });
+  return program_impl->Return (
+    program_impl->GetEntry ().filter ([=](s1::api_impl::String* str) { return str->DowncastEvil<s1_String> (); }),
+    nullptr);
 }
 
 s1_bool s1_program_set_input_frequency (s1_Program* program, s1_StringArg param, s1_InputFrequency freq)

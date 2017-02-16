@@ -80,23 +80,19 @@ S1TYPE_DECLARE_FWD(String);
  * \memberof s1_Program
  */
 S1_API(s1_bool) s1_program_set_entry_function (s1_Program* program, s1_StringArg name);
-//@{
 /**
  * Get the entry function of a program.
  * \param program Program object.
  * \returns The program's entry function or \NULL in case if an error.
  * In that case the error status is saved in the library's
  * last error code.
+ * Does \em not add a reference to the returned object.
  * \remarks The default entry function name is \c main.
  *   The returned pointer is valid as long as the program object is valid and the entry
  *   function name wasn't changed.
  * \memberof s1_Program
  */
-S1_API(const char*) s1_program_get_entry_function (s1_Program* program);
-S1_API(const wchar_t*) s1_program_get_entry_function_ws (s1_Program* program);
-S1_API(const s1_char16*) s1_program_get_entry_function_u16 (s1_Program* program);
-S1_API(const s1_char32*) s1_program_get_entry_function_u32 (s1_Program* program);
-//@}
+S1_API(s1_String*) s1_program_get_entry_function (s1_Program* program);
 
 /// Variation frequency of a program input variable
 enum s1_InputFrequency
@@ -238,33 +234,18 @@ namespace s1
         return s1_program_set_entry_function (this, name) != 0;
       }
 
-      //@{
       /**
        * Get the entry function of a program.
        * \returns The program's entry function or \NULL in case if an error.
-       * The pointer is valid as long as the program object is valid and the entry
-       * function name wasn't changed.
+       * Does \em not add a reference to the returned object.
        * In that case the error status is saved in the library's
        * last error code.
        * \remarks The default entry function name is \c main.
        */
-      const char* GetEntryFunction ()
+      String* GetEntryFunction ()
       {
         return s1_program_get_entry_function (this);
       }
-      const wchar_t* GetEntryFunctionWS ()
-      {
-        return s1_program_get_entry_function_ws (this);
-      }
-      const s1_char16* GetEntryFunctionU16 ()
-      {
-        return s1_program_get_entry_function_u16 (this);
-      }
-      const s1_char32* GetEntryFunctionU32 ()
-      {
-        return s1_program_get_entry_function_u32 (this);
-      }
-      //@}
 
       /**
        * Set the variation frequency of a program input variable.
