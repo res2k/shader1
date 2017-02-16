@@ -90,7 +90,7 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
       }
       static const CgOptions& DefaultOptions()
       {
-        static const CgOptions o;
+        static const CgOptions o (false);
         return o;
       }
     public:
