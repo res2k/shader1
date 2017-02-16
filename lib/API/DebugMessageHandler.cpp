@@ -27,10 +27,10 @@ void s1_set_debug_message_handler (s1_debug_message_handler_func handler,
   s1::AccessGlobalDebugMessageHandler ([=](s1::DebugMessageHandler& dmh) { dmh.SetHandler (handler, userContext); });
 }
 
-void s1_set_debug_message_handler_ws (s1_debug_message_handler_ws_func handler,
-                                      uintptr_t userContext)
+void s1_set_debug_message_handler_wcs (s1_debug_message_handler_wcs_func handler,
+                                       uintptr_t userContext)
 {
-  s1::AccessGlobalDebugMessageHandler ([=](s1::DebugMessageHandler& dmh) { dmh.SetHandlerWS (handler, userContext); });
+  s1::AccessGlobalDebugMessageHandler ([=](s1::DebugMessageHandler& dmh) { dmh.SetHandlerWCS (handler, userContext); });
 }
 
 s1_debug_message_handler_func s1_get_debug_message_handler (uintptr_t* userContextPtr)
@@ -38,9 +38,9 @@ s1_debug_message_handler_func s1_get_debug_message_handler (uintptr_t* userConte
   return s1::AccessGlobalDebugMessageHandler ([=](s1::DebugMessageHandler& dmh) { return dmh.GetHandler (userContextPtr); });
 }
 
-s1_debug_message_handler_ws_func s1_get_debug_message_handler_ws (uintptr_t* userContextPtr)
+s1_debug_message_handler_wcs_func s1_get_debug_message_handler_wcs (uintptr_t* userContextPtr)
 {
-  return s1::AccessGlobalDebugMessageHandler ([=](s1::DebugMessageHandler& dmh) { return dmh.GetHandlerWS (userContextPtr); });
+  return s1::AccessGlobalDebugMessageHandler ([=](s1::DebugMessageHandler& dmh) { return dmh.GetHandlerWCS (userContextPtr); });
 }
 
 void s1_default_debug_message_handler (const char* message, uintptr_t userContext)
@@ -48,7 +48,7 @@ void s1_default_debug_message_handler (const char* message, uintptr_t userContex
   s1::DefaultDebugMessageHandler::PrintMessage (message);
 }
 
-void s1_default_debug_message_handler_ws (const wchar_t* message, uintptr_t userContext)
+void s1_default_debug_message_handler_wcs (const wchar_t* message, uintptr_t userContext)
 {
   s1::DefaultDebugMessageHandler::PrintMessage (message);
 }

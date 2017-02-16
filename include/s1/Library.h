@@ -94,8 +94,8 @@ S1_API(void) s1_library_set_debug_message_handler (
  * \memberof s1_Library
  * \sa \ref debug_message_handlers
  */
-S1_API(void) s1_library_set_debug_message_handler_ws (
-  s1_Library* lib, s1_debug_message_handler_ws_func handler, uintptr_t userContext);
+S1_API(void) s1_library_set_debug_message_handler_wcs (
+  s1_Library* lib, s1_debug_message_handler_wcs_func handler, uintptr_t userContext);
 
 /**
  * Obtain UTF-8 version of library debug message handler.
@@ -117,7 +117,7 @@ S1_API(s1_debug_message_handler_func) s1_library_get_debug_message_handler (
  * \memberof s1_Library
  * \sa \ref debug_message_handlers
  */
-S1_API(s1_debug_message_handler_ws_func) s1_library_get_debug_message_handler_ws (
+S1_API(s1_debug_message_handler_wcs_func) s1_library_get_debug_message_handler_wcs (
   s1_Library* lib, uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
 
 
@@ -308,9 +308,9 @@ namespace s1
        * \param userContext User-defined context value.
        * \sa \ref debug_message_handlers
        */
-      void SetDebugMessageHandlerWS (s1_debug_message_handler_ws_func handler, uintptr_t userContext)
+      void SetDebugMessageHandlerWCS (s1_debug_message_handler_wcs_func handler, uintptr_t userContext)
       {
-        return s1_library_set_debug_message_handler_ws (this, handler, userContext);
+        return s1_library_set_debug_message_handler_wcs (this, handler, userContext);
       }
 
       /**
@@ -341,9 +341,9 @@ namespace s1
        *   (this includes an UTF-8 version being set).
        * \sa \ref debug_message_handlers
        */
-      s1_debug_message_handler_ws_func GetDebugMessageHandlerWS ()
+      s1_debug_message_handler_wcs_func GetDebugMessageHandlerWCS ()
       {
-        return s1_library_get_debug_message_handler_ws (this);
+        return s1_library_get_debug_message_handler_wcs (this);
       }
       /**
        * Obtain wide string version of global debug message handler.
@@ -352,9 +352,9 @@ namespace s1
        *   (this includes an UTF-8 version being set).
        * \sa \ref debug_message_handlers
        */
-      s1_debug_message_handler_ws_func GetDebugMessageHandlerWS (uintptr_t& userContext)
+      s1_debug_message_handler_wcs_func GetDebugMessageHandlerWS (uintptr_t& userContext)
       {
-        return s1_library_get_debug_message_handler_ws (this, &userContext);
+        return s1_library_get_debug_message_handler_wcs (this, &userContext);
       }
 
       /**

@@ -83,7 +83,7 @@ namespace s1
     this->context = context;
   }
 
-  void DebugMessageHandler::SetHandlerWS (DebugMessageHandlerWSFunc handlerWide, uintptr_t context)
+  void DebugMessageHandler::SetHandlerWCS (DebugMessageHandlerWCSFunc handlerWide, uintptr_t context)
   {
     this->handlerUTF8 = nullptr;
     this->handlerWide = handlerWide;
@@ -100,7 +100,7 @@ namespace s1
     return nullptr;
   }
 
-  DebugMessageHandlerWSFunc DebugMessageHandler::GetHandlerWS (uintptr_t* context) const
+  DebugMessageHandlerWCSFunc DebugMessageHandler::GetHandlerWCS (uintptr_t* context) const
   {
     if (handlerWide)
     {

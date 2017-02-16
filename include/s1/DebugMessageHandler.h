@@ -53,7 +53,7 @@ typedef void (*s1_debug_message_handler_func)(const char* message, uintptr_t use
  * \param userContext User-defined context value as passed to s1_set_debug_message_handler().
  * \sa \ref debug_message_handlers
  */
-typedef void (*s1_debug_message_handler_ws_func)(const wchar_t* message, uintptr_t userContext);
+typedef void (*s1_debug_message_handler_wcs_func)(const wchar_t* message, uintptr_t userContext);
 
 //@{
 /**
@@ -70,8 +70,8 @@ S1_API(void) s1_set_debug_message_handler (s1_debug_message_handler_func handler
  * \param userContext User-defined context value.
  * \sa \ref debug_message_handlers
  */
-S1_API(void) s1_set_debug_message_handler_ws (s1_debug_message_handler_ws_func handler,
-                                              uintptr_t userContext);
+S1_API(void) s1_set_debug_message_handler_wcs (s1_debug_message_handler_wcs_func handler,
+                                               uintptr_t userContext);
 
 /**
  * Obtain UTF-8 variant of global debug message handler.
@@ -88,7 +88,7 @@ S1_API(s1_debug_message_handler_func) s1_get_debug_message_handler (uintptr_t* u
  *   (this includes an UTF-8 variant being set).
  * \sa \ref debug_message_handlers
  */
-S1_API(s1_debug_message_handler_ws_func) s1_get_debug_message_handler_ws (uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
+S1_API(s1_debug_message_handler_wcs_func) s1_get_debug_message_handler_wcs (uintptr_t* userContextPtr S1_ARG_DEFAULT (S1_NULL));
 
 /**
  * Default debug message handler (UTF-8 variant).
@@ -103,11 +103,11 @@ S1_API(void) s1_default_debug_message_handler (const char* message, uintptr_t us
 * Default debug message handler (wide string variant).
 * \param message Message string.
 * \param userContext Ignored.
-* \remarks Prints \a message to \c stderr. On Windows, additionally outputs to
+* \remarks Prints \a message to \c stderr. On WindoWCS, additionally outputs to
 *   OutputDebugString().
  * \sa \ref debug_message_handlers
 */
-S1_API (void) s1_default_debug_message_handler_ws (const wchar_t* message, uintptr_t userContext);
+S1_API (void) s1_default_debug_message_handler_wcs (const wchar_t* message, uintptr_t userContext);
 
 /// Debug message handler variants.
 enum s1_DebugMessageHandlerVariant
@@ -133,7 +133,7 @@ static inline enum s1_DebugMessageHandlerVariant s1_get_preferred_debug_message_
 namespace s1
 {
   typedef s1_debug_message_handler_func DebugMessageHandlerFunc;
-  typedef s1_debug_message_handler_ws_func DebugMessageHandlerWSFunc;
+  typedef s1_debug_message_handler_wcs_func DebugMessageHandlerWCSFunc;
 
   /// \copydoc s1_set_debug_message_handler
   static inline void SetDebugMessageHandler (DebugMessageHandlerFunc handler,
@@ -141,11 +141,11 @@ namespace s1
   {
     return s1_set_debug_message_handler (handler, userContext);
   }
-  /// \copydoc s1_set_debug_message_handler_ws
-  static inline void SetDebugMessageHandlerWS (DebugMessageHandlerWSFunc handler,
+  /// \copydoc s1_set_debug_message_handler_wcs
+  static inline void SetDebugMessageHandlerWCS (DebugMessageHandlerWCSFunc handler,
                                                uintptr_t userContext)
   {
-    return s1_set_debug_message_handler_ws (handler, userContext);
+    return s1_set_debug_message_handler_wcs (handler, userContext);
   }
 
   /**
@@ -176,9 +176,9 @@ namespace s1
    *   (this includes a wide string variant being set).
    * \sa \ref debug_message_handlers
    */
-  static inline DebugMessageHandlerWSFunc GetDebugMessageHandlerWS ()
+  static inline DebugMessageHandlerWCSFunc GetDebugMessageHandlerWCS ()
   {
-    return s1_get_debug_message_handler_ws ();
+    return s1_get_debug_message_handler_wcs ();
   }
   /**
    * Obtain UTF-8 variant of global debug message handler.
@@ -187,9 +187,9 @@ namespace s1
    *   (this includes a wide string variant being set).
    * \sa \ref debug_message_handlers
    */
-  static inline DebugMessageHandlerWSFunc GetDebugMessageHandlerWS (uintptr_t& userContext)
+  static inline DebugMessageHandlerWCSFunc GetDebugMessageHandlerWCS (uintptr_t& userContext)
   {
-    return s1_get_debug_message_handler_ws (&userContext);
+    return s1_get_debug_message_handler_wcs (&userContext);
   }
 
   /// \copydoc s1_default_debug_message_handler
@@ -197,10 +197,10 @@ namespace s1
   {
     s1_default_debug_message_handler (message, userContext);
   }
-  /// \copydoc s1_default_debug_message_handler_ws
-  static inline void DefaultDebugMessageHandlerWS (const wchar_t* message, uintptr_t userContext)
+  /// \copydoc s1_default_debug_message_handler_wcs
+  static inline void DefaultDebugMessageHandlerWCS (const wchar_t* message, uintptr_t userContext)
   {
-    s1_default_debug_message_handler_ws (message, userContext);
+    s1_default_debug_message_handler_wcs (message, userContext);
   }
 
   typedef s1_DebugMessageHandlerVariant DebugMessageHandlerVariant;

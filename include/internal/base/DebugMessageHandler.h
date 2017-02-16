@@ -36,13 +36,13 @@ namespace s1
     //@{
     /// Set a handler function.
     void SetHandler (DebugMessageHandlerFunc handlerUTF8, uintptr_t context);
-    void SetHandlerWS (DebugMessageHandlerWSFunc handlerWide, uintptr_t context);
+    void SetHandlerWCS (DebugMessageHandlerWCSFunc handlerWide, uintptr_t context);
     //@}
 
     //@{
     /// Get handler function.
     DebugMessageHandlerFunc GetHandler (uintptr_t* context) const;
-    DebugMessageHandlerWSFunc GetHandlerWS (uintptr_t* context) const;
+    DebugMessageHandlerWCSFunc GetHandlerWCS (uintptr_t* context) const;
     //@}
 
     //@{
@@ -56,7 +56,7 @@ namespace s1
     //@}
   private:
     DebugMessageHandlerFunc handlerUTF8 = nullptr;
-    DebugMessageHandlerWSFunc handlerWide = nullptr;
+    DebugMessageHandlerWCSFunc handlerWide = nullptr;
     uintptr_t context = 0;
   };
 

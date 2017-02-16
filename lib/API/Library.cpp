@@ -105,13 +105,13 @@ void s1_library_set_debug_message_handler (s1_Library* lib,
   libImpl->GetDebugMessageHandler ().SetHandler (handler, userContext);
 }
 
-void s1_library_set_debug_message_handler_ws (s1_Library* lib,
-                                              s1_debug_message_handler_ws_func handler,
-                                              uintptr_t userContext)
+void s1_library_set_debug_message_handler_wcs (s1_Library* lib,
+                                               s1_debug_message_handler_wcs_func handler,
+                                               uintptr_t userContext)
 {
   S1_ASSERT_MSG (lib, "NULL Library", S1_ASSERT_RET_VOID);
   auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
-  libImpl->GetDebugMessageHandler ().SetHandlerWS (handler, userContext);
+  libImpl->GetDebugMessageHandler ().SetHandlerWCS (handler, userContext);
 }
 
 s1_debug_message_handler_func s1_library_get_debug_message_handler (s1_Library* lib,
@@ -122,12 +122,12 @@ s1_debug_message_handler_func s1_library_get_debug_message_handler (s1_Library* 
   return libImpl->GetDebugMessageHandler ().GetHandler (userContextPtr);
 }
 
-s1_debug_message_handler_ws_func s1_library_get_debug_message_handler_ws (s1_Library* lib,
-                                                                          uintptr_t* userContextPtr)
+s1_debug_message_handler_wcs_func s1_library_get_debug_message_handler_wcs (s1_Library* lib,
+                                                                            uintptr_t* userContextPtr)
 {
   S1_ASSERT_MSG (lib, "NULL Library", nullptr);
   auto libImpl = s1::EvilUpcast<s1::api_impl::Library> (lib);
-  return libImpl->GetDebugMessageHandler ().GetHandlerWS (userContextPtr);
+  return libImpl->GetDebugMessageHandler ().GetHandlerWCS (userContextPtr);
 }
 
 
