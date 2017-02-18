@@ -352,7 +352,7 @@ namespace s1
        *   (this includes an UTF-8 version being set).
        * \sa \ref debug_message_handlers
        */
-      s1_debug_message_handler_wcs_func GetDebugMessageHandlerWS (uintptr_t& userContext)
+      s1_debug_message_handler_wcs_func GetDebugMessageHandlerWCS (uintptr_t& userContext)
       {
         return s1_library_get_debug_message_handler_wcs (this, &userContext);
       }
