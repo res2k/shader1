@@ -23,6 +23,8 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "ResultCode_internal.h"
 
+#include <memory>
+
 #include <boost/call_traits.hpp>
 #include <boost/optional.hpp>
 
