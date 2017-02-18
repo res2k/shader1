@@ -24,8 +24,6 @@
 
 #include <boost/container/small_vector.hpp>
 
-#include <iostream>
-
 #if defined (_WIN32)
 #include <Windows.h>
 #endif
@@ -230,7 +228,7 @@ namespace s1
   #if defined (_WIN32)
     OutputDebugStringW (str);
   #endif
-    std::wcerr << str << std::endl;
+    fwprintf (stderr, L"%s\n", str);
   }
 
   void DefaultDebugMessageHandler::PrintMessage (const char* str)
@@ -238,8 +236,8 @@ namespace s1
   #if defined (_WIN32)
     auto buf_ws = UTF8toWide (str);
     PrintMessage (buf_ws.data ());
-#else
-    std::cerr << str << std::endl;
+  #else
+    fprintf (stderr, "%s\n", str);
   #endif
   }
 } // namespace s1
