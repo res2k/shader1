@@ -132,16 +132,7 @@ namespace s1
         /// Encoding invalid for character (overlong)
         ceEncodingInvalid = 3
       };
-      template<typename Ch>
-      struct ConversionResult
-      {
-        /// Converted string
-        String str;
-        /// Pointer past first invalid input, if any
-        const Ch* invalidPos = nullptr;
-        /// Code of first error
-        ConversionError error = ceSuccess;
-      };
+      template<typename Ch> struct ConversionResult;
       static ConversionResult<char> convertUTF8 (const char* s, size_t len = (size_t)~0);
       static ConversionResult<Char16> convertUTF16 (const Char16* s, size_t len = (size_t)~0);
       static ConversionResult<Char32> convertUTF32 (const Char32* s, size_t len = (size_t)~0);
@@ -280,6 +271,17 @@ namespace s1
         return static_cast<A> (a + b);
       }
       static void ThrowStringOverflowException ();
+    };
+
+    template<typename Ch>
+    struct String::ConversionResult
+    {
+      /// Converted string
+      String str;
+      /// Pointer past first invalid input, if any
+      const Ch* invalidPos = nullptr;
+      /// Code of first error
+      ConversionError error = ceSuccess;
     };
   } // namespace uc
 } // namespace s1
