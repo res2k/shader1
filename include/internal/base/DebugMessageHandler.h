@@ -115,7 +115,7 @@ namespace s1
   namespace detail
   {
     template<typename T>
-    void PrintMessage (T msg)
+    static void PrintMessage (T msg)
     {
       // First, try thread-specific handler
       if (threadHandler)
