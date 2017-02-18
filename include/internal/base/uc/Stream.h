@@ -21,8 +21,6 @@
 #include "Char.h"
 #include "UTF8Decoder.h"
 
-#include <istream>
-
 namespace s1
 {
 namespace uc
@@ -33,19 +31,9 @@ namespace uc
   class Stream
   {
   protected:
-    std::istream& inStream;
     /// UTF-8 decoder object
     UTF8Decoder decoder;
     
-    enum
-    {
-      /// Size of internal unicode characters buffer
-      UCBufferSize = 1024
-    };
-    /**
-     * Internal buffer for data from input stream.
-     */
-    char streamInBuffer[UCBufferSize];
     const char* streamInBufferPtr;
     size_t streamInBufferRemaining;
     
@@ -55,11 +43,25 @@ namespace uc
     /// Refill stream input buffer
     bool RefillBuffer ();
   public:
+    /// Stream input source
+    struct Source
+    {
+      virtual ~Source () {}
+      /// Returns whether more data is available.
+      virtual bool HaveMoreData () = 0;
+      /**
+       * Get next available data.
+       * \param data Reference to pointer receiving pointer to next data.
+       * \returns Number of available bytes.
+       */
+      virtual size_t NextData (const char*& data) = 0;
+    };
+
     /**
      * Constructor.
-     * \param inStream Input byte stream.
+     * \param inSource Input byte source.
      */
-    Stream (std::istream& inStream);
+    Stream (Source& inSource);
     ~Stream();
     
     /// Returns whether more characters are available
@@ -71,6 +73,8 @@ namespace uc
     
     /// Return current character
     Char32 operator* () const;
+  protected:
+    Source& inSource;
   private:
     Stream (const Stream& other); // forbidden
   };

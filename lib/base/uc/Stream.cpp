@@ -26,8 +26,8 @@ namespace uc
 {
   //-------------------------------------------------------------------------
   
-  Stream::Stream (std::istream& inStream)
-   : inStream (inStream), streamInBufferRemaining (0),
+  Stream::Stream (Source& inSource)
+   : inSource (inSource), streamInBufferRemaining (0),
      currentChar (InvalidChar32), currentDecodeResult (UTF8Decoder::drSuccess)
   {
     RefillBuffer();
@@ -44,7 +44,7 @@ namespace uc
     return
       (currentChar != InvalidChar32) // We have a current character
       || (streamInBufferRemaining > 0) // ... or still buffered chars to decode
-      || !inStream.eof(); // ... or still raw input data
+      || inSource.HaveMoreData(); // ... or still raw input data
   }
 
   Stream& Stream::operator++() throw()
@@ -116,14 +116,12 @@ namespace uc
   {
     if (streamInBufferRemaining == 0)
     {
-      if (!inStream.good())
+      if (!inSource.HaveMoreData())
       {
 	return false;
       }
       
-      inStream.read (streamInBuffer, sizeof (streamInBuffer));
-      streamInBufferPtr = streamInBuffer;
-      streamInBufferRemaining = size_t (inStream.gcount());
+      streamInBufferRemaining = inSource.NextData (streamInBufferPtr);
       
       if (streamInBufferRemaining == 0)
       {

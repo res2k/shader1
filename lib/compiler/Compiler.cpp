@@ -47,9 +47,38 @@ namespace s1
     return BackendPtr ();
   }
 
+  class IStreamSource : public uc::Stream::Source
+  {
+    std::istream& input;
+
+    enum
+    {
+      /// Size of internal unicode characters buffer
+      UCBufferSize = 1024
+    };
+    /**
+     * Internal buffer for data from input stream.
+     */
+    char streamInBuffer[UCBufferSize];
+  public:
+    IStreamSource (std::istream& input) : input (input) {}
+
+    bool HaveMoreData () override
+    {
+      return input.good () && !input.eof ();
+    }
+    size_t NextData (const char*& data) override
+    {
+      input.read (streamInBuffer, sizeof (streamInBuffer));
+      data = streamInBuffer;
+      return size_t (input.gcount());
+    }
+  };
+
   Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input)
   {
-    uc::Stream uniStream (input);
+    IStreamSource source (input);
+    uc::Stream uniStream (source);
     return ProgramPtr (new Program (&uniStream));
   }
 } // namespace s1
