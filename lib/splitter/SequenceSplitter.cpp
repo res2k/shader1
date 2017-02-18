@@ -47,7 +47,6 @@
 #include "splitter/ProgramSplitter.h"
 
 #include <boost/make_shared.hpp>
-#include <iostream>
 
 #include "base/format/Formatter.tpp"
 

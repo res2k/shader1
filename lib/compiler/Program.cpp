@@ -32,8 +32,6 @@
 
 #include "ErrorHandler.h"
 
-#include <iostream>
-
 namespace s1
 {
   Compiler::Program::Program (uc::Stream* inputStream)
