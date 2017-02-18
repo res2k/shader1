@@ -103,7 +103,7 @@ S1_API(void) s1_default_debug_message_handler (const char* message, uintptr_t us
 * Default debug message handler (wide string variant).
 * \param message Message string.
 * \param userContext Ignored.
-* \remarks Prints \a message to \c stderr. On WindoWCS, additionally outputs to
+* \remarks Prints \a message to \c stderr. On Windows, additionally outputs to
 *   OutputDebugString().
  * \sa \ref debug_message_handlers
 */
