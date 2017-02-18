@@ -73,14 +73,14 @@ namespace s1
                                                   backendOptions);
     }
 
-    s1_ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
+    s1::ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)
     {
       this->options.reset (new s1::Compiler::Options (GetLibrary(), *(options.get())));
       return S1_SUCCESS;
     }
     const s1::Compiler::OptionsPtr& Program::GetOptions() const { return options; }
     
-    s1_ResultCode Program::SetEntry (boost::intrusive_ptr<String> entry)
+    s1::ResultCode Program::SetEntry (boost::intrusive_ptr<String> entry)
     {
       // TODO: Function name validation
       entryFunction = entry;
@@ -91,7 +91,7 @@ namespace s1
       return entryFunction.get();
     }
     
-    s1_ResultCode Program::SetInputFrequency (const uc::String& param, s1_InputFrequency freq)
+    s1::ResultCode Program::SetInputFrequency (const uc::String& param, s1_InputFrequency freq)
     {
       // TODO: Parameter validation
       s1::splitter::Frequency new_freq;
@@ -122,7 +122,7 @@ namespace s1
       return S1_E_FAILURE;
     }
 
-    s1_ResultCode Program::SetInputArraySize (const uc::String& param, size_t size)
+    s1::ResultCode Program::SetInputArraySize (const uc::String& param, size_t size)
     {
       // TODO: Parameter validation
       inputSizeMap[param] = size;
@@ -184,7 +184,8 @@ s1_bool s1_program_set_entry_function (s1_Program* program, s1_StringArg string)
       s1::ResultCode createRes =
         s1::api_impl::String::Create (strObj, program_impl->GetLibrary (), resolve_str.GetString ());
       if (S1_FAILED(createRes)) return createRes;
-      return program_impl->SetEntry (strObj);
+      auto result = program_impl->SetEntry (strObj);
+      return s1::Result<bool> (S1_SUCCESSFUL (result), result);
     }), false);
 }
 
@@ -206,8 +207,9 @@ s1_bool s1_program_set_input_frequency (s1_Program* program, s1_StringArg param,
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   return program_impl->Return (program_impl->Try (
-    [=]() -> s1::Result<bool> {
-      return program_impl->SetInputFrequency (s1::api_impl::ResolveStringArg (param, 0), freq);
+    [=]() {
+      s1::ResultCode result = program_impl->SetInputFrequency (s1::api_impl::ResolveStringArg (param, 0), freq);
+      return s1::Result<bool> (S1_SUCCESSFUL (result), result);
     }), false);
 }
 
@@ -231,8 +233,9 @@ s1_bool s1_program_set_input_array_size (s1_Program* program, s1_StringArg param
   s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
 
   return program_impl->Return (program_impl->Try (
-    [=]() -> s1::Result<s1_bool> {
-      return program_impl->SetInputArraySize (s1::api_impl::ResolveStringArg (param, 0), size);
+    [=]() -> s1::Result<bool> {
+      auto result = program_impl->SetInputArraySize (s1::api_impl::ResolveStringArg (param, 0), size);
+      return s1::Result<bool> (S1_SUCCESSFUL (result), result);
     }), false);
 }
 

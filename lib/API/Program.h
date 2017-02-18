@@ -61,16 +61,16 @@ namespace s1
 
       /**\name Methods mapping to public API
        * @{ */
-      s1_ResultCode SetOptions (const s1::Compiler::OptionsPtr& options);
+      s1::ResultCode SetOptions (const s1::Compiler::OptionsPtr& options);
       const s1::Compiler::OptionsPtr& GetOptions() const;
       
-      s1_ResultCode SetEntry (boost::intrusive_ptr<String> entry);
+      s1::ResultCode SetEntry (boost::intrusive_ptr<String> entry);
       Result<String*> GetEntry () const;
       
-      s1_ResultCode SetInputFrequency (const uc::String& param, s1_InputFrequency freq);
+      s1::ResultCode SetInputFrequency (const uc::String& param, s1_InputFrequency freq);
       Result<InputFrequency> GetInputFrequency (const uc::String& param) const;
 
-      s1_ResultCode SetInputArraySize (const uc::String& param, size_t size);
+      s1::ResultCode SetInputArraySize (const uc::String& param, size_t size);
       Result<size_t> GetInputArraySize (const uc::String& param) const;
       /** @} */
     };
