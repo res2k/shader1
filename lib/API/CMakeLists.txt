@@ -69,6 +69,7 @@ if(CXXTEST_FOUND)
     s1_add_library(s1_test STATIC
                    SOURCES ${s1_sources}
                    LINK base compiler)
+    set_property(TARGET s1_test PROPERTY EXCLUDE_FROM_ALL YES)
     set(_S1_TEST_DEP s1_test)
   else()
     set(_S1_TEST_DEP s1)
