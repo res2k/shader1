@@ -133,7 +133,7 @@ S1_API(s1_ResultCode) s1_string_independent_create_u32 (s1_String** newStrObj, c
 
 const char* s1_string_u8 (s1_String* string)
 {
-  S1_ASSERT_MSG(string, "NULL String", false);
+  S1_ASSERT_MSG(string, "NULL String", nullptr);
   s1::api_impl::String* string_impl (s1::EvilUpcast<s1::api_impl::String> (string));
 
   return string_impl->Str ();
@@ -141,7 +141,7 @@ const char* s1_string_u8 (s1_String* string)
 
 const wchar_t* s1_string_wcs (s1_String* string)
 {
-  S1_ASSERT_MSG(string, "NULL String", false);
+  S1_ASSERT_MSG(string, "NULL String", nullptr);
   s1::api_impl::String* string_impl (s1::EvilUpcast<s1::api_impl::String> (string));
 
   return string_impl->StrWCS ();
@@ -149,7 +149,7 @@ const wchar_t* s1_string_wcs (s1_String* string)
 
 const s1_char16* s1_string_u16 (s1_String* string)
 {
-  S1_ASSERT_MSG(string, "NULL String", false);
+  S1_ASSERT_MSG(string, "NULL String", nullptr);
   s1::api_impl::String* string_impl (s1::EvilUpcast<s1::api_impl::String> (string));
 
   return string_impl->StrU16 ();
@@ -157,7 +157,7 @@ const s1_char16* s1_string_u16 (s1_String* string)
 
 const s1_char32* s1_string_u32 (s1_String* string)
 {
-  S1_ASSERT_MSG(string, "NULL String", false);
+  S1_ASSERT_MSG(string, "NULL String", nullptr);
   s1::api_impl::String* string_impl (s1::EvilUpcast<s1::api_impl::String> (string));
 
   return string_impl->StrU32 ();
