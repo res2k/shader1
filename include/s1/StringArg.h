@@ -50,8 +50,9 @@ typedef struct s1_StringArg_s
 /**\def S1_STRING_ARG_MAX_N
  * Maximum length of a string argument.
  * \hideinitializer
+ * \internal \sa s1_string_size_type
  */
-#define S1_STRING_ARG_MAX_N       (_S1_SA_TS_SIZE_MAX < UINT32_MAX ? _S1_SA_TS_SIZE_MAX : UINT32_MAX)
+#define S1_STRING_ARG_MAX_N       (_S1_SA_TS_SIZE_MAX < (UINT32_MAX-1) ? _S1_SA_TS_SIZE_MAX : (UINT32_MAX-1))
 
 /* StringArg type: UTF-8 */
 #define _S1_SA_TS_TYPE_UTF8       0
