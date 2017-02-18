@@ -21,6 +21,8 @@
 #ifndef __BASE_UC_EXCEPTION_H__
 #define __BASE_UC_EXCEPTION_H__
 
+#include <exception>
+
 namespace s1
 {
   namespace uc
