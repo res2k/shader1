@@ -41,10 +41,10 @@ namespace s1
       mutable bool haveUTF32 : 1;
 
       /// UTF-8 encoded version
-      mutable alignas(std::string) uint8_t storeStrUTF8[sizeof(std::string)];
+      mutable uint8_t storeStrUTF8[sizeof(std::string)] alignas(std::string);
       typedef std::basic_string<s1_char32> c32string;
       /// UTF-32 encoded version
-      mutable alignas(c32string) uint8_t storeStrUTF32[sizeof (c32string)];
+      mutable uint8_t storeStrUTF32[sizeof (c32string)] alignas(c32string);
 
       /// Get UTF-8 string instance
       std::string& GetStrUTF8 () const
