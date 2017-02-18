@@ -49,7 +49,7 @@ namespace s1
     class Program;
     typedef boost::intrusive_ptr<Program> ProgramPtr;
     
-    ProgramPtr CreateProgram (std::istream& input);
+    ProgramPtr CreateProgram (const char* inputData, size_t inputSize);
     
     // Methods to specify input
     // Optimization getters/setters

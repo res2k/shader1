@@ -27,8 +27,6 @@
 #include "StringArg.h"
 #include "StringObj.h"
 
-#include <sstream>
-
 namespace s1
 {
   namespace api_impl
@@ -58,8 +56,7 @@ namespace s1
       // FIXME!!!: This is rather inefficient!
       if (!wrapped_program)
       {
-        std::istringstream inputStream (source, std::ios_base::in | std::ios_base::binary);
-        wrapped_program = compiler.CreateProgram (inputStream);
+        wrapped_program = compiler.CreateProgram (source.data(), source.size());
       }
       
       Compiler::Program::FreqFlagMap inputFreqFlags;

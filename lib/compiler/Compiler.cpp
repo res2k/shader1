@@ -22,6 +22,7 @@
 
 #include "BackendCg.h"
 #include "BackendGLSL.h"
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
@@ -47,37 +48,9 @@ namespace s1
     return BackendPtr ();
   }
 
-  class IStreamSource : public uc::Stream::Source
+  Compiler::ProgramPtr Compiler::CreateProgram (const char* inputData, size_t inputSize)
   {
-    std::istream& input;
-
-    enum
-    {
-      /// Size of internal unicode characters buffer
-      UCBufferSize = 1024
-    };
-    /**
-     * Internal buffer for data from input stream.
-     */
-    char streamInBuffer[UCBufferSize];
-  public:
-    IStreamSource (std::istream& input) : input (input) {}
-
-    bool HaveMoreData () override
-    {
-      return input.good () && !input.eof ();
-    }
-    size_t NextData (const char*& data) override
-    {
-      input.read (streamInBuffer, sizeof (streamInBuffer));
-      data = streamInBuffer;
-      return size_t (input.gcount());
-    }
-  };
-
-  Compiler::ProgramPtr Compiler::CreateProgram (std::istream& input)
-  {
-    IStreamSource source (input);
+    uc::SimpleBufferStreamSource source (inputData, inputSize);
     uc::Stream uniStream (source);
     return ProgramPtr (new Program (&uniStream));
   }
