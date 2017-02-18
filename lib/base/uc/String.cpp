@@ -30,6 +30,9 @@
 #include <boost/functional/hash.hpp>
 
 #include <stddef.h>
+#if HAVE_UCHAR_H_MBRTOC16
+#include <uchar.h>
+#endif
 
 #include "char_traits.h"
 #include "UCDDataLookup.h"
@@ -611,7 +614,7 @@ namespace s1
     {
       if (len == (size_t)~0) len = std::char_traits<char>::length (s);
 
-    #if !defined(_MSC_VER)
+    #if defined(HAVE_UCHAR_H_MBRTOC16) && !defined(_MSC_VER)
       /* MSVC >= 2015 has mbrtoc16(), but that only converts from UTF-8,
        * not local multibyte... */
     #define USE_MBRTOC16

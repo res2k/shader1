@@ -46,7 +46,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 add_definitions("-DBOOST_ALL_NO_LIB")
 
 include(CheckCXXCompilerFlag)
-include(CheckTypeSize) 
+include(CheckSymbolExists)
+include(CheckTypeSize)
 
 function(CxxCompilerFlagString flagvar flagstr)
   CHECK_CXX_COMPILER_FLAG("${flagstr}" ${flagvar}_FOUND)
@@ -110,6 +111,7 @@ CxxCompilerFlagString (CXX_LINK_GC_SECTIONS "-Wl,--gc-sections")
 set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_LINK_GC_SECTIONS}")
 
 CHECK_TYPE_SIZE(wchar_t CXX_SIZEOF_WCHAR_T BUILTIN_TYPES_ONLY LANGUAGE CXX)
+CHECK_SYMBOL_EXISTS(mbrtoc16 uchar.h HAVE_UCHAR_H_MBRTOC16)
 
 # Build shared libs by default
 set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")

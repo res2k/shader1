@@ -20,5 +20,7 @@
 
 // sizeof(wchar_t)
 #define CXX_SIZEOF_WCHAR_T	@CXX_SIZEOF_WCHAR_T@
+// whether mbrtoc16 is in uchar.h
+#define HAVE_UCHAR_H_MBRTOC16   @HAVE_UCHAR_H_MBRTOC16@
 
 #endif // __BASE_CONFIG_H__
