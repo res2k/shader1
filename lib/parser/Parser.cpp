@@ -30,7 +30,7 @@ namespace s1
   using namespace parser;
   
   Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler,
-		  ErrorHandler& errorHandler)
+                  ErrorHandler& errorHandler)
    : inputLexer (inputLexer), semanticsHandler (semanticsHandler),
      errorHandler (errorHandler)
   {
@@ -103,55 +103,55 @@ namespace s1
       bool isType = IsType (scope, beyondType);
       if (currentToken.typeOrID == Lexer::kwConst)
       {
-	/* Konstantendeklaration */
+        /* Konstantendeklaration */
 //@@ENDSNIP
-	/* constant declaration */
+        /* constant declaration */
 //@@SNIP ParseProgramStatements.txt
-	ParseConstDeclare (scope);
-	Expect (Lexer::Semicolon);
-	NextToken();
+        ParseConstDeclare (scope);
+        Expect (Lexer::Semicolon);
+        NextToken();
       }
       else if ((isType
-	  && (Peek (beyondType).typeOrID == Lexer::Identifier))
-	|| (currentToken.typeOrID == Lexer::kwVoid))
+          && (Peek (beyondType).typeOrID == Lexer::Identifier))
+        || (currentToken.typeOrID == Lexer::kwVoid))
       {
-	if ((currentToken.typeOrID == Lexer::kwVoid)
-	    || (Peek (beyondType+1).typeOrID == Lexer::ParenL))
-	{
-	  /* Funktionsdeklaration */
+        if ((currentToken.typeOrID == Lexer::kwVoid)
+            || (Peek (beyondType+1).typeOrID == Lexer::ParenL))
+        {
+          /* Funktionsdeklaration */
 //@@ENDSNIP
-	  /* Function declaration */
+          /* Function declaration */
 //@@SNIP ParseProgramStatements.txt
-	  ParseFuncDeclare (scope);
-	}
-	else
-	{
-	  /* Variablendeklaration */
+          ParseFuncDeclare (scope);
+        }
+        else
+        {
+          /* Variablendeklaration */
 //@@ENDSNIP
-	  /* Variable declaration */
+          /* Variable declaration */
 //@@SNIP ParseProgramStatements.txt
-	  ParseVarDeclare (scope);
-	  Expect (Lexer::Semicolon);
-	  NextToken();
-	}
+          ParseVarDeclare (scope);
+          Expect (Lexer::Semicolon);
+          NextToken();
+        }
       }
       else if (currentToken.typeOrID == Lexer::kwTypedef)
       {
-	/* Typdefinition */
+        /* Typdefinition */
 //@@ENDSNIP
-	/* Type definition */
+        /* Type definition */
 //@@SNIP ParseProgramStatements.txt
-	ParseTypedef (scope);
-	Expect (Lexer::Semicolon);
-	NextToken();
+        ParseTypedef (scope);
+        Expect (Lexer::Semicolon);
+        NextToken();
       }
       else
-	/* Unbekanntes Token - aufrufende Methode wird Fehler
-	   auslösen (erwartet "end of file"-Token) */
+        /* Unbekanntes Token - aufrufende Methode wird Fehler
+           auslösen (erwartet "end of file"-Token) */
 //@@ENDSNIP
-	/* Unknown token - let ParseProgram throw error */
+        /* Unknown token - let ParseProgram throw error */
 //@@SNIP ParseProgramStatements.txt
-	break;
+        break;
     }
   }
 //@@ENDSNIP
@@ -162,57 +162,57 @@ namespace s1
     {
       try
       {
-	int beyondType;
-	Scope blockScope = block->GetInnerScope();
-	bool isType = IsType (blockScope, beyondType);
-	if (currentToken.typeOrID == Lexer::kwConst)
-	{
-	  /* constant declaration */
-	  ParseConstDeclare (blockScope);
-	  Expect (Lexer::Semicolon);
-	  NextToken();
-	}
-	else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
-	{
-	  /* Variable declaration */
-	  ParseVarDeclare (blockScope);
-	  Expect (Lexer::Semicolon);
-	  NextToken();
-	}
-	else if (currentToken.typeOrID == Lexer::kwTypedef)
-	{
-	  /* Type definition */
-	  ParseTypedef (blockScope);
-	  Expect (Lexer::Semicolon);
-	  NextToken();
-	}
-	else if (IsCommand (blockScope))
-	{
-	  ParseCommand (block);
-	}
-	else
-	  break;
-	/* TODO: could improve behaviour in case unexpected tokens are encountered */
+        int beyondType;
+        Scope blockScope = block->GetInnerScope();
+        bool isType = IsType (blockScope, beyondType);
+        if (currentToken.typeOrID == Lexer::kwConst)
+        {
+          /* constant declaration */
+          ParseConstDeclare (blockScope);
+          Expect (Lexer::Semicolon);
+          NextToken();
+        }
+        else if (isType && (Peek (beyondType).typeOrID == Lexer::Identifier))
+        {
+          /* Variable declaration */
+          ParseVarDeclare (blockScope);
+          Expect (Lexer::Semicolon);
+          NextToken();
+        }
+        else if (currentToken.typeOrID == Lexer::kwTypedef)
+        {
+          /* Type definition */
+          ParseTypedef (blockScope);
+          Expect (Lexer::Semicolon);
+          NextToken();
+        }
+        else if (IsCommand (blockScope))
+        {
+          ParseCommand (block);
+        }
+        else
+          break;
+        /* TODO: could improve behaviour in case unexpected tokens are encountered */
       }
       catch (const Exception& e)
       {
-	/* emit error */
-	errorHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
-	// Seek next ';' (end of statement) or '}' (end of block)
-	while ((currentToken.typeOrID != Lexer::Semicolon)
-	  && (currentToken.typeOrID != Lexer::BraceR)
-	  && (currentToken.typeOrID != Lexer::EndOfFile))
-	{
-	  NextToken();
-	}
-	if (currentToken.typeOrID == Lexer::Semicolon)
-	{
-	  NextToken ();
-	  continue;
-	}
-	else
-	  // '}', exit block
-	  break;
+        /* emit error */
+        errorHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
+        // Seek next ';' (end of statement) or '}' (end of block)
+        while ((currentToken.typeOrID != Lexer::Semicolon)
+          && (currentToken.typeOrID != Lexer::BraceR)
+          && (currentToken.typeOrID != Lexer::EndOfFile))
+        {
+          NextToken();
+        }
+        if (currentToken.typeOrID == Lexer::Semicolon)
+        {
+          NextToken ();
+          continue;
+        }
+        else
+          // '}', exit block
+          break;
       }
     }
   }
@@ -244,8 +244,8 @@ namespace s1
       Expression returnExpr;
       if (IsExpression (blockScope))
       {
-	/* Return with some value */
-	returnExpr = ParseExpression (blockScope);
+        /* Return with some value */
+        returnExpr = ParseExpression (blockScope);
       }
       block->AddReturnCommand (returnExpr);
       Expect (Lexer::Semicolon);
@@ -319,40 +319,40 @@ namespace s1
   bool Parser::IsExpression (const Scope& scope)
   {
     if ((currentToken.typeOrID == Lexer::ParenL)
-	|| (currentToken.typeOrID == Lexer::kwTrue)
-	|| (currentToken.typeOrID == Lexer::kwFalse)
-	|| (currentToken.typeOrID == Lexer::Numeric))
+        || (currentToken.typeOrID == Lexer::kwTrue)
+        || (currentToken.typeOrID == Lexer::kwFalse)
+        || (currentToken.typeOrID == Lexer::Numeric))
       return true;
     // Check if assignment
     if ((currentToken.typeOrID == Lexer::Identifier)
-	  && (Peek ().typeOrID == Lexer::Assign))
+          && (Peek ().typeOrID == Lexer::Assign))
       return true;
     // Check if attribute
     if ((currentToken.typeOrID == Lexer::Identifier)
-	  && (Peek ().typeOrID == Lexer::Member))
+          && (Peek ().typeOrID == Lexer::Member))
       return true;
     // Check if array access
     if ((currentToken.typeOrID == Lexer::Identifier)
-	  && (Peek ().typeOrID == Lexer::BracketL))
+          && (Peek ().typeOrID == Lexer::BracketL))
       return true;
     // Check if 'stand-alone' expression
     if (((currentToken.typeOrID == Lexer::Identifier)
-	    && (IsBinaryOperationToken (Peek ().typeOrID) 	// X op Y
-	      || (Peek ().typeOrID == Lexer::TernaryIf)))	// X ? ...
-	  || IsUnaryOperationToken (currentToken.typeOrID)	// !X, ~X ...
-	  || Peek ().typeOrID == Lexer::Semicolon)		// X; (expression is just identifier)
+            && (IsBinaryOperationToken (Peek ().typeOrID) 	// X op Y
+              || (Peek ().typeOrID == Lexer::TernaryIf)))	// X ? ...
+          || IsUnaryOperationToken (currentToken.typeOrID)	// !X, ~X ...
+          || Peek ().typeOrID == Lexer::Semicolon)		// X; (expression is just identifier)
       return true;
     /* Check if function call - can be <Identifier> '('
        or <type> '(', where <type> can take up multiple tokens,
        especially for arrays */
     if ((currentToken.typeOrID == Lexer::Identifier)
-	  && (Peek ().typeOrID == Lexer::ParenL))
+          && (Peek ().typeOrID == Lexer::ParenL))
       return true;
     int checkForParens = 0;
     if (IsType (scope, checkForParens))
     {
       if (Peek (checkForParens).typeOrID == Lexer::ParenL)
-	return true;
+        return true;
     }
     return false;
   }
@@ -380,37 +380,37 @@ namespace s1
     int beyondType = 0;
     bool isType (false);
     if ((currentToken.typeOrID == Lexer::Identifier)
-	|| ((isType = IsType (scope, beyondType))
-	  && (Peek (beyondType).typeOrID == Lexer::ParenL)))
+        || ((isType = IsType (scope, beyondType))
+          && (Peek (beyondType).typeOrID == Lexer::ParenL)))
     {
       /* Expression could be: 
          * a variable/attribute value,
-	 * function call,
-	 * type constructor
+         * function call,
+         * type constructor
        */
       Type type;
       Name idName;
       if (isType)
-	type = ParseType (scope);
+        type = ParseType (scope);
       else
       {
-	idName = scope->ResolveIdentifier (currentToken.tokenString);
-	NextToken();
+        idName = scope->ResolveIdentifier (currentToken.tokenString);
+        NextToken();
       }
       /* if identifier is function name ... */
       if (isType || (idName->GetType() == SemanticsHandler::Name::Function))
       {
-	// ... parse function call
-	SemanticsHandler::ExpressionVector params;
-	ParseFuncParamActual (scope, params);
-	if (isType)
-	  expr = semanticsHandler.CreateTypeConstructorExpression (type, params);
-	else
-	  expr = semanticsHandler.CreateFunctionCallExpression (idName, params);
+        // ... parse function call
+        SemanticsHandler::ExpressionVector params;
+        ParseFuncParamActual (scope, params);
+        if (isType)
+          expr = semanticsHandler.CreateTypeConstructorExpression (type, params);
+        else
+          expr = semanticsHandler.CreateFunctionCallExpression (idName, params);
       }
       else
       {
-	expr = semanticsHandler.CreateVariableExpression (idName);
+        expr = semanticsHandler.CreateVariableExpression (idName);
       }
     }
     else if (currentToken.typeOrID == Lexer::ParenL)
@@ -440,28 +440,28 @@ namespace s1
   }
   
   Parser::Expression Parser::ParseAttributeOrArrayAccess (const Scope& scope,
-							  Expression baseExpr)
+                                                          Expression baseExpr)
   {
     Parser::Expression expr = baseExpr;
     while (true)
     {
       if (currentToken.typeOrID == Lexer::Member)
       {
-	NextToken ();
-	Expect (Lexer::Identifier);
-	expr = semanticsHandler.CreateAttributeAccess (expr, currentToken.tokenString);
-	NextToken();
+        NextToken ();
+        Expect (Lexer::Identifier);
+        expr = semanticsHandler.CreateAttributeAccess (expr, currentToken.tokenString);
+        NextToken();
       }
       else if (currentToken.typeOrID == Lexer::BracketL)
       {
-	NextToken();
-	Expression indexExpr = ParseExpression (scope);
-	Expect (Lexer::BracketR);
-	NextToken();
-	expr = semanticsHandler.CreateArrayElementAccess (expr, indexExpr);
+        NextToken();
+        Expression indexExpr = ParseExpression (scope);
+        Expect (Lexer::BracketR);
+        NextToken();
+        expr = semanticsHandler.CreateArrayElementAccess (expr, indexExpr);
       }
       else
-	break;
+        break;
     }
     return expr;
   }
@@ -477,16 +477,16 @@ namespace s1
       switch (currentToken.typeOrID)
       {
       case Lexer::Mult:
-	op = SemanticsHandler::Mul;
-	break;
+        op = SemanticsHandler::Mul;
+        break;
       case Lexer::Div:
-	op = SemanticsHandler::Div;
-	break;
+        op = SemanticsHandler::Div;
+        break;
       case Lexer::Mod:
-	op = SemanticsHandler::Mod;
-	break;
+        op = SemanticsHandler::Mod;
+        break;
       default:
-	assert (false);
+        assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprUnary (scope);
@@ -505,13 +505,13 @@ namespace s1
       switch (currentToken.typeOrID)
       {
       case Lexer::Plus:
-	op = SemanticsHandler::Add;
-	break;
+        op = SemanticsHandler::Add;
+        break;
       case Lexer::Minus:
-	op = SemanticsHandler::Sub;
-	break;
+        op = SemanticsHandler::Sub;
+        break;
       default:
-	assert (false);
+        assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprMultiplication (scope);
@@ -534,14 +534,14 @@ namespace s1
         assert (false);
         // Fall through (silence compiler)
       case Lexer::BitwiseInvert:
-	op = SemanticsHandler::Inv;
-	break;
+        op = SemanticsHandler::Inv;
+        break;
       case Lexer::LogicInvert:
-	op = SemanticsHandler::Not;
-	break;
+        op = SemanticsHandler::Not;
+        break;
       case Lexer::Minus:
-	op = SemanticsHandler::Neg;
-	break;
+        op = SemanticsHandler::Neg;
+        break;
       }
       NextToken();
       expr = ParseExprBase (scope);
@@ -573,13 +573,13 @@ namespace s1
       switch (currentToken.typeOrID)
       {
       case Lexer::Equals:
-	op = SemanticsHandler::Equals;
-	break;
+        op = SemanticsHandler::Equals;
+        break;
       case Lexer::NotEquals:
-	op = SemanticsHandler::NotEquals;
-	break;
+        op = SemanticsHandler::NotEquals;
+        break;
       default:
-	assert (false);
+        assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprComparison (scope);
@@ -600,19 +600,19 @@ namespace s1
       switch (currentToken.typeOrID)
       {
       case Lexer::Larger:
-	op = SemanticsHandler::Larger;
-	break;
+        op = SemanticsHandler::Larger;
+        break;
       case Lexer::LargerEqual:
-	op = SemanticsHandler::LargerEqual;
-	break;
+        op = SemanticsHandler::LargerEqual;
+        break;
       case Lexer::Smaller:
-	op = SemanticsHandler::Smaller;
-	break;
+        op = SemanticsHandler::Smaller;
+        break;
       case Lexer::SmallerEqual:
-	op = SemanticsHandler::SmallerEqual;
-	break;
+        op = SemanticsHandler::SmallerEqual;
+        break;
       default:
-	assert (false);
+        assert (false);
       }
       NextToken();
       Expression expr2 = ParseExprAddition (scope);
@@ -677,8 +677,8 @@ namespace s1
     case Lexer::Identifier:
       /* Might be a type alias */
       {
-	Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
-	isType = (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
+        Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
+        isType = (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
       }
       break;
     default:
@@ -687,9 +687,9 @@ namespace s1
     if (isType)
     {
       while ((Peek (peekAfterType).typeOrID == Lexer::BracketL)
-	&& (Peek (peekAfterType+1).typeOrID == Lexer::BracketR))
+        && (Peek (peekAfterType+1).typeOrID == Lexer::BracketR))
       {
-	peekAfterType += 2;
+        peekAfterType += 2;
       }
     }
     return isType;
@@ -709,18 +709,18 @@ namespace s1
     case Lexer::kwInt:
     case Lexer::kwFloat:
       {
-	switch (currentToken.typeClass)
-	{
-	case Lexer::Normal:
-	  if (currentToken.typeOrID == Lexer::kwBool)
-	    return ParseTypeBool ();
-	  else
-	    return ParseTypeNumeric (isUnsigned);
-	case Lexer::Vector:
-	  return ParseTypeVector (isUnsigned);
-	case Lexer::Matrix:
-	  return ParseTypeMatrix (isUnsigned);
-	}
+        switch (currentToken.typeClass)
+        {
+        case Lexer::Normal:
+          if (currentToken.typeOrID == Lexer::kwBool)
+            return ParseTypeBool ();
+          else
+            return ParseTypeNumeric (isUnsigned);
+        case Lexer::Vector:
+          return ParseTypeVector (isUnsigned);
+        case Lexer::Matrix:
+          return ParseTypeMatrix (isUnsigned);
+        }
       }
       break;
     case Lexer::kwSampler1D:
@@ -730,18 +730,18 @@ namespace s1
       return ParseTypeSampler ();
     case Lexer::Identifier:
       {
-	Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
-	Type type;
-	if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
-	{
-	  type = typeName->GetAliasedType();
-	}
-	else
-	{
-	  throw Exception (parser::ExpectedTypeName, currentToken);
-	}
-	NextToken ();
-	return type;
+        Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
+        Type type;
+        if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
+        {
+          type = typeName->GetAliasedType();
+        }
+        else
+        {
+          throw Exception (parser::ExpectedTypeName, currentToken);
+        }
+        NextToken ();
+        return type;
       }
       break;
     default:
@@ -774,7 +774,7 @@ namespace s1
     case Lexer::kwInt:
       /* int */
       type = semanticsHandler.CreateType (
-	isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
+        isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
       NextToken();
       break;
     case Lexer::kwFloat:
@@ -799,7 +799,7 @@ namespace s1
     case Lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-	isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
+        isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
       break;
     case Lexer::kwFloat:
       /* float */
@@ -824,7 +824,7 @@ namespace s1
     case Lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-	isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
+        isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
       break;
     case Lexer::kwFloat:
       /* float */
@@ -834,7 +834,7 @@ namespace s1
       UnexpectedToken ();
     }
     Type matType = semanticsHandler.CreateMatrixType (baseType, currentToken.dimension1,
-						   currentToken.dimension2);
+                                                   currentToken.dimension2);
     NextToken();
     return matType;
   }
@@ -948,24 +948,24 @@ namespace s1
     {
       if (currentToken.typeOrID == Lexer::ParenR)
       {
-	// End of list
-	NextToken ();
-	break;
+        // End of list
+        NextToken ();
+        break;
       }
 
       // TODO: In case of error, skip to next param
       int paramDirection = 0;
       if (currentToken.typeOrID == Lexer::kwIn)
       {
-	// 'in' parameter
-	NextToken();
-	paramDirection |= SemanticsHandler::Scope::dirIn;
+        // 'in' parameter
+        NextToken();
+        paramDirection |= SemanticsHandler::Scope::dirIn;
       }
       if (currentToken.typeOrID == Lexer::kwOut)
       {
-	// 'in' parameter
-	NextToken();
-	paramDirection |= SemanticsHandler::Scope::dirOut;
+        // 'in' parameter
+        NextToken();
+        paramDirection |= SemanticsHandler::Scope::dirOut;
       }
       // If no explicit direction is given, use 'in'
       if (paramDirection == 0) paramDirection = SemanticsHandler::Scope::dirIn;
@@ -977,17 +977,17 @@ namespace s1
       NextToken ();
       if (currentToken.typeOrID == Lexer::Assign)
       {
-	// Handle default value
-	NextToken ();
-	if (paramDirection == SemanticsHandler::Scope::dirOut)
-	  throw Exception (OutParameterWithDefault);
-	newParam.defaultValue = ParseExpression (scope);
+        // Handle default value
+        NextToken ();
+        if (paramDirection == SemanticsHandler::Scope::dirOut)
+          throw Exception (OutParameterWithDefault);
+        newParam.defaultValue = ParseExpression (scope);
       }
       params.push_back (newParam);
       if (currentToken.typeOrID == Lexer::Separator)
-	NextToken ();
+        NextToken ();
       else if (currentToken.typeOrID != Lexer::ParenR)
-	UnexpectedToken ();
+        UnexpectedToken ();
     }
   }
   
@@ -1001,18 +1001,18 @@ namespace s1
     {
       if (currentToken.typeOrID == Lexer::ParenR)
       {
-	// End of list
-	NextToken ();
-	break;
+        // End of list
+        NextToken ();
+        break;
       }
       
       Expression expr = ParseExpression (scope);
       params.push_back (expr);
 
       if (currentToken.typeOrID == Lexer::Separator)
-	NextToken ();
+        NextToken ();
       else if (currentToken.typeOrID != Lexer::ParenR)
-	UnexpectedToken ();
+        UnexpectedToken ();
     }
   }
 
@@ -1029,9 +1029,9 @@ namespace s1
       ParseVarIdentifierAndInitializer (scope, type);
       if (currentToken.typeOrID == Lexer::Separator)
       {
-	// ',' - more variables follow
-	NextToken();
-	continue;
+        // ',' - more variables follow
+        NextToken();
+        continue;
       }
       break;
     }
@@ -1066,9 +1066,9 @@ namespace s1
       ParseConstIdentifierAndInitializer (scope, type);
       if (currentToken.typeOrID == Lexer::Separator)
       {
-	// ',' - more constants follow
-	NextToken();
-	continue;
+        // ',' - more constants follow
+        NextToken();
+        continue;
       }
     }
     while (false);

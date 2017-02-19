@@ -57,23 +57,23 @@ namespace s1
       /// Representation of a type
       struct Type
       {
-	enum Class
-	{
-	  Base, Sampler, Array, Vector, Matrix
-	};
-	
-	virtual ~Type() {}
-	
-	virtual Class GetTypeClass() const = 0;
-	virtual BaseType GetBaseType() const = 0;
-	virtual SamplerType GetSamplerType() const = 0;
-	
-	virtual TypePtr GetArrayVectorMatrixBaseType() const = 0;
-	
-	virtual unsigned int GetVectorTypeComponents() const = 0;
-	
-	virtual unsigned int GetMatrixTypeCols() const = 0;
-	virtual unsigned int GetMatrixTypeRows() const = 0;
+        enum Class
+        {
+          Base, Sampler, Array, Vector, Matrix
+        };
+        
+        virtual ~Type() {}
+        
+        virtual Class GetTypeClass() const = 0;
+        virtual BaseType GetBaseType() const = 0;
+        virtual SamplerType GetSamplerType() const = 0;
+        
+        virtual TypePtr GetArrayVectorMatrixBaseType() const = 0;
+        
+        virtual unsigned int GetVectorTypeComponents() const = 0;
+        
+        virtual unsigned int GetMatrixTypeCols() const = 0;
+        virtual unsigned int GetMatrixTypeRows() const = 0;
       };
       
       /// Create a base type
@@ -84,11 +84,11 @@ namespace s1
       virtual TypePtr CreateArrayType (TypePtr baseType) = 0;
       /// Create a vector type
       virtual TypePtr CreateVectorType (TypePtr baseType,
-					unsigned int components) = 0;
+                                        unsigned int components) = 0;
       /// Create a matrix type
       virtual TypePtr CreateMatrixType (TypePtr baseType,
-					unsigned int columns,
-					unsigned int rows) = 0;
+                                        unsigned int columns,
+                                        unsigned int rows) = 0;
       /** @} */
       
       /**\name Names
@@ -98,14 +98,14 @@ namespace s1
       {
         virtual ~Name() {}
         
-	/// Type of name (function or variable/parameter)
-	enum NameType { Function, Variable, TypeAlias };
-	
-	/// Get type of name
-	virtual NameType GetType() = 0;
-	
-	/// Get aliased type
-	virtual TypePtr GetAliasedType() = 0;
+        /// Type of name (function or variable/parameter)
+        enum NameType { Function, Variable, TypeAlias };
+        
+        /// Get type of name
+        virtual NameType GetType() = 0;
+        
+        /// Get aliased type
+        virtual TypePtr GetAliasedType() = 0;
 
         /// Get name identifier
         virtual const uc::String& GetIdentifier () = 0;
@@ -135,51 +135,51 @@ namespace s1
       virtual ExpressionPtr CreateVariableExpression (NamePtr name) = 0;
       /// Create an expression that access an attribute of some other expression
       virtual ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-						   const uc::String& attr) = 0;
+                                                   const uc::String& attr) = 0;
       /// Create an expression that accesses a member of an array
       virtual ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
-						      ExpressionPtr elementIndexExpr) = 0;
-						   
+                                                      ExpressionPtr elementIndexExpr) = 0;
+                                                   
       /// Create an expression that accesses a member of an array
       virtual ExpressionPtr CreateAssignExpression (ExpressionPtr target,
-						    ExpressionPtr value) = 0;
+                                                    ExpressionPtr value) = 0;
 
       /// Possible arithmetic operations
       enum ArithmeticOp { Add, Sub, Mul, Div, Mod };
       /// Create an arithmetic expression
       virtual ExpressionPtr CreateArithmeticExpression (ArithmeticOp op,
-							ExpressionPtr operand1,
-							ExpressionPtr operand2) = 0;
+                                                        ExpressionPtr operand1,
+                                                        ExpressionPtr operand2) = 0;
       /// Possible unary operations
       enum UnaryOp { Neg, Inv, Not };
       /// Create an unary expression
       virtual ExpressionPtr CreateUnaryExpression (UnaryOp op,
-						   ExpressionPtr operand) = 0;
-						   
+                                                   ExpressionPtr operand) = 0;
+                                                   
       /// Create a ternary expression
       virtual ExpressionPtr CreateTernaryExpression (ExpressionPtr condition,
-						     ExpressionPtr ifExpr,
-						     ExpressionPtr thenExpr) = 0;
-						     
+                                                     ExpressionPtr ifExpr,
+                                                     ExpressionPtr thenExpr) = 0;
+                                                     
       /// Possible comparisons
       enum CompareOp { Equals, NotEquals, Smaller, SmallerEqual, Larger, LargerEqual };
       /// Create a comparison expression
       virtual ExpressionPtr CreateComparisonExpression (CompareOp op,
-							ExpressionPtr operand1,
-							ExpressionPtr operand2) = 0;
+                                                        ExpressionPtr operand1,
+                                                        ExpressionPtr operand2) = 0;
       /// Possible logic operations
       enum LogicOp { And, Or };
       /// Create a logic expression
       virtual ExpressionPtr CreateLogicExpression (LogicOp op,
-						   ExpressionPtr operand1,
-						   ExpressionPtr operand2) = 0;
-						   
+                                                   ExpressionPtr operand1,
+                                                   ExpressionPtr operand2) = 0;
+                                                   
       typedef std::vector<ExpressionPtr> ExpressionVector;
       virtual ExpressionPtr CreateFunctionCallExpression (NamePtr functionName,
-							  const ExpressionVector& params) = 0;
+                                                          const ExpressionVector& params) = 0;
       
       virtual ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
-							  const ExpressionVector& params) = 0;
+                                                          const ExpressionVector& params) = 0;
       /** @} */
 
       /**\name Functions
@@ -205,12 +205,12 @@ namespace s1
        */
       enum ScopeLevel      
       { 
-	/// Builtin functions (and possibly variables+types)
-	Builtin,
-	/// Global functions, variables and types
-	Global,
-	/// Function-local variables and types
-	Function
+        /// Builtin functions (and possibly variables+types)
+        Builtin,
+        /// Global functions, variables and types
+        Global,
+        /// Function-local variables and types
+        Function
       };
       
       /**
@@ -220,29 +220,29 @@ namespace s1
       {
         virtual ~Scope() {}
 
-	/// Get level of the scope.
-	virtual ScopeLevel GetLevel() const = 0;
-	/**
-	 * Add a variable or constant.
-	 * \param type Type of variable.
-	 * \param identifier Identifier of variable.
-	 * \param initialValue Initial value of variable, can be a 0 pointer if none
-	 *  is given. Required for constants
-	 * \param constant Whether it is a constant variable.
-	 */
-	virtual NamePtr AddVariable (TypePtr type,
-	  const uc::String& identifier,
-	  ExpressionPtr initialValue,
-	  bool constant) = 0;
-	  
-	/**
-	 * Add a type alias.
-	 * \param aliasedType Type to alias.
-	 * \param identifier Identifier of type alias.
-	 */
-	virtual NamePtr AddTypeAlias (TypePtr aliasedType,
-	  const uc::String& identifier) = 0;
-	  
+        /// Get level of the scope.
+        virtual ScopeLevel GetLevel() const = 0;
+        /**
+         * Add a variable or constant.
+         * \param type Type of variable.
+         * \param identifier Identifier of variable.
+         * \param initialValue Initial value of variable, can be a 0 pointer if none
+         *  is given. Required for constants
+         * \param constant Whether it is a constant variable.
+         */
+        virtual NamePtr AddVariable (TypePtr type,
+          const uc::String& identifier,
+          ExpressionPtr initialValue,
+          bool constant) = 0;
+          
+        /**
+         * Add a type alias.
+         * \param aliasedType Type to alias.
+         * \param identifier Identifier of type alias.
+         */
+        virtual NamePtr AddTypeAlias (TypePtr aliasedType,
+          const uc::String& identifier) = 0;
+          
         /// Type of a formal parameter
         enum FormalParameterType
         {
@@ -256,39 +256,39 @@ namespace s1
           /// All types greater or equal than this identify auto-added parameters
           ptFirstAutoType = ptAutoGlobal
         };
-	enum FormalParameterDirection
-	{
-	  dirDefault = 0,
-	  dirIn = 1,
-	  dirOut = 2,
-	  dirInOut = 3
-	};
-	struct FunctionFormalParameter
-	{
+        enum FormalParameterDirection
+        {
+          dirDefault = 0,
+          dirIn = 1,
+          dirOut = 2,
+          dirInOut = 3
+        };
+        struct FunctionFormalParameter
+        {
           /// Type of parameter
           FormalParameterType paramType;
-	  TypePtr type;
-	  uc::String identifier;
-	  ExpressionPtr defaultValue;
-	  FormalParameterDirection dir;
+          TypePtr type;
+          uc::String identifier;
+          ExpressionPtr defaultValue;
+          FormalParameterDirection dir;
 
           FunctionFormalParameter() : paramType (ptUser) {}
-	};
-	typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
-	  
-	/**
-	 * Add a function.
-	 * \param returnType Return type of function.
-	 * \param identifier Identifier of function.
-	 * \param params Formal parameters.
-	 * \returns Function object.
-	 */
-	virtual FunctionPtr AddFunction (TypePtr returnType,
-	  const uc::String& identifier,
-	  const FunctionFormalParameters& params) = 0;
-	  
-	/// Resolve an identifier to a name
-	virtual NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
+        };
+        typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
+          
+        /**
+         * Add a function.
+         * \param returnType Return type of function.
+         * \param identifier Identifier of function.
+         * \param params Formal parameters.
+         * \returns Function object.
+         */
+        virtual FunctionPtr AddFunction (TypePtr returnType,
+          const uc::String& identifier,
+          const FunctionFormalParameters& params) = 0;
+          
+        /// Resolve an identifier to a name
+        virtual NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
       };
       typedef boost::shared_ptr<Scope> ScopePtr;
       
@@ -305,16 +305,16 @@ namespace s1
       {
         virtual ~Block() {}
 
-	virtual ScopePtr GetInnerScope() = 0;
-	
-	virtual void AddExpressionCommand (ExpressionPtr expr) = 0;
-	virtual void AddReturnCommand (ExpressionPtr returnValue) = 0;
-	virtual void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
-				   BlockPtr elseBlock) = 0;
-	virtual void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock) = 0;
-	virtual void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
-				 BlockPtr loopBlock) = 0;
-	virtual void AddNestedBlock (BlockPtr block) = 0;
+        virtual ScopePtr GetInnerScope() = 0;
+        
+        virtual void AddExpressionCommand (ExpressionPtr expr) = 0;
+        virtual void AddReturnCommand (ExpressionPtr returnValue) = 0;
+        virtual void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
+                                   BlockPtr elseBlock) = 0;
+        virtual void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock) = 0;
+        virtual void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
+                                 BlockPtr loopBlock) = 0;
+        virtual void AddNestedBlock (BlockPtr block) = 0;
       };
       
       virtual BlockPtr CreateBlock (ScopePtr parentScope) = 0;
