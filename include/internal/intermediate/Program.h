@@ -41,6 +41,7 @@ namespace s1
       
       size_t GetNumFunctions () const;
       ProgramFunctionPtr GetFunction (size_t n) const;
+      ProgramFunctionPtr GetEntryFunction () const;
       
       void AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
 			     const uc::String& name);

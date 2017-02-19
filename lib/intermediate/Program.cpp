@@ -17,6 +17,7 @@
 
 #include "base/common.h"
 #include "intermediate/Program.h"
+#include "intermediate/ProgramFunction.h"
 
 #include "splitter/Frequency.h"
 
@@ -41,6 +42,17 @@ namespace s1
       return functions[n];
     }
     
+    ProgramFunctionPtr Program::GetEntryFunction () const
+    {
+      auto found_func = std::find_if (functions.begin (), functions.end (),
+                                      [&](const ProgramFunctionPtr& func)
+                                      {
+                                        return func->IsEntryFunction();
+                                      });
+      if (found_func != functions.end ()) return *found_func;
+      return ProgramFunctionPtr ();
+    }
+
     void Program::AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
 				    const uc::String& name)
     {

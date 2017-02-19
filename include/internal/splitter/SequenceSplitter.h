@@ -200,8 +200,6 @@ namespace s1
       
       intermediate::SequenceBuilderPtr GetOutputSequence (int freq)
       { return outputSeqBuilder[freq]; }
-      
-      static int GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type);
     protected:
       ProgramSplitter& progSplit;
       bool mergeUniformToVF;

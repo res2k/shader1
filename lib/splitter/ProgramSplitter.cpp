@@ -341,16 +341,9 @@ namespace s1
           if (param.dir & parser::SemanticsHandler::Scope::dirIn)
           {
             // Input parameter
-            int paramFreq;
             ParamMap::const_iterator paramFlag = paramFlags.find (param.identifier);
-            if (paramFlag != paramFlags.end())
-            {
-              paramFreq = paramFlag->second;
-            }
-            else
-            {
-              paramFreq = 1 << SequenceSplitter::GetDefaultFrequencyForType (param.type);
-            }
+            S1_ASSERT (paramFlag != paramFlags.end(), S1_ASSERT_RET_VOID);
+            unsigned int paramFreq = paramFlag->second;
             splitter.SetInputFreqFlags (param.identifier, paramFreq);
             if ((paramFreq & (freqFlagU | freqFlagV)) != 0)
               vParams.push_back (param);

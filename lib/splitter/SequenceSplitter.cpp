@@ -1252,27 +1252,6 @@ namespace s1
         outputSeqBuilder[freqUniform]->Clear ();
       }
     }
-    
-    int SequenceSplitter::GetDefaultFrequencyForType (const parser::SemanticsHandler::TypePtr& type)
-    {
-      switch (type->GetTypeClass())
-      {
-      case parser::SemanticsHandler::Type::Base:
-        return freqVertex;
-      case parser::SemanticsHandler::Type::Sampler:
-        return freqFragment;
-      case parser::SemanticsHandler::Type::Array:
-        return GetDefaultFrequencyForType (type->GetArrayVectorMatrixBaseType());
-      case parser::SemanticsHandler::Type::Vector:
-        return freqVertex;
-      case parser::SemanticsHandler::Type::Matrix:
-        return freqUniform;
-      }
-      assert (false);
-      return 0;
-    }
-
-    format::StaticFormatter FormatRegisterWarning ("Register {0} has no associated availability, using '{1}'");
 
     unsigned int SequenceSplitter::GetRegAvailability (const RegisterPtr& reg)
     {
@@ -1290,22 +1269,13 @@ namespace s1
             break;
           }
         }
-        // Imported regs: guess from type.
-        // Local regs: assume uniform
-        int defaultFreq = isImported ? GetDefaultFrequencyForType (reg->GetOriginalType()) : freqUniform;
-        
-        unsigned int defaultAvail = 1 << defaultFreq;
+
+        unsigned int defaultAvail = 1 << freqUniform;
         regAvailability[reg] = defaultAvail;
-        
-        /* Also, stay silent on local regs.
-         * (Probably just an undefined value anyway. Acceptable to be silent.) */
-        if (isImported)
-        {
-          const char* const defFreqName[freqNum] = { "uniform",  "vertex", "fragment" };
-          const uc::String& regName = reg->GetName();
-          // FIXME: Or better use some special 'warning' mechanism for this?
-          s1::PrintDebugMessage (FormatRegisterWarning.to<uc::String> (regName, defFreqName[defaultFreq]));
-        }
+
+        // Assert b/c program inputs should've been covered by Compiler::Program::GetCompiledProgram()
+        S1_ASSERT (!isImported, defaultAvail);
+
         return defaultAvail;
       }
       return avail->second;

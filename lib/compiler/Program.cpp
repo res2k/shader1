@@ -98,6 +98,46 @@ namespace s1
     return opt;
   }
 
+  static parser::SemanticsHandler::TypePtr GetBaseType (const parser::SemanticsHandler::TypePtr& type)
+  {
+    if (type->GetTypeClass () == parser::SemanticsHandler::Type::Array)
+      return GetBaseType (type->GetArrayVectorMatrixBaseType ());
+    else
+      return type;
+  }
+
+  static splitter::Frequency GetDefaultFreq (const parser::SemanticsHandler::Scope::FunctionFormalParameter param)
+  {
+    switch (param.freqQualifier)
+    {
+    case parser::SemanticsHandler::Scope::freqAuto:
+      // Auto: assume 'uniform', so simply fall through
+    case parser::SemanticsHandler::Scope::freqUniform:
+      {
+        if (GetBaseType (param.type)->GetTypeClass() == parser::SemanticsHandler::Type::Sampler)
+          // Logically, samples are uniform. Internally, they're fragment (at least as long vertex textures aren't supported).
+          return splitter::freqFragment;
+        else
+          return splitter::freqUniform;
+      }
+    case parser::SemanticsHandler::Scope::freqAttribute:
+      {
+        if (GetBaseType (param.type)->GetTypeClass() == parser::SemanticsHandler::Type::Sampler)
+        {
+          // TODO: We should probably emit a warning here...
+          return splitter::freqFragment;
+        }
+        else
+        {
+          return splitter::freqVertex;
+        }
+      }
+    }
+
+    assert (false);
+    return splitter::freqUniform;
+  }
+
   Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const uc::String& entryFunction,
                                                                        const OptionsPtr& compilerOptions,
                                                                        const FreqFlagMap& inputParamFreqs,
@@ -120,6 +160,18 @@ namespace s1
     optimize::Optimizer opt = CreateOptimizer (compilerOptions);
     intermediate::ProgramPtr optProg = opt.ApplyOptimizations (intermediateProg);
 
+    FreqFlagMap defaultInputParamFreqs;
+    // Fill map with frequencies from input parameter qualifiers
+    {
+      auto entryFunc = intermediateProg->GetEntryFunction ();
+      S1_ASSERT (entryFunc, Backend::ProgramPtr ());
+      for (const auto& entryParam : entryFunc->GetParams ())
+      {
+        if ((entryParam.dir & parser::SemanticsHandler::Scope::dirOut) != 0) continue;
+        defaultInputParamFreqs[entryParam.identifier] = 1 << GetDefaultFreq (entryParam);
+      }
+    }
+
     switch (target)
     {
     case Backend::targetVP:
@@ -129,8 +181,11 @@ namespace s1
         {
           splitter::ProgramSplitter splitter;
           
-          typedef std::pair<uc::String, unsigned int> FreqFlagPair;
-          for(FreqFlagPair freqFlag : inputParamFreqs)
+          for(auto freqFlag : defaultInputParamFreqs)
+          {
+            splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);
+          }
+          for(auto freqFlag : inputParamFreqs)
           {
             splitter.SetInputFreqFlags (freqFlag.first, freqFlag.second);
           }
