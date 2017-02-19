@@ -88,10 +88,10 @@ namespace uc
     if (currentDecodeResult != UTF8Decoder::drSuccess)
     {
       if ((currentDecodeResult == UTF8Decoder::drCharacterInvalid)
-	|| (currentDecodeResult == UTF8Decoder::drCharacterIncomplete)
-	|| (currentDecodeResult == UTF8Decoder::drEncodingInvalid))
+        || (currentDecodeResult == UTF8Decoder::drCharacterIncomplete)
+        || (currentDecodeResult == UTF8Decoder::drEncodingInvalid))
       {
-	throw StreamInvalidCharacterException (currentDecodeResult);
+        throw StreamInvalidCharacterException (currentDecodeResult);
       }
       else if (currentDecodeResult == UTF8Decoder::drInputUnderrun)
       {
@@ -99,7 +99,7 @@ namespace uc
       }
       else
       {
-	throw StreamException (currentDecodeResult);
+        throw StreamException (currentDecodeResult);
       }
     }
     else if (!(*this))
@@ -118,15 +118,15 @@ namespace uc
     {
       if (!inSource.HaveMoreData())
       {
-	return false;
+        return false;
       }
       
       streamInBufferRemaining = inSource.NextData (streamInBufferPtr);
       
       if (streamInBufferRemaining == 0)
       {
-	// Nothing was read
-	return false;
+        // Nothing was read
+        return false;
       }
     }
     return true;
