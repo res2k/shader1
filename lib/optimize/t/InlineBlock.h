@@ -69,7 +69,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -112,7 +112,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -159,7 +159,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -220,7 +220,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -283,7 +283,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -344,7 +344,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

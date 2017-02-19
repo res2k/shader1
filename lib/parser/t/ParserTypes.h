@@ -41,7 +41,8 @@ class ParserTypesTestSuite : public CxxTest::TestSuite
 public:
   void testTypeBool (void)
   {
-    std::istringstream in ("bool");
+    std::string inStr ("bool");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -59,7 +60,8 @@ public:
   
   void testTypeInt (void)
   {
-    std::istringstream in ("int");
+    std::string inStr ("int");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -77,7 +79,8 @@ public:
   
   void testTypeUInt (void)
   {
-    std::istringstream in ("unsigned int");
+    std::string inStr ("unsigned int");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -95,7 +98,8 @@ public:
   
   void testTypeFloat (void)
   {
-    std::istringstream in ("float");
+    std::string inStr ("float");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -113,7 +117,8 @@ public:
   
   void testTypeSampler1D (void)
   {
-    std::istringstream in ("sampler1D");
+    std::string inStr ("sampler1D");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -131,7 +136,8 @@ public:
   
   void testTypeSampler2D (void)
   {
-    std::istringstream in ("sampler2D");
+    std::string inStr ("sampler2D");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -149,7 +155,8 @@ public:
   
   void testTypeSampler3D (void)
   {
-    std::istringstream in ("sampler3D");
+    std::string inStr ("sampler3D");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -167,7 +174,8 @@ public:
   
   void testTypeSamplerCUBE (void)
   {
-    std::istringstream in ("samplerCUBE");
+    std::string inStr ("samplerCUBE");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -185,7 +193,8 @@ public:
   
   void testTypeVectorBool (void)
   {
-    std::istringstream in ("bool3");
+    std::string inStr ("bool3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -207,7 +216,8 @@ public:
   
   void testTypeVectorInt (void)
   {
-    std::istringstream in ("int3");
+    std::string inStr ("int3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -229,7 +239,8 @@ public:
   
   void testTypeVectorUInt (void)
   {
-    std::istringstream in ("unsigned int3");
+    std::string inStr ("unsigned int3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -251,7 +262,8 @@ public:
   
   void testTypeVectorFloat (void)
   {
-    std::istringstream in ("float3");
+    std::string inStr ("float3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -273,7 +285,8 @@ public:
   
   void testTypeMatrixBool (void)
   {
-    std::istringstream in ("bool3x2");
+    std::string inStr ("bool3x2");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -296,7 +309,8 @@ public:
   
   void testTypeMatrixInt (void)
   {
-    std::istringstream in ("int3x2");
+    std::string inStr ("int3x2");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -319,7 +333,8 @@ public:
   
   void testTypeMatrixUInt (void)
   {
-    std::istringstream in ("unsigned int3x2");
+    std::string inStr ("unsigned int3x2");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -342,7 +357,8 @@ public:
   
   void testTypeMatrixFloat (void)
   {
-    std::istringstream in ("float3x2");
+    std::string inStr ("float3x2");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -365,7 +381,8 @@ public:
   
   void testTypeArray (void)
   {
-    std::istringstream in ("int[]");
+    std::string inStr ("int[]");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -386,7 +403,8 @@ public:
   
   void testTypeArrayArray (void)
   {
-    std::istringstream in ("int[][]");
+    std::string inStr ("int[][]");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

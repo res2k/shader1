@@ -43,7 +43,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void main() {}");
+    std::string inStr ("void main() {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -58,7 +59,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void main (out float4 pos, out float4 color) {}");
+    std::string inStr ("void main (out float4 pos, out float4 color) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -73,7 +75,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void main() { int foo = 1; }");
+    std::string inStr ("void main() { int foo = 1; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -88,7 +91,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void main() { int foo = 1, bar; }");
+    std::string inStr ("void main() { int foo = 1, bar; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -103,7 +107,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int bar; void main() { int foo = bar; }");
+    std::string inStr ("int bar; void main() { int foo = bar; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -118,7 +123,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("const int bar = 1; void main() { int foo = bar; }");
+    std::string inStr ("const int bar = 1; void main() { int foo = bar; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -133,7 +139,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void Foo() {} void main() { Foo(); }");
+    std::string inStr ("void Foo() {} void main() { Foo(); }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -148,7 +155,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int Foo() { return 1; } void main() { int x = Foo(); }");
+    std::string inStr ("int Foo() { return 1; } void main() { int x = Foo(); }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -163,7 +171,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void main() { int x; x = float (1.2); }");
+    std::string inStr ("void main() { int x; x = float (1.2); }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -178,7 +187,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("void main() { int x, y; x + y; }");
+    std::string inStr ("void main() { int x, y; x + y; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

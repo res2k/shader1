@@ -18,6 +18,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "base/common.h"
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
@@ -37,7 +38,7 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in (
+    std::string inStr (
       "void main()"
       "{"
         "float x;"
@@ -47,6 +48,7 @@ public:
         "float y = x;"
       "}"
     );
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

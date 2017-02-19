@@ -19,6 +19,7 @@
 
 #include "base/common.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Exception.h"
 #include "parser/Parser.h"
@@ -45,7 +46,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("a = b;");
+    std::string inStr ("a = b;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -66,7 +68,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("a = b");
+    std::string inStr ("a = b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -87,7 +90,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("if (a) { c = d; }");
+    std::string inStr ("if (a) { c = d; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -111,7 +115,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("if (a) { c = d; } else { c = e; }");
+    std::string inStr ("if (a) { c = d; } else { c = e; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -139,7 +144,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("while (a) { c = d; }");
+    std::string inStr ("while (a) { c = d; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -163,7 +169,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("for (a; b; b = b+1) { c = d; }");
+    std::string inStr ("for (a; b; b = b+1) { c = d; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -187,7 +194,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("{ a = b; }");
+    std::string inStr ("{ a = b; }");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -210,7 +218,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("a = b error; c=d;");
+    std::string inStr ("a = b error; c=d;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

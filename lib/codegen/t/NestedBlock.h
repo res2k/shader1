@@ -18,6 +18,7 @@
 #include <cxxtest/TestSuite.h>
 #include "base/common.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "lexer/LexerErrorHandler.h"
@@ -117,7 +118,7 @@ public:
     
     using namespace s1::parser;
     
-    std::istringstream in (blockSource);
+    s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

@@ -19,6 +19,7 @@
 
 #include "base/common.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 
@@ -43,7 +44,8 @@ class ParserExprTestSuite : public CxxTest::TestSuite
 public:
   void testIdentifier (void)
   {
-    std::istringstream in ("a");
+    std::string inStr ("a");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -63,7 +65,8 @@ public:
   
   void testIdentifierAttr (void)
   {
-    std::istringstream in ("a.x");
+    std::string inStr ("a.x");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -83,7 +86,8 @@ public:
   
   void testIdentifierAttr2 (void)
   {
-    std::istringstream in ("(a+b).x");
+    std::string inStr ("(a+b).x");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -103,7 +107,8 @@ public:
   
   void testIdentifierAttr3 (void)
   {
-    std::istringstream in ("a.x+b");
+    std::string inStr ("a.x+b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -123,7 +128,8 @@ public:
   
   void testIdentifierAttr4 (void)
   {
-    std::istringstream in ("a+b.x");
+    std::string inStr ("a+b.x");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -143,7 +149,8 @@ public:
   
   void testEvaluationOrder (void)
   {
-    std::istringstream in ("a-b-c");
+    std::string inStr ("a-b-c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -163,7 +170,8 @@ public:
   
   void testPrecedence1 (void)
   {
-    std::istringstream in ("a+b*c");
+    std::string inStr ("a+b*c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -183,7 +191,8 @@ public:
   
   void testPrecedence2 (void)
   {
-    std::istringstream in ("a=b=c");
+    std::string inStr ("a=b=c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -203,7 +212,8 @@ public:
   
   void testPrecedence3 (void)
   {
-    std::istringstream in ("a+b==c*d");
+    std::string inStr ("a+b==c*d");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -223,7 +233,8 @@ public:
   
   void testPrecedence4 (void)
   {
-    std::istringstream in ("a=b&&c");
+    std::string inStr ("a=b&&c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -243,7 +254,8 @@ public:
   
   void testPrecedence5 (void)
   {
-    std::istringstream in ("a&&b||c");
+    std::string inStr ("a&&b||c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -263,7 +275,8 @@ public:
   
   void testPrecedence6 (void)
   {
-    std::istringstream in ("a||b&&c&&d");
+    std::string inStr ("a||b&&c&&d");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -283,7 +296,8 @@ public:
   
   void testPrecedence7 (void)
   {
-    std::istringstream in ("!a&&b");
+    std::string inStr ("!a&&b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -303,7 +317,8 @@ public:
   
   void testPrecedence8 (void)
   {
-    std::istringstream in ("a+b>c*d");
+    std::string inStr ("a+b>c*d");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -323,7 +338,8 @@ public:
   
   void testPrecedence9 (void)
   {
-    std::istringstream in ("a=b?c:d");
+    std::string inStr ("a=b?c:d");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -343,7 +359,8 @@ public:
   
   void testPrecedence10 (void)
   {
-    std::istringstream in ("a==b?c:d");
+    std::string inStr ("a==b?c:d");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -363,7 +380,8 @@ public:
   
   void testUnary1 (void)
   {
-    std::istringstream in ("a+-b");
+    std::string inStr ("a+-b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -383,7 +401,8 @@ public:
   
   void testTernary1 (void)
   {
-    std::istringstream in ("a?b:c");
+    std::string inStr ("a?b:c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -403,7 +422,8 @@ public:
   
   void testTernary2 (void)
   {
-    std::istringstream in ("a?b?1:2:c");
+    std::string inStr ("a?b?1:2:c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -423,7 +443,8 @@ public:
   
   void testParentheses1 (void)
   {
-    std::istringstream in ("(a)");
+    std::string inStr ("(a)");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -443,7 +464,8 @@ public:
   
   void testParentheses2 (void)
   {
-    std::istringstream in ("((((a))))");
+    std::string inStr ("((((a))))");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -463,7 +485,8 @@ public:
   
   void testParentheses3 (void)
   {
-    std::istringstream in ("a*(b+c)");
+    std::string inStr ("a*(b+c)");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -483,7 +506,8 @@ public:
   
   void testIdentifierArray1 (void)
   {
-    std::istringstream in ("a[1]");
+    std::string inStr ("a[1]");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -503,7 +527,8 @@ public:
   
   void testIdentifierArray2 (void)
   {
-    std::istringstream in ("a[b+c]");
+    std::string inStr ("a[b+c]");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -523,7 +548,8 @@ public:
   
   void testIdentifierArray3 (void)
   {
-    std::istringstream in ("(a+b)[1]+c");
+    std::string inStr ("(a+b)[1]+c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -546,7 +572,8 @@ public:
     // Need a 'strict' semantics handler for this test
     typedef ::TestSemanticsHandler TestSemanticsHandler;
   
-    std::istringstream in ("x = Foo ()");
+    std::string inStr ("x = Foo ()");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -573,7 +600,8 @@ public:
     // Need a 'strict' semantics handler for this test
     typedef ::TestSemanticsHandler TestSemanticsHandler;
   
-    std::istringstream in ("x = Foo (a + b, 3.0)");
+    std::string inStr ("x = Foo (a + b, 3.0)");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -601,7 +629,8 @@ public:
   
   void testTypeCtor (void)
   {
-    std::istringstream in ("x = int ()");
+    std::string inStr ("x = int ()");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -621,7 +650,8 @@ public:
   
   void testTypeCtor2 (void)
   {
-    std::istringstream in ("x = int2 (1, 2)");
+    std::string inStr ("x = int2 (1, 2)");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

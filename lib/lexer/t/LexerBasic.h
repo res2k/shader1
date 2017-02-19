@@ -19,6 +19,7 @@
 
 #include "base/common.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
@@ -33,7 +34,7 @@ public:
   void testEmptyInput (void)
   {
     std::string empty;
-    std::istringstream in (empty);
+    s1::uc::SimpleBufferStreamSource in (empty.data (), empty.size ());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -54,7 +55,8 @@ public:
   
   void testWhitespace(void)
   {
-    std::istringstream in ("  \r   \t  \n   ");
+    std::string inStr ("  \r   \t  \n   ");
+    s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -75,7 +77,8 @@ public:
   
   void testInvalidInput(void)
   {
-    std::istringstream in ("\xE2\x98");
+    std::string inStr ("\xE2\x98");
+    s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -98,7 +101,8 @@ public:
   
   void testInvalidInput2(void)
   {
-    std::istringstream in ("a" "\xE2\x98" "b");
+    std::string inStr ("a" "\xE2\x98" "b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -138,7 +142,8 @@ public:
   
   void testTokens(void)
   {
-    std::istringstream in ("; ( ) [ ] { } . , == != > >= < <= = + - * / % ~ ! ? : || &&");
+    std::string inStr ("; ( ) [ ] { } . , == != > >= < <= = + - * / % ~ ! ? : || &&");
+    s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -164,7 +169,8 @@ public:
   
   void testTokensInvalid(void)
   {
-    std::istringstream in ("| &");
+    std::string inStr ("| &");
+    s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

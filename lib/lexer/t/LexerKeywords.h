@@ -30,8 +30,9 @@ class LexerKeywordsTestSuite : public CxxTest::TestSuite
 public:
   void testKeywords(void)
   {
-    std::istringstream in ("return true false bool unsigned int float sampler1D sampler2D sampler3D samplerCUBE "
+    std::string inStr ("return true false bool unsigned int float sampler1D sampler2D sampler3D samplerCUBE "
 			   "typedef void in out const if else while");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -57,7 +58,8 @@ public:
   
   void testVectorMatrixKeywords(void)
   {
-    std::istringstream in ("int2 int3x2 float5 float32 bool3");
+    std::string inStr ("int2 int3x2 float5 float32 bool3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

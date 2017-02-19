@@ -17,6 +17,7 @@
 
 #include <cxxtest/TestSuite.h>
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
@@ -29,7 +30,8 @@ class LexerCommentsTestSuite : public CxxTest::TestSuite
 public:
   void testLineComment1(void)
   {
-    std::istringstream in ("// foo");
+    std::string inStr ("// foo");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -50,7 +52,8 @@ public:
   
   void testLineComment2(void)
   {
-    std::istringstream in ("// foo\n");
+    std::string inStr ("// foo\n");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -71,7 +74,8 @@ public:
   
   void testLineComment3(void)
   {
-    std::istringstream in ("a\n// foo\nb");
+    std::string inStr ("a\n// foo\nb");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -102,7 +106,8 @@ public:
   
   void testBlockComment1(void)
   {
-    std::istringstream in ("/* foo */");
+    std::string inStr ("/* foo */");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -123,7 +128,8 @@ public:
   
   void testBlockComment2(void)
   {
-    std::istringstream in ("/* foo\n bar */");
+    std::string inStr ("/* foo\n bar */");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -144,7 +150,8 @@ public:
   
   void testBlockComment3(void)
   {
-    std::istringstream in ("a\n/* foo */\nb");
+    std::string inStr ("a\n/* foo */\nb");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

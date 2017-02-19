@@ -17,6 +17,7 @@
 
 #include <cxxtest/TestSuite.h>
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 #include "base/uc/StreamEndOfInputException.h"
 #include "base/uc/StreamInvalidCharacterException.h"
@@ -27,7 +28,7 @@ public:
   void testEmptyStream (void)
   {
     std::string empty;
-    std::istringstream in (empty);
+    s1::uc::SimpleBufferStreamSource in (empty.data (), empty.size ());
     s1::uc::Stream ustream (in);
 
     // Empty stream should report "no chars"
@@ -43,7 +44,7 @@ public:
   void testGetASCII (void)
   {
     std::string str ("a");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
@@ -60,7 +61,7 @@ public:
   void testGetUTF (void)
   {
     std::string str ("\xE2\x98\xBA");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
@@ -78,7 +79,7 @@ public:
   void testGetUTFNonBMP (void)
   {
     std::string str ("\xF0\x9D\x94\xBD");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
@@ -96,7 +97,7 @@ public:
   void testGetUTFIncomplete1 (void)
   {
     std::string str ("\xE2\x98");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
@@ -112,7 +113,7 @@ public:
   void testGetUTFIncomplete2 (void)
   {
     std::string str ("a\xE2\x98");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
@@ -133,7 +134,7 @@ public:
   void testGetUTFIncomplete3 (void)
   {
     std::string str ("\xE2\x98" "a");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
@@ -154,7 +155,7 @@ public:
   void testGetUTFInvalid (void)
   {
     std::string str ("\xC0\x8a" "a");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     s1::uc::Char32 ch;
     
@@ -172,9 +173,33 @@ public:
   }
   
   // Hack to make UnicodeStream internal buffer size available
-  struct MyUnicodeStream : public s1::uc::Stream
+  class MyUnicodeStream : public s1::uc::Stream::Source
   {
-    using s1::uc::Stream::UCBufferSize;
+    const char* inputData;
+    size_t inputRemaining;
+  public:
+    enum  { UCBufferSize = 1024 };
+
+    MyUnicodeStream (const char* inputData, size_t inputSize)
+      : inputData (inputData), inputRemaining (inputSize) {}
+
+    bool HaveMoreData () override
+    {
+      return inputRemaining > 0;
+    }
+    size_t NextData (const char*& data) override
+    {
+      if (inputRemaining == 0)
+      {
+        data = nullptr;
+        return 0;
+      }
+      size_t serveAmount = std::min<size_t> (inputRemaining, UCBufferSize);
+      data = inputData;
+      inputData += serveAmount;
+      inputRemaining -= serveAmount;
+      return serveAmount;
+    }
   };
   
   void testGetASCIILargeBuffer (void)
@@ -184,7 +209,7 @@ public:
     size_t testSize = MyUnicodeStream::UCBufferSize + 1;
     std::string str;
     for (size_t i = 0; i < testSize; i++) str.append ("a");
-    std::istringstream in (str);
+    MyUnicodeStream in (str.data(), str.size());
     s1::uc::Stream ustream (in);
     
     for (size_t i = 0; i < testSize; i++)
@@ -209,7 +234,7 @@ public:
     std::string str;
     for (size_t i = 0; i < testSize; i++) str.append ("a");
     str.append ("\xE2\x98\xBA");
-    std::istringstream in (str);
+    MyUnicodeStream in (str.data(), str.size());
     s1::uc::Stream ustream (in);
     
     s1::uc::Char32 ch;
@@ -234,7 +259,7 @@ public:
   void testGetUTFSurrogate (void)
   {
     std::string str ("\xED\xA0\xB5\xED\xB4\xBD");
-    std::istringstream in (str);
+    s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
     
     TS_ASSERT_EQUALS ((bool)ustream, true);

@@ -31,7 +31,8 @@ class LexerNumericTestSuite : public CxxTest::TestSuite
 public:
   void testNumeric(void)
   {
-    std::istringstream in ("0 0xabc 0x12AB 0.0 .0 0.0 .1 1e2 1e-2 .1E3 1.E-4");
+    std::string inStr ("0 0xabc 0x12AB 0.0 .0 0.0 .1 1e2 1e-2 .1E3 1.E-4");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -55,7 +56,8 @@ public:
   
   void testNumericInvalid1(void)
   {
-    std::istringstream in ("0.0.0");
+    std::string inStr ("0.0.0");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -86,7 +88,8 @@ public:
   
   void testNumericInvalid2(void)
   {
-    std::istringstream in ("0.-0");
+    std::string inStr ("0.-0");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -124,7 +127,8 @@ public:
   
   void testNumericInvalid3(void)
   {
-    std::istringstream in ("1e2.3");
+    std::string inStr ("1e2.3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -155,7 +159,8 @@ public:
   
   void testNumericInvalid4(void)
   {
-    std::istringstream in ("1e2e3");
+    std::string inStr ("1e2e3");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -186,7 +191,8 @@ public:
   
   void testNumericInvalid5(void)
   {
-    std::istringstream in ("0xa.e2");
+    std::string inStr ("0xa.e2");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -224,7 +230,8 @@ public:
   
   void testNumericInvalid6(void)
   {
-    std::istringstream in (".e2");
+    std::string inStr (".e2");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -255,7 +262,8 @@ public:
   
   void testNumericInvalid7(void)
   {
-    std::istringstream in (".x");
+    std::string inStr (".x");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);

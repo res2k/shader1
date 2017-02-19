@@ -19,6 +19,7 @@
 
 #include "base/common.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Exception.h"
 #include "parser/Parser.h"
@@ -43,7 +44,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int a;");
+    std::string inStr ("int a;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -77,7 +79,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int a, b;");
+    std::string inStr ("int a, b;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -130,7 +133,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int a; int b;");
+    std::string inStr ("int a; int b;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -183,7 +187,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int a = 1+2;");
+    std::string inStr ("int a = 1+2;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -220,7 +225,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("int a = 1+2, b;");
+    std::string inStr ("int a = 1+2, b;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -267,7 +273,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("const int a = 0;");
+    std::string inStr ("const int a = 0;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -301,7 +308,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("const int a;");
+    std::string inStr ("const int a;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -326,7 +334,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("typedef int MyInt;");
+    std::string inStr ("typedef int MyInt;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -358,7 +367,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("typedef int MyInt1; typedef MyInt1 MyInt;");
+    std::string inStr ("typedef int MyInt1; typedef MyInt1 MyInt;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
@@ -390,7 +400,8 @@ public:
   {
     using namespace s1::parser;
     
-    std::istringstream in ("typedef int MyInt; MyInt a;");
+    std::string inStr ("typedef int MyInt; MyInt a;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
