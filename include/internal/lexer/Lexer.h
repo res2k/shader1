@@ -132,6 +132,8 @@ namespace s1
       kwIn,
       kwOut,
       kwConst,
+      kwUniform,
+      kwAttribute,
       
       kwIf,
       kwElse,

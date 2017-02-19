@@ -46,7 +46,9 @@ namespace s1
   KEYWORD ("void",		kwVoid)		\
   KEYWORD ("in",		kwIn)		\
   KEYWORD ("out",		kwOut)		\
-  KEYWORD ("const",		kwConst)	\
+  KEYWORD ("const",		kwConst)        \
+  KEYWORD ("uniform",		kwUniform)      \
+  KEYWORD ("attribute",		kwAttribute)	\
   KEYWORD ("if",		kwIf)		\
   KEYWORD ("else",		kwElse)		\
   KEYWORD ("while",		kwWhile)	\
