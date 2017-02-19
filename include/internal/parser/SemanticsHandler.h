@@ -263,6 +263,16 @@ namespace s1
           dirOut = 2,
           dirInOut = 3
         };
+        /// User-assigned 'input frequency' qualifier for a parameter
+        enum FormalParameterFrequency
+        {
+          /// No particular frequency
+          freqAuto = 0,
+          /// Uniform qualifier
+          freqUniform = 1,
+          /// Attribute (Vertex input) qualifier
+          freqAttribute = 2
+        };
         struct FunctionFormalParameter
         {
           /// Type of parameter
@@ -271,6 +281,7 @@ namespace s1
           uc::String identifier;
           ExpressionPtr defaultValue;
           FormalParameterDirection dir;
+          FormalParameterFrequency freqQualifier;
 
           FunctionFormalParameter() : paramType (ptUser) {}
         };

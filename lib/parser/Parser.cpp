@@ -955,22 +955,55 @@ namespace s1
 
       // TODO: In case of error, skip to next param
       int paramDirection = 0;
-      if (currentToken.typeOrID == Lexer::kwIn)
+      SemanticsHandler::Scope::FormalParameterFrequency freqQualifier = SemanticsHandler::Scope::freqAuto;
+      int numFreqQualifiers = 0;
+      bool parseQualifiers = true;
+      while (parseQualifiers)
       {
-        // 'in' parameter
-        NextToken();
-        paramDirection |= SemanticsHandler::Scope::dirIn;
-      }
-      if (currentToken.typeOrID == Lexer::kwOut)
-      {
-        // 'in' parameter
-        NextToken();
-        paramDirection |= SemanticsHandler::Scope::dirOut;
+        if (currentToken.typeOrID == Lexer::kwIn)
+        {
+          // 'in' parameter
+          NextToken();
+          if ((paramDirection & SemanticsHandler::Scope::dirIn) != 0)
+          {
+            // TODO: Warn about redundancy
+          }
+          paramDirection |= SemanticsHandler::Scope::dirIn;
+        }
+        else if (currentToken.typeOrID == Lexer::kwOut)
+        {
+          // 'out' parameter
+          NextToken();
+          if ((paramDirection & SemanticsHandler::Scope::dirOut) != 0)
+          {
+            // TODO: Warn about redundancy
+          }
+          paramDirection |= SemanticsHandler::Scope::dirOut;
+        }
+        else if (currentToken.typeOrID == Lexer::kwUniform)
+        {
+          // 'uniform' qualifier
+          NextToken();
+          freqQualifier = SemanticsHandler::Scope::freqUniform;
+          numFreqQualifiers++;
+        }
+        else if (currentToken.typeOrID == Lexer::kwAttribute)
+        {
+          // 'attribute' qualifier
+          NextToken();
+          freqQualifier = SemanticsHandler::Scope::freqAttribute;
+          numFreqQualifiers++;
+        }
+        else
+        {
+          parseQualifiers = false;
+        }
       }
       // If no explicit direction is given, use 'in'
       if (paramDirection == 0) paramDirection = SemanticsHandler::Scope::dirIn;
       SemanticsHandler::Scope::FunctionFormalParameter newParam;
       newParam.dir = (SemanticsHandler::Scope::FormalParameterDirection)paramDirection;
+      newParam.freqQualifier = freqQualifier;
       newParam.type = ParseType (scope);
       Expect (Lexer::Identifier);
       newParam.identifier = currentToken.tokenString;
@@ -982,6 +1015,16 @@ namespace s1
         if (paramDirection == SemanticsHandler::Scope::dirOut)
           throw Exception (OutParameterWithDefault);
         newParam.defaultValue = ParseExpression (scope);
+      }
+      if ((((paramDirection & SemanticsHandler::Scope::dirIn) == 0)
+          || ((paramDirection & SemanticsHandler::Scope::dirOut) != 0))
+        && (numFreqQualifiers > 0))
+      {
+        throw Exception (QualifiersNotAllowed);
+      }
+      else if (numFreqQualifiers > 1)
+      {
+        throw Exception (ConflictingQualifiersForInParam);
       }
       params.push_back (newParam);
       if (currentToken.typeOrID == Lexer::Separator)

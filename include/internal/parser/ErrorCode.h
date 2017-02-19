@@ -29,7 +29,9 @@ namespace s1
       IdentifierUndeclared,
       DeclarationNotAllowedInScope,
       ExpectedTypeName,
-      OutParameterWithDefault
+      OutParameterWithDefault,
+      ConflictingQualifiersForInParam,
+      QualifiersNotAllowed
     };
   } // namespace parser
 } // namespace s1
