@@ -35,10 +35,6 @@ namespace s1
       SimpleBufferStreamSource (const char* inputData, size_t inputSize)
         : inputData (inputData), inputSize (inputSize) {}
 
-      bool HaveMoreData () override
-      {
-        return inputData != nullptr;
-      }
       size_t NextData (const char*& data) override
       {
         size_t returnSize = inputSize;

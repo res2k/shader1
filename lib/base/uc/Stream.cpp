@@ -15,7 +15,10 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+#include "base/common.h"
+
 #include "base/uc/Stream.h"
+
 #include "base/uc/StreamException.h"
 #include "base/uc/StreamInvalidCharacterException.h"
 #include "base/uc/StreamEndOfInputException.h"
@@ -30,7 +33,8 @@ namespace uc
    : inSource (inSource), streamInBufferRemaining (0),
      currentChar (InvalidChar32), currentDecodeResult (UTF8Decoder::drSuccess)
   {
-    RefillBuffer();
+    // Initial fill
+    streamInBufferRemaining = inSource.NextData (streamInBufferPtr);
     // Go to first character
     if (*this) ++(*this);
   }
@@ -44,7 +48,7 @@ namespace uc
     return
       (currentChar != InvalidChar32) // We have a current character
       || (streamInBufferRemaining > 0) // ... or still buffered chars to decode
-      || inSource.HaveMoreData(); // ... or still raw input data
+      || (streamInBufferPtr != nullptr); // ... or still raw input data
   }
 
   Stream& Stream::operator++() throw()
@@ -114,20 +118,20 @@ namespace uc
 
   bool Stream::RefillBuffer ()
   {
+    S1_ASSERT (streamInBufferRemaining == 0, true);
+
+    if (!streamInBufferPtr)
+    {
+      // Assume source is out of data
+      return false;
+    }
+      
+    streamInBufferRemaining = inSource.NextData (streamInBufferPtr);
     if (streamInBufferRemaining == 0)
     {
-      if (!inSource.HaveMoreData())
-      {
-        return false;
-      }
-      
-      streamInBufferRemaining = inSource.NextData (streamInBufferPtr);
-      
-      if (streamInBufferRemaining == 0)
-      {
-        // Nothing was read
-        return false;
-      }
+      // Nothing was read, assume source is out of data
+      streamInBufferPtr = nullptr;
+      return false;
     }
     return true;
   }

@@ -183,10 +183,6 @@ public:
     MyUnicodeStream (const char* inputData, size_t inputSize)
       : inputData (inputData), inputRemaining (inputSize) {}
 
-    bool HaveMoreData () override
-    {
-      return inputRemaining > 0;
-    }
     size_t NextData (const char*& data) override
     {
       if (inputRemaining == 0)

@@ -47,12 +47,11 @@ namespace uc
     struct Source
     {
       virtual ~Source () {}
-      /// Returns whether more data is available.
-      virtual bool HaveMoreData () = 0;
       /**
        * Get next available data.
        * \param data Reference to pointer receiving pointer to next data.
        * \returns Number of available bytes.
+       *  Return 0 if the source is out of data.
        */
       virtual size_t NextData (const char*& data) = 0;
     };
