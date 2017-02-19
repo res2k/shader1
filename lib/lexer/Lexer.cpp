@@ -88,8 +88,8 @@ KEYWORDS
       // Check for end of input
       if (currentChar == uc::InvalidChar32)
       {
-	currentToken = Token (EndOfFile);
-	return *this;
+        currentToken = Token (EndOfFile);
+        return *this;
       }
       
       // Check if it's a "simple" token (can only start with a single known character)
@@ -103,175 +103,175 @@ KEYWORDS
       case '{': currentToken = Token (BraceL, currentChar); 	NextChar(); return *this;
       case '}': currentToken = Token (BraceR, currentChar); 	NextChar(); return *this;
       case '.':
-	{
-	  uc::Char32 next = PeekChar();
-	  if ((next >= '0') && (next <= '9'))
-	  {
-	    // '.' is start of a number
-	    break;
-	  }
-	  else
-	  {
-	    // '.' is member operator
-	    NextChar();
-	    currentToken = Token (Member, '.'); 
-	    return *this;
-	  }
-	}
+        {
+          uc::Char32 next = PeekChar();
+          if ((next >= '0') && (next <= '9'))
+          {
+            // '.' is start of a number
+            break;
+          }
+          else
+          {
+            // '.' is member operator
+            NextChar();
+            currentToken = Token (Member, '.'); 
+            return *this;
+          }
+        }
       case ',': currentToken = Token (Separator, currentChar); 	NextChar(); return *this;
       case '=':
-	{
-	  NextChar();
-	  if (currentChar == '=')
-	  {
-	    currentToken = Token (Equals, "==");
-	    NextChar();
-	  }
-	  else
-	    currentToken = Token (Assign, "=");
-	}
-	return *this;
+        {
+          NextChar();
+          if (currentChar == '=')
+          {
+            currentToken = Token (Equals, "==");
+            NextChar();
+          }
+          else
+            currentToken = Token (Assign, "=");
+        }
+        return *this;
       case '!':
-	{
-	  NextChar();
-	  if (currentChar == '=')
-	  {
-	    currentToken = Token (NotEquals, "!=");
-	    NextChar();
-	  }
-	  else
-	    currentToken = Token (LogicInvert, "!");
-	}
-	return *this;
+        {
+          NextChar();
+          if (currentChar == '=')
+          {
+            currentToken = Token (NotEquals, "!=");
+            NextChar();
+          }
+          else
+            currentToken = Token (LogicInvert, "!");
+        }
+        return *this;
       case '>':
-	{
-	  NextChar();
-	  if (currentChar == '=')
-	  {
-	    currentToken = Token (LargerEqual, ">=");
-	    NextChar();
-	  }
-	  else
-	    currentToken = Token (Larger, ">");
-	}
-	return *this;
+        {
+          NextChar();
+          if (currentChar == '=')
+          {
+            currentToken = Token (LargerEqual, ">=");
+            NextChar();
+          }
+          else
+            currentToken = Token (Larger, ">");
+        }
+        return *this;
       case '<':
-	{
-	  NextChar();
-	  if (currentChar == '=')
-	  {
-	    currentToken = Token (SmallerEqual, "<=");
-	    NextChar();
-	  }
-	  else
-	    currentToken = Token (Smaller, "<");
-	}
-	return *this;
+        {
+          NextChar();
+          if (currentChar == '=')
+          {
+            currentToken = Token (SmallerEqual, "<=");
+            NextChar();
+          }
+          else
+            currentToken = Token (Smaller, "<");
+        }
+        return *this;
       case '+': currentToken = Token (Plus, currentChar); 	NextChar(); return *this;
       case '-': currentToken = Token (Minus, currentChar); 	NextChar(); return *this;
       case '*': currentToken = Token (Mult, currentChar); 	NextChar(); return *this;
       case '/':
-	{
-	  NextChar();
-	  if (currentChar == '/')
-	  {
-	    // Line comment
-	    do
-	    {
-	      NextChar();
-	    }
-	    while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
-	    // Let '\n' be handled by regular code
-	    continue;
-	  }
-	  else if (currentChar == '*')
-	  {
-	    // Block comment
-	    do
-	    {
-	      NextChar();
-	      if (currentChar == '*')
-	      {
-		NextChar();
-		// Check for ending '*/'
-		if (currentChar == '/')
-		{
-		  NextChar();
-		  break;
-		}
-	      }
-	    }
-	    while (currentChar != uc::InvalidChar32);
-	    continue;
-	  }
-	  else
-	    // Division operator
-	    currentToken = Token (Div, "/");
-	}
-	return *this;
+        {
+          NextChar();
+          if (currentChar == '/')
+          {
+            // Line comment
+            do
+            {
+              NextChar();
+            }
+            while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
+            // Let '\n' be handled by regular code
+            continue;
+          }
+          else if (currentChar == '*')
+          {
+            // Block comment
+            do
+            {
+              NextChar();
+              if (currentChar == '*')
+              {
+                NextChar();
+                // Check for ending '*/'
+                if (currentChar == '/')
+                {
+                  NextChar();
+                  break;
+                }
+              }
+            }
+            while (currentChar != uc::InvalidChar32);
+            continue;
+          }
+          else
+            // Division operator
+            currentToken = Token (Div, "/");
+        }
+        return *this;
       case '%': currentToken = Token (Mod, currentChar); 	NextChar(); return *this;
       case '~': currentToken = Token (BitwiseInvert, currentChar);NextChar(); return *this;
       case '?': currentToken = Token (TernaryIf, currentChar); 	NextChar(); return *this;
       case ':': currentToken = Token (TernaryElse, currentChar);NextChar(); return *this;
       case '&':
-	{
-	  uc::Char32 next = PeekChar();
-	  if (next == '&')
-	  {
-	    currentToken = Token (LogicAnd, "&&");
-	    // Skip first & second '&'
-	    NextChar();
-	    NextChar();
-	  }
-	  else
-	  {
-	    // Lone '&' not a valid token. Let stray character handling deal with it
-	    break;
-	  }
-	}
-	return *this;
+        {
+          uc::Char32 next = PeekChar();
+          if (next == '&')
+          {
+            currentToken = Token (LogicAnd, "&&");
+            // Skip first & second '&'
+            NextChar();
+            NextChar();
+          }
+          else
+          {
+            // Lone '&' not a valid token. Let stray character handling deal with it
+            break;
+          }
+        }
+        return *this;
       case '|':
-	{
-	  uc::Char32 next = PeekChar();
-	  if (next == '|')
-	  {
-	    currentToken = Token (LogicOr, "||");
-	    // Skip first & second '|'
-	    NextChar();
-	    NextChar();
-	  }
-	  else
-	  {
-	    // Lone '|' not a valid token. Let stray character handling deal with it
-	    break;
-	  }
-	}
-	return *this;
+        {
+          uc::Char32 next = PeekChar();
+          if (next == '|')
+          {
+            currentToken = Token (LogicOr, "||");
+            // Skip first & second '|'
+            NextChar();
+            NextChar();
+          }
+          else
+          {
+            // Lone '|' not a valid token. Let stray character handling deal with it
+            break;
+          }
+        }
+        return *this;
       }
       
       if ((currentChar == '_') || uc::IsIDStart (currentChar))
       {
-	// Identifier
-	ParseIdentifier ();
+        // Identifier
+        ParseIdentifier ();
       }
       else if ((currentChar == '.') || ((currentChar >= '0') && (currentChar <= '9')))
       {
-	// Number
-	ParseNumeric ();
+        // Number
+        ParseNumeric ();
       }
       else
       {
-	if (currentChar != 0xfffd)
-	{
-	  /* Replacement character (0xFFFD) indicates an invalid input sequence.
-	     Error handler was already called for that. */
-	  errorHandler.StrayCharacter (currentChar);
-	  currentToken = Token (Unknown, currentChar);
-	}
-	else
-	  /* Otherwise, it's an unrecognized character. */
-	  currentToken = Token (Invalid, currentChar);
-	NextChar();
+        if (currentChar != 0xfffd)
+        {
+          /* Replacement character (0xFFFD) indicates an invalid input sequence.
+             Error handler was already called for that. */
+          errorHandler.StrayCharacter (currentChar);
+          currentToken = Token (Unknown, currentChar);
+        }
+        else
+          /* Otherwise, it's an unrecognized character. */
+          currentToken = Token (Invalid, currentChar);
+        NextChar();
       }
       
       return *this;
@@ -314,44 +314,44 @@ KEYWORDS
       uc::String dimensions;
       if (tokenStr.startsWith ("int"))
       {
-	typeCandidate = kwInt;
-	dimensions = uc::String (tokenStr, 3);
+        typeCandidate = kwInt;
+        dimensions = uc::String (tokenStr, 3);
       }
       else if (tokenStr.startsWith ("float"))
       {
-	typeCandidate = kwFloat;
-	dimensions = uc::String (tokenStr, 5);
+        typeCandidate = kwFloat;
+        dimensions = uc::String (tokenStr, 5);
       }
       else if (tokenStr.startsWith ("bool"))
       {
-	typeCandidate = kwBool;
-	dimensions = uc::String (tokenStr, 4);
+        typeCandidate = kwBool;
+        dimensions = uc::String (tokenStr, 4);
       }
       if (typeCandidate != Invalid)
       {
         auto dimensionsBuf = dimensions.data ();
-	if ((dimensions.length() == 1)
-	    && (dimensionsBuf[0] >= '1')
-	    && (dimensionsBuf[0] <= '4'))
-	{
-	  // It's a vector!
-	  currentToken.typeOrID = typeCandidate;
-	  currentToken.typeClass = Vector;
-	  currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
-	}
-	else if ((dimensions.length() == 3)
-	    && (dimensionsBuf[0] >= '1')
-	    && (dimensionsBuf[0] <= '4')
-	    && (dimensionsBuf[1] == 'x')
-	    && (dimensionsBuf[2] >= '1')
-	    && (dimensionsBuf[2] <= '4'))
-	{
-	  // It's a matrix!
-	  currentToken.typeOrID = typeCandidate;
-	  currentToken.typeClass = Matrix;
-	  currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
-	  currentToken.dimension2 = dimensionsBuf[2] - '1' + 1;
-	}
+        if ((dimensions.length() == 1)
+            && (dimensionsBuf[0] >= '1')
+            && (dimensionsBuf[0] <= '4'))
+        {
+          // It's a vector!
+          currentToken.typeOrID = typeCandidate;
+          currentToken.typeClass = Vector;
+          currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
+        }
+        else if ((dimensions.length() == 3)
+            && (dimensionsBuf[0] >= '1')
+            && (dimensionsBuf[0] <= '4')
+            && (dimensionsBuf[1] == 'x')
+            && (dimensionsBuf[2] >= '1')
+            && (dimensionsBuf[2] <= '4'))
+        {
+          // It's a matrix!
+          currentToken.typeOrID = typeCandidate;
+          currentToken.typeClass = Matrix;
+          currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
+          currentToken.dimension2 = dimensionsBuf[2] - '1' + 1;
+        }
       }
     }
   }
@@ -365,19 +365,19 @@ KEYWORDS
       uc::Char32 next = PeekChar();
       if ((next == 'x') || (next == 'X'))
       {
-	// Hex number
-	NextChar();
-	tokenStr += currentChar;
-	NextChar();
-	while (((currentChar >= '0') && (currentChar <= '9'))
-	  || ((currentChar >= 'a') && (currentChar <= 'f'))
-	  || ((currentChar >= 'A') && (currentChar <= 'F')))
-	{
-	  tokenStr += currentChar;
-	  NextChar();
-	}
-	currentToken = Token (Numeric, tokenStr);
-	return;
+        // Hex number
+        NextChar();
+        tokenStr += currentChar;
+        NextChar();
+        while (((currentChar >= '0') && (currentChar <= '9'))
+          || ((currentChar >= 'a') && (currentChar <= 'f'))
+          || ((currentChar >= 'A') && (currentChar <= 'F')))
+        {
+          tokenStr += currentChar;
+          NextChar();
+        }
+        currentToken = Token (Numeric, tokenStr);
+        return;
       }
     }
 
@@ -389,31 +389,31 @@ KEYWORDS
       NextChar();
       if ((currentChar == '.') && !hasDecimal)
       {
-	hasDecimal = true;
-	tokenStr += currentChar;
+        hasDecimal = true;
+        tokenStr += currentChar;
       }
       else if (((currentChar == 'E') || (currentChar == 'e')) && !hasExp)
       {
-	hasExp = true;
-	tokenStr += currentChar;
-	// Force to 'true' since decimal exponents are not allowed
-	hasDecimal = true;
-	// Accept '-' again, once
-	uc::Char32 next = PeekChar();
-	if (next == '-')
-	{
-	  NextChar();
-	  tokenStr += currentChar;
-	}
+        hasExp = true;
+        tokenStr += currentChar;
+        // Force to 'true' since decimal exponents are not allowed
+        hasDecimal = true;
+        // Accept '-' again, once
+        uc::Char32 next = PeekChar();
+        if (next == '-')
+        {
+          NextChar();
+          tokenStr += currentChar;
+        }
       }
       else if ((currentChar >= '0') && (currentChar <= '9'))
       {
-	tokenStr += currentChar;
+        tokenStr += currentChar;
       }
       else
       {
-	// End of number
-	break;
+        // End of number
+        break;
       }
     }
     
@@ -429,14 +429,14 @@ KEYWORDS
     {
       try
       {
-	nextChar[LookAhead-1] = *inputChars;
+        nextChar[LookAhead-1] = *inputChars;
       }
       catch (uc::StreamInvalidCharacterException&)
       {
-	// Signal error handler ...
-	errorHandler.InputInvalidCharacter();
-	// ... and set character to the 'replacer' one
-	nextChar[LookAhead-1] = 0xfffd;
+        // Signal error handler ...
+        errorHandler.InputInvalidCharacter();
+        // ... and set character to the 'replacer' one
+        nextChar[LookAhead-1] = 0xfffd;
       }
       ++inputChars;
     }
