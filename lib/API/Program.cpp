@@ -31,16 +31,33 @@ namespace s1
 {
   namespace api_impl
   {
-    Program::Program(s1::Library* lib, Compiler& compiler, const std::string& source)
+    Program::Program(s1::Library* lib, Compiler& compiler)
       : LibraryObject (lib),
         compiler (compiler),
-        options (new s1::Compiler::Options (lib)),
-        source (source)
+        options (new s1::Compiler::Options (lib))
     {
       s1::ResultCode err = String::Create (entryFunction, lib, "main", nullptr);
       if (!S1_SUCCESSFUL(err))
       {
         throw Exception (err);
+      }
+    }
+
+    Program::Program(s1::Library* lib, Compiler& compiler, const std::string& source)
+      : Program (lib, compiler)
+    {
+      this->source = source;
+    }
+
+    Program::Program (s1::Library* lib, Compiler& compiler, std::function<size_t (const char*&)> streamFunc)
+      : Program (lib, compiler)
+    {
+      // FIXME: Kind of stupid... Should (eventually) be able to pass stream directly to CreateProgram()
+      const char* data;
+      size_t dataSize;
+      while ((dataSize = streamFunc (data)) != 0)
+      {
+        source.append (data, dataSize);
       }
     }
 

@@ -50,10 +50,13 @@ namespace s1
       typedef boost::unordered_map<uc::String, size_t> InputSizeMapType;
       InputSizeMapType inputSizeMap;
       
+      Program (s1::Library* lib, Compiler& compiler);
+
       Compiler::ProgramPtr wrapped_program;
       void Dirty();
     public:
       Program (s1::Library* lib, Compiler& compiler, const std::string& source);
+      Program (s1::Library* lib, Compiler& compiler, std::function<size_t (const char*&)> streamFunc);
 
       Compiler::Backend::ProgramPtr GetCompiledProgram (const Compiler::BackendPtr& backend,
                                                         Compiler::Backend::CompileTarget target,

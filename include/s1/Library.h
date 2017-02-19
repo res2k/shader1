@@ -189,6 +189,33 @@ S1_API(s1_Program*) s1_program_create_from_string (s1_Library* lib, const char* 
                                                   size_t sourceSize,
                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
+/**
+ * Input stream function pointer.
+ * \param userContext User context value provided along with the function pointer.
+ * \param data Outputs pointer to the next block of available data.
+ * \returns Size of the block returned in \a data. Return 0 if no other data is
+ *   available.
+ */
+typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data);
+
+/**
+ * Create a program object from a stream.
+ * \param lib Parent library.
+ * \param streamFunc Function providing streaming input of source code. Source must be encoded in UTF-8.
+ * \param userContext Context information for streaming input function.
+ * \param compatLevel Program compatibility level.
+ *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
+ * \returns A new program object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of an error, \NULL is returned and the error status is saved in the library's
+ * last error code.
+ * \memberof s1_Library
+ */
+S1_API(s1_Program*) s1_program_create_from_stream (s1_Library* lib, s1_stream_input_func streamFunc,
+                                                   uintptr_t userContext,
+                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
+
 S1TYPE_DECLARE_FWD(Backend);
 /**
  * Create a backend object.
@@ -245,6 +272,12 @@ namespace s1
      */
     class Library : public Object
     {
+    protected:
+      template<typename StreamFunc>
+      static size_t StreamFuncWrapper (uintptr_t funcObj, const char** data)
+      {
+        return (*reinterpret_cast<StreamFunc*> (funcObj))(*data);
+      }
     public:
       /// Smart pointer class for Library instances.
       typedef Ptr<Library> Pointer;
@@ -385,6 +418,56 @@ namespace s1
         return S1_RETURN_MOVE_REF(Program,
           s1_program_create_from_string (this, source, sourceSize, compatLevel));
       }
+
+      /**
+       * Create a program object from a stream.
+       * \param streamFunc Function providing streaming input of source code. Source must be encoded in UTF-8.
+       * \param userContext Context information for streaming input function.
+       * \param compatLevel Program compatibility level.
+       *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
+       * \returns A new program object.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+       */
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (s1_stream_input_func streamFunc,
+                                                                uintptr_t userContext,
+                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
+      {
+        return S1_RETURN_MOVE_REF(Program,
+                                  s1_program_create_from_stream (this, streamFunc, userContext, compatLevel));
+      }
+
+      //@{
+      /**
+       * Create a program object from a stream.
+       * \param streamFunc Functor providing streaming input of source code. Source must be encoded in UTF-8.
+       *   The functor must provide an <tt>size_t operator()(const char*&)</tt>, writing a pointer to the
+       *   next block of data into the reference argument and returning the size of that data, or 0 if
+       *   no additional data is available.
+       * \param compatLevel Program compatibility level.
+       *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
+       * \returns A new program object.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+       */
+      template<typename StreamFunc>
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (StreamFunc streamFunc,
+                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
+      {
+        return S1_RETURN_MOVE_REF(Program,
+                                  s1_program_create_from_stream (this, &StreamFuncWrapper<StreamFunc>,
+                                                                 reinterpret_cast<uintptr_t> (&streamFunc), compatLevel));
+      }
+      template<typename StreamFunc>
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (StreamFunc* streamFunc,
+                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
+      {
+        return S1_RETURN_MOVE_REF(Program,
+                                  s1_program_create_from_stream (this, &StreamFuncWrapper<StreamFunc>,
+                                                                 reinterpret_cast<uintptr_t> (streamFunc), compatLevel));
+      }
+      //@}
+
       /**
        * Create a backend object.
        * \param backend Name of the backend to create.
