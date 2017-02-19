@@ -363,47 +363,76 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     }
   }
   
-  std::string sourceStr;
-  try
+  class InputFileStream
   {
-    ifstream inputFile (boost::filesystem::path (options.inputFileName));
-    // Check for BOM
+    bool errorState;
+    ifstream inputFile;
+    size_t fileSize;
+    char buf[256];
+  public:
+    InputFileStream (const boost::filesystem::path& path) : errorState (false)
     {
-      unsigned char bomBuf[3];
-      inputFile.read ((char*)bomBuf, 3);
-      if (inputFile.eof () || (bomBuf[0] != 0xEF) || (bomBuf[1] != 0xBB) || (bomBuf[2] != 0xBF))
+      try
       {
-        // Not a BOM, reset
-        inputFile.clear ();
-        inputFile.seekg (0);
+        inputFile.open (boost::filesystem::path (path));
+        // Check for BOM
+        {
+          unsigned char bomBuf[3];
+          inputFile.read ((char*)bomBuf, 3);
+          if (inputFile.eof () || (bomBuf[0] != 0xEF) || (bomBuf[1] != 0xBB) || (bomBuf[2] != 0xBF))
+          {
+            // Not a BOM, reset
+            inputFile.clear ();
+            inputFile.seekg (0);
+          }
+        }
+        inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
+        size_t startPos (inputFile.tellg ());
+        inputFile.seekg (0, std::ios_base::end);
+        fileSize = inputFile.tellg ();
+        fileSize = fileSize - startPos;
+        inputFile.seekg (startPos, std::ios_base::beg);
+      }
+      catch (std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+        errorState = true;
       }
     }
-    inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
-    {
-      size_t startPos (inputFile.tellg ());
-      inputFile.seekg (0, std::ios_base::end);
-      size_t fileSize (inputFile.tellg ());
-      inputFile.seekg (startPos, std::ios_base::beg);
 
-      sourceStr.reserve (fileSize);
-      while (fileSize > 0)
+    bool HadInputError () const { return errorState;  }
+
+    size_t operator()(const char*& data)
+    {
+      if (errorState) return 0;
+      if (fileSize == 0) return 0;
+
+      try
       {
-        char buf[256];
         inputFile.read (buf, std::min (fileSize, sizeof (buf)));
         size_t nRead (inputFile.gcount ());
-        if (nRead == 0) break;
-        sourceStr.append (buf, nRead);
+        data = buf;
         fileSize -= nRead;
+        return nRead;
+      }
+      catch (std::exception& e)
+      {
+        std::cerr << e.what() << std::endl;
+        errorState = true;
+        return 0;
       }
     }
-  }
-  catch (std::exception& e)
+  };
+  Program::Pointer compilerProg;
   {
-    std::cerr << e.what() << std::endl;
-    return 4;
+    InputFileStream inStream (options.inputFileName);
+    compilerProg = lib->CreateProgramFromStream (&inStream);
+    if (inStream.HadInputError ())
+    {
+      return 4;
+    }
   }
-  
-  Program::Pointer compilerProg (lib->CreateProgramFromString (sourceStr.c_str(), sourceStr.size()));
+
   if (!compilerProg)
   {
     std::cerr << "Error creating program: " << LastErrorString (lib) << std::endl;
