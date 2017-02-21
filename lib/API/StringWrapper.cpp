@@ -22,6 +22,38 @@ namespace s1
 {
   namespace api_impl
   {
+    StringWrapper::StringWrapper (StringWrapper&& s) : StringWrapper (std::move (s.str))
+    {
+      if (s.haveUTF8)
+      {
+        new (storeStrUTF8) std::string (std::move (s.GetStrUTF8()));
+        haveUTF8 = s.haveUTF8;
+      }
+      if (s.haveUTF32)
+      {
+        new (storeStrUTF32) c32string (std::move (s.GetStrUTF32()));
+        haveUTF32 = s.haveUTF32;
+      }
+      s.Clear();
+    }
+
+    StringWrapper& StringWrapper::operator= (StringWrapper&& s)
+    {
+      str = std::move (s.str);
+      if (s.haveUTF8)
+      {
+        new (storeStrUTF8) std::string (std::move (s.GetStrUTF8()));
+        haveUTF8 = s.haveUTF8;
+      }
+      if (s.haveUTF32)
+      {
+        new (storeStrUTF32) c32string (std::move (s.GetStrUTF32()));
+        haveUTF32 = s.haveUTF32;
+      }
+      s.Clear();
+      return *this;
+    }
+
     const char* StringWrapper::GetUTF8 () const
     {
       if (!haveUTF8)

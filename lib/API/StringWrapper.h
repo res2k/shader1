@@ -71,6 +71,8 @@ namespace s1
       StringWrapper () : haveUTF8 (false), haveUTF32 (false) {}
       StringWrapper (const uc::String& s) : str (s), haveUTF8 (false), haveUTF32 (false) {}
       StringWrapper (uc::String&& s) : str (std::move (s)), haveUTF8 (false), haveUTF32 (false) {}
+      StringWrapper (StringWrapper&& s);
+      StringWrapper (const StringWrapper& s) : StringWrapper (s.GetUCS()) {}
       ~StringWrapper () { Clear (); }
 
       StringWrapper& operator= (const uc::String& s)
@@ -90,6 +92,11 @@ namespace s1
           Clear ();
         }
         return *this;
+      }
+      StringWrapper& operator= (StringWrapper&& s);
+      StringWrapper& operator= (const StringWrapper& s)
+      {
+        return operator=(s.GetUCS());
       }
 
       /// Get original string
