@@ -42,7 +42,7 @@ namespace s1
       class BlockImpl;
 
       class Builtin;
-      typedef boost::shared_ptr<Builtin> BuiltinPtr;
+      typedef boost::intrusive_ptr<Builtin> BuiltinPtr;
 
       class CommandImpl;
       class ExpressionImpl;

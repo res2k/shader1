@@ -28,6 +28,7 @@ namespace s1
   namespace intermediate
   {
     class IntermediateGeneratorSemanticsHandler::Builtin
+      : public boost::intrusive_ref_counter<Builtin>
     {
       intermediate::BuiltinFunction what;
       TypePtr returnType;
