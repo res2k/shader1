@@ -1,4 +1,9 @@
-file(GLOB splitter_sources *.h *.cpp ../include/internal/splitter/*.h)
+set(splitter_sources
+    ProgramSplitter.cpp
+    SequenceSplitter.cpp
+    ${CMAKE_SOURCE_DIR}/include/internal/splitter/ProgramSplitter.h
+    ${CMAKE_SOURCE_DIR}/include/internal/splitter/SequenceSplitter.h
+    )
 s1_add_library(splitter
                SOURCES ${splitter_sources}
                LINK intermediate)
