@@ -48,15 +48,20 @@ namespace s1
       {
         SequenceSplitter& parent;
 
-        unsigned int PromoteRegister (const RegisterPtr& reg, int frequency);
         void SplitBinaryOp (const RegisterPtr& destination, const SequenceOpPtr& op,
                             const RegisterPtr& source1, const RegisterPtr& source2);
         template<typename Container>
         unsigned int ComputeCombinedFreqs (const Container& sources);
+        int ComputeHighestFreq (const RegisterPtr& reg);
+        template<typename... T>
+        int ComputeHighestFreq (const RegisterPtr& reg, const T&... regs);
         template<typename Container>
         int ComputeHighestFreq (const Container& sources);
         template<typename Container>
-        unsigned int PromoteAll (int freq, const Container& sources);
+        unsigned int Promote (int freq, const Container& sources);
+        unsigned int Promote (int freq, const RegisterPtr& reg);
+        template<typename... T>
+        unsigned int Promote (int freq, const RegisterPtr& reg, const T&... regs);
 
         unsigned int AddOpToSequences (const SequenceOpPtr& op, unsigned int freqMask);
 
