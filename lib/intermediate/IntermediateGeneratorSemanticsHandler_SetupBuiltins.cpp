@@ -129,7 +129,7 @@ namespace s1
                                                 MakeFormalParameters2 (vecTypeFloat[c])));
       }
       uc::String id_cross ("cross");
-      auto cross_factory = default_builtin_factory (intermediate::dot);
+      auto cross_factory = default_builtin_factory (intermediate::cross);
       scope->AddBuiltinFunction (new Builtin (cross_factory,
                                               vecTypeInt[3],
                                               id_cross,
