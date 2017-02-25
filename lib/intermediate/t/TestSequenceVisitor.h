@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -42,6 +42,10 @@ public:
     opMakeVectorInt,
     opMakeVectorUInt,
     opMakeVectorFloat,
+    opVectorCross,
+    opVectorDot,
+    opVectorLength,
+    opVectorNormalize,
     opMakeMatrixBool,
     opMakeMatrixInt,
     opMakeMatrixUInt,
@@ -217,6 +221,46 @@ public:
     entries.push_back (entry);
   }
 
+  void OpVectorDot (const RegisterPtr& destination,
+                    const RegisterPtr& source1,
+                    const RegisterPtr& source2) override
+  {
+    SequenceEntry entry;
+    entry.op = opVectorDot;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+  void OpVectorCross (const RegisterPtr& destination,
+                      const RegisterPtr& source1,
+                      const RegisterPtr& source2) override
+  {
+    SequenceEntry entry;
+    entry.op = opVectorCross;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
+    entries.push_back (entry);
+  }
+  void OpVectorNormalize (const RegisterPtr& destination,
+                          const RegisterPtr& source) override
+  {
+    SequenceEntry entry;
+    entry.op = opVectorNormalize;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entries.push_back (entry);
+  }
+  void OpVectorLength (const RegisterPtr& destination,
+                       const RegisterPtr& source) override
+  {
+    SequenceEntry entry;
+    entry.op = opVectorLength;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source;
+    entries.push_back (entry);
+  }
 
   void OpMakeMatrix (const RegisterPtr& destination,
                      s1::intermediate::BasicType compType,

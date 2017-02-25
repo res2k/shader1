@@ -1,18 +1,18 @@
 /*
-Shader1
-Copyright (c) 2015 Frank Richter
+    Shader1
+    Copyright (c) 2015-2017 Frank Richter
 
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the wxWindows Library Licence.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-Please see the wxWindows Library Licence for more details.
-The licence texts can be found in the source distribution files
-LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
 #ifndef __CODEGEN_ANNOTATINGSEQUENCECODEGENERATOR_H__
@@ -89,6 +89,16 @@ namespace s1
         void OpMakeVector (const RegisterPtr& destination,
                            intermediate::BasicType compType,
                            const std::vector<RegisterPtr>& sources) override;
+        void OpVectorDot (const RegisterPtr& destination,
+                          const RegisterPtr& source1,
+                          const RegisterPtr& source2) override;
+        void OpVectorCross (const RegisterPtr& destination,
+                            const RegisterPtr& source1,
+                            const RegisterPtr& source2) override;
+        void OpVectorNormalize (const RegisterPtr& destination,
+                                const RegisterPtr& source) override;
+        void OpVectorLength (const RegisterPtr& destination,
+                             const RegisterPtr& source) override;
 
         void OpMakeMatrix (const RegisterPtr& destination,
                            intermediate::BasicType compType,

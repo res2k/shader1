@@ -1,18 +1,18 @@
 /*
-Shader1
-Copyright (c) 2015 Frank Richter
+    Shader1
+    Copyright (c) 2015-2017 Frank Richter
 
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the wxWindows Library Licence.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-Please see the wxWindows Library Licence for more details.
-The licence texts can be found in the source distribution files
-LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
 #include "base/common.h"
@@ -207,14 +207,6 @@ namespace s1
         {
           switch (value)
           {
-          case intermediate::dot:
-            return "dot";
-          case intermediate::cross:
-            return "cross";
-          case intermediate::normalize:
-            return "normalize";
-          case intermediate::length:
-            return "length";
           case intermediate::mul:
             return "mul";
           case intermediate::tex1D:
@@ -350,6 +342,32 @@ namespace s1
                                                                  const std::vector<RegisterPtr>& sources)
     {
       DEBUG_COMMENT ("MakeVector", (destination)(compType)(sources));
+    }
+
+    void AnnotatingSequenceCodeGenerator::Visitor::OpVectorDot (const RegisterPtr& destination,
+                                                                const RegisterPtr& source1,
+                                                                const RegisterPtr& source2)
+    {
+      DEBUG_COMMENT ("VectorDot", (destination)(source1)(source2));
+    }
+
+    void AnnotatingSequenceCodeGenerator::Visitor::OpVectorCross (const RegisterPtr& destination,
+                                                                  const RegisterPtr& source1,
+                                                                  const RegisterPtr& source2)
+    {
+      DEBUG_COMMENT ("VectorCross", (destination)(source1)(source2));
+    }
+
+    void AnnotatingSequenceCodeGenerator::Visitor::OpVectorNormalize (const RegisterPtr& destination,
+                                                                      const RegisterPtr& source)
+    {
+      DEBUG_COMMENT ("VectorNormalize", (destination)(source));
+    }
+
+    void AnnotatingSequenceCodeGenerator::Visitor::OpVectorLength (const RegisterPtr& destination,
+                                                                   const RegisterPtr& source)
+    {
+      DEBUG_COMMENT ("VectorLength", (destination)(source));
     }
 
     static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");

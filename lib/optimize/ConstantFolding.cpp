@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -211,6 +211,16 @@ namespace s1
       void OpMakeVector (const RegisterPtr& destination,
                          intermediate::BasicType compType,
                          const std::vector<RegisterPtr>& sources);
+      void OpVectorDot (const RegisterPtr& destination,
+                        const RegisterPtr& source1,
+                        const RegisterPtr& source2) override;
+      void OpVectorCross (const RegisterPtr& destination,
+                          const RegisterPtr& source1,
+                          const RegisterPtr& source2) override;
+      void OpVectorNormalize (const RegisterPtr& destination,
+                              const RegisterPtr& source) override;
+      void OpVectorLength (const RegisterPtr& destination,
+                           const RegisterPtr& source) override;
 
       void OpMakeMatrix (const RegisterPtr& destination,
                          intermediate::BasicType compType,
@@ -447,6 +457,90 @@ namespace s1
       }
 
       CommonSequenceVisitor::OpMakeVector (destination, compType, sources);
+    }
+
+    void ConstantFolding::FoldingVisitor::OpVectorDot (const RegisterPtr& destination,
+                                                       const RegisterPtr& source1,
+                                                       const RegisterPtr& source2)
+    {
+      ConstRegsMap::const_iterator src1Const = constRegs.find (source1);
+      ConstRegsMap::const_iterator src2Const = constRegs.find (source2);
+      if ((src1Const != constRegs.end())
+          && (src2Const != constRegs.end()))
+      {
+        ConstantValPtr src1Val (src1Const->second);
+        ConstantValPtr src2Val (src2Const->second);
+
+        if (HandleBuiltinDot (destination,
+                              source1->GetOriginalType(),
+                              src1Val, src2Val))
+        {
+          return;
+        }
+      }
+
+      CommonSequenceVisitor::OpVectorDot (destination, source1, source2);
+    }
+
+    void ConstantFolding::FoldingVisitor::OpVectorCross (const RegisterPtr& destination,
+                                                         const RegisterPtr& source1,
+                                                         const RegisterPtr& source2)
+    {
+      ConstRegsMap::const_iterator src1Const = constRegs.find (source1);
+      ConstRegsMap::const_iterator src2Const = constRegs.find (source2);
+      if ((src1Const != constRegs.end())
+          && (src2Const != constRegs.end()))
+      {
+        ConstantValPtr src1Val (src1Const->second);
+        ConstantValPtr src2Val (src2Const->second);
+
+        if (HandleBuiltinCross (destination,
+                                source1->GetOriginalType (),
+                                src1Val, src2Val))
+        {
+          return;
+        }
+      }
+
+      CommonSequenceVisitor::OpVectorCross (destination, source1, source2);
+    }
+
+    void ConstantFolding::FoldingVisitor::OpVectorNormalize (const RegisterPtr& destination,
+                                                             const RegisterPtr& source)
+    {
+      ConstRegsMap::const_iterator srcConst = constRegs.find (source);
+      if (srcConst != constRegs.end())
+      {
+        ConstantValPtr srcVal (srcConst->second);
+
+        if (HandleBuiltinNormalize (destination,
+                                    source->GetOriginalType (),
+                                    srcVal))
+        {
+          return;
+        }
+      }
+
+      CommonSequenceVisitor::OpVectorNormalize (destination, source);
+    }
+
+    void ConstantFolding::FoldingVisitor::OpVectorLength (const RegisterPtr& destination,
+                                                          const RegisterPtr& source)
+    {
+      ConstRegsMap::const_iterator srcConst = constRegs.find (source);
+      if (srcConst != constRegs.end())
+      {
+        ConstantValPtr srcVal (srcConst->second);
+
+        if (HandleBuiltinLength (destination,
+                                 source->GetOriginalType (),
+                                 srcVal))
+        {
+          return;
+        }
+      }
+
+      CommonSequenceVisitor::OpVectorLength (destination, source);
     }
 
     void ConstantFolding::FoldingVisitor::OpMakeMatrix (const RegisterPtr& destination,
@@ -1543,26 +1637,6 @@ namespace s1
       {
         switch (what)
         {
-        case intermediate::dot:
-          handled = HandleBuiltinDot (destination,
-                                      inParams[0]->GetOriginalType(),
-                                      paramConstVals[0], paramConstVals[1]);
-          break;
-        case intermediate::cross:
-          handled = HandleBuiltinCross (destination,
-                                        inParams[0]->GetOriginalType(),
-                                        paramConstVals[0], paramConstVals[1]);
-          break;
-        case intermediate::normalize:
-          handled = HandleBuiltinNormalize (destination,
-                                            inParams[0]->GetOriginalType(),
-                                            paramConstVals[0]);
-          break;
-        case intermediate::length:
-          handled = HandleBuiltinLength (destination,
-                                         inParams[0]->GetOriginalType(),
-                                         paramConstVals[0]);
-          break;
         case intermediate::mul:
           {
             unsigned int rows1, cols1;

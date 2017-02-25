@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -125,6 +125,16 @@ namespace s1
           void OpMakeVector (const RegisterPtr& destination,
                              intermediate::BasicType compType,
                              const std::vector<RegisterPtr>& sources);
+          void OpVectorDot (const RegisterPtr& destination,
+                            const RegisterPtr& source1,
+                            const RegisterPtr& source2) override;
+          void OpVectorCross (const RegisterPtr& destination,
+                              const RegisterPtr& source1,
+                              const RegisterPtr& source2) override;
+          void OpVectorNormalize (const RegisterPtr& destination,
+                                  const RegisterPtr& source) override;
+          void OpVectorLength (const RegisterPtr& destination,
+                               const RegisterPtr& source) override;
 
           void OpMakeMatrix (const RegisterPtr& destination,
                              intermediate::BasicType compType,

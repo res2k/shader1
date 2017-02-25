@@ -89,6 +89,16 @@ namespace s1
       void OpMakeVector (const RegisterPtr& destination,
                           intermediate::BasicType compType,
                           const std::vector<RegisterPtr>& sources);
+      void OpVectorDot (const RegisterPtr& destination,
+                        const RegisterPtr& source1,
+                        const RegisterPtr& source2) override;
+      void OpVectorCross (const RegisterPtr& destination,
+                          const RegisterPtr& source1,
+                          const RegisterPtr& source2) override;
+      void OpVectorNormalize (const RegisterPtr& destination,
+                              const RegisterPtr& source) override;
+      void OpVectorLength (const RegisterPtr& destination,
+                           const RegisterPtr& source) override;
 
       void OpMakeMatrix (const RegisterPtr& destination,
                           intermediate::BasicType compType,
@@ -230,6 +240,58 @@ namespace s1
       }
       usedRegisters.insert (sources.begin(), sources.end());
       CommonSequenceVisitor::OpMakeVector (destination, compType, sources);
+    }
+
+    void DeadCodeElimination::DeadCodeChecker::OpVectorDot (const RegisterPtr& destination,
+                                                            const RegisterPtr& source1,
+                                                            const RegisterPtr& source2)
+    {
+      if (usedRegisters.count (destination) == 0)
+      {
+        seqChanged = true;
+        return;
+      }
+      usedRegisters.insert (source1);
+      usedRegisters.insert (source2);
+      CommonSequenceVisitor::OpVectorDot (destination, source1, source2);
+    }
+
+    void DeadCodeElimination::DeadCodeChecker::OpVectorCross (const RegisterPtr& destination,
+                                                              const RegisterPtr& source1,
+                                                              const RegisterPtr& source2)
+    {
+      if (usedRegisters.count (destination) == 0)
+      {
+        seqChanged = true;
+        return;
+      }
+      usedRegisters.insert (source1);
+      usedRegisters.insert (source2);
+      CommonSequenceVisitor::OpVectorCross (destination, source1, source2);
+    }
+
+    void DeadCodeElimination::DeadCodeChecker::OpVectorNormalize (const RegisterPtr& destination,
+                                                                  const RegisterPtr& source)
+    {
+      if (usedRegisters.count (destination) == 0)
+      {
+        seqChanged = true;
+        return;
+      }
+      usedRegisters.insert (source);
+      CommonSequenceVisitor::OpVectorNormalize (destination, source);
+    }
+
+    void DeadCodeElimination::DeadCodeChecker::OpVectorLength (const RegisterPtr& destination,
+                                                               const RegisterPtr& source)
+    {
+      if (usedRegisters.count (destination) == 0)
+      {
+        seqChanged = true;
+        return;
+      }
+      usedRegisters.insert (source);
+      CommonSequenceVisitor::OpVectorLength (destination, source);
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpMakeMatrix (const RegisterPtr& destination,

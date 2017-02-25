@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -37,6 +37,10 @@
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
+#include "intermediate/SequenceOp/SequenceOpVectorCross.h"
+#include "intermediate/SequenceOp/SequenceOpVectorDot.h"
+#include "intermediate/SequenceOp/SequenceOpVectorLength.h"
+#include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 
 #include <boost/make_shared.hpp>
@@ -79,6 +83,20 @@ namespace s1
       void OpMakeVector (const RegisterPtr& destination,
                           BasicType compType,
                           const std::vector<RegisterPtr>& sources)
+      { assert (false); }
+      void OpVectorDot (const RegisterPtr& destination,
+                        const RegisterPtr& source1,
+                        const RegisterPtr& source2) override
+      { assert (false); }
+      void OpVectorCross (const RegisterPtr& destination,
+                          const RegisterPtr& source1,
+                          const RegisterPtr& source2) override
+      { assert (false); }
+      void OpVectorNormalize (const RegisterPtr& destination,
+                              const RegisterPtr& source) override
+      { assert (false); }
+      void OpVectorLength (const RegisterPtr& destination,
+                           const RegisterPtr& source) override
       { assert (false); }
 
       void OpMakeMatrix (const RegisterPtr& destination,
@@ -304,6 +322,42 @@ namespace s1
       SequenceOpPtr newOp (new SequenceOpMakeVector (MapRegisterOut (destination),
                                                      compType,
                                                      newSources));
+      AddOpToSequence (newOp);
+    }
+
+    void CloningSequenceVisitor::OpVectorDot (const RegisterPtr& destination,
+                                              const RegisterPtr& source1,
+                                              const RegisterPtr& source2)
+    {
+      SequenceOpPtr newOp (new SequenceOpVectorDot (MapRegisterOut (destination),
+                                                    MapRegisterIn (source1),
+                                                    MapRegisterIn (source2)));
+      AddOpToSequence (newOp);
+    }
+
+    void CloningSequenceVisitor::OpVectorCross (const RegisterPtr& destination,
+                                                const RegisterPtr& source1,
+                                                const RegisterPtr& source2)
+    {
+      SequenceOpPtr newOp (new SequenceOpVectorCross (MapRegisterOut (destination),
+                                                      MapRegisterIn (source1),
+                                                      MapRegisterIn (source2)));
+      AddOpToSequence (newOp);
+    }
+
+    void CloningSequenceVisitor::OpVectorNormalize (const RegisterPtr& destination,
+                                                    const RegisterPtr& source)
+    {
+      SequenceOpPtr newOp (new SequenceOpVectorNormalize (MapRegisterOut (destination),
+                                                          MapRegisterIn (source)));
+      AddOpToSequence (newOp);
+    }
+
+    void CloningSequenceVisitor::OpVectorLength (const RegisterPtr& destination,
+                                                 const RegisterPtr& source)
+    {
+      SequenceOpPtr newOp (new SequenceOpVectorNormalize (MapRegisterOut (destination),
+                                                          MapRegisterIn (source)));
       AddOpToSequence (newOp);
     }
 

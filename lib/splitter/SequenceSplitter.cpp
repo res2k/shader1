@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -43,6 +43,10 @@
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
+#include "intermediate/SequenceOp/SequenceOpVectorCross.h"
+#include "intermediate/SequenceOp/SequenceOpVectorDot.h"
+#include "intermediate/SequenceOp/SequenceOpVectorLength.h"
+#include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "splitter/ProgramSplitter.h"
 
@@ -351,6 +355,94 @@ namespace s1
                                                                       compType,
                                                                       sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
+    }
+
+    void SequenceSplitter::InputVisitor::OpVectorDot (const RegisterPtr& destination,
+                                                      const RegisterPtr& source1,
+                                                      const RegisterPtr& source2)
+    {
+      /* interpolation-safe if one operand is an uniform */
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
+      bool lerpSafe = ((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0);
+
+      if (lerpSafe)
+      {
+        int highestFreq = ComputeHighestFreq (source1, source2);
+        unsigned int commonFreqs = Promote (highestFreq, source1, source2);
+
+        parent.SetRegAvailability (destination, commonFreqs);
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpVectorDot (destination,
+                                                                       source1,
+                                                                       source2));
+        AddOpToSequences (newSeqOp, commonFreqs);
+      }
+      else
+      {
+        Promote (freqFragment, source1, source2);
+
+        parent.SetRegAvailability (destination, freqFlagF);
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpVectorDot (destination,
+                                                                       source1,
+                                                                       source2));
+        parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
+      }
+    }
+
+    void SequenceSplitter::InputVisitor::OpVectorCross (const RegisterPtr& destination,
+                                                        const RegisterPtr& source1,
+                                                        const RegisterPtr& source2)
+    {
+      /* interpolation-safe if one operand is an uniform */
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
+      bool lerpSafe = ((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0);
+
+      if (lerpSafe)
+      {
+        int highestFreq = ComputeHighestFreq (source1, source2);
+        unsigned int commonFreqs = Promote (highestFreq, source1, source2);
+
+        parent.SetRegAvailability (destination, commonFreqs);
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpVectorCross (destination,
+                                                                         source1,
+                                                                         source2));
+        AddOpToSequences (newSeqOp, commonFreqs);
+      }
+      else
+      {
+        Promote (freqFragment, source1, source2);
+
+        parent.SetRegAvailability (destination, freqFlagF);
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpVectorCross (destination,
+                                                                         source1,
+                                                                         source2));
+        parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
+      }
+    }
+
+    void SequenceSplitter::InputVisitor::OpVectorNormalize (const RegisterPtr& destination,
+                                                            const RegisterPtr& source)
+    {
+      /* not interpolation-safe */
+      Promote (freqFragment, source);
+
+      parent.SetRegAvailability (destination, freqFlagF);
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpVectorNormalize (destination,
+                                                                           source));
+      parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
+    }
+
+    void SequenceSplitter::InputVisitor::OpVectorLength (const RegisterPtr& destination,
+                                                         const RegisterPtr& source)
+    {
+      /* not interpolation-safe */
+      Promote (freqFragment, source);
+
+      parent.SetRegAvailability (destination, freqFlagF);
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpVectorLength (destination,
+                                                                        source));
+      parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
     }
 
     void SequenceSplitter::InputVisitor::OpMakeMatrix (const RegisterPtr& destination,
@@ -1126,8 +1218,6 @@ namespace s1
       bool lerpSafe = false;
       switch (what)
       {
-      case intermediate::dot:
-      case intermediate::cross:
       case intermediate::mul:
         /* dot, cross, matrix mul: interpolation-safe if one operand is an uniform */
         {
@@ -1136,8 +1226,6 @@ namespace s1
           lerpSafe = ((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0);
         }
         break;
-      case intermediate::normalize:
-      case intermediate::length:
       case intermediate::min:
       case intermediate::max:
       case intermediate::pow:

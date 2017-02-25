@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2017 Frank Richter
+    Copyright (c) 2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,28 +15,26 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __INTERMEDIATE_BUILTINFUNCTION_H__
-#define __INTERMEDIATE_BUILTINFUNCTION_H__
+#ifndef __INTERMEDIATE_SEQUENCEOPVECTORCROSS_H__
+#define __INTERMEDIATE_SEQUENCEOPVECTORCROSS_H__
+
+#include "../forwarddecl.h"
+#include "SequenceOpBinary.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    enum BuiltinFunction
+    class SequenceOpVectorCross : public SequenceOpBinary
     {
-      // Matrix builtins
-      mul,
-      // Texture builtins
-      tex1D,
-      tex2D,
-      tex3D,
-      texCUBE,
-      // Misc
-      min,
-      max,
-      pow
+    public:
+      SequenceOpVectorCross (RegisterPtr destination,
+                             RegisterPtr source1,
+                             RegisterPtr source2);
+
+      void Visit (SequenceVisitor& visitor);
     };
   } // namespace intermediate
 } // namespace s1
 
-#endif // __INTERMEDIATE_BUILTINFUNCTION_H__
+#endif // __INTERMEDIATE_SEQUENCEOPVECTORCROSS_H__

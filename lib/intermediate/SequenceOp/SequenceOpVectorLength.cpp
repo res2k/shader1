@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2017 Frank Richter
+    Copyright (c) 2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,28 +15,24 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __INTERMEDIATE_BUILTINFUNCTION_H__
-#define __INTERMEDIATE_BUILTINFUNCTION_H__
+#include "base/common.h"
+#include "intermediate/SequenceOp/SequenceOpVectorLength.h"
+
+#include "intermediate/SequenceVisitor.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    enum BuiltinFunction
+    SequenceOpVectorLength::SequenceOpVectorLength (RegisterPtr destination,
+                                                    RegisterPtr source)
+     : SequenceOpUnary (destination, source)
     {
-      // Matrix builtins
-      mul,
-      // Texture builtins
-      tex1D,
-      tex2D,
-      tex3D,
-      texCUBE,
-      // Misc
-      min,
-      max,
-      pow
-    };
+    }
+
+    void SequenceOpVectorLength::Visit (SequenceVisitor& visitor)
+    {
+      visitor.OpVectorLength (destination, source);
+    }
   } // namespace intermediate
 } // namespace s1
-
-#endif // __INTERMEDIATE_BUILTINFUNCTION_H__

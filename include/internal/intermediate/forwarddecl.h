@@ -33,6 +33,7 @@ namespace s1
     typedef boost::shared_ptr<SequenceBuilder> SequenceBuilderPtr;
     class SequenceOp;
     typedef boost::intrusive_ptr<SequenceOp> SequenceOpPtr;
+    struct SequenceVisitor;
     class Program;
     typedef boost::shared_ptr<Program> ProgramPtr;
     class ProgramFunction;

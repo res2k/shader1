@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -19,6 +19,10 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
+#include "intermediate/SequenceOp/SequenceOpVectorCross.h"
+#include "intermediate/SequenceOp/SequenceOpVectorDot.h"
+#include "intermediate/SequenceOp/SequenceOpVectorLength.h"
+#include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
 
 #include "Builtin.h"
 #include "ScopeImpl.h"
@@ -112,7 +116,13 @@ namespace s1
                                               MakeFormalParameters2 (floatType)));
 
       uc::String id_dot ("dot");
-      auto dot_factory = default_builtin_factory (intermediate::dot);
+      auto dot_factory =
+        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
+        {
+          S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+          return new SequenceOpVectorDot (destination, inParams[0], inParams[1]);
+        };
+
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (dot_factory,
@@ -129,7 +139,12 @@ namespace s1
                                                 MakeFormalParameters2 (vecTypeFloat[c])));
       }
       uc::String id_cross ("cross");
-      auto cross_factory = default_builtin_factory (intermediate::cross);
+      auto cross_factory =
+        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
+        {
+          S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+          return new SequenceOpVectorCross (destination, inParams[0], inParams[1]);
+        };
       scope->AddBuiltinFunction (new Builtin (cross_factory,
                                               vecTypeInt[3],
                                               id_cross,
@@ -206,7 +221,12 @@ namespace s1
       }
 
       uc::String id_normalize ("normalize");
-      auto normalize_factory = default_builtin_factory (intermediate::normalize);
+      auto normalize_factory =
+        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
+        {
+          S1_ASSERT (inParams.size () == 1, SequenceOpPtr ());
+          return new SequenceOpVectorNormalize (destination, inParams[0]);
+        };
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (normalize_factory,
@@ -224,7 +244,12 @@ namespace s1
       }
 
       uc::String id_length ("length");
-      auto length_factory = default_builtin_factory (intermediate::length);
+      auto length_factory =
+        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
+        {
+          S1_ASSERT (inParams.size () == 1, SequenceOpPtr ());
+          return new SequenceOpVectorLength (destination, inParams[0]);
+        };
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (length_factory,

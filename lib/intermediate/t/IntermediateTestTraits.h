@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -36,6 +36,10 @@ CXXTEST_ENUM_TRAITS (TestSequenceVisitor::Operation,
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeVectorInt)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeVectorUInt)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeVectorFloat)
+                     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opVectorCross)
+                     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opVectorDot)
+                     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opVectorLength)
+                     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opVectorNormalize)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeMatrixBool)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeMatrixInt)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeMatrixUInt)

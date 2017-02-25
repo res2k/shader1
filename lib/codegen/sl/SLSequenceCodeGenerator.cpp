@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -333,6 +333,42 @@ namespace s1
         EmitFunctionCall (destination,
                           owner->traits.FormatVector (compType, unsigned (sources.size ())),
                           paramsStr.c_str ());
+      }
+
+      static format::StaticFormatter FormatBinaryArgs ("{0}, {1}");
+
+      void SequenceCodeGenerator::CodegenVisitor::OpVectorDot (const RegisterPtr& destination,
+                                                               const RegisterPtr& source1,
+                                                               const RegisterPtr& source2)
+      {
+        AnnotatingVisitor::OpVectorDot (destination, source1, source2);
+        EmitFunctionCall (destination, "dot",
+                          FormatBinaryArgs.to<std::string> (owner->GetOutputRegisterName (source1),
+                                                            owner->GetOutputRegisterName (source2)).c_str());
+      }
+
+      void SequenceCodeGenerator::CodegenVisitor::OpVectorCross (const RegisterPtr& destination,
+                                                                 const RegisterPtr& source1,
+                                                                 const RegisterPtr& source2)
+      {
+        AnnotatingVisitor::OpVectorCross (destination, source1, source2);
+        EmitFunctionCall (destination, "cross",
+                          FormatBinaryArgs.to<std::string> (owner->GetOutputRegisterName (source1),
+                                                            owner->GetOutputRegisterName (source2)).c_str());
+      }
+
+      void SequenceCodeGenerator::CodegenVisitor::OpVectorNormalize (const RegisterPtr& destination,
+                                                                     const RegisterPtr& source)
+      {
+        AnnotatingVisitor::OpVectorNormalize (destination, source);
+        EmitFunctionCall (destination, "normalize", owner->GetOutputRegisterName (source).c_str());
+      }
+
+      void SequenceCodeGenerator::CodegenVisitor::OpVectorLength (const RegisterPtr& destination,
+                                                                  const RegisterPtr& source)
+      {
+        AnnotatingVisitor::OpVectorLength (destination, source);
+        EmitFunctionCall (destination, "length", owner->GetOutputRegisterName (source).c_str());
       }
 
       static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
@@ -671,10 +707,6 @@ namespace s1
         std::string exprStr;
         switch (what)
         {
-        case intermediate::dot:		exprStr.append ("dot");		break;
-        case intermediate::cross:		exprStr.append ("cross");	break;
-        case intermediate::normalize:	exprStr.append ("normalize");	break;
-        case intermediate::length:	exprStr.append ("length");	break;
         case intermediate::mul:		exprStr.append ("mul");		break;
         case intermediate::tex1D:		exprStr.append ("tex1D");	break;
         case intermediate::tex2D:		exprStr.append ("tex2D");	break;
