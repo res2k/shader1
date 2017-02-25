@@ -30,24 +30,28 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::Builtin
       : public boost::intrusive_ref_counter<Builtin>
     {
-      intermediate::BuiltinFunction what;
-      TypePtr returnType;
-      uc::String identifier;
-      ScopeImpl::FunctionFormalParameters formalParameters;
     public:
-      Builtin (intermediate::BuiltinFunction what,
+      typedef std::function<SequenceOpPtr (RegisterPtr dest, const std::vector<RegisterPtr>& inParams)>
+        SeqOpFactoryFunc;
+
+      Builtin (SeqOpFactoryFunc factoryFunc,
                const TypePtr& returnType,
                const uc::String& identifier,
                const ScopeImpl::FunctionFormalParameters& formalParameters)
-       : what (what), returnType (returnType), identifier (identifier),
+       : factoryFunc (factoryFunc), returnType (returnType), identifier (identifier),
          formalParameters (formalParameters)
       {}
 
-      intermediate::BuiltinFunction GetBuiltinFunction () const { return what; }
+      SeqOpFactoryFunc GetSeqOpFactory () const { return factoryFunc; }
       const TypePtr& GetReturnType () const { return returnType; }
       const uc::String& GetIdentifier() const { return identifier; }
       const ScopeImpl::FunctionFormalParameters& GetFormalParameters() const
       { return formalParameters; }
+    protected:
+      SeqOpFactoryFunc factoryFunc;
+      TypePtr returnType;
+      uc::String identifier;
+      ScopeImpl::FunctionFormalParameters formalParameters;
     };
   } // namespace intermediate
 } // namespace s1

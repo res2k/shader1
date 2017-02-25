@@ -159,8 +159,9 @@ namespace s1
 
       SequenceOpPtr seqOp;
       if (overload->builtin)
-        seqOp = new SequenceOpBuiltinCall (destination, overload->builtin->GetBuiltinFunction(),
-                                           inParams);
+      {
+        seqOp = overload->builtin->GetSeqOpFactory () (destination, inParams);
+      }
       else
       {
         if (destination)
