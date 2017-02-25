@@ -81,7 +81,9 @@ namespace s1
       virtual void OpExtractVectorComponent (const RegisterPtr& destination,
                                              const RegisterPtr& source,
                                              unsigned int comp) = 0;
-                                 
+
+      /**\name Component-wise operations
+       * @{ */
       enum ArithmeticOp { Add, Sub, Mul, Div, Mod };
       virtual void OpArith (const RegisterPtr& destination,
                             ArithmeticOp op,
@@ -104,7 +106,8 @@ namespace s1
       virtual void OpUnary (const RegisterPtr& destination,
                             UnaryOp op,
                             const RegisterPtr& source) = 0;
-                               
+      /** @} */
+
       virtual void OpBlock (const SequencePtr& subSequence,
                             const Sequence::IdentifierToRegMap& identToRegs_imp,
                             const Sequence::IdentifierToRegMap& identToRegs_exp) = 0;
