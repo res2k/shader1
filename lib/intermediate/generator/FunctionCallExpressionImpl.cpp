@@ -45,137 +45,137 @@ namespace s1
     {
       if (overloadSelected) return;
       overloadSelected = true;
-      
+
       boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
       boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (ScopePtr (nameImpl->ownerScope)));
-      
+
       // Collect overload candidates
       ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName, params));
-      
+
       if (candidates.size() == 0)
       {
-	// No candidates
-	throw Exception (NoMatchingFunctionOverload);
+        // No candidates
+        throw Exception (NoMatchingFunctionOverload);
       }
       else if (candidates.size() > 1)
       {
-	// Ambiguous overload
-	throw Exception (AmbiguousFunctionOverload);
+        // Ambiguous overload
+        throw Exception (AmbiguousFunctionOverload);
       }
       overload = candidates[0];
-      
+
       for (size_t formal = 0, actual = 0; formal < overload->params.size(); formal++)
       {
-	const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
-	
-	ExpressionPtr paramExpr;
+        const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
+
+        ExpressionPtr paramExpr;
         assert (param.paramType == SemanticsHandler::Scope::ptUser);
         if (actual < params.size())
           paramExpr = params[actual++];
         else
           paramExpr = param.defaultValue;
-	actualParams.push_back (paramExpr);
+        actualParams.push_back (paramExpr);
       }
     }
 
     void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FetchRegisters (BlockImpl& block,
-											    FetchedRegs& fetchedRegs,
-											    PostActions& postActions)
+                                                                                            FetchedRegs& fetchedRegs,
+                                                                                            PostActions& postActions)
     {
       for (size_t i = 0; i < actualParams.size(); i++)
       {
-	RegisterPtr reg1, reg2;
-	boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
-	if (overload->params[i].dir & ScopeImpl::dirIn)
-	{
-	  reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
-	  postActions.emplace_back (paramExprImpl, reg1, false);
-	}
-	if (overload->params[i].dir & ScopeImpl::dirOut)
-	{
-	  reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
-	  postActions.emplace_back (paramExprImpl, reg2, false);
-	}
-	fetchedRegs.emplace_back (reg1, reg2);
+        RegisterPtr reg1, reg2;
+        boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
+        if (overload->params[i].dir & ScopeImpl::dirIn)
+        {
+          reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
+          postActions.emplace_back (paramExprImpl, reg1, false);
+        }
+        if (overload->params[i].dir & ScopeImpl::dirOut)
+        {
+          reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
+          postActions.emplace_back (paramExprImpl, reg2, false);
+        }
+        fetchedRegs.emplace_back (reg1, reg2);
       }
     }
-      
+
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetValueType ()
     {
       SelectOverload ();
-	
+
       return boost::static_pointer_cast<TypeImpl> (overload->returnType);
     }
-    
+
     RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
-												  RegisterClassification classify,
-												  bool asLvalue)
+                                                                                                  RegisterClassification classify,
+                                                                                                  bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
-      
+
       SelectOverload ();
-      
+
       if (overload->identifier.isEmpty()) return RegisterPtr();
-      
+
       FetchedRegs fetchedRegs;
       PostActions postActions;
       FetchRegisters (block, fetchedRegs, postActions);
-      
+
       std::vector<RegisterPtr> inParams;
       std::vector<RegisterPtr> outParams;
       for (size_t i = 0; i < overload->params.size(); i++)
       {
-	const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
-	if (param.dir & ScopeImpl::dirIn)
-	{
-	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
-	  boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
-	  RegisterPtr inReg (fetchedRegs[i].first);
-	  assert (inReg);
-	  boost::shared_ptr<TypeImpl> formalParamType (boost::static_pointer_cast<TypeImpl> (param.type));
-	  if (!paramExprType->IsEqual (*formalParamType))
-	  {
-	    RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequenceBuilder()), formalParamType, Intermediate));
-	    handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType);
-	    inReg = targetReg;
-	  }
-	  inParams.push_back (inReg);
-	}
-	if (param.dir & ScopeImpl::dirOut)
-	{
-	  boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
-	  RegisterPtr outReg (fetchedRegs[i].second);
-	  if (!outReg)
-	    throw Exception (ActualParameterNotAnLValue);
-	  outParams.push_back (outReg);
-	}
+        const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
+        if (param.dir & ScopeImpl::dirIn)
+        {
+          boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
+          boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
+          RegisterPtr inReg (fetchedRegs[i].first);
+          assert (inReg);
+          boost::shared_ptr<TypeImpl> formalParamType (boost::static_pointer_cast<TypeImpl> (param.type));
+          if (!paramExprType->IsEqual (*formalParamType))
+          {
+            RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequenceBuilder()), formalParamType, Intermediate));
+            handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType);
+            inReg = targetReg;
+          }
+          inParams.push_back (inReg);
+        }
+        if (param.dir & ScopeImpl::dirOut)
+        {
+          boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
+          RegisterPtr outReg (fetchedRegs[i].second);
+          if (!outReg)
+            throw Exception (ActualParameterNotAnLValue);
+          outParams.push_back (outReg);
+        }
       }
-      
+
       RegisterPtr destination;
       boost::shared_ptr<TypeImpl> retType (GetValueType());
       if (!retType->IsEqual (*(handler->GetVoidType())))
-	destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);
-      
+        destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);
+
       SequenceOpPtr seqOp;
       if (overload->builtin)
-	seqOp = new SequenceOpBuiltinCall (destination, overload->builtin->GetBuiltinFunction(),
-					   inParams);
+        seqOp = new SequenceOpBuiltinCall (destination, overload->builtin->GetBuiltinFunction(),
+                                           inParams);
       else
       {
-	if (destination)
-	  outParams.insert (outParams.begin(), destination);
-	seqOp = new SequenceOpFunctionCall (overload->identifier, inParams, outParams);
+        if (destination)
+          outParams.insert (outParams.begin(), destination);
+        seqOp = new SequenceOpFunctionCall (overload->identifier, inParams, outParams);
       }
       block.GetSequenceBuilder()->AddOp (seqOp);
-      
+
       for (PostActions::const_iterator postAction (postActions.begin());
-	   postAction != postActions.end();
-	   ++postAction)
+           postAction != postActions.end();
+           ++postAction)
       {
-	postAction->expr->AddToSequencePostAction (block, postAction->reg, postAction->lValue);
+        postAction->expr->AddToSequencePostAction (block, postAction->reg, postAction->lValue);
       }
-      
+
       return destination;
     }
   } // namespace intermediate

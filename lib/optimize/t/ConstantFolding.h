@@ -37,28 +37,28 @@
 using namespace s1::intermediate;
 using namespace s1::optimize;
 
-class ConstantFoldingTestSuite : public CxxTest::TestSuite 
+class ConstantFoldingTestSuite : public CxxTest::TestSuite
 {
   class TestParser : public s1::Parser
   {
   public:
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-		s1::parser::ErrorHandler& errorHandler)
+                s1::parser::ErrorHandler& errorHandler)
      : Parser (inputLexer, semanticsHandler, errorHandler) {}
-    
+
     using s1::Parser::ParseBlock;
   };
-  
+
   class TestSemanticsHandler : public IntermediateGeneratorSemanticsHandler
   {
   public:
     typedef IntermediateGeneratorSemanticsHandler Superclass;
-    
+
     class TestBlockImpl : public BlockImpl
     {
     public:
       typedef BlockImpl Superclass;
-    
+
       using Superclass::sequenceBuilder;
     };
   };
@@ -69,9 +69,9 @@ public:
       "float a;"
       "a = 1;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -79,22 +79,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -104,7 +104,7 @@ public:
     if (testVisitor.entries.size() < 2) return;
     TS_ASSERT_EQUALS (testVisitor.entries[1].op, TestSequenceVisitor::opConstFloat);
   }
-  
+
   void testArrayExtract (void)
   {
     static const char blockSource[] =
@@ -113,9 +113,9 @@ public:
       "a = float[] (1.0, 2.0, 3.0);"
       "b = a[1];"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -123,22 +123,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -154,7 +154,7 @@ public:
     // Extract array member - optimized: no extract op, simple assignment instead
     TS_ASSERT_EQUALS (testVisitor.entries[5].op, TestSequenceVisitor::opAssignment);
   }
-  
+
   void testArrayChange (void)
   {
     static const char blockSource[] =
@@ -164,9 +164,9 @@ public:
       "a[1] = 4.0;"
       "b = a[1];"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -174,22 +174,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -212,7 +212,7 @@ public:
     // Extract array member - optimized: no extract op, simple assignment instead
     TS_ASSERT_EQUALS (testVisitor.entries[9].op, TestSequenceVisitor::opAssignment);
   }
-  
+
   void testArrayLen (void)
   {
     static const char blockSource[] =
@@ -221,9 +221,9 @@ public:
       "a = float[] (1.0, 2.0, 3.0);"
       "b = a.length;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -231,22 +231,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -260,7 +260,7 @@ public:
     // Get length - optimized: no array length op, constant instead
     TS_ASSERT_EQUALS (testVisitor.entries[4].op, TestSequenceVisitor::opConstUInt);
   }
-  
+
   void testVectorExtract (void)
   {
     static const char blockSource[] =
@@ -268,9 +268,9 @@ public:
       "float b;"
       "b = a.y;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -278,22 +278,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -306,7 +306,7 @@ public:
     // Extract vector component - optimized: no extract op, const value instead
     TS_ASSERT_EQUALS (testVisitor.entries[3].op, TestSequenceVisitor::opConstFloat);
   }
-  
+
   void testArithSimple (void)
   {
     static const char blockSource[] =
@@ -318,9 +318,9 @@ public:
       "float d; d = x/y;"
       "float e; e = x%y;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -328,22 +328,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -380,9 +380,9 @@ public:
       "float2 d; d = x/y;"
       "float2 e; e = x%y;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -390,22 +390,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -458,9 +458,9 @@ public:
       "bool a; a = x && y;"
       "bool b; b = x || y;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -468,22 +468,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -510,9 +510,9 @@ public:
       "int b; b = -y;"
       "bool c; c = !z;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -520,22 +520,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -579,9 +579,9 @@ public:
       "bool k; k = x >  z;"
       "bool l; l = x >= z;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -589,22 +589,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -634,7 +634,7 @@ public:
     // Optimized: bool constant instead of compare op
     TS_ASSERT_EQUALS (testVisitor.entries[8].op, TestSequenceVisitor::opConstBool);
     TS_ASSERT_EQUALS (testVisitor.entries[8].boolConst, false);
-    
+
     // Optimized: bool constant instead of compare op
     TS_ASSERT_EQUALS (testVisitor.entries[9].op, TestSequenceVisitor::opConstBool);
     TS_ASSERT_EQUALS (testVisitor.entries[9].boolConst, true);
@@ -666,9 +666,9 @@ public:
       "}"
       "z = z+x;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -676,22 +676,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -724,9 +724,9 @@ public:
       "z = 1;"
       "y = x*z;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -734,22 +734,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, false);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -779,9 +779,9 @@ public:
       "z = 1;"
       "y = x*z;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -789,22 +789,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -828,14 +828,14 @@ public:
       "x = 0;"
       "while (x < 5)"
       "{"
-	"x = x+1;"
+        "x = x+1;"
       "}"
       "z = 1;"
       "y = x*z;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -843,22 +843,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true); /* seq is still changed b/c initial 'x < 5' is optimized */
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -885,14 +885,14 @@ public:
       "x = 0;"
       "while (x > 0)"
       "{"
-	"x = x+1;"
+        "x = x+1;"
       "}"
       "z = 1;"
       "y = x*z;"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -900,22 +900,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-					    TestSemanticsHandler::Global,
-					    semanticsHandler.GetVoidType()));
+                                            TestSemanticsHandler::Global,
+                                            semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -942,9 +942,9 @@ public:
       "float2 y = float2 (2.0, 0.25);"
       "float a; a = dot (x, y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -952,25 +952,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -995,9 +995,9 @@ public:
       "float3 y = float3 (4.0, 5.0, 6.0);"
       "float3 a; a = cross (x, y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1005,25 +1005,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1047,7 +1047,7 @@ public:
     TS_ASSERT_EQUALS (testVisitor.entries[10].floatConst, -3);
     TS_ASSERT_EQUALS (testVisitor.entries[11].op, TestSequenceVisitor::opMakeVectorFloat);
   }
-  
+
   void testBuiltinNormalize (void)
   {
     static const char blockSource[] =
@@ -1056,9 +1056,9 @@ public:
       "float3 a; a = normalize (x);"
       "float3 b; b = normalize (y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1066,25 +1066,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1116,7 +1116,7 @@ public:
     TS_ASSERT_DELTA  (testVisitor.entries[14].floatConst, M_SQRT1_2, 0.00001);
     TS_ASSERT_EQUALS (testVisitor.entries[15].op, TestSequenceVisitor::opMakeVectorFloat);
   }
-  
+
   void testBuiltinLength (void)
   {
     static const char blockSource[] =
@@ -1125,9 +1125,9 @@ public:
       "float a; a = length (x);"
       "float b; b = length (y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1135,25 +1135,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1183,9 +1183,9 @@ public:
       "float2x2 y = float2x2 (0.0, 1.0, 1.0, 0.0);"
       "float2x2 a; a = mul (x, y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1193,25 +1193,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1247,9 +1247,9 @@ public:
       "float2 y = float2 (2.0, 3.0);"
       "float2 a; a = mul (x, y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1257,25 +1257,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1305,9 +1305,9 @@ public:
       "float2x2 y = float2x2 (0.0, 1.0, 1.0, 0.0);"
       "float2 a; a = mul (x, y);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1315,25 +1315,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1369,9 +1369,9 @@ public:
       "int b; b = min (ix, iy);"
       "float c; c = min (fx, fy);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1379,25 +1379,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1440,9 +1440,9 @@ public:
       "int b; b = max (ix, iy);"
       "float c; c = max (fx, fy);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1450,25 +1450,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);
@@ -1508,9 +1508,9 @@ public:
       "float a; a = pow (x1, y1);"
       "float b; b = pow (x2, y2);"
       ;
-    
+
     using namespace s1::parser;
-    
+
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
     s1::LexerErrorHandler errorHandler;
@@ -1518,25 +1518,25 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr builtinScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-									   SemanticsHandler::Builtin,
-									   semanticsHandler.GetVoidType()));
+                                                                           SemanticsHandler::Builtin,
+                                                                           semanticsHandler.GetVoidType()));
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (builtinScope,
-									  TestSemanticsHandler::Global,
-									  semanticsHandler.GetVoidType()));
+                                                                          TestSemanticsHandler::Global,
+                                                                          semanticsHandler.GetVoidType()));
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    
+
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-      
+
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool seqChanged = s1::optimize::ConstantFolding::FoldConstants (newSeqBuilder, testBlockImpl->GetSequence());
     TS_ASSERT_EQUALS (seqChanged, true);
-    
+
     s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
     TestSequenceVisitor testVisitor;
     newSeq->Visit (testVisitor);

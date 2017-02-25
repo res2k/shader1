@@ -29,19 +29,19 @@ namespace s1
     struct IntermediateGeneratorSemanticsHandler::NameImpl : public CommonName
     {
       boost::weak_ptr<ScopeImpl> ownerScope;
-      
+
       // Output parameter
       bool isOutputParam = false;
-      
+
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
-		const uc::String& identifier, NameType type,
-		const boost::shared_ptr<TypeImpl>& typeOfName)
-	: CommonName (identifier, type, typeOfName), ownerScope (ownerScope) {}
+                const uc::String& identifier, NameType type,
+                const boost::shared_ptr<TypeImpl>& typeOfName)
+        : CommonName (identifier, type, typeOfName), ownerScope (ownerScope) {}
       NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
-		const uc::String& identifier,
-		const boost::shared_ptr<TypeImpl>& typeOfName,
-		ExpressionPtr value, bool constant, bool isOutputParam = false)
-	: CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope),
+                const uc::String& identifier,
+                const boost::shared_ptr<TypeImpl>& typeOfName,
+                ExpressionPtr value, bool constant, bool isOutputParam = false)
+        : CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope),
           isOutputParam (isOutputParam) {}
 
       TypeImplPtr GetValueType () const { return boost::static_pointer_cast<TypeImpl> (valueType); }

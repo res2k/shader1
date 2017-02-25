@@ -36,9 +36,9 @@ namespace s1
     {
     public:
       SequenceBuilderPtr newSequenceBuilder;
-      
+
       CloningSequenceVisitor (const SequenceBuilderPtr& newSequenceBuilder);
-      
+
       /// Map a register.
       virtual RegisterPtr MapRegister (const RegisterPtr& reg)
       { return reg; }
@@ -47,112 +47,112 @@ namespace s1
       /// Add an operation to the target sequence.
       virtual void AddOpToSequence (const SequenceOpPtr& seqOp)
       {
-	newSequenceBuilder->AddOp (seqOp);
+        newSequenceBuilder->AddOp (seqOp);
       }
-		      
+
       void PreVisitOp (const SequenceOpPtr& op)
       { visitedOp = op; }
       void PostVisitOp () {}
       void VisitEnd()
       { visitedOp.reset(); }
-      
+
       void OpConstBool (const RegisterPtr& destination,
-			bool value);
+                        bool value);
       void OpConstInt (const RegisterPtr& destination,
-			int value);
+                        int value);
       void OpConstUInt (const RegisterPtr& destination,
-			unsigned int value);
+                        unsigned int value);
       void OpConstFloat (const RegisterPtr& destination,
-			  float value);
-				
+                          float value);
+
       void OpAssign (const RegisterPtr& destination,
-		      const RegisterPtr& source);
-				
+                      const RegisterPtr& source);
+
       void OpCast (const RegisterPtr& destination,
-		    BasicType destType,
-		    const RegisterPtr& source);
+                    BasicType destType,
+                    const RegisterPtr& source);
 
       void OpMakeVector (const RegisterPtr& destination,
-			  BasicType compType,
-			  const std::vector<RegisterPtr>& sources);
-				    
+                          BasicType compType,
+                          const std::vector<RegisterPtr>& sources);
+
       void OpMakeMatrix (const RegisterPtr& destination,
-			  BasicType compType,
-			  unsigned int matrixRows, unsigned int matrixCols,
-			  const std::vector<RegisterPtr>& sources);
-				    
+                          BasicType compType,
+                          unsigned int matrixRows, unsigned int matrixCols,
+                          const std::vector<RegisterPtr>& sources);
+
       void OpMakeArray (const RegisterPtr& destination,
-			const std::vector<RegisterPtr>& sources);
+                        const std::vector<RegisterPtr>& sources);
       void OpExtractArrayElement (const RegisterPtr& destination,
-				  const RegisterPtr& source,
-				  const RegisterPtr& index);
+                                  const RegisterPtr& source,
+                                  const RegisterPtr& index);
       void OpChangeArrayElement (const RegisterPtr& destination,
-				  const RegisterPtr& source,
-				  const RegisterPtr& index,
-				  const RegisterPtr& newValue);
+                                  const RegisterPtr& source,
+                                  const RegisterPtr& index,
+                                  const RegisterPtr& newValue);
       void OpGetArrayLength (const RegisterPtr& destination,
-			      const RegisterPtr& array);
+                              const RegisterPtr& array);
 
       void OpExtractVectorComponent (const RegisterPtr& destination,
-				      const RegisterPtr& source,
-				      unsigned int comp);
-				    
+                                      const RegisterPtr& source,
+                                      unsigned int comp);
+
       void OpArith (const RegisterPtr& destination,
-		    ArithmeticOp op,
-		    const RegisterPtr& source1,
-		    const RegisterPtr& source2);
+                    ArithmeticOp op,
+                    const RegisterPtr& source1,
+                    const RegisterPtr& source2);
 
       void OpLogic (const RegisterPtr& destination,
-		    LogicOp op,
-		    const RegisterPtr& source1,
-		    const RegisterPtr& source2);
+                    LogicOp op,
+                    const RegisterPtr& source1,
+                    const RegisterPtr& source2);
 
       void OpUnary (const RegisterPtr& destination,
-		    UnaryOp op,
-		    const RegisterPtr& source);
-			      
+                    UnaryOp op,
+                    const RegisterPtr& source);
+
       void OpCompare (const RegisterPtr& destination,
-		      CompareOp op,
-		      const RegisterPtr& source1,
-		      const RegisterPtr& source2);
-			
+                      CompareOp op,
+                      const RegisterPtr& source1,
+                      const RegisterPtr& source2);
+
       void OpBlock (const SequencePtr& seq,
-		    const Sequence::IdentifierToRegMap& identToRegID_imp,
-		    const Sequence::IdentifierToRegMap& identToRegID_exp);
-		    
+                    const Sequence::IdentifierToRegMap& identToRegID_imp,
+                    const Sequence::IdentifierToRegMap& identToRegID_exp);
+
       void OpBranch (const RegisterPtr& conditionReg,
-		      const SequenceOpPtr& seqOpIf,
-		      const SequenceOpPtr& seqOpElse);
+                      const SequenceOpPtr& seqOpIf,
+                      const SequenceOpPtr& seqOpElse);
       void OpWhile (const RegisterPtr& conditionReg,
-		    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-		    const SequenceOpPtr& seqOpBody);
-		    
+                    const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+                    const SequenceOpPtr& seqOpBody);
+
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
       void OpFunctionCall (const uc::String& funcIdent,
-			    const std::vector<RegisterPtr>& inParams,
-			    const std::vector<RegisterPtr>& outParams);
+                            const std::vector<RegisterPtr>& inParams,
+                            const std::vector<RegisterPtr>& outParams);
       void OpBuiltinCall (const RegisterPtr& destination,
-			  BuiltinFunction what,
-			  const std::vector<RegisterPtr>& inParams);
+                          BuiltinFunction what,
+                          const std::vector<RegisterPtr>& inParams);
     protected:
       class BlockNestingSequenceVisitor;
       virtual void NestedBlock (CloningSequenceVisitor* handlingVisitor,
-			        const SequencePtr& seq,
-			        const Sequence::IdentifierToRegMap& identToReg_imp,
-			        const Sequence::IdentifierToRegMap& identToReg_exp);
-      
+                                const SequencePtr& seq,
+                                const Sequence::IdentifierToRegMap& identToReg_imp,
+                                const Sequence::IdentifierToRegMap& identToReg_exp);
+
       SequenceOpPtr visitedOp;
-      
+
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
                                              const SequencePtr& oldSequence,
                                              const RegisterMap& regMap);
       virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
-					     const RegisterMap& regMap) = 0;
+                                             const RegisterMap& regMap) = 0;
       virtual bool VisitBackwards() const { return false; }
       virtual void PostVisitSequence (CloningSequenceVisitor* visitor,
-				      const SequenceBuilderPtr& newSequenceBuilder,
-				      const RegisterMap& regMap) {}
+                                      const SequenceBuilderPtr& newSequenceBuilder,
+                                      const RegisterMap& regMap) {}
     };
   } // namespace intermediate
 } // namespace s1

@@ -67,7 +67,7 @@ namespace s1
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef IntermediateGeneratorSemanticsHandler::TypePtr TypePtr;
     typedef IntermediateGeneratorSemanticsHandler::ExpressionPtr ExpressionPtr;
-    
+
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
       voidType = boost::shared_ptr<TypeImpl> (new TypeImpl (Void));
@@ -76,7 +76,7 @@ namespace s1
       uintType = boost::shared_ptr<TypeImpl> (new TypeImpl (UInt));
       floatType = boost::shared_ptr<TypeImpl> (new TypeImpl (Float));
     }
-    
+
     IntermediateGeneratorSemanticsHandler::~IntermediateGeneratorSemanticsHandler ()
     {
     }
@@ -107,50 +107,50 @@ namespace s1
     {
       switch (type->typeClass)
       {
-	case TypeImpl::Base:
-	{
+        case TypeImpl::Base:
+        {
           return GetBaseTypeString (type->base, 0, 0);
-	}
-	break;
+        }
+        break;
       case TypeImpl::Sampler:
-	{
-	  switch (type->sampler)
-	  {
-	    case _1D: return "S1";
-	    case _2D: return "S2";
-	    case _3D: return "S3";
-	    case CUBE: return "SC";
-	  }
-	}
-	break;
+        {
+          switch (type->sampler)
+          {
+            case _1D: return "S1";
+            case _2D: return "S2";
+            case _3D: return "S3";
+            case CUBE: return "SC";
+          }
+        }
+        break;
       case TypeImpl::Array:
-	{
+        {
           std::string s;
           FormatTSArray (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)));
           return s;
-	}
+        }
       case TypeImpl::Vector:
-	{
+        {
           auto compType = boost::static_pointer_cast<TypeImpl> (type->avmBase);
           S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
           return GetBaseTypeString (compType->base, type->vectorDim, 0);
-	}
+        }
       case TypeImpl::Matrix:
-	{
+        {
           auto compType = boost::static_pointer_cast<TypeImpl> (type->avmBase);
           S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
           return GetBaseTypeString (compType->base, type->matrixRows, type->matrixCols);
-	}
+        }
       }
       S1_ASSERT (false, std::string());
       return std::string ();
     }
-    
+
     std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypePtr& type)
     {
       return GetTypeString (boost::static_pointer_cast<TypeImpl> (type));
     }
- 
+
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
       const boost::shared_ptr<TypeImpl>& t1, const boost::shared_ptr<TypeImpl>& t2)
@@ -160,19 +160,19 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::GetAttributeType (const TypeImplPtr& expressionType,
-							     const Attribute& attr)
+                                                             const Attribute& attr)
     {
       return boost::static_pointer_cast<TypeImpl> (CommonSemanticsHandler::GetAttributeType (expressionType, attr));
     }
 
     format::StaticFormatter FormatRegPrefixName ("{0}{1}");
     format::StaticFormatter FormatRegTmp ("{0}tmp{1}");
-    
+
     SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameImplSet& exportedNames)
     {
       // Create a block with all assignments
       BlockPtr globalsInitBlock (CreateBlock (globalScope));
-      
+
       const std::vector<NamePtr>& globalVars (globalScope->GetAllVars());
       for (auto global : globalVars)
       {
@@ -188,7 +188,7 @@ namespace s1
 
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (globalsInitBlock));
       blockImpl->FinishBlock();
-      
+
       exportedNames = blockImpl->GetExportedNames();
       return blockImpl->GetSequence();
     }
@@ -261,9 +261,9 @@ namespace s1
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
-									 const TypePtr& type,
-									 RegisterClassification classify,
-									 const uc::String& name)
+                                                                         const TypePtr& type,
+                                                                         RegisterClassification classify,
+                                                                         const uc::String& name)
     {
       const uc::Char prefix[3] = { uc::Char (classify), '_', 0};
       uc::String regName;
@@ -273,120 +273,120 @@ namespace s1
       }
       else
       {
-	static unsigned int allRegNum = 0;
+        static unsigned int allRegNum = 0;
         FormatRegTmp (regName, prefix, allRegNum++);
       }
-      
+
       return seqBuilder.AllocateRegister (type, regName);
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
-									 const RegisterPtr& oldReg)
+                                                                         const RegisterPtr& oldReg)
     {
       return seqBuilder.AllocateRegister (oldReg);
     }
-      
+
     void IntermediateGeneratorSemanticsHandler::GenerateCast (SequenceBuilder& seqBuilder,
-							      const RegisterPtr& castDestination,
-							      const TypeImplPtr& typeDestination,
-							      const RegisterPtr& castSource,
-							      const TypeImplPtr& typeSource)
+                                                              const RegisterPtr& castDestination,
+                                                              const TypeImplPtr& typeDestination,
+                                                              const RegisterPtr& castSource,
+                                                              const TypeImplPtr& typeSource)
     {
       switch (typeDestination->typeClass)
       {
-	case TypeImpl::Base:
-	{
-	  SequenceOpPtr seqOp;
-	  switch (typeDestination->base)
-	  {
-	    case Int:
-	      seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::Int, castSource));
-	      break;
-	    case UInt:
-	      seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::UInt, castSource));
-	      break;
-	    case Float:
-	      seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::Float, castSource));
-	      break;
-	    default:
-	      // Void, Bool can't be casted
-	      break;
-	  }
-	  if (seqOp)
-	  {
-	    seqBuilder.AddOp (seqOp);
-	    return;
-	  }
-	  break;
-	}
+        case TypeImpl::Base:
+        {
+          SequenceOpPtr seqOp;
+          switch (typeDestination->base)
+          {
+            case Int:
+              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::Int, castSource));
+              break;
+            case UInt:
+              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::UInt, castSource));
+              break;
+            case Float:
+              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::Float, castSource));
+              break;
+            default:
+              // Void, Bool can't be casted
+              break;
+          }
+          if (seqOp)
+          {
+            seqBuilder.AddOp (seqOp);
+            return;
+          }
+          break;
+        }
       case TypeImpl::Sampler:
-	// Cannot cast samplers
-	break;
+        // Cannot cast samplers
+        break;
       case TypeImpl::Array:
-	// TODO: Cast individual elements, if lengths match
-	break;
+        // TODO: Cast individual elements, if lengths match
+        break;
       case TypeImpl::Vector:
-	// Special case: allow casting from a base type to a vector, replicate value across all components
-	if (typeSource->typeClass == TypeImpl::Base)
-	{
-	  std::vector<RegisterPtr> srcVec;
-	  TypeImplPtr destBaseType (boost::static_pointer_cast<TypeImpl> (typeDestination->avmBase));
-	  RegisterPtr srcReg;
-	  if (!destBaseType->IsEqual (*(typeSource)))
-	  {
-	    // Generate cast
-	    RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
-	    GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
-	    srcReg = srcVecReg;
-	  }
-	  else
-	    srcReg = castSource;
-	  srcVec.insert (srcVec.begin(), typeDestination->vectorDim, srcReg);
-	  // Generate "make vector" op
-	  SequenceOpPtr seqOp;
-	  switch (destBaseType->base)
-	  {
-	    case Bool:
-	      seqOp = new SequenceOpMakeVector (castDestination,
-						intermediate::Bool,
-						srcVec);
-	      break;
-	    case Int:
-	      seqOp = new SequenceOpMakeVector (castDestination,
-						intermediate::Int,
-						srcVec);
-	      break;
-	    case UInt:
-	      seqOp = new SequenceOpMakeVector (castDestination,
-						intermediate::UInt,
-						srcVec);
-	      break;
-	    case Float:
-	      seqOp = new SequenceOpMakeVector (castDestination,
-						intermediate::Float,
-						srcVec);
-	      break;
-	    default:
-	      // Void can't be casted
-	      break;
-	  }
-	  if (seqOp)
-	  {
-	    seqBuilder.AddOp (seqOp);
-	    return;
-	  }
-	  break;
-	}
-	assert (typeDestination->vectorDim == typeSource->vectorDim);
-	// TODO: Cast individual components
-	break;
+        // Special case: allow casting from a base type to a vector, replicate value across all components
+        if (typeSource->typeClass == TypeImpl::Base)
+        {
+          std::vector<RegisterPtr> srcVec;
+          TypeImplPtr destBaseType (boost::static_pointer_cast<TypeImpl> (typeDestination->avmBase));
+          RegisterPtr srcReg;
+          if (!destBaseType->IsEqual (*(typeSource)))
+          {
+            // Generate cast
+            RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
+            GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
+            srcReg = srcVecReg;
+          }
+          else
+            srcReg = castSource;
+          srcVec.insert (srcVec.begin(), typeDestination->vectorDim, srcReg);
+          // Generate "make vector" op
+          SequenceOpPtr seqOp;
+          switch (destBaseType->base)
+          {
+            case Bool:
+              seqOp = new SequenceOpMakeVector (castDestination,
+                                                intermediate::Bool,
+                                                srcVec);
+              break;
+            case Int:
+              seqOp = new SequenceOpMakeVector (castDestination,
+                                                intermediate::Int,
+                                                srcVec);
+              break;
+            case UInt:
+              seqOp = new SequenceOpMakeVector (castDestination,
+                                                intermediate::UInt,
+                                                srcVec);
+              break;
+            case Float:
+              seqOp = new SequenceOpMakeVector (castDestination,
+                                                intermediate::Float,
+                                                srcVec);
+              break;
+            default:
+              // Void can't be casted
+              break;
+          }
+          if (seqOp)
+          {
+            seqBuilder.AddOp (seqOp);
+            return;
+          }
+          break;
+        }
+        assert (typeDestination->vectorDim == typeSource->vectorDim);
+        // TODO: Cast individual components
+        break;
       case TypeImpl::Matrix:
-	assert (typeDestination->matrixCols == typeSource->matrixCols);
-	assert (typeDestination->matrixRows == typeSource->matrixRows);
-	// TODO: Cast individual components
-	break;
+        assert (typeDestination->matrixCols == typeSource->matrixCols);
+        assert (typeDestination->matrixRows == typeSource->matrixRows);
+        // TODO: Cast individual components
+        break;
       }
-      
+
       throw Exception (InvalidTypeCast);
     }
 
@@ -422,10 +422,10 @@ namespace s1
         // Collect global vars
         std::vector<NamePtr> globalVars (globalScope->GetAllVars ());
         ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions ());
-	for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
-	     funcIt != functions.end();
-	     ++funcIt)
-	{
+        for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
+             funcIt != functions.end();
+             ++funcIt)
+        {
           if ((*funcIt)->originalIdentifier == entryFunctionName)
           {
             if (!entryFunction)
@@ -438,19 +438,19 @@ namespace s1
             }
           }
 
-	  boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
-	  
-	  parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
-	  TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
-	  if (!voidType->IsEqual (*retTypeImpl))
-	  {
-	    parser::SemanticsHandler::Scope::FunctionFormalParameter retParam;
-	    retParam.type = (*funcIt)->returnType;
-	    retParam.identifier = BlockImpl::varReturnValueName;
-	    retParam.dir = parser::SemanticsHandler::Scope::dirOut;
-	    params.insert (params.begin(), retParam);
-	  }
-          
+          boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
+
+          parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
+          TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
+          if (!voidType->IsEqual (*retTypeImpl))
+          {
+            parser::SemanticsHandler::Scope::FunctionFormalParameter retParam;
+            retParam.type = (*funcIt)->returnType;
+            retParam.identifier = BlockImpl::varReturnValueName;
+            retParam.dir = parser::SemanticsHandler::Scope::dirOut;
+            params.insert (params.begin(), retParam);
+          }
+
           SequencePtr funcSeq (blockImpl->GetSequence ());
 
           {
@@ -485,7 +485,7 @@ namespace s1
               }
             }
           }
-	
+
           /* Note: augmentation happens here because static var initialization may also
              call functions! */
           {
@@ -500,12 +500,12 @@ namespace s1
           }
 
           ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
-									    (*funcIt)->identifier,
-									    params,
-									    funcSeq,
-									    false));
-	  newProg->AddFunction (newFunc);
-	}
+                                                                            (*funcIt)->identifier,
+                                                                            params,
+                                                                            funcSeq,
+                                                                            false));
+          newProg->AddFunction (newFunc);
+        }
         // TODO: Err if no entry function was given
         if (entryFunction)
         {
@@ -516,7 +516,7 @@ namespace s1
       }
       return newProg;
     }
-    
+
     TypePtr IntermediateGeneratorSemanticsHandler::CreateType (BaseType type)
     {
       switch (type)
@@ -530,178 +530,178 @@ namespace s1
       assert (false);
       return TypePtr();
     }
-    
+
     TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (SamplerType dim)
     {
       return TypePtr (new TypeImpl (dim));
     }
-    
+
     TypePtr IntermediateGeneratorSemanticsHandler::CreateArrayType (TypePtr baseType)
     {
       return TypePtr (new TypeImpl (baseType));
     }
-    
+
     TypePtr IntermediateGeneratorSemanticsHandler::CreateVectorType (TypePtr baseType,
-						      unsigned int components)
+                                                      unsigned int components)
     {
       return TypePtr (new TypeImpl (baseType, components));
     }
-    
+
     TypePtr IntermediateGeneratorSemanticsHandler::CreateMatrixType (TypePtr baseType,
-						      unsigned int columns,
-						      unsigned int rows)
+                                                      unsigned int columns,
+                                                      unsigned int rows)
     {
       return TypePtr (new TypeImpl (baseType, columns, rows));
     }
-  
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstBoolExpression (bool value)
     {
       return ExpressionPtr (new BoolExpressionImpl (this, value));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstNumericExpression (const uc::String& valueStr)
     {
       return ExpressionPtr (new NumericExpressionImpl (this, valueStr));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (NamePtr name)
     {
       boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
       switch (nameImpl->GetType())
       {
       case Name::Variable:
-	{
-	  return ExpressionPtr (new VariableExpressionImpl (this, nameImpl));
-	}
-	break;
+        {
+          return ExpressionPtr (new VariableExpressionImpl (this, nameImpl));
+        }
+        break;
       default:
-	// TODO: Throw or so
-	break;
+        // TODO: Throw or so
+        break;
       }
       return ExpressionPtr();
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAttributeAccess (ExpressionPtr expr,
-										const uc::String& attr)
+                                                                                const uc::String& attr)
     {
       Attribute attrInfo (IdentifyAttribute (attr));
       if (attrInfo.attrClass == Attribute::Unknown)
-	throw Exception (InvalidAttribute);
+        throw Exception (InvalidAttribute);
       return boost::make_shared<AttributeExpressionImpl> (this, expr, attrInfo);
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArrayElementAccess (ExpressionPtr arrayExpr,
-										   ExpressionPtr elementIndexExpr)
+                                                                                   ExpressionPtr elementIndexExpr)
     {
       return boost::make_shared<ArrayElementExpressionImpl> (this, arrayExpr, elementIndexExpr);
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAssignExpression (ExpressionPtr target,
-					  ExpressionPtr value)
+                                          ExpressionPtr value)
     {
       return ExpressionPtr (new AssignmentExpressionImpl (this,
-							  boost::static_pointer_cast<ExpressionImpl> (target),
-							  boost::static_pointer_cast<ExpressionImpl> (value)));
+                                                          boost::static_pointer_cast<ExpressionImpl> (target),
+                                                          boost::static_pointer_cast<ExpressionImpl> (value)));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArithmeticExpression (ArithmeticOp op,
-										     ExpressionPtr operand1,
-										     ExpressionPtr operand2)
+                                                                                     ExpressionPtr operand1,
+                                                                                     ExpressionPtr operand2)
     {
       return ExpressionPtr (new ArithmeticExpressionImpl (this,
-							  op,
-							  boost::static_pointer_cast<ExpressionImpl> (operand1),
-							  boost::static_pointer_cast<ExpressionImpl> (operand2)));
+                                                          op,
+                                                          boost::static_pointer_cast<ExpressionImpl> (operand1),
+                                                          boost::static_pointer_cast<ExpressionImpl> (operand2)));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateUnaryExpression (UnaryOp op,
-					  ExpressionPtr operand)
-						  
+                                          ExpressionPtr operand)
+
     {
       return boost::make_shared<UnaryExpressionImpl> (this, op,
-						      boost::static_pointer_cast<ExpressionImpl> (operand));
+                                                      boost::static_pointer_cast<ExpressionImpl> (operand));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTernaryExpression (ExpressionPtr condition,
-					    ExpressionPtr ifExpr,
-					    ExpressionPtr thenExpr)
-    { 
+                                            ExpressionPtr ifExpr,
+                                            ExpressionPtr thenExpr)
+    {
       return boost::make_shared<TernaryExpressionImpl> (this,
-							boost::static_pointer_cast<ExpressionImpl> (condition),
-							boost::static_pointer_cast<ExpressionImpl> (ifExpr),
-							boost::static_pointer_cast<ExpressionImpl> (thenExpr));
+                                                        boost::static_pointer_cast<ExpressionImpl> (condition),
+                                                        boost::static_pointer_cast<ExpressionImpl> (ifExpr),
+                                                        boost::static_pointer_cast<ExpressionImpl> (thenExpr));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateComparisonExpression (CompareOp op,
-					      ExpressionPtr operand1,
-					      ExpressionPtr operand2)
+                                              ExpressionPtr operand1,
+                                              ExpressionPtr operand2)
     {
       return ExpressionPtr (
-	boost::make_shared<ComparisonExpressionImpl> (this,
-						      op,
-						      boost::static_pointer_cast<ExpressionImpl> (operand1),
-						      boost::static_pointer_cast<ExpressionImpl> (operand2)));
+        boost::make_shared<ComparisonExpressionImpl> (this,
+                                                      op,
+                                                      boost::static_pointer_cast<ExpressionImpl> (operand1),
+                                                      boost::static_pointer_cast<ExpressionImpl> (operand2)));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateLogicExpression (LogicOp op,
-					  ExpressionPtr operand1,
-					  ExpressionPtr operand2)
+                                          ExpressionPtr operand1,
+                                          ExpressionPtr operand2)
     {
       return ExpressionPtr (
-	boost::make_shared<LogicExpressionImpl> (this,
-						 op,
-						 boost::static_pointer_cast<ExpressionImpl> (operand1),
-						 boost::static_pointer_cast<ExpressionImpl> (operand2)));
+        boost::make_shared<LogicExpressionImpl> (this,
+                                                 op,
+                                                 boost::static_pointer_cast<ExpressionImpl> (operand1),
+                                                 boost::static_pointer_cast<ExpressionImpl> (operand2)));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateFunctionCallExpression (NamePtr functionName,
-										       const ExpressionVector& params)
-    { 
+                                                                                       const ExpressionVector& params)
+    {
       assert (functionName->GetType() == SemanticsHandler::Name::Function);
-      
+
       return ExpressionPtr (
-	boost::make_shared<FunctionCallExpressionImpl> (this,
-							functionName,
-							params));
+        boost::make_shared<FunctionCallExpressionImpl> (this,
+                                                        functionName,
+                                                        params));
     }
-    
+
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,
-											  const ExpressionVector& params)
+                                                                                          const ExpressionVector& params)
     {
       return ExpressionPtr (
-	boost::make_shared<TypeConstructorExpressionImpl> (this,
-							   boost::static_pointer_cast<TypeImpl> (type),
-							   params));
+        boost::make_shared<TypeConstructorExpressionImpl> (this,
+                                                           boost::static_pointer_cast<TypeImpl> (type),
+                                                           params));
     }
-    
+
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
-								 ScopeLevel scopeLevel,
-								 const TypePtr& funcReturnType)
+                                                                 ScopeLevel scopeLevel,
+                                                                 const TypePtr& funcReturnType)
     {
       ScopeImplPtr newScope (boost::make_shared<ScopeImpl> (this,
-							    boost::static_pointer_cast<ScopeImpl> (parentScope),
-							    scopeLevel,
-							    funcReturnType));
+                                                            boost::static_pointer_cast<ScopeImpl> (parentScope),
+                                                            scopeLevel,
+                                                            funcReturnType));
       switch (scopeLevel)
       {
       case SemanticsHandler::Builtin:
-	builtinScope = newScope;
-	SetupBuiltins (builtinScope);
-	break;
+        builtinScope = newScope;
+        SetupBuiltins (builtinScope);
+        break;
       case Global:
-	globalScope = newScope;
-	break;
+        globalScope = newScope;
+        break;
       default:
-	break;
+        break;
       }
       return newScope;
     }
-      
+
     BlockPtr IntermediateGeneratorSemanticsHandler::CreateBlock (ScopePtr parentScope)
     {
       ScopePtr blockScope = CreateScope (parentScope, Function);
       return BlockPtr (new BlockImpl (this, blockScope));
     }
-  
+
   } // namespace intermediate
 } // namespace s1

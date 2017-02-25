@@ -30,81 +30,81 @@ namespace s1
     public:
       struct FunctionInfo
       {
-	uc::String originalIdentifier;
-	uc::String identifier;
-	TypePtr returnType;
-	FunctionFormalParameters params;
-	/// Function body (for user-defined functions)
-	BlockPtr block;
-	/// Builtin function information
-	BuiltinPtr builtin;
+        uc::String originalIdentifier;
+        uc::String identifier;
+        TypePtr returnType;
+        FunctionFormalParameters params;
+        /// Function body (for user-defined functions)
+        BlockPtr block;
+        /// Builtin function information
+        BuiltinPtr builtin;
       };
       typedef boost::shared_ptr<FunctionInfo> FunctionInfoPtr;
       typedef std::vector<FunctionInfoPtr> FunctionInfoVector;
     private:
       friend class IntermediateGeneratorSemanticsHandler;
-      
+
       typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
       std::vector<uc::String> outputParams;
       std::vector<NamePtr> varsInDeclOrder;
-      
+
       typedef boost::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
-      
+
       void CheckIdentifierUnique (const uc::String& identifier);
       NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
-      
+
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
       ScopeLevel level;
       TypePtr funcReturnType;
-      
+
       FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
 
       void AddParameter (const FunctionFormalParameter& param);
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
-		 const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
-		 const TypePtr& funcReturnType);
+                 const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
+                 const TypePtr& funcReturnType);
       ScopeLevel GetLevel() const { return level; }
-      
+
       NamePtr AddVariable (TypePtr type,
-	const uc::String& identifier,
-	ExpressionPtr initialValue,
-	bool constant);
-	
+        const uc::String& identifier,
+        ExpressionPtr initialValue,
+        bool constant);
+
       NamePtr AddTypeAlias (TypePtr aliasedType,
-	const uc::String& identifier);
-	
+        const uc::String& identifier);
+
       FunctionPtr AddFunction (TypePtr returnType,
-	const uc::String& identifier,
-	const FunctionFormalParameters& params);
-    
+        const uc::String& identifier,
+        const FunctionFormalParameters& params);
+
       NamePtr ResolveIdentifier (const uc::String& identifier);
       NameImplPtr ResolveIdentifierInternal (const uc::String& identifier);
-      
+
       TypePtr GetFunctionReturnType() const
       {
-	if (funcReturnType) return funcReturnType;
-	if (parent) return parent->GetFunctionReturnType();
-	return TypePtr ();
+        if (funcReturnType) return funcReturnType;
+        if (parent) return parent->GetFunctionReturnType();
+        return TypePtr ();
       }
       const std::vector<uc::String>& GetFunctionOutputParams () const
       {
-	if (!parent || (parent->level < Function))
-	  return outputParams;
-	else
-	  return parent->outputParams;
+        if (!parent || (parent->level < Function))
+          return outputParams;
+        else
+          return parent->outputParams;
       }
       int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
-      
+
       void AddBuiltinFunction (const BuiltinPtr& builtin);
       FunctionInfoVector GetFunctions () const;
       FunctionInfoVector CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const;
-      
+
       std::vector<NamePtr> FlushNewVars ();
       const std::vector<NamePtr>& GetAllVars ();
     };

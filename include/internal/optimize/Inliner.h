@@ -30,7 +30,7 @@ namespace s1
       class InliningVisitor;
     public:
       static bool InlineAllBlocks (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-				   const intermediate::SequencePtr& inputSeq);
+                                   const intermediate::SequencePtr& inputSeq);
     };
   } // namespace optimize
 } // namespace s1

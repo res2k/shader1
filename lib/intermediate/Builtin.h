@@ -35,13 +35,13 @@ namespace s1
       ScopeImpl::FunctionFormalParameters formalParameters;
     public:
       Builtin (intermediate::BuiltinFunction what,
-	       const TypePtr& returnType,
-	       const uc::String& identifier,
-	       const ScopeImpl::FunctionFormalParameters& formalParameters)
+               const TypePtr& returnType,
+               const uc::String& identifier,
+               const ScopeImpl::FunctionFormalParameters& formalParameters)
        : what (what), returnType (returnType), identifier (identifier),
-	 formalParameters (formalParameters)
+         formalParameters (formalParameters)
       {}
-      
+
       intermediate::BuiltinFunction GetBuiltinFunction () const { return what; }
       const TypePtr& GetReturnType () const { return returnType; }
       const uc::String& GetIdentifier() const { return identifier; }

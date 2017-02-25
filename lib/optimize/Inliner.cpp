@@ -39,73 +39,73 @@ namespace s1
       bool& haveInlined;
     public:
       InlineBlockVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-			  bool& haveInlined)
+                          bool& haveInlined)
        : CommonSequenceVisitor (outputSeqBuilder), blockNum (0), haveInlined (haveInlined)
       {
       }
-      
+
       void OpBlock (const intermediate::SequencePtr& seq,
-		    const Sequence::IdentifierToRegMap& identToRegID_imp,
-		    const Sequence::IdentifierToRegMap& identToRegID_exp);
+                    const Sequence::IdentifierToRegMap& identToRegID_imp,
+                    const Sequence::IdentifierToRegMap& identToRegID_exp);
 
       CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
-				    const RegisterMap& regMap)
+                                    const RegisterMap& regMap)
       {
-	return new InlineBlockVisitor (newSequenceBuilder, haveInlined);
+        return new InlineBlockVisitor (newSequenceBuilder, haveInlined);
       }
     };
-    
+
     //-----------------------------------------------------------------------
-    
+
     class Inliner::InliningVisitor : public CommonSequenceVisitor
     {
       uc::String regsSuffix;
-      
+
       typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       RegisterMap registerMap;
     public:
       InliningVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-		       const uc::String& regsSuffix)
+                       const uc::String& regsSuffix)
        : CommonSequenceVisitor (outputSeqBuilder), regsSuffix (regsSuffix)
       {
       }
-		       
+
       void AddRegisterMapping (const RegisterPtr& from, const RegisterPtr& to)
       {
-	registerMap[from] = to;
+        registerMap[from] = to;
       }
-      
+
       RegisterPtr MapRegister (const RegisterPtr& reg)
       {
-	RegisterMap::const_iterator mappedReg = registerMap.find (reg);
-	if (mappedReg != registerMap.end())
-	  return mappedReg->second;
-	
-	uc::String newRegName (reg->GetName());
-	newRegName.append (regsSuffix);
-	RegisterPtr newReg = newSequenceBuilder->AllocateRegister (reg->GetOriginalType(), newRegName);
-	registerMap[reg] = newReg;
-	return newReg;
+        RegisterMap::const_iterator mappedReg = registerMap.find (reg);
+        if (mappedReg != registerMap.end())
+          return mappedReg->second;
+
+        uc::String newRegName (reg->GetName());
+        newRegName.append (regsSuffix);
+        RegisterPtr newReg = newSequenceBuilder->AllocateRegister (reg->GetOriginalType(), newRegName);
+        registerMap[reg] = newReg;
+        return newReg;
       }
-      
+
       CommonSequenceVisitor* Clone (const intermediate::SequenceBuilderPtr& newSequenceBuilder,
-				    const RegisterMap& regMap)
+                                    const RegisterMap& regMap)
       {
-	/* Called for blocks in branch or while ops.
-	   Inline contained ops, but not the block itself.
-	   */
-	bool haveInlined;
-	return new InlineBlockVisitor (newSequenceBuilder, haveInlined);
+        /* Called for blocks in branch or while ops.
+           Inline contained ops, but not the block itself.
+           */
+        bool haveInlined;
+        return new InlineBlockVisitor (newSequenceBuilder, haveInlined);
       }
     };
-    
+
     //-----------------------------------------------------------------------
 
     format::StaticFormatter FormatBlockSuffix ("$b{0}");
-    
+
     void Inliner::InlineBlockVisitor::OpBlock (const intermediate::SequencePtr& seq,
-					       const Sequence::IdentifierToRegMap& identToRegID_imp,
-					       const Sequence::IdentifierToRegMap& identToRegID_exp)
+                                               const Sequence::IdentifierToRegMap& identToRegID_imp,
+                                               const Sequence::IdentifierToRegMap& identToRegID_exp)
     {
       haveInlined = true;
       if (seq->GetNumOps() == 0) return;
@@ -113,36 +113,36 @@ namespace s1
       uc::String blockSuffix;
       FormatBlockSuffix (blockSuffix, blockNum);
       blockNum++;
-      
+
       InliningVisitor visitor (newSequenceBuilder, blockSuffix);
       for (Sequence::RegisterImpMappings::const_iterator imp = seq->GetImports().begin();
-	    imp != seq->GetImports().end();
-	    ++imp)
+            imp != seq->GetImports().end();
+            ++imp)
       {
-	Sequence::IdentifierToRegMap::const_iterator mappedReg = identToRegID_imp.find (imp->first);
-	RegisterPtr mapTo;
-	if (mappedReg != identToRegID_imp.end())
-	  visitor.AddRegisterMapping (imp->second, mappedReg->second);
-	// else: Register is uninitialized. So don't map it to anything
+        Sequence::IdentifierToRegMap::const_iterator mappedReg = identToRegID_imp.find (imp->first);
+        RegisterPtr mapTo;
+        if (mappedReg != identToRegID_imp.end())
+          visitor.AddRegisterMapping (imp->second, mappedReg->second);
+        // else: Register is uninitialized. So don't map it to anything
       }
       for (Sequence::RegisterExpMappings::const_iterator exp = seq->GetExports().begin();
-	    exp != seq->GetExports().end();
-	    ++exp)
+            exp != seq->GetExports().end();
+            ++exp)
       {
-	Sequence::IdentifierToRegMap::const_iterator mappedReg = identToRegID_exp.find (exp->first);
-	assert (mappedReg != identToRegID_exp.end());
-	visitor.AddRegisterMapping (exp->second, mappedReg->second);
+        Sequence::IdentifierToRegMap::const_iterator mappedReg = identToRegID_exp.find (exp->first);
+        assert (mappedReg != identToRegID_exp.end());
+        visitor.AddRegisterMapping (exp->second, mappedReg->second);
       }
-      
+
       intermediate::SequenceBuilderPtr seqToInline (boost::make_shared<intermediate::SequenceBuilder> ());
       Inliner::InlineAllBlocks (seqToInline, seq);
       seqToInline->GetSequence()->Visit (visitor);
     }
-      
+
     //-----------------------------------------------------------------------
-    
+
     bool Inliner::InlineAllBlocks (const intermediate::SequenceBuilderPtr& outputSeqBuilder,
-				   const intermediate::SequencePtr& inputSeq)
+                                   const intermediate::SequencePtr& inputSeq)
     {
       bool haveInlined (false);
       InlineBlockVisitor visitor (outputSeqBuilder, haveInlined);

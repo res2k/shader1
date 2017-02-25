@@ -79,7 +79,7 @@ public:
   struct SequenceEntry
   {
     Operation op;
-    
+
     union
     {
       bool boolConst;
@@ -87,35 +87,35 @@ public:
       unsigned int uintConst;
       float floatConst;
     };
-      
+
     RegisterPtr destReg;
     RegisterPtr sourceReg[3];
     std::vector<RegisterPtr> sourceRegs;
-    
+
     unsigned int matrixRows;
     unsigned int matrixCols;
-    
+
     unsigned int extractComp;
-    
+
     s1::uc::String functionIdentifier;
     s1::intermediate::BuiltinFunction whatBuiltin;
     std::vector<RegisterPtr> inParams;
     std::vector<RegisterPtr> outParams;
-    
+
     boost::shared_ptr<TestSequenceVisitor> blockVisitor;
     boost::shared_ptr<TestSequenceVisitor> branchIfVisitor;
     boost::shared_ptr<TestSequenceVisitor> branchElseVisitor;
     boost::shared_ptr<TestSequenceVisitor> whileVisitor;
   };
-  
+
   std::vector<SequenceEntry> entries;
-  
+
   void PreVisitOp (const s1::intermediate::SequenceOpPtr& op) {}
   void PostVisitOp () {}
   void VisitEnd() {}
-  
+
   void OpConstBool (const RegisterPtr& destination,
-		    bool value)
+                    bool value)
   {
     SequenceEntry entry;
     entry.op = opConstBool;
@@ -123,9 +123,9 @@ public:
     entry.boolConst = value;
     entries.push_back (entry);
   }
-  
+
   void OpConstInt (const RegisterPtr& destination,
-		   int value)
+                   int value)
   {
     SequenceEntry entry;
     entry.op = opConstInt;
@@ -133,9 +133,9 @@ public:
     entry.intConst = value;
     entries.push_back (entry);
   }
-  
+
   void OpConstUInt (const RegisterPtr& destination,
-		    unsigned int value)
+                    unsigned int value)
   {
     SequenceEntry entry;
     entry.op = opConstUInt;
@@ -143,9 +143,9 @@ public:
     entry.uintConst = value;
     entries.push_back (entry);
   }
-  
+
   void OpConstFloat (const RegisterPtr& destination,
-		     float value)
+                     float value)
   {
     SequenceEntry entry;
     entry.op = opConstFloat;
@@ -153,10 +153,10 @@ public:
     entry.floatConst = value;
     entries.push_back (entry);
   }
-  
-			      
+
+
   void OpAssign (const RegisterPtr& destination,
-		 const RegisterPtr& source)
+                 const RegisterPtr& source)
   {
     SequenceEntry entry;
     entry.op = opAssignment;
@@ -164,11 +164,11 @@ public:
     entry.sourceReg[0] = source;
     entries.push_back (entry);
   }
-  
-			      
+
+
   void OpCast (const RegisterPtr& destination,
-	       s1::intermediate::BasicType destType,
-	       const RegisterPtr& source)
+               s1::intermediate::BasicType destType,
+               const RegisterPtr& source)
   {
     SequenceEntry entry;
     switch (destType)
@@ -190,11 +190,11 @@ public:
     entry.sourceReg[0] = source;
     entries.push_back (entry);
   }
-  
-  
+
+
   void OpMakeVector (const RegisterPtr& destination,
-		     s1::intermediate::BasicType compType,
-		     const std::vector<RegisterPtr>& sources)
+                     s1::intermediate::BasicType compType,
+                     const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     switch (compType)
@@ -219,9 +219,9 @@ public:
 
 
   void OpMakeMatrix (const RegisterPtr& destination,
-		     s1::intermediate::BasicType compType,
-		     unsigned int matrixRows, unsigned int matrixCols,
-		     const std::vector<RegisterPtr>& sources)
+                     s1::intermediate::BasicType compType,
+                     unsigned int matrixRows, unsigned int matrixCols,
+                     const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     switch (compType)
@@ -248,7 +248,7 @@ public:
 
 
   void OpMakeArray (const RegisterPtr& destination,
-		    const std::vector<RegisterPtr>& sources)
+                    const std::vector<RegisterPtr>& sources)
   {
     SequenceEntry entry;
     entry.op = opMakeArray;
@@ -256,10 +256,10 @@ public:
     entry.sourceRegs = sources;
     entries.push_back (entry);
   }
-				
+
   void OpExtractArrayElement (const RegisterPtr& destination,
-			      const RegisterPtr& source,
-			      const RegisterPtr& index)
+                              const RegisterPtr& source,
+                              const RegisterPtr& index)
   {
     SequenceEntry entry;
     entry.op = opExtractArrayElement;
@@ -270,9 +270,9 @@ public:
   }
 
   void OpChangeArrayElement (const RegisterPtr& destination,
-			     const RegisterPtr& source,
-			     const RegisterPtr& index,
-			     const RegisterPtr& newValue)
+                             const RegisterPtr& source,
+                             const RegisterPtr& index,
+                             const RegisterPtr& newValue)
   {
     SequenceEntry entry;
     entry.op = opChangeArrayElement;
@@ -282,9 +282,9 @@ public:
     entry.sourceReg[2] = newValue;
     entries.push_back (entry);
   }
-      
+
   void OpGetArrayLength (const RegisterPtr& destination,
-			 const RegisterPtr& array)
+                         const RegisterPtr& array)
   {
     SequenceEntry entry;
     entry.op = opGetArrayLength;
@@ -293,10 +293,10 @@ public:
     entries.push_back (entry);
   }
 
-					 
+
   void OpExtractVectorComponent (const RegisterPtr& destination,
-				 const RegisterPtr& source,
-				 unsigned int comp)
+                                 const RegisterPtr& source,
+                                 unsigned int comp)
   {
     SequenceEntry entry;
     entry.op = opExtractVectorComponent ;
@@ -305,12 +305,12 @@ public:
     entry.extractComp = comp;
     entries.push_back (entry);
   }
-					     
-					     
+
+
   void OpArith (const RegisterPtr& destination,
-		ArithmeticOp op,
-		const RegisterPtr& source1,
-		const RegisterPtr& source2)
+                ArithmeticOp op,
+                const RegisterPtr& source1,
+                const RegisterPtr& source2)
   {
     SequenceEntry entry;
     switch (op)
@@ -339,9 +339,9 @@ public:
 
 
   void OpLogic (const RegisterPtr& destination,
-		LogicOp op,
-		const RegisterPtr& source1,
-		const RegisterPtr& source2)
+                LogicOp op,
+                const RegisterPtr& source1,
+                const RegisterPtr& source2)
   {
     SequenceEntry entry;
     switch (op)
@@ -361,8 +361,8 @@ public:
 
 
   void OpUnary (const RegisterPtr& destination,
-		UnaryOp op,
-		const RegisterPtr& source)
+                UnaryOp op,
+                const RegisterPtr& source)
   {
     SequenceEntry entry;
     switch (op)
@@ -382,11 +382,11 @@ public:
     entries.push_back (entry);
   }
 
-  
+
   void OpCompare (const RegisterPtr& destination,
-		  CompareOp op,
-		  const RegisterPtr& source1,
-		  const RegisterPtr& source2)
+                  CompareOp op,
+                  const RegisterPtr& source1,
+                  const RegisterPtr& source2)
   {
     SequenceEntry entry;
     switch (op)
@@ -415,29 +415,29 @@ public:
     entry.sourceReg[1] = source2;
     entries.push_back (entry);
   }
-  
+
   void OpBlock (const boost::shared_ptr<Sequence>& seq,
-		const Sequence::IdentifierToRegMap&,
-		const Sequence::IdentifierToRegMap&)
+                const Sequence::IdentifierToRegMap&,
+                const Sequence::IdentifierToRegMap&)
   {
     boost::shared_ptr<TestSequenceVisitor> blockVisitor = boost::make_shared<TestSequenceVisitor> ();
     seq->Visit (*blockVisitor);
-    
+
     SequenceEntry entry;
     entry.op = opBlock;
     entry.blockVisitor = blockVisitor;
     entries.push_back (entry);
   }
-  
+
   void OpBranch (const RegisterPtr& conditionReg,
-		 const s1::intermediate::SequenceOpPtr& seqOpIf,
-		 const s1::intermediate::SequenceOpPtr& seqOpElse)
+                 const s1::intermediate::SequenceOpPtr& seqOpIf,
+                 const s1::intermediate::SequenceOpPtr& seqOpElse)
   {
     boost::shared_ptr<TestSequenceVisitor> ifVisitor = boost::make_shared<TestSequenceVisitor> ();
     if (seqOpIf) seqOpIf->Visit (*ifVisitor);
     boost::shared_ptr<TestSequenceVisitor> elseVisitor = boost::make_shared<TestSequenceVisitor> ();
     if (seqOpElse) seqOpIf->Visit (*elseVisitor);
-    
+
     SequenceEntry entry;
     entry.op = opBranch;
     entry.sourceReg[0] = conditionReg;
@@ -445,14 +445,14 @@ public:
     entry.branchElseVisitor = elseVisitor;
     entries.push_back (entry);
   }
-  
+
   void OpWhile (const RegisterPtr& conditionReg,
-		const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-		const s1::intermediate::SequenceOpPtr& seqOpBody)
+                const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
+                const s1::intermediate::SequenceOpPtr& seqOpBody)
   {
     boost::shared_ptr<TestSequenceVisitor> whileVisitor = boost::make_shared<TestSequenceVisitor> ();
     seqOpBody->Visit (*whileVisitor);
-    
+
     SequenceEntry entry;
     entry.op = opWhile;
     entry.sourceReg[0] = conditionReg;
@@ -467,10 +467,10 @@ public:
     entry.sourceRegs = outParamVals;
     entries.push_back (entry);
   }
-  
+
   void OpFunctionCall (const s1::uc::String& funcIdent,
-		       const std::vector<RegisterPtr>& inParams,
-		       const std::vector<RegisterPtr>& outParams)
+                       const std::vector<RegisterPtr>& inParams,
+                       const std::vector<RegisterPtr>& outParams)
   {
     SequenceEntry entry;
     entry.op = opFunctionCall;
@@ -479,10 +479,10 @@ public:
     entry.outParams = outParams;
     entries.push_back (entry);
   }
-  
+
   void OpBuiltinCall (const RegisterPtr& destination,
-		      s1::intermediate::BuiltinFunction what,
-		      const std::vector<RegisterPtr>& inParams)
+                      s1::intermediate::BuiltinFunction what,
+                      const std::vector<RegisterPtr>& inParams)
   {
     SequenceEntry entry;
     entry.op = opBuiltinCall;

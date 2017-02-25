@@ -62,7 +62,7 @@ namespace s1
      : parent (parent)
     {
     }
-    
+
     static inline int LowestFreq (unsigned int availabilityFlag)
     {
       int f;
@@ -78,7 +78,7 @@ namespace s1
       assert ((f >= 0) && (f < freqNum));
       return f;
     }
-    
+
     static inline int HighestFreq (unsigned int availabilityFlag)
     {
       assert (availabilityFlag != 0);
@@ -95,12 +95,12 @@ namespace s1
       assert ((f >= 0) && (f < freqNum));
       return f;
     }
-    
+
     unsigned int SequenceSplitter::InputVisitor::PromoteRegister (const RegisterPtr& reg,
                                                                   int frequency)
     {
       unsigned int availability = parent.GetRegAvailability (reg);
-      
+
       int f = LowestFreq (availability);
       // Sanity checks
       assert (f <= frequency);
@@ -115,10 +115,10 @@ namespace s1
         availability |= (1 << f);
       }
       parent.SetRegAvailability (reg, availability);
-      
+
       return availability;
     }
-    
+
     void SequenceSplitter::InputVisitor::SplitBinaryOp (const RegisterPtr& destination,
                                                         const SequenceOpPtr& op,
                                                         const RegisterPtr& source1,
@@ -126,7 +126,7 @@ namespace s1
     {
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
-      
+
       // Determine highest computation frequency
       int highestFreq = freqNum;
       while (highestFreq-- > 0)
@@ -138,11 +138,11 @@ namespace s1
         }
       }
       assert (highestFreq >= 0);
-      
+
       // Make sure each source reg is also available in the highest frequency
       src1Avail = PromoteRegister (source1, highestFreq);
       src2Avail = PromoteRegister (source2, highestFreq);
-      
+
       /* Hack: If both sources are available in uniform freq,
          _only_ add op to uniform freq - uniform ops will later be
          copied into vertex and fragment ops anyway */
@@ -150,7 +150,7 @@ namespace s1
       {
         src1Avail = src2Avail = freqFlagU;
       }
-      
+
       unsigned int destAvail = 0;
       // Add operation to all frequencies that are supported by both operands
       for (int f = 0; f < freqNum; f++)
@@ -163,7 +163,7 @@ namespace s1
       }
       parent.SetRegAvailability (destination, destAvail);
     }
-    
+
     template<typename Container>
     unsigned int SequenceSplitter::InputVisitor::ComputeCombinedFreqs (const Container& sources)
     {
@@ -175,7 +175,7 @@ namespace s1
       }
       return allFreq;
     }
-    
+
     template<typename Container>
     int SequenceSplitter::InputVisitor::ComputeHighestFreq (const Container& sources)
     {
@@ -194,10 +194,10 @@ namespace s1
         }
       }
       assert (highestFreq >= 0);
-      
+
       return highestFreq;
     }
-    
+
     template<typename Container>
     unsigned int SequenceSplitter::InputVisitor::PromoteAll (int freq, const Container& sources)
     {
@@ -209,9 +209,9 @@ namespace s1
         parent.SetRegAvailability (src, srcAvail);
         commonFreqs &= srcAvail;
       }
-      
+
       assert ((commonFreqs & (1 << freq)) != 0);
-      
+
       return commonFreqs;
     }
 
@@ -221,7 +221,7 @@ namespace s1
          _only_ add op to uniform freq - uniform ops will later be
          copied into vertex and fragment ops anyway */
       if (freqMask & freqFlagU) freqMask = freqFlagU;
-      
+
       for (int f = 0; f < freqNum; f++)
       {
         if (freqMask & (1 << f))
@@ -233,48 +233,48 @@ namespace s1
       assert (false);
       return 0;
     }
-    
+
     void SequenceSplitter::InputVisitor::OpConstBool (const RegisterPtr& destination,
                                                       bool value)
     {
       parent.SetRegAvailability (destination, freqFlagU);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
-                          
+
     void SequenceSplitter::InputVisitor::OpConstInt (const RegisterPtr& destination,
                                                      int value)
     {
       parent.SetRegAvailability (destination, freqFlagU);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
-                          
+
     void SequenceSplitter::InputVisitor::OpConstUInt (const RegisterPtr& destination,
                                                       unsigned int value)
     {
       parent.SetRegAvailability (destination, freqFlagU);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
-                          
+
     void SequenceSplitter::InputVisitor::OpConstFloat (const RegisterPtr& destination,
                                                        float value)
     {
       parent.SetRegAvailability (destination, freqFlagU);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpConst (destination, value));
       AddOpToSequences (newSeqOp, freqFlagU);
     }
-    
+
     void SequenceSplitter::InputVisitor::OpAssign (const RegisterPtr& destination,
                                                    const RegisterPtr& source)
     {
       unsigned int srcAvail = parent.GetRegAvailability (source);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpAssign (destination, source));
       /* Hack: If op is _also_ executed in uniform freq,
          _only_ add op to uniform freq - uniform ops will later be
@@ -291,19 +291,19 @@ namespace s1
       // Copy full availability when assigning, can reduce needed transfers
       parent.SetRegAvailability (destination, srcAvail);
     }
-    
+
     void SequenceSplitter::InputVisitor::OpCast (const RegisterPtr& destination,
                                                  intermediate::BasicType destType,
                                                  const RegisterPtr& source)
     {
       unsigned int srcAvail = parent.GetRegAvailability (source);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpCast (destination,
                                                                 destType,
                                                                 source));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
-    
+
     void SequenceSplitter::InputVisitor::OpMakeVector (const RegisterPtr& destination,
                                                        intermediate::BasicType compType,
                                                        const std::vector<RegisterPtr>& sources)
@@ -314,13 +314,13 @@ namespace s1
          Better: just promote RGB */
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpMakeVector (destination,
                                                                       compType,
                                                                       sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
-    
+
     void SequenceSplitter::InputVisitor::OpMakeMatrix (const RegisterPtr& destination,
                                                        intermediate::BasicType compType,
                                                        unsigned int matrixRows, unsigned int matrixCols,
@@ -328,24 +328,24 @@ namespace s1
     {
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpMakeMatrix (destination,
-                                                                      compType, 
+                                                                      compType,
                                                                       matrixRows, matrixCols,
                                                                       sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
-    
+
     void SequenceSplitter::InputVisitor::OpMakeArray (const RegisterPtr& destination,
                                                       const std::vector<RegisterPtr>& sources)
     {
       int highestFreq = ComputeHighestFreq (sources);
       unsigned int commonFreqs = PromoteAll (highestFreq, sources);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpMakeArray (destination, sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
-                      
+
     void SequenceSplitter::InputVisitor::OpExtractArrayElement (const RegisterPtr& destination,
                                                                 const RegisterPtr& source,
                                                                 const RegisterPtr& index)
@@ -353,7 +353,7 @@ namespace s1
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpExtractArrayElement (destination, source, index));
       SplitBinaryOp (destination, newSeqOp, source, index);
     }
-    
+
     void SequenceSplitter::InputVisitor::OpChangeArrayElement (const RegisterPtr& destination,
                                                                const RegisterPtr& source,
                                                                const RegisterPtr& index,
@@ -365,17 +365,17 @@ namespace s1
       sourceRegs.push_back (newValue);
       int highestFreq = ComputeHighestFreq (sourceRegs);
       unsigned int commonFreqs = PromoteAll (highestFreq, sourceRegs);
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpChangeArrayElement (destination, source,
                                                                               index, newValue));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
     }
-    
+
     void SequenceSplitter::InputVisitor::OpGetArrayLength (const RegisterPtr& destination,
                                                            const RegisterPtr& array)
     {
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpGetArrayLength (destination, array));
-      
+
       unsigned int srcAvail = parent.GetRegAvailability (array);
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
@@ -385,11 +385,11 @@ namespace s1
                                                                    unsigned int comp)
     {
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpExtractVectorComponent (destination, source, comp));
-      
+
       unsigned int srcAvail = parent.GetRegAvailability (source);
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, srcAvail));
     }
-    
+
     void SequenceSplitter::InputVisitor::OpArith (const RegisterPtr& destination,
                                                   ArithmeticOp op,
                                                   const RegisterPtr& source1,
@@ -404,18 +404,18 @@ namespace s1
         with interpolated operands (lerp (op (x_1, y_1), op (x_2, y_2), f)
           == op (lerp (x_1, x_2, f), lerp (y_1, y_2, f)).
        */
-      
+
       bool lerpSafe (false);
-      
+
       unsigned int src1Avail = parent.GetRegAvailability (source1);
       unsigned int src2Avail = parent.GetRegAvailability (source2);
-      
+
       switch (op)
       {
       case Add:
       case Sub:
         /* Addition, subtraction are interpolation-safe */
-        lerpSafe = true;	
+        lerpSafe = true;
         break;
       case Mul:
       case Div:
@@ -423,7 +423,7 @@ namespace s1
           if (((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0))
           {
             /* Multiplication/Division with uniform is safe */
-            lerpSafe = true;	
+            lerpSafe = true;
           }
           else
           {
@@ -436,7 +436,7 @@ namespace s1
         /* Mod isn't interpolation safe at all */
         break;
       }
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpArith (destination, op, source1, source2));
       if (lerpSafe)
       {
@@ -447,13 +447,13 @@ namespace s1
         // Promote inputs to fragment freq
         PromoteRegister (source1, freqFragment);
         PromoteRegister (source2, freqFragment);
-        
+
         // Add operation to fragment frequency
         parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
         parent.SetRegAvailability (destination, freqFlagF);
       }
     }
-    
+
     void SequenceSplitter::InputVisitor::OpCompare (const RegisterPtr& destination,
                                                     CompareOp op,
                                                     const RegisterPtr& source1,
@@ -469,15 +469,15 @@ namespace s1
         SplitBinaryOp (destination, newSeqOp, source1, source2);
         return;
       }
-      
+
       PromoteRegister (source1, freqFragment);
       PromoteRegister (source2, freqFragment);
-      
+
       // Add operation to fragment frequency
       parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
       parent.SetRegAvailability (destination, freqFlagF);
     }
-                              
+
     void SequenceSplitter::InputVisitor::OpLogic (const RegisterPtr& destination,
                                                   LogicOp op,
                                                   const RegisterPtr& source1,
@@ -493,33 +493,33 @@ namespace s1
         SplitBinaryOp (destination, newSeqOp, source1, source2);
         return;
       }
-      
+
       PromoteRegister (source1, freqFragment);
       PromoteRegister (source2, freqFragment);
-      
+
       // Add operation to fragment frequency
       parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
       parent.SetRegAvailability (destination, freqFlagF);
     }
-    
+
     void SequenceSplitter::InputVisitor::OpUnary (const RegisterPtr& destination,
                                                   UnaryOp op,
                                                   const RegisterPtr& source)
     {
       bool lerpSafe (false);
-      
+
       switch (op)
       {
       case Neg:
       case Not:
         /* Negation/logical NOT are interpolation-safe */
-        lerpSafe = true;	
+        lerpSafe = true;
         break;
       case Inv:
         /* Bit-wise invert isn't */
         break;
       }
-      
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpUnaryOp (destination, op, source));
       unsigned int srcAvail = parent.GetRegAvailability (source);
       if (lerpSafe)
@@ -531,13 +531,13 @@ namespace s1
       {
         // Promote inputs to fragment freq
         PromoteRegister (source, freqFragment);
-        
+
         // Add operation to fragment frequency
         parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
         parent.SetRegAvailability (destination, freqFlagF);
       }
     }
-    
+
     void SequenceSplitter::InputVisitor::SplitBlock (const SequencePtr& blockSequence,
                                                      const Sequence::IdentifierToRegMap& identToRegIDs_imp,
                                                      const Sequence::IdentifierToRegMap& identToRegIDs_exp,
@@ -548,7 +548,7 @@ namespace s1
       AvailabilityMap regAvailability;
       SequenceSplitter blockSplitter (parent.progSplit, mergeUniformToVF);
       blockSplitter.SetInputSequence (blockSequence);
-      
+
       // Forward frequencies to subSeqSplitter
       const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
       for (Sequence::RegisterImpMappings::const_iterator imports = blockImports.begin();
@@ -563,9 +563,9 @@ namespace s1
         unsigned int reg_subseqAvail = parent.GetRegAvailability (reg);
         blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
       }
-      
+
       blockSplitter.PerformSplit();
-      
+
       Sequence::IdentifierToRegMap newIdentToRegIDs_imp (identToRegIDs_imp);
       Sequence::IdentifierToRegMap newIdentToRegIDs_exp (identToRegIDs_exp);
       // Propagate registers transferred by nested block to this block
@@ -591,21 +591,21 @@ namespace s1
             regName = parent.GetTransferIdent (reg->GetName());
             newReg = parent.AllocateRegister (reg->GetOriginalType(), regName);
             transferRegsMap[reg] = std::make_pair (newReg, regName);
-            
+
             newIdentToRegIDs_imp[regName] = newReg;
             newIdentToRegIDs_exp[regName] = newReg;
-          
+
             parent.SetRegAvailability (newReg, blockSplitter.GetRegAvailability (reg));
             srcSeqBuilder->SetExport (regName, reg);
           }
-          
+
           dstSeqBuilder->SetImport (reg, regName);
           parent.transferRegs[f].push_back (newReg);
           //parent.SetRegAvailability (newReg, (1 << f) | (1 << (f+1)));
           //parent.SetRegAvailability (newReg, (1 << f));
         }
       }
-      
+
       // Update availability flags
       const Sequence::RegisterExpMappings& blockExports = blockSequence->GetExports();
       for (Sequence::RegisterExpMappings::const_iterator exports = blockExports.begin();
@@ -616,11 +616,11 @@ namespace s1
         assert (expRegID != newIdentToRegIDs_exp.end());
         RegisterPtr reg (expRegID->second);
         RegisterPtr reg_subseq (exports->second);
-        
+
         unsigned int reg_subseqAvail = blockSplitter.GetRegAvailability (reg_subseq);
         parent.SetRegAvailability (reg, reg_subseqAvail);
       }
-      
+
       for (int f = 0; f < freqNum; f++)
       {
         if (!keepEmpty && (blockSplitter.outputSeqBuilder[f]->GetNumOps() == 0)) continue;
@@ -629,14 +629,14 @@ namespace s1
         newSequences[f].identToRegs_exp = newIdentToRegIDs_exp;
       }
     }
-    
+
     void SequenceSplitter::InputVisitor::OpBlock (const SequencePtr& subSequence,
                                                   const Sequence::IdentifierToRegMap& identToRegIDs_imp,
                                                   const Sequence::IdentifierToRegMap& identToRegIDs_exp)
     {
       SplitResult newSeqOps[freqNum];
       SplitBlock (subSequence, identToRegIDs_imp, identToRegIDs_exp, newSeqOps);
-      
+
       for (int f = 0; f < freqNum; f++)
       {
         if (!newSeqOps[f].seqBuilder) continue;
@@ -654,7 +654,7 @@ namespace s1
                                                                        RenamedBranchOutputs& outputs)
     {
       SequenceBuilderPtr seqBuilder (splitRes.seqBuilder);
-      
+
       Sequence::RegisterExpMappings newExports;
       Sequence::RegisterExpMappings& seqExports (seqBuilder->GetExports());
       Sequence::IdentifierToRegMap newIdentToRegIDsExp (splitRes.identToRegs_exp);
@@ -677,16 +677,16 @@ namespace s1
         newIdent.append ("$");
         newIdent.append (suffix);
         newIdent.append (uc::Char ('0' + f));
-        
+
         RegisterPtr newReg (parent.AllocateRegister (oldReg->GetOriginalType(), newIdent));
         newExports[newIdent] = seqExp->second;
         newIdentToRegIDsExp[newIdent] = newReg;
-        
+
         parent.SetRegAvailability (newReg, 1 << f);
         outputs.emplace_back (oldReg, newReg);
       }
       seqExports = newExports;
-    
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (seqBuilder->GetSequence(),
                                                                  splitRes.identToRegs_imp,
                                                                  newIdentToRegIDsExp));
@@ -699,42 +699,42 @@ namespace s1
                                                                                                int f)
     {
       SequenceBuilderPtr seqBuilder (splitRes.seqBuilder);
-      
+
       Sequence::IdentifierToRegMap newIdentToRegIDsImp (splitRes.identToRegs_imp);
       Sequence::IdentifierToRegMap newIdentToRegIDsExp (splitRes.identToRegs_exp);
-      
+
       for (int g = 0; g < f; g++)
       {
         for(const RegisterPair& rename : renames[g])
         {
           PromoteRegister (rename.second, f);
-          
+
           intermediate::Sequence::RegisterPtr srcRegPtr (rename.second);
           intermediate::Sequence::RegisterPtr dstRegPtr (rename.first);
-          
+
           uc::String newIdent (dstRegPtr->GetName());
           newIdent.append ("$");
           newIdent.append (suffix);
           newIdent.append (uc::Char ('0' + f));
-          
+
           RegisterPtr newReg (seqBuilder->AllocateRegister (srcRegPtr->GetOriginalType(), newIdent));
           seqBuilder->SetImport (newReg, srcRegPtr->GetName());
           seqBuilder->SetExport (dstRegPtr->GetName(), newReg);
 
           newIdentToRegIDsImp[srcRegPtr->GetName()] = rename.second;
           newIdentToRegIDsExp[dstRegPtr->GetName()] = rename.first;
-          
+
           parent.SetRegAvailability (rename.first, parent.GetRegAvailability (rename.first));
         }
       }
-    
+
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (seqBuilder->GetSequence(),
                                                                  newIdentToRegIDsImp,
                                                                  newIdentToRegIDsExp));
-      
+
       return newSeqOp;
     }
-    
+
     void SequenceSplitter::InputVisitor::OpBranch (const RegisterPtr& conditionReg,
                                                    const SequenceOpPtr& seqOpIf,
                                                    const SequenceOpPtr& seqOpElse)
@@ -745,7 +745,7 @@ namespace s1
       boost::intrusive_ptr<intermediate::SequenceOpBlock> elseBlock (
         boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpElse));
       assert (elseBlock);
-      
+
       // Compute highest frequency of condition and all sequence inputs
       std::vector<RegisterPtr> allInputs;
       allInputs.push_back (conditionReg);
@@ -759,7 +759,7 @@ namespace s1
           Sequence::IdentifierToRegMap::const_iterator regIt (identToRegs.find (imports->first));
           assert (regIt != identToRegs.end());
           allInputs.push_back (regIt->second);
-        }      
+        }
       }
       {
         const Sequence::IdentifierToRegMap& identToRegs (elseBlock->GetImportIdentToRegs());
@@ -771,14 +771,14 @@ namespace s1
           Sequence::IdentifierToRegMap::const_iterator regIt (identToRegs.find (imports->first));
           assert (regIt != identToRegs.end());
           allInputs.push_back (regIt->second);
-        }      
+        }
       }
-      
+
       // Propagate condition and all sequence inputs to highest frequency
       ComputeCombinedFreqs (allInputs);
       int highestFreq = ComputeHighestFreq (allInputs);
       unsigned int commonFreqs = PromoteAll (highestFreq, allInputs);
-      
+
       // Output branch op to frequencies supported by condition and all sequence inputs
       SplitResult newIfOps[freqNum];
       {
@@ -796,20 +796,20 @@ namespace s1
       }
       // Frequency at which the condition needs to be evaluated
       int condFreq = HighestFreq (commonFreqs);
-      
+
       RenamedBranchOutputs ifRenames[freqNum];
       RenamedBranchOutputs elseRenames[freqNum];
-      
+
       for (int f = 0; f < freqNum; f++)
       {
         assert(newIfOps[f].seqBuilder != 0);
         assert(newElseOps[f].seqBuilder != 0);
-        
+
         if (f == condFreq)
         {
           SequenceOpPtr augmentedIfOp (AugmentBranchBlockWithRenames ("if", newIfOps[f], ifRenames, f));
           SequenceOpPtr augmentedElseOp (AugmentBranchBlockWithRenames ("else", newElseOps[f], elseRenames, f));
-          
+
           SequenceOpPtr newSeqOp (new intermediate::SequenceOpBranch (conditionReg,
                                                                       augmentedIfOp,
                                                                       augmentedElseOp));
@@ -822,7 +822,7 @@ namespace s1
         }
       }
     }
-    
+
     void SequenceSplitter::InputVisitor::OpWhile (const RegisterPtr& conditionReg,
                                                   const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
                                                   const SequenceOpPtr& seqOpBody)
@@ -831,7 +831,7 @@ namespace s1
         boost::dynamic_pointer_cast<intermediate::SequenceOpBlock> (seqOpBody));
       assert (body);
 
-      /* Do a couple of "dry-run" splits to determine the required frequencies 
+      /* Do a couple of "dry-run" splits to determine the required frequencies
          for looped vars */
       AvailabilityMap loopedRegFreqs;
       // Frequencies of looped regs start out with the frequency of the first-loop reg.
@@ -848,7 +848,7 @@ namespace s1
         const Sequence::IdentifierToRegMap& identToRegIDs_exp = body->GetExportIdentToRegs();
         SequenceSplitter blockSplitter (dryRunProgSplit, false);
         blockSplitter.SetInputSequence (blockSequence);
-        
+
         // Forward frequencies to subSeqSplitter
         const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
         for (Sequence::RegisterImpMappings::const_iterator imports = blockImports.begin();
@@ -868,9 +868,9 @@ namespace s1
             reg_subseqAvail = parent.GetRegAvailability (reg);
           blockSplitter.SetLocalRegFreqFlags (reg_subseq, reg_subseqAvail);
         }
-                
+
         blockSplitter.PerformSplit();
-        
+
         // Update frequencies of looped regs
         const Sequence::RegisterExpMappings& blockExports = blockSequence->GetExports();
         for (Sequence::RegisterExpMappings::const_iterator exports = blockExports.begin();
@@ -881,13 +881,13 @@ namespace s1
           assert (expRegID != identToRegIDs_imp.end());
           RegisterPtr reg (expRegID->second);
           RegisterPtr reg_subseq (exports->second);
-          
+
           AvailabilityMap::iterator loopedRegFreq = loopedRegFreqs.find (reg);
           if (loopedRegFreq == loopedRegFreqs.end()) continue;
           loopedRegFreq->second = blockSplitter.GetRegAvailability (reg_subseq);
         }
       }
-      
+
       // Take "dry-run" frequencies for looped regs and promote actual loop input registers
       for(const LoopedReg& loopedReg : loopedRegs)
       {
@@ -899,7 +899,7 @@ namespace s1
         if (loopedReg.second != conditionReg)
           parent.SetRegAvailability (loopedReg.second, 1 << freq);
       }
-      
+
       // Compute highest frequency of condition and all loop inputs
       boost::unordered_set<RegisterPtr> allInputs;
       {
@@ -908,7 +908,7 @@ namespace s1
              ++loopedReg)
         {
           allInputs.insert (loopedReg->first);
-        }      
+        }
 
         SequencePtr blockSequence (body->GetSequence());
         const Sequence::RegisterImpMappings& blockImports = blockSequence->GetImports();
@@ -927,7 +927,7 @@ namespace s1
          frequency after a loop */
       unsigned int combinedFreqs = ComputeCombinedFreqs (allInputs);
       int highestFreq = HighestFreq (combinedFreqs);
-      
+
       /* Generating per vertex code for loops is problematic,
        * so hack to avoid that */
       if (highestFreq == freqVertex)
@@ -957,17 +957,17 @@ namespace s1
               reg = loopedReg->first;
               break;
             }
-          }      
-          
+          }
+
           PromoteRegister (reg, highestFreq);
           /* Force registers to be available on uniform and/or fragment freq,
            * but not vertex freq - forces no loop ops to be put into vertex freq */
           unsigned int avail = parent.GetRegAvailability (reg);
           avail &= ~freqFlagV;
           parent.SetRegAvailability (reg, avail);
-        }      
+        }
       }
-      
+
       // Output branch op to frequencies supported by condition and all sequence inputs
       SplitResult newOps[freqNum];
       /* @@@ Merging the uniform sequence into vertex+fragment sequence is a trick to ensure
@@ -985,7 +985,7 @@ namespace s1
       {
         assert((combinedFreqs & (1 << highestFreq)) != 0);
         assert(newOps[highestFreq].seqBuilder != 0);
-        
+
         std::vector<LoopedReg> newLoopedRegs;
         for(const LoopedReg& loopedReg : loopedRegs)
         {
@@ -993,7 +993,7 @@ namespace s1
           if ((avail & ((1 << highestFreq) | freqFlagU)) != 0)
             newLoopedRegs.push_back (loopedReg);
         }
-        
+
         SequenceOpPtr newSeqOp (new intermediate::SequenceOpBlock (newOps[highestFreq].seqBuilder->GetSequence(),
                                                                    newOps[highestFreq].identToRegs_imp,
                                                                    newOps[highestFreq].identToRegs_exp));
@@ -1011,11 +1011,11 @@ namespace s1
         parent.SetRegAvailability (loopedReg.second, 1 << highestFreq);
       }
     }
-    
+
     void SequenceSplitter::InputVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
     {
       SequenceOpPtr newSeqOp (new intermediate::SequenceOpReturn (outParamVals));
-      
+
       /* 'return': only execute on fragment frequency */
       for(const RegisterPtr& reg : outParamVals)
       {
@@ -1023,7 +1023,7 @@ namespace s1
       }
       parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
     }
-    
+
     void SequenceSplitter::InputVisitor::OpFunctionCall (const uc::String& funcIdent,
                                                          const std::vector<RegisterPtr>& inParams,
                                                          const std::vector<RegisterPtr>& outParams)
@@ -1033,19 +1033,19 @@ namespace s1
         To know the frequencies of the output params/return value, we have to analyze
         the function body, taking into account the frequencies of the input params
         (very likely the output depends on the input)...
-       
+
         Recursion:
         When coming upon an input frequency combination that is currently split,
         guess the frequencies of output parameters by choosing "all" frequencies...
        */
-      
+
       std::vector<unsigned int> inputParamFreqFlags;
       for(const RegisterPtr& reg : inParams)
       {
         inputParamFreqFlags.push_back (parent.GetRegAvailability (reg));
       }
       auto splitResult = parent.progSplit.GetSplitFunctions (funcIdent, inputParamFreqFlags);
-        
+
       // Set availability of output values
       assert (splitResult.outputParamFreqs.size() == outParams.size());
       for (size_t i = 0; i < outParams.size(); i++)
@@ -1053,7 +1053,7 @@ namespace s1
         const RegisterPtr& reg = outParams[i];
         parent.SetRegAvailability (reg, splitResult.outputParamFreqs[i]);
       }
-      
+
       // Generate lists of registers used for 'transfer' between frequencies
       std::vector<RegisterPtr> transferIn[freqNum];
       std::vector<RegisterPtr> transferOut[freqNum];
@@ -1062,37 +1062,37 @@ namespace s1
         for(const ProgramSplitter::FunctionTransferValues& tfv : splitResult.transferValues[f])
         {
           uc::String transferIdent (parent.GetTransferIdent (tfv.identifier));
-          
+
           RegisterPtr reg (parent.AllocateRegister (tfv.valueType, transferIdent));
-          
+
           transferOut[f].push_back (reg);
           transferIn[f+1].push_back (reg);
           parent.transferRegs[f].push_back (reg);
           parent.SetRegAvailability (reg, 1 << (f + 1));
         }
       }
-      
-      
+
+
       for (int f = 0; f < freqNum; f++)
       {
         if (splitResult.idents[f].isEmpty()) continue;
 
         if (splitResult.forceInputPropagation)
           PromoteAll (f, inParams);
-        
+
         // Add 'transfer' parameters to function call
         std::vector<RegisterPtr> newOutParams (outParams);
         newOutParams.insert (newOutParams.end(), transferOut[f].begin(), transferOut[f].end());
         std::vector<RegisterPtr> newInParams (inParams);
         newInParams.insert (newInParams.end(), transferIn[f].begin(), transferIn[f].end());
-        
+
         SequenceOpPtr newOp (new intermediate::SequenceOpFunctionCall (splitResult.idents[f],
                                                                        newInParams,
                                                                        newOutParams));
         parent.outputSeqBuilder[f]->AddOp (newOp);
       }
     }
-                          
+
     void SequenceSplitter::InputVisitor::OpBuiltinCall (const RegisterPtr& destination,
                                                         intermediate::BuiltinFunction what,
                                                         const std::vector<RegisterPtr>& inParams)
@@ -1122,12 +1122,12 @@ namespace s1
         /* All others: not interpolation-safe */
         break;
       }
-      
+
       if (lerpSafe)
       {
         int highestFreq = ComputeHighestFreq (inParams);
         unsigned int commonFreqs = PromoteAll (highestFreq, inParams);
-        
+
         parent.SetRegAvailability (destination, commonFreqs);
         SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
                                                                          what,
@@ -1137,7 +1137,7 @@ namespace s1
       else
       {
         PromoteAll (freqFragment, inParams);
-        
+
         parent.SetRegAvailability (destination, freqFlagF);
         SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
                                                                          what,
@@ -1145,20 +1145,20 @@ namespace s1
         parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
       }
     }
-    
+
     //-----------------------------------------------------------------------
-    
+
     SequenceSplitter::SequenceSplitter (ProgramSplitter& progSplit,
                                         bool mergeUniformToVF)
-     : progSplit (progSplit), mergeUniformToVF (mergeUniformToVF)					
+     : progSplit (progSplit), mergeUniformToVF (mergeUniformToVF)
     {
     }
-    
+
     void SequenceSplitter::SetInputFreqFlags (const uc::String& input, unsigned int freqFlags)
     {
       paramFlags[input] = freqFlags;
     }
-    
+
     void SequenceSplitter::PerformSplit ()
     {
       transferIdentNum = 0;
@@ -1167,7 +1167,7 @@ namespace s1
       for (int f = 0; f < freqNum; f++)
       {
         outputSeqBuilder[f] = boost::make_shared<intermediate::SequenceBuilder> ();
-        
+
       }
       for (intermediate::Sequence::RegisterImpMappings::const_iterator impMap = inputSeq->GetImports().begin();
            impMap != inputSeq->GetImports().end();
@@ -1177,7 +1177,7 @@ namespace s1
         {
           outputSeqBuilder[f]->SetImport (impMap->second, impMap->first);
         }
-        
+
         ParamMap::const_iterator inputFreq = paramFlags.find (impMap->first);
         if (inputFreq != paramFlags.end())
         {
@@ -1194,11 +1194,11 @@ namespace s1
           outputSeqBuilder[f]->SetExport (expMap->first, expMap->second);
         }
       }
-      
+
       InputVisitor visitor (*this);
-      
+
       inputSeq->Visit (visitor);
-      
+
       for (int f = 0; f < freqNum; f++)
       {
         intermediate::Sequence::RegisterSet keepRegs;
@@ -1208,7 +1208,7 @@ namespace s1
           keepRegs.insert (transferRegs[f].begin(), transferRegs[f].end());
         outputSeqBuilder[f]->CleanUnusedImportsExports (keepRegs, keepRegs);
       }
-      
+
       // Insert 'uniform' sequence at start of both V/F sequences
       if (mergeUniformToVF)
       {
@@ -1248,7 +1248,7 @@ namespace s1
         outputSeqBuilder[freqVertex]->AddExports (outputSeqBuilder[freqUniform]->GetExports());
         outputSeqBuilder[freqFragment]->AddImports (outputSeqBuilder[freqUniform]->GetSequence()->GetImports());
         outputSeqBuilder[freqFragment]->AddExports (outputSeqBuilder[freqUniform]->GetExports());
-        
+
         outputSeqBuilder[freqUniform]->Clear ();
       }
     }
@@ -1260,7 +1260,7 @@ namespace s1
       {
         // Availability not given, guess.
         bool isImported = false;
-        
+
         for(const intermediate::Sequence::IdentRegPair& imp : inputSeq->GetImports())
         {
           if (imp.second == reg)
@@ -1289,7 +1289,7 @@ namespace s1
       FormatTransferIdent (transferIdent, origName, transferIdentNum++);
       return transferIdent;
     }
-    
+
     s1::intermediate::RegisterPtr
     SequenceSplitter::AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
                                         const uc::String& name)

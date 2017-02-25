@@ -30,13 +30,13 @@ namespace s1
       SequenceVisitor::ArithmeticOp op;
     public:
       SequenceOpArith (RegisterPtr destination,
-		       SequenceVisitor::ArithmeticOp op,
-		       RegisterPtr source1,
-		       RegisterPtr source2);
-      
+                       SequenceVisitor::ArithmeticOp op,
+                       RegisterPtr source1,
+                       RegisterPtr source2);
+
       void Visit (SequenceVisitor& visitor);
     };
-    
+
   } // namespace intermediate
 } // namespace s1
 

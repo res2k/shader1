@@ -28,24 +28,24 @@
 
 #include "ParserTestTraits.h"
 
-class ParserBlockTestSuite : public CxxTest::TestSuite 
+class ParserBlockTestSuite : public CxxTest::TestSuite
 {
   class TestParser : public s1::Parser
   {
   public:
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-		s1::parser::ErrorHandler& errorHandler)
+                s1::parser::ErrorHandler& errorHandler)
      : Parser (inputLexer, semanticsHandler, errorHandler) {}
-    
+
     using s1::Parser::ParseBlock;
   };
-  
+
   typedef TestSemanticsHandlerSloppyIdentifiers TestSemanticsHandler;
 public:
   void testBlockExpr (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("a = b;");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -54,20 +54,20 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  (a = b);\n");
+                     "  (a = b);\n");
   }
-  
+
   void testBlockStatementIncomplete (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("a = b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -76,20 +76,20 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "");
-  }  
-  
+                     "");
+  }
+
   void testBlockBranch (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("if (a) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -98,23 +98,23 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  if (a)\n"
-		     "  {\n"
-		     "    (c = d);\n"
-		     "  }\n");
+                     "  if (a)\n"
+                     "  {\n"
+                     "    (c = d);\n"
+                     "  }\n");
   }
-  
+
   void testBlockBranch2 (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("if (a) { c = d; } else { c = e; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -123,27 +123,27 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  if (a)\n"
-		     "  {\n"
-		     "    (c = d);\n"
-		     "  }\n"
-		     "  else\n"
-		     "  {\n"
-		     "    (c = e);\n"
-		     "  }\n");
+                     "  if (a)\n"
+                     "  {\n"
+                     "    (c = d);\n"
+                     "  }\n"
+                     "  else\n"
+                     "  {\n"
+                     "    (c = e);\n"
+                     "  }\n");
   }
-  
+
   void testBlockWhile (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("while (a) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -152,23 +152,23 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  while (a)\n"
-		     "  {\n"
-		     "    (c = d);\n"
-		     "  }\n");
+                     "  while (a)\n"
+                     "  {\n"
+                     "    (c = d);\n"
+                     "  }\n");
   }
-  
+
   void testBlockFor (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("for (a; b; b = b+1) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -177,23 +177,23 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  for (a; b; (b = (b + 1)))\n"
-		     "  {\n"
-		     "    (c = d);\n"
-		     "  }\n");
+                     "  for (a; b; (b = (b + 1)))\n"
+                     "  {\n"
+                     "    (c = d);\n"
+                     "  }\n");
   }
-  
+
   void testBlockNested (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("{ a = b; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -202,22 +202,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  {\n"
-		     "    (a = b);\n"
-		     "  }\n");
+                     "  {\n"
+                     "    (a = b);\n"
+                     "  }\n");
   }
-  
+
   void testBlockErrorRecovery (void)
   {
     using namespace s1::parser;
-    
+
     std::string inStr ("a = b error; c=d;");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -226,13 +226,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     s1::parser::ErrorHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
-    
+
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TestSemanticsHandler::TestBlock* testBlock = 
+    TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-		     "  (c = d);\n");
-  }  
+                     "  (c = d);\n");
+  }
 };

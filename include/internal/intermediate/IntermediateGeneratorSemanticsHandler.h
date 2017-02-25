@@ -34,16 +34,16 @@ namespace s1
     {
     protected:
       friend class ProgramFunction;
-      
+
       struct TypeImpl;
       struct NameImpl;
       class FunctionImpl;
       class ScopeImpl;
       class BlockImpl;
-      
+
       class Builtin;
       typedef boost::shared_ptr<Builtin> BuiltinPtr;
-      
+
       class CommandImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
@@ -59,23 +59,23 @@ namespace s1
       class TypeConstructorExpressionImpl;
       class UnaryExpressionImpl;
       class VariableExpressionImpl;
-      
+
       typedef boost::shared_ptr<NameImpl> NameImplPtr;
       typedef boost::unordered_set<NameImplPtr> NameImplSet;
-      
+
       typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
       TypeImplPtr voidType;
       TypeImplPtr boolType;
       TypeImplPtr intType;
       TypeImplPtr uintType;
       TypeImplPtr floatType;
-      
+
       static std::string GetTypeString (const TypeImplPtr& type);
-      
+
       typedef boost::shared_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
       ScopeImplPtr globalScope;
-      
+
       // Helper functions for SetupBuiltins
       Scope::FunctionFormalParameters MakeFormalParameters1 (const TypePtr& type);
       Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& type);
@@ -97,7 +97,7 @@ namespace s1
       static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
       static std::string GetTypeString (const TypePtr& type);
       /**@}*/
-      
+
       /**\name Attribute utilities
        * @{ */
       struct Attribute : public CommonSemanticsHandler::Attribute
@@ -112,12 +112,12 @@ namespace s1
         { return (swizzleComps >> (num*2)) & 3; }
       };
       TypeImplPtr GetAttributeType (const TypeImplPtr& expressionType,
-				    const Attribute& attr);
+                                    const Attribute& attr);
       /** @} */
-      
+
       IntermediateGeneratorSemanticsHandler ();
       ~IntermediateGeneratorSemanticsHandler ();
-      
+
       /**\name Basic types
        * @{ */
       TypeImplPtr GetVoidType() const { return voidType; }
@@ -126,17 +126,17 @@ namespace s1
       TypeImplPtr GetUintType() const { return uintType; }
       TypeImplPtr GetFloatType() const { return floatType; }
       /** @} */
-      
+
       /**\name Register handling
        * @{ */
       enum RegisterClassification
       {
-	Variable = 'v',
-	Intermediate = 'i',
-	Dummy = 'd',
-	Imported = 'm',
-	Condition = 'c',
-	Index = 'x'
+        Variable = 'v',
+        Intermediate = 'i',
+        Dummy = 'd',
+        Imported = 'm',
+        Condition = 'c',
+        Index = 'x'
       };
       /**
        * Allocate a new register.
@@ -144,16 +144,16 @@ namespace s1
        */
       static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const TypePtr& type,
                                            RegisterClassification classify,
-				           const uc::String& name = uc::String ());
+                                           const uc::String& name = uc::String ());
       /// Create a new generation of a register
       static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
-      
+
       void GenerateCast (SequenceBuilder& seqBuilder,
-			 const RegisterPtr& castDestination,
-			 const TypeImplPtr& typeDestination,
-			 const RegisterPtr& castSource,
-			 const TypeImplPtr& typeSource);
+                         const RegisterPtr& castDestination,
+                         const TypeImplPtr& typeDestination,
+                         const RegisterPtr& castSource,
+                         const TypeImplPtr& typeSource);
 
       /// Mark the program as “completed”. Required before GetProgram() is called
       void CompleteProgram ();
@@ -165,51 +165,51 @@ namespace s1
       TypePtr CreateSamplerType (SamplerType dim);
       TypePtr CreateArrayType (TypePtr baseType);
       TypePtr CreateVectorType (TypePtr baseType,
-				unsigned int components);
+                                unsigned int components);
       TypePtr CreateMatrixType (TypePtr baseType,
-				unsigned int columns,
-				unsigned int rows);
-      
+                                unsigned int columns,
+                                unsigned int rows);
+
       ExpressionPtr CreateConstBoolExpression (bool value);
       ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr);
       ExpressionPtr CreateVariableExpression (NamePtr name);
       ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-					   const uc::String& attr);
+                                           const uc::String& attr);
       ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
-					      ExpressionPtr elementIndexExpr);
+                                              ExpressionPtr elementIndexExpr);
       ExpressionPtr CreateAssignExpression (ExpressionPtr target,
-					    ExpressionPtr value);
-					    
+                                            ExpressionPtr value);
+
       ExpressionPtr CreateArithmeticExpression (ArithmeticOp op,
-						ExpressionPtr operand1,
-						ExpressionPtr operand2);
+                                                ExpressionPtr operand1,
+                                                ExpressionPtr operand2);
       ExpressionPtr CreateUnaryExpression (UnaryOp op,
-					   ExpressionPtr operand);
+                                           ExpressionPtr operand);
       ExpressionPtr CreateTernaryExpression (ExpressionPtr condition,
-					     ExpressionPtr ifExpr,
-					     ExpressionPtr thenExpr);
+                                             ExpressionPtr ifExpr,
+                                             ExpressionPtr thenExpr);
       ExpressionPtr CreateComparisonExpression (CompareOp op,
-						ExpressionPtr operand1,
-						ExpressionPtr operand2);
+                                                ExpressionPtr operand1,
+                                                ExpressionPtr operand2);
       ExpressionPtr CreateLogicExpression (LogicOp op,
-					   ExpressionPtr operand1,
-					   ExpressionPtr operand2);
+                                           ExpressionPtr operand1,
+                                           ExpressionPtr operand2);
 
       ExpressionPtr CreateFunctionCallExpression (NamePtr functionName,
-						  const ExpressionVector& params);
-      
+                                                  const ExpressionVector& params);
+
       ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
-						     const ExpressionVector& params);
-      
+                                                     const ExpressionVector& params);
+
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel,
-			    const TypePtr& returnType);
+                            const TypePtr& returnType);
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
       { return CreateScope (parentScope, scopeLevel, TypePtr ()); }
-      
+
       BlockPtr CreateBlock (ScopePtr parentScope);
       /** @} */
     };
-    
+
   } // namespace intermediate
 } // namespace s1
 
