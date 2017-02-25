@@ -99,34 +99,37 @@ namespace s1
                                               uc::String ("pow"),
                                               MakeFormalParameters2 (floatType)));
 
+      uc::String id_dot ("dot");
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (intermediate::dot,
                                                 intType,
-                                                uc::String ("dot"),
+                                                id_dot,
                                                 MakeFormalParameters2 (vecTypeInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::dot,
                                                 uintType,
-                                                uc::String ("dot"),
+                                                id_dot,
                                                 MakeFormalParameters2 (vecTypeUInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::dot,
                                                 floatType,
-                                                uc::String ("dot"),
+                                                id_dot,
                                                 MakeFormalParameters2 (vecTypeFloat[c])));
       }
+      uc::String id_cross ("cross");
       scope->AddBuiltinFunction (new Builtin (intermediate::cross,
                                               vecTypeInt[3],
-                                              uc::String ("cross"),
+                                              id_cross,
                                               MakeFormalParameters2 (vecTypeInt[3])));
       scope->AddBuiltinFunction (new Builtin (intermediate::cross,
                                               vecTypeUInt[3],
-                                              uc::String ("cross"),
+                                              id_cross,
                                               MakeFormalParameters2 (vecTypeUInt[3])));
       scope->AddBuiltinFunction (new Builtin (intermediate::cross,
                                               vecTypeFloat[3],
-                                              uc::String ("cross"),
+                                              id_cross,
                                               MakeFormalParameters2 (vecTypeFloat[3])));
 
+      uc::String id_mul ("mul");
       for (unsigned int l = 1; l < 5; l++)
       {
         for (unsigned int m = 1; m < 5; m++)
@@ -135,15 +138,15 @@ namespace s1
           {
             scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                     matTypeInt[l][n],
-                                                    uc::String ("mul"),
+                                                    id_mul,
                                                     MakeFormalParameters2 (matTypeInt[l][m], matTypeInt[m][n])));
             scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                     matTypeUInt[l][n],
-                                                    uc::String ("mul"),
+                                                    id_mul,
                                                     MakeFormalParameters2 (matTypeUInt[l][m], matTypeUInt[m][n])));
             scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                     matTypeFloat[l][n],
-                                                    uc::String ("mul"),
+                                                    id_mul,
                                                     MakeFormalParameters2 (matTypeFloat[l][m], matTypeFloat[m][n])));
           }
         }
@@ -155,15 +158,15 @@ namespace s1
         {
           scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                   vecTypeInt[n],
-                                                  uc::String ("mul"),
+                                                  id_mul,
                                                   MakeFormalParameters2 (vecTypeInt[m], matTypeInt[m][n])));
           scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                   vecTypeUInt[n],
-                                                  uc::String ("mul"),
+                                                  id_mul,
                                                   MakeFormalParameters2 (vecTypeUInt[m], matTypeUInt[m][n])));
           scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                   vecTypeFloat[n],
-                                                  uc::String ("mul"),
+                                                  id_mul,
                                                   MakeFormalParameters2 (vecTypeFloat[m], matTypeFloat[m][n])));
         }
       }
@@ -174,156 +177,164 @@ namespace s1
         {
           scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                   vecTypeInt[l],
-                                                  uc::String ("mul"),
+                                                  id_mul,
                                                   MakeFormalParameters2 (matTypeInt[l][m], vecTypeInt[m])));
           scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                   vecTypeUInt[l],
-                                                  uc::String ("mul"),
+                                                  id_mul,
                                                   MakeFormalParameters2 (matTypeUInt[l][m], vecTypeUInt[m])));
           scope->AddBuiltinFunction (new Builtin (intermediate::mul,
                                                   vecTypeFloat[l],
-                                                  uc::String ("mul"),
+                                                  id_mul,
                                                   MakeFormalParameters2 (matTypeFloat[l][m], vecTypeFloat[m])));
         }
       }
 
+      uc::String id_normalize ("normalize");
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (intermediate::normalize,
                                                 vecTypeFloat[c],
-                                                uc::String ("normalize"),
+                                                id_normalize,
                                                 MakeFormalParameters1 (vecTypeInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::normalize,
                                                 vecTypeFloat[c],
-                                                uc::String ("normalize"),
+                                                id_normalize,
                                                 MakeFormalParameters1 (vecTypeUInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::normalize,
                                                 vecTypeFloat[c],
-                                                uc::String ("normalize"),
+                                                id_normalize,
                                                 MakeFormalParameters1 (vecTypeFloat[c])));
       }
 
+      uc::String id_length ("length");
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (intermediate::length,
                                                 floatType,
-                                                uc::String ("length"),
+                                                id_length,
                                                 MakeFormalParameters1 (vecTypeInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::length,
                                                 floatType,
-                                                uc::String ("length"),
+                                                id_length,
                                                 MakeFormalParameters1 (vecTypeUInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::length,
                                                 floatType,
-                                                uc::String ("length"),
+                                                id_length,
                                                 MakeFormalParameters1 (vecTypeFloat[c])));
       }
 
+      uc::String id_tex1D ("tex1D");
       scope->AddBuiltinFunction (new Builtin (intermediate::tex1D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex1D"),
+                                              id_tex1D,
                                               MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeInt[1])));
       scope->AddBuiltinFunction (new Builtin (intermediate::tex1D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex1D"),
+                                              id_tex1D,
                                               MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeUInt[1])));
       scope->AddBuiltinFunction (new Builtin (intermediate::tex1D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex1D"),
+                                              id_tex1D,
                                               MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeFloat[1])));
 
+      uc::String id_tex2D ("tex2D");
       scope->AddBuiltinFunction (new Builtin (intermediate::tex2D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex2D"),
+                                              id_tex2D,
                                               MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeInt[2])));
       scope->AddBuiltinFunction (new Builtin (intermediate::tex2D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex2D"),
+                                              id_tex2D,
                                               MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeUInt[2])));
       scope->AddBuiltinFunction (new Builtin (intermediate::tex2D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex2D"),
+                                              id_tex2D,
                                               MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeFloat[2])));
 
+      uc::String id_tex3D ("tex3D");
       scope->AddBuiltinFunction (new Builtin (intermediate::tex3D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex3D"),
+                                              id_tex3D,
                                               MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeInt[3])));
       scope->AddBuiltinFunction (new Builtin (intermediate::tex3D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex3D"),
+                                              id_tex3D,
                                               MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeUInt[3])));
       scope->AddBuiltinFunction (new Builtin (intermediate::tex3D,
                                               vecTypeFloat[4],
-                                              uc::String ("tex3D"),
+                                              id_tex3D,
                                               MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeFloat[3])));
 
+      uc::String id_texCUBE ("texCUBE");
       scope->AddBuiltinFunction (new Builtin (intermediate::texCUBE,
                                               vecTypeFloat[4],
-                                              uc::String ("texCUBE"),
+                                              id_texCUBE,
                                               MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeInt[3])));
       scope->AddBuiltinFunction (new Builtin (intermediate::texCUBE,
                                               vecTypeFloat[4],
-                                              uc::String ("texCUBE"),
+                                              id_texCUBE,
                                               MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeUInt[3])));
       scope->AddBuiltinFunction (new Builtin (intermediate::texCUBE,
                                               vecTypeFloat[4],
-                                              uc::String ("texCUBE"),
+                                              id_texCUBE,
                                               MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeFloat[3])));
 
+      uc::String id_min ("min");
       scope->AddBuiltinFunction (new Builtin (intermediate::min,
                                               intType,
-                                              uc::String ("min"),
+                                              id_min,
                                               MakeFormalParameters2 (intType)));
       scope->AddBuiltinFunction (new Builtin (intermediate::min,
                                               uintType,
-                                              uc::String ("min"),
+                                              id_min,
                                               MakeFormalParameters2 (uintType)));
       scope->AddBuiltinFunction (new Builtin (intermediate::min,
                                               floatType,
-                                              uc::String ("min"),
+                                              id_min,
                                               MakeFormalParameters2 (floatType)));
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (intermediate::min,
                                                 vecTypeInt[c],
-                                                uc::String ("min"),
+                                                id_min,
                                                 MakeFormalParameters2 (vecTypeInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::min,
                                                 vecTypeUInt[c],
-                                                uc::String ("min"),
+                                                id_min,
                                                  MakeFormalParameters2 (vecTypeUInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::min,
                                                 vecTypeFloat[c],
-                                                uc::String ("min"),
+                                                id_min,
                                                 MakeFormalParameters2 (vecTypeFloat[c])));
       }
 
+      uc::String id_max ("max");
       scope->AddBuiltinFunction (new Builtin (intermediate::max,
                                               intType,
-                                              uc::String ("max"),
+                                              id_max,
                                               MakeFormalParameters2 (intType)));
       scope->AddBuiltinFunction (new Builtin (intermediate::max,
                                               uintType,
-                                              uc::String ("max"),
+                                              id_max,
                                               MakeFormalParameters2 (uintType)));
       scope->AddBuiltinFunction (new Builtin (intermediate::max,
                                               floatType,
-                                              uc::String ("max"),
+                                              id_max,
                                               MakeFormalParameters2 (floatType)));
       for (unsigned int c = 1; c < 5; c++)
       {
         scope->AddBuiltinFunction (new Builtin (intermediate::max,
                                                 vecTypeInt[c],
-                                                uc::String ("max"),
+                                                id_max,
                                                 MakeFormalParameters2 (vecTypeInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::max,
                                                 vecTypeUInt[c],
-                                                uc::String ("max"),
+                                                id_max,
                                                 MakeFormalParameters2 (vecTypeUInt[c])));
         scope->AddBuiltinFunction (new Builtin (intermediate::max,
                                                 vecTypeFloat[c],
-                                                uc::String ("max"),
+                                                id_max,
                                                 MakeFormalParameters2 (vecTypeFloat[c])));
       }
     }
