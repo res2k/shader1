@@ -318,6 +318,12 @@ namespace s1
 
 #if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::StringArg StringArg;
+
+  using cxxapi::u8;
+  using cxxapi::u16;
+  using cxxapi::u32;
+  using cxxapi::wcs;
+  using cxxapi::strobj;
 #endif // !defined(S1_BUILD)
 } // namespace s1
 
