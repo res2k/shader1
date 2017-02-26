@@ -234,6 +234,18 @@ namespace s1
         EmitAssign (destination, rside.c_str ());
       }
 
+      const char* SequenceCodeGenerator::CodegenVisitor::SamplingFunction (intermediate::SequenceVisitor::SampleTextureOp op) const
+      {
+        switch (op)
+        {
+        case intermediate::SequenceVisitor::tex1D:    return "tex1D";
+        case intermediate::SequenceVisitor::tex2D:    return "tex2D";
+        case intermediate::SequenceVisitor::tex3D:    return "tex3D";
+        case intermediate::SequenceVisitor::texCUBE:  return "texCUBE";
+        }
+        return nullptr;
+      }
+
       void SequenceCodeGenerator::CodegenVisitor::OpConstBool (const RegisterPtr& destination,
                                                                bool value)
       {
@@ -693,14 +705,7 @@ namespace s1
                                                                    const RegisterPtr& coord)
       {
         AnnotatingVisitor::OpSampleTexture (destination, what, sampler, coord);
-        const char* functionName = nullptr;
-        switch (what)
-        {
-        case intermediate::SequenceVisitor::tex1D:    functionName = "tex1D";   break;
-        case intermediate::SequenceVisitor::tex2D:    functionName = "tex2D";   break;
-        case intermediate::SequenceVisitor::tex3D:    functionName = "tex3D";   break;
-        case intermediate::SequenceVisitor::texCUBE:  functionName = "texCUBE"; break;
-        }
+        const char* functionName = SamplingFunction (what);
         S1_ASSERT(functionName, S1_ASSERT_RET_VOID);
         EmitFunctionCall (destination, functionName, sampler, coord);
       }

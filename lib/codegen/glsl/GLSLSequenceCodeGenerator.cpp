@@ -35,6 +35,8 @@ namespace s1
         GLSLCodegenVisitor (SequenceCodeGenerator* owner,
                             const StringsArrayPtr& target);
 
+        const char* SamplingFunction (intermediate::SequenceVisitor::SampleTextureOp op) const override;
+
         void OpMatrixLinAlgMul (const RegisterPtr& destination,
                                 const RegisterPtr& source1,
                                 const RegisterPtr& source2) override;
@@ -48,6 +50,18 @@ namespace s1
                                                                      const StringsArrayPtr& target)
         : CodegenVisitor (owner, target)
       {}
+
+      const char* SequenceCodeGenerator::GLSLCodegenVisitor::SamplingFunction (intermediate::SequenceVisitor::SampleTextureOp op) const
+      {
+        switch (op)
+        {
+        case intermediate::SequenceVisitor::tex1D:    return "texture1D";
+        case intermediate::SequenceVisitor::tex2D:    return "texture2D";
+        case intermediate::SequenceVisitor::tex3D:    return "texture3D";
+        case intermediate::SequenceVisitor::texCUBE:  return "textureCUBE";
+        }
+        return nullptr;
+      }
 
       void SequenceCodeGenerator::GLSLCodegenVisitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
                                                                          const RegisterPtr& source1,

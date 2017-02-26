@@ -106,6 +106,9 @@ namespace s1
           void EmitUnary (const RegisterPtr& destination,
                           const RegisterPtr& source,
                           const char* op);
+
+          /// Return identifier of a sampling function
+          virtual const char* SamplingFunction (intermediate::SequenceVisitor::SampleTextureOp op) const;
         public:
           CodegenVisitor (SequenceCodeGenerator* owner,
                           const StringsArrayPtr& target);
