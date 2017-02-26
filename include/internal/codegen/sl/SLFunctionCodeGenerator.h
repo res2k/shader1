@@ -105,6 +105,9 @@ namespace s1
       public:
         FunctionCodeGenerator (const Traits& traits, const Options& options);
 
+        StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
+                                  const intermediate::ProgramPtr& prog,
+                                  int frequency);
         StringsArrayPtr Generate (const char* identifier,
                                   const intermediate::ProgramFunctionPtr& func,
                                   const intermediate::ProgramPtr& prog,

@@ -106,6 +106,15 @@ namespace s1
         return result;
       }
 
+      StringsArrayPtr FunctionCodeGenerator::Generate (const intermediate::ProgramFunctionPtr& func,
+                                                       const intermediate::ProgramPtr& prog,
+                                                       int frequency)
+      {
+        std::string funcName;
+        traits.ConvertIdentifier (func->GetIdentifier ()).toUTF8String (funcName);
+        return Generate (funcName.c_str (), func, prog, frequency);
+      }
+
       static format::StaticFormatter FormatFuncDecl ("void {0} ({1})");
 
       StringsArrayPtr FunctionCodeGenerator::Generate (const char* identifier,

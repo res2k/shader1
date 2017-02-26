@@ -60,9 +60,7 @@ namespace s1
           }
           else
           {
-            std::string funcName;
-            traits.ConvertIdentifier (func->GetIdentifier ()).toUTF8String (funcName);
-            resultStrings->AddStrings (*(funcGen->Generate (funcName.c_str (), func, prog, frequency)));
+            resultStrings->AddStrings (*(funcGen->Generate (func, prog, frequency)));
           }
           resultStrings->AddString (std::string ());
         }
