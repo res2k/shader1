@@ -31,7 +31,11 @@ namespace s1
       class SequenceCodeGenerator : public sl::SequenceCodeGenerator
       {
       protected:
+        class GLSLCodegenVisitor;
+
         const Options& GetOptions () const;
+
+        std::unique_ptr<CodegenVisitor> CreateVisitor () override;
 
         std::unique_ptr<sl::SequenceCodeGenerator> CreateForBlock (const intermediate::Sequence& seq,
                                                                    sl::ImportedNameResolver* nameRes) const override;

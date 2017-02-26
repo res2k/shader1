@@ -29,6 +29,55 @@ namespace s1
   {
     namespace glsl
     {
+      class SequenceCodeGenerator::GLSLCodegenVisitor : public SequenceCodeGenerator::CodegenVisitor
+      {
+      public:
+        GLSLCodegenVisitor (SequenceCodeGenerator* owner,
+                            const StringsArrayPtr& target);
+
+        void OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                const RegisterPtr& source1,
+                                const RegisterPtr& source2) override;
+        void OpArith (const RegisterPtr& destination,
+                      ArithmeticOp op,
+                      const RegisterPtr& source1,
+                      const RegisterPtr& source2) override;
+      };
+
+      SequenceCodeGenerator::GLSLCodegenVisitor::GLSLCodegenVisitor (SequenceCodeGenerator* owner,
+                                                                     const StringsArrayPtr& target)
+        : CodegenVisitor (owner, target)
+      {}
+
+      void SequenceCodeGenerator::GLSLCodegenVisitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                                         const RegisterPtr& source1,
+                                                                         const RegisterPtr& source2)
+      {
+        AnnotatingSequenceCodeGenerator::Visitor::OpMatrixLinAlgMul (destination, source1, source2);
+        // GLSL: Linear algebraic multiplication of matrices & vectors is handled by '*'
+        EmitBinary (destination, source1, source2, "*");
+      }
+
+      void SequenceCodeGenerator::GLSLCodegenVisitor::OpArith (const RegisterPtr& destination,
+                                                               ArithmeticOp op,
+                                                               const RegisterPtr& source1,
+                                                               const RegisterPtr& source2)
+      {
+        // Component-wise multiplication is done via a builtin function in GLSL
+        if ((op == ArithmeticOp::Mul)
+            && (source1->GetOriginalType ()->GetTypeClass () == parser::SemanticsHandler::Type::Matrix)
+            && (source2->GetOriginalType ()->GetTypeClass () == parser::SemanticsHandler::Type::Matrix))
+        {
+          AnnotatingSequenceCodeGenerator::Visitor::OpArith (destination, op, source1, source2);
+          EmitFunctionCall (destination, "matrixCompMult", source1, source2);
+          return;
+        }
+
+        CodegenVisitor::OpArith (destination, op, source1, source2);
+      }
+
+      //---------------------------------------------------------------------
+
       SequenceCodeGenerator::SequenceCodeGenerator (const intermediate::Sequence& seq,
                                                     sl::ImportedNameResolver* nameRes,
                                                     const intermediate::ProgramFunction::TransferMappings& transferIn,
@@ -43,6 +92,11 @@ namespace s1
       const Options& SequenceCodeGenerator::GetOptions () const
       {
         return static_cast<const Options&> (options);
+      }
+
+      std::unique_ptr<SequenceCodeGenerator::CodegenVisitor> SequenceCodeGenerator::CreateVisitor ()
+      {
+        return std::unique_ptr<CodegenVisitor> (new GLSLCodegenVisitor (this, strings));
       }
 
       std::unique_ptr<sl::SequenceCodeGenerator>
