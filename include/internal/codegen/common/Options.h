@@ -50,7 +50,7 @@ namespace s1
       /// Return value of debug annotation flag.
       bool GetDebugAnnotationFlag () const
       {
-        return *debugAnnotationsFlag;
+        return debugAnnotationsFlag.value_or (false);
       }
     };
   } // namespace codegen
