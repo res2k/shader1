@@ -190,6 +190,25 @@ namespace s1
         EmitAssign (destination, rside.c_str ());
       }
 
+      void SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterPtr& destination,
+                                                                    const char* function,
+                                                                    const RegisterPtr& source1)
+      {
+        EmitFunctionCall (destination, function, owner->GetOutputRegisterName (source1).c_str ());
+      }
+
+      static format::StaticFormatter FormatBinaryArgs ("{0}, {1}");
+
+      void SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterPtr& destination,
+                                                                    const char* function,
+                                                                    const RegisterPtr& source1,
+                                                                    const RegisterPtr& source2)
+      {
+        EmitFunctionCall (destination, function,
+                          FormatBinaryArgs.to<std::string> (owner->GetOutputRegisterName (source1),
+                                                            owner->GetOutputRegisterName (source2)).c_str());
+      }
+
       void SequenceCodeGenerator::CodegenVisitor::EmitBinary (const RegisterPtr& destination,
                                                               const RegisterPtr& source1,
                                                               const RegisterPtr& source2,
@@ -335,16 +354,12 @@ namespace s1
                           paramsStr.c_str ());
       }
 
-      static format::StaticFormatter FormatBinaryArgs ("{0}, {1}");
-
       void SequenceCodeGenerator::CodegenVisitor::OpVectorDot (const RegisterPtr& destination,
                                                                const RegisterPtr& source1,
                                                                const RegisterPtr& source2)
       {
         AnnotatingVisitor::OpVectorDot (destination, source1, source2);
-        EmitFunctionCall (destination, "dot",
-                          FormatBinaryArgs.to<std::string> (owner->GetOutputRegisterName (source1),
-                                                            owner->GetOutputRegisterName (source2)).c_str());
+        EmitFunctionCall (destination, "dot", source1, source2);
       }
 
       void SequenceCodeGenerator::CodegenVisitor::OpVectorCross (const RegisterPtr& destination,
@@ -352,23 +367,21 @@ namespace s1
                                                                  const RegisterPtr& source2)
       {
         AnnotatingVisitor::OpVectorCross (destination, source1, source2);
-        EmitFunctionCall (destination, "cross",
-                          FormatBinaryArgs.to<std::string> (owner->GetOutputRegisterName (source1),
-                                                            owner->GetOutputRegisterName (source2)).c_str());
+        EmitFunctionCall (destination, "cross", source1, source2);
       }
 
       void SequenceCodeGenerator::CodegenVisitor::OpVectorNormalize (const RegisterPtr& destination,
                                                                      const RegisterPtr& source)
       {
         AnnotatingVisitor::OpVectorNormalize (destination, source);
-        EmitFunctionCall (destination, "normalize", owner->GetOutputRegisterName (source).c_str());
+        EmitFunctionCall (destination, "normalize", source);
       }
 
       void SequenceCodeGenerator::CodegenVisitor::OpVectorLength (const RegisterPtr& destination,
                                                                   const RegisterPtr& source)
       {
         AnnotatingVisitor::OpVectorLength (destination, source);
-        EmitFunctionCall (destination, "length", owner->GetOutputRegisterName (source).c_str());
+        EmitFunctionCall (destination, "length", source);
       }
 
       static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");

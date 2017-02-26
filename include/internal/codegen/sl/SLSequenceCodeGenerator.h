@@ -92,6 +92,13 @@ namespace s1
           void EmitFunctionCall (const RegisterPtr& destination,
                                  const char* function,
                                  const char* paramsStr);
+          void EmitFunctionCall (const RegisterPtr& destination,
+                                 const char* function,
+                                 const RegisterPtr& source1);
+          void EmitFunctionCall (const RegisterPtr& destination,
+                                 const char* function,
+                                 const RegisterPtr& source1,
+                                 const RegisterPtr& source2);
           void EmitBinary (const RegisterPtr& destination,
                            const RegisterPtr& source1,
                            const RegisterPtr& source2,
