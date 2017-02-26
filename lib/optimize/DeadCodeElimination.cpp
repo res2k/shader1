@@ -154,6 +154,11 @@ namespace s1
                     const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
                     const intermediate::SequenceOpPtr& seqOpBody);
 
+      void OpSampleTexture (const RegisterPtr& destination,
+                            SampleTextureOp what,
+                            const RegisterPtr& sampler,
+                            const RegisterPtr& coord) override;
+
       void OpReturn (const std::vector<RegisterPtr>& outParamVals);
       void OpFunctionCall (const uc::String& funcIdent,
                             const std::vector<RegisterPtr>& inParams,
@@ -546,6 +551,21 @@ namespace s1
        * of the DCE.
        * However, to compute which registers are truly "used" we need a more
        * sophisticated approach: a graph of register dependencies. */
+    }
+
+    void DeadCodeElimination::DeadCodeChecker::OpSampleTexture (const RegisterPtr& destination,
+                                                                SampleTextureOp what,
+                                                                const RegisterPtr& sampler,
+                                                                const RegisterPtr& coord)
+    {
+      if (usedRegisters.count (destination) == 0)
+      {
+        seqChanged = true;
+        return;
+      }
+      usedRegisters.insert (sampler);
+      usedRegisters.insert (coord);
+      CommonSequenceVisitor::OpSampleTexture (destination, what, sampler, coord);
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpReturn (const std::vector<RegisterPtr>& outParamVals)

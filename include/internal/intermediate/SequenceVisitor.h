@@ -140,6 +140,12 @@ namespace s1
                             const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
                             const SequenceOpPtr& seqOpBody) = 0;
 
+      enum SampleTextureOp { tex1D, tex2D, tex3D, texCUBE };
+      virtual void OpSampleTexture (const RegisterPtr& destination,
+                                    SampleTextureOp what,
+                                    const RegisterPtr& sampler,
+                                    const RegisterPtr& coord) = 0;
+
       virtual void OpReturn (const std::vector<RegisterPtr>& outParamVals) = 0;
       virtual void OpFunctionCall (const uc::String& funcIdent,
                                    const std::vector<RegisterPtr>& inParams,

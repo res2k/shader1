@@ -20,10 +20,12 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
+#include "intermediate/SequenceOp/SequenceOpSampleTexture.h"
 #include "intermediate/SequenceOp/SequenceOpVectorCross.h"
 #include "intermediate/SequenceOp/SequenceOpVectorDot.h"
 #include "intermediate/SequenceOp/SequenceOpVectorLength.h"
 #include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
+#include "intermediate/SequenceVisitor.h"
 
 #include "Builtin.h"
 #include "ScopeImpl.h"
@@ -272,8 +274,19 @@ namespace s1
                                                 MakeFormalParameters1 (vecTypeFloat[c])));
       }
 
+      auto sample_texture_factory =
+        [](SequenceVisitor::SampleTextureOp op)
+      {
+        return
+          [op](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
+          {
+            S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+            return new SequenceOpSampleTexture (destination, op, inParams[0], inParams[1]);
+          };
+      };
+
       uc::String id_tex1D ("tex1D");
-      auto tex1D_factory = default_builtin_factory (intermediate::tex1D);
+      auto tex1D_factory = sample_texture_factory (SequenceVisitor::tex1D);
       scope->AddBuiltinFunction (new Builtin (tex1D_factory,
                                               vecTypeFloat[4],
                                               id_tex1D,
@@ -288,7 +301,7 @@ namespace s1
                                               MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeFloat[1])));
 
       uc::String id_tex2D ("tex2D");
-      auto tex2D_factory = default_builtin_factory (intermediate::tex2D);
+      auto tex2D_factory = sample_texture_factory (SequenceVisitor::tex2D);
       scope->AddBuiltinFunction (new Builtin (tex2D_factory,
                                               vecTypeFloat[4],
                                               id_tex2D,
@@ -303,7 +316,7 @@ namespace s1
                                               MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeFloat[2])));
 
       uc::String id_tex3D ("tex3D");
-      auto tex3D_factory = default_builtin_factory (intermediate::tex3D);
+      auto tex3D_factory = sample_texture_factory (SequenceVisitor::tex3D);
       scope->AddBuiltinFunction (new Builtin (tex3D_factory,
                                               vecTypeFloat[4],
                                               id_tex3D,
@@ -318,7 +331,7 @@ namespace s1
                                               MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeFloat[3])));
 
       uc::String id_texCUBE ("texCUBE");
-      auto texCUBE_factory = default_builtin_factory (intermediate::texCUBE);
+      auto texCUBE_factory = sample_texture_factory (SequenceVisitor::texCUBE);
       scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
                                               vecTypeFloat[4],
                                               id_texCUBE,

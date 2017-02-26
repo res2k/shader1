@@ -75,6 +75,10 @@ public:
     opBlock,
     opBranch,
     opWhile,
+    opSampleTexture1D,
+    opSampleTexture2D,
+    opSampleTexture3D,
+    opSampleTextureCUBE,
     opReturn,
     opFunctionCall,
     opBuiltinCall
@@ -514,6 +518,33 @@ public:
     entry.op = opWhile;
     entry.sourceReg[0] = conditionReg;
     entry.blockVisitor = whileVisitor;
+    entries.push_back (entry);
+  }
+
+  void OpSampleTexture (const RegisterPtr& destination,
+                        SampleTextureOp what,
+                        const RegisterPtr& sampler,
+                        const RegisterPtr& coord)
+  {
+    SequenceEntry entry;
+    switch (what)
+    {
+    case tex1D:
+      entry.op = opSampleTexture1D;
+      break;
+    case tex2D:
+      entry.op = opSampleTexture2D;
+      break;
+    case tex3D:
+      entry.op = opSampleTexture3D;
+      break;
+    case texCUBE:
+      entry.op = opSampleTextureCUBE;
+      break;
+    }
+    entry.destReg = destination;
+    entry.sourceReg[0] = sampler;
+    entry.sourceReg[1] = coord;
     entries.push_back (entry);
   }
 

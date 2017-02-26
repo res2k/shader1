@@ -37,6 +37,7 @@
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 #include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
+#include "intermediate/SequenceOp/SequenceOpSampleTexture.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "intermediate/SequenceOp/SequenceOpVectorCross.h"
 #include "intermediate/SequenceOp/SequenceOpVectorDot.h"
@@ -567,6 +568,18 @@ namespace s1
       SequenceOpPtr newOp (new SequenceOpWhile (MapRegisterIn (conditionReg),
                                                 newLoopedRegs,
                                                 newSeqOpBody));
+      AddOpToSequence (newOp);
+    }
+
+    void CloningSequenceVisitor::OpSampleTexture (const RegisterPtr& destination,
+                                                  SampleTextureOp what,
+                                                  const RegisterPtr& sampler,
+                                                  const RegisterPtr& coord)
+    {
+      SequenceOpPtr newOp (new SequenceOpSampleTexture (MapRegisterOut (destination),
+                                                        what,
+                                                        MapRegisterIn (sampler),
+                                                        MapRegisterIn (coord)));
       AddOpToSequence (newOp);
     }
 

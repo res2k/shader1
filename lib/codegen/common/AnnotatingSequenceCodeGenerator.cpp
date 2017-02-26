@@ -201,20 +201,34 @@ namespace s1
       };
 
       template<>
+      struct DebugCommentArgHelper<intermediate::SequenceVisitor::SampleTextureOp>
+      {
+        static const char* FormatArg(intermediate::SequenceVisitor::SampleTextureOp value)
+        {
+          switch (value)
+          {
+          case intermediate::SequenceVisitor::tex1D:
+            return "tex1D";
+          case intermediate::SequenceVisitor::tex2D:
+            return "tex2D";
+          case intermediate::SequenceVisitor::tex3D:
+            return "tex3D";
+          case intermediate::SequenceVisitor::texCUBE:
+            return "texCUBE";
+          default:
+            break;
+          }
+          return "???";
+        }
+      };
+
+      template<>
       struct DebugCommentArgHelper<intermediate::BuiltinFunction>
       {
         static const char* FormatArg(intermediate::BuiltinFunction value)
         {
           switch (value)
           {
-          case intermediate::tex1D:
-            return "tex1D";
-          case intermediate::tex2D:
-            return "tex2D";
-          case intermediate::tex3D:
-            return "tex3D";
-          case intermediate::texCUBE:
-            return "texCUBE";
           case intermediate::min:
             return "min";
           case intermediate::max:
@@ -516,6 +530,14 @@ namespace s1
                                                             const intermediate::SequenceOpPtr& seqOpBody)
     {
       DEBUG_COMMENT ("While", (conditionReg)(loopedRegs));
+    }
+
+    void AnnotatingSequenceCodeGenerator::Visitor::OpSampleTexture (const RegisterPtr& destination,
+                                                                    SampleTextureOp what,
+                                                                    const RegisterPtr& sampler,
+                                                                    const RegisterPtr& coord)
+    {
+      DEBUG_COMMENT ("SampleTexture", (what)(sampler)(coord));
     }
 
     void AnnotatingSequenceCodeGenerator::Visitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)

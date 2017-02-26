@@ -43,6 +43,7 @@
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 #include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
+#include "intermediate/SequenceOp/SequenceOpSampleTexture.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "intermediate/SequenceOp/SequenceOpVectorCross.h"
 #include "intermediate/SequenceOp/SequenceOpVectorDot.h"
@@ -1164,6 +1165,22 @@ namespace s1
          * Promotion would only introduce unnecessary transfers... */
         parent.SetRegAvailability (loopedReg.second, 1 << highestFreq);
       }
+    }
+
+    void SequenceSplitter::InputVisitor::OpSampleTexture (const RegisterPtr& destination,
+                                                          SampleTextureOp what,
+                                                          const RegisterPtr& sampler,
+                                                          const RegisterPtr& coord)
+    {
+      /* Sampling: not interpolation-safe */
+      Promote (freqFragment, sampler, coord);
+
+      parent.SetRegAvailability (destination, freqFlagF);
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpSampleTexture (destination,
+                                                                         what,
+                                                                         sampler,
+                                                                         coord));
+      parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
     }
 
     void SequenceSplitter::InputVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)

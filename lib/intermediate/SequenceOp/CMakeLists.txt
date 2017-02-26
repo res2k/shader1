@@ -19,6 +19,7 @@ set(seqop_sources
     SequenceOpMakeVector.cpp
     SequenceOpMatrixLinAlgMul.cpp
     SequenceOpReturn.cpp
+    SequenceOpSampleTexture.cpp
     SequenceOpUnary.cpp
     SequenceOpUnaryOp.cpp
     SequenceOpVectorCross.cpp
@@ -48,6 +49,7 @@ set(seqop_sources
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpMakeVector.h
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpReturn.h
+    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpSampleTexture.h
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpUnary.h
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpUnaryOp.h
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpVectorCross.h

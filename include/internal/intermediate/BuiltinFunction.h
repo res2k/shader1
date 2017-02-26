@@ -24,11 +24,6 @@ namespace s1
   {
     enum BuiltinFunction
     {
-      // Texture builtins
-      tex1D,
-      tex2D,
-      tex3D,
-      texCUBE,
       // Misc
       min,
       max,

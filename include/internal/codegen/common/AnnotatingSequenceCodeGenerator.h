@@ -153,6 +153,11 @@ namespace s1
                       const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
                       const intermediate::SequenceOpPtr& seqOpBody) override;
 
+        void OpSampleTexture (const RegisterPtr& destination,
+                              SampleTextureOp what,
+                              const RegisterPtr& sampler,
+                              const RegisterPtr& coord) override;
+
         void OpReturn (const std::vector<RegisterPtr>& outParamVals) override;
         void OpFunctionCall (const uc::String& funcIdent,
                              const std::vector<RegisterPtr>& inParams,

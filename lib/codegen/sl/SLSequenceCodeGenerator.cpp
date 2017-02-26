@@ -687,6 +687,24 @@ namespace s1
         emitEmptyBlocks = oldEmitEmptyBlocks;
       }
 
+      void SequenceCodeGenerator::CodegenVisitor::OpSampleTexture (const RegisterPtr& destination,
+                                                                   SampleTextureOp what,
+                                                                   const RegisterPtr& sampler,
+                                                                   const RegisterPtr& coord)
+      {
+        AnnotatingVisitor::OpSampleTexture (destination, what, sampler, coord);
+        const char* functionName = nullptr;
+        switch (what)
+        {
+        case intermediate::SequenceVisitor::tex1D:    functionName = "tex1D";   break;
+        case intermediate::SequenceVisitor::tex2D:    functionName = "tex2D";   break;
+        case intermediate::SequenceVisitor::tex3D:    functionName = "tex3D";   break;
+        case intermediate::SequenceVisitor::texCUBE:  functionName = "texCUBE"; break;
+        }
+        S1_ASSERT(functionName, S1_ASSERT_RET_VOID);
+        EmitFunctionCall (destination, functionName, sampler, coord);
+      }
+
       void SequenceCodeGenerator::CodegenVisitor::OpReturn (const std::vector<RegisterPtr>& outParamVals)
       {
         AnnotatingVisitor::OpReturn (outParamVals);
@@ -729,10 +747,6 @@ namespace s1
         std::string exprStr;
         switch (what)
         {
-        case intermediate::tex1D:		exprStr.append ("tex1D");	break;
-        case intermediate::tex2D:		exprStr.append ("tex2D");	break;
-        case intermediate::tex3D:		exprStr.append ("tex3D");	break;
-        case intermediate::texCUBE:	exprStr.append ("texCUBE");	break;
         case intermediate::min:		exprStr.append ("min");		break;
         case intermediate::max:		exprStr.append ("max");		break;
         case intermediate::pow:		exprStr.append ("pow");		break;
