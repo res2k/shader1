@@ -30,8 +30,8 @@ namespace uc
   //-------------------------------------------------------------------------
   
   Stream::Stream (Source& inSource)
-   : inSource (inSource), streamInBufferRemaining (0),
-     currentChar (InvalidChar32), currentDecodeResult (UTF8Decoder::drSuccess)
+   : streamInBufferRemaining (0), currentChar (InvalidChar32),
+     currentDecodeResult (UTF8Decoder::drSuccess), inSource (inSource)
   {
     // Initial fill
     streamInBufferRemaining = inSource.NextData (streamInBufferPtr);
