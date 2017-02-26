@@ -342,9 +342,11 @@ namespace s1
         }
         else
         {
+          bool sameOrigin = true;
           ParamHelper params (paramsStr);
           {
             SwizzleHelper swizzles (params);
+            RegisterPtr lastOrigin;
             for (const RegisterPtr& source : sources)
             {
               RegisterOriginsMap::const_iterator originIt (owner->registerOrigins.find (source));
@@ -352,13 +354,22 @@ namespace s1
               {
                 const RegisterOriginPair& origin (originIt->second);
                 swizzles.Add (owner->GetOutputRegisterName (origin.first), origin.second);
+                if (lastOrigin) sameOrigin &= (lastOrigin == origin.first);
+                lastOrigin = origin.first;
               }
               else
               {
                 swizzles.Flush ();
                 params.Add (owner->GetOutputRegisterName (source));
+                sameOrigin = false;
               }
             }
+          }
+          if (sameOrigin)
+          {
+            /* A swizzle of some vector; treat as a simple value */
+            EmitAssign (destination, paramsStr.c_str ());
+            return;
           }
         }
         EmitFunctionCall (destination,
