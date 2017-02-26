@@ -207,8 +207,6 @@ namespace s1
         {
           switch (value)
           {
-          case intermediate::mul:
-            return "mul";
           case intermediate::tex1D:
             return "tex1D";
           case intermediate::tex2D:
@@ -381,6 +379,12 @@ namespace s1
       DEBUG_COMMENT ("MakeMatrix", (destination)(compType)(matrixRows)(matrixCols)(sources));
     }
 
+    void AnnotatingSequenceCodeGenerator::Visitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                                      const RegisterPtr& source1,
+                                                                      const RegisterPtr& source2)
+    {
+      DEBUG_COMMENT ("MatrixLinAlgMul", (destination)(source1)(source2));
+    }
 
     void AnnotatingSequenceCodeGenerator::Visitor::OpMakeArray (const RegisterPtr& destination,
                                                                 const std::vector<RegisterPtr>& sources)

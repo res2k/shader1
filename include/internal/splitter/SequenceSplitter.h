@@ -131,6 +131,9 @@ namespace s1
                            intermediate::BasicType compType,
                            unsigned int matrixRows, unsigned int matrixCols,
                            const std::vector<RegisterPtr>& sources);
+        void OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                const RegisterPtr& source1,
+                                const RegisterPtr& source2);
 
         void OpMakeArray (const RegisterPtr& destination,
                           const std::vector<RegisterPtr>& sources);

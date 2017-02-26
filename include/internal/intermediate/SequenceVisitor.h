@@ -75,10 +75,17 @@ namespace s1
                                    const RegisterPtr& source) = 0;
       /** @} */
 
+      /**\name Matrix-related operations
+       * @{ */
       virtual void OpMakeMatrix (const RegisterPtr& destination,
                                  BasicType compType,
                                  unsigned int matrixRows, unsigned int matrixCols,
                                  const std::vector<RegisterPtr>& sources) = 0;
+      /// Matrix-matrix/matrix-vector linear algebraic multiplication
+      virtual void OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                      const RegisterPtr& source1,
+                                      const RegisterPtr& source2) = 0;
+      /** @} */
 
       virtual void OpMakeArray (const RegisterPtr& destination,
                                 const std::vector<RegisterPtr>& sources) = 0;

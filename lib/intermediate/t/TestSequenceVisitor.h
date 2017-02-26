@@ -50,6 +50,7 @@ public:
     opMakeMatrixInt,
     opMakeMatrixUInt,
     opMakeMatrixFloat,
+    opMatrixLinAlgMul,
     opMakeArray,
     opExtractArrayElement,
     opExtractVectorComponent,
@@ -287,6 +288,18 @@ public:
     entry.sourceRegs = sources;
     entry.matrixRows = matrixRows;
     entry.matrixCols = matrixCols;
+    entries.push_back (entry);
+  }
+
+  void OpMatrixLinAlgMul (const RegisterPtr& destination,
+                          const RegisterPtr& source1,
+                          const RegisterPtr& source2) override
+  {
+    SequenceEntry entry;
+    entry.op = opMatrixLinAlgMul;
+    entry.destReg = destination;
+    entry.sourceReg[0] = source1;
+    entry.sourceReg[1] = source2;
     entries.push_back (entry);
   }
 

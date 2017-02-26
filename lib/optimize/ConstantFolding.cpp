@@ -226,6 +226,9 @@ namespace s1
                          intermediate::BasicType compType,
                          unsigned int matrixRows, unsigned int matrixCols,
                          const std::vector<RegisterPtr>& sources);
+      void OpMatrixLinAlgMul (const RegisterPtr& destination,
+                              const RegisterPtr& source1,
+                              const RegisterPtr& source2) override;
 
       void OpMakeArray (const RegisterPtr& destination,
                         const std::vector<RegisterPtr>& sources);
@@ -571,6 +574,57 @@ namespace s1
       }
 
       CommonSequenceVisitor::OpMakeMatrix (destination, compType, matrixRows, matrixCols, sources);
+    }
+
+    void ConstantFolding::FoldingVisitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                             const RegisterPtr& source1,
+                                                             const RegisterPtr& source2)
+    {
+      ConstRegsMap::const_iterator src1Const = constRegs.find (source1);
+      ConstRegsMap::const_iterator src2Const = constRegs.find (source2);
+      if ((src1Const != constRegs.end())
+          && (src2Const != constRegs.end()))
+      {
+        ConstantValPtr src1Val (src1Const->second);
+        ConstantValPtr src2Val (src2Const->second);
+
+        unsigned int rows1, cols1;
+        switch (source1->GetOriginalType ()->GetTypeClass ())
+        {
+        case parser::SemanticsHandler::Type::Matrix:
+          rows1 = source1->GetOriginalType ()->GetMatrixTypeRows ();
+          cols1 = source1->GetOriginalType ()->GetMatrixTypeCols ();
+          break;
+        case parser::SemanticsHandler::Type::Vector:
+          rows1 = 1;
+          cols1 = source1->GetOriginalType ()->GetVectorTypeComponents ();
+          break;
+        default:
+          assert (false);
+        }
+        unsigned int rows2, cols2;
+        switch (source2->GetOriginalType ()->GetTypeClass ())
+        {
+        case parser::SemanticsHandler::Type::Matrix:
+          rows2 = source2->GetOriginalType ()->GetMatrixTypeRows ();
+          cols2 = source2->GetOriginalType ()->GetMatrixTypeCols ();
+          break;
+        case parser::SemanticsHandler::Type::Vector:
+          rows2 = source2->GetOriginalType ()->GetVectorTypeComponents ();
+          cols2 = 1;
+          break;
+        default:
+          assert (false);
+        }
+        assert (cols1 == rows2);
+        HandleBuiltinMatrixMul (destination,
+                                source1->GetOriginalType (),
+                                src1Val, src2Val,
+                                rows1, cols1, cols2);
+        return;
+      }
+
+      CommonSequenceVisitor::OpMatrixLinAlgMul (destination, source1, source2);
     }
 
     void ConstantFolding::FoldingVisitor::OpMakeArray (const RegisterPtr& destination,
@@ -1637,43 +1691,6 @@ namespace s1
       {
         switch (what)
         {
-        case intermediate::mul:
-          {
-            unsigned int rows1, cols1;
-            switch (inParams[0]->GetOriginalType()->GetTypeClass())
-            {
-            case parser::SemanticsHandler::Type::Matrix:
-              rows1 = inParams[0]->GetOriginalType()->GetMatrixTypeRows();
-              cols1 = inParams[0]->GetOriginalType()->GetMatrixTypeCols();
-              break;
-            case parser::SemanticsHandler::Type::Vector:
-              rows1 = 1;
-              cols1 = inParams[0]->GetOriginalType()->GetVectorTypeComponents();
-              break;
-            default:
-              assert (false);
-            }
-            unsigned int rows2, cols2;
-            switch (inParams[1]->GetOriginalType()->GetTypeClass())
-            {
-            case parser::SemanticsHandler::Type::Matrix:
-              rows2 = inParams[1]->GetOriginalType()->GetMatrixTypeRows();
-              cols2 = inParams[1]->GetOriginalType()->GetMatrixTypeCols();
-              break;
-            case parser::SemanticsHandler::Type::Vector:
-              rows2 = inParams[1]->GetOriginalType()->GetVectorTypeComponents();
-              cols2 = 1;
-              break;
-            default:
-              assert (false);
-            }
-            assert (cols1 == rows2);
-            handled = HandleBuiltinMatrixMul (destination,
-                                              inParams[0]->GetOriginalType(),
-                                              paramConstVals[0], paramConstVals[1],
-                                              rows1, cols1, cols2);
-          }
-          break;
         case intermediate::min:
           handled = HandleBuiltinMin (destination, inParams[0], inParams[1]);
           break;

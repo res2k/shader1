@@ -19,6 +19,7 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
+#include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
 #include "intermediate/SequenceOp/SequenceOpVectorCross.h"
 #include "intermediate/SequenceOp/SequenceOpVectorDot.h"
 #include "intermediate/SequenceOp/SequenceOpVectorLength.h"
@@ -159,7 +160,12 @@ namespace s1
                                               MakeFormalParameters2 (vecTypeFloat[3])));
 
       uc::String id_mul ("mul");
-      auto mul_factory = default_builtin_factory (intermediate::mul);
+      auto mul_factory =
+        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
+        {
+          S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+          return new SequenceOpMatrixLinAlgMul (destination, inParams[0], inParams[1]);
+        };
       for (unsigned int l = 1; l < 5; l++)
       {
         for (unsigned int m = 1; m < 5; m++)

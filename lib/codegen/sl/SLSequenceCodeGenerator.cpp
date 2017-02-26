@@ -393,6 +393,15 @@ namespace s1
                           paramsStr.c_str ());
       }
 
+      void SequenceCodeGenerator::CodegenVisitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                                     const RegisterPtr& source1,
+                                                                     const RegisterPtr& source2)
+      {
+        AnnotatingVisitor::OpMatrixLinAlgMul (destination, source1, source2);
+        EmitFunctionCall (destination, "mul",
+                          FormatBinaryArgs.to<std::string> (owner->GetOutputRegisterName (source1),
+                                                            owner->GetOutputRegisterName (source2)).c_str());
+      }
 
       void SequenceCodeGenerator::CodegenVisitor::OpMakeArray (const RegisterPtr& destination,
                                                                const std::vector<RegisterPtr>& sources)
@@ -707,7 +716,6 @@ namespace s1
         std::string exprStr;
         switch (what)
         {
-        case intermediate::mul:		exprStr.append ("mul");		break;
         case intermediate::tex1D:		exprStr.append ("tex1D");	break;
         case intermediate::tex2D:		exprStr.append ("tex2D");	break;
         case intermediate::tex3D:		exprStr.append ("tex3D");	break;

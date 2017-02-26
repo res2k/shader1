@@ -41,6 +41,7 @@
 #include "intermediate/SequenceOp/SequenceOpMakeArray.h"
 #include "intermediate/SequenceOp/SequenceOpMakeMatrix.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
+#include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "intermediate/SequenceOp/SequenceOpVectorCross.h"
@@ -458,6 +459,38 @@ namespace s1
                                                                       matrixRows, matrixCols,
                                                                       sources));
       parent.SetRegAvailability (destination, AddOpToSequences (newSeqOp, commonFreqs));
+    }
+
+    void SequenceSplitter::InputVisitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                            const RegisterPtr& source1,
+                                                            const RegisterPtr& source2)
+    {
+      /* matrix mul: interpolation-safe if one operand is an uniform */
+      unsigned int src1Avail = parent.GetRegAvailability (source1);
+      unsigned int src2Avail = parent.GetRegAvailability (source2);
+      bool lerpSafe = ((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0);
+
+      if (lerpSafe)
+      {
+        int highestFreq = ComputeHighestFreq (source1, source2);
+        unsigned int commonFreqs = Promote (highestFreq, source1, source2);
+
+        parent.SetRegAvailability (destination, commonFreqs);
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpMatrixLinAlgMul (destination,
+                                                                             source1,
+                                                                             source2));
+        AddOpToSequences (newSeqOp, commonFreqs);
+      }
+      else
+      {
+        Promote (freqFragment, source1, source2);
+
+        parent.SetRegAvailability (destination, freqFlagF);
+        SequenceOpPtr newSeqOp (new intermediate::SequenceOpMatrixLinAlgMul (destination,
+                                                                             source1,
+                                                                             source2));
+        parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
+      }
     }
 
     void SequenceSplitter::InputVisitor::OpMakeArray (const RegisterPtr& destination,
@@ -1215,49 +1248,14 @@ namespace s1
                                                         intermediate::BuiltinFunction what,
                                                         const std::vector<RegisterPtr>& inParams)
     {
-      bool lerpSafe = false;
-      switch (what)
-      {
-      case intermediate::mul:
-        /* dot, cross, matrix mul: interpolation-safe if one operand is an uniform */
-        {
-          unsigned int src1Avail = parent.GetRegAvailability (inParams[0]);
-          unsigned int src2Avail = parent.GetRegAvailability (inParams[1]);
-          lerpSafe = ((src1Avail & freqFlagU) != 0) || ((src2Avail & freqFlagU) != 0);
-        }
-        break;
-      case intermediate::min:
-      case intermediate::max:
-      case intermediate::pow:
-      case intermediate::tex1D:
-      case intermediate::tex2D:
-      case intermediate::tex3D:
-      case intermediate::texCUBE:
-        /* All others: not interpolation-safe */
-        break;
-      }
+      /* Builtins: not interpolation-safe */
+      Promote (freqFragment, inParams);
 
-      if (lerpSafe)
-      {
-        int highestFreq = ComputeHighestFreq (inParams);
-        unsigned int commonFreqs = Promote (highestFreq, inParams);
-
-        parent.SetRegAvailability (destination, commonFreqs);
-        SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
-                                                                         what,
-                                                                         inParams));
-        AddOpToSequences (newSeqOp, commonFreqs);
-      }
-      else
-      {
-        Promote (freqFragment, inParams);
-
-        parent.SetRegAvailability (destination, freqFlagF);
-        SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
-                                                                         what,
-                                                                         inParams));
-        parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
-      }
+      parent.SetRegAvailability (destination, freqFlagF);
+      SequenceOpPtr newSeqOp (new intermediate::SequenceOpBuiltinCall (destination,
+                                                                        what,
+                                                                        inParams));
+      parent.outputSeqBuilder[freqFragment]->AddOp (newSeqOp);
     }
 
     //-----------------------------------------------------------------------

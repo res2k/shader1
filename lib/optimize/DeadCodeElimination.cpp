@@ -104,6 +104,9 @@ namespace s1
                           intermediate::BasicType compType,
                           unsigned int matrixRows, unsigned int matrixCols,
                           const std::vector<RegisterPtr>& sources);
+      void OpMatrixLinAlgMul (const RegisterPtr& destination,
+                              const RegisterPtr& source1,
+                              const RegisterPtr& source2) override;
 
       void OpMakeArray (const RegisterPtr& destination,
                         const std::vector<RegisterPtr>& sources);
@@ -306,6 +309,20 @@ namespace s1
       }
       usedRegisters.insert (sources.begin(), sources.end());
       CommonSequenceVisitor::OpMakeMatrix (destination, compType, matrixRows, matrixCols, sources);
+    }
+
+    void DeadCodeElimination::DeadCodeChecker::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                                  const RegisterPtr& source1,
+                                                                  const RegisterPtr& source2)
+    {
+      if (usedRegisters.count (destination) == 0)
+      {
+        seqChanged = true;
+        return;
+      }
+      usedRegisters.insert (source1);
+      usedRegisters.insert (source2);
+      CommonSequenceVisitor::OpMatrixLinAlgMul (destination, source1, source2);
     }
 
     void DeadCodeElimination::DeadCodeChecker::OpMakeArray (const RegisterPtr& destination,

@@ -35,6 +35,7 @@
 #include "intermediate/SequenceOp/SequenceOpMakeArray.h"
 #include "intermediate/SequenceOp/SequenceOpMakeMatrix.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
+#include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 #include "intermediate/SequenceOp/SequenceOpVectorCross.h"
@@ -376,6 +377,16 @@ namespace s1
                                                      compType,
                                                      matrixRows, matrixCols,
                                                      newSources));
+      AddOpToSequence (newOp);
+    }
+
+    void CloningSequenceVisitor::OpMatrixLinAlgMul (const RegisterPtr& destination,
+                                                    const RegisterPtr& source1,
+                                                    const RegisterPtr& source2)
+    {
+      SequenceOpPtr newOp (new SequenceOpMatrixLinAlgMul (MapRegisterOut (destination),
+                                                          MapRegisterIn (source1),
+                                                          MapRegisterIn (source2)));
       AddOpToSequence (newOp);
     }
 

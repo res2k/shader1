@@ -44,6 +44,7 @@ CXXTEST_ENUM_TRAITS (TestSequenceVisitor::Operation,
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeMatrixInt)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeMatrixUInt)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeMatrixFloat)
+                     CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMatrixLinAlgMul)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opMakeArray)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opExtractArrayElement)
                      CXXTEST_ENUM_MEMBER (TestSequenceVisitor::opExtractVectorComponent)
