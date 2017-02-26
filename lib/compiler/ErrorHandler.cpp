@@ -40,6 +40,8 @@ void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encou
   ERRORCODE(DeclarationNotAllowedInScope);
   ERRORCODE(ExpectedTypeName);
   ERRORCODE(OutParameterWithDefault);
+  ERRORCODE(ConflictingQualifiersForInParam);
+  ERRORCODE(QualifiersNotAllowed);
 #undef ERRORCODE
   }
   
