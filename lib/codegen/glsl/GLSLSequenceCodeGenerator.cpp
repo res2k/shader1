@@ -44,6 +44,11 @@ namespace s1
                       ArithmeticOp op,
                       const RegisterPtr& source1,
                       const RegisterPtr& source2) override;
+
+        void OpCompare (const RegisterPtr& destination,
+                        CompareOp op,
+                        const RegisterPtr& source1,
+                        const RegisterPtr& source2) override;
       };
 
       SequenceCodeGenerator::GLSLCodegenVisitor::GLSLCodegenVisitor (SequenceCodeGenerator* owner,
@@ -88,6 +93,33 @@ namespace s1
         }
 
         CodegenVisitor::OpArith (destination, op, source1, source2);
+      }
+
+      void SequenceCodeGenerator::GLSLCodegenVisitor::OpCompare (const RegisterPtr& destination,
+                                                                 CompareOp op,
+                                                                 const RegisterPtr& source1,
+                                                                 const RegisterPtr& source2)
+      {
+        // Component-wise comparison between vectors is done via a builtin function in GLSL
+        if (source1->GetOriginalType ()->GetTypeClass () == parser::SemanticsHandler::Type::Vector)
+        {
+          AnnotatingSequenceCodeGenerator::Visitor::OpCompare (destination, op, source1, source2);
+          const char* funcName = nullptr;
+          switch (op)
+          {
+          case Eq:  funcName = "equal";             break;
+          case NE:  funcName = "notEqual";          break;
+          case LT:  funcName = "lessThan";          break;
+          case LE:  funcName = "lessThanEqual";     break;
+          case GT:  funcName = "greaterThan";       break;
+          case GE:  funcName = "greaterThanEqual";  break;
+          }
+          S1_ASSERT(funcName, S1_ASSERT_RET_VOID);
+          EmitFunctionCall (destination, funcName, source1, source2);
+          return;
+        }
+
+        CodegenVisitor::OpCompare (destination, op, source1, source2);
       }
 
       //---------------------------------------------------------------------
