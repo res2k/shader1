@@ -68,6 +68,7 @@ namespace s1
 
         class CodegenVisitor : public AnnotatingSequenceCodeGenerator::Visitor
         {
+        protected:
           typedef AnnotatingSequenceCodeGenerator::Visitor AnnotatingVisitor;
           friend class SequenceCodeGenerator;
 
@@ -228,6 +229,9 @@ namespace s1
         void EmitDeclaration (const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,
                               const std::string& name,
                               const std::string& initializer);
+
+        /// Create an instance of the codegen visitor.
+        virtual std::unique_ptr<CodegenVisitor> CreateVisitor ();
 
         virtual std::unique_ptr<SequenceCodeGenerator> CreateForBlock (const intermediate::Sequence& seq,
                                                                        ImportedNameResolver* nameRes) const = 0;

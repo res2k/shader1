@@ -768,10 +768,10 @@ namespace s1
         strings = boost::make_shared<StringsArray> ();
         seenRegisters.clear ();
 
-        CodegenVisitor visitor (this, strings);
-        visitor.SetDebugCommentsEnabled (options.GetDebugAnnotationFlag ());
+        auto visitor = CreateVisitor ();
+        visitor->SetDebugCommentsEnabled (options.GetDebugAnnotationFlag ());
 
-        BeforeSequence (visitor);
+        BeforeSequence (*visitor);
 
         // 'Import' variables from parent generator
         {
@@ -841,14 +841,14 @@ namespace s1
         }
 
         // Generate code for actual operations
-        seq.Visit (visitor);
+        seq.Visit (*visitor);
 
         for (const EndAssignmentPair& assignment : endAssignments)
         {
-          visitor.EmitAssign (assignment.first.c_str (), assignment.second);
+          visitor->EmitAssign (assignment.first.c_str (), assignment.second);
         }
 
-        AfterSequence (visitor);
+        AfterSequence (*visitor);
 
         return strings;
       }
@@ -912,6 +912,11 @@ namespace s1
           FormatDeclaration (declLine, typeStrings.first, name.c_str(), typeStrings.second);
         }
         strings->AddString (declLine);
+      }
+
+      std::unique_ptr<SequenceCodeGenerator::CodegenVisitor> SequenceCodeGenerator::CreateVisitor ()
+      {
+        return std::unique_ptr<CodegenVisitor> (new CodegenVisitor (this, strings));
       }
     } // namespace sl
   } // namespace codegen
