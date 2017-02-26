@@ -173,7 +173,7 @@ namespace s1
 
         for (const auto& inParam : inParams)
         {
-          const char* variability = "const in";
+          const char* variability = GetOptions().GetAvoidQualifierIn() ? "const" : "const in";
           funcParams.Add (variability, inParam.first);
         }
         for (const auto& outParam : outParams)

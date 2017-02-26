@@ -32,7 +32,20 @@ namespace s1
       class Options : public sl::Options
       {
       protected:
-        class GLSLDeclarations : public SLDeclarations {};
+        /**
+         * Options to instruct backend to avoid generating the 'in' qualifier
+         * for function parameters. (Workaround for Qt QML shader support.)
+         */
+        boost::optional<bool> avoidQualifierIn;
+
+        class GLSLDeclarations : public SLDeclarations
+        {
+        public:
+          GLSLDeclarations ()
+          {
+            this->RegisterFlag ("avoid-qualifier-in", &Options::avoidQualifierIn);
+          }
+        };
         static GLSLDeclarations declarations;
         const Declarations& GetDeclarations () const override { return declarations; }
       public:
@@ -40,6 +53,9 @@ namespace s1
         Options () {}
         /// Constructor: default values for all
         Options (bool debugAnnotate) : sl::Options (debugAnnotate) {}
+
+        /// Whether to avoid generating the 'in' qualifier for function parameters
+        bool GetAvoidQualifierIn () const { return avoidQualifierIn.value_or (false); }
       };
     } //
   } // namespace codegen
