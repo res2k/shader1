@@ -82,6 +82,7 @@ namespace s1
       }
 
       static format::StaticFormatter FormatTypeVector ("{0}vec{1}");
+      static format::StaticFormatter FormatTypeMatrixShort ("mat{0}");
       static format::StaticFormatter FormatTypeMatrix ("mat{0}x{1}");
       static format::StaticFormatter FormatSuffix ("{0}[{1}]");
 
@@ -93,7 +94,10 @@ namespace s1
       uc::String Traits::FormatMatrix (intermediate::BasicType type, unsigned int rowCount, unsigned int colCount) const
       {
         // FIXME: GLSL doesn't know non-float(double) matrices!
-        return FormatTypeMatrix.to<uc::String> (rowCount, colCount);
+        if (rowCount == colCount)
+          return FormatTypeMatrixShort.to<uc::String> (rowCount);
+        else
+          return FormatTypeMatrix.to<uc::String> (rowCount, colCount);
       }
 
       std::pair<uc::String, uc::String> Traits::TypeString (const parser::SemanticsHandler::TypePtr& type,
@@ -153,7 +157,8 @@ namespace s1
           break;
         case parser::SemanticsHandler::Type::Matrix:
           {
-            FormatTypeMatrix (typeStr, type->GetMatrixTypeRows (), type->GetMatrixTypeCols ());
+            typeStr = FormatMatrix (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
+                                    type->GetMatrixTypeRows (), type->GetMatrixTypeCols ());
           }
           break;
         }
