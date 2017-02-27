@@ -23,24 +23,25 @@
     distribution.
 */
 
-#include "MainWindow.h"
+/**\file
+ * Object providing image location to QML
+ */
+#ifndef IMAGELOCATION_H
+#define IMAGELOCATION_H
 
-#include "ImageLocation.h"
-#include "ShaderSource.h"
+#include <QObject>
 
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QQuickWidget>
-
-MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
+class ImageLocation : public QObject
 {
-  shaderSrc = new ShaderSource (this);
-  imageLocation = new ImageLocation (this);
+  Q_OBJECT
+public:
+  ImageLocation (QObject* parent = nullptr);
 
-  auto qml_widget = new QQuickWidget (this);
-  qml_widget->engine()->rootContext()->setContextProperty (QStringLiteral ("shaderSource"), shaderSrc);
-  qml_widget->engine()->rootContext()->setContextProperty (QStringLiteral ("imageLocation"), imageLocation);
-  qml_widget->setResizeMode (QQuickWidget::SizeRootObjectToView);
-  qml_widget->setSource (QStringLiteral ("qrc:/ImageView.qml"));
-  setCentralWidget (qml_widget);
-}
+  /// Image location URL
+  QString url();
+  Q_PROPERTY(QString url READ url NOTIFY urlChanged);
+signals:
+  void urlChanged ();
+};
+
+#endif // IMAGELOCATION_H

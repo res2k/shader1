@@ -23,24 +23,11 @@
     distribution.
 */
 
-#include "MainWindow.h"
-
 #include "ImageLocation.h"
-#include "ShaderSource.h"
 
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QQuickWidget>
+ImageLocation::ImageLocation (QObject* parent) : QObject (parent) {}
 
-MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
+QString ImageLocation::url()
 {
-  shaderSrc = new ShaderSource (this);
-  imageLocation = new ImageLocation (this);
-
-  auto qml_widget = new QQuickWidget (this);
-  qml_widget->engine()->rootContext()->setContextProperty (QStringLiteral ("shaderSource"), shaderSrc);
-  qml_widget->engine()->rootContext()->setContextProperty (QStringLiteral ("imageLocation"), imageLocation);
-  qml_widget->setResizeMode (QQuickWidget::SizeRootObjectToView);
-  qml_widget->setSource (QStringLiteral ("qrc:/ImageView.qml"));
-  setCentralWidget (qml_widget);
+  return QStringLiteral ("qrc:/images/lena.png");
 }

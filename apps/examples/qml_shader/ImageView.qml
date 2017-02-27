@@ -32,10 +32,11 @@ Item {
         fillMode: Image.PreserveAspectFit
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        source: "images/lena.png"
+        source: imageLocation.url
         width: sourceSize.width > parent.width ? parent.width : sourceSize.width
         height: sourceSize.height > parent.height ? parent.height : sourceSize.height
         visible: false
+        asynchronous: true
         layer.enabled: true
     }
     ShaderEffect {

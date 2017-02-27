@@ -7,6 +7,8 @@ if(Qt5_FOUND)
   qt5_add_resources(QML_SHADER_QRC qml_shader.qrc OPTIONS --compress 9 --threshold 0)
   set(qml_shader_sources
       main.cpp
+      ImageLocation.cpp
+      ImageLocation.h
       MainWindow.cpp
       MainWindow.h
       ShaderSource.cpp

@@ -31,6 +31,7 @@
 
 #include <QMainWindow>
 
+class ImageLocation;
 class ShaderSource;
 
 class MainWindow : public QMainWindow
@@ -40,6 +41,7 @@ public:
   MainWindow (QWidget* parent = nullptr);
 protected:
   ShaderSource* shaderSrc;
+  ImageLocation* imageLocation;
 };
 
 #endif // MAINWINDOW_H
