@@ -83,15 +83,19 @@ namespace s1
       if (seqLen == 1)
       {
         // One-char sequences are stored 'inline'
-        f (*reinterpret_cast<const Char32*> (&(data.data[dataOfs])));
+        f (data.data[dataOfs]);
       }
       else
       {
         // Multi-char sequences are in the 'seqdata' table
         auto seq = &(data.seqdata[charData & 0xffffff]);
-        for (unsigned int i = 0; i < seqLen; i++)
+        auto seqEnd = seq + seqLen;
+        UTF16Decoder decoder;
+        while (seq < seqEnd)
         {
-          f (seq[i]);
+          Char32 ch;
+          if (decoder (seq, seqEnd, ch) != UTF16Decoder::drSuccess) break;
+          f (ch);
         }
       }
       return true;

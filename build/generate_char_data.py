@@ -157,6 +157,12 @@ class Data_CP_Seq(object):
 
   def __init__(self, prop_map):
     self.prop_map = prop_map
+
+  def _UTF16count(self, seq):
+    n = 0
+    for cp in seq:
+      n += 1 if cp < 0x10000 else 2
+    return n
   
   def WriteExtraMapDataDecl(self, out_file):
     self.ofs_for_cp = {}
@@ -165,9 +171,20 @@ class Data_CP_Seq(object):
       seq = self.prop_map[cp]
       if len(seq) == 1: continue
       self.ofs_for_cp[cp] = n
-      n += len(seq)
-    print('\tChar32 seqdata[{0}];'.format (n), file=out_file)
+      n += self._UTF16count(seq)
+    print('\tChar16 seqdata[{0}];'.format (n), file=out_file)
     return True
+
+  def _UTF16convert(self, seq):
+    seq_u16 = []
+    for cp in seq:
+      if cp < 0x10000:
+        seq_u16.append(cp)
+      else:
+        cp -= 0x10000
+        seq_u16.append(0xd800 | (cp >> 10))
+        seq_u16.append(0xdc00 | (cp & 0x3ff))
+    return seq_u16
 
   def WriteExtraMapData(self, out_file):
     print('\t{', file=out_file)
@@ -175,7 +192,7 @@ class Data_CP_Seq(object):
       seq = self.prop_map[cp]
       if len(seq) == 1: continue
       s = ""
-      for seq_cp in seq:
+      for seq_cp in self._UTF16convert(seq):
         s = s + '{0}, '.format (hex (seq_cp))
       print('\t\t{0}'.format (s.rstrip()), file=out_file)
     print('\t},', file=out_file)
@@ -184,7 +201,7 @@ class Data_CP_Seq(object):
     if cp in self.prop_map:
       seq = self.prop_map[cp]
       if cp in self.ofs_for_cp:
-        val = self.ofs_for_cp[cp] | ((len(seq)-1) << 24)
+        val = self.ofs_for_cp[cp] | ((self._UTF16count(seq)-1) << 24)
       else:
         val = seq[0]
     else:
