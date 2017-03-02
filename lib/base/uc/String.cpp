@@ -995,18 +995,13 @@ namespace s1
             normalizationState.HandleChar (T);
           continue;
         }
-        const Char32* decompSeq;
-        unsigned int decompSeqSize;
-        if (LookupSeq (ch, ucd_CanonicalDecomp, decompSeq, decompSeqSize))
-        {
-          /* Note: the decomposition data is stored fully decomposed,
-           * recursion is not necessary */
-          for (unsigned int i = 0; i < decompSeqSize; i++)
-          {
-            normalizationState.HandleChar (decompSeq[i]);
-          }
-        }
-        else
+        if (!LookupSeq (ch, ucd_CanonicalDecomp,
+                        [&](Char32 decompChar)
+                        {
+                          /* Note: the decomposition data is stored fully decomposed,
+                           * recursion is not necessary */
+                          normalizationState.HandleChar (decompChar);
+                        }))
         {
           // Not decomposed.
           normalizationState.HandleChar (ch);

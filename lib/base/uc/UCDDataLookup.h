@@ -72,8 +72,8 @@ namespace s1
     }
 
     /// Looks up a character sequence for another character
-    template<typename DataType>
-    static inline bool LookupSeq (Char32 ch, const DataType& data, const Char32*& seq, unsigned int& size)
+    template<typename DataType, typename ResultFunc>
+    static inline bool LookupSeq (Char32 ch, const DataType& data, ResultFunc f)
     {
       unsigned int keyIndex (IndexInRanges (ch, data.key));
       if (keyIndex == ~0u) return false;
@@ -83,14 +83,16 @@ namespace s1
       if (seqLen == 1)
       {
         // One-char sequences are stored 'inline'
-        seq = reinterpret_cast<const Char32*> (&(data.data[dataOfs]));
-        size = 1;
+        f (*reinterpret_cast<const Char32*> (&(data.data[dataOfs])));
       }
       else
       {
         // Multi-char sequences are in the 'seqdata' table
-        seq = &(data.seqdata[charData & 0xffffff]);
-        size = seqLen;
+        auto seq = &(data.seqdata[charData & 0xffffff]);
+        for (unsigned int i = 0; i < seqLen; i++)
+        {
+          f (seq[i]);
+        }
       }
       return true;
     }

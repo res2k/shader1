@@ -24,6 +24,7 @@ set(base_sources_uc_cpp
     uc/StringOverflowException.cpp
     uc/Stream.cpp
     uc/StreamException.cpp
+    uc/UCDDataLookup.h
     uc/UTF16to8Transcoder.cpp
     uc/UTF8to16Transcoder.cpp
     )
