@@ -46,7 +46,35 @@ Item {
         fragmentShader: shaderSource.fragmentProgram
 
         onLogChanged: {
-          console.log("ShaderEffect status:", status, "log:", log);
+            console.log("ShaderEffect status:", status, "log:", log);
         }
+    }
+    Item {
+        Rectangle {
+            color: "#c0ffffff"
+            anchors.fill: statusText
+            anchors.margins: -4
+            radius: 4
+        }
+        Text {
+            function statusTextStr() {
+                switch (image.status) {
+                case Image.Error:   return "Error loading image";
+                case Image.Loading: return "Loading... " + (Math.floor(image.progress*100)) + "%";
+                }
+                return "";
+            }
+
+            id: statusText
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            text: statusTextStr();
+            font.pixelSize: 12
+        }
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+
+        visible: statusText.text !== ""
     }
 }

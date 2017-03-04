@@ -25,9 +25,20 @@
 
 #include "ImageLocation.h"
 
-ImageLocation::ImageLocation (QObject* parent) : QObject (parent) {}
+ImageLocation::ImageLocation (QObject* parent)
+  : QObject (parent), imageUrl (QUrl::fromLocalFile (QStringLiteral (":/images/Lena.png")))
+{}
 
-QString ImageLocation::url()
+const QUrl& ImageLocation::url()
 {
-  return QStringLiteral ("qrc:/images/lena.png");
+  return imageUrl;
+}
+
+void ImageLocation::setUrl (const QUrl& url)
+{
+  if (url != imageUrl)
+  {
+    imageUrl = url;
+    emit urlChanged ();
+  }
 }

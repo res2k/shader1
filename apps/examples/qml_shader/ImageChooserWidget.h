@@ -1,4 +1,4 @@
-<!--
+/*
     Shader1
     Copyright (c) 2017 Frank Richter
 
@@ -21,12 +21,36 @@
 
     3. This notice may not be removed or altered from any source
     distribution.
--->
-<RCC>
-    <qresource prefix="/">
-      <file>images/Bonobo.png</file>
-      <file>images/Lena.png</file>
-      <file>ImageView.qml</file>
-      <file>shaders/grayscale.s1</file>
-    </qresource>
-</RCC>
+*/
+
+/**\file
+ * Widget for selecting an image options
+ */
+#ifndef IMAGECHOOSERWIDGET_H
+#define IMAGECHOOSERWIDGET_H
+
+#include <QWidget>
+
+#include <memory>
+
+namespace Ui
+{
+  class ImageChooserWidget;
+} // namespace ui
+
+class ImageLocation;
+
+class ImageChooserWidget : public QWidget
+{
+  Q_OBJECT
+public:
+  ImageChooserWidget (ImageLocation* imageLocation, QWidget* parent = nullptr);
+  ~ImageChooserWidget();
+protected:
+  std::unique_ptr<Ui::ImageChooserWidget> ui;
+  ImageLocation* imageLocation;
+
+  void treeItemClicked (const QModelIndex& index);
+};
+
+#endif // IMAGECHOOSERWIDGET_H

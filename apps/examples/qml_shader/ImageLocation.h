@@ -30,6 +30,7 @@
 #define IMAGELOCATION_H
 
 #include <QObject>
+#include <QUrl>
 
 class ImageLocation : public QObject
 {
@@ -38,10 +39,13 @@ public:
   ImageLocation (QObject* parent = nullptr);
 
   /// Image location URL
-  QString url();
-  Q_PROPERTY(QString url READ url NOTIFY urlChanged);
+  const QUrl& url();
+  void setUrl (const QUrl& url);
+  Q_PROPERTY(QUrl url READ url NOTIFY urlChanged);
 signals:
   void urlChanged ();
+protected:
+  QUrl imageUrl;
 };
 
 #endif // IMAGELOCATION_H

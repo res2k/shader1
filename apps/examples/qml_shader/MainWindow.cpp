@@ -25,9 +25,11 @@
 
 #include "MainWindow.h"
 
+#include "ImageChooserWidget.h"
 #include "ImageLocation.h"
 #include "ShaderSource.h"
 
+#include <QDockWidget>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickWidget>
@@ -45,4 +47,11 @@ MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
   qml_widget->setResizeMode (QQuickWidget::SizeRootObjectToView);
   qml_widget->setSource (QStringLiteral ("qrc:/ImageView.qml"));
   setCentralWidget (qml_widget);
+
+  auto optionsDock = new QDockWidget (tr ("Image"), this);
+  auto optionsWidget = new ImageChooserWidget (imageLocation, optionsDock);
+  optionsDock->setWidget (optionsWidget);
+  // Note: not 'closeable' until we have some menu or so
+  optionsDock->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+  addDockWidget (Qt::LeftDockWidgetArea, optionsDock);
 }

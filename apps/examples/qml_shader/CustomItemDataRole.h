@@ -1,4 +1,4 @@
-<!--
+/*
     Shader1
     Copyright (c) 2017 Frank Richter
 
@@ -21,12 +21,19 @@
 
     3. This notice may not be removed or altered from any source
     distribution.
--->
-<RCC>
-    <qresource prefix="/">
-      <file>images/Bonobo.png</file>
-      <file>images/Lena.png</file>
-      <file>ImageView.qml</file>
-      <file>shaders/grayscale.s1</file>
-    </qresource>
-</RCC>
+*/
+
+/**\file
+ * Custom item model rules
+ */
+#ifndef CUSTOMITEMDATAROLE_H
+#define CUSTOMITEMDATAROLE_H
+
+/// Custom item model rules
+enum CustomItemDataRole
+{
+  /// Full URL to a file
+  FullUrlRole = Qt::UserRole + 0x41
+};
+
+#endif // CUSTOMITEMDATAROLE_H
