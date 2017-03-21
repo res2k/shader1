@@ -17,6 +17,7 @@ if(Qt5_FOUND)
   target_link_libraries(qml_shader
                         Qt5::QuickWidgets Qt5::Widgets
                         s1)
+  setup_example(qml_shader)
   # Require C++11 features if set globally
   if(S1_REQUIRED_CXX_FEATURES)
     target_compile_features(qml_shader PRIVATE ${S1_REQUIRED_CXX_FEATURES})
