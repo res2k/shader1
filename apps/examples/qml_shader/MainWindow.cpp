@@ -34,6 +34,8 @@
 
 MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
 {
+  resize (800, 600);
+
   shaderSrc = new ShaderSource (this);
   imageLocation = new ImageLocation (this);
 

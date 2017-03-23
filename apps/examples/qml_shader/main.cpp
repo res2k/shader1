@@ -26,10 +26,29 @@
 #include "MainWindow.h"
 
 #include <QApplication>
+#include <QScreen>
+
+#if defined(Q_OS_WIN32)
+#include <Windows.h>
+
+#include <Uxtheme.h>
+#include <vssym32.h>
+#endif
 
 int main (int argc, char* argv[])
 {
   QApplication qapp (argc, argv);
+
+#if defined(Q_OS_WIN32)
+  LOGFONTW lfw;
+  if (SUCCEEDED(GetThemeSysFont(NULL, TMT_MSGBOXFONT, &lfw)))
+  {
+    QFont font;
+    font.setFamily(QString::fromWCharArray(lfw.lfFaceName));
+    font.setPointSize((qAbs(lfw.lfHeight) * 72.0) / qapp.screens()[0]->logicalDotsPerInchY());
+    qapp.setFont(font);
+  }
+#endif
 
   MainWindow* main_wnd = new MainWindow;
   main_wnd->show ();
