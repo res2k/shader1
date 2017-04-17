@@ -37,6 +37,7 @@
 
 #include <QDir>
 #include <QFileSystemModel>
+#include <QImageReader>
 #include <QStandardPaths>
 #include <QStringBuilder>
 #include <QStringListModel>
@@ -90,6 +91,18 @@ ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* p
             return QUrl::fromLocalFile (userPicturesModel->filePath (index));
           return QVariant();
         }, userPicturesModel, this);
+
+      // Set up filesystem model to only show images supported by Qt
+      const auto supportedFormats = QImageReader::supportedImageFormats ();
+      QStringList supportedFormatFilters;
+      for (const auto& format : supportedFormats)
+      {
+        QString extension = QStringLiteral ("*.") % QString::fromLatin1 (format);
+        supportedFormatFilters.append (extension);
+      }
+      userPicturesModel->setNameFilters (supportedFormatFilters);
+      userPicturesModel->setNameFilterDisables (false);
+
       auto userPicturesSubmodel = new SubindexModel (this);
       userPicturesSubmodel->setSourceModel (userPicturesModelWithURL);
       userPicturesSubmodel->setSourceRoot (userPicturesModelWithURL->mapFromSource (userPicturesIndex).parent());
