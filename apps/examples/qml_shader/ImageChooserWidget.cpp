@@ -74,6 +74,7 @@ ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* p
     builtinImagesModelFoster->setSourceModel (builtinImagesModelWithURL);
     QMap<int, QVariant> fosterData;
     fosterData[Qt::DisplayRole] = tr ("Builtin Images");
+    fosterData[Qt::DecorationRole] = style()->standardIcon (QStyle::SP_DirIcon);
     builtinImagesModelFoster->setFosterData (fosterData);
     imagesModel->addModel (builtinImagesModelFoster);
   }
@@ -110,10 +111,23 @@ ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* p
     }
   }
 
-  ui->imageTree->setModel (imagesModel);
+  // Only show icons for folders
+  auto imagesModelFolderIconsOnly = make_CustomDataModel (
+    [=](const QModelIndex &index, int role) -> QVariant
+    {
+      if (role == Qt::DecorationRole)
+      {
+        if (!imagesModel->hasChildren (index)) return QIcon();
+      }
+      return QVariant();
+    }, imagesModel, this);
 
-  auto defaultIndex = imagesModel->match (imagesModel->index (0, 0), Qt::DisplayRole, defaultImage, 1,
-                                          Qt::MatchRecursive);
+  ui->imageTree->setModel (imagesModelFolderIconsOnly);
+
+  auto defaultIndex =
+    imagesModelFolderIconsOnly->match (imagesModelFolderIconsOnly->index (0, 0),
+                                       Qt::DisplayRole, defaultImage, 1,
+                                       Qt::MatchRecursive);
   if (!defaultIndex.isEmpty ())
   {
     ui->imageTree->scrollTo (defaultIndex[0]);
