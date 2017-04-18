@@ -33,6 +33,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickWidget>
+#include <QToolBar>
 
 MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
 {
@@ -52,6 +53,21 @@ MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
   auto optionsWidget = new ImageChooserWidget (imageLocation, optionsDock);
   optionsDock->setWidget (optionsWidget);
   // Note: not 'closeable' until we have some menu or so
-  optionsDock->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+  optionsDock->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable);
   addDockWidget (Qt::LeftDockWidgetArea, optionsDock);
+
+  QFont materialIconsFont (QStringLiteral ("Material Icons"), 18);
+
+  auto toolbar = new QToolBar (this);
+  toolbar->setFont (materialIconsFont);
+  toolbar->setFloatable (false);
+  toolbar->setMovable (false);
+  toolbar->setOrientation (Qt::Vertical);
+  toolbar->setToolButtonStyle (Qt::ToolButtonTextOnly);
+  addToolBar (Qt::LeftToolBarArea, toolbar);
+
+  auto imageBrowserAction = optionsDock->toggleViewAction (); //toolbar->addAction (QStringLiteral ("image"));
+  imageBrowserAction->setToolTip (optionsDock->windowTitle ());
+  imageBrowserAction->setText (QStringLiteral ("image"));
+  toolbar->addAction (imageBrowserAction);
 }
