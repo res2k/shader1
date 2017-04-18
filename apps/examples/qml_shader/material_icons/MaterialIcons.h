@@ -23,39 +23,16 @@
     distribution.
 */
 
-#include "MainWindow.h"
+/**\file
+ * Registration of Material Icons font in application
+ */
+#ifndef MATERIALICONS_H
+#define MATERIALICONS_H
 
-#include "material_icons/MaterialIcons.h"
-
-#include <QApplication>
-#include <QScreen>
-
-#if defined(Q_OS_WIN32)
-#include <Windows.h>
-
-#include <Uxtheme.h>
-#include <vssym32.h>
-#endif
-
-int main (int argc, char* argv[])
+namespace material_icons
 {
-  QApplication qapp (argc, argv);
+  /// Register Material Icons font in application
+  void RegisterFont ();
+};
 
-#if defined(Q_OS_WIN32)
-  LOGFONTW lfw;
-  if (SUCCEEDED(GetThemeSysFont(NULL, TMT_MSGBOXFONT, &lfw)))
-  {
-    QFont font;
-    font.setFamily(QString::fromWCharArray(lfw.lfFaceName));
-    font.setPointSize((qAbs(lfw.lfHeight) * 72.0) / qapp.screens()[0]->logicalDotsPerInchY());
-    qapp.setFont(font);
-  }
-#endif
-
-  material_icons::RegisterFont ();
-
-  MainWindow* main_wnd = new MainWindow;
-  main_wnd->show ();
-
-  return qapp.exec();
-}
+#endif // MATERIALICONS_H

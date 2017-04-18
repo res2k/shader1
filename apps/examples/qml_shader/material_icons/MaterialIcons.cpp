@@ -23,39 +23,28 @@
     distribution.
 */
 
-#include "MainWindow.h"
+#include "MaterialIcons.h"
 
-#include "material_icons/MaterialIcons.h"
+#include <QDir>
+#include <QFontDatabase>
 
-#include <QApplication>
-#include <QScreen>
+static inline void initMaterialIconsRes() { Q_INIT_RESOURCE(MaterialIcons); }
+static inline void cleanupMaterialIconsRes() { Q_CLEANUP_RESOURCE(MaterialIcons); }
 
-#if defined(Q_OS_WIN32)
-#include <Windows.h>
-
-#include <Uxtheme.h>
-#include <vssym32.h>
-#endif
-
-int main (int argc, char* argv[])
+namespace material_icons
 {
-  QApplication qapp (argc, argv);
-
-#if defined(Q_OS_WIN32)
-  LOGFONTW lfw;
-  if (SUCCEEDED(GetThemeSysFont(NULL, TMT_MSGBOXFONT, &lfw)))
+  namespace
   {
-    QFont font;
-    font.setFamily(QString::fromWCharArray(lfw.lfFaceName));
-    font.setPointSize((qAbs(lfw.lfHeight) * 72.0) / qapp.screens()[0]->logicalDotsPerInchY());
-    qapp.setFont(font);
+    struct ResourceInitializer
+    {
+      ResourceInitializer() { initMaterialIconsRes(); }
+      ~ResourceInitializer() { cleanupMaterialIconsRes(); }
+    };
+    ResourceInitializer resInit;
+  } // anonymous namespace
+
+  void RegisterFont ()
+  {
+    QFontDatabase::addApplicationFont (QStringLiteral(":/material_icons/MaterialIcons-Regular.ttf"));
   }
-#endif
-
-  material_icons::RegisterFont ();
-
-  MainWindow* main_wnd = new MainWindow;
-  main_wnd->show ();
-
-  return qapp.exec();
-}
+} // namespace material_icons

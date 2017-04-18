@@ -4,8 +4,6 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt5 COMPONENTS QuickWidgets Widgets)
 
 if(Qt5_FOUND)
-  qt5_add_resources(QML_SHADER_QRC qml_shader.qrc OPTIONS --compress 9 --threshold 0)
-
   set(qml_shader_models_sources
       models/CombiningItemModel.cpp
       models/CombiningItemModel.h
@@ -24,6 +22,18 @@ if(Qt5_FOUND)
   target_link_libraries(qml_shader_models
                         Qt5::Widgets)
 
+  qt5_add_resources(MATERIAL_ICONS_QRC material_icons/MaterialIcons.qrc OPTIONS --compress 9 --threshold 0)
+  set(qml_shader_material_icons_sources
+      material_icons/MaterialIcons.cpp
+      material_icons/MaterialIcons.h
+      material_icons/MaterialIcons.qrc ${MATERIAL_ICONS_QRC}
+      )
+  add_library(qml_shader_material_icons STATIC EXCLUDE_FROM_ALL
+              ${qml_shader_material_icons_sources})
+  target_link_libraries(qml_shader_material_icons
+                        Qt5::Gui)
+
+  qt5_add_resources(QML_SHADER_QRC qml_shader.qrc OPTIONS --compress 9 --threshold 0)
   set(qml_shader_sources
       main.cpp
       CustomItemDataRole.h
@@ -42,6 +52,7 @@ if(Qt5_FOUND)
   set_target_properties(qml_shader PROPERTIES AUTOUIC ON)
   target_link_libraries(qml_shader
                         qml_shader_models
+                        qml_shader_material_icons
                         Qt5::QuickWidgets Qt5::Widgets
                         s1)
   if(WIN32)

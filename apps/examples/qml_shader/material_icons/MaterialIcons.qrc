@@ -1,4 +1,4 @@
-/*
+<!--
     Shader1
     Copyright (c) 2017 Frank Richter
 
@@ -21,41 +21,9 @@
 
     3. This notice may not be removed or altered from any source
     distribution.
-*/
-
-#include "MainWindow.h"
-
-#include "material_icons/MaterialIcons.h"
-
-#include <QApplication>
-#include <QScreen>
-
-#if defined(Q_OS_WIN32)
-#include <Windows.h>
-
-#include <Uxtheme.h>
-#include <vssym32.h>
-#endif
-
-int main (int argc, char* argv[])
-{
-  QApplication qapp (argc, argv);
-
-#if defined(Q_OS_WIN32)
-  LOGFONTW lfw;
-  if (SUCCEEDED(GetThemeSysFont(NULL, TMT_MSGBOXFONT, &lfw)))
-  {
-    QFont font;
-    font.setFamily(QString::fromWCharArray(lfw.lfFaceName));
-    font.setPointSize((qAbs(lfw.lfHeight) * 72.0) / qapp.screens()[0]->logicalDotsPerInchY());
-    qapp.setFont(font);
-  }
-#endif
-
-  material_icons::RegisterFont ();
-
-  MainWindow* main_wnd = new MainWindow;
-  main_wnd->show ();
-
-  return qapp.exec();
-}
+-->
+<RCC>
+    <qresource prefix="/material_icons">
+      <file alias="MaterialIcons-Regular.ttf">font/MaterialIcons-Regular.ttf</file>
+    </qresource>
+</RCC>
