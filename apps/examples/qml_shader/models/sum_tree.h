@@ -79,9 +79,9 @@ namespace sum_tree
       static bool is_greater_equal (T&&, T&&) { return true; }
     };
 
-    template<typename T> struct default : public sorted { };
+    template<typename T> struct default_traits : public sorted { };
 
-    template<> struct default<EmptyNodeData> : public unsorted { };
+    template<> struct default_traits<EmptyNodeData> : public unsorted { };
     
   } // namespace value_traits
 
@@ -176,7 +176,7 @@ namespace sum_tree
         node_ptr parent = nullptr;
         node_ptr left = nullptr;
         node_ptr right = nullptr;
-        color color = color::Black;
+        color node_color = color::Black;
         bool header = false; // TODO?: could use bstree_algorithms_base<>::is_header() instead...
 
         node_links () {}
@@ -230,8 +230,8 @@ namespace sum_tree
       static void set_left (node_ptr n, node_ptr left) { n->left = left; }
       static node_ptr get_right (const_node_ptr n) { return n->right; }
       static void set_right (node_ptr n, node_ptr right) { n->right = right; }
-      static color get_color (const_node_ptr n) { return n->color; }
-      static void set_color (node_ptr n, color c) { n->color = c; }
+      static color get_color (const_node_ptr n) { return n->node_color; }
+      static void set_color (node_ptr n, color c) { n->node_color = c; }
       static color black () { return color::Black; }
       static color red () { return color::Red; }
 
@@ -240,7 +240,7 @@ namespace sum_tree
       {
         auto node_data = node_from_links (n);
 
-        SumTraits::value_type new_sum = node_data->get_node_value ();
+        typename SumTraits::value_type new_sum = node_data->get_node_value ();
         if (n->left) new_sum += node_from_links (n->left)->get_sum();
         if (n->right) new_sum += node_from_links (n->right)->get_sum();
         node_data->set_sum (std::move (new_sum));
@@ -280,6 +280,8 @@ namespace boost
       : public bstree_algorithms<sum_tree::impl::RBTNodeTraitsImpl<N, S>>
     {
       typedef bstree_algorithms<sum_tree::impl::RBTNodeTraitsImpl<N, S>> base_algo;
+      typedef typename base_algo::node_ptr node_ptr;
+      typedef typename base_algo::node_traits node_traits;
     public:
       static void rotate_left_no_parent_fix(const node_ptr& p, const node_ptr& p_right)
       {
@@ -333,7 +335,8 @@ namespace boost
         node_traits::update_ancestry_sums (new_node);
       }
 
-      static void erase (const node_ptr& header, const node_ptr& z, data_for_rebalance&info)
+      static void erase (const node_ptr& header, const node_ptr& z,
+                         typename base_algo::data_for_rebalance& info)
       {
         base_algo::erase (header, z, info);
 
@@ -364,11 +367,11 @@ namespace sum_tree
 
       typename node_traits::const_node_ptr get_header() const
       {
-        return reinterpret_cast<node_traits::const_node_ptr> (&_header);
+        return reinterpret_cast<typename node_traits::const_node_ptr> (&_header);
       }
       typename node_traits::node_ptr get_header()
       {
-        return reinterpret_cast<node_traits::node_ptr> (&_header);
+        return reinterpret_cast<typename node_traits::node_ptr> (&_header);
       }
     private:
       // NOTE: Must be first member!
@@ -378,7 +381,7 @@ namespace sum_tree
 
   template<typename NodeData = EmptyNodeData,
            typename SumTraits = sum_traits::node_index<int>,
-           typename ValueTraits = value_traits::default<NodeData>>
+           typename ValueTraits = value_traits::default_traits<NodeData>>
   class Tree : protected impl::Tree_base<NodeData, SumTraits>
   {
     typedef impl::Tree_base<NodeData, SumTraits> Tree_base;
@@ -390,11 +393,11 @@ namespace sum_tree
     typedef typename node_traits::node_ptr node_type;
     typedef typename node_traits::const_node_ptr const_node_type;
 
-    bool empty () const { return tree_algo::begin_node (get_header ()) == tree_algo::end_node (get_header ()); }
+    bool empty () const { return tree_algo::begin_node (this->get_header ()) == tree_algo::end_node (this->get_header ()); }
     typename SumTraits::value_type root_sum() const
     {
-      auto root = tree_algo::root_node (get_header ());
-      if (root == get_header()) return 0;
+      auto root = tree_algo::root_node (this->get_header ());
+      if (root == this->get_header()) return 0;
       return tree_sum (root);
     }
 
@@ -414,11 +417,11 @@ namespace sum_tree
     /// Get a node from its data
     static const_node_type get_data_node (const NodeData& data)
     {
-      return &(static_cast<const node_traits::node&> (data)._rb_links);
+      return &(static_cast<const typename node_traits::node&> (data)._rb_links);
     }
     static node_type get_data_node (NodeData& data)
     {
-      return &(static_cast<node_traits::node&> (data)._rb_links);
+      return &(static_cast<typename node_traits::node&> (data)._rb_links);
     }
     //@}
 
@@ -450,15 +453,15 @@ namespace sum_tree
     /// Get a node by querying against sum
     node_type get_node_by_sum (typename SumTraits::value_type value)
     {
-      auto root = tree_algo::root_node (get_header ());
-      if (root == get_header()) return nullptr;
+      auto root = tree_algo::root_node (this->get_header ());
+      if (root == this->get_header()) return nullptr;
       if (value >= tree_sum (root)) return nullptr;
       return get_node_by_sum (root, value);
     }
     const_node_type get_node_by_sum (typename SumTraits::value_type value) const
     {
-      auto root = tree_algo::root_node (get_header ());
-      if (root == get_header()) return nullptr;
+      auto root = tree_algo::root_node (this->get_header ());
+      if (root == this->get_header()) return nullptr;
       if (value >= tree_sum (root)) return nullptr;
       return get_node_by_sum (root, value);
     }
@@ -476,7 +479,7 @@ namespace sum_tree
       }
 
       auto parent = node_traits::get_parent (node);
-      while (parent != get_header())
+      while (parent != this->get_header())
       {
         auto p_right = node_traits::get_right (parent);
         if (node == p_right)
@@ -498,7 +501,7 @@ namespace sum_tree
 
     void clear ()
     {
-      tree_algo::clear_and_dispose (get_header (), [=](node_type p){ delete node_traits::node_from_links (p); });
+      tree_algo::clear_and_dispose (this->get_header (), [=](node_type p){ delete node_traits::node_from_links (p); });
     }
 
     /**
@@ -508,9 +511,9 @@ namespace sum_tree
     template<typename... T>
     node_type emplace (node_type before, T&&... data)
     {
-      auto new_node = new node_traits::node (std::forward<T> (data)...);
+      auto new_node = new typename node_traits::node (std::forward<T> (data)...);
       tree_algo::init (&new_node->_rb_links);
-      tree_algo::insert_before (get_header(), before, &new_node->_rb_links);
+      tree_algo::insert_before (this->get_header(), before, &new_node->_rb_links);
       auto new_node_parent = node_traits::get_parent (&new_node->_rb_links);
       if (!tree_algo::is_header (new_node_parent))
       {
@@ -525,9 +528,9 @@ namespace sum_tree
     template<typename... T>
     node_type emplace_back (T&&... data)
     {
-      auto new_node = new node_traits::node (std::forward<T> (data)...);
+      auto new_node = new typename node_traits::node (std::forward<T> (data)...);
       tree_algo::init (&new_node->_rb_links);
-      tree_algo::push_back (get_header(), &new_node->_rb_links);
+      tree_algo::push_back (this->get_header(), &new_node->_rb_links);
       auto new_node_parent = node_traits::get_parent (&new_node->_rb_links);
       if (!tree_algo::is_header (new_node_parent))
       {
@@ -539,14 +542,14 @@ namespace sum_tree
     /// Erase a node from the tree. Deletes node object as well!
     void erase_node (node_type node)
     {
-      tree_algo::erase (get_header (), node);
+      tree_algo::erase (this->get_header (), node);
       delete node;
     }
 
     /**\name Node-based iteration
      * @{ */
-    node_type begin_node () const { return tree_algo::begin_node (get_header ()); }
-    node_type end_node () const { return tree_algo::end_node (get_header ()); }
+    node_type begin_node () const { return tree_algo::begin_node (this->get_header ()); }
+    node_type end_node () const { return tree_algo::end_node (this->get_header ()); }
 
     static node_type next_node (node_type node) { return tree_algo::next_node (node); }
     /** @} */
@@ -560,7 +563,7 @@ namespace sum_tree
       auto source_next = next_node (source);
 
       tree_algo::unlink (source);
-      tree_algo::insert_before (get_header(), before, source);
+      tree_algo::insert_before (this->get_header(), before, source);
       assert (!ValueTraits::is_less (get_node_data (source), get_node_data (before)));
 
       return source_next;
