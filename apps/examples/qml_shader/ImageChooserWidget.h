@@ -50,7 +50,7 @@ protected:
   std::unique_ptr<Ui::ImageChooserWidget> ui;
   ImageLocation* imageLocation;
 
-  void treeItemClicked (const QModelIndex& index);
+  void treeItemSelected (const QModelIndex& index);
 };
 
 #endif // IMAGECHOOSERWIDGET_H

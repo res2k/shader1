@@ -49,8 +49,6 @@ ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* p
   ui->setupUi (this);
 
   auto imagesPath = QStringLiteral (":/images/");
-  connect (ui->imageTree, &QTreeView::clicked,
-           this, &ImageChooserWidget::treeItemClicked);
   auto defaultImage = imageLocation->url ().fileName ();
 
   // Set up contents of Image selection widget
@@ -124,6 +122,9 @@ ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* p
 
   ui->imageTree->setModel (imagesModelFolderIconsOnly);
 
+  connect (ui->imageTree->selectionModel(), &QItemSelectionModel::currentChanged,
+           this, &ImageChooserWidget::treeItemSelected);
+
   auto defaultIndex =
     imagesModelFolderIconsOnly->match (imagesModelFolderIconsOnly->index (0, 0),
                                        Qt::DisplayRole, defaultImage, 1,
@@ -146,7 +147,7 @@ ImageChooserWidget::~ImageChooserWidget()
 
 }
 
-void ImageChooserWidget::treeItemClicked (const QModelIndex& index)
+void ImageChooserWidget::treeItemSelected (const QModelIndex& index)
 {
   auto item_data = ui->imageTree->model ()->data (index, FullUrlRole);
   // Ignore items with empty URL
