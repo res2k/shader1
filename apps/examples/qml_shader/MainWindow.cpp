@@ -66,7 +66,7 @@ MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
   toolbar->setToolButtonStyle (Qt::ToolButtonTextOnly);
   addToolBar (Qt::LeftToolBarArea, toolbar);
 
-  auto imageBrowserAction = optionsDock->toggleViewAction (); //toolbar->addAction (QStringLiteral ("image"));
+  auto imageBrowserAction = optionsDock->toggleViewAction ();
   imageBrowserAction->setToolTip (optionsDock->windowTitle ());
   imageBrowserAction->setText (QStringLiteral ("image"));
   toolbar->addAction (imageBrowserAction);
