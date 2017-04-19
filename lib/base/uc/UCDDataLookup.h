@@ -22,6 +22,8 @@
 #ifndef __UCDDATALOOKUP_H__
 #define __UCDDATALOOKUP_H__
 
+#include "base/uc/UTF16Decoder.h"
+
 namespace s1
 {
   namespace uc
