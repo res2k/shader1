@@ -36,6 +36,7 @@
 
 #include <boost/call_traits.hpp>
 #include <boost/compressed_pair.hpp>
+#include <boost/intrusive/parent_from_member.hpp>
 #include <boost/intrusive/rbtree_algorithms.hpp>
 
 namespace sum_tree
@@ -216,12 +217,12 @@ namespace sum_tree
       static node* node_from_links (node_ptr links)
       {
         assert(!links->header);
-        return reinterpret_cast<node*> (reinterpret_cast<uint8_t*> (links) - offsetof(node, _rb_links));
+        return boost::intrusive::get_parent_from_member (links, &node::_rb_links);
       }
       static const node* node_from_links (const_node_ptr links)
       {
         assert(!links->header);
-        return reinterpret_cast<const node*> (reinterpret_cast<const uint8_t*> (links) - offsetof(node, _rb_links));
+        return boost::intrusive::get_parent_from_member (links, &node::_rb_links);
       }
 
       static node_ptr get_parent (const_node_ptr n) { return n->parent; }
