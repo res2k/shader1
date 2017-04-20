@@ -27,6 +27,7 @@
 
 #include "ImageChooserWidget.h"
 #include "ImageLocation.h"
+#include "ShaderChooserWidget.h"
 #include "ShaderSource.h"
 
 #include <QDockWidget>
@@ -49,6 +50,12 @@ MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
   qml_widget->setSource (QStringLiteral ("qrc:/ImageView.qml"));
   setCentralWidget (qml_widget);
 
+  auto shaderDock = new QDockWidget (tr ("Shader Program"), this);
+  auto shaderWidget = new ShaderChooserWidget (shaderSrc, shaderDock);
+  shaderDock->setWidget (shaderWidget);
+  shaderDock->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable);
+  addDockWidget (Qt::LeftDockWidgetArea, shaderDock);
+
   auto optionsDock = new QDockWidget (tr ("Image"), this);
   auto optionsWidget = new ImageChooserWidget (imageLocation, optionsDock);
   optionsDock->setWidget (optionsWidget);
@@ -64,6 +71,11 @@ MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
   toolbar->setOrientation (Qt::Vertical);
   toolbar->setToolButtonStyle (Qt::ToolButtonTextOnly);
   addToolBar (Qt::LeftToolBarArea, toolbar);
+
+  auto shaderBrowserAction = shaderDock->toggleViewAction ();
+  shaderBrowserAction->setToolTip (shaderDock->windowTitle ());
+  shaderBrowserAction->setText (QStringLiteral ("gradient"));
+  toolbar->addAction (shaderBrowserAction);
 
   auto imageBrowserAction = optionsDock->toggleViewAction ();
   imageBrowserAction->setToolTip (optionsDock->windowTitle ());

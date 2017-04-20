@@ -49,6 +49,8 @@ if(Qt5_FOUND)
       ImageLocation.h
       MainWindow.cpp
       MainWindow.h
+      ShaderChooserWidget.cpp
+      ShaderChooserWidget.h
       ShaderSource.cpp
       ShaderSource.h
       qml_shader.qrc ${QML_SHADER_QRC}
