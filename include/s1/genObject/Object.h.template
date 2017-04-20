@@ -304,7 +304,7 @@ namespace s1
     };
   
   #if !defined(DOXYGEN_RUN)
-    /* Note: If this class is _defined_, we there is _no_ well-known forward
+    /* Note: If this class is _defined_, we know there is _no_ well-known forward
      * declaration!
      * A well-known forward declaration causes a specialization to be forward-
      * declared. */
