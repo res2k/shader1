@@ -52,7 +52,6 @@ MainWindow::MainWindow (QWidget* parent) : QMainWindow (parent)
   auto optionsDock = new QDockWidget (tr ("Image"), this);
   auto optionsWidget = new ImageChooserWidget (imageLocation, optionsDock);
   optionsDock->setWidget (optionsWidget);
-  // Note: not 'closeable' until we have some menu or so
   optionsDock->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetClosable);
   addDockWidget (Qt::LeftDockWidgetArea, optionsDock);
 

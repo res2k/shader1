@@ -24,7 +24,7 @@
 */
 
 /**\file
- * Widget for selecting an image options
+ * Widget for selecting an image
  */
 #ifndef IMAGECHOOSERWIDGET_H
 #define IMAGECHOOSERWIDGET_H
