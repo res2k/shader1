@@ -39,10 +39,12 @@ if(Qt5_FOUND)
       main.cpp
       AssetBrowsingModel.cpp
       AssetBrowsingModel.h
+      AssetBrowsingWidget.cpp
+      AssetBrowsingWidget.h
+      AssetBrowsingWidget.ui
       CustomItemDataRole.h
       ImageChooserWidget.cpp
       ImageChooserWidget.h
-      ImageChooserWidget.ui
       ImageLocation.cpp
       ImageLocation.h
       MainWindow.cpp

@@ -24,23 +24,37 @@
 */
 
 /**\file
- * Widget for selecting an image options
+ * Base class for "asset browser" widgets
  */
-#ifndef IMAGECHOOSERWIDGET_H
-#define IMAGECHOOSERWIDGET_H
+#ifndef ASSETBROWSINGWIDGET_H
+#define ASSETBROWSINGWIDGET_H
 
-#include "AssetBrowsingWidget.h"
+#include <QWidget>
 
-class ImageLocation;
+#include <memory>
 
-class ImageChooserWidget : public AssetBrowsingWidget
+namespace Ui
+{
+  class AssetBrowsingWidget;
+} // namespace ui
+
+class AssetBrowsingModel;
+
+class AssetBrowsingWidget : public QWidget
 {
   Q_OBJECT
 public:
-  ImageChooserWidget (ImageLocation* imageLocation, QWidget* parent = nullptr);
-  ~ImageChooserWidget();
+  AssetBrowsingWidget (QWidget* parent = nullptr);
+  ~AssetBrowsingWidget();
 protected:
-  ImageLocation* imageLocation;
+  AssetBrowsingModel* assetsModel;
+  std::unique_ptr<Ui::AssetBrowsingWidget> ui;
+
+  void hideExtraColumns ();
+  void selectFile (const QString& name);
+  void treeItemSelected (const QModelIndex& index);
+signals:
+  void urlSelected (const QUrl& url);
 };
 
-#endif // IMAGECHOOSERWIDGET_H
+#endif // ASSETBROWSINGWIDGET_H
