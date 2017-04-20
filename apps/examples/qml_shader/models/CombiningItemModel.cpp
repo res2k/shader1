@@ -35,8 +35,15 @@ CombiningItemModel::~CombiningItemModel ()
 
 void CombiningItemModel::addModel (QAbstractItemModel* model)
 {
+  int oldColumnCount = totalColumnCount;
+  int newColumnCount = std::max (oldColumnCount, model->columnCount());
+  if (newColumnCount > oldColumnCount)
+  {
+    beginInsertColumns (QModelIndex(), oldColumnCount, newColumnCount+1);
+  }
+  totalColumnCount = newColumnCount;
+
   int lastRow = static_cast<int> (rowCount());
-  totalColumnCount = std::max (totalColumnCount, model->columnCount());
   int modelRows = model->rowCount();
   beginInsertRows (QModelIndex(), lastRow, lastRow + modelRows);
 
@@ -67,6 +74,11 @@ void CombiningItemModel::addModel (QAbstractItemModel* model)
            this, &CombiningItemModel::sourceRowsChanged);
 
   endInsertRows();
+
+  if (newColumnCount > oldColumnCount)
+  {
+    endInsertColumns ();
+  }
 }
 
 bool CombiningItemModel::canFetchMore (const QModelIndex& parent) const
