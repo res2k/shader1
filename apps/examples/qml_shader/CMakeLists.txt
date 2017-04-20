@@ -21,6 +21,7 @@ if(Qt5_FOUND)
               ${qml_shader_models_sources})
   target_link_libraries(qml_shader_models
                         Qt5::Widgets)
+  target_compile_features(qml_shader_models PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 
   qt5_add_resources(MATERIAL_ICONS_QRC material_icons/MaterialIcons.qrc OPTIONS --compress 9 --threshold 0)
   set(qml_shader_material_icons_sources
@@ -59,10 +60,7 @@ if(Qt5_FOUND)
     target_link_libraries(qml_shader uxtheme.lib)
   endif()
   setup_example(qml_shader)
-  # Require C++11 features if set globally
-  if(S1_REQUIRED_CXX_FEATURES)
-    target_compile_features(qml_shader PRIVATE ${S1_REQUIRED_CXX_FEATURES})
-  endif()
+  target_compile_features(qml_shader PRIVATE ${S1_REQUIRED_CXX_FEATURES})
 elseif(Qt5_NOT_FOUND_MESSAGE)
   message(STATUS "Qt5 not found: ${Qt5_NOT_FOUND_MESSAGE}")
 endif()
