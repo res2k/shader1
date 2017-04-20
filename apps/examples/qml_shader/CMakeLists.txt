@@ -37,6 +37,8 @@ if(Qt5_FOUND)
   qt5_add_resources(QML_SHADER_QRC qml_shader.qrc OPTIONS --compress 9 --threshold 0)
   set(qml_shader_sources
       main.cpp
+      AssetBrowsingModel.cpp
+      AssetBrowsingModel.h
       CustomItemDataRole.h
       ImageChooserWidget.cpp
       ImageChooserWidget.h

@@ -28,19 +28,15 @@
 #include "ui_ImageChooserWidget.h"
 
 #include "CustomItemDataRole.h"
+#include "AssetBrowsingModel.h"
 #include "ImageLocation.h"
 
-#include "models/CombiningItemModel.h"
 #include "models/CustomDataModel.h"
-#include "models/FosterModel.h"
-#include "models/SubindexModel.h"
 
-#include <QDir>
-#include <QFileSystemModel>
+#include <QFileInfo>
 #include <QImageReader>
 #include <QStandardPaths>
 #include <QStringBuilder>
-#include <QStringListModel>
 
 ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* parent)
   : QWidget (parent), imageLocation (imageLocation)
@@ -48,64 +44,29 @@ ImageChooserWidget::ImageChooserWidget (ImageLocation* imageLocation, QWidget* p
   ui.reset (new Ui::ImageChooserWidget);
   ui->setupUi (this);
 
-  auto imagesPath = QStringLiteral (":/images/");
   auto defaultImage = imageLocation->url ().fileName ();
 
   // Set up contents of Image selection widget
-  auto imagesModel = new CombiningItemModel (this);
+  auto imagesModel = new AssetBrowsingModel (this);
+  imagesModel->setBuiltinsPath (QStringLiteral (":/images/"), tr ("Builtin Images"));
 
+  // Set up model to only show images supported by Qt
   {
-    auto builtinImagesModel = new QStringListModel (this);
-    QDir builtinImagesDir (imagesPath);
-    builtinImagesModel->setStringList (builtinImagesDir.entryList (QDir::NoFilter, QDir::Name));
-    auto builtinImagesModelWithURL = make_CustomDataModel (
-      [=](const QModelIndex &index, int role) -> QVariant
-      {
-        if (role == FullUrlRole)
-        {
-          auto filename = builtinImagesModel->data (index, Qt::DisplayRole).toString ();
-          return QUrl::fromLocalFile (imagesPath % filename);
-        }
-        return QVariant();
-      }, builtinImagesModel, this);
-    auto builtinImagesModelFoster = new FosterModel (this);
-    builtinImagesModelFoster->setSourceModel (builtinImagesModelWithURL);
-    QMap<int, QVariant> fosterData;
-    fosterData[Qt::DisplayRole] = tr ("Builtin Images");
-    fosterData[Qt::DecorationRole] = style()->standardIcon (QStyle::SP_DirIcon);
-    builtinImagesModelFoster->setFosterData (fosterData);
-    imagesModel->addModel (builtinImagesModelFoster);
+    const auto supportedFormats = QImageReader::supportedImageFormats ();
+    QStringList supportedFormatFilters;
+    for (const auto& format : supportedFormats)
+    {
+      QString extension = QStringLiteral ("*.") % QString::fromLatin1 (format);
+      supportedFormatFilters.append (extension);
+    }
+    imagesModel->setFileSystemNameFilters (supportedFormatFilters);
   }
 
   {
     const auto userPicturesPaths = QStandardPaths::standardLocations (QStandardPaths::PicturesLocation);
     for (const auto& picturePath : userPicturesPaths)
     {
-      auto userPicturesModel = new QFileSystemModel (this);
-      auto userPicturesIndex = userPicturesModel->setRootPath (picturePath);
-      auto userPicturesModelWithURL = make_CustomDataModel (
-        [=](const QModelIndex &index, int role) -> QVariant
-        {
-          if (role == FullUrlRole)
-            return QUrl::fromLocalFile (userPicturesModel->filePath (index));
-          return QVariant();
-        }, userPicturesModel, this);
-
-      // Set up filesystem model to only show images supported by Qt
-      const auto supportedFormats = QImageReader::supportedImageFormats ();
-      QStringList supportedFormatFilters;
-      for (const auto& format : supportedFormats)
-      {
-        QString extension = QStringLiteral ("*.") % QString::fromLatin1 (format);
-        supportedFormatFilters.append (extension);
-      }
-      userPicturesModel->setNameFilters (supportedFormatFilters);
-      userPicturesModel->setNameFilterDisables (false);
-
-      auto userPicturesSubmodel = new SubindexModel (this);
-      userPicturesSubmodel->setSourceModel (userPicturesModelWithURL);
-      userPicturesSubmodel->setSourceRoot (userPicturesModelWithURL->mapFromSource (userPicturesIndex).parent());
-      imagesModel->addModel (userPicturesSubmodel);
+      imagesModel->addFileSystemPath (picturePath);
     }
   }
 
