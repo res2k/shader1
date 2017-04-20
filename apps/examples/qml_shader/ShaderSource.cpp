@@ -34,22 +34,6 @@
 #include "s1/CompiledProgram.h"
 #include "s1/Library.h"
 #include "s1/Options.h"
-#include "s1/Ptr.h"
-
-ShaderSource::ShaderSource (QObject* parent) : QObject (parent)
-{
-  compileShader ();
-}
-
-QString ShaderSource::vertexProgram()
-{
-  return currentVP;
-}
-
-QString ShaderSource::fragmentProgram()
-{
-  return currentFP;
-}
 
 static QString ResultCodeString (s1::ResultCode errorCode)
 {
@@ -68,24 +52,41 @@ static QString LastErrorString (s1::Library* lib)
   return s;
 }
 
-
-void ShaderSource::compileShader ()
+ShaderSource::ShaderSource (QObject* parent)
+  : QObject (parent), sourceUrl (QUrl::fromLocalFile (QStringLiteral (":/shaders/grayscale.s1")))
 {
-  QByteArray shaderData;
-  {
-    auto shaderFilePath = QStringLiteral (":/shaders/grayscale.s1");
-    QFile shaderFile (shaderFilePath);
-    shaderFile.open (QFile::ReadOnly);
-    if (shaderFile.error () != QFile::NoError)
-    {
-      qWarning () << "error opening" << shaderFilePath << ":"
-        << shaderFile.errorString ();
-      return;
-    }
-    shaderData = shaderFile.readAll ();
-  }
+  initLibrary ();
+  compileShader ();
+}
 
-  s1::Ptr<s1::Library> lib;
+const QUrl& ShaderSource::url()
+{
+  return sourceUrl;
+}
+
+void ShaderSource::setUrl (const QUrl& url)
+{
+  if (url != sourceUrl)
+  {
+    sourceUrl = url;
+    emit urlChanged ();
+
+    compileShader();
+  }
+}
+
+QString ShaderSource::vertexProgram()
+{
+  return currentVP;
+}
+
+QString ShaderSource::fragmentProgram()
+{
+  return currentFP;
+}
+
+void ShaderSource::initLibrary ()
+{
   s1::ResultCode libErr (s1::Library::Create (lib));
   if (!S1_SUCCESSFUL(libErr))
   {
@@ -93,10 +94,7 @@ void ShaderSource::compileShader ()
     return;
   }
 
-  s1::Options::Pointer compilerOpts = lib->CreateOptions ();
-  compilerOpts->SetOptLevel (3);
-
-  s1::Backend::Pointer compilerBackend (lib->CreateBackend (L"glsl"));
+  compilerBackend = lib->CreateBackend (L"glsl");
   if (!compilerBackend)
   {
     qWarning() << "Failed to create GLSL backend:"
@@ -104,15 +102,7 @@ void ShaderSource::compileShader ()
     return;
   }
 
-  s1::Program::Pointer compilerProg = lib->CreateProgramFromString (shaderData.constData (), shaderData.size ());
-  if (!compilerProg)
-  {
-    qWarning() << "Error creating program:" << LastErrorString (lib);
-    return;
-  }
-  compilerProg->SetOptions (compilerOpts);
-
-  s1::BackendOptions::Pointer backendOptions = compilerBackend->CreateBackendOptions ();
+  backendOptions = compilerBackend->CreateBackendOptions ();
   if (!backendOptions)
   {
     qWarning() << "Error creating backend options object:" << LastErrorString (lib);
@@ -125,7 +115,44 @@ void ShaderSource::compileShader ()
         << LastErrorString (lib);
     }
   }
+}
 
+void ShaderSource::compileShader ()
+{
+  if (!compilerBackend) return;
+
+  if (!sourceUrl.isLocalFile())
+  {
+    qWarning() << "Unsupported URL:" << sourceUrl;
+    return;
+  }
+
+  QByteArray shaderData;
+  {
+    auto shaderFilePath = sourceUrl.toLocalFile();
+    QFile shaderFile (shaderFilePath);
+    shaderFile.open (QFile::ReadOnly);
+    if (shaderFile.error () != QFile::NoError)
+    {
+      qWarning () << "error opening" << shaderFilePath << ":"
+        << shaderFile.errorString ();
+      return;
+    }
+    shaderData = shaderFile.readAll ();
+  }
+
+  s1::Options::Pointer compilerOpts = lib->CreateOptions ();
+  compilerOpts->SetOptLevel (3);
+
+  s1::Program::Pointer compilerProg = lib->CreateProgramFromString (shaderData.constData (), shaderData.size ());
+  if (!compilerProg)
+  {
+    qWarning() << "Error creating program:" << LastErrorString (lib);
+    return;
+  }
+  compilerProg->SetOptions (compilerOpts);
+
+  QString newVP, newFP;
   s1::CompiledProgram::Pointer compiledVP (
     compilerBackend->GenerateProgram (compilerProg, S1_TARGET_VP, backendOptions));
   if (!compiledVP)
@@ -134,7 +161,7 @@ void ShaderSource::compileShader ()
   }
   else
   {
-    currentVP = QString::fromUtf8 (compiledVP->GetString ());
+    newVP = QString::fromUtf8 (compiledVP->GetString ());
   }
   s1::CompiledProgram::Pointer compiledFP (
     compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP, backendOptions));
@@ -144,6 +171,15 @@ void ShaderSource::compileShader ()
   }
   else
   {
-    currentFP = QString::fromUtf8 (compiledFP->GetString ());
+    newFP = QString::fromUtf8 (compiledFP->GetString ());
+  }
+
+  if (!newVP.isEmpty() && !newFP.isEmpty())
+  {
+    currentVP = newVP;
+    currentFP = newFP;
+
+    emit vertexProgramChanged ();
+    emit fragmentProgramChanged ();
   }
 }

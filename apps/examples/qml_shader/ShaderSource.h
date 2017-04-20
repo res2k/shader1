@@ -30,12 +30,21 @@
 #define SHADERSOURCE_H
 
 #include <QObject>
+#include <QUrl>
+
+#include "s1/fwd.h"
+#include "s1/Ptr.h"
 
 class ShaderSource : public QObject
 {
   Q_OBJECT
 public:
   ShaderSource (QObject* parent = nullptr);
+
+  /// Shader program source URL
+  const QUrl& url();
+  void setUrl (const QUrl& url);
+  Q_PROPERTY(QUrl url READ url NOTIFY urlChanged);
 
   //@{
   /// Vertex program access
@@ -48,13 +57,23 @@ public:
   Q_PROPERTY(QString fragmentProgram READ fragmentProgram NOTIFY fragmentProgramChanged);
   //@}
 protected:
+  QUrl sourceUrl;
+  /// S1 library object reference
+  s1::Ptr<s1::Library> lib;
+  /// S1 backend reference
+  s1::Ptr<s1::Backend> compilerBackend;
+  /// S1 backend options reference
+  s1::Ptr<s1::BackendOptions> backendOptions;
+
   /// Current vertex program.
   QString currentVP;
   /// Current fragment program.
   QString currentFP;
 
+  void initLibrary ();
   void compileShader ();
 signals:
+  void urlChanged ();
   void vertexProgramChanged ();
   void fragmentProgramChanged ();
 };
