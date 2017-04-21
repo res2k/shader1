@@ -23,6 +23,7 @@
 
 #include "Char.h"
 
+#include <functional>
 #include <limits>
 #include <string>
 #include <string.h>
@@ -283,14 +284,26 @@ namespace s1
       /// Code of first error
       ConversionError error = ceSuccess;
     };
+
+    // Hash function for UnicodeString
+    std::size_t hash_value (const String& s);
   } // namespace uc
 } // namespace s1
 
-// Boost hash function for UnicodeString
-namespace boost
+// Provide std::hash<s1::uc::String>
+namespace std
 {
-  std::size_t hash_value (const s1::uc::String& s);
-}
+  template<> struct hash<s1::uc::String>
+  {
+    typedef s1::uc::String argument_type;
+    typedef std::size_t result_type;
+
+    result_type operator()(const argument_type& s) const
+    {
+      return s1::uc::hash_value (s);
+    }
+  };
+} // namespace std
 
 //
 // Provide inline methods

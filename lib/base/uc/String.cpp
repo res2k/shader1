@@ -1028,6 +1028,13 @@ namespace s1
 
     //-----------------------------------------------------------------------
 
+    std::size_t hash_value (const String& s)
+    {
+      // Workaround for infinite recursion when trying to hash char16_t
+      const uint16_t* data_u16 = reinterpret_cast<const uint16_t*> (s.data());
+      return boost::hash_range (data_u16, data_u16 + s.length());
+    }
+
     void swap (String& s1, String& s2)
     {
       std::swap (s1.d, s2.d);
@@ -1037,15 +1044,3 @@ namespace s1
     }
   } // namespace uc
 } // namespace s1
-
-//-----------------------------------------------------------------------
-
-namespace boost
-{
-  std::size_t hash_value (const s1::uc::String& s)
-  {
-    // Workaround for infinite recursion when trying to hash char16_t
-    const uint16_t* data_u16 = reinterpret_cast<const uint16_t*> (s.data());
-    return boost::hash_range (data_u16, data_u16 + s.length());
-  }
-}
