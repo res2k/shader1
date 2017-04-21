@@ -61,14 +61,14 @@ namespace s1
       /// Names of global vars that are (also) written
       std::vector<uc::String> globalVarNamesOut;
 
-      typedef boost::unordered_map<uc::String, RegisterPtr> GlobalVarRegsMap;
+      typedef std::unordered_map<uc::String, RegisterPtr> GlobalVarRegsMap;
       /// Map of global name to (input) register
       GlobalVarRegsMap globalVarRegsIn;
       /// Map of global name to (output) register
       GlobalVarRegsMap globalVarRegsOut;
       /// Previous set of global var output registers
       GlobalVarRegsMap globalVarRegsOutPrev;
-      typedef boost::unordered_map<uc::String, uc::String> OriginalNameToGlobalMap;
+      typedef std::unordered_map<uc::String, uc::String> OriginalNameToGlobalMap;
       /// Map of original register name to global name
       OriginalNameToGlobalMap originalNameToGlobal;
       bool loopBlock = false;

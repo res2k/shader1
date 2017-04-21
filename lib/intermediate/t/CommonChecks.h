@@ -23,7 +23,7 @@
 
 static void VerifyRegsAssignedOnce (const s1::intermediate::SequencePtr& seq)
 {
-  typedef boost::unordered_map<s1::intermediate::RegisterPtr, size_t> AssignCountMap;
+  typedef std::unordered_map<s1::intermediate::RegisterPtr, size_t> AssignCountMap;
   AssignCountMap assignCount;
   
   for (size_t n = 0; n < seq->GetNumOps(); n++)

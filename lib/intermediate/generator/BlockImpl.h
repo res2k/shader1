@@ -35,7 +35,7 @@ namespace s1
       
       // Special, internal names
       NameImplPtr varCondition;
-      typedef boost::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
+      typedef std::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
       TernaryResultVarsMap varsTernaryResult;
       NameImplPtr varReturnValue;
       
@@ -54,7 +54,7 @@ namespace s1
         
         NameReg() : isImported (false) {}
       };
-      typedef boost::unordered_map<NameImplPtr, NameReg> NameRegMap;
+      typedef std::unordered_map<NameImplPtr, NameReg> NameRegMap;
       NameRegMap nameRegisters;
       NameImplSet exportedNames;
       

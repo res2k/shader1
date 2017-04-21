@@ -217,7 +217,7 @@ namespace s1
       }
       
       // Generate register IDs for all values the nested blocks export
-      typedef boost::unordered_map<NameImplPtr, RegisterPtr> ExportedNamesMap;
+      typedef std::unordered_map<NameImplPtr, RegisterPtr> ExportedNamesMap;
       ExportedNamesMap seenExportedNames;
       std::vector<RegisterPtr> writtenRegistersIf;
       std::vector<RegisterPtr> writtenRegistersElse;

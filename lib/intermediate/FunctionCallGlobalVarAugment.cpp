@@ -35,7 +35,7 @@ namespace s1
       int level)
       : CloningSequenceVisitor (newSequenceBuilder), level (level), globals (globals)
     {
-      typedef boost::unordered_map<uc::String, RegisterPtr> ImportsMap;
+      typedef std::unordered_map<uc::String, RegisterPtr> ImportsMap;
       ImportsMap importsMap;
       importsMap.insert (oldSeq->GetImports ().begin(), oldSeq->GetImports().end());
       const Sequence::RegisterExpMappings& exportsMap = oldSeq->GetExports ();
@@ -224,7 +224,7 @@ namespace s1
                                                 const SequenceOpPtr& seqOpBody)
     {
       // Add all non-const global vars to looped regs
-      boost::unordered_set<LoopedRegPair> newLoopedRegs;
+      std::unordered_set<LoopedRegPair> newLoopedRegs;
       for (const auto& loopedReg : loopedRegs)
       {
         // Map to new regs to make duplicate elimination work

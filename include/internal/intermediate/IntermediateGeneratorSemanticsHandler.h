@@ -61,7 +61,7 @@ namespace s1
       class VariableExpressionImpl;
 
       typedef boost::shared_ptr<NameImpl> NameImplPtr;
-      typedef boost::unordered_set<NameImplPtr> NameImplSet;
+      typedef std::unordered_set<NameImplPtr> NameImplSet;
 
       typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
       TypeImplPtr voidType;

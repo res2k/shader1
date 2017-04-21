@@ -161,7 +161,7 @@ namespace s1
 
       SequenceOpPtr visitedOp;
 
-      typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
+      typedef std::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
                                              const SequencePtr& oldSequence,
                                              const RegisterMap& regMap);

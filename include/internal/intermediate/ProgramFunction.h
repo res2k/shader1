@@ -62,7 +62,7 @@ namespace s1
       
       void SetParameterFrequency (const uc::String& param, int freq)
       { paramFreqMap[param] = freq; }
-      typedef boost::unordered_map<uc::String, int> ParameterFrequencyMap;
+      typedef std::unordered_map<uc::String, int> ParameterFrequencyMap;
       const ParameterFrequencyMap& GetParameterFrequencies() const
       { return paramFreqMap; }
       /// Add multiple parameter frequencies

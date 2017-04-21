@@ -110,7 +110,7 @@ namespace s1
       /// Whether function recursiveness was recorded
       bool haveRecursive : 1;
       /// Recursive functions
-      boost::unordered_set<uc::String> recursive;
+      std::unordered_set<uc::String> recursive;
 
       Data () : haveRecursive (false) {}
     };
@@ -140,7 +140,7 @@ namespace s1
 
       size_t num_f = prog.GetNumFunctions ();
       // Add all functions as vertices
-      boost::unordered_map<uc::String, Data::FunctionCallGraph::vertex_descriptor> identToVertex;
+      std::unordered_map<uc::String, Data::FunctionCallGraph::vertex_descriptor> identToVertex;
       for (size_t f = 0; f < num_f; f++)
       {
         const auto& ident = prog.GetFunction (f)->GetIdentifier ();

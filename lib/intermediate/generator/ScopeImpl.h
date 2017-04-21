@@ -44,13 +44,13 @@ namespace s1
     private:
       friend class IntermediateGeneratorSemanticsHandler;
 
-      typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
+      typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       std::vector<NamePtr> newVars;
       std::vector<uc::String> outputParams;
       std::vector<NamePtr> varsInDeclOrder;
 
-      typedef boost::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
+      typedef std::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
 

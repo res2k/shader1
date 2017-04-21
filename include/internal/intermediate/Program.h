@@ -56,11 +56,11 @@ namespace s1
         /// Fragment output color
         Color
       };
-      typedef boost::unordered_map<uc::String, ParameterTarget> OutputParameters;
+      typedef std::unordered_map<uc::String, ParameterTarget> OutputParameters;
       void SetOutputParameter (const uc::String& name, ParameterTarget target);
       const OutputParameters& GetOutputParameters () const;
       
-      typedef boost::unordered_map<uc::String, size_t> ParameterArraySizes;
+      typedef std::unordered_map<uc::String, size_t> ParameterArraySizes;
       void SetParameterArraySizes (const ParameterArraySizes& sizes);
       const ParameterArraySizes& GetParameterArraySizes () const;
 

@@ -21,10 +21,13 @@
 #include "forwarddecl.h"
 #include "parser/SemanticsHandler.h"
 
+#include "base/std_hash.h"
+
+#include <unordered_map>
+#include <unordered_set>
+
 #include <boost/container/deque.hpp>
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
 namespace s1
 {
@@ -64,9 +67,9 @@ namespace s1
         const TypePtr& GetOriginalType () const { return originalType; }
       };
       typedef boost::intrusive_ptr<Register> RegisterPtr;
-      typedef boost::unordered_set<RegisterPtr> RegisterSet;
+      typedef std::unordered_set<RegisterPtr> RegisterSet;
       
-      typedef boost::unordered_map<uc::String, RegisterPtr> IdentifierToRegMap;
+      typedef std::unordered_map<uc::String, RegisterPtr> IdentifierToRegMap;
       /// Get number of operations
       size_t GetNumOps() const;
       /// Get a specific op
@@ -79,7 +82,7 @@ namespace s1
       typedef std::vector<IdentRegPair> RegisterImpMappings;
       const RegisterImpMappings& GetImports () const { return imports; }
 
-      typedef boost::unordered_map<uc::String, RegisterPtr> RegisterExpMappings;
+      typedef std::unordered_map<uc::String, RegisterPtr> RegisterExpMappings;
       const RegisterExpMappings& GetExports () const;
       RegisterPtr GetExport (const uc::String& name) const;
 
