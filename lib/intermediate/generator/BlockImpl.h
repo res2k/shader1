@@ -47,12 +47,12 @@ namespace s1
       
       struct NameReg
       {
-	bool isImported;
-	RegisterPtr reg;
-	RegisterPtr initialReg;
-	bool initiallyWriteable;
-	
-	NameReg() : isImported (false) {}
+        bool isImported;
+        RegisterPtr reg;
+        RegisterPtr initialReg;
+        bool initiallyWriteable;
+        
+        NameReg() : isImported (false) {}
       };
       typedef boost::unordered_map<NameImplPtr, NameReg> NameRegMap;
       NameRegMap nameRegisters;
@@ -71,10 +71,10 @@ namespace s1
       void AddExpressionCommand (ExpressionPtr expr);
       void AddReturnCommand (ExpressionPtr returnValue);
       void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
-			 BlockPtr elseBlock);
+                         BlockPtr elseBlock);
       void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock);
       void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
-		       BlockPtr loopBlock);
+                       BlockPtr loopBlock);
       void AddNestedBlock (BlockPtr block);
       /** @} */
       

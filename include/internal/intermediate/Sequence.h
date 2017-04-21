@@ -46,22 +46,22 @@ namespace s1
                                               boost::thread_unsafe_counter>
       {
       protected:
-	friend class Sequence;
-	
-	uc::String originalName;
-	unsigned int generation;
-	uc::String name;
-	
-	TypePtr originalType;
+        friend class Sequence;
+        
+        uc::String originalName;
+        unsigned int generation;
+        uc::String name;
+        
+        TypePtr originalType;
       public:
-	Register (const uc::String& name, const TypePtr& originalType);
-	Register (const Register& other);
-	
+        Register (const uc::String& name, const TypePtr& originalType);
+        Register (const Register& other);
+        
         const uc::String& GetOriginalName () const { return originalName; }
-	const uc::String& GetName() const { return name; }
-	void StealName (Register& other);
-	
-	const TypePtr& GetOriginalType () const { return originalType; }
+        const uc::String& GetName() const { return name; }
+        void StealName (Register& other);
+        
+        const TypePtr& GetOriginalType () const { return originalType; }
       };
       typedef boost::intrusive_ptr<Register> RegisterPtr;
       typedef boost::unordered_set<RegisterPtr> RegisterSet;

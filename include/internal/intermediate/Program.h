@@ -44,17 +44,17 @@ namespace s1
       ProgramFunctionPtr GetEntryFunction () const;
       
       void AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
-			     const uc::String& name);
+                             const uc::String& name);
       typedef std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, uc::String> TransferValuePair;
       typedef std::vector<TransferValuePair> TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
       
       enum ParameterTarget
       {
-	/// Vertex output position
-	Position,
-	/// Fragment output color
-	Color
+        /// Vertex output position
+        Position,
+        /// Fragment output color
+        Color
       };
       typedef boost::unordered_map<uc::String, ParameterTarget> OutputParameters;
       void SetOutputParameter (const uc::String& name, ParameterTarget target);
