@@ -1034,7 +1034,7 @@ namespace s1
             ++exports)
         {
           Sequence::IdentifierToRegMap::const_iterator expRegID = identToRegIDs_exp.find (exports->first);
-          assert (expRegID != identToRegIDs_imp.end());
+          assert (expRegID != identToRegIDs_exp.end());
           RegisterPtr reg (expRegID->second);
           RegisterPtr reg_subseq (exports->second);
 
