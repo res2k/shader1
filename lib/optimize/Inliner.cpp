@@ -61,7 +61,6 @@ namespace s1
     {
       uc::String regsSuffix;
 
-      typedef boost::unordered_map<RegisterPtr, RegisterPtr> RegisterMap;
       RegisterMap registerMap;
     public:
       InliningVisitor (const intermediate::SequenceBuilderPtr& outputSeqBuilder,

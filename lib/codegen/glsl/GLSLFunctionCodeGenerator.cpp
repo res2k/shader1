@@ -25,6 +25,8 @@
 #include "codegen/glsl/GLSLOptions.h"
 #include "splitter/Frequency.h"
 
+#include <boost/unordered_set.hpp>
+
 namespace s1
 {
   namespace codegen

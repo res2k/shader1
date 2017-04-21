@@ -21,6 +21,7 @@
 #include "Compiler.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/Program.h"
 #include "splitter/Frequency.h"
 
 #include "Backend.h"
@@ -49,7 +50,7 @@ namespace s1
     void SetProgramOutputParameters ();
   public:
     typedef boost::unordered_map<uc::String, unsigned int> FreqFlagMap;
-    typedef boost::unordered_map<uc::String, size_t> ArraySizeMap;
+    typedef intermediate::Program::ParameterArraySizes ArraySizeMap;
     
     Compiler::Backend::ProgramPtr GetCompiledProgram (const uc::String& entryFunction,
                                                       const OptionsPtr& compilerOptions,

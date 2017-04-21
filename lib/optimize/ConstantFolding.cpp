@@ -28,6 +28,7 @@
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/unordered_map.hpp>
 
 #include "base/format/Formatter.tpp"
 

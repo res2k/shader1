@@ -28,6 +28,7 @@
 #include "splitter/SequenceSplitter.h"
 
 #include <boost/make_shared.hpp>
+#include <boost/unordered_set.hpp>
 
 #include "base/format/Formatter.tpp"
 
