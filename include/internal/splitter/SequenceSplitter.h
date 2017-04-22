@@ -18,8 +18,6 @@
 #ifndef __SPLITTER_SEQUENCESPLITTER_H__
 #define __SPLITTER_SEQUENCESPLITTER_H__
 
-#include <boost/unordered_map.hpp>
-
 #include "intermediate/forwarddecl.h"
 #include "intermediate/SequenceVisitor.h"
 
@@ -41,7 +39,7 @@ namespace s1
 
       intermediate::SequencePtr inputSeq;
 
-      typedef boost::unordered_map<uc::String, unsigned int> ParamMap;
+      typedef std::unordered_map<uc::String, unsigned int> ParamMap;
       ParamMap paramFlags;
 
       class InputVisitor : public intermediate::SequenceVisitor
@@ -243,7 +241,7 @@ namespace s1
       RegisterPtr AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
                                     const uc::String& name);
     private:
-      typedef boost::unordered_map<RegisterPtr, unsigned int> AvailabilityMap;
+      typedef std::unordered_map<RegisterPtr, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;
       AvailabilityMap setAvailability;
 

@@ -53,7 +53,6 @@
 #include "splitter/ProgramSplitter.h"
 
 #include <boost/make_shared.hpp>
-#include <boost/unordered_set.hpp>
 
 #include "base/format/Formatter.tpp"
 
@@ -725,7 +724,7 @@ namespace s1
       Sequence::IdentifierToRegMap newIdentToRegIDs_imp (identToRegIDs_imp);
       Sequence::IdentifierToRegMap newIdentToRegIDs_exp (identToRegIDs_exp);
       // Propagate registers transferred by nested block to this block
-      typedef boost::unordered_map<RegisterPtr, std::pair<RegisterPtr, uc::String> > TransferRegsMap;
+      typedef std::unordered_map<RegisterPtr, std::pair<RegisterPtr, uc::String> > TransferRegsMap;
       TransferRegsMap transferRegsMap;
       for (int f = 0; f < freqNum-1; f++)
       {
@@ -1058,7 +1057,7 @@ namespace s1
       }
 
       // Compute highest frequency of condition and all loop inputs
-      boost::unordered_set<RegisterPtr> allInputs;
+      std::unordered_set<RegisterPtr> allInputs;
       {
         for (std::vector<std::pair<RegisterPtr, RegisterPtr> >::const_iterator loopedReg = loopedRegs.begin();
              loopedReg != loopedRegs.end();

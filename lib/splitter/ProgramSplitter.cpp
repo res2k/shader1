@@ -28,7 +28,6 @@
 #include "splitter/SequenceSplitter.h"
 
 #include <boost/make_shared.hpp>
-#include <boost/unordered_set.hpp>
 
 #include "base/format/Formatter.tpp"
 
@@ -172,7 +171,7 @@ namespace s1
           // Turn values 'transferred' by the function into extra output/input paramerts
           parser::SemanticsHandler::Scope::FunctionFormalParameters extraParams[freqNum];
           const std::vector<intermediate::RegisterPtr>& transfers = seqSplit.GetTransferRegs (freqVertex);
-          boost::unordered_set<uc::String> seenTransferIdents;
+          std::unordered_set<uc::String> seenTransferIdents;
           for (const intermediate::RegisterPtr& reg : transfers)
           {
             // Generate unique parameter identifier

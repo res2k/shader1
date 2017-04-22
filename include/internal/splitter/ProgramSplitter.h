@@ -23,7 +23,7 @@
 
 #include "Frequency.h"
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 namespace s1
 {
@@ -36,7 +36,7 @@ namespace s1
       intermediate::ProgramPtr inputProgram;
       intermediate::ProgramPtr outputPrograms[freqNum];
       
-      typedef boost::unordered_map<uc::String, unsigned int> ParamMap;
+      typedef std::unordered_map<uc::String, unsigned int> ParamMap;
       ParamMap paramFlags;
       
       friend class SequenceSplitter;
@@ -53,7 +53,7 @@ namespace s1
         std::vector<FunctionTransferValues> transferValues[freqNum-1];
       };
       typedef boost::shared_ptr<SplitFunctionInfo> SplitFunctionInfoPtr;
-      typedef boost::unordered_map<uc::String, SplitFunctionInfoPtr> SplitFunctionInfoMap;
+      typedef std::unordered_map<uc::String, SplitFunctionInfoPtr> SplitFunctionInfoMap;
       SplitFunctionInfoMap splitFunctions;
 
       struct SplitFunctionsResult
