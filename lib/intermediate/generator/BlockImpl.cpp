@@ -528,7 +528,7 @@ namespace s1
                                   sequenceBuilder->GetIdentifierToRegisterMap ());
     }
 
-    static format::StaticFormatter FormatTernaryResult ("$tr{0}{1}{2}");
+    static format::StaticFormatter FormatTernaryResult ("$tr{0}{1}");
 
     IntermediateGeneratorSemanticsHandler::NameImplPtr
     IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (const TypeImplPtr& resultType)
