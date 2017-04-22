@@ -835,11 +835,11 @@ namespace s1
         newIdent.append (uc::Char ('0' + f));
 
         RegisterPtr newReg (parent.AllocateRegister (oldReg->GetOriginalType(), newIdent));
-        newExports[newIdent] = seqExp->second;
-        newIdentToRegIDsExp[newIdent] = newReg;
+        newExports[seqExp->first] = seqExp->second;
+        newIdentToRegIDsExp[seqExp->first] = newReg;
 
         parent.SetRegAvailability (newReg, 1 << f);
-        outputs.emplace_back (oldReg, newReg);
+        outputs.emplace_back (seqExp->first, newReg);
       }
       seqExports = newExports;
 
@@ -861,26 +861,22 @@ namespace s1
 
       for (int g = 0; g < f; g++)
       {
-        for(const RegisterPair& rename : renames[g])
+        for(const auto& rename : renames[g])
         {
           Promote (f, rename.second);
 
           intermediate::Sequence::RegisterPtr srcRegPtr (rename.second);
-          intermediate::Sequence::RegisterPtr dstRegPtr (rename.first);
 
-          uc::String newIdent (dstRegPtr->GetName());
+          uc::String newIdent (rename.first);
           newIdent.append ("$");
           newIdent.append (suffix);
           newIdent.append (uc::Char ('0' + f));
 
           RegisterPtr newReg (seqBuilder->AllocateRegister (srcRegPtr->GetOriginalType(), newIdent));
-          seqBuilder->SetImport (newReg, srcRegPtr->GetName());
-          seqBuilder->SetExport (dstRegPtr->GetName(), newReg);
+          seqBuilder->SetImport (newReg, newIdent);
+          seqBuilder->SetExport (rename.first, newReg);
 
-          newIdentToRegIDsImp[srcRegPtr->GetName()] = rename.second;
-          newIdentToRegIDsExp[dstRegPtr->GetName()] = rename.first;
-
-          parent.SetRegAvailability (rename.first, parent.GetRegAvailability (rename.first));
+          newIdentToRegIDsImp[newIdent] = rename.second;
         }
       }
 
@@ -963,6 +959,8 @@ namespace s1
 
         if (f == condFreq)
         {
+          /* Combining frequency:
+           * Emit condition proper. The correct renamed output is placed in the conditional blocks.*/
           SequenceOpPtr augmentedIfOp (AugmentBranchBlockWithRenames ("if", newIfOps[f], ifRenames, f));
           SequenceOpPtr augmentedElseOp (AugmentBranchBlockWithRenames ("else", newElseOps[f], elseRenames, f));
 
@@ -973,6 +971,9 @@ namespace s1
         }
         else
         {
+          /* Non-combining frequency:
+           * Add both blocks. However, since both blocks would write to the same outputs,
+           * rename all outputs (exports) of the blocks. */
           EmitUnconditionalBranchBlock (ifBlock->GetSequence (), "if", newIfOps[f], f, ifRenames[f]);
           EmitUnconditionalBranchBlock (elseBlock->GetSequence (), "else", newElseOps[f], f, elseRenames[f]);
         }

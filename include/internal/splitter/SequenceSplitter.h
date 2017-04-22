@@ -80,8 +80,8 @@ namespace s1
                          bool keepEmpty = false,
                          bool mergeUniformToVF = false);
 
-        typedef std::pair<RegisterPtr, RegisterPtr> RegisterPair;
-        typedef std::vector<RegisterPair> RenamedBranchOutputs;
+        typedef std::pair<uc::String, RegisterPtr> RenamedRegister;
+        typedef std::vector<RenamedRegister> RenamedBranchOutputs;
         void EmitUnconditionalBranchBlock (SequencePtr origSeq, const char* suffix,
                                            const SplitResult& splitRes,
                                            int f,
