@@ -131,6 +131,20 @@ namespace s1
       }
     }
 
+    void SequenceBuilder::RemoveImport (const uc::String& parentRegName)
+    {
+      auto it = sequence->imports.begin();
+      while (it != sequence->imports.end())
+      {
+        if (it->first == parentRegName)
+        {
+          sequence->imports.erase (it);
+          return;
+        }
+        ++it;
+      }
+    }
+
     const SequenceBuilder::RegisterImpMappings& SequenceBuilder::GetImports () const
     {
       return sequence->imports;

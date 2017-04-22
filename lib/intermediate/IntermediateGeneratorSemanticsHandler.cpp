@@ -249,6 +249,13 @@ namespace s1
                                                 globalVars);
           entryFuncSeq->Visit (augment);
         }
+
+        // Remove global variables from entry function imports
+        for (const auto& global : globalVars)
+        {
+          newSeqBuilder->RemoveImport (global->GetIdentifier ());
+        }
+
         entryFuncSeq = newSeqBuilder->GetSequence ();
       }
 

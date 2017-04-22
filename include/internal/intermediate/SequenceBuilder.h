@@ -86,6 +86,7 @@ namespace s1
       void SetImport (const RegisterPtr& localReg,
                       const uc::String& parentRegName);
       void AddImports (const RegisterImpMappings& imports);
+      void RemoveImport (const uc::String& parentRegName);
       const RegisterImpMappings& GetImports () const;
       typedef Sequence::RegisterExpMappings RegisterExpMappings;
       RegisterExpMappings& GetExports ();
