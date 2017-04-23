@@ -862,9 +862,9 @@ namespace s1
       {
         for(const auto& rename : renames[g])
         {
-          Promote (f, rename.second);
-
           intermediate::Sequence::RegisterPtr srcRegPtr (rename.second);
+
+          Promote (f, srcRegPtr);
 
           uc::String newIdent (rename.first);
           newIdent.append ("$");
@@ -876,6 +876,17 @@ namespace s1
           seqBuilder->SetExport (rename.first, newReg);
 
           newIdentToRegIDsImp[newIdent] = rename.second;
+        }
+      }
+
+      // Force availability of registers computed by branch to be of highest freq only
+      auto seqExports = seqBuilder->GetExports ();
+      for (const auto& exp : newIdentToRegIDsExp)
+      {
+        bool isExported = seqExports.find (exp.first) != seqExports.end ();
+        if (isExported)
+        {
+          parent.SetRegAvailability (exp.second, 1 << f);
         }
       }
 
