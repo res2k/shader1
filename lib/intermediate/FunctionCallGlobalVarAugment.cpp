@@ -195,7 +195,25 @@ namespace s1
     void FunctionCallGlobalVarAugment::VisitEnd ()
     {
       CloningSequenceVisitor::VisitEnd ();
-      // Update exports of sequence builder
+
+      // Update imports, exports of sequence builder
+      if (level > 0)
+      {
+        auto seqReadSet = newSequenceBuilder->GetAllReadRegisters ();
+        std::unordered_map<uc::String, RegisterPtr> seqImpMap (
+          newSequenceBuilder->GetImports ().begin (), newSequenceBuilder->GetImports ().end ());
+        for (const uc::String& globalIn : globalVarNamesIn)
+        {
+          auto seqImpIt = seqImpMap.find (globalIn);
+          if (seqImpIt == seqImpMap.end ()) continue;
+
+          if (seqReadSet.find (seqImpIt->second) == seqReadSet.end ())
+          {
+            // Global was not actually read
+            newSequenceBuilder->RemoveImport (globalIn);
+          }
+        }
+      }
 
       for(const uc::String& globalOut : globalVarNamesOut)
       {
@@ -205,7 +223,7 @@ namespace s1
         {
           reg = globalVarRegOutIt->second;
         }
-        else
+        else if (level == 0)
         {
           // Register was never written. Copy from import
           const auto globalVarInIt = globalVarRegsIn.find (globalOut);
@@ -214,7 +232,7 @@ namespace s1
           SequenceOpPtr newOp (new SequenceOpAssign (reg, globalVarInIt->second));
           CloningSequenceVisitor::AddOpToSequence (newOp);
         }
-        newSequenceBuilder->SetExport (globalOut, reg);
+        if (reg) newSequenceBuilder->SetExport (globalOut, reg);
       }
     }
 
