@@ -155,7 +155,7 @@ namespace s1
                     const Sequence::IdentifierToRegMap& identToReg_imp,
                     const Sequence::IdentifierToRegMap& identToReg_exp)
       {
-        owner->NestedBlock (this, seq, identToReg_imp, identToReg_exp);
+        AddOpToSequence (owner->NestedBlock (seq, identToReg_imp, identToReg_exp));
       }
 
       void OpBranch (const RegisterPtr& conditionReg,
@@ -194,10 +194,10 @@ namespace s1
      : newSequenceBuilder (newSequenceBuilder)
     {}
 
-    void CloningSequenceVisitor::NestedBlock (CloningSequenceVisitor* handlingVisitor,
-                                             const SequencePtr& seq,
-                                             const Sequence::IdentifierToRegMap& identToReg_imp,
-                                             const Sequence::IdentifierToRegMap& identToReg_exp)
+    CloningSequenceVisitor::SequenceOpBlockPtr
+    CloningSequenceVisitor::NestedBlock (const SequencePtr& seq,
+                                          const Sequence::IdentifierToRegMap& identToReg_imp,
+                                          const Sequence::IdentifierToRegMap& identToReg_exp)
     {
       SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
       newSeqBuilder->AddImports (seq->GetImports ());
@@ -248,10 +248,11 @@ namespace s1
         newIdentToReg_exp.insert (std::make_pair (i2r->first, MapRegisterOut (i2r->second)));
       }
 
-      SequenceOpPtr newOp (new SequenceOpBlock (newSeqBuilder->GetSequence(),
-                                                newIdentToReg_imp,
-                                                newIdentToReg_exp));
-      handlingVisitor->AddOpToSequence (newOp);
+      auto newOp = new SequenceOpBlock (newSeqBuilder->GetSequence(),
+                                        newIdentToReg_imp,
+                                        newIdentToReg_exp);
+
+      return newOp;
     }
 
     CloningSequenceVisitor* CloningSequenceVisitor::Clone (const SequenceBuilderPtr& newSequenceBuilder,
@@ -495,7 +496,7 @@ namespace s1
                                          const Sequence::IdentifierToRegMap& identToReg_imp,
                                          const Sequence::IdentifierToRegMap& identToReg_exp)
     {
-      NestedBlock (this, seq, identToReg_imp, identToReg_exp);
+      AddOpToSequence (NestedBlock (seq, identToReg_imp, identToReg_exp));
     }
 
     void CloningSequenceVisitor::OpBranch (const RegisterPtr& conditionReg,

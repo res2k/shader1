@@ -73,10 +73,9 @@ namespace s1
       OriginalNameToGlobalMap originalNameToGlobal;
       bool loopBlock = false;
 
-      virtual void NestedBlock (CloningSequenceVisitor* handlingVisitor,
-                                const SequencePtr& seq,
-                                const Sequence::IdentifierToRegMap& identToReg_imp,
-                                const Sequence::IdentifierToRegMap& identToReg_exp);
+      SequenceOpBlockPtr NestedBlock (const SequencePtr& seq,
+                                      const Sequence::IdentifierToRegMap& identToReg_imp,
+                                      const Sequence::IdentifierToRegMap& identToReg_exp) override;
 
       virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
         const SequencePtr& oldSequence,

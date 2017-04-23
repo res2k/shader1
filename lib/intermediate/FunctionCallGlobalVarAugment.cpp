@@ -21,6 +21,7 @@
 #include "base/format/Formatter.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
+#include "intermediate/SequenceOp/SequenceOpBlock.h"
 
 namespace s1
 {
@@ -296,10 +297,10 @@ namespace s1
       CloningSequenceVisitor::OpFunctionCall (funcIdent, newInParams, newOutParams);
     }
 
-    void FunctionCallGlobalVarAugment::NestedBlock (CloningSequenceVisitor* handlingVisitor,
-                                                    const SequencePtr& seq,
-                                                    const Sequence::IdentifierToRegMap& identToReg_imp,
-                                                    const Sequence::IdentifierToRegMap& identToReg_exp)
+    CloningSequenceVisitor::SequenceOpBlockPtr
+    FunctionCallGlobalVarAugment::NestedBlock (const SequencePtr& seq,
+                                               const Sequence::IdentifierToRegMap& identToReg_imp,
+                                               const Sequence::IdentifierToRegMap& identToReg_exp)
     {
       if (loopBlock)
       {
@@ -349,7 +350,7 @@ namespace s1
         }
       }
 
-      CloningSequenceVisitor::NestedBlock (handlingVisitor, seq, newImpMap, newExpMap);
+      return CloningSequenceVisitor::NestedBlock (seq, newImpMap, newExpMap);
     }
 
     CloningSequenceVisitor* FunctionCallGlobalVarAugment::Clone (const SequenceBuilderPtr& newSequenceBuilder,

@@ -27,6 +27,8 @@ namespace s1
 {
   namespace intermediate
   {
+    class SequenceOpBlock;
+
     /**
      * SequenceVisitor implementation that clones a sequence to a target.
      * Optionally applies a mapping to registers. The addition of
@@ -154,10 +156,10 @@ namespace s1
                           const std::vector<RegisterPtr>& inParams);
     protected:
       class BlockNestingSequenceVisitor;
-      virtual void NestedBlock (CloningSequenceVisitor* handlingVisitor,
-                                const SequencePtr& seq,
-                                const Sequence::IdentifierToRegMap& identToReg_imp,
-                                const Sequence::IdentifierToRegMap& identToReg_exp);
+      typedef boost::intrusive_ptr<SequenceOpBlock> SequenceOpBlockPtr;
+      virtual SequenceOpBlockPtr NestedBlock (const SequencePtr& seq,
+                                              const Sequence::IdentifierToRegMap& identToReg_imp,
+                                              const Sequence::IdentifierToRegMap& identToReg_exp);
 
       SequenceOpPtr visitedOp;
 
