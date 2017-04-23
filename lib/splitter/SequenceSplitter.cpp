@@ -102,6 +102,38 @@ namespace s1
       return f;
     }
 
+    static format::StaticFormatter FormatOutput ("{0}$OUT{1}");
+
+    void SequenceSplitter::InputVisitor::VisitEnd ()
+    {
+      const auto& outputFreqs = parent.outputFreqs;
+      // Force frequencies of (program) output to required freq
+      for (const auto& outputFreq : outputFreqs)
+      {
+        int f = outputFreq.second;
+        auto seqBuilder = parent.outputSeqBuilder[f];
+        auto seqExpIt = seqBuilder->GetExports ().find (outputFreq.first);
+        if (seqExpIt != seqBuilder->GetExports ().end ())
+        {
+          auto outputReg = seqExpIt->second;
+          unsigned int outputRegAvail = parent.GetRegAvailability (outputReg);
+          if (HighestFreq (outputRegAvail) == f) continue;
+
+          auto regName = FormatOutput.to<uc::String> (outputReg->GetOriginalName (), f);
+          auto newReg = parent.AllocateRegister (outputReg ->GetOriginalType(), regName);
+          OpAssign (newReg, outputReg);
+
+          Promote (outputFreq.second, newReg);
+
+          // Fix up exports, imports so new reg is properly recognized as "used"
+          auto srcSeqBuilder = parent.outputSeqBuilder[HighestFreq (outputRegAvail)];
+          srcSeqBuilder->SetExport (outputFreq.first, newReg);
+          seqBuilder->SetImport (newReg, outputFreq.first);
+          seqBuilder->SetExport (outputFreq.first, newReg);
+        }
+      }
+    }
+
     void SequenceSplitter::InputVisitor::SplitBinaryOp (const RegisterPtr& destination,
                                                         const SequenceOpPtr& op,
                                                         const RegisterPtr& source1,
@@ -1333,6 +1365,12 @@ namespace s1
         for (int f = 0; f < freqNum; f++)
         {
           outputSeqBuilder[f]->SetExport (expMap->first, expMap->second);
+        }
+
+        auto outputFreq = outputFreqs.find (expMap->first);
+        if (outputFreq != outputFreqs.end())
+        {
+          desiredRegFreq[expMap->second] = outputFreq->second;
         }
       }
 

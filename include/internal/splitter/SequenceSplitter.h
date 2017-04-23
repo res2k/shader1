@@ -41,6 +41,8 @@ namespace s1
 
       typedef std::unordered_map<uc::String, unsigned int> ParamMap;
       ParamMap paramFlags;
+      typedef std::unordered_map<uc::String, Frequency> OutputFreqMap;
+      OutputFreqMap outputFreqs;
 
       class InputVisitor : public intermediate::SequenceVisitor
       {
@@ -93,7 +95,7 @@ namespace s1
 
         void PreVisitOp (const intermediate::SequenceOpPtr& op) {}
         void PostVisitOp () {}
-        void VisitEnd() {}
+        void VisitEnd ();
 
         void OpConstBool (const RegisterPtr& destination,
                           bool value);
@@ -200,6 +202,9 @@ namespace s1
 
       // set input param frequencies
       void SetInputFreqFlags (const uc::String& input, unsigned int freqFlags);
+      // Set output param frequencies
+      void SetOutputFreq (const uc::String& output, Frequency freq)
+      { outputFreqs[output] = freq; }
       void SetLocalRegFreqFlags (const RegisterPtr& regID, unsigned int freqFlags)
       { setAvailability[regID] = freqFlags; }
       unsigned int GetLocalRegFreqFlags (const RegisterPtr& regID)
@@ -244,6 +249,7 @@ namespace s1
       typedef std::unordered_map<RegisterPtr, unsigned int> AvailabilityMap;
       AvailabilityMap regAvailability;
       AvailabilityMap setAvailability;
+      std::unordered_map<RegisterPtr, Frequency> desiredRegFreq;
 
       unsigned int transferIdentNum;
     };

@@ -359,7 +359,8 @@ namespace s1
             intermediate::Program::OutputParameters::const_iterator outParam = progOutput.find (param.identifier);
             if (outParam != progOutput.end())
             {
-              switch (intermediate::Program::GetTargetFrequency (outParam->second))
+              auto targetFreq = intermediate::Program::GetTargetFrequency (outParam->second);
+              switch (targetFreq)
               {
               case freqVertex:
                 vParams.push_back (param);
@@ -368,6 +369,7 @@ namespace s1
                 fParams.push_back (param);
                 break;
               }
+              splitter.SetOutputFreq (param.identifier, static_cast<Frequency> (targetFreq));
             }
           }
         }
