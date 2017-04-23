@@ -26,18 +26,47 @@
 import QtQuick 2.0
 
 Item {
-    id: item1
+    id: imageView
+
+    property int __imageWidth: 100
+    property int __imageHeight: 100
+
+    function updateImageDimensions()
+    {
+        var imgW = image.sourceSize.width, imgH = image.sourceSize.height;
+
+        if ((imgW > width) || (imgH > height))
+        {
+            var scale1 = Math.min (width / imgW, 1.0);
+            var scale2 = Math.min (height / imgH, 1.0);
+            var scale = Math.min (scale1, scale2);
+            imgW = Math.floor (imgW * scale);
+            imgH = Math.floor (imgH * scale);
+            console.log (width, height, scale1, scale2, imgW, imgH);
+        }
+
+        __imageWidth = imgW;
+        __imageHeight = imgH;
+    }
+
+    onWidthChanged: updateImageDimensions();
+    onHeightChanged: updateImageDimensions();
+
     Image {
         id: image
         fillMode: Image.PreserveAspectFit
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         source: imageLocation.url
-        width: sourceSize.width > parent.width ? parent.width : sourceSize.width
-        height: sourceSize.height > parent.height ? parent.height : sourceSize.height
+        width: __imageWidth
+        height: __imageHeight
         visible: false
         asynchronous: true
         layer.enabled: true
+
+        onStatusChanged: {
+            if (status == Image.Ready) imageView.updateImageDimensions();
+        }
     }
     ShaderEffect {
         anchors.fill: image
