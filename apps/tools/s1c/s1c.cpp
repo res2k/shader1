@@ -264,24 +264,7 @@ public:
         arg_string_vec optArgs = vm["opt"].as<arg_string_vec> ();
         BOOST_FOREACH (const arg_string_type& optArg, optArgs)
         {
-          bool parseRes = false;
-          if (optArg.empty ())
-          {
-            parseRes = compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
-          }
-          else
-          {
-            boost::optional<int> optLevel (boost::convert<int> (optArg, boost::cnv::spirit ()));
-            if (optLevel)
-              parseRes = compilerOpts->SetOptLevel (*optLevel);
-            else
-              parseRes = compilerOpts->SetOptFlagFromStr (optArg);
-          }
-          if (!parseRes)
-          {
-            throw std::runtime_error ((boost::format ("optimization option '%1%': %2%")
-                                       % to_local (optArg) % LastErrorString (lib)).str ());
-          }
+          ParseOptimization (optArg, compilerOpts);
         }
       }
     }
@@ -308,6 +291,29 @@ private:
     unsigned min_tokens () const { return 2; }
     unsigned max_tokens () const { return 2; }
   };
+
+  void ParseOptimization (const arg_string_type& optArg, Options* compilerOpts)
+  {
+    bool parseRes = false;
+    if (optArg.empty ())
+    {
+      parseRes = compilerOpts->SetOptLevel (defaultEnableOptimizationLevel);
+    }
+    else
+    {
+      boost::optional<int> optLevel (boost::convert<int> (optArg, boost::cnv::spirit ()));
+      if (optLevel)
+        parseRes = compilerOpts->SetOptLevel (*optLevel);
+      else
+        parseRes = compilerOpts->SetOptFlagFromStr (optArg);
+    }
+    if (!parseRes)
+    {
+      Library* lib = compilerOpts->GetLibrary ();
+      throw std::runtime_error ((boost::format ("optimization option '%1%': %2%")
+                                 % to_local (optArg) % LastErrorString (lib)).str ());
+    }
+  }
 };
 
 /* Use this stream type since it provides better exception messages that
