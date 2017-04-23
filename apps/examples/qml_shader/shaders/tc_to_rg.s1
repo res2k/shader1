@@ -1,0 +1,10 @@
+    void main (uniform float4x4 qt_Matrix,
+               attribute float4 qt_Vertex,
+               attribute float2 qt_MultiTexCoord0,
+               uniform float qt_Opacity,
+               uniform sampler2D src,
+               out float4 position, out float4 color)
+    {
+      position = mul (qt_Matrix, qt_Vertex);
+      color = float4 (qt_MultiTexCoord0.x, qt_MultiTexCoord0.y, 0, 1) * qt_Opacity;
+    }

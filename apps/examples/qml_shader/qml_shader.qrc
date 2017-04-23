@@ -28,5 +28,8 @@
       <file>images/Lena.png</file>
       <file>ImageView.qml</file>
       <file>shaders/grayscale.s1</file>
+      <file>shaders/identity.s1</file>
+      <file>shaders/split_rgba.s1</file>
+      <file>shaders/tc_to_rg.s1</file>
     </qresource>
 </RCC>

@@ -1,0 +1,51 @@
+void main (uniform float4x4 qt_Matrix,
+            attribute float4 qt_Vertex,
+            attribute float2 qt_MultiTexCoord0,
+            uniform float qt_Opacity,
+            uniform sampler2D src,
+            out float4 position, out float4 color)
+{
+  position = mul (qt_Matrix, qt_Vertex);
+
+  float4 extract;
+  float3 colorize;
+  float2 tc_offset;
+  if (qt_MultiTexCoord0.x < 0.5)
+  {
+    if (qt_MultiTexCoord0.y < 0.5)
+    {
+      // Top left quadrant: red
+      extract = float4 (1, 0, 0, 0);
+      colorize = float3 (1, 0, 0);
+      tc_offset = float2 (0, 0);
+    }
+    else
+    {
+      // Bottom left quadrant: blue
+      extract = float4 (0, 0, 1, 0);
+      colorize = float3 (0, 0, 1);
+      tc_offset = float2 (0, -1);
+    }
+  }
+  else
+  {
+    if (qt_MultiTexCoord0.y < 0.5)
+    {
+      // Top right quadrant: green
+      extract = float4 (0, 1, 0, 0);
+      colorize = float3 (0, 1, 0);
+      tc_offset = float2 (-1, 0);
+    }
+    else
+    {
+      // Bottom right quadrant: alpha
+      extract = float4 (0, 0, 0, 1);
+      colorize = float3 (1, 1, 1);
+      tc_offset = float2 (-1, -1);
+    }
+  }
+
+  float2 tc = float2 (qt_MultiTexCoord0 * 2 + tc_offset);
+  float4 tex = tex2D(src, tc);
+  color = float4 (dot (tex, extract) * colorize, 1) * qt_Opacity;
+}
