@@ -42,7 +42,6 @@ Item {
             var scale = Math.min (scale1, scale2);
             imgW = Math.floor (imgW * scale);
             imgH = Math.floor (imgH * scale);
-            console.log (width, height, scale1, scale2, imgW, imgH);
         }
 
         __imageWidth = imgW;
