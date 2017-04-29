@@ -20,7 +20,6 @@
 
 #include "compiler/Compiler.h"
 
-#include "BackendCg.h"
 #include "BackendGLSL.h"
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
@@ -40,8 +39,6 @@ namespace s1
   {
     switch (backend)
     {
-    case beCg:
-      return BackendPtr (new compiler::BackendCg (lib));
     case beGLSL:
       return BackendPtr (new compiler::BackendGLSL (lib));
     }

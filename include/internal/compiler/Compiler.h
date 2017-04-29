@@ -41,7 +41,6 @@ namespace s1
     
     enum SupportedBackend
     {
-      beCg,
       beGLSL
     };
     BackendPtr CreateBackend (SupportedBackend backend);

@@ -18,33 +18,33 @@
 #include <cxxtest/TestSuite.h>
 #include "base/common.h"
 
-#include "codegen/cg/CgGenerator.h"
-#include "../cg/CgSequenceCodeGenerator.h"
-#include "../cg/CgTraits.h"
+#include "codegen/glsl/GLSLGenerator.h"
+#include "../glsl/GLSLSequenceCodeGenerator.h"
+#include "../glsl/GLSLTraits.h"
 
 using namespace s1::codegen;
 
-class NameToCgIdentifierTestSuite : public CxxTest::TestSuite 
+class NameToglslIdentifierTestSuite : public CxxTest::TestSuite 
 {
 public:
   void testNameASCII (void)
   {
-    std::string cgIdentifier;
-    CgTraits::instance.ConvertIdentifier (s1::uc::String ("a")).toUTF8String (cgIdentifier);
-    for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
+    std::string glslIdentifier;
+    glsl::Traits traits;
+    traits.ConvertIdentifier (s1::uc::String ("a")).toUTF8String (glslIdentifier);
+    for (auto ch : glslIdentifier)
     {
-      char ch = *it;
       TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
 
   void testNameASCIINonAlpha (void)
   {
-    std::string cgIdentifier;
-    CgTraits::instance.ConvertIdentifier (s1::uc::String ("a!b\"c$d%e&f/g(h)i=j?k\\l,m;n.o:p-q_r#s*t~u+v@w[x]y{z}")).toUTF8String (cgIdentifier);
-    for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
+    std::string glslIdentifier;
+    glsl::Traits traits;
+    traits.ConvertIdentifier (s1::uc::String ("a!b\"c$d%e&f/g(h)i=j?k\\l,m;n.o:p-q_r#s*t~u+v@w[x]y{z}")).toUTF8String (glslIdentifier);
+    for (auto ch : glslIdentifier)
     {
-      char ch = *it;
       TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
@@ -52,11 +52,11 @@ public:
   void testNameUnicode (void)
   {
     static const s1::uc::Char ustr[] = {0xe4, 0};
-    std::string cgIdentifier;
-    CgTraits::instance.ConvertIdentifier (s1::uc::String (ustr)).toUTF8String (cgIdentifier);
-    for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
+    std::string glslIdentifier;
+    glsl::Traits traits;
+    traits.ConvertIdentifier (s1::uc::String (ustr)).toUTF8String (glslIdentifier);
+    for (auto ch : glslIdentifier)
     {
-      char ch = *it;
       TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
@@ -869,11 +869,11 @@ public:
       0x0020, 0x0063, 0x1e83, 0x0072, 0x0061, 0x006e, 0x002e, 0x0020,
       0x000a, 0
     };
-    std::string cgIdentifier;
-    CgTraits::instance.ConvertIdentifier (s1::uc::String (ustr)).toUTF8String (cgIdentifier);
-    for (std::string::iterator it = cgIdentifier.begin(); it != cgIdentifier.end(); ++it)
+    std::string glslIdentifier;
+    glsl::Traits traits;
+    traits.ConvertIdentifier (s1::uc::String (ustr)).toUTF8String (glslIdentifier);
+    for (auto ch : glslIdentifier)
     {
-      char ch = *it;
       TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
     }
   }

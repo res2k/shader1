@@ -215,11 +215,7 @@ s1_Backend* s1_backend_create (s1_Library* obj, s1_StringArg backendStr)
     [=]() -> s1::Result<s1_Backend*> {
       s1::api_impl::ResolveStringArg backend (backendStr, 0);
       s1::Compiler::SupportedBackend compiler_backend;
-      if (boost::algorithm::equals (backend.GetString(), "cg"))
-      {
-        compiler_backend = s1::Compiler::beCg;
-      }
-      else if (boost::algorithm::equals (backend.GetString(), "glsl"))
+      if (boost::algorithm::equals (backend.GetString(), "glsl"))
       {
         compiler_backend = s1::Compiler::beGLSL;
       }

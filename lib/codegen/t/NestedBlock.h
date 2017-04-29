@@ -26,10 +26,10 @@
 #include "BlockImpl.h"
 #include "NameImpl.h"
 
-#include "codegen/cg/CgGenerator.h"
-#include "codegen/cg/CgOptions.h"
-#include "../cg/CgSequenceCodeGenerator.h"
-#include "../cg/CgTraits.h"
+#include "codegen/glsl/GLSLGenerator.h"
+#include "codegen/glsl/GLSLOptions.h"
+#include "../glsl/GLSLSequenceCodeGenerator.h"
+#include "../glsl/GLSLTraits.h"
 
 #include "StringSubstitute.h"
 
@@ -77,22 +77,27 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
     { return s1::uc::String(); }	
   };
   
-  class TestCodeGenerator : public CgGenerator
+  class TestCodeGenerator : public glsl::Generator
   {
   public:
-    typedef CgGenerator Superclass;
+    typedef glsl::Generator Superclass;
     
-    class TestSequenceCodeGenerator : public SequenceCodeGenerator
+    class TestSequenceCodeGenerator : public glsl::SequenceCodeGenerator
     {
       static const ProgramFunction::TransferMappings& EmptyMappings()
       {
         static const ProgramFunction::TransferMappings m;
         return m;
       }
-      static const CgOptions& DefaultOptions()
+      static const glsl::Options& DefaultOptions()
       {
-        static const CgOptions o (false);
+        static const glsl::Options o (false);
         return o;
+      }
+      static const glsl::Traits& DefaultTraits()
+      {
+        static const glsl::Traits t;
+        return t;
       }
     public:
       typedef SequenceCodeGenerator Superclass;
@@ -101,7 +106,7 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
 				std::vector<s1::uc::String> (),
-                                DefaultOptions (), "v2f") {}
+                                DefaultTraits (), DefaultOptions ()) {}
        
       using Superclass::GetOutputRegisterName;
     };
@@ -143,13 +148,14 @@ public:
     StringsArrayPtr generateResult (seqGen.Generate ());
     
     StringStringMap substMap;
-    CgTraits::instance.ConvertIdentifier (testBlockImpl->sequenceBuilder->GetIdentifierRegister ("a")->GetName ())
+    glsl::Traits traits;
+    traits.ConvertIdentifier (testBlockImpl->sequenceBuilder->GetIdentifierRegister ("a")->GetName ())
       .toUTF8String (substMap["A"]);
     TS_ASSERT_EQUALS(generateResult->Size(), 4);
     unsigned int l = 0;
     if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
-		     StringSubstitute ("unsigned int $A;", substMap));
+		     StringSubstitute ("int $A;", substMap));
     if (l >= generateResult->Size()) return;
     TS_ASSERT_EQUALS(generateResult->Get (l++),
 		     StringSubstitute ("{", substMap));

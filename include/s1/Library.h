@@ -221,7 +221,7 @@ S1TYPE_DECLARE_FWD(Backend);
  * Create a backend object.
  * \param lib Parent library.
  * \param backend Name of the backend to create.
- *   Currently only <tt>"cg"</tt> is supported.
+ *   Currently only <tt>"glsl"</tt> is supported.
  * \returns A new backend object.
  *   The returned object will already have a reference, release the reference
  *   using s1_release().
@@ -471,7 +471,7 @@ namespace s1
       /**
        * Create a backend object.
        * \param backend Name of the backend to create.
-       *   Currently only <tt>"cg"</tt> is supported.
+       *   Currently only <tt>"glsl"</tt> is supported.
        * \returns A new backend object.
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.

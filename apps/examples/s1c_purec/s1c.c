@@ -87,7 +87,7 @@ int main (const int argc, const char* const argv[])
   int arg_num;
   const char* input_file_name = NULL;
   const char* entry_name = "main";
-  const char* backend_str = "cg";
+  const char* backend_str = "glsl";
   FILE* infile = NULL;
   char* source_str = NULL;
   size_t source_size = 0;

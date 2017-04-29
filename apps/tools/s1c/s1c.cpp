@@ -129,7 +129,7 @@ public:
                               Options* compilerOpts)
   {
     const char* defaultEntry = "main";
-    const char* defaultBackend = "cg";
+    const char* defaultBackend = "glsl";
 
     bpo::options_description input_desc ("General usage");
     input_desc.add_options ()

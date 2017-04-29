@@ -24,9 +24,10 @@
 #include "BlockImpl.h"
 #include "NameImpl.h"
 
-#include "codegen/cg/CgGenerator.h"
-#include "codegen/cg/CgOptions.h"
-#include "../cg/CgSequenceCodeGenerator.h"
+#include "codegen/glsl/GLSLGenerator.h"
+#include "codegen/glsl/GLSLOptions.h"
+#include "../glsl/GLSLSequenceCodeGenerator.h"
+#include "../glsl/GLSLTraits.h"
 
 #include "StringSubstitute.h"
 
@@ -64,22 +65,27 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
     { return s1::uc::String(); }	
   };
   
-  class TestCodeGenerator : public CgGenerator
+  class TestCodeGenerator : public glsl::Generator
   {
   public:
-    typedef CgGenerator Superclass;
+    typedef glsl::Generator Superclass;
     
-    class TestSequenceCodeGenerator : public SequenceCodeGenerator
+    class TestSequenceCodeGenerator : public glsl::SequenceCodeGenerator
     {
       static const ProgramFunction::TransferMappings& EmptyMappings()
       {
         static const ProgramFunction::TransferMappings m;
         return m;
       }
-      static const CgOptions& DefaultOptions()
+      static const glsl::Options& DefaultOptions()
       {
-        static const CgOptions o (false);
+        static const glsl::Options o (false);
         return o;
+      }
+      static const glsl::Traits& DefaultTraits()
+      {
+        static const glsl::Traits t;
+        return t;
       }
     public:
       typedef SequenceCodeGenerator Superclass;
@@ -88,7 +94,7 @@ class BasicSequenceTestSuite : public CxxTest::TestSuite
        : SequenceCodeGenerator (seq, nameRes,
 				EmptyMappings(), EmptyMappings(),
 				std::vector<s1::uc::String> (),
-                                DefaultOptions (), "v2f") {}
+                                DefaultTraits (), DefaultOptions ()) {}
        
       using Superclass::GetOutputRegisterName;
     };
