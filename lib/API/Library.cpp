@@ -40,19 +40,25 @@ namespace s1
   {
     class Library : public s1::Library
     {
-      boost::optional<StringWrapper> lastErrorInfo;
+    protected:
+      struct ApiPerThreadData : public PerThreadData
+      {
+        boost::optional<StringWrapper> lastErrorInfo;
+      };
+      PerThreadData* AllocPerThreadData () override { return new ApiPerThreadData; }
     public:
       const char* GetLastErrorInfo ()
       {
+        auto& threadData = static_cast<ApiPerThreadData&> (GetPerThreadData());
         auto ucs_info = s1::Library::GetLastErrorInfo ();
         if (ucs_info)
         {
-          lastErrorInfo = *ucs_info;
-          return lastErrorInfo->GetUTF8 ();
+          threadData.lastErrorInfo = *ucs_info;
+          return threadData.lastErrorInfo->GetUTF8 ();
         }
         else
         {
-          lastErrorInfo = boost::none;
+          threadData.lastErrorInfo = boost::none;
           return nullptr;
         }
       }

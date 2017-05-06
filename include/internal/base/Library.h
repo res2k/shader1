@@ -22,6 +22,7 @@
 #define __BASE_LIBRARY_H__
 
 #include "base/DebugMessageHandler.h"
+#include "base/dynamic_tls.h"
 #include "base/Exception.h"
 #include "base/Object.h"
 #include "base/Result.h"
@@ -53,32 +54,70 @@ namespace s1
 
   class Library : public Object
   {
-    // TODO: Store error info with thread affinity
-    s1_ResultCode lastError;
-    boost::optional<uc::String> errorInfo;
+  protected:
+    struct PerThreadData
+    {
+      s1_ResultCode lastError = S1_SUCCESS;
+      boost::optional<uc::String> errorInfo;
+
+      virtual ~PerThreadData() {}
+    };
+    dynamic_tls::Handle perThreadSlot = dynamic_tls::InvalidHandle;
+
+    /**
+     * Allocation function for per-thread data.
+     * Virtual so derived classed can also derive PerThreadData.
+     */
+    virtual PerThreadData* AllocPerThreadData () { return new PerThreadData; }
+    /// Get per-thread data for current thread.
+    PerThreadData& GetPerThreadData ()
+    {
+      auto data_p = reinterpret_cast<PerThreadData*> (dynamic_tls::GetValue (perThreadSlot));
+      if (!data_p)
+      {
+        data_p = AllocPerThreadData ();
+        dynamic_tls::SetValue (perThreadSlot, data_p);
+      }
+      return *data_p;
+    }
+
     /// Message handler settings
     DebugMessageHandler messageHandler;
     /// The internal factory object
     Compiler compiler;  // TODO: Can probably be removed
   public:
-    Library() : lastError (S1_SUCCESS), compiler (this) {}
+    Library() : compiler (this)
+    {
+      perThreadSlot =
+        dynamic_tls::Alloc ([](void* data, uintptr_t){ delete reinterpret_cast<PerThreadData*> (data); }, 0);
+    }
+    ~Library()
+    {
+      if (perThreadSlot != dynamic_tls::InvalidHandle)
+      {
+        dynamic_tls::Free (perThreadSlot,
+          [](void* data, uintptr_t){ delete reinterpret_cast<PerThreadData*> (data); }, 0);
+      }
+    }
     
     // TODO: Store stuff like memory allocator, global options etc... here
-    s1_ResultCode GetLastError () { return lastError; }
+    s1_ResultCode GetLastError () { return GetPerThreadData().lastError; }
     const uc::String* GetLastErrorInfo ()
     {
+      auto errorInfo = GetPerThreadData().errorInfo;
       return errorInfo ? &(*errorInfo) : nullptr;
     }
     void SetLastError (s1_ResultCode code, const uc::String* info = nullptr)
     {
-      lastError = code;
+      auto& threadData = GetPerThreadData();
+      threadData.lastError = code;
       if (info)
       {
-        errorInfo = *info;
+        threadData.errorInfo = *info;
       }
       else
       {
-        errorInfo = boost::none;
+        threadData.errorInfo = boost::none;
       }
     }
     
