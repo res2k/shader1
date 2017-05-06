@@ -70,11 +70,22 @@ s1_ResultCode s1_create_library (s1_Library** out)
 {
   if (!out) return S1_E_INVALID_ARG_N(0);
   
-  s1::Library* new_lib (new (std::nothrow) s1::api_impl::Library);
-  if (!new_lib) return S1_E_OUT_OF_MEMORY;
-  new_lib->AddRef();
-  *out = new_lib->DowncastEvil<s1_Library> ();
-  return S1_SUCCESS;
+  try
+  {
+    s1::Library* new_lib (new (std::nothrow) s1::api_impl::Library);
+    if (!new_lib) return S1_E_OUT_OF_MEMORY;
+    new_lib->AddRef();
+    *out = new_lib->DowncastEvil<s1_Library> ();
+    return S1_SUCCESS;
+  }
+  catch (std::bad_alloc)
+  {
+    return S1_E_OUT_OF_MEMORY;
+  }
+  catch (std::exception)
+  {
+    return S1_E_FAILURE;
+  }
 }
 
 s1_ResultCode s1_library_get_last_error (s1_Library* lib)
