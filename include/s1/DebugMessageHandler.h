@@ -39,6 +39,8 @@
  * For convenience, debug message handlers can be set in both UTF-8 and
  * wide string variants. However, only one of these can be active at a
  * time. Setting one handler will "unset" the other.
+ *
+ * You should not let any exceptions escape from the handler function.
  */
 /**
  * Debug message handler callback function (UTF-8 variant).

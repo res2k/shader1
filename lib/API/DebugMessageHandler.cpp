@@ -45,10 +45,22 @@ s1_debug_message_handler_wcs_func s1_get_debug_message_handler_wcs (uintptr_t* u
 
 void s1_default_debug_message_handler (const char* message, uintptr_t userContext)
 {
-  s1::DefaultDebugMessageHandler::PrintMessage (message);
+  try
+  {
+    s1::DefaultDebugMessageHandler::PrintMessage (message);
+  }
+  catch (...)
+  {
+  }
 }
 
 void s1_default_debug_message_handler_wcs (const wchar_t* message, uintptr_t userContext)
 {
-  s1::DefaultDebugMessageHandler::PrintMessage (message);
+  try
+  {
+    s1::DefaultDebugMessageHandler::PrintMessage (message);
+  }
+  catch (...)
+  {
+  }
 }
