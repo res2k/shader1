@@ -220,7 +220,7 @@ namespace s1
     std::string s_utf8;
     str.toUTF8String (s_utf8);
     PrintMessage (s_utf8.data ());
-#endif
+  #endif
   }
 
   void DefaultDebugMessageHandler::PrintMessage (const wchar_t* str)

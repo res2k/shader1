@@ -109,7 +109,7 @@ S1_API(void) s1_default_debug_message_handler (const char* message, uintptr_t us
 *   OutputDebugString().
  * \sa \ref debug_message_handlers
 */
-S1_API (void) s1_default_debug_message_handler_wcs (const wchar_t* message, uintptr_t userContext);
+S1_API(void) s1_default_debug_message_handler_wcs (const wchar_t* message, uintptr_t userContext);
 
 /// Debug message handler variants.
 enum s1_DebugMessageHandlerVariant
