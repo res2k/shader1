@@ -255,11 +255,14 @@ namespace s1
      * \param str %String to pass.
      */
     StringArg (const std::wstring& str) : s1_StringArg (s1_wcs_n (str.c_str(), str.size())) {}
+    //@{
     /**
      * Construct a string argument from a String object.
      * \param str %String to pass.
      */
     StringArg (String* str) : s1_StringArg (s1_strobj (str)) {}
+    StringArg (const Ptr<String>& str) : s1_StringArg (s1_strobj (str.get())) {}
+    //@}
   };
 
   /// \copydoc s1_u8_n
