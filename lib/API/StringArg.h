@@ -32,48 +32,88 @@ namespace s1
   namespace api_impl
   {
     /**
+     * Calls an \c operator() of \a Visitor depending on the string passed in
+     * \a arg.
+     * \c operator() of \a Visitor is called with one of the following argument(s):
+     * * <tt>const char*</tt>, <tt>const s1_char16*</tt>, <tt>const s1_char32*</tt>
+     *   or <tt>const wchar_t*</tt> together with a \c size_t:
+     *   Called if the string argument contains a pointer to an UTF-8, UTF-16,
+     *   UTF-32 or wide character string. The \c size_t argument may specify the
+     *   string length in code units, or may be \c (size_t)~0.
+     * * <tt>cxxapi::String*</tt> if the argument contains a String object.
+     * * \c ResultCode if the argument contains an error. The code is usually
+     *   S1_E_STRING_TOO_LONG or S1_E_INVALID_ARG.
+     * \a Visitor must provide a nested type definition \em result_type.
+     * \returns The result of the called \c operator().
+     */
+    template<typename Visitor>
+    typename Visitor::result_type VisitStringArg (s1::cxxapi::StringArg arg, Visitor&& v)
+    {
+      if (((arg.ts & _S1_SA_TS_SIZE_MASK) == _S1_SA_TS_SIZE_INVALID)
+        && (arg.p == 0))
+      {
+        return v (S1_E_STRING_TOO_LONG);
+      }
+      else if ((arg.p != 0) && (arg.ts == UINTPTR_MAX))
+      {
+        return v (reinterpret_cast<cxxapi::String*> (arg.p));
+      }
+      else if (arg.p == 0)
+      {
+        return v (S1_E_INVALID_ARG);
+      }
+      else
+      {
+        uintptr_t type = arg.ts & _S1_SA_TS_TYPE_MASK;
+        uintptr_t raw_size = (arg.ts & _S1_SA_TS_SIZE_MASK);
+        size_t len = (raw_size == _S1_SA_TS_SIZE_AUTO) ? (size_t)~0 : (size_t)raw_size;
+        switch (type)
+        {
+        case _S1_SA_TS_TYPE_UTF8:   return v (reinterpret_cast<const char*> (arg.p), len);
+        case _S1_SA_TS_TYPE_UTF16:  return v (reinterpret_cast<const s1_char16*> (arg.p), len);
+        case _S1_SA_TS_TYPE_UTF32:  return v (reinterpret_cast<const s1_char32*> (arg.p), len);
+        case _S1_SA_TS_TYPE_WCS:    return v (reinterpret_cast<const wchar_t*> (arg.p), len);
+        }
+      }
+      return v (S1_E_INVALID_ARG);
+    }
+
+    /**
      * Resolve a string argument to an internal type (or maybe error).
      */
     class ResolveStringArg
     {
-      boost::variant<ResultCode, uc::String, cxxapi::String*> data;
+      typedef boost::variant<ResultCode, uc::String, cxxapi::String*> string_data;
+
+      class StringVisitor
+      {
+        int argNum;
+      public:
+        typedef string_data result_type;
+
+        StringVisitor (int argNum) : argNum (argNum) {}
+
+        string_data operator() (const char* s, size_t len) { return uc::String::fromUntrustedUTF (s, len); }
+        string_data operator() (const s1_char16* s, size_t len) { return uc::String::fromUntrustedUTF (s, len); }
+        string_data operator() (const s1_char32* s, size_t len) { return uc::String::fromUntrustedUTF (s, len); }
+        string_data operator() (const wchar_t* s, size_t len) { return uc::String::fromUntrustedWS (s, len); }
+        string_data operator() (cxxapi::String* s) { return s; }
+        string_data operator() (ResultCode error)
+        {
+          switch (error)
+          {
+          case S1_E_STRING_TOO_LONG:  return S1_E_STRING_TOO_LONG_N(argNum);
+          case S1_E_INVALID_ARG:      return S1_E_INVALID_ARG_N(argNum);
+          }
+          return error;
+        }
+      };
+
+      string_data data;
     public:
       ResolveStringArg (s1::cxxapi::StringArg arg, int argNum)
       {
-        if (((arg.ts & _S1_SA_TS_SIZE_MASK) == _S1_SA_TS_SIZE_INVALID)
-          && (arg.p == 0))
-        {
-          data = S1_E_STRING_TOO_LONG_N(argNum);
-        }
-        else if ((arg.p != 0) && (arg.ts == UINTPTR_MAX))
-        {
-          data = reinterpret_cast<cxxapi::String*> (arg.p);
-        }
-        else if (arg.p == 0)
-        {
-          data = S1_E_INVALID_ARG_N(argNum);
-        }
-        else
-        {
-          uintptr_t type = arg.ts & _S1_SA_TS_TYPE_MASK;
-          uintptr_t raw_size = (arg.ts & _S1_SA_TS_SIZE_MASK);
-          size_t len = (raw_size == _S1_SA_TS_SIZE_AUTO) ? (size_t)~0 : (size_t)raw_size;
-          switch (type)
-          {
-          case _S1_SA_TS_TYPE_UTF8:
-            data = uc::String::fromUntrustedUTF (reinterpret_cast<const char*> (arg.p), len);
-            break;
-          case _S1_SA_TS_TYPE_UTF16:
-            data = uc::String::fromUntrustedUTF (reinterpret_cast<const s1_char16*> (arg.p), len);
-            break;
-          case _S1_SA_TS_TYPE_UTF32:
-            data = uc::String::fromUntrustedUTF (reinterpret_cast<const s1_char32*> (arg.p), len);
-            break;
-          case _S1_SA_TS_TYPE_WCS:
-            data = uc::String::fromUntrustedWS (reinterpret_cast<const wchar_t*> (arg.p), len);
-            break;
-          }
-        }
+        data = VisitStringArg (arg, StringVisitor (argNum));
       }
 
       /// Return resolution error code, if any
