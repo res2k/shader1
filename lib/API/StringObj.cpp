@@ -111,7 +111,7 @@ static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrOb
     }).code();
 }
 
-S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, const char* string, const char** invalidPos)
+S1_API(s1_ResultCode) s1_string_independent_create_u8 (s1_String** newStrObj, const char* string, const char** invalidPos)
 {
   return s1_string_independent_create_internal (newStrObj, string, invalidPos);
 }

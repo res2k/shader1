@@ -265,7 +265,7 @@ static s1_String* s1_string_create_internal (s1_Library* obj, const Ch* string, 
     }), nullptr);
 }
 
-s1_String* s1_string_create (s1_Library* obj, const char* string, const char** invalidPos)
+s1_String* s1_string_create_u8 (s1_Library* obj, const char* string, const char** invalidPos)
 {
   return s1_string_create_internal (obj, string, invalidPos);
 }

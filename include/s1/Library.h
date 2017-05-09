@@ -249,8 +249,8 @@ S1TYPE_DECLARE_FWD(String);
  * the library's last error code.
  * \memberof s1_Library
  */
-S1_API(s1_String*) s1_string_create (s1_Library* lib, const char* string,
-                                     const char** invalidPos S1_ARG_DEFAULT(S1_NULL));
+S1_API(s1_String*) s1_string_create_u8 (s1_Library* lib, const char* string,
+                                        const char** invalidPos S1_ARG_DEFAULT(S1_NULL));
 S1_API(s1_String*) s1_string_create_wcs (s1_Library* lib, const wchar_t* string,
                                          const wchar_t** invalidPos S1_ARG_DEFAULT (S1_NULL));
 S1_API(s1_String*) s1_string_create_u16 (s1_Library* lib, const s1_char16* string,
@@ -495,7 +495,7 @@ namespace s1
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (const char* string)
       {
         return S1_RETURN_MOVE_REF(String,
-                                  s1_string_create (this, string));
+                                  s1_string_create_u8 (this, string));
       }
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (const wchar_t* string)
       {
@@ -528,7 +528,7 @@ namespace s1
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (const char* string, const char*& invalidPos)
       {
         return S1_RETURN_MOVE_REF(String,
-                                  s1_string_create (this, string, &invalidPos));
+                                  s1_string_create_u8 (this, string, &invalidPos));
       }
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (const wchar_t* string, const wchar_t*& invalidPos)
       {

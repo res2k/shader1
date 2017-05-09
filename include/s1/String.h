@@ -57,8 +57,8 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_String);
  * In case of other errors, \a newStrObj is set to \NULL is returned and the error
  * status is returned.
  */
-S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, const char* string,
-                                                    const char** invalidPos S1_ARG_DEFAULT (S1_NULL));
+S1_API(s1_ResultCode) s1_string_independent_create_u8 (s1_String** newStrObj, const char* string,
+                                                       const char** invalidPos S1_ARG_DEFAULT (S1_NULL));
 S1_API(s1_ResultCode) s1_string_independent_create_wcs (s1_String** newStrObj, const wchar_t* string,
                                                         const wchar_t** invalidPos S1_ARG_DEFAULT (S1_NULL));
 S1_API(s1_ResultCode) s1_string_independent_create_u16 (s1_String** newStrObj, const s1_char16* string,
@@ -135,7 +135,7 @@ namespace s1
       static ResultCode IndependentCreate (Pointer& strObj, const char* string)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_independent_create (&p, string));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_u8 (&p, string));
         strObj.take (p);
         return err;
       }
@@ -179,7 +179,7 @@ namespace s1
       static ResultCode IndependentCreate (Pointer& strObj, const char* string, const char*& invalidPos)
       {
         s1_String* p (0);
-        ResultCode err = static_cast<ResultCode> (s1_string_independent_create (&p, string, &invalidPos));
+        ResultCode err = static_cast<ResultCode> (s1_string_independent_create_u8 (&p, string, &invalidPos));
         strObj.take (p);
         return err;
       }

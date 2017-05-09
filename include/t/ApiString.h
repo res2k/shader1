@@ -138,7 +138,7 @@ public:
     TS_ASSERT_DIFFERS(lib, (s1_Library*)0);
 
     s1_String* str;
-    str = s1_string_create (lib, 0, 0);
+    str = s1_string_create_u8 (lib, 0, 0);
     TS_ASSERT_EQUALS(str, (s1_String*)0);
     TS_ASSERT(S1_ERROR_EQUAL(s1_library_get_last_error (lib), S1_E_INVALID_ARG));
 
@@ -222,7 +222,7 @@ public:
 
     {
       s1_String* str;
-      str = s1_string_create (lib, testString2_u8, 0);
+      str = s1_string_create_u8 (lib, testString2_u8, 0);
       TS_ASSERT_DIFFERS(str, (s1_String*)0);
       const char* str_utf8 = s1_string_u8 (str);
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -377,7 +377,7 @@ public:
   {
     // Check object creation
     s1_String* str;
-    s1_ResultCode err = s1_string_independent_create (&str, 0, 0);
+    s1_ResultCode err = s1_string_independent_create_u8 (&str, 0, 0);
     TS_ASSERT_EQUALS(str, (s1_String*)0);
     TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_INVALID_ARG));
   }
@@ -450,7 +450,7 @@ public:
   {
     {
       s1_String* str;
-      s1_ResultCode err = s1_string_independent_create (&str, testString2_u8, 0);
+      s1_ResultCode err = s1_string_independent_create_u8 (&str, testString2_u8, 0);
       TS_ASSERT_DIFFERS(str, (s1_String*)0);
       const char* str_utf8 = s1_string_u8 (str);
       ASSERT_EQUALS_STR2_U8(str_utf8);
