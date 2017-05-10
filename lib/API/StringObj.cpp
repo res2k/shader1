@@ -20,6 +20,8 @@
 
 #include "StringObj.h"
 
+#include "StringArg.h"
+
 namespace s1
 {
   namespace api_impl
@@ -51,47 +53,105 @@ namespace s1
       return S1_SUCCESS;
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const char* str, const char** invalidPos)
+    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const char* str, const char** invalidPos, size_t len)
     {
-      auto result = uc::String::convertUTF8 (str);
+      auto result = uc::String::convertUTF8 (str, len);
       strObj.reset (new String (std::move (result.str), lib));
       if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = result.invalidPos;
       return TranslateStringConversionError (result.error);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char16* str, const s1_char16** invalidPos)
+    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char16* str, const s1_char16** invalidPos, size_t len)
     {
-      auto result = uc::String::convertUTF16 (str);
+      auto result = uc::String::convertUTF16 (str, len);
       strObj.reset (new String (std::move (result.str), lib));
       if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = result.invalidPos;
       return TranslateStringConversionError (result.error);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char32* str, const s1_char32** invalidPos)
+    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char32* str, const s1_char32** invalidPos, size_t len)
     {
-      auto result = uc::String::convertUTF32 (str);
+      auto result = uc::String::convertUTF32 (str, len);
       strObj.reset (new String (std::move (result.str), lib));
       if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = result.invalidPos;
       return TranslateStringConversionError (result.error);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos)
+    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos, size_t len)
     {
 #if defined(S1_WCHAR_IS_UTF16)
-      auto result = uc::String::convertUTF16 (reinterpret_cast<const s1_char16*> (str));
+      auto result = uc::String::convertUTF16 (reinterpret_cast<const s1_char16*> (str), len);
 #elif defined(S1_WCHAR_IS_UTF32)
-      auto result = uc::String::convertUTF32 (reinterpret_cast<const s1_char32*> (str));
+      auto result = uc::String::convertUTF32 (reinterpret_cast<const s1_char32*> (str), len);
 #endif
       strObj.reset (new String (std::move (result.str), lib));
       if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = reinterpret_cast<const wchar_t*> (result.invalidPos);
       return TranslateStringConversionError (result.error);
     }
+
+    class StringCreateVisitor
+    {
+      boost::intrusive_ptr<String>& strObj;
+      s1::Library* lib;
+      int argIndex;
+      size_t* invalidPos;
+    public:
+      typedef ResultCode result_type;
+
+      StringCreateVisitor (boost::intrusive_ptr<String>& strObj, s1::Library* lib, int argIndex, size_t* invalidPos)
+        : strObj (strObj), lib (lib), argIndex (argIndex), invalidPos (invalidPos) {}
+
+      template<typename Ch>
+      ResultCode operator() (const Ch* s, size_t len)
+      {
+        const Ch* invalidPosPtr = nullptr;
+        auto result = String::Create (strObj, lib, s, &invalidPosPtr, len);
+        if (invalidPos && invalidPosPtr) *invalidPos = invalidPosPtr - s;
+        return result;
+      }
+      ResultCode operator() (cxxapi::String* s)
+      {
+        // Create new object with same string data
+        s1::api_impl::String* string_impl (s1::EvilUpcast<s1::api_impl::String> (s));
+        return String::Create (strObj, lib, string_impl->StrUCS ());
+      }
+      ResultCode operator() (ResultCode error)
+      {
+        switch (error)
+        {
+        case S1_E_STRING_TOO_LONG:  return S1_E_STRING_TOO_LONG_N(argIndex);
+        case S1_E_INVALID_ARG:      return S1_E_INVALID_ARG_N(argIndex);
+        }
+        return error;
+      }
+    };
+
+    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, cxxapi::StringArg str, int argIndex, size_t* invalidPos)
+    {
+      return VisitStringArg (str, StringCreateVisitor (strObj, lib, argIndex, invalidPos));
+    }
   } // namespace api_impl
 } // namespace s1
+
+S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, s1_StringArg string, size_t* invalidPos)
+{
+  if (!newStrObj) return S1_E_INVALID_ARG_N (0);
+
+  *newStrObj = nullptr;
+
+  return s1::api_impl::String::Try (
+    [=]() -> s1::Result<nullptr_t> {
+      boost::intrusive_ptr<s1::api_impl::String> newString;
+      s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, 1, invalidPos);
+      if (newString) newString->AddRef ();
+      *newStrObj = newString->DowncastEvil<s1_String> ();
+      return createResult;
+    }).code();
+}
 
 template<typename Ch>
 static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrObj, const Ch* string, const Ch** invalidPos)

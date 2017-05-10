@@ -247,6 +247,21 @@ s1_Backend* s1_backend_create (s1_Library* obj, s1_StringArg backendStr)
     }), nullptr);
 }
 
+s1_String* s1_string_create (s1_Library* obj, s1_StringArg string, size_t* invalidPos)
+{
+  S1_ASSERT_MSG(obj, "NULL Library", nullptr);
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
+  return lib->Return (lib->Try (
+    [=]() {
+      boost::intrusive_ptr<s1::api_impl::String> newString;
+      s1::ResultCode createResult = s1::api_impl::String::Create (newString, lib, string, 1, invalidPos);
+      if (newString) newString->AddRef ();
+      return s1::Result<s1_String*> (newString->DowncastEvil<s1_String> (), createResult);
+    }), nullptr);
+}
+
 template<typename Ch>
 static s1_String* s1_string_create_internal (s1_Library* obj, const Ch* string, const Ch** invalidPos)
 {

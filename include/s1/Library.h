@@ -259,6 +259,26 @@ S1_API(s1_String*) s1_string_create_u32 (s1_Library* lib, const s1_char32* strin
                                          const s1_char32** invalidPos S1_ARG_DEFAULT (S1_NULL));
 //@}
 
+/**
+ * Create a string object.
+ * \param lib Parent library.
+ * \param string Contents of the string. Passing \NULL will result in an error.
+ * \param invalidPos Optionally returns position of the (first) invalid input,
+ *   in code units of the input string.
+ * \returns A new string object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of a decoding error a valid String object will be returned; however,
+ * place holder characters will be present in the string. \a invalidPos will point
+ * to the position of the (first) invalid input and an appropriate error
+ * status is saved in the library's last error code.
+ * In case of other errors, \NULL is returned and the error status is saved in
+ * the library's last error code.
+ * \memberof s1_Library
+ */
+S1_API(s1_String*) s1_string_create (s1_Library* lib, s1_StringArg string,
+                                     size_t* invalidPos S1_ARG_DEFAULT(S1_NULL));
+
 #if defined(__cplusplus)
 namespace s1
 {
@@ -512,6 +532,11 @@ namespace s1
         return S1_RETURN_MOVE_REF(String,
                                   s1_string_create_u32 (this, string));
       }
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (StringArg string)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create (this, string));
+      }
       //@}
       //@{
       /** Create a string object.
@@ -546,6 +571,23 @@ namespace s1
                                   s1_string_create_u32 (this, string, &invalidPos));
       }
       //@}
+      /**
+       * Create a string object.
+       * \param string Contents of the string. Passing \NULL will result in an error.
+       * \param invalidPos Returns position of the (first) invalid input, if any,
+       *   in code units of the input string.
+       * In case of a decoding error a valid String object will be returned; however,
+       * place holder characters will be present in the string. \a invalidPos will point
+       * to the position of the (first) invalid input and an appropriate error
+       * status is saved in the library's last error code.
+       * In case of other errors, \NULL is returned and the error status is saved in
+       * the library's last error code.
+       */
+      S1_RETURN_MOVE_REF_TYPE(String) CreateString (StringArg string, size_t& invalidPos)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_string_create (this, string, &invalidPos));
+      }
     };
   S1_NS_CXXAPI_END
 

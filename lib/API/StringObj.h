@@ -47,10 +47,11 @@ namespace s1
        */
       static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, uc::String&& str);
       static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const uc::String& str);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const char* str, const char** invalidPos);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char16* str, const s1_char16** invalidPos);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char32* str, const s1_char32** invalidPos);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos);
+      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const char* str, const char** invalidPos, size_t len = (size_t)~0);
+      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char16* str, const s1_char16** invalidPos, size_t len = (size_t)~0);
+      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char32* str, const s1_char32** invalidPos, size_t len = (size_t)~0);
+      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos, size_t len = (size_t)~0);
+      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, cxxapi::StringArg str, int argIndex, size_t* invalidPos);
       //@}
 
       const uc::String& StrUCS () const { return str.GetUCS (); }
