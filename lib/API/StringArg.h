@@ -23,6 +23,8 @@
 
 #include "s1/StringArg.h"
 
+#include "base/uc/String_optional.h"
+
 #include "StringObj.h"
 
 #include <boost/variant.hpp>
