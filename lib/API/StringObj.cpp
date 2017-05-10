@@ -29,14 +29,12 @@ namespace s1
     ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, uc::String&& str)
     {
       strObj.reset (new String (std::move (str), lib));
-      if (!strObj) return S1_E_OUT_OF_MEMORY;
       return S1_SUCCESS;
     }
 
     ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const uc::String& str)
     {
       strObj.reset (new String (str, lib));
-      if (!strObj) return S1_E_OUT_OF_MEMORY;
       return S1_SUCCESS;
     }
 
@@ -57,7 +55,6 @@ namespace s1
     {
       auto result = uc::String::convertUTF8 (str, len);
       strObj.reset (new String (std::move (result.str), lib));
-      if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = result.invalidPos;
       return TranslateStringConversionError (result.error);
     }
@@ -66,7 +63,6 @@ namespace s1
     {
       auto result = uc::String::convertUTF16 (str, len);
       strObj.reset (new String (std::move (result.str), lib));
-      if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = result.invalidPos;
       return TranslateStringConversionError (result.error);
     }
@@ -75,7 +71,6 @@ namespace s1
     {
       auto result = uc::String::convertUTF32 (str, len);
       strObj.reset (new String (std::move (result.str), lib));
-      if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = result.invalidPos;
       return TranslateStringConversionError (result.error);
     }
@@ -88,7 +83,6 @@ namespace s1
       auto result = uc::String::convertUTF32 (reinterpret_cast<const s1_char32*> (str), len);
 #endif
       strObj.reset (new String (std::move (result.str), lib));
-      if (!strObj) return S1_E_OUT_OF_MEMORY;
       if (invalidPos) *invalidPos = reinterpret_cast<const wchar_t*> (result.invalidPos);
       return TranslateStringConversionError (result.error);
     }
