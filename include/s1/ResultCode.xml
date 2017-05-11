@@ -22,96 +22,96 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 -->
 <codes>
-	<component name="BASE" value="0" descr="&lsquo;base&rsquo; errors" docgroup="General result codes">
-		<code name="SUCCESS" value="0" type="success">
-			<descr>Success</descr>
-			<doc>
-			Result code for an unmitigated success.
-			\remarks Since an operation might succeed with the result code \em not being
-			S1_SUCCESS you should always use #S1_SUCCESSFUL to check a result code.
-			</doc>
-		</code>
-		<code name="E_FAILURE" value="0">
-			<descr>Generic failure</descr>
-		</code>
-		<code name="E_OUT_OF_MEMORY" value="1">
-			<descr>Out of memory</descr>
-		</code>
-		<code name="E_INVALID_ARG" value="2"
-		      name_ext="E_INVALID_ARG_N">
-			<descr>An argument was invalid</descr>
-			<descr_ext>An argument was invalid ({0})</descr_ext>
-			<doc>
-			Some argument was invalid (eg a pointer was \NULL).
-			\remarks You need to use the #S1_ERROR_EQUAL macro to check for this error code.
-			</doc>
-			<doc_ext>
-			A specific argument was invalid (eg a pointer was \NULL).
-			\a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
-			has index 0. But note that for functions taking an object instance as the first argument that
-			argument is \em not included when counting the invalid argument number.
-			(This does not really incur a loss of information as there wouldn't be
-			a way to obtain a library to set the error code on anyway.)
-			</doc_ext>
-		</code>
-		<code name="E_STRING_TOO_LONG" value="3"
-		      name_ext="E_STRING_TOO_LONG_N">
-			<descr>A string argument was too long</descr>
-			<descr_ext>A string argument was too long ({0})</descr_ext>
-			<doc>
-			A string argument was too long (longer than S1_STRING_ARG_MAX_N).
-			\remarks You need to use the #S1_ERROR_EQUAL macro to check for this error code.
-			</doc>
-			<doc_ext>
-			A specific string argument was too long (longer than S1_STRING_ARG_MAX_N).
-			\a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
-			has index 0. But note that for functions taking an object instance as the first argument that
-			argument is \em not included when counting the invalid argument number.
-			(This does not really incur a loss of information as there wouldn't be
-			a way to obtain a library to set the error code on anyway.)
-			</doc_ext>
-		</code>
-		<code name="S_INPUT_INCOMPLETE" value="10" type="success">
-			<descr>Incomplete sequence in input</descr>
-			<doc>
-			The input contained an incomplete sequence of code units.
-			</doc>
-		</code>
-		<code name="S_CODE_POINT_INVALID" value="11" type="success">
-			<descr>Invalid code point in input</descr>
-			<doc>
-			The input contained an invalid code point (e.g. a surrogate half).
-			</doc>
-		</code>
-		<code name="S_ENCODING_INVALID" value="12" type="success">
-			<descr>Invalid encoding for a code point in input</descr>
-			<doc>
-			The input contained an invalid encoding for a code point (overlong encoding).
-			</doc>
-		</code>
-	</component>
-	<component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
-		<code name="E_INVALID_OPTIMIZATION" value="0">
-			<descr>The optimization option was invalid</descr>
-		</code>
-	</component>
-	<component name="BACKEND" value="2" descr="backend-related" docgroup="Backend-related result codes">
-		<code name="E_UNKNOWN_BACKEND" value="0">
-			<descr>An unknown backend was requested</descr>
-		</code>
-		<code name="E_GENERATE_FAILED" value="1">
-			<descr>Program generation failed</descr>
-		</code>
-	</component>
-	<component name="PROGRAM" value="3" descr="program-related" docgroup="Program-related result codes">
-		<code name="E_INVALID_FREQUENCY" value="0">
-			<descr>An invalid input parameter frequency was given</descr>
-		</code>
-		<code name="E_UNKNOWN_PARAMETER" value="1">
-			<descr>A program input parameter is not known</descr>
-		</code>
-		<code name="E_INCOMPATIBLE" value="2">
-			<descr>The requested compatibility level is not supported</descr>
-		</code>
-	</component>
+  <component name="BASE" value="0" descr="&lsquo;base&rsquo; errors" docgroup="General result codes">
+    <code name="SUCCESS" value="0" type="success">
+      <descr>Success</descr>
+      <doc>
+      Result code for an unmitigated success.
+      \remarks Since an operation might succeed with the result code \em not being
+      S1_SUCCESS you should always use #S1_SUCCESSFUL to check a result code.
+      </doc>
+    </code>
+    <code name="E_FAILURE" value="0">
+      <descr>Generic failure</descr>
+    </code>
+    <code name="E_OUT_OF_MEMORY" value="1">
+      <descr>Out of memory</descr>
+    </code>
+    <code name="E_INVALID_ARG" value="2"
+          name_ext="E_INVALID_ARG_N">
+      <descr>An argument was invalid</descr>
+      <descr_ext>An argument was invalid ({0})</descr_ext>
+      <doc>
+      Some argument was invalid (eg a pointer was \NULL).
+      \remarks You need to use the #S1_ERROR_EQUAL macro to check for this error code.
+      </doc>
+      <doc_ext>
+      A specific argument was invalid (eg a pointer was \NULL).
+      \a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
+      has index 0. But note that for functions taking an object instance as the first argument that
+      argument is \em not included when counting the invalid argument number.
+      (This does not really incur a loss of information as there wouldn't be
+      a way to obtain a library to set the error code on anyway.)
+      </doc_ext>
+    </code>
+    <code name="E_STRING_TOO_LONG" value="3"
+          name_ext="E_STRING_TOO_LONG_N">
+      <descr>A string argument was too long</descr>
+      <descr_ext>A string argument was too long ({0})</descr_ext>
+      <doc>
+      A string argument was too long (longer than S1_STRING_ARG_MAX_N).
+      \remarks You need to use the #S1_ERROR_EQUAL macro to check for this error code.
+      </doc>
+      <doc_ext>
+      A specific string argument was too long (longer than S1_STRING_ARG_MAX_N).
+      \a N is the argument number and can be extracted using #S1_GET_EXTRA. The first argument
+      has index 0. But note that for functions taking an object instance as the first argument that
+      argument is \em not included when counting the invalid argument number.
+      (This does not really incur a loss of information as there wouldn't be
+      a way to obtain a library to set the error code on anyway.)
+      </doc_ext>
+    </code>
+    <code name="S_INPUT_INCOMPLETE" value="10" type="success">
+      <descr>Incomplete sequence in input</descr>
+      <doc>
+      The input contained an incomplete sequence of code units.
+      </doc>
+    </code>
+    <code name="S_CODE_POINT_INVALID" value="11" type="success">
+      <descr>Invalid code point in input</descr>
+      <doc>
+      The input contained an invalid code point (e.g. a surrogate half).
+      </doc>
+    </code>
+    <code name="S_ENCODING_INVALID" value="12" type="success">
+      <descr>Invalid encoding for a code point in input</descr>
+      <doc>
+      The input contained an invalid encoding for a code point (overlong encoding).
+      </doc>
+    </code>
+  </component>
+  <component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
+    <code name="E_INVALID_OPTIMIZATION" value="0">
+      <descr>The optimization option was invalid</descr>
+    </code>
+  </component>
+  <component name="BACKEND" value="2" descr="backend-related" docgroup="Backend-related result codes">
+    <code name="E_UNKNOWN_BACKEND" value="0">
+      <descr>An unknown backend was requested</descr>
+    </code>
+    <code name="E_GENERATE_FAILED" value="1">
+      <descr>Program generation failed</descr>
+    </code>
+  </component>
+  <component name="PROGRAM" value="3" descr="program-related" docgroup="Program-related result codes">
+    <code name="E_INVALID_FREQUENCY" value="0">
+      <descr>An invalid input parameter frequency was given</descr>
+    </code>
+    <code name="E_UNKNOWN_PARAMETER" value="1">
+      <descr>A program input parameter is not known</descr>
+    </code>
+    <code name="E_INCOMPATIBLE" value="2">
+      <descr>The requested compatibility level is not supported</descr>
+    </code>
+  </component>
 </codes>
