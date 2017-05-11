@@ -129,7 +129,7 @@ static const s1_char32 testString3_u32[] = { 0x1F435, 0 };
 class ApiStringTestSuite : public CxxTest::TestSuite
 {
 public:
-  void testCreateNullStrC (void)
+  void testCreateStrErrorC (void)
   {
     // Check object creation
     s1_Library* lib;
@@ -142,10 +142,18 @@ public:
     TS_ASSERT_EQUALS(str, (s1_String*)0);
     TS_ASSERT(S1_ERROR_EQUAL(s1_library_get_last_error (lib), S1_E_INVALID_ARG));
 
+    str = s1_string_create (lib, s1_u8 (0));
+    TS_ASSERT_EQUALS(str, (s1_String*)0);
+    TS_ASSERT(S1_ERROR_EQUAL(s1_library_get_last_error (lib), S1_E_INVALID_ARG));
+
+    str = s1_string_create (lib, s1_u8_n ("", size_t (S1_STRING_ARG_MAX_N) + 1));
+    TS_ASSERT_EQUALS(str, (s1_String*)0);
+    TS_ASSERT(S1_ERROR_EQUAL(s1_library_get_last_error (lib), S1_E_STRING_TOO_LONG));
+
     s1_release (lib);
   }
 
-  void testCreateNullStrCXX (void)
+  void testCreateStrErrorCXX (void)
   {
     s1::Library::Pointer lib;
     s1_ResultCode err = s1::Library::Create (lib);
@@ -154,6 +162,14 @@ public:
     s1::String::Pointer str = lib->CreateString ((const char*)nullptr);
     TS_ASSERT_EQUALS(str, (s1::String*)nullptr);
     TS_ASSERT(S1_ERROR_EQUAL(lib->GetLastError(), S1_E_INVALID_ARG));
+
+    str = lib->CreateString (s1::u8 (nullptr));
+    TS_ASSERT_EQUALS(str, (s1::String*)nullptr);
+    TS_ASSERT(S1_ERROR_EQUAL(lib->GetLastError(), S1_E_INVALID_ARG));
+
+    str = lib->CreateString (s1::u8 ("", size_t (S1_STRING_ARG_MAX_N) + 1));
+    TS_ASSERT_EQUALS(str, (s1::String*)nullptr);
+    TS_ASSERT(S1_ERROR_EQUAL(lib->GetLastError(), S1_E_STRING_TOO_LONG));
   }
 
   void testCreateAsciiCXX (void)
@@ -559,21 +575,37 @@ public:
     }
   }
 
-  void testIndependentCreateNullStrC (void)
+  void testIndependenttestCreateStrErrorC (void)
   {
     // Check object creation
     s1_String* str;
     s1_ResultCode err = s1_string_independent_create_u8 (&str, 0, 0);
     TS_ASSERT_EQUALS(str, (s1_String*)0);
     TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_INVALID_ARG));
+
+    err = s1_string_independent_create (&str, s1_u8 (0));
+    TS_ASSERT_EQUALS(str, (s1_String*)0);
+    TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_INVALID_ARG));
+
+    err = s1_string_independent_create (&str, s1_u8_n ("", size_t (S1_STRING_ARG_MAX_N) + 1));
+    TS_ASSERT_EQUALS(str, (s1_String*)0);
+    TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_STRING_TOO_LONG));
   }
 
-  void testIndependentCreateNullStrCXX (void)
+  void testIndependenttestCreateStrErrorCXX (void)
   {
     s1::String::Pointer str;
     s1_ResultCode err = s1::String::IndependentCreate (str, (const char*)nullptr);
     TS_ASSERT_EQUALS(str, (s1::String*)nullptr);
     TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_INVALID_ARG));
+
+    err = s1::String::IndependentCreate (str, s1::u8 (nullptr));
+    TS_ASSERT_EQUALS(str, (s1::String*)nullptr);
+    TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_INVALID_ARG));
+
+    err = s1::String::IndependentCreate (str, s1::u8 ("", size_t (S1_STRING_ARG_MAX_N) + 1));
+    TS_ASSERT_EQUALS(str, (s1::String*)nullptr);
+    TS_ASSERT(S1_ERROR_EQUAL(err, S1_E_STRING_TOO_LONG));
   }
 
   void testIndependentCreateAsciiCXX (void)
