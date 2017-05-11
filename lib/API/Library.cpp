@@ -27,6 +27,7 @@
 #include "compiler/Options.h"
 
 #include "Program.h"
+#include "ResultCodeHelper.h"
 #include "StringArg.h"
 #include "StringObj.h"
 #include "StringWrapper.h"
@@ -256,7 +257,8 @@ s1_String* s1_string_create (s1_Library* obj, s1_StringArg string, size_t* inval
   return lib->Return (lib->Try (
     [=]() -> s1::Result<s1_String*> {
       boost::intrusive_ptr<s1::api_impl::String> newString;
-      s1::ResultCode createResult = s1::api_impl::String::Create (newString, lib, string, 1, invalidPos);
+      s1::ResultCode createResult = s1::api_impl::String::Create (newString, lib, string, invalidPos);
+      createResult = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (createResult, 0));
       if (!newString) return createResult;
       newString->AddRef ();
       return s1::Result<s1_String*> (newString->DowncastEvil<s1_String> (), createResult);

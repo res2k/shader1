@@ -18,6 +18,7 @@
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
 
+#include "ResultCodeHelper.h"
 #include "StringObj.h"
 
 #include "StringArg.h"
@@ -91,13 +92,12 @@ namespace s1
     {
       boost::intrusive_ptr<String>& strObj;
       s1::Library* lib;
-      int argIndex;
       size_t* invalidPos;
     public:
       typedef ResultCode result_type;
 
-      StringCreateVisitor (boost::intrusive_ptr<String>& strObj, s1::Library* lib, int argIndex, size_t* invalidPos)
-        : strObj (strObj), lib (lib), argIndex (argIndex), invalidPos (invalidPos) {}
+      StringCreateVisitor (boost::intrusive_ptr<String>& strObj, s1::Library* lib, size_t* invalidPos)
+        : strObj (strObj), lib (lib), invalidPos (invalidPos) {}
 
       template<typename Ch>
       ResultCode operator() (const Ch* s, size_t len)
@@ -115,18 +115,13 @@ namespace s1
       }
       ResultCode operator() (ResultCode error)
       {
-        switch (error)
-        {
-        case S1_E_STRING_TOO_LONG:  return S1_E_STRING_TOO_LONG_N(argIndex);
-        case S1_E_INVALID_ARG:      return S1_E_INVALID_ARG_N(argIndex);
-        }
         return error;
       }
     };
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, cxxapi::StringArg str, int argIndex, size_t* invalidPos)
+    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, cxxapi::StringArg str, size_t* invalidPos)
     {
-      return VisitStringArg (str, StringCreateVisitor (strObj, lib, argIndex, invalidPos));
+      return VisitStringArg (str, StringCreateVisitor (strObj, lib, invalidPos));
     }
   } // namespace api_impl
 } // namespace s1
@@ -140,7 +135,8 @@ S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, s1_St
   return s1::api_impl::String::Try (
     [=]() -> s1::Result<nullptr_t> {
       boost::intrusive_ptr<s1::api_impl::String> newString;
-      s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, 1, invalidPos);
+      s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, invalidPos);
+      createResult = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (createResult, 1));
       if (newString) newString->AddRef ();
       *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
       return createResult;
