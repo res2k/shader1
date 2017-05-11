@@ -38,7 +38,8 @@
       <descr>Out of memory</descr>
     </code>
     <code name="E_INVALID_ARG" value="2"
-          name_ext="E_INVALID_ARG_N">
+          name_ext="E_INVALID_ARG_N"
+          ext_type="ArgIndex">
       <descr>An argument was invalid</descr>
       <descr_ext>An argument was invalid ({0})</descr_ext>
       <doc>
@@ -55,7 +56,8 @@
       </doc_ext>
     </code>
     <code name="E_STRING_TOO_LONG" value="3"
-          name_ext="E_STRING_TOO_LONG_N">
+          name_ext="E_STRING_TOO_LONG_N"
+          ext_type="ArgIndex">
       <descr>A string argument was too long</descr>
       <descr_ext>A string argument was too long ({0})</descr_ext>
       <doc>

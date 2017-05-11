@@ -44,3 +44,25 @@ const char* s1_get_result_code_str (s1_ResultCode code)
   }
   return nullptr;
 }
+
+namespace s1
+{
+  namespace detail
+  {
+    ResultCodeExtraType GetResultCodeExtraType (s1_ResultCode code)
+    {
+      switch (S1_CLEAR_EXTRA(code))
+      {
+      {{for comp in components}}
+      {{for code in comp.getchildren()}}
+      {{if 'name_ext' in code.attrib}}
+        case {{code_ident(code.attrib['name'])}}:
+          return ResultCodeExtraType::{{if 'ext_type' in code.attrib}}{{code.attrib['ext_type']}}{{else}}Unknown{{endif}};
+      {{endif}}
+      {{endfor}}
+      {{endfor}}
+      }
+      return ResultCodeExtraType::None;
+    }
+  } // namespace detail
+} // namespace s1

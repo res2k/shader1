@@ -30,6 +30,31 @@ namespace s1
      */
     const char* GetExtendedErrorDescr (s1_ResultCode code, const char* baseDescr,
                                        const char* extDescr);
+
+    /// The purpose of the 'extra' field of an error code
+    enum struct ResultCodeExtraType
+    {
+      /// Error code is not supposed to have extra info
+      None,
+      /// The purpose is unknown
+      Unknown,
+
+      /// Extra info contains an argument index
+      ArgIndex
+    };
+
+    /// Obtain the type of extra information for an error code
+    ResultCodeExtraType GetResultCodeExtraType (s1_ResultCode code);
+
+    /// Set the argument index contained in a result code, if the code carries one
+    static inline s1_ResultCode ChangeResultCodeArgumentIndex (s1_ResultCode code, int argIndex)
+    {
+      if (GetResultCodeExtraType (code) == ResultCodeExtraType::ArgIndex)
+      {
+        return S1_CLEAR_EXTRA(code) | _S1_MAKE_SUCCESS_X(0, (argIndex + 1));
+      }
+      return code;
+    }
   } // namespace detail
 } // namespace s1
 
