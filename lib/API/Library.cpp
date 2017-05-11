@@ -254,10 +254,11 @@ s1_String* s1_string_create (s1_Library* obj, s1_StringArg string, size_t* inval
   s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
 
   return lib->Return (lib->Try (
-    [=]() {
+    [=]() -> s1::Result<s1_String*> {
       boost::intrusive_ptr<s1::api_impl::String> newString;
       s1::ResultCode createResult = s1::api_impl::String::Create (newString, lib, string, 1, invalidPos);
-      if (newString) newString->AddRef ();
+      if (!newString) return createResult;
+      newString->AddRef ();
       return s1::Result<s1_String*> (newString->DowncastEvil<s1_String> (), createResult);
     }), nullptr);
 }
@@ -272,10 +273,11 @@ static s1_String* s1_string_create_internal (s1_Library* obj, const Ch* string, 
   if (!string) return lib->ReturnErrorCode (S1_E_INVALID_ARG_N (0), nullptr);
 
   return lib->Return (lib->Try (
-    [=]() {
+    [=]() -> s1::Result<s1_String*> {
       boost::intrusive_ptr<s1::api_impl::String> newString;
       s1::ResultCode createResult = s1::api_impl::String::Create (newString, lib, string, invalidPos);
-      if (newString) newString->AddRef ();
+      if (!newString) return createResult;
+      newString->AddRef ();
       return s1::Result<s1_String*> (newString->DowncastEvil<s1_String> (), createResult);
     }), nullptr);
 }

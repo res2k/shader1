@@ -142,7 +142,7 @@ S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, s1_St
       boost::intrusive_ptr<s1::api_impl::String> newString;
       s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, 1, invalidPos);
       if (newString) newString->AddRef ();
-      *newStrObj = newString->DowncastEvil<s1_String> ();
+      *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
       return createResult;
     }).code();
 }
@@ -160,7 +160,7 @@ static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrOb
       boost::intrusive_ptr<s1::api_impl::String> newString;
       s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, invalidPos);
       if (newString) newString->AddRef ();
-      *newStrObj = newString->DowncastEvil<s1_String> ();
+      *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
       return createResult;
     }).code();
 }
