@@ -102,7 +102,7 @@ namespace s1
         string_data operator() (cxxapi::String* s) { return s; }
         string_data operator() (ResultCode error)
         {
-          switch (error)
+          switch (static_cast<s1_ResultCode> (error))
           {
           case S1_E_STRING_TOO_LONG:  return S1_E_STRING_TOO_LONG_N(argNum);
           case S1_E_INVALID_ARG:      return S1_E_INVALID_ARG_N(argNum);
