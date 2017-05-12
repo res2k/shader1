@@ -41,17 +41,18 @@ namespace s1
       String (const uc::String& str, s1::Library* lib) : LibraryObject (lib), str (str) {}
     public:
       //@
+      typedef std::tuple<ResultCode, boost::intrusive_ptr<String>, size_t> CreateResultType;
       /**
        * Create a String instance from some input string.
        * \remarks May throw!
        */
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, uc::String&& str);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const uc::String& str);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const char* str, const char** invalidPos, size_t len = (size_t)~0);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char16* str, const s1_char16** invalidPos, size_t len = (size_t)~0);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char32* str, const s1_char32** invalidPos, size_t len = (size_t)~0);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos, size_t len = (size_t)~0);
-      static ResultCode Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, cxxapi::StringArg str,size_t* invalidPos);
+      static CreateResultType Create (s1::Library* lib, uc::String&& str);
+      static CreateResultType Create (s1::Library* lib, const uc::String& str);
+      static CreateResultType Create (s1::Library* lib, const char* str, size_t len = (size_t)~0);
+      static CreateResultType Create (s1::Library* lib, const s1_char16* str, size_t len = (size_t)~0);
+      static CreateResultType Create (s1::Library* lib, const s1_char32* str, size_t len = (size_t)~0);
+      static CreateResultType Create (s1::Library* lib, const wchar_t* str, size_t len = (size_t)~0);
+      static CreateResultType Create (s1::Library* lib, cxxapi::StringArg str);
       //@}
 
       const uc::String& StrUCS () const { return str.GetUCS (); }

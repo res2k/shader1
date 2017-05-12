@@ -36,11 +36,13 @@ namespace s1
         compiler (compiler),
         options (new s1::Compiler::Options (lib))
     {
-      s1::ResultCode err = String::Create (entryFunction, lib, "main", nullptr);
+      auto stringCreateResult = String::Create (lib, "main");
+      s1::ResultCode err = std::get<0> (stringCreateResult);
       if (!S1_SUCCESSFUL(err))
       {
         throw Exception (err);
       }
+      entryFunction = std::get<1> (stringCreateResult);
     }
 
     Program::Program(s1::Library* lib, Compiler& compiler, const std::string& source)
@@ -197,10 +199,11 @@ s1_bool s1_program_set_entry_function (s1_Program* program, s1_StringArg string)
 
   return program_impl->Return (program_impl->Try (
     [=]() -> s1::Result<bool> {
-      boost::intrusive_ptr<s1::api_impl::String> strObj;
-      s1::ResultCode createRes =
-        s1::api_impl::String::Create (strObj, program_impl->GetLibrary (), resolve_str.GetString ());
-      if (S1_FAILED(createRes)) return createRes;
+      auto createRes =
+        s1::api_impl::String::Create (program_impl->GetLibrary (), resolve_str.GetString ());
+      auto createResCode = std::get<0> (createRes);
+      if (S1_FAILED(createResCode)) return createResCode;
+      const auto& strObj = std::get<1> (createRes);
       auto result = program_impl->SetEntry (strObj);
       return s1::Result<bool> (S1_SUCCESSFUL (result), result);
     }), false);

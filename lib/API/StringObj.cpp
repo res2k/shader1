@@ -27,16 +27,18 @@ namespace s1
 {
   namespace api_impl
   {
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, uc::String&& str)
+    String::CreateResultType String::Create (s1::Library* lib, uc::String&& str)
     {
+      boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (std::move (str), lib));
-      return S1_SUCCESS;
+      return std::make_tuple (S1_SUCCESS, strObj, (size_t)~0);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const uc::String& str)
+    String::CreateResultType String::Create (s1::Library* lib, const uc::String& str)
     {
+      boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (str, lib));
-      return S1_SUCCESS;
+      return std::make_tuple (S1_SUCCESS, strObj, (size_t)~0);
     }
 
     static ResultCode TranslateStringConversionError (uc::String::ConversionError error)
@@ -52,76 +54,74 @@ namespace s1
       return S1_SUCCESS;
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const char* str, const char** invalidPos, size_t len)
+    String::CreateResultType String::Create (s1::Library* lib, const char* str, size_t len)
     {
       auto result = uc::String::convertUTF8 (str, len);
+      boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (std::move (result.str), lib));
-      if (invalidPos) *invalidPos = result.invalidPos;
-      return TranslateStringConversionError (result.error);
+      size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
+      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char16* str, const s1_char16** invalidPos, size_t len)
+    String::CreateResultType String::Create (s1::Library* lib, const s1_char16* str, size_t len)
     {
       auto result = uc::String::convertUTF16 (str, len);
+      boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (std::move (result.str), lib));
-      if (invalidPos) *invalidPos = result.invalidPos;
-      return TranslateStringConversionError (result.error);
+      size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
+      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const s1_char32* str, const s1_char32** invalidPos, size_t len)
+    String::CreateResultType String::Create (s1::Library* lib, const s1_char32* str, size_t len)
     {
       auto result = uc::String::convertUTF32 (str, len);
+      boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (std::move (result.str), lib));
-      if (invalidPos) *invalidPos = result.invalidPos;
-      return TranslateStringConversionError (result.error);
+      size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
+      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
     }
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, const wchar_t* str, const wchar_t** invalidPos, size_t len)
+    String::CreateResultType String::Create (s1::Library* lib, const wchar_t* str, size_t len)
     {
 #if defined(S1_WCHAR_IS_UTF16)
       auto result = uc::String::convertUTF16 (reinterpret_cast<const s1_char16*> (str), len);
 #elif defined(S1_WCHAR_IS_UTF32)
       auto result = uc::String::convertUTF32 (reinterpret_cast<const s1_char32*> (str), len);
 #endif
+      boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (std::move (result.str), lib));
-      if (invalidPos) *invalidPos = reinterpret_cast<const wchar_t*> (result.invalidPos);
-      return TranslateStringConversionError (result.error);
+      size_t invalidPos = result.invalidPos ? reinterpret_cast<const wchar_t*> (result.invalidPos) - str : (size_t)~0;
+      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
     }
 
     class StringCreateVisitor
     {
-      boost::intrusive_ptr<String>& strObj;
       s1::Library* lib;
-      size_t* invalidPos;
     public:
-      typedef ResultCode result_type;
+      typedef String::CreateResultType result_type;
 
-      StringCreateVisitor (boost::intrusive_ptr<String>& strObj, s1::Library* lib, size_t* invalidPos)
-        : strObj (strObj), lib (lib), invalidPos (invalidPos) {}
+      StringCreateVisitor (s1::Library* lib) : lib (lib) {}
 
       template<typename Ch>
-      ResultCode operator() (const Ch* s, size_t len)
+      String::CreateResultType operator() (const Ch* s, size_t len)
       {
-        const Ch* invalidPosPtr = nullptr;
-        auto result = String::Create (strObj, lib, s, &invalidPosPtr, len);
-        if (invalidPos && invalidPosPtr) *invalidPos = invalidPosPtr - s;
-        return result;
+        return String::Create (lib, s, len);
       }
-      ResultCode operator() (cxxapi::String* s)
+      String::CreateResultType operator() (cxxapi::String* s)
       {
         // Create new object with same string data
         s1::api_impl::String* string_impl (s1::EvilUpcast<s1::api_impl::String> (s));
-        return String::Create (strObj, lib, string_impl->StrUCS ());
+        return String::Create (lib, string_impl->StrUCS ());
       }
-      ResultCode operator() (ResultCode error)
+      String::CreateResultType operator() (ResultCode error)
       {
-        return error;
+        return std::make_tuple (error, boost::intrusive_ptr<String>(), (size_t)~0);
       }
     };
 
-    ResultCode String::Create (boost::intrusive_ptr<String>& strObj, s1::Library* lib, cxxapi::StringArg str, size_t* invalidPos)
+    String::CreateResultType String::Create (s1::Library* lib, cxxapi::StringArg str)
     {
-      return VisitStringArg (str, StringCreateVisitor (strObj, lib, invalidPos));
+      return VisitStringArg (str, StringCreateVisitor (lib));
     }
   } // namespace api_impl
 } // namespace s1
@@ -134,12 +134,13 @@ S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, s1_St
 
   return s1::api_impl::String::Try (
     [=]() -> s1::Result<nullptr_t> {
-      boost::intrusive_ptr<s1::api_impl::String> newString;
-      s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, invalidPos);
-      createResult = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (createResult, 1));
+      auto createResult = s1::api_impl::String::Create (nullptr, string);
+      auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 1));
+      const auto& newString = std::get<1> (createResult);
       if (newString) newString->AddRef ();
       *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
-      return createResult;
+      if (invalidPos && (std::get<2> (createResult) != (size_t)~0)) *invalidPos = std::get<2> (createResult);
+      return createResultCode;
     }).code();
 }
 
@@ -153,11 +154,13 @@ static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrOb
 
   return s1::api_impl::String::Try (
     [=]() -> s1::Result<nullptr_t> {
-      boost::intrusive_ptr<s1::api_impl::String> newString;
-      s1::ResultCode createResult = s1::api_impl::String::Create (newString, nullptr, string, invalidPos);
+      auto createResult = s1::api_impl::String::Create (nullptr, string);
+      auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 1));
+      const auto& newString = std::get<1> (createResult);
       if (newString) newString->AddRef ();
       *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
-      return createResult;
+      if (invalidPos && (std::get<2> (createResult) != (size_t)~0)) *invalidPos = string + std::get<2> (createResult);
+      return createResultCode;
     }).code();
 }
 
