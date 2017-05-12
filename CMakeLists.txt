@@ -88,9 +88,11 @@ CxxCompilerFlagString (CXX_NO_UNDEFINED_FLAG "-Wl,--no-undefined")
 set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG} ${CXX_NO_UNDEFINED_FLAG}")
 
-# Force pthreads to be always linked; even if no function as such is used we
-# still need thread support to be present.
-set(CMAKE_THREAD_LIBS_INIT "${CXX_NO_AS_NEEDED_FLAG} ${CMAKE_THREAD_LIBS_INIT}")
+if(NOT MSVC)
+  # Force pthreads to be always linked; even if no function as such is used we
+  # still need thread support to be present.
+  set(CMAKE_THREAD_LIBS_INIT "${CXX_NO_AS_NEEDED_FLAG} ${CMAKE_THREAD_LIBS_INIT}")
+endif()
 
 # Check if we can link the C++ standard library statically
 set(S1_STATIC_LIBSTDCXX ON CACHE BOOL "Whether to statically link libstdc++")
