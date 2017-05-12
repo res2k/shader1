@@ -27,6 +27,9 @@ endif()
 find_package(PythonInterp 3 REQUIRED)
 find_package(CxxTest)
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+find_package(Threads REQUIRED)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(s1_add_library)
 include(s1_add_cxxtest)
@@ -80,9 +83,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
+CxxCompilerFlagString (CXX_NO_AS_NEEDED_FLAG "-Wl,--no-as-needed")
 CxxCompilerFlagString (CXX_NO_UNDEFINED_FLAG "-Wl,--no-undefined")
 set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
 set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG} ${CXX_NO_UNDEFINED_FLAG}")
+
+# Force pthreads to be always linked; even if no function as such is used we
+# still need thread support to be present.
+set(CMAKE_THREAD_LIBS_INIT "${CXX_NO_AS_NEEDED_FLAG} ${CMAKE_THREAD_LIBS_INIT}")
 
 # Check if we can link the C++ standard library statically
 set(S1_STATIC_LIBSTDCXX ON CACHE BOOL "Whether to statically link libstdc++")
