@@ -258,7 +258,7 @@ s1_String* s1_string_create (s1_Library* obj, s1_StringArg string, size_t* inval
     [=]() -> s1::Result<s1_String*> {
       auto createResult = s1::api_impl::String::Create (lib, string);
       auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 0));
-      const auto& newString = std::get<1> (createResult);
+      boost::intrusive_ptr<s1::api_impl::String> newString = std::get<1> (createResult);
       if (!newString) return createResultCode;
       newString->AddRef ();
       if (invalidPos && (std::get<2> (createResult) != (size_t)~0)) *invalidPos = std::get<2> (createResult);
@@ -279,7 +279,7 @@ static s1_String* s1_string_create_internal (s1_Library* obj, const Ch* string, 
     [=]() -> s1::Result<s1_String*> {
       auto createResult = s1::api_impl::String::Create (lib, string);
       auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 0));
-      const auto& newString = std::get<1> (createResult);
+      boost::intrusive_ptr<s1::api_impl::String> newString = std::get<1> (createResult);
       if (!newString) return createResultCode;
       newString->AddRef ();
       if (invalidPos && (std::get<2> (createResult) != (size_t)~0)) *invalidPos = string + std::get<2> (createResult);

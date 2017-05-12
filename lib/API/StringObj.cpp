@@ -136,7 +136,7 @@ S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, s1_St
     [=]() -> s1::Result<nullptr_t> {
       auto createResult = s1::api_impl::String::Create (nullptr, string);
       auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 1));
-      const auto& newString = std::get<1> (createResult);
+      boost::intrusive_ptr<s1::api_impl::String> newString = std::get<1> (createResult);
       if (newString) newString->AddRef ();
       *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
       if (invalidPos && (std::get<2> (createResult) != (size_t)~0)) *invalidPos = std::get<2> (createResult);
@@ -156,9 +156,9 @@ static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrOb
     [=]() -> s1::Result<nullptr_t> {
       auto createResult = s1::api_impl::String::Create (nullptr, string);
       auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 1));
-      const auto& newString = std::get<1> (createResult);
+      boost::intrusive_ptr<s1::api_impl::String> newString = std::get<1> (createResult);
       if (newString) newString->AddRef ();
-      *newStrObj = newString ? newString->DowncastEvil<s1_String> () : nullptr;
+      *newStrObj = newString ? (newString->DowncastEvil<s1_String> ()) : nullptr;
       if (invalidPos && (std::get<2> (createResult) != (size_t)~0)) *invalidPos = string + std::get<2> (createResult);
       return createResultCode;
     }).code();
