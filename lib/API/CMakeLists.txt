@@ -1,6 +1,9 @@
 # Supply a version script to hide all symbols but our own
 CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/ld-symbols.map")
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+find_package(Threads REQUIRED)
+
 add_custom_command(OUTPUT ResultCode.cpp
                    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
                       ${S1_INC_PUBLIC}/ResultCode.xml
@@ -49,6 +52,7 @@ else()
                  SOURCES ${s1_sources}
                  LINK base compiler)
 endif()
+target_link_libraries(s1 ${CMAKE_THREAD_LIBS_INIT})
 set(_ARCH "")
 if(CMAKE_GENERATOR_PLATFORM)
   set(_ARCH "${CMAKE_GENERATOR_PLATFORM}")
