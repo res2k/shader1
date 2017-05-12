@@ -19,6 +19,7 @@
 
 #include <assert.h>
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"

@@ -23,6 +23,8 @@
 #include "ErrorHandler.h"
 #include "SemanticsHandler.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
+
 #include <vector>
 
 namespace s1
