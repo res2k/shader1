@@ -25,7 +25,6 @@ set(base_sources_uc_cpp
     uc/String.cpp
     uc/StringOverflowException.cpp
     uc/Stream.cpp
-    uc/StreamException.cpp
     uc/UCDDataLookup.h
     uc/UTF16to8Transcoder.cpp
     uc/UTF8to16Transcoder.cpp
@@ -35,9 +34,6 @@ set(base_sources_uc_h
     ${S1_INC}/base/uc/Char.h
     ${S1_INC}/base/uc/Exception.h
     ${S1_INC}/base/uc/Stream.h
-    ${S1_INC}/base/uc/StreamEndOfInputException.h
-    ${S1_INC}/base/uc/StreamException.h
-    ${S1_INC}/base/uc/StreamInvalidCharacterException.h
     ${S1_INC}/base/uc/String.h
     ${S1_INC}/base/uc/StringOverflowException.h
     ${S1_INC}/base/uc/UTF16Decoder.h

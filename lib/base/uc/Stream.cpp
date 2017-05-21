@@ -19,10 +19,6 @@
 
 #include "base/uc/Stream.h"
 
-#include "base/uc/StreamException.h"
-#include "base/uc/StreamInvalidCharacterException.h"
-#include "base/uc/StreamEndOfInputException.h"
-
 namespace s1
 {
 namespace uc
@@ -87,28 +83,15 @@ namespace uc
     return *this;
   }
   
-  uc::Char32 Stream::operator* () const
+  Stream::FetchResult Stream::operator* () const
   {
     if (currentDecodeResult != UTF8Decoder::drSuccess)
     {
-      if ((currentDecodeResult == UTF8Decoder::drCharacterInvalid)
-        || (currentDecodeResult == UTF8Decoder::drCharacterIncomplete)
-        || (currentDecodeResult == UTF8Decoder::drEncodingInvalid))
-      {
-        throw StreamInvalidCharacterException (currentDecodeResult);
-      }
-      else if (currentDecodeResult == UTF8Decoder::drInputUnderrun)
-      {
-        throw StreamEndOfInputException ();
-      }
-      else
-      {
-        throw StreamException (currentDecodeResult);
-      }
+      return boost::outcome::make_unexpected (static_cast<Error> (currentDecodeResult));
     }
     else if (!(*this))
     {
-      throw StreamEndOfInputException ();
+      return boost::outcome::make_unexpected (Error::EndOfInput);
     }
     else
     {

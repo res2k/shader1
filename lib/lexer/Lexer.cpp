@@ -21,7 +21,6 @@
 
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
-#include "base/uc/StreamInvalidCharacterException.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -429,11 +428,10 @@ KEYWORDS
       nextChar[i-1] = nextChar[i];
     if (inputChars)
     {
-      try
-      {
-        nextChar[LookAhead-1] = *inputChars;
-      }
-      catch (uc::StreamInvalidCharacterException&)
+      auto streamNextChar = *inputChars;
+      if (streamNextChar)
+        nextChar[LookAhead - 1] = streamNextChar.value ();
+      else
       {
         // Signal error handler ...
         errorHandler.InputInvalidCharacter();

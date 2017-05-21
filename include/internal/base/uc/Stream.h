@@ -21,6 +21,8 @@
 #include "Char.h"
 #include "UTF8Decoder.h"
 
+#include <boost/outcome/outcome.hpp>
+
 namespace s1
 {
 namespace uc
@@ -56,26 +58,42 @@ namespace uc
       virtual size_t NextData (const char*& data) = 0;
     };
 
+    /// Stream errors
+    enum struct Error
+    {
+        /// UTF-8 decoding: Input buffer does not suffice to decode a character
+        utf8InputUnderrun = UTF8Decoder::drInputUnderrun,
+        /// UTF-8 decoding: Incomplete byte sequence
+        utf8CharacterIncomplete = UTF8Decoder::drCharacterIncomplete,
+        /// UTF-8 decoding: Invalid character (surrogate half or beyond last allowed code point)
+        utf8CharacterInvalid = UTF8Decoder::drCharacterInvalid,
+        /// UTF-8 decoding: Encoding invalid for character (overlong)
+        utf8EncodingInvalid = UTF8Decoder::drEncodingInvalid,
+
+        /// End of input reached
+        EndOfInput = utf8InputUnderrun
+    };
+
     /**
      * Constructor.
      * \param inSource Input byte source.
      */
     Stream (Source& inSource);
+    Stream (const Stream& other) = delete;
     ~Stream();
     
     /// Returns whether more characters are available
-    operator bool() const throw();
-    bool operator!() const throw() { return !(bool)(*this); }
+    operator bool() const noexcept;
+    bool operator!() const noexcept { return !(bool)(*this); }
 
     /// Advance stream
-    Stream& operator++() throw();
-    
+    Stream& operator++() noexcept;
+
+    typedef boost::outcome::expected<Char32, Error> FetchResult;
     /// Return current character
-    Char32 operator* () const;
+    FetchResult operator* () const;
   protected:
     Source& inSource;
-  private:
-    Stream (const Stream& other); // forbidden
   };
 } // namespace uc
 } // namespace s1
