@@ -48,10 +48,16 @@ namespace s1
 
       /// Get UTF-8 string instance
       std::string& GetStrUTF8 () const
-      { return *(reinterpret_cast<std::string*> (storeStrUTF8)); }
+      {
+        uint8_t* p = storeStrUTF8;
+        return *(reinterpret_cast<std::string*> (p));
+      }
       /// Get UTF-32 string instance
       c32string& GetStrUTF32 () const
-      { return *(reinterpret_cast<c32string*> (storeStrUTF32)); }
+      {
+        uint8_t* p = storeStrUTF32;
+        return *(reinterpret_cast<c32string*> (p));
+      }
 
       /// Clear all encoded strings
       void Clear ()
