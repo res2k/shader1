@@ -1,5 +1,7 @@
 add_definitions(-DS1_BUILD)
-set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
+set(S1_REQUIRED_CXX_FEATURES
+  ${ALL_REQUIRED_CXX_FEATURES}
+  $<TARGET_PROPERTY:boost::outcome::hl,INTERFACE_COMPILE_FEATURES>)
 
 include(WriteCompilerDetectionHeader)
 # We want a compatibility macro for cxx_thread_local
@@ -46,6 +48,8 @@ if(MSVC AND NOT BUILD_SHARED_LIBS)
   set(s1_actualoutput "$<$<BOOL:${s1_outputname}>:${s1_outputname}>$<$<NOT:$<BOOL:${s1_outputname}>>:${s1_logicalname}>")
   set(S1LIB_PDB "/Fd${CMAKE_BINARY_DIR}/\$(Configuration)/${s1_actualoutput}.pdb" ${CXX_PDB_SYNC})
 endif()
+
+include_directories(${CMAKE_SOURCE_DIR}/boost.outcome/include)
 
 add_subdirectory(base)
 add_subdirectory(lexer)
