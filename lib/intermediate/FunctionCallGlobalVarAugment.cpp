@@ -19,9 +19,12 @@
 #include "FunctionCallGlobalVarAugment.h"
 
 #include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
+
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {
