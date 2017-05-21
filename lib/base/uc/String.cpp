@@ -171,6 +171,7 @@ namespace s1
       for (size_type i = 0; i < n; i++)
       {
         UTF16Encoder::EncodeResult result = enc (s[i], dst, dstEnd);
+        (void)result;
         assert (result >= 0);
       }
       d.length = newLength;
@@ -200,6 +201,7 @@ namespace s1
       Char* dstEnd = dst + n;
       UTF16Encoder enc;
       UTF16Encoder::EncodeResult result = enc (c, dst, dstEnd);
+      (void)result;
       assert (result >= 0);
       assert (dst == dstEnd);
       d.length = newLength;
@@ -736,6 +738,7 @@ namespace s1
           UTF16Encoder enc;
           Char* dst = surr;
           UTF16Encoder::EncodeResult result = enc (ch, dst, dst+2);
+          (void)result;
           assert (result == UTF16Encoder::erSuccess);
         }
         const Char* end = start + length();
