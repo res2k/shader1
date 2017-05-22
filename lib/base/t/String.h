@@ -777,4 +777,18 @@ public:
     s1::uc::String str = MakeLongString ();
     TS_ASSERT_EQUALS (str.data ()[str.size ()], 0);
   }
+
+  void testReserveExtra ()
+  {
+    const s1::uc::String::size_type longStrLen = 128;
+    const s1::uc::String s1 = MakeLongString (longStrLen);
+    s1::uc::String s2;
+    for (s1::uc::String::size_type n = 0; n < longStrLen; n++)
+    {
+      s2.reserveExtra (1, 16);
+      s2.append (static_cast<s1::uc::Char> ('a' + (n % 26)));
+    }
+    TS_ASSERT_EQUALS (s1, s2);
+  }
+
 };

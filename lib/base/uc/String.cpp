@@ -245,9 +245,9 @@ namespace s1
       return total;
     }
 
-    void String::reserveExtra (size_t additionalCapacity)
+    void String::reserveExtra (size_t additionalCapacity, size_t quantum)
     {
-      reserveInternal (OverflowCheckAdd (length (), additionalCapacity, max_size () - 1) + 1);
+      reserveInternal (OverflowCheckAdd (length (), additionalCapacity, max_size () - 1) + 1, quantum);
     }
 
     String& String::operator= (const String& other)
@@ -762,7 +762,7 @@ namespace s1
       }
     }
 
-    void String::ResizeBuffer (size_type capacity)
+    void String::ResizeBuffer (size_type capacity, size_t quantum)
     {
       bool currentIsInternal = IsBufferInternal();
       bool canUseInternal = capacity <= InternalBufferSize;
@@ -784,7 +784,7 @@ namespace s1
         {
           assert (d.capacity < capacity);
           // Allocate new buffer
-          newBuffer = AllocBufferData (capacity);
+          newBuffer = AllocBufferData (capacity, quantum);
           RefBufferData (newBuffer.first);
           Char_traits::copy (newBuffer.first->data, bufferPtr(), d.capacity);
           heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer.first->data);
@@ -795,7 +795,7 @@ namespace s1
           AllocatedBufferData* data = BufferDataPtr();
           if (!IsBufferUnique())
           {
-            newBuffer = AllocBufferData (capacity);
+            newBuffer = AllocBufferData (capacity, quantum);
             RefBufferData (newBuffer.first);
             Char_traits::copy (newBuffer.first->data, data->data, std::min (d.length, capacity));
             heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer.first->data);
@@ -804,7 +804,7 @@ namespace s1
           else
           {
             if (d.capacity == capacity) return;
-            newBuffer = ReallocBufferData(BufferDataPtr(), capacity);
+            newBuffer = ReallocBufferData(BufferDataPtr(), capacity, quantum);
             heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer.first->data);
           }
         }
@@ -817,6 +817,21 @@ namespace s1
       assert (!IsBufferInternal());
       return reinterpret_cast<AllocatedBufferData*> (
         reinterpret_cast<char*> (heapBuffer) - offsetof (AllocatedBufferData, data));
+    }
+
+    size_t String::ComputeAllocSize (size_type numChars, size_t quantum)
+    {
+      size_t allocBytes = offsetof (AllocatedBufferData, data) + numChars * sizeof (Char);
+      /* Fudge so that the amount that'll be allocated is a multiple of
+       * quantum * sizeof(Char) */
+      if (quantum > 1)
+      {
+        size_t quantumBytes = quantum * sizeof (Char);
+        allocBytes = ((allocBytes + quantumBytes - 1) / quantumBytes) * quantumBytes;
+        allocBytes = static_cast<size_type> (
+          std::min<size_t> (allocBytes, max_size() * sizeof (Char)));
+      }
+      return allocBytes;
     }
 
     String::size_type String::BufferAvailableChars (AllocatedBufferData* data, size_t allocSize)
@@ -834,17 +849,17 @@ namespace s1
                           std::numeric_limits<size_type>::max()));
     }
     
-    String::AllocatedBufferAndSize String::AllocBufferData (size_type numChars)
+    String::AllocatedBufferAndSize String::AllocBufferData (size_type numChars, size_t quantum)
     {
-      size_t allocSize = offsetof (AllocatedBufferData, data) + numChars * sizeof (Char);
+      size_t allocSize = ComputeAllocSize (numChars, quantum);
       AllocatedBufferData* p = reinterpret_cast<AllocatedBufferData*> (malloc (allocSize));
       p->refCount.store (0);
       return std::make_pair (p, BufferAvailableChars (p, allocSize));
     }
 
-    String::AllocatedBufferAndSize String::ReallocBufferData (AllocatedBufferData* p, size_type numChars)
+    String::AllocatedBufferAndSize String::ReallocBufferData (AllocatedBufferData* p, size_type numChars, size_t quantum)
     {
-      size_t allocSize = offsetof (AllocatedBufferData, data) + numChars * sizeof (Char);
+      size_t allocSize = ComputeAllocSize (numChars, quantum);
       AllocatedBufferData* new_p = reinterpret_cast<AllocatedBufferData*> (
         realloc (p, allocSize));
       if (!new_p)
@@ -864,6 +879,12 @@ namespace s1
         boost::atomic_thread_fence(boost::memory_order_acquire);
         free (data);
       }
+    }
+
+    void String::reserveInternal (size_type minCapacity, size_t quantum)
+    {
+      if (IsBufferUnique () && (d.capacity >= minCapacity)) return;
+      ResizeBuffer (minCapacity, quantum);
     }
 
     void String::ThrowStringOverflowException ()

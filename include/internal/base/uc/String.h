@@ -80,16 +80,24 @@ namespace s1
       bool isEmpty() const { return length() == 0; }
       size_type countChar32() const;
 
-      /// Make sure memory for at least \a minCapacity code units is reserved
-      void reserve (size_type minCapacity)
+      /**
+       * Make sure memory for at least \a minCapacity code units is reserved.
+       * If memory must be (re)allocated the allocated size is attempted to
+       * be adjusted such that it's a multiple of \a quantum code units
+       * (but that's not a guarantee).
+       */
+      void reserve (size_type minCapacity, size_t quantum = 1)
       {
-        reserveInternal (OverflowCheckAdd (minCapacity, 1u, max_size()));
+        reserveInternal (OverflowCheckAdd (minCapacity, 1u, max_size()), quantum);
       }
       /**
        * Make sure memory for the current string length plus \a additionalCapacity code units is reserved.
+       * If memory must be (re)allocated the allocated size is attempted to
+       * be adjusted such that it's a multiple of \a quantum code units
+       * (but that's not a guarantee).
        * \remarks May throw if \a additionalCapacity is too large.
        */
-      void reserveExtra (size_t additionalCapacity);
+      void reserveExtra (size_t additionalCapacity, size_t quantum = 1);
       void shrink_to_fit()
       {
         ResizeBuffer (OverflowCheckAdd (length(), 1u, max_size()));
@@ -231,7 +239,7 @@ namespace s1
       /// Free the code unit buffer
       void FreeBuffer ();
       /// Resize the code unit buffer
-      void ResizeBuffer (size_type capacity);
+      void ResizeBuffer (size_type capacity, size_t quantum = 1);
 
       /// Get pointer to AllocatedBufferData object
       AllocatedBufferData* BufferDataPtr() const;
@@ -242,11 +250,12 @@ namespace s1
       bool IsBufferUnique() const
       { return IsBufferInternal() || (BufferDataPtr()->refCount.load() == 1); }
 
+      static size_t ComputeAllocSize (size_type numChars, size_t quantum);
       static size_type BufferAvailableChars (AllocatedBufferData* data, size_t allocSize);
       /// Allocated buffer. First: Buffer pointer. Second: Size of buffer
       typedef std::pair<AllocatedBufferData*, size_type> AllocatedBufferAndSize;
-      AllocatedBufferAndSize AllocBufferData (size_type numChars);
-      AllocatedBufferAndSize ReallocBufferData (AllocatedBufferData* p, size_type numChars);
+      AllocatedBufferAndSize AllocBufferData (size_type numChars, size_t quantum);
+      AllocatedBufferAndSize ReallocBufferData (AllocatedBufferData* p, size_type numChars, size_t quantum);
       // Add a reference to some buffer data.
       void RefBufferData (AllocatedBufferData* data);
       // Release a reference to some buffer data. Frees if necessary
@@ -255,11 +264,7 @@ namespace s1
       Char* bufferPtr() { return reinterpret_cast<Char*> (IsBufferInternal() ? internalBuffer : heapBuffer); }
       const Char* bufferPtr() const { return reinterpret_cast<const Char*> (IsBufferInternal() ? internalBuffer : heapBuffer); }
       void setLength (size_type len) { d.length = len; }
-      void reserveInternal (size_type minCapacity)
-      {
-        if (IsBufferUnique () && (d.capacity >= minCapacity)) return;
-        ResizeBuffer (minCapacity);
-      }
+      void reserveInternal (size_type minCapacity, size_t quantum = 1);
       size_type capacity () const { return d.capacity; }
 
       //@{
