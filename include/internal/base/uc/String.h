@@ -70,7 +70,13 @@ namespace s1
 
       size_type length() const { return d.length; }
       size_type size() const { return length(); }
-      static size_type max_size() { return std::numeric_limits<size_type>::max () / sizeof (Char); }
+      static size_type max_size()
+      {
+        auto max_alloc_size =
+          std::min<size_t> (std::numeric_limits<size_type>::max (),
+                            std::numeric_limits<size_t>::max () - offsetof(AllocatedBufferData, data));
+        return static_cast<size_type> (max_alloc_size) / sizeof (Char);
+      }
       bool isEmpty() const { return length() == 0; }
       size_type countChar32() const;
 
