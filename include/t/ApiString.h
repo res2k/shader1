@@ -613,6 +613,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString1_u8);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -626,6 +627,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString1_u16);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -639,6 +641,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString1_u32);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -652,6 +655,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString1_wcs);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -666,6 +670,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u8 (testString1_u8));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -679,6 +684,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u16 (testString1_u16));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -692,6 +698,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u32 (testString1_u32));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -705,6 +712,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::wcs (testString1_wcs));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR1_U8(str_utf8);
@@ -722,6 +730,7 @@ public:
     {
       s1_String* str;
       s1_ResultCode err = s1_string_independent_create_u8 (&str, testString2_u8, 0);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS(str, (s1_String*)0);
       const char* str_utf8 = s1_string_u8 (str);
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -736,6 +745,7 @@ public:
     {
       s1_String* str;
       s1_ResultCode err = s1_string_independent_create_u16 (&str, testString2_u16, 0);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS(str, (s1_String*)0);
       const char* str_utf8 = s1_string_u8 (str);
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -749,6 +759,7 @@ public:
     {
       s1_String* str;
       s1_ResultCode err = s1_string_independent_create_u32 (&str, testString2_u32, 0);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS(str, (s1_String*)0);
       const char* str_utf8 = s1_string_u8 (str);
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -762,6 +773,7 @@ public:
     {
       s1_String* str;
       s1_ResultCode err = s1_string_independent_create_wcs (&str, testString2_wcs, 0);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS(str, (s1_String*)0);
       const char* str_utf8 = s1_string_u8 (str);
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -780,6 +792,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString2_u8);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -793,6 +806,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString2_u16);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -806,6 +820,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString2_u32);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -819,6 +834,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString2_wcs);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -833,6 +849,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u8 (testString2_u8));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -846,6 +863,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u16 (testString2_u16));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -859,6 +877,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u32 (testString2_u32));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -872,6 +891,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::wcs (testString2_wcs));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR2_U8(str_utf8);
@@ -889,6 +909,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString3_u8);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -900,6 +921,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString3_u16);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -911,6 +933,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, testString3_u32);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -923,6 +946,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u8 (testString3_u8));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -934,6 +958,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u16 (testString3_u16));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -945,6 +970,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, s1::u32 (testString3_u32));
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -961,19 +987,23 @@ public:
     s1::String::Pointer strU8, strU16, strU32;
     {
       s1_ResultCode err = s1::String::IndependentCreate (strU8, testString3_u8);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (strU8, (s1::String*)nullptr);
     }
     {
       s1_ResultCode err = s1::String::IndependentCreate (strU16, testString3_u16);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (strU16, (s1::String*)nullptr);
     }
     {
       s1_ResultCode err = s1::String::IndependentCreate (strU32, testString3_u32);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (strU32, (s1::String*)nullptr);
     }
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, strU8);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -985,6 +1015,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, strU16);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
@@ -996,6 +1027,7 @@ public:
     {
       s1::String::Pointer str;
       s1_ResultCode err = s1::String::IndependentCreate (str, strU32);
+      TS_ASSERT(S1_SUCCESSFUL(err));
       TS_ASSERT_DIFFERS (str, (s1::String*)nullptr);
       const char* str_utf8 = str->U8 ();
       ASSERT_EQUALS_STR3_U8(str_utf8);
