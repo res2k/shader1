@@ -242,8 +242,11 @@ namespace s1
       bool IsBufferUnique() const
       { return IsBufferInternal() || (BufferDataPtr()->refCount.load() == 1); }
 
-      AllocatedBufferData* AllocBufferData (size_type numChars);
-      AllocatedBufferData* ReallocBufferData (AllocatedBufferData* p, size_type numChars);
+      static size_type BufferAvailableChars (AllocatedBufferData* data, size_t allocSize);
+      /// Allocated buffer. First: Buffer pointer. Second: Size of buffer
+      typedef std::pair<AllocatedBufferData*, size_type> AllocatedBufferAndSize;
+      AllocatedBufferAndSize AllocBufferData (size_type numChars);
+      AllocatedBufferAndSize ReallocBufferData (AllocatedBufferData* p, size_type numChars);
       // Add a reference to some buffer data.
       void RefBufferData (AllocatedBufferData* data);
       // Release a reference to some buffer data. Frees if necessary

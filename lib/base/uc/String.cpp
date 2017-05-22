@@ -29,6 +29,7 @@
 #include <boost/container/vector.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <malloc.h>
 #include <stddef.h>
 #if HAVE_UCHAR_H_MBRTOC16
 #include <uchar.h>
@@ -774,17 +775,19 @@ namespace s1
           Char_traits::copy (reinterpret_cast<Char*> (internalBuffer), oldData->data, capacity);
           ReleaseBufferData (oldData);
         }
+        d.capacity = capacity;
       }
       else
       {
+        AllocatedBufferAndSize newBuffer;
         if (currentIsInternal)
         {
           assert (d.capacity < capacity);
           // Allocate new buffer
-          AllocatedBufferData* newBuffer = AllocBufferData (capacity);
-          RefBufferData (newBuffer);
-          Char_traits::copy (newBuffer->data, bufferPtr(), d.capacity);
-          heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer->data);
+          newBuffer = AllocBufferData (capacity);
+          RefBufferData (newBuffer.first);
+          Char_traits::copy (newBuffer.first->data, bufferPtr(), d.capacity);
+          heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer.first->data);
         }
         else
         {
@@ -792,20 +795,21 @@ namespace s1
           AllocatedBufferData* data = BufferDataPtr();
           if (!IsBufferUnique())
           {
-            AllocatedBufferData* newBuffer = AllocBufferData (capacity);
-            RefBufferData (newBuffer);
-            Char_traits::copy (newBuffer->data, data->data, std::min (d.length, capacity));
-            heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer->data);
+            newBuffer = AllocBufferData (capacity);
+            RefBufferData (newBuffer.first);
+            Char_traits::copy (newBuffer.first->data, data->data, std::min (d.length, capacity));
+            heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer.first->data);
             ReleaseBufferData (data);
           }
           else
           {
             if (d.capacity == capacity) return;
-            heapBuffer = reinterpret_cast<buffer_value_type*> (ReallocBufferData(BufferDataPtr(), capacity)->data);
+            newBuffer = ReallocBufferData(BufferDataPtr(), capacity);
+            heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer.first->data);
           }
         }
+        d.capacity = newBuffer.second;
       }
-      d.capacity = capacity;
     }
 
     String::AllocatedBufferData* String::BufferDataPtr() const
@@ -814,22 +818,38 @@ namespace s1
       return reinterpret_cast<AllocatedBufferData*> (
         reinterpret_cast<char*> (heapBuffer) - offsetof (AllocatedBufferData, data));
     }
-    
-    String::AllocatedBufferData* String::AllocBufferData (size_type numChars)
+
+    String::size_type String::BufferAvailableChars (AllocatedBufferData* data, size_t allocSize)
     {
-      AllocatedBufferData* p = reinterpret_cast<AllocatedBufferData*> (
-        malloc (offsetof (AllocatedBufferData, data) + numChars * sizeof (Char)));
+      size_t availSize;
+    #if defined(HAVE__MSIZE)
+      availSize = _msize (data);
+    #elif defined(HAVE_MALLOC_USABLE_SIZE)
+      availSize = malloc_usable_size (data);
+    #else
+      availSize = allocSize;
+    #endif
+      return static_cast<size_type> (
+        std::min<size_t> ((availSize - offsetof (AllocatedBufferData, data)) / sizeof (Char),
+                          std::numeric_limits<size_type>::max()));
+    }
+    
+    String::AllocatedBufferAndSize String::AllocBufferData (size_type numChars)
+    {
+      size_t allocSize = offsetof (AllocatedBufferData, data) + numChars * sizeof (Char);
+      AllocatedBufferData* p = reinterpret_cast<AllocatedBufferData*> (malloc (allocSize));
       p->refCount.store (0);
-      return p;
+      return std::make_pair (p, BufferAvailableChars (p, allocSize));
     }
 
-    String::AllocatedBufferData* String::ReallocBufferData (AllocatedBufferData* p, size_type numChars)
+    String::AllocatedBufferAndSize String::ReallocBufferData (AllocatedBufferData* p, size_type numChars)
     {
+      size_t allocSize = offsetof (AllocatedBufferData, data) + numChars * sizeof (Char);
       AllocatedBufferData* new_p = reinterpret_cast<AllocatedBufferData*> (
-        realloc (p, offsetof (AllocatedBufferData, data) + numChars * sizeof (Char)));
+        realloc (p, allocSize));
       if (!new_p)
         throw std::bad_alloc ();
-      return new_p;
+      return std::make_pair (new_p, BufferAvailableChars (new_p, allocSize));
     }
 
     void String::RefBufferData (AllocatedBufferData* data)

@@ -22,5 +22,9 @@
 #cmakedefine CXX_SIZEOF_WCHAR_T	@CXX_SIZEOF_WCHAR_T@
 // whether mbrtoc16 is in uchar.h
 #cmakedefine HAVE_UCHAR_H_MBRTOC16   @HAVE_UCHAR_H_MBRTOC16@
+// whether _msize() is available
+#cmakedefine HAVE__MSIZE             @HAVE__MSIZE@
+// whether malloc_usable_size() is available
+#cmakedefine HAVE_MALLOC_USABLE_SIZE @HAVE_MALLOC_USABLE_SIZE@
 
 #endif // __BASE_CONFIG_H__
