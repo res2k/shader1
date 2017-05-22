@@ -731,7 +731,7 @@ namespace s1
       }
       else
       {
-	if (length() < 2) return npos;
+        if (length() < 2) return npos;
 
         Char surr[2];
         {
@@ -745,8 +745,8 @@ namespace s1
         const Char* p = start + 1;
         while (p && (p < end))
         {
-	  p = Char_traits::find (p, end - p, surr[1]);
-	  if (p && (*(p - 1) == surr[0])) return static_cast<size_type> (p - start - 1);
+          p = Char_traits::find (p, end - p, surr[1]);
+          if (p && (*(p - 1) == surr[0])) return static_cast<size_type> (p - start - 1);
         }
         return npos;
       }
@@ -771,7 +771,7 @@ namespace s1
         {
           assert (capacity < d.capacity); // Otherwise, couldn't use internal buffer
           auto oldData = BufferDataPtr();
-	  Char_traits::copy (reinterpret_cast<Char*> (internalBuffer), oldData->data, capacity);
+          Char_traits::copy (reinterpret_cast<Char*> (internalBuffer), oldData->data, capacity);
           ReleaseBufferData (oldData);
         }
       }
@@ -783,7 +783,7 @@ namespace s1
           // Allocate new buffer
           AllocatedBufferData* newBuffer = AllocBufferData (capacity);
           RefBufferData (newBuffer);
-	  Char_traits::copy (newBuffer->data, bufferPtr(), d.capacity);
+          Char_traits::copy (newBuffer->data, bufferPtr(), d.capacity);
           heapBuffer = reinterpret_cast<buffer_value_type*> (newBuffer->data);
         }
         else
