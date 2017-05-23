@@ -514,9 +514,10 @@ namespace s1
     {
       if (len == (size_t)~0) len = std::char_traits<Char16>::length (s);
 
+      auto safe_len = OverflowCheckAdd (size_type (0), len, max_size ());
       String str;
-      str.reserve (len);
-      str.setLength (len);
+      str.reserve (safe_len);
+      str.setLength (safe_len);
 
       const Char16* p = s;
       const Char16* end = s + len;
