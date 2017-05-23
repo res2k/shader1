@@ -826,10 +826,10 @@ namespace s1
        * quantum * sizeof(Char) */
       if (quantum > 1)
       {
+        const auto allocMax = std::numeric_limits<size_type>::max();
         size_t quantumBytes = quantum * sizeof (Char);
-        allocBytes = ((allocBytes + quantumBytes - 1) / quantumBytes) * quantumBytes;
-        allocBytes = static_cast<size_type> (
-          std::min<size_t> (allocBytes, max_size() * sizeof (Char)));
+        if ((allocMax - quantumBytes + 1) >= allocBytes)
+          allocBytes = ((allocBytes + quantumBytes - 1) / quantumBytes) * quantumBytes;
       }
       return allocBytes;
     }
