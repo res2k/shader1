@@ -81,13 +81,23 @@ namespace s1
       bool isEmpty() const { return length() == 0; }
       size_type countChar32() const;
 
+      /// Special reserve 'quantum' values
+      enum
+      {
+        /// Do not allocate more than necessary (default)
+        quantumNone = 1u,
+        /// Allocate some more code units, the amount growing with the requested size
+        quantumGrow = 0u
+      };
       /**
        * Make sure memory for at least \a minCapacity code units is reserved.
        * If memory must be (re)allocated the allocated size is attempted to
        * be adjusted such that it's a multiple of \a quantum code units
        * (but that's not a guarantee).
+       * If \a quantum is #quantumGrow or #quantumNone the value used in a
+       * possible allocation adjustment is determined internally.
        */
-      void reserve (size_type minCapacity, size_t quantum = 1)
+      void reserve (size_type minCapacity, size_t quantum = quantumNone)
       {
         reserveInternal (OverflowCheckAdd (minCapacity, 1u, max_size()), quantum);
       }
@@ -96,9 +106,11 @@ namespace s1
        * If memory must be (re)allocated the allocated size is attempted to
        * be adjusted such that it's a multiple of \a quantum code units
        * (but that's not a guarantee).
+       * If \a quantum is #quantumGrow or #quantumNone the value used in a
+       * possible allocation adjustment is determined internally.
        * \remarks May throw if \a additionalCapacity is too large.
        */
-      void reserveExtra (size_t additionalCapacity, size_t quantum = 1);
+      void reserveExtra (size_t additionalCapacity, size_t quantum = quantumNone);
       void shrink_to_fit()
       {
         ResizeBuffer (OverflowCheckAdd (length(), 1u, max_size()));

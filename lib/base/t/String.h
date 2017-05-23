@@ -791,4 +791,17 @@ public:
     TS_ASSERT_EQUALS (s1, s2);
   }
 
+  void testReserveExtra2 ()
+  {
+    const s1::uc::String::size_type longStrLen = 128;
+    const s1::uc::String s1 = MakeLongString (longStrLen);
+    s1::uc::String s2;
+    for (s1::uc::String::size_type n = 0; n < longStrLen; n++)
+    {
+      s2.reserveExtra (1, s1::uc::String::quantumGrow);
+      s2.append (static_cast<s1::uc::Char> ('a' + (n % 26)));
+    }
+    TS_ASSERT_EQUALS (s1, s2);
+  }
+
 };

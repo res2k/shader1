@@ -17,6 +17,7 @@
 
 #include "base/common.h"
 
+#include "base/bit_scan.h"
 #include "base/uc/UTF16Decoder.h"
 #include "base/uc/UTF16Encoder.h"
 #include "base/uc/UTF16to8Transcoder.h"
@@ -822,6 +823,15 @@ namespace s1
     size_t String::ComputeAllocSize (size_type numChars, size_t quantum)
     {
       size_t allocBytes = offsetof (AllocatedBufferData, data) + numChars * sizeof (Char);
+      if (quantum == quantumGrow)
+      {
+        if (numChars >= 4)
+        {
+          /* If you squint and turn your head sideways this almost looks like
+           * a rather crude approximation of an square root-ish function. */
+          quantum = size_t (1) << ((bit_scan::msb (numChars) + 1) / 2);
+        }
+      }
       /* Fudge so that the amount that'll be allocated is a multiple of
        * quantum * sizeof(Char) */
       if (quantum > 1)
