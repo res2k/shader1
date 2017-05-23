@@ -61,6 +61,10 @@ namespace s1
       const s1_char16* StrU16 () const { return str.GetUTF16 (); }
       const s1_char32* StrU32 () const { return str.GetUTF32 (); }
       const wchar_t* StrWCS () const { return str.GetWCS (); }
+    private:
+      template<typename Ch>
+      static CreateResultType CreateCommon (s1::Library* lib, const Ch* str, size_t len,
+                                            uc::String::ConversionResult<Ch> (*convert)(const Ch*, size_t));
     };
   } // namespace api_impl
 } // namespace s1

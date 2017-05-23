@@ -54,44 +54,39 @@ namespace s1
       return S1_SUCCESS;
     }
 
-    String::CreateResultType String::Create (s1::Library* lib, const char* str, size_t len)
+    template<typename Ch>
+    String::CreateResultType String::CreateCommon (s1::Library* lib, const Ch* str, size_t len,
+                                                   uc::String::ConversionResult<Ch> (*convert)(const Ch*, size_t))
     {
-      auto result = uc::String::convertUTF8 (str, len);
+      auto result = convert (str, len);
       boost::intrusive_ptr<String> strObj;
       strObj.reset (new String (std::move (result.str), lib));
       size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
       return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
+    }
+
+    String::CreateResultType String::Create (s1::Library* lib, const char* str, size_t len)
+    {
+      return CreateCommon (lib, str, len, &uc::String::convertUTF8);
     }
 
     String::CreateResultType String::Create (s1::Library* lib, const s1_char16* str, size_t len)
     {
-      auto result = uc::String::convertUTF16 (str, len);
-      boost::intrusive_ptr<String> strObj;
-      strObj.reset (new String (std::move (result.str), lib));
-      size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
-      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
+      return CreateCommon (lib, str, len, &uc::String::convertUTF16);
     }
 
     String::CreateResultType String::Create (s1::Library* lib, const s1_char32* str, size_t len)
     {
-      auto result = uc::String::convertUTF32 (str, len);
-      boost::intrusive_ptr<String> strObj;
-      strObj.reset (new String (std::move (result.str), lib));
-      size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
-      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
+      return CreateCommon (lib, str, len, &uc::String::convertUTF32);
     }
 
     String::CreateResultType String::Create (s1::Library* lib, const wchar_t* str, size_t len)
     {
-#if defined(S1_WCHAR_IS_UTF16)
-      auto result = uc::String::convertUTF16 (reinterpret_cast<const s1_char16*> (str), len);
-#elif defined(S1_WCHAR_IS_UTF32)
-      auto result = uc::String::convertUTF32 (reinterpret_cast<const s1_char32*> (str), len);
-#endif
-      boost::intrusive_ptr<String> strObj;
-      strObj.reset (new String (std::move (result.str), lib));
-      size_t invalidPos = result.invalidPos ? reinterpret_cast<const wchar_t*> (result.invalidPos) - str : (size_t)~0;
-      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
+    #if defined(S1_WCHAR_IS_UTF16)
+      return CreateCommon (lib, reinterpret_cast<const s1_char16*> (str), len, &uc::String::convertUTF16);
+    #elif defined(S1_WCHAR_IS_UTF32)
+      return CreateCommon (lib, reinterpret_cast<const s1_char32*> (str), len, &uc::String::convertUTF32);
+    #endif
     }
 
     class StringCreateVisitor
