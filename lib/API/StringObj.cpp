@@ -18,6 +18,8 @@
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
 
+#include "base/uc/StringOverflowException.h"
+
 #include "ResultCodeHelper.h"
 #include "StringObj.h"
 
@@ -58,11 +60,18 @@ namespace s1
     String::CreateResultType String::CreateCommon (s1::Library* lib, const Ch* str, size_t len,
                                                    uc::String::ConversionResult<Ch> (*convert)(const Ch*, size_t))
     {
-      auto result = convert (str, len);
-      boost::intrusive_ptr<String> strObj;
-      strObj.reset (new String (std::move (result.str), lib));
-      size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
-      return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
+      try
+      {
+        auto result = convert (str, len);
+        boost::intrusive_ptr<String> strObj;
+        strObj.reset (new String (std::move (result.str), lib));
+        size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
+        return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
+      }
+      catch (uc::StringOverflowException)
+      {
+        return std::make_tuple (S1_E_STRING_TOO_LONG, nullptr, (size_t)~0);
+      }
     }
 
     String::CreateResultType String::Create (s1::Library* lib, const char* str, size_t len)
