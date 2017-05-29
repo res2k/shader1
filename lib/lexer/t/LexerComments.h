@@ -179,4 +179,36 @@ public:
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
   }
+
+  void testBlockComment4(void)
+  {
+    std::string inStr ("a\n/* foo\nbar */\nb");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token;
+
+    // Should report token available
+    TS_ASSERT_EQUALS ((bool)lexer, true);
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("a"));
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be an "identifier"
+    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b"));
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Still at end
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+  }
 };
