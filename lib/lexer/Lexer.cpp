@@ -64,9 +64,9 @@ KEYWORDS
     
     // Fill lookahead characters
     for (int i = 0; i < LookAhead; i++)
-      NextChar();
+      NextChar (bufferSkip);
     // ... and one to set the actual current char
-    NextChar();
+    NextChar ();
     
     if ((bool)*this)
       ++(*this);
@@ -84,7 +84,7 @@ KEYWORDS
     while (true)
     {
       // Skip whitespace
-      while (uc::IsWhiteSpace (currentChar)) NextChar();
+      while (uc::IsWhiteSpace (currentChar)) NextChar (bufferClearPrevious);
       
       // Check for end of input
       if (currentChar == uc::InvalidChar32)
@@ -96,13 +96,13 @@ KEYWORDS
       // Check if it's a "simple" token (can only start with a single known character)
       switch (currentChar)
       {
-      case ';': currentToken = Token (Semicolon, currentChar); 	NextChar(); return *this;
-      case '(': currentToken = Token (ParenL, currentChar); 	NextChar(); return *this;
-      case ')': currentToken = Token (ParenR, currentChar); 	NextChar(); return *this;
-      case '[': currentToken = Token (BracketL, currentChar); 	NextChar(); return *this;
-      case ']': currentToken = Token (BracketR, currentChar); 	NextChar(); return *this;
-      case '{': currentToken = Token (BraceL, currentChar); 	NextChar(); return *this;
-      case '}': currentToken = Token (BraceR, currentChar); 	NextChar(); return *this;
+      case ';': currentToken = MakeToken (Semicolon); NextChar (); return *this;
+      case '(': currentToken = MakeToken (ParenL);    NextChar (); return *this;
+      case ')': currentToken = MakeToken (ParenR);    NextChar (); return *this;
+      case '[': currentToken = MakeToken (BracketL);  NextChar (); return *this;
+      case ']': currentToken = MakeToken (BracketR);  NextChar (); return *this;
+      case '{': currentToken = MakeToken (BraceL);    NextChar (); return *this;
+      case '}': currentToken = MakeToken (BraceR);    NextChar (); return *this;
       case '.':
         {
           uc::Char32 next = PeekChar();
@@ -114,63 +114,63 @@ KEYWORDS
           else
           {
             // '.' is member operator
-            NextChar();
-            currentToken = Token (Member, '.'); 
+            currentToken = MakeToken (Member); 
+            NextChar ();
             return *this;
           }
         }
-      case ',': currentToken = Token (Separator, currentChar); 	NextChar(); return *this;
+      case ',': currentToken = MakeToken (Separator); NextChar (); return *this;
       case '=':
         {
-          NextChar();
-          if (currentChar == '=')
+          if (PeekChar() == '=')
           {
-            currentToken = Token (Equals, "==");
-            NextChar();
+            NextChar ();
+            currentToken = MakeToken (Equals);
           }
           else
-            currentToken = Token (Assign, "=");
+            currentToken = MakeToken (Assign);
+          NextChar ();
         }
         return *this;
       case '!':
         {
-          NextChar();
-          if (currentChar == '=')
+          if (PeekChar() == '=')
           {
-            currentToken = Token (NotEquals, "!=");
-            NextChar();
+            NextChar ();
+            currentToken = MakeToken (NotEquals);
           }
           else
-            currentToken = Token (LogicInvert, "!");
+            currentToken = MakeToken (LogicInvert);
+          NextChar ();
         }
         return *this;
       case '>':
         {
-          NextChar();
-          if (currentChar == '=')
+          if (PeekChar() == '=')
           {
-            currentToken = Token (LargerEqual, ">=");
-            NextChar();
+            NextChar ();
+            currentToken = MakeToken (LargerEqual);
           }
           else
-            currentToken = Token (Larger, ">");
+            currentToken = MakeToken (Larger);
+          NextChar ();
         }
         return *this;
       case '<':
         {
-          NextChar();
-          if (currentChar == '=')
+          if (PeekChar() == '=')
           {
-            currentToken = Token (SmallerEqual, "<=");
-            NextChar();
+            NextChar ();
+            currentToken = MakeToken (SmallerEqual);
           }
           else
-            currentToken = Token (Smaller, "<");
+            currentToken = MakeToken (Smaller);
+          NextChar ();
         }
         return *this;
-      case '+': currentToken = Token (Plus, currentChar); 	NextChar(); return *this;
-      case '-': currentToken = Token (Minus, currentChar); 	NextChar(); return *this;
-      case '*': currentToken = Token (Mult, currentChar); 	NextChar(); return *this;
+      case '+': currentToken = MakeToken (Plus);  NextChar (); return *this;
+      case '-': currentToken = MakeToken (Minus); NextChar (); return *this;
+      case '*': currentToken = MakeToken (Mult);  NextChar (); return *this;
       case '/':
         {
           if (ParseComment ())
@@ -180,23 +180,24 @@ KEYWORDS
           else
           {
             // Division operator
-            currentToken = Token (Div, "/");
+            currentToken = MakeToken (Div);
+            NextChar ();
           }
         }
         return *this;
-      case '%': currentToken = Token (Mod, currentChar); 	NextChar(); return *this;
-      case '~': currentToken = Token (BitwiseInvert, currentChar);NextChar(); return *this;
-      case '?': currentToken = Token (TernaryIf, currentChar); 	NextChar(); return *this;
-      case ':': currentToken = Token (TernaryElse, currentChar);NextChar(); return *this;
+      case '%': currentToken = MakeToken (Mod); 	        NextChar (); return *this;
+      case '~': currentToken = MakeToken (BitwiseInvert); NextChar (); return *this;
+      case '?': currentToken = MakeToken (TernaryIf);     NextChar (); return *this;
+      case ':': currentToken = MakeToken (TernaryElse);   NextChar (); return *this;
       case '&':
         {
           uc::Char32 next = PeekChar();
           if (next == '&')
           {
-            currentToken = Token (LogicAnd, "&&");
-            // Skip first & second '&'
-            NextChar();
-            NextChar();
+            NextChar ();
+            currentToken = MakeToken (LogicAnd);
+            // Skip second '&'
+            NextChar ();
           }
           else
           {
@@ -210,10 +211,10 @@ KEYWORDS
           uc::Char32 next = PeekChar();
           if (next == '|')
           {
-            currentToken = Token (LogicOr, "||");
-            // Skip first & second '|'
-            NextChar();
-            NextChar();
+            NextChar ();
+            currentToken = MakeToken (LogicOr);
+            // Skip second '|'
+            NextChar ();
           }
           else
           {
@@ -241,29 +242,20 @@ KEYWORDS
           /* Replacement character (0xFFFD) indicates an invalid input sequence.
              Error handler was already called for that. */
           errorHandler.StrayCharacter (currentChar);
-          currentToken = Token (Unknown, currentChar);
+          currentToken = MakeToken (Unknown);
         }
         else
           /* Otherwise, it's an unrecognized character. */
-          currentToken = Token (Invalid, currentChar);
-        NextChar();
+          currentToken = MakeToken (Invalid);
+        NextChar ();
       }
       
       return *this;
     }
   }
 
-  void Lexer::ParseIdentifier ()
+  Lexer::Token Lexer::MakeToken (TokenType type)
   {
-    uc::String tokenStr;
-    tokenStr += currentChar;
-    NextChar();
-    while (uc::IsIDContinue (currentChar))
-    {
-      tokenStr += currentChar;
-      NextChar();
-    }
-    
     /* Normalize token string.
        Spec wants canonically equivalent character sequences to be treated
        identical for identifiers. Unicode 5.2 Ch. 3 Def. D70, which defines
@@ -271,9 +263,23 @@ KEYWORDS
        explicitly refered to. Hence normalize token string to NFD (canonical
        decomposition).
      */
-    tokenStr = tokenStr.Normalized (uc::String::normNFD);
-    
-    currentToken = Token (Identifier, tokenStr);
+    auto tokenStr = tokenBuffer.Normalized (uc::String::normNFD);
+
+    auto nextToken = Token (type, tokenStr);
+    tokenBuffer.clear ();
+
+    return nextToken;
+  }
+
+  void Lexer::ParseIdentifier ()
+  {
+    while (uc::IsIDContinue (PeekChar()))
+    {
+      NextChar ();
+    }
+
+    currentToken = MakeToken (Identifier);
+    auto tokenStr = currentToken.tokenString;
     KeywordMap::iterator kwType = keywords.find (tokenStr);
     if (kwType != keywords.end())
     {
@@ -329,29 +335,31 @@ KEYWORDS
         }
       }
     }
+
+    NextChar ();
   }
   
   void Lexer::ParseNumeric()
   {
-    uc::String tokenStr;
-    tokenStr += currentChar;
     if (currentChar == '0')
     {
       uc::Char32 next = PeekChar();
       if ((next == 'x') || (next == 'X'))
       {
         // Hex number
-        NextChar();
-        tokenStr += currentChar;
-        NextChar();
-        while (((currentChar >= '0') && (currentChar <= '9'))
-          || ((currentChar >= 'a') && (currentChar <= 'f'))
-          || ((currentChar >= 'A') && (currentChar <= 'F')))
+        NextChar ();
+        next = PeekChar();
+        bool hadNumeric = false;
+        while (((next >= '0') && (next <= '9'))
+          || ((next >= 'a') && (next <= 'f'))
+          || ((next >= 'A') && (next <= 'F')))
         {
-          tokenStr += currentChar;
-          NextChar();
+          NextChar ();
+          next = PeekChar();
+          hadNumeric = true;
         }
-        currentToken = Token (Numeric, tokenStr);
+        currentToken = MakeToken (hadNumeric ? Numeric : Invalid);
+        NextChar ();
         return;
       }
     }
@@ -361,29 +369,30 @@ KEYWORDS
     bool hasExp = false;
     while (true)
     {
-      NextChar();
-      if ((currentChar == '.') && !hasDecimal)
+      uc::Char32 next = PeekChar();
+      if ((next == '.') && !hasDecimal)
       {
+        NextChar ();
         hasDecimal = true;
-        tokenStr += currentChar;
       }
-      else if (((currentChar == 'E') || (currentChar == 'e')) && !hasExp)
+      else if (((next == 'E') || (next == 'e')) && !hasExp)
       {
+        NextChar ();
         hasExp = true;
-        tokenStr += currentChar;
         // Force to 'true' since decimal exponents are not allowed
         hasDecimal = true;
         // Accept '-' again, once
         uc::Char32 next = PeekChar();
         if (next == '-')
         {
-          NextChar();
-          tokenStr += currentChar;
+          NextChar ();
         }
       }
-      else if ((currentChar >= '0') && (currentChar <= '9'))
+      else if ((next >= '0') && (next <= '9'))
       {
-        tokenStr += currentChar;
+        // Collect
+        NextChar ();
+        continue;
       }
       else
       {
@@ -392,37 +401,40 @@ KEYWORDS
       }
     }
     
-    currentToken = Token (Numeric, tokenStr);
+    currentToken = MakeToken (Numeric);
+    NextChar ();
   }
 
   bool Lexer::ParseComment ()
   {
     S1_ASSERT(currentChar == '/', false);
-    NextChar();
-    if (currentChar == '/')
+    uc::Char32 next = PeekChar();
+    if (next == '/')
     {
+      NextChar (bufferClearPrevious | bufferSkip);
       // Line comment
       do
       {
-        NextChar();
+        NextChar (bufferSkip);
       }
       while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
       // Let '\n' be handled by regular code
       return true;
     }
-    else if (currentChar == '*')
+    else if (next == '*')
     {
+      NextChar (bufferClearPrevious | bufferSkip);
       // Block comment
       do
       {
-        NextChar();
+        NextChar (bufferSkip);
         if (currentChar == '*')
         {
-          NextChar();
+          NextChar (bufferSkip);
           // Check for ending '*/'
           if (currentChar == '/')
           {
-            NextChar();
+            NextChar (bufferSkip);
             break;
           }
         }
@@ -434,9 +446,16 @@ KEYWORDS
     return false;
   }
 
-  void Lexer::NextChar()
+  void Lexer::NextChar (unsigned int buffer)
   {
+    if ((buffer & bufferClearPrevious) != 0) tokenBuffer.clear();
+
     currentChar = nextChar[0];
+    if ((currentChar != uc::InvalidChar32) && ((buffer & bufferSkip) == 0))
+    {
+      tokenBuffer.reserveExtra (1, uc::String::quantumGrow);
+      tokenBuffer.append (currentChar);
+    }
     for (int i = 1; i < LookAhead; i++)
       nextChar[i-1] = nextChar[i];
     if (inputChars)

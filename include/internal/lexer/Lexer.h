@@ -152,24 +152,21 @@ namespace s1
     struct Token
     {
       /// Type/symbol/keyword ID of this token
-      TokenType typeOrID;
+      TokenType typeOrID = Invalid;
       /// Original string for this token
       uc::String tokenString;
       /// Classification (normal, vector or matrix) for type keywords
-      TypeClassification typeClass;
+      TypeClassification typeClass = Normal;
       /// For vectors: vector dimension; For matrices: number of columns
-      int dimension1;
+      int dimension1 = 0;
       /// For matrices: number of rows
-      int dimension2;
+      int dimension2 = 0;
 
-      Token () : typeOrID (Invalid), typeClass (Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type) : typeOrID (type), typeClass (Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type, const uc::String& tokenString)
-       : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type, uc::Char32 tokenChar)
-       : typeOrID (type), tokenString (tokenChar), typeClass (Normal), dimension1 (0), dimension2 (0) {}
-      Token (TokenType type, const char* tokenString)
-       : typeOrID (type), tokenString (tokenString), typeClass (Normal), dimension1 (0), dimension2 (0) {}
+      Token () {}
+      Token (TokenType type) : typeOrID (type) {}
+      Token (TokenType type, const uc::String& tokenString) : typeOrID (type), tokenString (tokenString) {}
+      Token (TokenType type, uc::Char32 tokenChar) : typeOrID (type), tokenString (tokenChar) {}
+      Token (TokenType type, const char* tokenString) : typeOrID (type), tokenString (tokenString) {}
     };
     
     Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler);
@@ -201,6 +198,9 @@ namespace s1
     KeywordMap keywords;
     
     Token currentToken;
+
+    /// Create a token using tokenBuffer
+    Token MakeToken (TokenType type);
     
     /// Parse identifier
     void ParseIdentifier ();
@@ -211,8 +211,12 @@ namespace s1
     
     /// Current character. Set by NextChar().
     uc::Char32 currentChar;
+    /// Buffer for currently parse token
+    uc::String tokenBuffer;
+    /// Controls whether character should be added to tokenBuffer
+    enum TokenBuffer { bufferUse = 0, bufferSkip = 0x1, bufferClearPrevious = 0x2 };
     /// Read next character from input stream.
-    void NextChar ();
+    void NextChar (unsigned int buffer = bufferUse);
     enum { LookAhead = 2 };
     /// Next character in input stream. Set by NextChar().
     uc::Char32 nextChar[LookAhead];
