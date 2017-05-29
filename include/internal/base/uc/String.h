@@ -69,6 +69,8 @@ namespace s1
 
       String& insert (size_type before, const char* s);
 
+      void clear ();
+
       size_type length() const { return d.length; }
       size_type size() const { return length(); }
       static size_type max_size()

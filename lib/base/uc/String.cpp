@@ -230,6 +230,15 @@ namespace s1
       return *this;
     }
 
+    void String::clear ()
+    {
+      if (d.length > 0)
+      {
+        d.length = 0;
+        bufferPtr()[d.length] = 0;
+      }
+    }
+
     String::size_type String::countChar32() const
     {
       if (d.length == 0) return 0;
