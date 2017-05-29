@@ -206,6 +206,8 @@ namespace s1
     void ParseIdentifier ();
     /// Parse numeric value
     void ParseNumeric ();
+    /// Parse a comment. Current character must be leading '/' and will be consumed.
+    bool ParseComment ();
     
     /// Current character. Set by NextChar().
     uc::Char32 currentChar;

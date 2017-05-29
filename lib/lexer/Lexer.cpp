@@ -173,41 +173,15 @@ KEYWORDS
       case '*': currentToken = Token (Mult, currentChar); 	NextChar(); return *this;
       case '/':
         {
-          NextChar();
-          if (currentChar == '/')
+          if (ParseComment ())
           {
-            // Line comment
-            do
-            {
-              NextChar();
-            }
-            while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
-            // Let '\n' be handled by regular code
-            continue;
-          }
-          else if (currentChar == '*')
-          {
-            // Block comment
-            do
-            {
-              NextChar();
-              if (currentChar == '*')
-              {
-                NextChar();
-                // Check for ending '*/'
-                if (currentChar == '/')
-                {
-                  NextChar();
-                  break;
-                }
-              }
-            }
-            while (currentChar != uc::InvalidChar32);
             continue;
           }
           else
+          {
             // Division operator
             currentToken = Token (Div, "/");
+          }
         }
         return *this;
       case '%': currentToken = Token (Mod, currentChar); 	NextChar(); return *this;
@@ -419,6 +393,45 @@ KEYWORDS
     }
     
     currentToken = Token (Numeric, tokenStr);
+  }
+
+  bool Lexer::ParseComment ()
+  {
+    S1_ASSERT(currentChar == '/', false);
+    NextChar();
+    if (currentChar == '/')
+    {
+      // Line comment
+      do
+      {
+        NextChar();
+      }
+      while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
+      // Let '\n' be handled by regular code
+      return true;
+    }
+    else if (currentChar == '*')
+    {
+      // Block comment
+      do
+      {
+        NextChar();
+        if (currentChar == '*')
+        {
+          NextChar();
+          // Check for ending '*/'
+          if (currentChar == '/')
+          {
+            NextChar();
+            break;
+          }
+        }
+      }
+      while (currentChar != uc::InvalidChar32);
+      return true;
+    }
+    // else: something else
+    return false;
   }
 
   void Lexer::NextChar()
