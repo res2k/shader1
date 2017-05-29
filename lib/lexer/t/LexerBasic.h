@@ -143,6 +143,8 @@ public:
   void testTokens(void)
   {
     std::string inStr ("; ( ) [ ] { } . , == != > >= < <= = + - * / % ~ ! ? : || &&");
+    const s1::uc::String expectedStr[] =
+      { ";", "(", ")", "[", "]", "{", "}", ".", ",", "==", "!=", ">", ">=", "<", "<=", "=", "+", "-", "*", "/", "%", "~", "!", "?", ":", "||", "&&" };
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
@@ -150,14 +152,16 @@ public:
     s1::Lexer::Token token;
 
     s1::Lexer::TokenType expectedToken = s1::Lexer::Semicolon;
+    int expectedIndex = 0;
     // All of the above are valid tokens
     while (lexer)
     {
       TS_ASSERT_THROWS_NOTHING ((token = *lexer));
       // Token should be a certain token
       TS_ASSERT_EQUALS (token.typeOrID, expectedToken);
-      TS_ASSERT_DIFFERS (token.tokenString, s1::uc::String (""));
+      TS_ASSERT_EQUALS (token.tokenString, expectedStr[expectedIndex]);
       expectedToken = (s1::Lexer::TokenType)(expectedToken+1);
+      ++expectedIndex;
       // Trying to forward never throws
       TS_ASSERT_THROWS_NOTHING (++lexer);
     }

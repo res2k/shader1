@@ -292,4 +292,29 @@ public:
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
   }
+
+  void testNumericInvalid8(void)
+  {
+    std::string inStr ("0x");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    s1::LexerErrorHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token;
+
+    // Should report token available
+    TS_ASSERT_EQUALS ((bool)lexer, true);
+
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // Token should be invalid
+    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Invalid);
+    TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("0x"));
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+
+    // Still at end
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+  }
 };
