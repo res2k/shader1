@@ -207,7 +207,7 @@ KEYWORDS
           }
           else
           {
-            // Lone '&' not a valid token. Let stray character handling deal with it
+            // Lone '&' not a valid token
             break;
           }
         }
@@ -224,7 +224,7 @@ KEYWORDS
           }
           else
           {
-            // Lone '|' not a valid token. Let stray character handling deal with it
+            // Lone '|' not a valid token
             break;
           }
         }
@@ -247,12 +247,13 @@ KEYWORDS
         {
           /* Replacement character (0xFFFD) indicates an invalid input sequence.
              Error handler was already called for that. */
-          errorHandler.StrayCharacter (currentChar);
           currentToken = MakeToken (Unknown);
         }
         else
+        {
           /* Otherwise, it's an unrecognized character. */
           currentToken = MakeToken (Invalid);
+        }
         NextChar ();
       }
       

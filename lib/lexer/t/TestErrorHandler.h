@@ -21,24 +21,15 @@
 struct TestErrorHandler : public s1::LexerErrorHandler
 {
   bool invalidCharFound;
-  bool strayCharFound;
-  s1::uc::Char32 strayCharOffender;
   
   TestErrorHandler() { Reset(); }
     
   void Reset ()
   {
     invalidCharFound = false;
-    strayCharFound = false;
-    strayCharOffender = 0;
   }
   
   void InputInvalidCharacter () { invalidCharFound = true; }
-  void StrayCharacter (s1::uc::Char32 offender)
-  {
-    strayCharFound = true;
-    strayCharOffender = offender;
-  }
 };
 
 #endif // __TESTERRORHANDLER_H__

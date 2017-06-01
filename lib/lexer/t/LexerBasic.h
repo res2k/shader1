@@ -201,23 +201,18 @@ public:
     TS_ASSERT_EQUALS ((bool)lexer, true);
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    // Error handler should've been triggered
-    TS_ASSERT_EQUALS (errorHandler.strayCharFound, true);
-    TS_ASSERT_EQUALS (errorHandler.strayCharOffender, '|');
-    errorHandler.Reset();
     // Stray input character should result in an Unknown token
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Unknown);
+    TS_ASSERT_EQUALS (token.tokenString, "|");
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    // Error handler should've been triggered
-    TS_ASSERT_EQUALS (errorHandler.strayCharFound, true);
-    TS_ASSERT_EQUALS (errorHandler.strayCharOffender, '&');
     // Stray input character should result in an Unknown token
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Unknown);
+    TS_ASSERT_EQUALS (token.tokenString, "&");
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 2);
     // Trying to forward never throws

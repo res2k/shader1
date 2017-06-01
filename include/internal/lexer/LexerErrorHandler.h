@@ -29,11 +29,6 @@ namespace s1
      * An example would be an incomplete encoding sequence in UTF-8.
      */
     virtual void InputInvalidCharacter () {}
-    /**
-     * Handler called when a character is found that can't occur in any
-     * type of token.
-     */
-    virtual void StrayCharacter (uc::Char32 offender) {}
   };
 } // namespace s1
 
