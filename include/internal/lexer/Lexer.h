@@ -148,6 +148,15 @@ namespace s1
       Normal, Vector, Matrix
     };
 
+    /// Token location in the source
+    struct Location
+    {
+      /// Line number (0-based)
+      unsigned int line = 0;
+      /// Columns number (0-based), in code points
+      unsigned int column = 0;
+    };
+
     /// Token object
     struct Token
     {
@@ -161,6 +170,9 @@ namespace s1
       int dimension1 = 0;
       /// For matrices: number of rows
       int dimension2 = 0;
+
+      /// Location of token in source
+      Location location;
 
       Token () {}
       Token (TokenType type) : typeOrID (type) {}
@@ -197,7 +209,9 @@ namespace s1
     /// Map of identifier strings to keyword names
     KeywordMap keywords;
     
+    Location currentLocation;
     Token currentToken;
+    Location currentTokenLocation;
 
     /// Create a token using tokenBuffer
     Token MakeToken (TokenType type);
@@ -210,7 +224,7 @@ namespace s1
     bool ParseComment ();
     
     /// Current character. Set by NextChar().
-    uc::Char32 currentChar;
+    uc::Char32 currentChar = uc::InvalidChar32;
     /// Buffer for currently parse token
     uc::String tokenBuffer;
     /// Controls whether character should be added to tokenBuffer

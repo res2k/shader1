@@ -88,6 +88,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("a"));
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -96,6 +98,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b"));
+    TS_ASSERT_EQUALS (token.location.line, 2);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -164,6 +168,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("a"));
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -172,6 +178,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b"));
+    TS_ASSERT_EQUALS (token.location.line, 2);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -196,6 +204,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("a"));
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -204,6 +214,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b"));
+    TS_ASSERT_EQUALS (token.location.line, 3);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 

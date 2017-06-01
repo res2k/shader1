@@ -115,6 +115,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("a"));
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -124,6 +126,8 @@ public:
     TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
     // Invalid input sequence should result in an Invalid token
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Invalid);
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 1);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -132,6 +136,8 @@ public:
     // Token should be an "identifier"
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b"));
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 2);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -143,8 +149,17 @@ public:
   void testTokens(void)
   {
     std::string inStr ("; ( ) [ ] { } . , == != > >= < <= = + - * / % ~ ! ? : || &&");
-    const s1::uc::String expectedStr[] =
-      { ";", "(", ")", "[", "]", "{", "}", ".", ",", "==", "!=", ">", ">=", "<", "<=", "=", "+", "-", "*", "/", "%", "~", "!", "?", ":", "||", "&&" };
+    struct Expected
+    {
+      s1::uc::String str;
+      unsigned int col;
+    };
+    const Expected expected[] =
+      { {";", 0}, {"(", 2}, {")", 4}, {"[", 6}, {"]", 8}, {"{", 10}, {"}", 12},
+        {".", 14}, {",", 16}, {"==", 18}, {"!=", 21}, {">", 24}, {">=", 26},
+        {"<", 29}, {"<=", 31}, {"=", 34}, {"+", 36}, {"-", 38}, {"*", 40},
+        {"/", 42}, {"%", 44}, {"~", 46}, {"!", 48}, {"?", 50}, {":", 52},
+        {"||", 54}, {"&&", 57} };
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
@@ -159,7 +174,9 @@ public:
       TS_ASSERT_THROWS_NOTHING ((token = *lexer));
       // Token should be a certain token
       TS_ASSERT_EQUALS (token.typeOrID, expectedToken);
-      TS_ASSERT_EQUALS (token.tokenString, expectedStr[expectedIndex]);
+      TS_ASSERT_EQUALS (token.tokenString, expected[expectedIndex].str);
+      TS_ASSERT_EQUALS (token.location.line, 0);
+      TS_ASSERT_EQUALS (token.location.column, expected[expectedIndex].col);
       expectedToken = (s1::Lexer::TokenType)(expectedToken+1);
       ++expectedIndex;
       // Trying to forward never throws
@@ -190,6 +207,8 @@ public:
     errorHandler.Reset();
     // Stray input character should result in an Unknown token
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Unknown);
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 0);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 
@@ -199,6 +218,8 @@ public:
     TS_ASSERT_EQUALS (errorHandler.strayCharOffender, '&');
     // Stray input character should result in an Unknown token
     TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Unknown);
+    TS_ASSERT_EQUALS (token.location.line, 0);
+    TS_ASSERT_EQUALS (token.location.column, 2);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
 

@@ -61,6 +61,10 @@ namespace s1
     keywords[uc::String (Str)] 		= Symbol;
 KEYWORDS
 #undef KEYWORD
+
+    // Invalidate lookahead
+    for (int i = 0; i < LookAhead; i++)
+      nextChar[i] = uc::InvalidChar32;
     
     // Fill lookahead characters
     for (int i = 0; i < LookAhead; i++)
@@ -92,6 +96,8 @@ KEYWORDS
         currentToken = Token (EndOfFile);
         return *this;
       }
+      // Record token location after whitespace skipping
+      currentTokenLocation = currentLocation;
       
       // Check if it's a "simple" token (can only start with a single known character)
       switch (currentChar)
@@ -267,6 +273,7 @@ KEYWORDS
 
     auto nextToken = Token (type, tokenStr);
     tokenBuffer.clear ();
+    nextToken.location = currentTokenLocation;
 
     return nextToken;
   }
@@ -449,6 +456,22 @@ KEYWORDS
   void Lexer::NextChar (unsigned int buffer)
   {
     if ((buffer & bufferClearPrevious) != 0) tokenBuffer.clear();
+
+    /* Advance location *before* fetching next char,
+     * so it truly points to the 'current' character
+     * (otherwise it'd be the next one) */
+    if (currentChar != uc::InvalidChar32)
+    {
+      if (currentChar == '\n')
+      {
+        currentLocation.line++;
+        currentLocation.column = 0;
+      }
+      else
+      {
+        currentLocation.column++;
+      }
+    }
 
     currentChar = nextChar[0];
     if ((currentChar != uc::InvalidChar32) && ((buffer & bufferSkip) == 0))
