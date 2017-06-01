@@ -233,9 +233,10 @@ namespace s1
     void NextChar (unsigned int buffer = bufferUse);
     enum { LookAhead = 2 };
     /// Next character in input stream. Set by NextChar().
-    uc::Char32 nextChar[LookAhead];
+    uc::Stream::FetchResult nextChar[LookAhead];
     /// Look ahead to a character
-    uc::Char32 PeekChar (int la = 0) const { return nextChar[la]; }
+    uc::Char32 PeekChar (int la = 0) const
+    { return nextChar[la] ? nextChar[la].value() : uc::InvalidChar32; }
   };
 } // namespace s1
 

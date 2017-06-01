@@ -474,33 +474,31 @@ KEYWORDS
       }
     }
 
-    currentChar = nextChar[0];
+    auto streamNextChar = nextChar[0];
+    if (streamNextChar)
+      currentChar = streamNextChar.value ();
+    else if (streamNextChar.error () == uc::Stream::Error::EndOfInput)
+    {
+      currentChar = uc::InvalidChar32;
+    }
+    else
+    {
+      // Signal error handler ...
+      errorHandler.InputInvalidCharacter();
+      // ... and set character to the 'replacer' one
+      currentChar = uc::ReplacementChar;
+    }
+
     if ((currentChar != uc::InvalidChar32) && ((buffer & bufferSkip) == 0))
     {
       tokenBuffer.reserveExtra (1, uc::String::quantumGrow);
       tokenBuffer.append (currentChar);
     }
+
     for (int i = 1; i < LookAhead; i++)
       nextChar[i-1] = nextChar[i];
-    if (inputChars)
-    {
-      auto streamNextChar = *inputChars;
-      if (streamNextChar)
-        nextChar[LookAhead - 1] = streamNextChar.value ();
-      else
-      {
-        // Signal error handler ...
-        errorHandler.InputInvalidCharacter();
-        // ... and set character to the 'replacer' one
-        nextChar[LookAhead-1] = 0xfffd;
-      }
-      ++inputChars;
-    }
-    else
-    {
-      // If at the end of input, return -1
-      nextChar[LookAhead-1] = -1;
-    }
+    nextChar[LookAhead - 1] = *inputChars;
+    ++inputChars;
   }
 
   const char* Lexer::GetTokenStr (TokenType token)
