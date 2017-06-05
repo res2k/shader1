@@ -18,6 +18,7 @@
 #ifndef __LEXER_LEXER_H__
 #define __LEXER_LEXER_H__
 
+#include "TokenLocation.h"
 #include "TokenType.h"
 
 #include "base/uc/Stream.h"
@@ -32,16 +33,8 @@ namespace s1
   class Lexer
   {
   public:
+    typedef lexer::TokenLocation Location;
     typedef lexer::TokenType TokenType;
-
-    /// Token location in the source
-    struct Location
-    {
-      /// Line number (0-based)
-      unsigned int line = 0;
-      /// Columns number (0-based), in code points
-      unsigned int column = 0;
-    };
 
     /// Token object
     struct Token
