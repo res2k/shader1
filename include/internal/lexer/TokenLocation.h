@@ -28,10 +28,13 @@ namespace s1
     /// Token location in the source
     struct TokenLocation
     {
+      /// Value indicating an invalid/unknown location component
+      static const unsigned int InvalidLocation = ~0u;
+
       /// Line number (0-based)
-      unsigned int line = 0;
+      unsigned int line = InvalidLocation;
       /// Columns number (0-based), in code points
-      unsigned int column = 0;
+      unsigned int column = InvalidLocation;
     };
 
   } // namespace lexer

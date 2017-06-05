@@ -86,7 +86,7 @@ namespace s1
     /// Map of identifier strings to keyword names
     KeywordMap keywords;
     
-    Location currentLocation;
+    Location currentLocation = Location{ 0, 0 };
     Token currentToken;
     Location currentTokenLocation;
 
