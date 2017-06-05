@@ -18,6 +18,8 @@
 #ifndef __LEXER_LEXERERRORHANDLER_H__
 #define __LEXER_LEXERERRORHANDLER_H__
 
+#include "TokenLocation.h"
+
 namespace s1
 {
   struct LexerErrorHandler
@@ -28,7 +30,7 @@ namespace s1
      * Handler called when an invalid input sequence is encountered.
      * An example would be an incomplete encoding sequence in UTF-8.
      */
-    virtual void InputInvalidCharacter () {}
+    virtual void InputInvalidCharacter (const lexer::TokenLocation&) {}
   };
 } // namespace s1
 

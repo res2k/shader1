@@ -33,7 +33,7 @@ class ErrorHandler : public LexerErrorHandler,
 public:
   /**\name s1::LexerErrorHandler
    * @{ */
-  void InputInvalidCharacter () { }
+  void InputInvalidCharacter (const lexer::TokenLocation&) override { }
   /** @} */
   
   /**\name s1::LexerErrorHandler

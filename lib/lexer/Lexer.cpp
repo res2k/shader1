@@ -482,7 +482,7 @@ KEYWORDS
     else
     {
       // Signal error handler ...
-      errorHandler.InputInvalidCharacter();
+      errorHandler.InputInvalidCharacter (currentLocation);
       // ... and set character to the 'replacer' one
       currentChar = uc::ReplacementChar;
     }

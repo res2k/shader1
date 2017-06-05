@@ -90,6 +90,8 @@ public:
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Error handle should've been triggered
     TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
+    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.line, 0);
+    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.column, 0);
     // Invalid input sequence should result in an Invalid token
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Invalid);
     // Trying to forward never throws
@@ -124,6 +126,8 @@ public:
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Error handler should've been triggered
     TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
+    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.line, 0);
+    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.column, 1);
     // Invalid input sequence should result in an Invalid token
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Invalid);
     TS_ASSERT_EQUALS (token.location.line, 0);

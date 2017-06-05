@@ -18,9 +18,12 @@
 #ifndef __TESTERRORHANDLER_H__
 #define __TESTERRORHANDLER_H__
 
+#include "lexer/TokenLocation.h"
+
 struct TestErrorHandler : public s1::LexerErrorHandler
 {
   bool invalidCharFound;
+  s1::lexer::TokenLocation invalidCharLocation;
   
   TestErrorHandler() { Reset(); }
     
@@ -29,7 +32,11 @@ struct TestErrorHandler : public s1::LexerErrorHandler
     invalidCharFound = false;
   }
   
-  void InputInvalidCharacter () { invalidCharFound = true; }
+  void InputInvalidCharacter (const s1::lexer::TokenLocation& location) override
+  {
+    invalidCharFound = true;
+    invalidCharLocation = location;
+  }
 };
 
 #endif // __TESTERRORHANDLER_H__
