@@ -34,9 +34,6 @@ public:
   /**\name s1::LexerErrorHandler
    * @{ */
   void InputInvalidCharacter () { }
-  void StrayCharacter (uc::Char32 offender)
-  {
-  }
   /** @} */
   
   /**\name s1::LexerErrorHandler
