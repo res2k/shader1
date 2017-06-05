@@ -45,12 +45,12 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // We should be at EOF from the start
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testWhitespace(void)
@@ -67,12 +67,12 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // We should be at EOF from the start
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testInvalidInput(void)
@@ -91,12 +91,12 @@ public:
     // Error handle should've been triggered
     TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
     // Invalid input sequence should result in an Invalid token
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Invalid);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Invalid);
     // Trying to forward never throws
     TS_ASSERT_THROWS_NOTHING (++lexer);
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testInvalidInput2(void)
@@ -113,7 +113,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("a"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
@@ -125,7 +125,7 @@ public:
     // Error handler should've been triggered
     TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
     // Invalid input sequence should result in an Invalid token
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Invalid);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Invalid);
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 1);
     // Trying to forward never throws
@@ -134,7 +134,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 2);
@@ -143,7 +143,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testTokens(void)
@@ -166,7 +166,7 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
-    s1::Lexer::TokenType expectedToken = s1::Lexer::Semicolon;
+    s1::Lexer::TokenType expectedToken = s1::lexer::Semicolon;
     int expectedIndex = 0;
     // All of the above are valid tokens
     while (lexer)
@@ -177,7 +177,7 @@ public:
       TS_ASSERT_EQUALS (token.tokenString, expected[expectedIndex].str);
       TS_ASSERT_EQUALS (token.location.line, 0);
       TS_ASSERT_EQUALS (token.location.column, expected[expectedIndex].col);
-      expectedToken = (s1::Lexer::TokenType)(expectedToken+1);
+      expectedToken = (s1::lexer::TokenType)(expectedToken+1);
       ++expectedIndex;
       // Trying to forward never throws
       TS_ASSERT_THROWS_NOTHING (++lexer);
@@ -185,7 +185,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testTokensInvalid(void)
@@ -202,7 +202,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Stray input character should result in an Unknown token
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Unknown);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Unknown);
     TS_ASSERT_EQUALS (token.tokenString, "|");
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
@@ -211,7 +211,7 @@ public:
 
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Stray input character should result in an Unknown token
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Unknown);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Unknown);
     TS_ASSERT_EQUALS (token.tokenString, "&");
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 2);
@@ -220,6 +220,6 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
 };

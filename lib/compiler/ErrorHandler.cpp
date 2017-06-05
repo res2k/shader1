@@ -27,7 +27,7 @@ namespace compiler
 {
   
 void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encounteredToken,
-			       Lexer::TokenType expectedToken)
+                               lexer::TokenType expectedToken)
 {
   const char* errorStr = "???";
   switch (code)
@@ -47,13 +47,13 @@ void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encou
   
   std::cerr << errorStr;
   std::cerr << "; ";
-  if (encounteredToken.typeOrID != Lexer::Invalid)
+  if (encounteredToken.typeOrID != lexer::Invalid)
   {
     std::cerr << "encountered: '";
     std::cerr << Lexer::GetTokenStr (encounteredToken);
     std::cerr << "'; ";
   }
-  if (expectedToken != Lexer::Invalid)
+  if (expectedToken != lexer::Invalid)
   {
     std::cerr << "expected: '";
     std::cerr << Lexer::GetTokenStr (expectedToken);

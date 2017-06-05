@@ -18,6 +18,8 @@
 #ifndef __LEXER_LEXER_H__
 #define __LEXER_LEXER_H__
 
+#include "TokenType.h"
+
 #include "base/uc/Stream.h"
 #include "base/uc/String.h"
 
@@ -30,119 +32,8 @@ namespace s1
   class Lexer
   {
   public:
-    enum TokenType
-    {
-      /// Invalid token (resulting from e.g. a stray character)
-      Invalid = -2,
-      /// End of input was reached
-      EndOfFile = -1,
-      
-      /// Unrecognized token
-      Unknown = 0,
-      /// Identifier
-      Identifier,
-      /// Numeric (hex or float number)
-      Numeric,
-      
-      /**\name Operators, Symbols
-       * @{ */
-      /// ';'
-      Semicolon,
-      
-      /// '('
-      ParenL,
-      /// ')'
-      ParenR,
-      /// '['
-      BracketL,
-      /// ']'
-      BracketR,
-      /// '{'
-      BraceL,
-      /// '}'
-      BraceR,
-      
-      /// '.'
-      Member,
-      /// ','
-      Separator,
-      
-      /// '=='
-      Equals,
-      /// '!='
-      NotEquals,
-      /// '>'
-      Larger,
-      /// '>='
-      LargerEqual,
-      /// '<'
-      Smaller,
-      /// '<='
-      SmallerEqual,
-      
-      /// '='
-      Assign,
-      
-      /// '+'
-      Plus,
-      /// '-'
-      Minus,
-      /// '*'
-      Mult,
-      /// '/'
-      Div,
-      /// '%'
-      Mod,
-      
-      /// '~'
-      BitwiseInvert,
-      /// '!'
-      LogicInvert,
-      
-      /// '?'
-      TernaryIf,
-      /// ':'
-      TernaryElse,
-      
-      /// '||'
-      LogicOr,
-      /// '&&'
-      LogicAnd,
-      /** @} */
-      
-      /**\name Keywords
-       * @{ */
-      kwReturn,
-      
-      kwTrue,
-      kwFalse,
-      
-      kwBool,
-      kwUnsigned,
-      kwInt,
-      kwFloat,
-      
-      kwSampler1D,
-      kwSampler2D,
-      kwSampler3D,
-      kwSamplerCUBE,
-      
-      kwTypedef,
-      kwVoid,
-      kwIn,
-      kwOut,
-      kwConst,
-      kwUniform,
-      kwAttribute,
-      
-      kwIf,
-      kwElse,
-      
-      kwWhile,
-      kwFor
-      /** @} */
-    };
-    
+    typedef lexer::TokenType TokenType;
+
     enum TypeClassification
     {
       Normal, Vector, Matrix
@@ -161,7 +52,7 @@ namespace s1
     struct Token
     {
       /// Type/symbol/keyword ID of this token
-      TokenType typeOrID = Invalid;
+      TokenType typeOrID = lexer::Invalid;
       /// Original string for this token
       uc::String tokenString;
       /// Classification (normal, vector or matrix) for type keywords

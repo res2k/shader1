@@ -29,33 +29,33 @@
 
 namespace s1
 {
-#define KEYWORDS				\
-  KEYWORD ("return",		kwReturn)	\
-  KEYWORD ("true",		kwTrue)		\
-  KEYWORD ("false",		kwFalse)	\
-  KEYWORD ("bool",		kwBool)		\
-  KEYWORD ("unsigned",		kwUnsigned)	\
-  KEYWORD ("int",		kwInt)		\
-  KEYWORD ("float",		kwFloat)	\
-  KEYWORD ("sampler1D",		kwSampler1D)	\
-  KEYWORD ("sampler2D",		kwSampler2D)	\
-  KEYWORD ("sampler3D",		kwSampler3D)	\
-  KEYWORD ("samplerCUBE",	kwSamplerCUBE)	\
-  KEYWORD ("typedef",		kwTypedef)	\
-  KEYWORD ("void",		kwVoid)		\
-  KEYWORD ("in",		kwIn)		\
-  KEYWORD ("out",		kwOut)		\
-  KEYWORD ("const",		kwConst)        \
-  KEYWORD ("uniform",		kwUniform)      \
-  KEYWORD ("attribute",		kwAttribute)	\
-  KEYWORD ("if",		kwIf)		\
-  KEYWORD ("else",		kwElse)		\
-  KEYWORD ("while",		kwWhile)	\
-  KEYWORD ("for",		kwFor)
+#define KEYWORDS                                        \
+  KEYWORD ("return",            lexer::kwReturn)        \
+  KEYWORD ("true",              lexer::kwTrue)          \
+  KEYWORD ("false",             lexer::kwFalse)         \
+  KEYWORD ("bool",              lexer::kwBool)          \
+  KEYWORD ("unsigned",          lexer::kwUnsigned)      \
+  KEYWORD ("int",               lexer::kwInt)           \
+  KEYWORD ("float",             lexer::kwFloat)         \
+  KEYWORD ("sampler1D",         lexer::kwSampler1D)     \
+  KEYWORD ("sampler2D",         lexer::kwSampler2D)     \
+  KEYWORD ("sampler3D",         lexer::kwSampler3D)     \
+  KEYWORD ("samplerCUBE",       lexer::kwSamplerCUBE)   \
+  KEYWORD ("typedef",           lexer::kwTypedef)       \
+  KEYWORD ("void",              lexer::kwVoid)          \
+  KEYWORD ("in",                lexer::kwIn)            \
+  KEYWORD ("out",               lexer::kwOut)           \
+  KEYWORD ("const",             lexer::kwConst)         \
+  KEYWORD ("uniform",           lexer::kwUniform)       \
+  KEYWORD ("attribute",         lexer::kwAttribute)     \
+  KEYWORD ("if",                lexer::kwIf)            \
+  KEYWORD ("else",              lexer::kwElse)          \
+  KEYWORD ("while",             lexer::kwWhile)         \
+  KEYWORD ("for",               lexer::kwFor)
   
   Lexer::Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler)
    : inputChars (inputChars), errorHandler (errorHandler),
-     currentToken (EndOfFile)
+     currentToken (lexer::EndOfFile)
   {
 #define KEYWORD(Str, Symbol)	\
     keywords[uc::String (Str)] 		= Symbol;
@@ -78,7 +78,7 @@ KEYWORDS
    
   Lexer::operator bool() const throw()
   {
-    return (currentToken.typeOrID != EndOfFile) || (currentChar != uc::InvalidChar32) || inputChars;
+    return (currentToken.typeOrID != lexer::EndOfFile) || (currentChar != uc::InvalidChar32) || inputChars;
   }
 
   Lexer& Lexer::operator++() throw()
@@ -93,7 +93,7 @@ KEYWORDS
       // Check for end of input
       if (currentChar == uc::InvalidChar32)
       {
-        currentToken = Token (EndOfFile);
+        currentToken = Token (lexer::EndOfFile);
         return *this;
       }
       // Record token location after whitespace skipping
@@ -102,13 +102,13 @@ KEYWORDS
       // Check if it's a "simple" token (can only start with a single known character)
       switch (currentChar)
       {
-      case ';': currentToken = MakeToken (Semicolon); NextChar (); return *this;
-      case '(': currentToken = MakeToken (ParenL);    NextChar (); return *this;
-      case ')': currentToken = MakeToken (ParenR);    NextChar (); return *this;
-      case '[': currentToken = MakeToken (BracketL);  NextChar (); return *this;
-      case ']': currentToken = MakeToken (BracketR);  NextChar (); return *this;
-      case '{': currentToken = MakeToken (BraceL);    NextChar (); return *this;
-      case '}': currentToken = MakeToken (BraceR);    NextChar (); return *this;
+      case ';': currentToken = MakeToken (lexer::Semicolon); NextChar (); return *this;
+      case '(': currentToken = MakeToken (lexer::ParenL);    NextChar (); return *this;
+      case ')': currentToken = MakeToken (lexer::ParenR);    NextChar (); return *this;
+      case '[': currentToken = MakeToken (lexer::BracketL);  NextChar (); return *this;
+      case ']': currentToken = MakeToken (lexer::BracketR);  NextChar (); return *this;
+      case '{': currentToken = MakeToken (lexer::BraceL);    NextChar (); return *this;
+      case '}': currentToken = MakeToken (lexer::BraceR);    NextChar (); return *this;
       case '.':
         {
           uc::Char32 next = PeekChar();
@@ -120,21 +120,21 @@ KEYWORDS
           else
           {
             // '.' is member operator
-            currentToken = MakeToken (Member); 
+            currentToken = MakeToken (lexer::Member); 
             NextChar ();
             return *this;
           }
         }
-      case ',': currentToken = MakeToken (Separator); NextChar (); return *this;
+      case ',': currentToken = MakeToken (lexer::Separator); NextChar (); return *this;
       case '=':
         {
           if (PeekChar() == '=')
           {
             NextChar ();
-            currentToken = MakeToken (Equals);
+            currentToken = MakeToken (lexer::Equals);
           }
           else
-            currentToken = MakeToken (Assign);
+            currentToken = MakeToken (lexer::Assign);
           NextChar ();
         }
         return *this;
@@ -143,10 +143,10 @@ KEYWORDS
           if (PeekChar() == '=')
           {
             NextChar ();
-            currentToken = MakeToken (NotEquals);
+            currentToken = MakeToken (lexer::NotEquals);
           }
           else
-            currentToken = MakeToken (LogicInvert);
+            currentToken = MakeToken (lexer::LogicInvert);
           NextChar ();
         }
         return *this;
@@ -155,10 +155,10 @@ KEYWORDS
           if (PeekChar() == '=')
           {
             NextChar ();
-            currentToken = MakeToken (LargerEqual);
+            currentToken = MakeToken (lexer::LargerEqual);
           }
           else
-            currentToken = MakeToken (Larger);
+            currentToken = MakeToken (lexer::Larger);
           NextChar ();
         }
         return *this;
@@ -167,16 +167,16 @@ KEYWORDS
           if (PeekChar() == '=')
           {
             NextChar ();
-            currentToken = MakeToken (SmallerEqual);
+            currentToken = MakeToken (lexer::SmallerEqual);
           }
           else
-            currentToken = MakeToken (Smaller);
+            currentToken = MakeToken (lexer::Smaller);
           NextChar ();
         }
         return *this;
-      case '+': currentToken = MakeToken (Plus);  NextChar (); return *this;
-      case '-': currentToken = MakeToken (Minus); NextChar (); return *this;
-      case '*': currentToken = MakeToken (Mult);  NextChar (); return *this;
+      case '+': currentToken = MakeToken (lexer::Plus);  NextChar (); return *this;
+      case '-': currentToken = MakeToken (lexer::Minus); NextChar (); return *this;
+      case '*': currentToken = MakeToken (lexer::Mult);  NextChar (); return *this;
       case '/':
         {
           if (ParseComment ())
@@ -186,22 +186,22 @@ KEYWORDS
           else
           {
             // Division operator
-            currentToken = MakeToken (Div);
+            currentToken = MakeToken (lexer::Div);
             NextChar ();
           }
         }
         return *this;
-      case '%': currentToken = MakeToken (Mod); 	        NextChar (); return *this;
-      case '~': currentToken = MakeToken (BitwiseInvert); NextChar (); return *this;
-      case '?': currentToken = MakeToken (TernaryIf);     NextChar (); return *this;
-      case ':': currentToken = MakeToken (TernaryElse);   NextChar (); return *this;
+      case '%': currentToken = MakeToken (lexer::Mod);           NextChar (); return *this;
+      case '~': currentToken = MakeToken (lexer::BitwiseInvert); NextChar (); return *this;
+      case '?': currentToken = MakeToken (lexer::TernaryIf);     NextChar (); return *this;
+      case ':': currentToken = MakeToken (lexer::TernaryElse);   NextChar (); return *this;
       case '&':
         {
           uc::Char32 next = PeekChar();
           if (next == '&')
           {
             NextChar ();
-            currentToken = MakeToken (LogicAnd);
+            currentToken = MakeToken (lexer::LogicAnd);
             // Skip second '&'
             NextChar ();
           }
@@ -218,7 +218,7 @@ KEYWORDS
           if (next == '|')
           {
             NextChar ();
-            currentToken = MakeToken (LogicOr);
+            currentToken = MakeToken (lexer::LogicOr);
             // Skip second '|'
             NextChar ();
           }
@@ -247,12 +247,12 @@ KEYWORDS
         {
           /* Replacement character (0xFFFD) indicates an invalid input sequence.
              Error handler was already called for that. */
-          currentToken = MakeToken (Unknown);
+          currentToken = MakeToken (lexer::Unknown);
         }
         else
         {
           /* Otherwise, it's an unrecognized character. */
-          currentToken = MakeToken (Invalid);
+          currentToken = MakeToken (lexer::Invalid);
         }
         NextChar ();
       }
@@ -286,7 +286,7 @@ KEYWORDS
       NextChar ();
     }
 
-    currentToken = MakeToken (Identifier);
+    currentToken = MakeToken (lexer::Identifier);
     auto tokenStr = currentToken.tokenString;
     KeywordMap::iterator kwType = keywords.find (tokenStr);
     if (kwType != keywords.end())
@@ -299,24 +299,24 @@ KEYWORDS
       /* Special handling of vector/matrix types.
          Instead of specifying a new enum for each possible vector or matrix
          type parse these specially by manually extracting the dimension(s). */
-      TokenType typeCandidate = Invalid;
+      TokenType typeCandidate = lexer::Invalid;
       uc::String dimensions;
       if (tokenStr.startsWith ("int"))
       {
-        typeCandidate = kwInt;
+        typeCandidate = lexer::kwInt;
         dimensions = uc::String (tokenStr, 3);
       }
       else if (tokenStr.startsWith ("float"))
       {
-        typeCandidate = kwFloat;
+        typeCandidate = lexer::kwFloat;
         dimensions = uc::String (tokenStr, 5);
       }
       else if (tokenStr.startsWith ("bool"))
       {
-        typeCandidate = kwBool;
+        typeCandidate = lexer::kwBool;
         dimensions = uc::String (tokenStr, 4);
       }
-      if (typeCandidate != Invalid)
+      if (typeCandidate != lexer::Invalid)
       {
         auto dimensionsBuf = dimensions.data ();
         if ((dimensions.length() == 1)
@@ -366,7 +366,7 @@ KEYWORDS
           next = PeekChar();
           hadNumeric = true;
         }
-        currentToken = MakeToken (hadNumeric ? Numeric : Invalid);
+        currentToken = MakeToken (hadNumeric ? lexer::Numeric : lexer::Invalid);
         NextChar ();
         return;
       }
@@ -409,7 +409,7 @@ KEYWORDS
       }
     }
     
-    currentToken = MakeToken (Numeric);
+    currentToken = MakeToken (lexer::Numeric);
     NextChar ();
   }
 
@@ -510,39 +510,39 @@ KEYWORDS
 KEYWORDS
 #undef KEYWORD
 
-    case Invalid:		return "<Invalid>";
-    case EndOfFile:		return "<EOF>";
-    case Unknown:		return "<Unknown>";
-    case Identifier:		return "<Identifier>";
-    case Numeric:		return "<Numeric>";
+    case lexer::Invalid:        return "<Invalid>";
+    case lexer::EndOfFile:      return "<EOF>";
+    case lexer::Unknown:        return "<Unknown>";
+    case lexer::Identifier:     return "<Identifier>";
+    case lexer::Numeric:        return "<Numeric>";
     
-    case Semicolon:		return ";";
-    case ParenL:		return "(";
-    case ParenR:		return ")";
-    case BracketL:		return "[";
-    case BracketR:		return "]";
-    case BraceL:		return "{";
-    case BraceR:		return "}";
-    case Member:		return ".";
-    case Separator:		return ",";
-    case Equals:		return "==";
-    case NotEquals:		return "!=";
-    case Larger:		return ">";
-    case LargerEqual:		return ">=";
-    case Smaller:		return "<";
-    case SmallerEqual:		return "<=";
-    case Assign:		return "=";
-    case Plus:			return "+";
-    case Minus:			return "-";
-    case Mult:			return "*";
-    case Div:			return "/";
-    case Mod:			return "%";
-    case BitwiseInvert:		return "~";
-    case LogicInvert:		return "!";
-    case TernaryIf:		return "?";
-    case TernaryElse:		return ":";
-    case LogicOr:		return "||";
-    case LogicAnd:		return "&&";
+    case lexer::Semicolon:      return ";";
+    case lexer::ParenL:         return "(";
+    case lexer::ParenR:         return ")";
+    case lexer::BracketL:       return "[";
+    case lexer::BracketR:       return "]";
+    case lexer::BraceL:         return "{";
+    case lexer::BraceR:         return "}";
+    case lexer::Member:         return ".";
+    case lexer::Separator:      return ",";
+    case lexer::Equals:         return "==";
+    case lexer::NotEquals:      return "!=";
+    case lexer::Larger:         return ">";
+    case lexer::LargerEqual:    return ">=";
+    case lexer::Smaller:        return "<";
+    case lexer::SmallerEqual:   return "<=";
+    case lexer::Assign:         return "=";
+    case lexer::Plus:           return "+";
+    case lexer::Minus:          return "-";
+    case lexer::Mult:           return "*";
+    case lexer::Div:            return "/";
+    case lexer::Mod:            return "%";
+    case lexer::BitwiseInvert:  return "~";
+    case lexer::LogicInvert:    return "!";
+    case lexer::TernaryIf:      return "?";
+    case lexer::TernaryElse:    return ":";
+    case lexer::LogicOr:        return "||";
+    case lexer::LogicAnd:       return "&&";
     }
     return 0;
   }

@@ -35,9 +35,9 @@ namespace s1
     public:
       ~Exception() throw () {}
       
-      Exception (ErrorCode code) : code (code), expectedToken (Lexer::Invalid) {}
+      Exception (ErrorCode code) : code (code), expectedToken (lexer::Invalid) {}
       Exception (ErrorCode code, const Lexer::Token& encounteredToken,
-		 Lexer::TokenType expectedToken = Lexer::Invalid)
+                 Lexer::TokenType expectedToken = lexer::Invalid)
        : code (code), encounteredToken (encounteredToken),
          expectedToken (expectedToken) {}
       

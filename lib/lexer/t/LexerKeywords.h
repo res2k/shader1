@@ -38,7 +38,7 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
-    s1::Lexer::TokenType expectedToken = s1::Lexer::kwReturn;
+    s1::Lexer::TokenType expectedToken = s1::lexer::kwReturn;
     // All of the above are valid tokens
     while (lexer)
     {
@@ -53,7 +53,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testVectorMatrixKeywords(void)
@@ -70,7 +70,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::kwInt);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwInt);
     TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Vector);
     TS_ASSERT_EQUALS (token.dimension1, 2);
     TS_ASSERT_EQUALS (token.location.line, 0);
@@ -81,7 +81,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::kwInt);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwInt);
     TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Matrix);
     TS_ASSERT_EQUALS (token.dimension1, 3);
     TS_ASSERT_EQUALS (token.dimension2, 2);
@@ -93,7 +93,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 12);
     // Trying to forward never throws
@@ -102,7 +102,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 19);
     // Trying to forward never throws
@@ -111,7 +111,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::kwBool);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwBool);
     TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Vector);
     TS_ASSERT_EQUALS (token.dimension1, 3);
     TS_ASSERT_EQUALS (token.location.line, 0);
@@ -121,7 +121,7 @@ public:
     
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
 };

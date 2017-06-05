@@ -43,7 +43,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("foo"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
@@ -55,7 +55,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("bar"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 4);
@@ -64,7 +64,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testIdentifiers2(void)
@@ -81,7 +81,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("f00"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
@@ -93,7 +93,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b4r"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 4);
@@ -102,7 +102,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testIdentifiers3(void)
@@ -119,7 +119,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString.length(), 1);
     TS_ASSERT_EQUALS (token.tokenString.data()[0], 0x3b1);
     TS_ASSERT_EQUALS (token.location.line, 0);
@@ -129,7 +129,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testIdentifiers4(void)
@@ -146,7 +146,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("_foo"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
@@ -158,7 +158,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("bar_"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 5);
@@ -170,7 +170,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token.tokenString, s1::uc::String ("b_az"));
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 10);
@@ -179,7 +179,7 @@ public:
 
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
-    TS_ASSERT_EQUALS (token.typeOrID, s1::Lexer::EndOfFile);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
   }
   
   void testCanonicalEquivalence(void)
@@ -197,7 +197,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token1 = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token1.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token1.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token1.location.line, 0);
     TS_ASSERT_EQUALS (token1.location.column, 0);
     // Trying to forward never throws
@@ -206,7 +206,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token2 = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token2.typeOrID, s1::Lexer::Identifier);
+    TS_ASSERT_EQUALS (token2.typeOrID, s1::lexer::Identifier);
     TS_ASSERT_EQUALS (token2.location.line, 0);
     TS_ASSERT_EQUALS (token2.location.column, 3);
     // Trying to forward never throws
