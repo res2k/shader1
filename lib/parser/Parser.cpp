@@ -655,12 +655,12 @@ namespace s1
   
   bool Parser::IsType (const Scope& scope, int& peekAfterType)
   {
-    Lexer::TokenType tokenID = currentToken.typeOrID;
+    Lexer::TokenType tokenID = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
     peekAfterType = 0;
     if (currentToken.typeOrID == lexer::kwUnsigned)
     {
       peekAfterType++;
-      tokenID = Peek().typeOrID;
+      tokenID = static_cast<lexer::TokenType> (Peek().typeOrID & ~lexer::TypeFlagMask);
     }
     bool isType = false;
     switch (tokenID)
@@ -698,27 +698,29 @@ namespace s1
   Parser::Type Parser::ParseTypeBase (const Scope& scope)
   {
     bool isUnsigned = false;
-    if (currentToken.typeOrID == lexer::kwUnsigned)
+    auto baseToken = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
+    if (baseToken == lexer::kwUnsigned)
     {
       isUnsigned = true;
       NextToken();
+      baseToken = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
     }
-    switch (currentToken.typeOrID)
+    switch (baseToken)
     {
     case lexer::kwBool:
     case lexer::kwInt:
     case lexer::kwFloat:
       {
-        switch (currentToken.typeClass)
+        switch (static_cast<lexer::TokenType> (currentToken.typeOrID & lexer::TypeFlagMask))
         {
-        case Lexer::Normal:
-          if (currentToken.typeOrID == lexer::kwBool)
+        case 0:
+          if (baseToken == lexer::kwBool)
             return ParseTypeBool ();
           else
             return ParseTypeNumeric (isUnsigned);
-        case Lexer::Vector:
+        case lexer::VecFlag:
           return ParseTypeVector (isUnsigned);
-        case Lexer::Matrix:
+        case lexer::MatFlag:
           return ParseTypeMatrix (isUnsigned);
         }
       }
@@ -791,7 +793,7 @@ namespace s1
   Parser::Type Parser::ParseTypeVector (bool isUnsigned)
   {
     Type baseType;
-    switch (currentToken.typeOrID)
+    switch (static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
       baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
@@ -816,7 +818,7 @@ namespace s1
   Parser::Type Parser::ParseTypeMatrix (bool isUnsigned)
   {
     Type baseType;
-    switch (currentToken.typeOrID)
+    switch (static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
       baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);

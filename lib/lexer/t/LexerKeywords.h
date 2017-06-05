@@ -30,8 +30,9 @@ class LexerKeywordsTestSuite : public CxxTest::TestSuite
 public:
   void testKeywords(void)
   {
-    std::string inStr ("return true false bool unsigned int float sampler1D sampler2D sampler3D samplerCUBE "
-			   "typedef void in out const uniform attribute if else while");
+    std::string inStr ("return true false sampler1D sampler2D sampler3D samplerCUBE "
+                       "typedef void in out const uniform attribute if else while for "
+                       "bool unsigned int float");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestErrorHandler errorHandler;
@@ -70,8 +71,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwInt);
-    TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Vector);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwIntVec);
     TS_ASSERT_EQUALS (token.dimension1, 2);
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 0);
@@ -81,8 +81,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwInt);
-    TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Matrix);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwIntMat);
     TS_ASSERT_EQUALS (token.dimension1, 3);
     TS_ASSERT_EQUALS (token.dimension2, 2);
     TS_ASSERT_EQUALS (token.location.line, 0);
@@ -111,8 +110,7 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Token should be an "identifier"
-    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwBool);
-    TS_ASSERT_EQUALS (token.typeClass, s1::Lexer::Vector);
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::kwBoolVec);
     TS_ASSERT_EQUALS (token.dimension1, 3);
     TS_ASSERT_EQUALS (token.location.line, 0);
     TS_ASSERT_EQUALS (token.location.column, 27);

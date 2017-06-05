@@ -34,11 +34,6 @@ namespace s1
   public:
     typedef lexer::TokenType TokenType;
 
-    enum TypeClassification
-    {
-      Normal, Vector, Matrix
-    };
-
     /// Token location in the source
     struct Location
     {
@@ -55,8 +50,6 @@ namespace s1
       TokenType typeOrID = lexer::Invalid;
       /// Original string for this token
       uc::String tokenString;
-      /// Classification (normal, vector or matrix) for type keywords
-      TypeClassification typeClass = Normal;
       /// For vectors: vector dimension; For matrices: number of columns
       int dimension1 = 0;
       /// For matrices: number of rows

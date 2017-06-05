@@ -324,8 +324,7 @@ KEYWORDS
             && (dimensionsBuf[0] <= '4'))
         {
           // It's a vector!
-          currentToken.typeOrID = typeCandidate;
-          currentToken.typeClass = Vector;
+          currentToken.typeOrID = static_cast<lexer::TokenType> (typeCandidate | lexer::VecFlag);
           currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
         }
         else if ((dimensions.length() == 3)
@@ -336,8 +335,7 @@ KEYWORDS
             && (dimensionsBuf[2] <= '4'))
         {
           // It's a matrix!
-          currentToken.typeOrID = typeCandidate;
-          currentToken.typeClass = Matrix;
+          currentToken.typeOrID =  static_cast<lexer::TokenType> (typeCandidate | lexer::MatFlag);
           currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
           currentToken.dimension2 = dimensionsBuf[2] - '1' + 1;
         }
@@ -552,14 +550,14 @@ KEYWORDS
   
   std::string Lexer::GetTokenStr (const Token& token)
   {
-    const char* baseTokenStr (GetTokenStr (token.typeOrID));
-    if (token.typeClass == Vector)
+    const char* baseTokenStr (GetTokenStr (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask)));
+    if ((token.typeOrID & lexer::VecFlag) != 0)
     {
       std::string s;
       FormatVector (s, baseTokenStr, token.dimension1);
       return s;
     }
-    else if (token.typeClass == Matrix)
+    else if ((token.typeOrID & lexer::MatFlag) != 0)
     {
       std::string s;
       FormatMatrix (s, baseTokenStr, token.dimension1, token.dimension2);

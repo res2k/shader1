@@ -27,6 +27,13 @@ namespace s1
   {
     enum TokenType
     {
+      /// "Vector" type flag
+      VecFlag = 0x10000,
+      /// "Matrix" type flag
+      MatFlag = 0x20000,
+      /// Bit mask for type flags
+      TypeFlagMask = 0x30000,
+
       /// Invalid token (resulting from e.g. a stray character)
       Invalid = -2,
       /// End of input was reached
@@ -111,12 +118,7 @@ namespace s1
       
       kwTrue,
       kwFalse,
-      
-      kwBool,
-      kwUnsigned,
-      kwInt,
-      kwFloat,
-      
+
       kwSampler1D,
       kwSampler2D,
       kwSampler3D,
@@ -134,7 +136,20 @@ namespace s1
       kwElse,
       
       kwWhile,
-      kwFor
+      kwFor,
+
+      kwBool,
+      kwUnsigned,
+      kwInt,
+      kwFloat,
+      kwBoolVec = kwBool | VecFlag,
+      kwUnsignedVec = kwUnsigned | VecFlag,
+      kwIntVec = kwInt | VecFlag,
+      kwFloatVec = kwFloat | VecFlag,
+      kwBoolMat = kwBool | MatFlag,
+      kwUnsignedMat = kwUnsigned | MatFlag,
+      kwIntMat = kwInt | MatFlag,
+      kwFloatMat =kwFloat  | MatFlag
       /** @} */
     };
   } // namespace lexer
