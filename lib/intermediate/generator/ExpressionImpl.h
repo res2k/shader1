@@ -18,20 +18,22 @@
 #ifndef __INTERMEDIATE_EXPRESSIONIMPL_H__
 #define __INTERMEDIATE_EXPRESSIONIMPL_H__
 
-#include "CommandImpl.h"
+#include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::ExpressionImpl : public CommandImpl
+    class IntermediateGeneratorSemanticsHandler::ExpressionImpl : public Expression
     {
+    protected:
+      IntermediateGeneratorSemanticsHandler* handler;
     public:
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler);
       
       virtual NameImplPtr GetExpressionName() { return NameImplPtr (); }
       
-      void AddToSequence (BlockImpl& block);
+      virtual void AddToSequence (BlockImpl& block);
       
       virtual NameImplSet QueryWrittenNames (bool asLvalue);
       

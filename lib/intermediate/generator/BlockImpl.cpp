@@ -75,7 +75,7 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddExpressionCommand (ExpressionPtr expr)
     {
       FlushVariableInitializers();
-      CommandImpl* impl = static_cast<CommandImpl*> (expr.get());
+      auto impl = static_cast<ExpressionImpl*> (expr.get());
       impl->AddToSequence (*this);
     }
 

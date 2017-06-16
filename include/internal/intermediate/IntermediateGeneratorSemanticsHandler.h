@@ -44,7 +44,6 @@ namespace s1
       class Builtin;
       typedef boost::intrusive_ptr<Builtin> BuiltinPtr;
 
-      class CommandImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
       class ArrayElementExpressionImpl;

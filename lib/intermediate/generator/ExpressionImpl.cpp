@@ -26,7 +26,7 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::ExpressionImpl::ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler)
-     : CommandImpl (handler)
+     : handler (handler)
     {
     }
 

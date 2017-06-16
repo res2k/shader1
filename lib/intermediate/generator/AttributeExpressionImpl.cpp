@@ -20,6 +20,7 @@
 #include "AttributeExpressionImpl.h"
 
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
 #include "intermediate/SequenceOp/SequenceOpGetArrayLength.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"

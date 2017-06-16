@@ -18,6 +18,7 @@
 #include "base/common.h"
 
 #include "intermediate/Exception.h"
+#include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceOp/SequenceOpExtractVectorComponent.h"
 #include "intermediate/SequenceOp/SequenceOpMakeArray.h"

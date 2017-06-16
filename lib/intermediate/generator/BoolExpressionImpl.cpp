@@ -20,6 +20,7 @@
 #include "BoolExpressionImpl.h"
 
 #include "BlockImpl.h"
+#include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 #include "TypeImpl.h"
 
