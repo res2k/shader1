@@ -44,12 +44,12 @@ namespace s1
     {
       NameImplSet set;
       {
-	NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
-	set.insert (op1Set.begin(), op1Set.end());
+        NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
+        set.insert (op1Set.begin(), op1Set.end());
       }
       {
-	NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
-	set.insert (op2Set.begin(), op2Set.end());
+        NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
+        set.insert (op2Set.begin(), op2Set.end());
       }
       return set;
     }
@@ -62,9 +62,9 @@ namespace s1
       
       // Operands have to be bools
       if (!type1->IsEqual (*(handler->GetBoolType().get()))
-	|| !type2->IsEqual (*(handler->GetBoolType().get())))
+        || !type2->IsEqual (*(handler->GetBoolType().get())))
       {
-	throw Exception (OperandTypesInvalid);
+        throw Exception (OperandTypesInvalid);
       }
       
       // Logic ops have always a bool result
@@ -72,13 +72,13 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::AddToSequence (BlockImpl& block,
-											   RegisterClassification classify,
-											   bool asLvalue)
+                                                                                           RegisterClassification classify,
+                                                                                           bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-	
+        
       // Set up registers for operand values
       RegisterPtr orgReg1, reg1;
       orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
@@ -92,11 +92,11 @@ namespace s1
       switch (op)
       {
       case And:
-	seqOp = SequenceOpPtr (new SequenceOpLogic (destination, SequenceVisitor::And, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpLogic (destination, SequenceVisitor::And, reg1, reg2));
+        break;
       case Or:
-	seqOp = SequenceOpPtr (new SequenceOpLogic (destination, SequenceVisitor::Or, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpLogic (destination, SequenceVisitor::Or, reg1, reg2));
+        break;
       }
       assert (seqOp);
       seq.AddOp (seqOp);

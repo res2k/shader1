@@ -43,8 +43,8 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::AddToSequence (BlockImpl& block,
-											  RegisterClassification classify,
-											  bool asLvalue)
+                                                                                          RegisterClassification classify,
+                                                                                          bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
       

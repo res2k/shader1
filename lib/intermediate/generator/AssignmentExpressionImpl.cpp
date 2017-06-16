@@ -55,7 +55,7 @@ namespace s1
 
       if (!valueType->CompatibleLossy (*(targetType.get())))
       {
-	throw Exception (AssignmentTypesIncompatible);
+        throw Exception (AssignmentTypesIncompatible);
       }
       
       return targetType;
@@ -67,8 +67,8 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AddToSequence (BlockImpl& block,
-												RegisterClassification classify,
-												bool asLvalue)
+                                                                                                RegisterClassification classify,
+                                                                                                bool asLvalue)
     {
       if (asLvalue) return RegisterPtr ();
       
@@ -83,39 +83,39 @@ namespace s1
       NameImplPtr valueName (value->GetExpressionName());
       if (!valueType->IsEqual (*(targetType.get())))
       {
-	// Set up register for left-side value
-	RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
-	// Generate cast to targetReg
-	handler->GenerateCast (seq, targetReg, targetType,
-			       exprDestinationReg, valueType);
-			       
-	value->AddToSequencePostAction (block, exprDestinationReg, false);
-	target->AddToSequencePostAction (block, targetReg, true);
-			       
-	return targetReg;
+        // Set up register for left-side value
+        RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
+        // Generate cast to targetReg
+        handler->GenerateCast (seq, targetReg, targetType,
+                               exprDestinationReg, valueType);
+                               
+        value->AddToSequencePostAction (block, exprDestinationReg, false);
+        target->AddToSequencePostAction (block, targetReg, true);
+                               
+        return targetReg;
       }
       else
       {
-	if (targetName && !valueName)
-	{
-	  // See if we can 'force' the target register for the name's register
-	  if (block.OverrideNameRegister (targetName, exprDestinationReg))
-	  {
-	    value->AddToSequencePostAction (block, exprDestinationReg, false);
-	    return exprDestinationReg;
-	  }
-	}
-	// Set up register for left-side value
-	RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
-	// Generate another assignment from exprDestinationReg to targetReg
-	SequenceOpPtr seqOp;
-	seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));
-	seq.AddOp (seqOp);
-	
-	value->AddToSequencePostAction (block, exprDestinationReg, false);
-	target->AddToSequencePostAction (block, targetReg, true);
-	
-	return targetReg;
+        if (targetName && !valueName)
+        {
+          // See if we can 'force' the target register for the name's register
+          if (block.OverrideNameRegister (targetName, exprDestinationReg))
+          {
+            value->AddToSequencePostAction (block, exprDestinationReg, false);
+            return exprDestinationReg;
+          }
+        }
+        // Set up register for left-side value
+        RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
+        // Generate another assignment from exprDestinationReg to targetReg
+        SequenceOpPtr seqOp;
+        seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));
+        seq.AddOp (seqOp);
+        
+        value->AddToSequencePostAction (block, exprDestinationReg, false);
+        target->AddToSequencePostAction (block, targetReg, true);
+        
+        return targetReg;
       }      
     }
   } // namespace intermediate

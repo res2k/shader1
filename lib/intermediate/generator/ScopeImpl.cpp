@@ -257,8 +257,8 @@ namespace s1
           size_t formal = 0, actual = 0;
           for (; actual < params.size(); formal++)
           {
-        // Only consider user-specified parameters for matching
-        if ((*vecIt)->params[formal].paramType != ptUser) continue;
+            // Only consider user-specified parameters for matching
+            if ((*vecIt)->params[formal].paramType != ptUser) continue;
 
             boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[actual]));
             TypeImplPtr paramType (exprImpl->GetValueType ());
@@ -274,8 +274,8 @@ namespace s1
           if (abort) continue;
           for (; formal < (*vecIt)->params.size(); formal++)
           {
-        // Only consider user-specified parameters for matching
-        if ((*vecIt)->params[formal].paramType != ptUser) continue;
+            // Only consider user-specified parameters for matching
+            if ((*vecIt)->params[formal].paramType != ptUser) continue;
 
             // Leftover parameter + no default value? Skip
             if (!(*vecIt)->params[formal].defaultValue)
@@ -302,8 +302,8 @@ namespace s1
             size_t formal = 0, actual = 0;
             for (; actual < params.size(); formal++)
             {
-          // Only consider user-specified parameters for matching
-          if ((*vecIt)->params[formal].paramType != ptUser) continue;
+              // Only consider user-specified parameters for matching
+              if ((*vecIt)->params[formal].paramType != ptUser) continue;
 
               boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[actual]));
               TypeImplPtr paramType (exprImpl->GetValueType ());
@@ -326,8 +326,8 @@ namespace s1
             if (abort) continue;
             for (; formal < (*vecIt)->params.size(); formal++)
             {
-          // Only consider user-specified parameters for matching
-          if ((*vecIt)->params[formal].paramType != ptUser) continue;
+              // Only consider user-specified parameters for matching
+              if ((*vecIt)->params[formal].paramType != ptUser) continue;
 
               // Leftover parameter + no default value? Skip
               if (!(*vecIt)->params[formal].defaultValue)

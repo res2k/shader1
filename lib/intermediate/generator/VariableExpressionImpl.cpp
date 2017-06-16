@@ -53,8 +53,8 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,
-											      RegisterClassification classify,
-											      bool asLvalue)
+                                                                                              RegisterClassification classify,
+                                                                                              bool asLvalue)
     {
       return block.GetRegisterForName (this->name, asLvalue);
     }

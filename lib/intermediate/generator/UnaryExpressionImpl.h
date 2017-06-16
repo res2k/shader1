@@ -30,14 +30,14 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> operand;
     public:
       UnaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			   UnaryOp op,
-			   const boost::shared_ptr<ExpressionImpl>& operand);
+                           UnaryOp op,
+                           const boost::shared_ptr<ExpressionImpl>& operand);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

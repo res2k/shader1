@@ -44,12 +44,12 @@ namespace s1
     {
       NameImplSet set;
       {
-	NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
-	set.insert (op1Set.begin(), op1Set.end());
+        NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
+        set.insert (op1Set.begin(), op1Set.end());
       }
       {
-	NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
-	set.insert (op2Set.begin(), op2Set.end());
+        NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
+        set.insert (op2Set.begin(), op2Set.end());
       }
       return set;
     }
@@ -65,28 +65,28 @@ namespace s1
       
       if (type1->typeClass == TypeImpl::Vector)
       {
-	baseType1 = boost::static_pointer_cast<TypeImpl> (type1->avmBase);
-	vectorDim1 = type1->vectorDim;
+        baseType1 = boost::static_pointer_cast<TypeImpl> (type1->avmBase);
+        vectorDim1 = type1->vectorDim;
       }
       else
-	baseType1 = type1;
+        baseType1 = type1;
       if (type2->typeClass == TypeImpl::Vector)
       {
-	baseType2 = boost::static_pointer_cast<TypeImpl> (type2->avmBase);
-	vectorDim2 = type2->vectorDim;
+        baseType2 = boost::static_pointer_cast<TypeImpl> (type2->avmBase);
+        vectorDim2 = type2->vectorDim;
       }
       else
-	baseType2 = type2;
+        baseType2 = type2;
       
       if (!baseType1->CompatibleLossy (*(handler->GetFloatType().get()))
-	|| !baseType2->CompatibleLossy (*(handler->GetFloatType().get())))
+        || !baseType2->CompatibleLossy (*(handler->GetFloatType().get())))
       {
-	throw Exception (OperandTypesInvalid);
+        throw Exception (OperandTypesInvalid);
       }
       
       if ((vectorDim1 != 0) && (vectorDim2 != 0) && (vectorDim1 != vectorDim2))
       {
-	throw Exception (OperandTypesIncompatible);
+        throw Exception (OperandTypesIncompatible);
       }
       
       // Determine type in which to perform computation
@@ -94,33 +94,33 @@ namespace s1
       
       if ((vectorDim1 != 0) && (vectorDim2 == 0))
       {
-	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-	  type1,
-	  boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
+        valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+          type1,
+          boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
       }
       else if ((vectorDim2 != 0) && (vectorDim1 == 0))
       {
-	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-	  boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
-	  type2);
+        valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+          boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
+          type2);
       }
       else // (((vectorDim1 != 0) && (vectorDim2 != 0)) || ((vectorDim1 == 0) && (vectorDim2 == 0)))
       {
-	valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-	  operand1->GetValueType(), operand2->GetValueType());
+        valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+          operand1->GetValueType(), operand2->GetValueType());
       }
-	
+        
       if (!valueType)
       {
-	throw Exception (OperandTypesIncompatible);
+        throw Exception (OperandTypesIncompatible);
       }
       
       return valueType;
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::AddToSequence (BlockImpl& block,
-												RegisterClassification classify,
-												bool asLvalue)
+                                                                                                RegisterClassification classify,
+                                                                                                bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
       
@@ -129,27 +129,27 @@ namespace s1
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
       
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
-	
+        
       // Set up registers for operand values
       RegisterPtr orgReg1, reg1;
       orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(type1.get())))
       {
-	// Insert cast op
-	RegisterPtr newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
-	handler->GenerateCast (seq, newReg1, valueType,
-			       reg1, type1);
-	reg1 = newReg1;
+        // Insert cast op
+        RegisterPtr newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
+        handler->GenerateCast (seq, newReg1, valueType,
+                               reg1, type1);
+        reg1 = newReg1;
       }
       RegisterPtr orgReg2, reg2;
       orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(type2.get())))
       {
-	// Insert cast op
-	RegisterPtr newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
-	handler->GenerateCast (seq, newReg2, valueType,
-			       reg2, type2);
-	reg2 = newReg2;
+        // Insert cast op
+        RegisterPtr newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
+        handler->GenerateCast (seq, newReg2, valueType,
+                               reg2, type2);
+        reg2 = newReg2;
       }
       
       RegisterPtr destination (handler->AllocateRegister (seq, GetValueType(), classify));
@@ -159,20 +159,20 @@ namespace s1
       switch (op)
       {
       case Add:
-	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Add, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Add, reg1, reg2));
+        break;
       case Sub:
-	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Sub, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Sub, reg1, reg2));
+        break;
       case Mul:
-	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Mul, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Mul, reg1, reg2));
+        break;
       case Div:
-	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Div, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Div, reg1, reg2));
+        break;
       case Mod:
-	seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Mod, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpArith (destination, SequenceVisitor::Mod, reg1, reg2));
+        break;
       }
       assert (seqOp);
       seq.AddOp (seqOp);

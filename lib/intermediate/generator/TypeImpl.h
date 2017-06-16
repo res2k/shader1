@@ -31,7 +31,7 @@ namespace s1
       TypeImpl (TypePtr aBase) : CommonType (aBase) {}
       TypeImpl (TypePtr vBase, unsigned int d) : CommonType (vBase, d) {}
       TypeImpl (TypePtr mBase, unsigned int c, unsigned int r)
-	: CommonType (mBase, c, r) {}
+        : CommonType (mBase, c, r) {}
     };
   } // namespace intermediate
 } // namespace s1

@@ -30,15 +30,15 @@ namespace s1
       IntermediateGeneratorSemanticsHandler::Attribute attr;
     public:
       AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			       const ExpressionPtr& baseExpr,
-			       const IntermediateGeneratorSemanticsHandler::Attribute& attr);
+                               const ExpressionPtr& baseExpr,
+                               const IntermediateGeneratorSemanticsHandler::Attribute& attr);
       
       TypeImplPtr GetValueType ();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
       void AddToSequencePostAction (BlockImpl& block,
-				    const RegisterPtr& target,
-				    bool wasLvalue);
+                                    const RegisterPtr& target,
+                                    bool wasLvalue);
     };
   } // namespace intermediate
 } // namespace s1

@@ -30,11 +30,11 @@ namespace s1
       SemanticsHandler::BaseType numberType;
     public:
       NumericExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			     const uc::String& valueStr);
+                             const uc::String& valueStr);
       
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

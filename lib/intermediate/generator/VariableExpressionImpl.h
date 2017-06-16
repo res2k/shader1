@@ -29,15 +29,15 @@ namespace s1
       NameImplPtr name;
     public:
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			      const NameImplPtr& name);
-			      
+                              const NameImplPtr& name);
+                              
       NameImplPtr GetExpressionName() { return name; }
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

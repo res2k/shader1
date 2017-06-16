@@ -38,7 +38,7 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler,
       const uc::String& valueStr)
        : ExpressionImpl (handler), valueStr (valueStr),
-	 numberType (IntermediateGeneratorSemanticsHandler::DetectNumericType (valueStr))
+         numberType (IntermediateGeneratorSemanticsHandler::DetectNumericType (valueStr))
     {
     }
       
@@ -46,8 +46,8 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::GetValueType()
     {
       boost::shared_ptr<TypeImpl> valueType =
-	boost::static_pointer_cast<TypeImpl> (handler->CreateType (numberType));
-	
+        boost::static_pointer_cast<TypeImpl> (handler->CreateType (numberType));
+        
       return valueType;
     }
 
@@ -156,8 +156,8 @@ namespace s1
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
-											     RegisterClassification classify,
-											     bool asLvalue)
+                                                                                             RegisterClassification classify,
+                                                                                             bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
       

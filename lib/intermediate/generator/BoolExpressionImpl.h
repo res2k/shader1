@@ -29,11 +29,11 @@ namespace s1
       bool value;
     public:
       BoolExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			  bool value);
+                          bool value);
       
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

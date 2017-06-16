@@ -30,8 +30,8 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> value;
     public:
       AssignmentExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-				const boost::shared_ptr<ExpressionImpl>& target,
-				const boost::shared_ptr<ExpressionImpl>& value);
+                                const boost::shared_ptr<ExpressionImpl>& target,
+                                const boost::shared_ptr<ExpressionImpl>& value);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
@@ -39,7 +39,7 @@ namespace s1
       
       void AddToSequence (BlockImpl& block);
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

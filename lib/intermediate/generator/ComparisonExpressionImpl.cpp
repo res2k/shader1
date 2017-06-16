@@ -44,12 +44,12 @@ namespace s1
     {
       NameImplSet set;
       {
-	NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
-	set.insert (op1Set.begin(), op1Set.end());
+        NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
+        set.insert (op1Set.begin(), op1Set.end());
       }
       {
-	NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
-	set.insert (op2Set.begin(), op2Set.end());
+        NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
+        set.insert (op2Set.begin(), op2Set.end());
       }
       return set;
     }
@@ -62,8 +62,8 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::AddToSequence (BlockImpl& block,
-												RegisterClassification classify,
-												bool asLvalue)
+                                                                                                RegisterClassification classify,
+                                                                                                bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
       
@@ -72,27 +72,27 @@ namespace s1
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
       
       boost::shared_ptr<TypeImpl> comparisonType = handler->GetHigherPrecisionType (type1, type2);
-	
+        
       // Set up registers for operand values
       RegisterPtr orgReg1, reg1;
       orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
       if (!comparisonType->IsEqual (*(type1.get())))
       {
-	// Insert cast op
-	RegisterPtr newReg1 (handler->AllocateRegister (seq, comparisonType, Intermediate));
-	handler->GenerateCast (seq, newReg1, comparisonType,
-			       reg1, type1);
-	reg1 = newReg1;
+        // Insert cast op
+        RegisterPtr newReg1 (handler->AllocateRegister (seq, comparisonType, Intermediate));
+        handler->GenerateCast (seq, newReg1, comparisonType,
+                               reg1, type1);
+        reg1 = newReg1;
       }
       RegisterPtr orgReg2, reg2;
       orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
       if (!comparisonType->IsEqual (*(type2.get())))
       {
-	// Insert cast op
-	RegisterPtr newReg2 (handler->AllocateRegister (seq, comparisonType, Intermediate));
-	handler->GenerateCast (seq, newReg2, comparisonType,
-			       reg2, type2);
-	reg2 = newReg2;
+        // Insert cast op
+        RegisterPtr newReg2 (handler->AllocateRegister (seq, comparisonType, Intermediate));
+        handler->GenerateCast (seq, newReg2, comparisonType,
+                               reg2, type2);
+        reg2 = newReg2;
       }
       
       RegisterPtr destination (handler->AllocateRegister (seq, GetValueType(), classify));
@@ -102,23 +102,23 @@ namespace s1
       switch (op)
       {
       case Equals:
-	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::Eq, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::Eq, reg1, reg2));
+        break;
       case NotEquals:
-	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::NE, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::NE, reg1, reg2));
+        break;
       case Smaller:
-	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::LT, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::LT, reg1, reg2));
+        break;
       case SmallerEqual:
-	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::LE, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::LE, reg1, reg2));
+        break;
       case Larger:
-	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::GT, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::GT, reg1, reg2));
+        break;
       case LargerEqual:
-	seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::GE, reg1, reg2));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpCompare (destination, SequenceVisitor::GE, reg1, reg2));
+        break;
       }
       assert (seqOp);
       seq.AddOp (seqOp);

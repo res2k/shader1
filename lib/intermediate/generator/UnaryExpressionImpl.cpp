@@ -31,9 +31,9 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::UnaryExpressionImpl (
-			   IntermediateGeneratorSemanticsHandler* handler,
-			   UnaryOp op,
-			   const boost::shared_ptr<ExpressionImpl>& operand)
+                           IntermediateGeneratorSemanticsHandler* handler,
+                           UnaryOp op,
+                           const boost::shared_ptr<ExpressionImpl>& operand)
        : ExpressionImpl (handler), op (op), operand (operand)
     {
     }
@@ -53,35 +53,35 @@ namespace s1
       switch (op)
       {
       case Neg:
-	if (operandType->IsEqual (*(handler->GetFloatType()))
-	    || operandType->IsEqual (*(handler->GetIntType())))
-	  valueType = operandType;
-	else if (operandType->IsEqual (*(handler->GetUintType())))
-	  valueType = handler->GetIntType();
-	else
-	  throw Exception (OperandTypesInvalid);
-	break;
+        if (operandType->IsEqual (*(handler->GetFloatType()))
+            || operandType->IsEqual (*(handler->GetIntType())))
+          valueType = operandType;
+        else if (operandType->IsEqual (*(handler->GetUintType())))
+          valueType = handler->GetIntType();
+        else
+          throw Exception (OperandTypesInvalid);
+        break;
       case Inv:
-	if (operandType->IsEqual (*(handler->GetUintType()))
-	    || operandType->IsEqual (*(handler->GetIntType())))
-	  valueType = operandType;
-	else
-	  throw Exception (OperandTypesInvalid);
-	break;
+        if (operandType->IsEqual (*(handler->GetUintType()))
+            || operandType->IsEqual (*(handler->GetIntType())))
+          valueType = operandType;
+        else
+          throw Exception (OperandTypesInvalid);
+        break;
       case Not:
-	if (operandType->IsEqual (*(handler->GetBoolType())))
-	  valueType = operandType;
-	else
-	  throw Exception (OperandTypesInvalid);
-	break;
+        if (operandType->IsEqual (*(handler->GetBoolType())))
+          valueType = operandType;
+        else
+          throw Exception (OperandTypesInvalid);
+        break;
       }
       
       return valueType;
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::AddToSequence (BlockImpl& block,
-											   RegisterClassification classify,
-											   bool asLvalue)
+                                                                                           RegisterClassification classify,
+                                                                                           bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
       
@@ -95,11 +95,11 @@ namespace s1
       orgReg = reg = operand->AddToSequence (block, Intermediate);
       if (!valueType->IsEqual (*(operandType.get())))
       {
-	// Insert cast op
-	RegisterPtr newReg (handler->AllocateRegister (seq, valueType, Intermediate));
-	handler->GenerateCast (seq, newReg, valueType,
-			       reg, operandType);
-	reg = newReg;
+        // Insert cast op
+        RegisterPtr newReg (handler->AllocateRegister (seq, valueType, Intermediate));
+        handler->GenerateCast (seq, newReg, valueType,
+                               reg, operandType);
+        reg = newReg;
       }
       
       RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType(), classify));
@@ -109,14 +109,14 @@ namespace s1
       switch (op)
       {
       case Neg:
-	seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Neg, reg));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Neg, reg));
+        break;
       case Inv:
-	seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Inv, reg));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Inv, reg));
+        break;
       case Not:
-	seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Not, reg));
-	break;
+        seqOp = SequenceOpPtr (new SequenceOpUnaryOp (destination, SequenceVisitor::Not, reg));
+        break;
       }
       assert (seqOp);
       seq.AddOp (seqOp);

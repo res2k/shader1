@@ -31,15 +31,15 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> operand2;
     public:
       LogicExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-			   LogicOp op,
-			   const boost::shared_ptr<ExpressionImpl>& operand1,
-			   const boost::shared_ptr<ExpressionImpl>& operand2);
+                           LogicOp op,
+                           const boost::shared_ptr<ExpressionImpl>& operand1,
+                           const boost::shared_ptr<ExpressionImpl>& operand2);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

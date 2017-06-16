@@ -14,15 +14,15 @@ namespace s1
       
       typedef std::vector<std::pair<boost::shared_ptr<ExpressionImpl>, RegisterPtr> > PostActionList;
       void ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterPtr>& reg,
-				      PostActionList& postActions);
+                                      PostActionList& postActions);
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-				     const TypeImplPtr& type,
-				     const ExpressionVector& params);
+                                     const TypeImplPtr& type,
+                                     const ExpressionVector& params);
       
       TypeImplPtr GetValueType () { return type; }
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
-				 bool asLvalue = false);
+                                 bool asLvalue = false);
     };
   } // namespace intermediate
 } // namespace s1

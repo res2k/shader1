@@ -33,8 +33,8 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::ArrayElementExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-												   const ExpressionPtr& arrayExpr,
-												   const ExpressionPtr& indexExpr)
+                                                                                                   const ExpressionPtr& arrayExpr,
+                                                                                                   const ExpressionPtr& indexExpr)
      : ExpressionImpl (handler), arrayExpr (arrayExpr), indexExpr (indexExpr)
     {}
     
@@ -44,13 +44,13 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
       TypeImplPtr exprType (exprImpl->GetValueType());
       if (exprType->typeClass != TypeImpl::Array)
-	throw Exception (NotAnArray);
+        throw Exception (NotAnArray);
       return boost::static_pointer_cast<TypeImpl> (exprType->avmBase);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,
-												  RegisterClassification classify,
-												  bool asLvalue)
+                                                                                                  RegisterClassification classify,
+                                                                                                  bool asLvalue)
     {
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
 
@@ -59,41 +59,41 @@ namespace s1
       
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
-	throw Exception (IndexNotAnInteger);
+        throw Exception (IndexNotAnInteger);
       
       RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), classify));
       
       if (asLvalue)
       {
-	return targetReg;
+        return targetReg;
       }
       else
       {
-	RegisterPtr arrayReg (arrayExprImpl->AddToSequence (block, Intermediate));
-	
-	RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
-	RegisterPtr orgIndexReg (indexReg);
-	if (!indexType->IsEqual (*(handler->GetUintType())))
-	{
-	  RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
-	  handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
-	  indexReg = newIndexReg;
-	}
-	
-      	SequenceOpPtr seqOp (new SequenceOpExtractArrayElement (targetReg, arrayReg, indexReg));
-	seq.AddOp (seqOp);
-	
-	arrayExprImpl->AddToSequencePostAction (block, arrayReg, false);
-	indexExprImpl->AddToSequencePostAction (block, orgIndexReg, false);
-	
-	return targetReg;
+        RegisterPtr arrayReg (arrayExprImpl->AddToSequence (block, Intermediate));
+        
+        RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
+        RegisterPtr orgIndexReg (indexReg);
+        if (!indexType->IsEqual (*(handler->GetUintType())))
+        {
+          RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
+          handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+          indexReg = newIndexReg;
+        }
+        
+        SequenceOpPtr seqOp (new SequenceOpExtractArrayElement (targetReg, arrayReg, indexReg));
+        seq.AddOp (seqOp);
+        
+        arrayExprImpl->AddToSequencePostAction (block, arrayReg, false);
+        indexExprImpl->AddToSequencePostAction (block, orgIndexReg, false);
+        
+        return targetReg;
       }
       
     }
 
     void IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequencePostAction (BlockImpl& block,
-												     const RegisterPtr& target,
-												     bool wasLvalue)
+                                                                                                     const RegisterPtr& target,
+                                                                                                     bool wasLvalue)
     {
       if (!wasLvalue) return;
       
@@ -106,15 +106,15 @@ namespace s1
       RegisterPtr arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));
       RegisterPtr arrayRegDst (arrayExprImpl->AddToSequence (block, Intermediate, true));
       if (!arrayRegDst)
-	throw Exception (ArrayNotAnLValue);
+        throw Exception (ArrayNotAnLValue);
       
       RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
       RegisterPtr orgIndexReg (indexReg);
       if (!indexType->IsEqual (*(handler->GetUintType())))
       {
-	RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
-	handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
-	indexReg = newIndexReg;
+        RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
+        handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+        indexReg = newIndexReg;
       }
       
       SequenceOpPtr seqOp (new SequenceOpChangeArrayElement (arrayRegDst, arrayRegSrc, indexReg, target));
