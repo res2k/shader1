@@ -110,11 +110,16 @@ namespace s1
         ExpressionPtr retValVarExpr (handler->CreateVariableExpression (varReturnValue));
         ExpressionPtr retValAssign (handler->CreateAssignExpression (retValVarExpr, returnValue));
         AddExpressionCommand (retValAssign);
-        RegisterPtr retValReg (GetRegisterForName (varReturnValue, false));
-        retValRegs.push_back (retValReg);
+        auto retValReg = GetRegisterForName (varReturnValue, false);
+        if (!retValReg)
+        {
+          ExpressionError (returnValue, retValReg.error ());
+          return;
+        }
+        retValRegs.push_back (retValReg.value());
         
         // @@@ This is a hack so the return val out param is later correctly "seen" by the splitter.
-        sequenceBuilder->SetExport (varReturnValueName, retValReg);
+        sequenceBuilder->SetExport (varReturnValueName, retValReg.value());
       }
       else
       {
@@ -166,8 +171,13 @@ namespace s1
           if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
-            RegisterPtr reg (GetRegisterForName (import->first, false));
-            readRegistersIf.push_back (reg);
+            auto reg = GetRegisterForName (import->first, false);
+            if (!reg)
+            {
+              ExpressionError (branchCondition, reg.error ());
+              continue;
+            }
+            readRegistersIf.push_back (reg.value());
           }
         }
         for (NameRegMap::const_iterator import = elseBlockImpl->nameRegisters.begin();
@@ -178,8 +188,13 @@ namespace s1
           if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
-            RegisterPtr reg (GetRegisterForName (import->first, false));
-            readRegistersElse.push_back (reg);
+            auto reg = GetRegisterForName (import->first, false);
+            if (!reg)
+            {
+              ExpressionError (branchCondition, reg.error ());
+              continue;
+            }
+            readRegistersElse.push_back (reg.value());
           }
         }
       }
@@ -226,9 +241,14 @@ namespace s1
              exportedName != ifBlockImpl->exportedNames.end();
              exportedName++)
         {
-          RegisterPtr reg (GetRegisterForName (*exportedName, true));
-          writtenRegistersIf.push_back (reg);
-          seenExportedNames.insert (std::make_pair (*exportedName, reg));
+          auto reg = GetRegisterForName (*exportedName, true);
+          if (!reg)
+          {
+            ExpressionError (branchCondition, reg.error ());
+            continue;
+          }
+          writtenRegistersIf.push_back (reg.value());
+          seenExportedNames.insert (std::make_pair (*exportedName, reg.value()));
         }
       }
       {
@@ -246,7 +266,13 @@ namespace s1
           }
           else
           {
-            reg = GetRegisterForName (*exportedName, true);
+            auto newReg = GetRegisterForName (*exportedName, true);
+            if (!newReg)
+            {
+              ExpressionError (branchCondition, newReg.error ());
+              continue;
+            }
+            reg = newReg.value ();
           }
           writtenRegistersElse.push_back (reg);
         }
@@ -320,9 +346,19 @@ namespace s1
            loopVar != loopVars.end();
            ++loopVar)
       {
-        RegisterPtr regIn (GetRegisterForName (*loopVar, false));
-        RegisterPtr regOut (GetRegisterForName (*loopVar, true));
-        loopedRegs.emplace_back (regIn, regOut);
+        auto regIn = GetRegisterForName (*loopVar, false);
+        if (!regIn)
+        {
+          ExpressionError (loopCond, regIn.error ());
+          continue;
+        }
+        auto regOut = GetRegisterForName (*loopVar, true);
+        if (!regOut)
+        {
+          ExpressionError (loopCond, regOut.error ());
+          continue;
+        }
+        loopedRegs.emplace_back (regIn.value(), regOut.value());
       }
       
       /* Add condition expression again at the bottom of the block
@@ -333,10 +369,15 @@ namespace s1
         ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
         newBlock->AddExpressionCommand (condAssign);
       }
-      RegisterPtr condReg (GetRegisterForName (varCondition, false));
+      auto condReg = GetRegisterForName (varCondition, false);
+      if (!condReg)
+      {
+        ExpressionError (loopCond, condReg.error ());
+        return;
+      }
       
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
-      SequenceOpPtr seqOp (new SequenceOpWhile (condReg, loopedRegs, seqOpBody));
+      SequenceOpPtr seqOp (new SequenceOpWhile (condReg.value(), loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
 
@@ -414,9 +455,19 @@ namespace s1
            loopVar != loopVars.end();
            ++loopVar)
       {
-        RegisterPtr regIn (GetRegisterForName (*loopVar, false));
-        RegisterPtr regOut (GetRegisterForName (*loopVar, true));
-        loopedRegs.emplace_back (regIn, regOut);
+        auto regIn = GetRegisterForName (*loopVar, false);
+        if (!regIn)
+        {
+          ExpressionError (loopCond, regIn.error ());
+          continue;
+        }
+        auto regOut = GetRegisterForName (*loopVar, true);
+        if (!regOut)
+        {
+          ExpressionError (loopCond, regOut.error ());
+          continue;
+        }
+        loopedRegs.emplace_back (regIn.value(), regOut.value());
       }
       
       boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::static_pointer_cast<BlockImpl> (loopBlock))));
@@ -434,10 +485,15 @@ namespace s1
           condAssign = handler->CreateConstBoolExpression (true);
         newBlock->AddExpressionCommand (condAssign);
       }
-      RegisterPtr condReg (GetRegisterForName (varCondition, false));
-      
+      auto condReg = GetRegisterForName (varCondition, false);
+      if (!condReg)
+      {
+        ExpressionError (loopCond, condReg.error ());
+        return;
+      }
+
       SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
-      SequenceOpPtr seqOp (new SequenceOpWhile (condReg, loopedRegs, seqOpBody));
+      SequenceOpPtr seqOp (new SequenceOpWhile (condReg.value(), loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
     
@@ -482,6 +538,11 @@ namespace s1
           AddExpressionCommand (expr);
         }
       }
+    }
+
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const ExpressionPtr& expr, ErrorCode code)
+    {
+      handler->ExpressionError (static_cast<ExpressionImpl*> (expr.get())->GetExpressionContext(), code);
     }
     
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
@@ -553,7 +614,8 @@ namespace s1
 
     DECLARE_STATIC_FORMATTER(FormatImportedReg, "{0}_B{1}");
 
-    RegisterPtr IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
+    IntermediateGeneratorSemanticsHandler::BlockImpl::result_RegisterPtr
+    IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
                                                                                       bool writeable)
     {
       bool isFromOutside = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
@@ -565,7 +627,7 @@ namespace s1
       
       if (doExport && name->varConstant)
       {
-        throw Exception (AssignmentTargetIsNotAnLValue);
+        return OUTCOME_V2_NAMESPACE::failure (AssignmentTargetIsNotAnLValue);
       }
       
       NameReg& nameReg = nameRegisters[name];
@@ -604,7 +666,7 @@ namespace s1
         if (writeable)
         {
           if (name->varConstant)
-            throw Exception (AssignmentTargetIsNotAnLValue);
+            return OUTCOME_V2_NAMESPACE::failure (AssignmentTargetIsNotAnLValue);
           reg = handler->AllocateRegister (*sequenceBuilder, reg);
           sequenceBuilder->SetIdentifierRegister (name->identifier, reg);
         }
@@ -616,18 +678,21 @@ namespace s1
       }
       return reg;
     }
-    
-    bool IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (const NameImplPtr& name,
-                                                                                 const RegisterPtr& newRegPtr)
+
+    IntermediateGeneratorSemanticsHandler::BlockImpl::result_void
+    IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (const NameImplPtr& name,
+                                                                            const RegisterPtr& newRegPtr)
     {
-      RegisterPtr origRegPtr (GetRegisterForName (name, true));
-      newRegPtr->StealName (*origRegPtr);
+      auto origRegPtr = GetRegisterForName (name, true);
+      if (!origRegPtr) return OUTCOME_V2_NAMESPACE::failure (origRegPtr.error ());
+
+      newRegPtr->StealName (*(origRegPtr.value()));
       NameReg& nameReg = nameRegisters[name];
       nameReg.reg = newRegPtr;
       sequenceBuilder->SetIdentifierRegister (name->identifier, newRegPtr);
       if (nameReg.isImported)
         sequenceBuilder->SetExport (name->identifier, newRegPtr);
-      return true;
+      return OUTCOME_V2_NAMESPACE::success ();
     }
   } // namespace intermediate
 } // namespace s1

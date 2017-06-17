@@ -57,7 +57,13 @@ namespace s1
                                                                                               RegisterClassification classify,
                                                                                               bool asLvalue)
     {
-      return block.GetRegisterForName (this->name, asLvalue);
+      auto blockReg = block.GetRegisterForName (this->name, asLvalue);
+      if (!blockReg)
+      {
+        ExpressionError (blockReg.error ());
+        return RegisterPtr ();
+      }
+      return blockReg.value ();
     }
   } // namespace intermediate
 } // namespace s1

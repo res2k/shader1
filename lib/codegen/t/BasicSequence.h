@@ -139,8 +139,9 @@ public:
     
     TS_ASSERT_EQUALS(generateResult->Size(), 1);
     if (generateResult->Size() < 1) return;
-    std::string resultRegName (seqGen.GetOutputRegisterName (
-      testBlockImpl->GetRegisterForName (testVarB, false)));
+    auto testBlockReg = testBlockImpl->GetRegisterForName (testVarB, false);
+    TS_ASSERT (testBlockReg);
+    std::string resultRegName (seqGen.GetOutputRegisterName (testBlockReg.value()));
     StringStringMap substMap;
     substMap["R0"] = resultRegName;
     TS_ASSERT_EQUALS(generateResult->Get (0),
@@ -188,13 +189,16 @@ public:
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
-    
-    std::string varARegName (seqGen.GetOutputRegisterName (
-      testBlockImpl->GetRegisterForName (testVarA, false)));
-    std::string varBRegName (seqGen.GetOutputRegisterName (
-      testBlockImpl->GetRegisterForName (testVarB, false)));
-    std::string varCRegName (seqGen.GetOutputRegisterName (
-      testBlockImpl->GetRegisterForName (testVarC, false)));
+
+    auto testBlockRegA = testBlockImpl->GetRegisterForName (testVarA, false);
+    TS_ASSERT (testBlockRegA);
+    auto testBlockRegB = testBlockImpl->GetRegisterForName (testVarB, false);
+    TS_ASSERT (testBlockRegB);
+    auto testBlockRegC = testBlockImpl->GetRegisterForName (testVarC, false);
+    TS_ASSERT (testBlockRegC);
+    std::string varARegName (seqGen.GetOutputRegisterName (testBlockRegA.value()));
+    std::string varBRegName (seqGen.GetOutputRegisterName (testBlockRegB.value()));
+    std::string varCRegName (seqGen.GetOutputRegisterName (testBlockRegC.value()));
     StringStringMap substMap;
     substMap["A"] = varARegName;
     substMap["B"] = varBRegName;

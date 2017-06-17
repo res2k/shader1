@@ -21,6 +21,8 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
 
+#include <outcome/outcome.hpp>
+
 namespace s1
 {
   namespace intermediate
@@ -44,6 +46,9 @@ namespace s1
        * if necessary
        */
       void FlushVariableInitializers();
+
+      /// Call handler 'Error' method with context of expression
+      void ExpressionError (const ExpressionPtr& expr, ErrorCode code);
       
       struct NameReg
       {
@@ -83,9 +88,11 @@ namespace s1
       
       void FinishBlock() { FlushVariableInitializers(); }
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
-      
-      RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);
-      bool OverrideNameRegister (const NameImplPtr& name, const RegisterPtr& reg);
+
+      typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, ErrorCode> result_RegisterPtr;
+      result_RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);
+      typedef OUTCOME_V2_NAMESPACE::result<void, ErrorCode> result_void;
+      result_void OverrideNameRegister (const NameImplPtr& name, const RegisterPtr& reg);
       
       const NameImplSet& GetExportedNames() const { return exportedNames; }
     };
