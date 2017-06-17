@@ -621,16 +621,15 @@ namespace s1
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateUnaryExpression (UnaryOp op,
-                                          ExpressionPtr operand)
-
+                                                                                ExpressionPtr operand)
     {
       return boost::make_shared<UnaryExpressionImpl> (this, op,
                                                       boost::static_pointer_cast<ExpressionImpl> (operand));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTernaryExpression (ExpressionPtr condition,
-                                            ExpressionPtr ifExpr,
-                                            ExpressionPtr thenExpr)
+                                                                                  ExpressionPtr ifExpr,
+                                                                                  ExpressionPtr thenExpr)
     {
       return boost::make_shared<TernaryExpressionImpl> (this,
                                                         boost::static_pointer_cast<ExpressionImpl> (condition),
@@ -639,8 +638,8 @@ namespace s1
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateComparisonExpression (CompareOp op,
-                                              ExpressionPtr operand1,
-                                              ExpressionPtr operand2)
+                                                                                     ExpressionPtr operand1,
+                                                                                     ExpressionPtr operand2)
     {
       return ExpressionPtr (
         boost::make_shared<ComparisonExpressionImpl> (this,
@@ -650,8 +649,8 @@ namespace s1
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateLogicExpression (LogicOp op,
-                                          ExpressionPtr operand1,
-                                          ExpressionPtr operand2)
+                                                                                ExpressionPtr operand1,
+                                                                                ExpressionPtr operand2)
     {
       return ExpressionPtr (
         boost::make_shared<LogicExpressionImpl> (this,
