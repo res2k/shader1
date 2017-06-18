@@ -27,6 +27,7 @@
 
 #include <boost/convert.hpp>
 #include <boost/convert/spirit.hpp>
+#include <outcome/outcome.hpp>
 
 #include <limits>
 #include <malloc.h>
@@ -54,10 +55,10 @@ namespace s1
     }
 
     template<typename T>
-    static T ParseNumber (int base, const uc::String& str,
-                          uc::String::size_type begin,
-                          uc::String::size_type end,
-                          bool negative)
+    static OUTCOME_V2_NAMESPACE::result<T, ErrorCode> ParseNumber (int base, const uc::String& str,
+                                                                   uc::String::size_type begin,
+                                                                   uc::String::size_type end,
+                                                                   bool negative)
     {
       T val (0);
       for (uc::String::size_type i = begin; i < end; i++)
@@ -77,13 +78,13 @@ namespace s1
           digitVal = digit - 'A' + 10;
         }
         else
-          throw Exception (NumberParseError);
+          return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
 
         // Over-/underflow check
         if (((std::numeric_limits<T>::max() / static_cast<T> (base)) < val)
             || ((std::numeric_limits<T>::min() / static_cast<T> (base)) > val))
         {
-          throw Exception (NumberParseError);
+          return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
         }
 
         if (negative)
@@ -91,7 +92,7 @@ namespace s1
           // Underflow check
           if ((std::numeric_limits<T>::min() + static_cast<T> (digitVal)) > (val * static_cast<T> (base)))
           {
-            throw Exception (NumberParseError);
+            return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
           }
           val = (val * static_cast<T> (base)) - static_cast<T> (digitVal);
         }
@@ -100,20 +101,20 @@ namespace s1
           // Overflow check
           if ((std::numeric_limits<T>::max() - (val * static_cast<T> (base))) < static_cast<T> (digitVal))
           {
-            throw Exception (NumberParseError);
+            return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
           }
           val = (val * static_cast<T> (base)) + static_cast<T> (digitVal);
         }
       }
-      return val;
+      return OUTCOME_V2_NAMESPACE::success (val);
     }
 
     template<typename T>
-    static T ParseInteger (const uc::String& str)
+    static OUTCOME_V2_NAMESPACE::result<T, ErrorCode> ParseInteger (const uc::String& str)
     {
       if (str.isEmpty())
       {
-        throw Exception (NumberParseError);
+        return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
       }
 
       if (str.startsWith ("0x") || str.startsWith ("0X"))
@@ -130,7 +131,7 @@ namespace s1
       }
     }
 
-    static float ParseFloat (const uc::String& str)
+    static OUTCOME_V2_NAMESPACE::result<float, ErrorCode> ParseFloat (const uc::String& str)
     {
       // Convert string to ASCII
       uc::String::size_type strLen = str.length();
@@ -142,7 +143,7 @@ namespace s1
         if (ch >= 128)
         {
           // Outside ASCII range, can't parse
-          throw Exception (NumberParseError);
+          return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
         }
         strAsc[i] = static_cast<char> (ch);
       }
@@ -152,9 +153,9 @@ namespace s1
         boost::convert<float> (strAsc, boost::cnv::spirit ()));
       if (!floatValue)
       {
-        throw Exception (NumberParseError);
+        return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
       }
-      return *floatValue;
+      return OUTCOME_V2_NAMESPACE::success (*floatValue);
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::AddToSequence (BlockImpl& block,
@@ -174,25 +175,28 @@ namespace s1
       case Int:
         {
           // Parse number
-          int n = ParseInteger<int> (valueStr);
+          auto n = ParseInteger<int> (valueStr);
+          if (!n) { ExpressionError (n.error()); return RegisterPtr(); }
           // Create actual sequence operation
-          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
+          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
       case UInt:
         {
           // Parse number
-          unsigned int n = ParseInteger<unsigned int> (valueStr);
+          auto n = ParseInteger<unsigned int> (valueStr);
+          if (!n) { ExpressionError (n.error()); return RegisterPtr(); }
           // Create actual sequence operation
-          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
+          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
       case Float:
         {
           // Parse number
-          float n = ParseFloat (valueStr);
+          auto n = ParseFloat (valueStr);
+          if (!n) { ExpressionError (n.error()); return RegisterPtr(); }
           // Create actual sequence operation
-          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n));
+          seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
       case Void:

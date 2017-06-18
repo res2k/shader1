@@ -362,6 +362,7 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
                             TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
@@ -385,6 +386,7 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
                             TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
@@ -408,6 +410,7 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
                             TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
@@ -431,6 +434,7 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
                             TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
@@ -457,6 +461,7 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
                             TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
@@ -483,6 +488,7 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
                             TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
