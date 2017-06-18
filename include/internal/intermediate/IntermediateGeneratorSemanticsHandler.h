@@ -29,6 +29,8 @@ namespace s1
 {
   namespace intermediate
   {
+    enum ErrorCode : int;
+
     class IntermediateGeneratorSemanticsHandler :
       public s1::parser::CommonSemanticsHandler
     {
@@ -121,6 +123,13 @@ namespace s1
 
       IntermediateGeneratorSemanticsHandler ();
       ~IntermediateGeneratorSemanticsHandler ();
+
+      /**\name Error handling
+       * @{ */
+      // TODO: void Warning ()
+      /// Signal an error in intermediate generation
+      void Error (const ExpressionContext& context, ErrorCode code);
+      /** @} */
 
       /**\name Basic types
        * @{ */

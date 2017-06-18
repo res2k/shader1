@@ -81,6 +81,12 @@ namespace s1
     {
     }
 
+    void IntermediateGeneratorSemanticsHandler::Error (const ExpressionContext& context, ErrorCode code)
+    {
+      // TODO: Actual propagation to a handler
+      fprintf (stderr, "intermediate generation error: %d\n", static_cast<int> (code));
+    }
+
     DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
 
     static inline std::string GetBaseTypeString (parser::SemanticsHandler::BaseType base, unsigned int rows, unsigned int cols)

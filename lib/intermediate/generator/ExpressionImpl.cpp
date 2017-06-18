@@ -31,6 +31,11 @@ namespace s1
     {
     }
 
+    void IntermediateGeneratorSemanticsHandler::ExpressionImpl::Error (ErrorCode code)
+    {
+      handler->Error (context, code);
+    }
+
     const IntermediateGeneratorSemanticsHandler::ExpressionContext&
     IntermediateGeneratorSemanticsHandler::ExpressionImpl::GetExpressionContext ()
     {

@@ -29,6 +29,9 @@ namespace s1
     protected:
       IntermediateGeneratorSemanticsHandler* handler;
       ExpressionContext context;
+
+      /// Call handler 'Error' method
+      void Error (ErrorCode code);
     public:
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                       ExpressionContext&& context);

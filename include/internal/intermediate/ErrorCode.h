@@ -23,7 +23,7 @@ namespace s1
   namespace intermediate
   {
     /// Intermediate representation error codes
-    enum ErrorCode
+    enum ErrorCode : int
     {
       /* Note: some error codes represent incorrect/errorneous input,
          some represent wrong internal state/are triggered by bugs.
