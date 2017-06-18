@@ -36,9 +36,11 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::TypeConstructorExpressionImpl (
-      IntermediateGeneratorSemanticsHandler* handler, const TypeImplPtr& type,
+      IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
+      const TypeImplPtr& type,
       const ExpressionVector& params)
-     : ExpressionImpl (handler), type (type), params (params)
+     : ExpressionImpl (handler, std::move (context)), type (type), params (params)
     {
     }
 

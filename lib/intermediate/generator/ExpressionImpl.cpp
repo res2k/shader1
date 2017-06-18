@@ -25,9 +25,16 @@ namespace s1
 {
   namespace intermediate
   {
-    IntermediateGeneratorSemanticsHandler::ExpressionImpl::ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler)
-     : handler (handler)
+    IntermediateGeneratorSemanticsHandler::ExpressionImpl::ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                                                           ExpressionContext&& context)
+     : handler (handler), context (std::move (context))
     {
+    }
+
+    const IntermediateGeneratorSemanticsHandler::ExpressionContext&
+    IntermediateGeneratorSemanticsHandler::ExpressionImpl::GetExpressionContext ()
+    {
+      return context;
     }
 
     IntermediateGeneratorSemanticsHandler::NameImplSet

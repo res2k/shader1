@@ -30,6 +30,7 @@ namespace s1
       IntermediateGeneratorSemanticsHandler::Attribute attr;
     public:
       AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                               ExpressionContext&& context,
                                const ExpressionPtr& baseExpr,
                                const IntermediateGeneratorSemanticsHandler::Attribute& attr);
       

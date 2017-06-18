@@ -37,8 +37,9 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::NumericExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       const uc::String& valueStr)
-       : ExpressionImpl (handler), valueStr (valueStr),
+       : ExpressionImpl (handler, std::move (context)), valueStr (valueStr),
          numberType (IntermediateGeneratorSemanticsHandler::DetectNumericType (valueStr))
     {
     }

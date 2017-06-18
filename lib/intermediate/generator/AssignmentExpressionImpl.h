@@ -30,6 +30,7 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> value;
     public:
       AssignmentExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                ExpressionContext&& context,
                                 const boost::shared_ptr<ExpressionImpl>& target,
                                 const boost::shared_ptr<ExpressionImpl>& value);
       

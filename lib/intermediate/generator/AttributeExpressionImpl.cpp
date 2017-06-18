@@ -35,9 +35,10 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                                                                             ExpressionContext&& context,
                                                                                              const ExpressionPtr& baseExpr,
                                                                                              const IntermediateGeneratorSemanticsHandler::Attribute& attr)
-     : ExpressionImpl (handler), baseExpr (baseExpr), attr (attr)
+     : ExpressionImpl (handler, std::move (context)), baseExpr (baseExpr), attr (attr)
     {}
     
     IntermediateGeneratorSemanticsHandler::TypeImplPtr

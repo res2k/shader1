@@ -28,9 +28,12 @@ namespace s1
     {
     protected:
       IntermediateGeneratorSemanticsHandler* handler;
+      ExpressionContext context;
     public:
-      ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler);
-      
+      ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                      ExpressionContext&& context);
+
+      const ExpressionContext& GetExpressionContext ();
       virtual NameImplPtr GetExpressionName() { return NameImplPtr (); }
       
       virtual void AddToSequence (BlockImpl& block);

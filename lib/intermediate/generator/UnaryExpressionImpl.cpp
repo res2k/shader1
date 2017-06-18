@@ -33,9 +33,10 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::UnaryExpressionImpl (
                            IntermediateGeneratorSemanticsHandler* handler,
+                           ExpressionContext&& context,
                            UnaryOp op,
                            const boost::shared_ptr<ExpressionImpl>& operand)
-       : ExpressionImpl (handler), op (op), operand (operand)
+       : ExpressionImpl (handler, std::move (context)), op (op), operand (operand)
     {
     }
 

@@ -34,6 +34,7 @@ namespace s1
                                       PostActionList& postActions);
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                     ExpressionContext&& context,
                                      const TypeImplPtr& type,
                                      const ExpressionVector& params);
       

@@ -31,6 +31,7 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> operand2;
     public:
       ArithmeticExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                ExpressionContext&& context,
                                 ArithmeticOp op,
                                 const boost::shared_ptr<ExpressionImpl>& operand1,
                                 const boost::shared_ptr<ExpressionImpl>& operand2);

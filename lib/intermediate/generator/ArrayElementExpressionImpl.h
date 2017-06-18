@@ -30,6 +30,7 @@ namespace s1
       ExpressionPtr indexExpr;
     public:
       ArrayElementExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                  ExpressionContext&& context,
                                   const ExpressionPtr& arrayExpr,
                                   const ExpressionPtr& indexExpr);
       

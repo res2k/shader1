@@ -33,8 +33,9 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::VariableExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       const boost::shared_ptr<NameImpl>& name)
-       : ExpressionImpl (handler), name (name)
+       : ExpressionImpl (handler, std::move (context)), name (name)
     {
     }
       

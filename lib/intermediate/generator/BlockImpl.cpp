@@ -471,9 +471,12 @@ namespace s1
         // ... check if it has initialization value ...
         if (name->varValue)
         {
+          auto valueExpr = static_cast<ExpressionImpl*> (name->varValue.get ());
+          const auto& context = valueExpr->GetExpressionContext ();
           // ... if so, synthesize assignment
-          boost::shared_ptr<ExpressionImpl> exprTarget (boost::make_shared<VariableExpressionImpl> (handler, name));
-          ExpressionPtr expr (boost::make_shared<AssignmentExpressionImpl> (handler, exprTarget,
+          boost::shared_ptr<ExpressionImpl> exprTarget (boost::make_shared<VariableExpressionImpl> (handler, ExpressionContext (context), name));
+          ExpressionPtr expr (boost::make_shared<AssignmentExpressionImpl> (handler, ExpressionContext (context),
+                                                                            exprTarget,
                                                                             boost::static_pointer_cast<ExpressionImpl> (name->varValue)));
           // Note recursion is okay as FlushNewVars() will return an empty array
           AddExpressionCommand (expr);

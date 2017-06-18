@@ -34,9 +34,10 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::ArrayElementExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                                                                                   ExpressionContext&& context,
                                                                                                    const ExpressionPtr& arrayExpr,
                                                                                                    const ExpressionPtr& indexExpr)
-     : ExpressionImpl (handler), arrayExpr (arrayExpr), indexExpr (indexExpr)
+     : ExpressionImpl (handler, std::move (context)), arrayExpr (arrayExpr), indexExpr (indexExpr)
     {}
     
     IntermediateGeneratorSemanticsHandler::TypeImplPtr

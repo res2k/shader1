@@ -29,6 +29,7 @@ namespace s1
       bool value;
     public:
       BoolExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                          ExpressionContext&& context,
                           bool value);
       
       boost::shared_ptr<TypeImpl> GetValueType();

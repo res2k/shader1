@@ -30,6 +30,7 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> operand;
     public:
       UnaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                           ExpressionContext&& context,
                            UnaryOp op,
                            const boost::shared_ptr<ExpressionImpl>& operand);
       

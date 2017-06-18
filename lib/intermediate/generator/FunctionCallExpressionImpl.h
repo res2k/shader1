@@ -51,6 +51,7 @@ namespace s1
                            FetchedRegs& fetchedRegs, PostActions& postActions);
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                                  ExpressionContext&& context,
                                   const NamePtr& functionName,
                                   const ExpressionVector& params);
 

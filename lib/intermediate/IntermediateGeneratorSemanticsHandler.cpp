@@ -562,12 +562,12 @@ namespace s1
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstBoolExpression (bool value)
     {
-      return ExpressionPtr (new BoolExpressionImpl (this, value));
+      return ExpressionPtr (new BoolExpressionImpl (this, ExpressionContext(), value));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstNumericExpression (const uc::String& valueStr)
     {
-      return ExpressionPtr (new NumericExpressionImpl (this, valueStr));
+      return ExpressionPtr (new NumericExpressionImpl (this, ExpressionContext(), valueStr));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (NamePtr name)
@@ -577,7 +577,7 @@ namespace s1
       {
       case Name::Variable:
         {
-          return ExpressionPtr (new VariableExpressionImpl (this, nameImpl));
+          return ExpressionPtr (new VariableExpressionImpl (this, ExpressionContext(), nameImpl));
         }
         break;
       default:
@@ -593,19 +593,20 @@ namespace s1
       Attribute attrInfo (IdentifyAttribute (attr));
       if (attrInfo.attrClass == Attribute::Unknown)
         throw Exception (InvalidAttribute);
-      return boost::make_shared<AttributeExpressionImpl> (this, expr, attrInfo);
+      return boost::make_shared<AttributeExpressionImpl> (this, ExpressionContext(), expr, attrInfo);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArrayElementAccess (ExpressionPtr arrayExpr,
                                                                                    ExpressionPtr elementIndexExpr)
     {
-      return boost::make_shared<ArrayElementExpressionImpl> (this, arrayExpr, elementIndexExpr);
+      return boost::make_shared<ArrayElementExpressionImpl> (this, ExpressionContext(), arrayExpr, elementIndexExpr);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAssignExpression (ExpressionPtr target,
                                           ExpressionPtr value)
     {
       return ExpressionPtr (new AssignmentExpressionImpl (this,
+                                                          ExpressionContext(),
                                                           boost::static_pointer_cast<ExpressionImpl> (target),
                                                           boost::static_pointer_cast<ExpressionImpl> (value)));
     }
@@ -615,6 +616,7 @@ namespace s1
                                                                                      ExpressionPtr operand2)
     {
       return ExpressionPtr (new ArithmeticExpressionImpl (this,
+                                                          ExpressionContext(),
                                                           op,
                                                           boost::static_pointer_cast<ExpressionImpl> (operand1),
                                                           boost::static_pointer_cast<ExpressionImpl> (operand2)));
@@ -623,7 +625,7 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateUnaryExpression (UnaryOp op,
                                                                                 ExpressionPtr operand)
     {
-      return boost::make_shared<UnaryExpressionImpl> (this, op,
+      return boost::make_shared<UnaryExpressionImpl> (this, ExpressionContext(), op,
                                                       boost::static_pointer_cast<ExpressionImpl> (operand));
     }
 
@@ -632,6 +634,7 @@ namespace s1
                                                                                   ExpressionPtr thenExpr)
     {
       return boost::make_shared<TernaryExpressionImpl> (this,
+                                                        ExpressionContext(),
                                                         boost::static_pointer_cast<ExpressionImpl> (condition),
                                                         boost::static_pointer_cast<ExpressionImpl> (ifExpr),
                                                         boost::static_pointer_cast<ExpressionImpl> (thenExpr));
@@ -643,6 +646,7 @@ namespace s1
     {
       return ExpressionPtr (
         boost::make_shared<ComparisonExpressionImpl> (this,
+                                                      ExpressionContext(),
                                                       op,
                                                       boost::static_pointer_cast<ExpressionImpl> (operand1),
                                                       boost::static_pointer_cast<ExpressionImpl> (operand2)));
@@ -654,6 +658,7 @@ namespace s1
     {
       return ExpressionPtr (
         boost::make_shared<LogicExpressionImpl> (this,
+                                                 ExpressionContext(),
                                                  op,
                                                  boost::static_pointer_cast<ExpressionImpl> (operand1),
                                                  boost::static_pointer_cast<ExpressionImpl> (operand2)));
@@ -666,6 +671,7 @@ namespace s1
 
       return ExpressionPtr (
         boost::make_shared<FunctionCallExpressionImpl> (this,
+                                                        ExpressionContext(),
                                                         functionName,
                                                         params));
     }
@@ -675,6 +681,7 @@ namespace s1
     {
       return ExpressionPtr (
         boost::make_shared<TypeConstructorExpressionImpl> (this,
+                                                           ExpressionContext(),
                                                            boost::static_pointer_cast<TypeImpl> (type),
                                                            params));
     }

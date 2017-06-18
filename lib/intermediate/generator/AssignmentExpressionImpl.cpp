@@ -31,9 +31,10 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AssignmentExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       const boost::shared_ptr<ExpressionImpl>& target,
       const boost::shared_ptr<ExpressionImpl>& value)
-       : ExpressionImpl (handler), target (target), value (value)
+       : ExpressionImpl (handler, std::move (context)), target (target), value (value)
     {
     }
       

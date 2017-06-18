@@ -33,10 +33,11 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::ArithmeticExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       ArithmeticOp op,
       const boost::shared_ptr<ExpressionImpl>& operand1,
       const boost::shared_ptr<ExpressionImpl>& operand2)
-       : ExpressionImpl (handler), op (op), operand1 (operand1), operand2 (operand2)
+       : ExpressionImpl (handler, std::move (context)), op (op), operand1 (operand1), operand2 (operand2)
     {
     }
 

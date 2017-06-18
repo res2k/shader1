@@ -30,6 +30,7 @@ namespace s1
       SemanticsHandler::BaseType numberType;
     public:
       NumericExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                             ExpressionContext&& context,
                              const uc::String& valueStr);
       
       boost::shared_ptr<TypeImpl> GetValueType();

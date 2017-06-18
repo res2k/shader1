@@ -44,6 +44,11 @@ namespace s1
       class Builtin;
       typedef boost::intrusive_ptr<Builtin> BuiltinPtr;
 
+      /// Context information for expression objects. Used for error/warning reporting.
+      struct ExpressionContext
+      {
+      };
+
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
       class ArrayElementExpressionImpl;

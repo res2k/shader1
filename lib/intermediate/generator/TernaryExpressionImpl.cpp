@@ -32,10 +32,11 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::TernaryExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       const boost::shared_ptr<ExpressionImpl>& condition,
       const boost::shared_ptr<ExpressionImpl>& ifExpr,
       const boost::shared_ptr<ExpressionImpl>& elseExpr)
-       : ExpressionImpl (handler), condition (condition), ifExpr (ifExpr), elseExpr (elseExpr)
+       : ExpressionImpl (handler, std::move (context)), condition (condition), ifExpr (ifExpr), elseExpr (elseExpr)
     {
     }
 

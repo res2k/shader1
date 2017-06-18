@@ -29,6 +29,7 @@ namespace s1
       NameImplPtr name;
     public:
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                              ExpressionContext&& context,
                               const NameImplPtr& name);
                               
       NameImplPtr GetExpressionName() { return name; }

@@ -31,6 +31,7 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> elseExpr;
     public:
       TernaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
+                             ExpressionContext&& context,
                              const boost::shared_ptr<ExpressionImpl>& condition,
                              const boost::shared_ptr<ExpressionImpl>& ifExpr,
                              const boost::shared_ptr<ExpressionImpl>& elseExpr);

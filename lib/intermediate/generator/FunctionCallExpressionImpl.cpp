@@ -36,9 +36,10 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FunctionCallExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       const NamePtr& functionName,
       const ExpressionVector& params)
-       : ExpressionImpl (handler), functionName (functionName), params (params), overloadSelected (false)
+       : ExpressionImpl (handler, std::move (context)), functionName (functionName), params (params), overloadSelected (false)
     {
     }
 

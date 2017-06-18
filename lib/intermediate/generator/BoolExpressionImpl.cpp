@@ -32,8 +32,9 @@ namespace s1
   {
     IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::BoolExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
+      ExpressionContext&& context,
       bool value)
-       : ExpressionImpl (handler), value (value)
+       : ExpressionImpl (handler, std::move (context)), value (value)
     {
     }
       
