@@ -102,8 +102,13 @@ namespace s1
       {
         // Insert cast op
         RegisterPtr newReg (handler->AllocateRegister (seq, valueType, Intermediate));
-        handler->GenerateCast (seq, newReg, valueType,
-                               reg, operandType);
+        auto srcCast = handler->GenerateCast (seq, newReg, valueType,
+                                              reg, operandType);
+        if (srcCast.has_error ())
+        {
+          ExpressionError (srcCast.error ());
+          return RegisterPtr ();
+        }
         reg = newReg;
       }
       

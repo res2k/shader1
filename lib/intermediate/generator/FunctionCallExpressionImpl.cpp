@@ -150,7 +150,13 @@ namespace s1
           if (!paramExprType->IsEqual (*formalParamType))
           {
             RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequenceBuilder()), formalParamType, Intermediate));
-            handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType);
+            auto paramCast = handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType);
+            if (paramCast.has_error ())
+            {
+              ExpressionError (paramCast.error ());
+              paramsOkay = false;
+              continue;
+            }
             inReg = targetReg;
           }
           inParams.push_back (inReg);

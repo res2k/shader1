@@ -299,11 +299,12 @@ namespace s1
       return seqBuilder.AllocateRegister (oldReg);
     }
 
-    void IntermediateGeneratorSemanticsHandler::GenerateCast (SequenceBuilder& seqBuilder,
-                                                              const RegisterPtr& castDestination,
-                                                              const TypeImplPtr& typeDestination,
-                                                              const RegisterPtr& castSource,
-                                                              const TypeImplPtr& typeSource)
+    IntermediateGeneratorSemanticsHandler::result_void
+    IntermediateGeneratorSemanticsHandler::GenerateCast (SequenceBuilder& seqBuilder,
+                                                         const RegisterPtr& castDestination,
+                                                         const TypeImplPtr& typeDestination,
+                                                         const RegisterPtr& castSource,
+                                                         const TypeImplPtr& typeSource)
     {
       switch (typeDestination->typeClass)
       {
@@ -328,7 +329,7 @@ namespace s1
           if (seqOp)
           {
             seqBuilder.AddOp (seqOp);
-            return;
+            return OUTCOME_V2_NAMESPACE::success();
           }
           break;
         }
@@ -349,7 +350,8 @@ namespace s1
           {
             // Generate cast
             RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
-            GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
+            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
+            if (innerCastResult.has_error()) return innerCastResult.error();
             srcReg = srcVecReg;
           }
           else
@@ -386,7 +388,7 @@ namespace s1
           if (seqOp)
           {
             seqBuilder.AddOp (seqOp);
-            return;
+            return OUTCOME_V2_NAMESPACE::success();
           }
           break;
         }
@@ -400,7 +402,7 @@ namespace s1
         break;
       }
 
-      throw Exception (InvalidTypeCast);
+      return InvalidTypeCast;
     }
 
     void IntermediateGeneratorSemanticsHandler::CompleteProgram ()

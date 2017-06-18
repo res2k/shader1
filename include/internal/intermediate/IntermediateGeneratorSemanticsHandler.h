@@ -25,6 +25,8 @@
 #include "forwarddecl.h"
 #include "Sequence.h"
 
+#include <outcome/outcome.hpp>
+
 namespace s1
 {
   namespace intermediate
@@ -163,11 +165,12 @@ namespace s1
       static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
 
-      void GenerateCast (SequenceBuilder& seqBuilder,
-                         const RegisterPtr& castDestination,
-                         const TypeImplPtr& typeDestination,
-                         const RegisterPtr& castSource,
-                         const TypeImplPtr& typeSource);
+      typedef OUTCOME_V2_NAMESPACE::result<void, ErrorCode> result_void;
+      result_void GenerateCast (SequenceBuilder& seqBuilder,
+                                const RegisterPtr& castDestination,
+                                const TypeImplPtr& typeDestination,
+                                const RegisterPtr& castSource,
+                                const TypeImplPtr& typeSource);
 
       /// Mark the program as “completed”. Required before GetProgram() is called
       void CompleteProgram ();

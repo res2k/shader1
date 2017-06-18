@@ -68,16 +68,26 @@ namespace s1
       {
         // Insert cast op
         RegisterPtr newReg1 (handler->AllocateRegister (seq, asType, Intermediate));
-        handler->GenerateCast (seq, newReg1, asType,
-                               r1.reg, type1);
+        auto r1cast = handler->GenerateCast (seq, newReg1, asType,
+                                             r1.reg, type1);
+        if (r1cast.has_error ())
+        {
+          ExpressionError (r1cast.error ());
+          return boost::none;
+        }
         r1.reg = newReg1;
       }
       if (!asType->IsEqual (*(type2.get())))
       {
         // Insert cast op
         RegisterPtr newReg2 (handler->AllocateRegister (seq, asType, Intermediate));
-        handler->GenerateCast (seq, newReg2, asType,
-                               r2.reg, type2);
+        auto r2cast = handler->GenerateCast (seq, newReg2, asType,
+                                             r2.reg, type2);
+        if (r2cast.has_error ())
+        {
+          ExpressionError (r2cast.error ());
+          return boost::none;
+        }
         r2.reg = newReg2;
       }
       return std::make_tuple (r1, r2);

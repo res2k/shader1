@@ -92,9 +92,14 @@ namespace s1
         RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
         if (!targetReg) return RegisterPtr(); // Assume error already handled
         // Generate cast to targetReg
-        handler->GenerateCast (seq, targetReg, targetType,
-                               exprDestinationReg, valueType);
-                               
+        auto targetCast = handler->GenerateCast (seq, targetReg, targetType,
+                                                 exprDestinationReg, valueType);
+        if (targetCast.has_error())
+        {
+          ExpressionError (targetCast.error ());
+          return RegisterPtr ();
+        }
+
         value->AddToSequencePostAction (block, exprDestinationReg, false);
         target->AddToSequencePostAction (block, targetReg, true);
                                

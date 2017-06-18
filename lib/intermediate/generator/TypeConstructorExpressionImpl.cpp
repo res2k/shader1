@@ -76,7 +76,13 @@ namespace s1
             else
             {
               RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-              handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+              if (srcCast.has_error ())
+              {
+                ExpressionError (srcCast.error ());
+                successful = false;
+                continue;
+              }
               regs.push_back (srcReg);
             }
           }
@@ -97,7 +103,13 @@ namespace s1
               else
               {
                 RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-                handler->GenerateCast (seq, srcReg, targetBaseType, compReg, exprCompType);
+                auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, compReg, exprCompType);
+                if (srcCast.has_error ())
+                {
+                  ExpressionError (srcCast.error ());
+                  successful = false;
+                  continue;
+                }
                 regs.push_back (srcReg);
               }
             }
@@ -148,7 +160,12 @@ namespace s1
           else
           {
             // otherwise, generate cast
-            handler->GenerateCast (seq, targetReg, type, srcReg, srcType);
+            auto targetCast = handler->GenerateCast (seq, targetReg, type, srcReg, srcType);
+            if (targetCast.has_error ())
+            {
+              ExpressionError (targetCast.error ());
+              return RegisterPtr ();
+            }
           }
           srcExprImpl->AddToSequencePostAction (block, srcReg, false);
           return targetReg;
@@ -248,7 +265,13 @@ namespace s1
             else
             {
               RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-              handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+              if (srcCast.has_error ())
+              {
+                ExpressionError (srcCast.error ());
+                sourcesOk = false;
+                continue;
+              }
               srcRegs.push_back (srcReg);
             }
           }

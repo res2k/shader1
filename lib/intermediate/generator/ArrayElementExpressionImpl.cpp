@@ -86,7 +86,12 @@ namespace s1
         if (!indexType->IsEqual (*(handler->GetUintType())))
         {
           RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
-          handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+          auto indexCast = handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+          if (indexCast.has_error())
+          {
+            ExpressionError (indexCast.error());
+            return RegisterPtr ();
+          }
           indexReg = newIndexReg;
         }
         
@@ -128,7 +133,12 @@ namespace s1
       if (!indexType->IsEqual (*(handler->GetUintType())))
       {
         RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
-        handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+        auto indexCast = handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+        if (indexCast.has_error())
+        {
+          ExpressionError (indexCast.error());
+          return;
+        }
         indexReg = newIndexReg;
       }
       
