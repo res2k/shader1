@@ -43,9 +43,9 @@ namespace s1
     {
     }
 
-    void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::SelectOverload ()
+    bool IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::SelectOverload ()
     {
-      if (overloadSelected) return;
+      if (overloadSelected) return (bool)overload;
       overloadSelected = true;
 
       boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
@@ -57,12 +57,14 @@ namespace s1
       if (candidates.size() == 0)
       {
         // No candidates
-        throw Exception (NoMatchingFunctionOverload);
+        ExpressionError (NoMatchingFunctionOverload);
+        return false;
       }
       else if (candidates.size() > 1)
       {
         // Ambiguous overload
-        throw Exception (AmbiguousFunctionOverload);
+        ExpressionError (AmbiguousFunctionOverload);
+        return false;
       }
       overload = candidates[0];
 
@@ -78,12 +80,15 @@ namespace s1
           paramExpr = param.defaultValue;
         actualParams.push_back (paramExpr);
       }
+
+      return true;
     }
 
-    void IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FetchRegisters (BlockImpl& block,
+    bool IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FetchRegisters (BlockImpl& block,
                                                                                             FetchedRegs& fetchedRegs,
                                                                                             PostActions& postActions)
     {
+      bool result = true;
       for (size_t i = 0; i < actualParams.size(); i++)
       {
         RegisterPtr reg1, reg2;
@@ -91,21 +96,25 @@ namespace s1
         if (overload->params[i].dir & ScopeImpl::dirIn)
         {
           reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
+          if (!reg1) { result = false; continue; } // Assume error already handled
           postActions.emplace_back (paramExprImpl, reg1, false);
         }
         if (overload->params[i].dir & ScopeImpl::dirOut)
         {
           reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
+          if (!reg2) { result = false; continue; } // Assume error already handled
           postActions.emplace_back (paramExprImpl, reg2, false);
         }
         fetchedRegs.emplace_back (reg1, reg2);
       }
+
+      return result;
     }
 
     boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetValueType ()
     {
-      SelectOverload ();
+      if (!SelectOverload ()) return TypeImplPtr(); // Assume error already handled
 
       return boost::static_pointer_cast<TypeImpl> (overload->returnType);
     }
@@ -116,14 +125,15 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
 
-      SelectOverload ();
+      if (!SelectOverload ()) return RegisterPtr(); // Assume error already handled
 
       if (overload->identifier.isEmpty()) return RegisterPtr();
 
       FetchedRegs fetchedRegs;
       PostActions postActions;
-      FetchRegisters (block, fetchedRegs, postActions);
+      if (!FetchRegisters (block, fetchedRegs, postActions)) return RegisterPtr(); // Assume error already handled
 
+      bool paramsOkay = true;
       std::vector<RegisterPtr> inParams;
       std::vector<RegisterPtr> outParams;
       for (size_t i = 0; i < overload->params.size(); i++)
@@ -133,6 +143,7 @@ namespace s1
         {
           boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
           boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
+          if (!paramExprType) { paramsOkay = false; continue; } // Assume error already handled
           RegisterPtr inReg (fetchedRegs[i].first);
           assert (inReg);
           boost::shared_ptr<TypeImpl> formalParamType (boost::static_pointer_cast<TypeImpl> (param.type));
@@ -149,13 +160,20 @@ namespace s1
           boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
           RegisterPtr outReg (fetchedRegs[i].second);
           if (!outReg)
-            throw Exception (ActualParameterNotAnLValue);
+          {
+            ExpressionError (ActualParameterNotAnLValue);
+            paramsOkay = false;
+            continue;
+          }
           outParams.push_back (outReg);
         }
       }
 
+      if (!paramsOkay) return RegisterPtr();
+
       RegisterPtr destination;
       boost::shared_ptr<TypeImpl> retType (GetValueType());
+      if (!retType) return RegisterPtr(); // Assume error already handled
       if (!retType->IsEqual (*(handler->GetVoidType())))
         destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);
 

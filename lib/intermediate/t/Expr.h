@@ -632,13 +632,13 @@ public:
     TS_ASSERT_EQUALS(visitor.entries.size(), 4);
     TS_ASSERT_EQUALS(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
     TS_ASSERT_EQUALS(visitor.entries[0].uintConst, 1);
-    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opCastToFloat);
-    TS_ASSERT_EQUALS(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
-    TS_ASSERT_EQUALS(visitor.entries[2].op, TestSequenceVisitor::opConstFloat);
-    TS_ASSERT_EQUALS(visitor.entries[2].floatConst, 2.0f);
+    TS_ASSERT_EQUALS(visitor.entries[1].op, TestSequenceVisitor::opConstFloat);
+    TS_ASSERT_EQUALS(visitor.entries[1].floatConst, 2.0f);
+    TS_ASSERT_EQUALS(visitor.entries[2].op, TestSequenceVisitor::opCastToFloat);
+    TS_ASSERT_EQUALS(visitor.entries[2].sourceReg[0], visitor.entries[0].destReg);
     TS_ASSERT_EQUALS(visitor.entries[3].op, TestSequenceVisitor::opArithAdd);
-    TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[0], visitor.entries[1].destReg);
-    TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[1], visitor.entries[2].destReg);
+    TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[0], visitor.entries[2].destReg);
+    TS_ASSERT_EQUALS(visitor.entries[3].sourceReg[1], visitor.entries[1].destReg);
   }
 
   void testExprArithVarAssignSelf (void)

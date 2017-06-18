@@ -81,7 +81,7 @@ namespace s1
     {
     }
 
-    void IntermediateGeneratorSemanticsHandler::Error (const ExpressionContext& context, ErrorCode code)
+    void IntermediateGeneratorSemanticsHandler::ExpressionError (const ExpressionContext& context, ErrorCode code)
     {
       // TODO: Actual propagation to a handler
       fprintf (stderr, "intermediate generation error: %d\n", static_cast<int> (code));

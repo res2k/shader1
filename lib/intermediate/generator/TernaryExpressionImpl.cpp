@@ -64,7 +64,8 @@ namespace s1
         
       if (!valueType)
       {
-        throw Exception (TernaryExpressionTypesIncompatible);
+        ExpressionError (TernaryExpressionTypesIncompatible);
+        return TypeImplPtr();
       }
       
       return valueType;

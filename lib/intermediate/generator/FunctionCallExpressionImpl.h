@@ -35,7 +35,7 @@ namespace s1
 
       ExpressionVector actualParams;
 
-      void SelectOverload ();
+      bool SelectOverload ();
       typedef std::vector<std::pair<RegisterPtr, RegisterPtr> > FetchedRegs;
       struct PostActionInfo
       {
@@ -47,7 +47,7 @@ namespace s1
          : expr (expr), reg (reg), lValue (lValue) {}
       };
       typedef std::vector<PostActionInfo> PostActions;
-      void FetchRegisters (s1::intermediate::IntermediateGeneratorSemanticsHandler::BlockImpl & block,
+      bool FetchRegisters (s1::intermediate::IntermediateGeneratorSemanticsHandler::BlockImpl & block,
                            FetchedRegs& fetchedRegs, PostActions& postActions);
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,

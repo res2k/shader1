@@ -57,11 +57,13 @@ namespace s1
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      if (!type1 || !type2) return RegisterPtr(); // Assume error already handled
 
       boost::shared_ptr<TypeImpl> comparisonType = handler->GetHigherPrecisionType (type1, type2);
         
       // Set up registers for operand values
       auto operandRegs = GetSourceRegisters (block, comparisonType);
+      if (!operandRegs) return RegisterPtr(); // Assume error already handled
       auto reg1 = std::get<0> (*operandRegs).reg;
       auto reg2 = std::get<1> (*operandRegs).reg;
 

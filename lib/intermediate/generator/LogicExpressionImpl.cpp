@@ -46,12 +46,14 @@ namespace s1
     {
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      if (!type1 || !type2) return TypeImplPtr(); // Assume error already handled
       
       // Operands have to be bools
       if (!type1->IsEqual (*(handler->GetBoolType().get()))
         || !type2->IsEqual (*(handler->GetBoolType().get())))
       {
-        throw Exception (OperandTypesInvalid);
+        ExpressionError (OperandTypesInvalid);
+        return TypeImplPtr();
       }
       
       // Logic ops have always a bool result
@@ -68,6 +70,7 @@ namespace s1
 
       // Set up registers for operand values
       auto valueType = GetValueType();
+      if (!valueType) return RegisterPtr(); // Assume error already handled
       auto operandRegs = GetSourceRegisters (block, valueType);
       auto reg1 = std::get<0> (*operandRegs).reg;
       auto reg2 = std::get<1> (*operandRegs).reg;

@@ -30,8 +30,8 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler;
       ExpressionContext context;
 
-      /// Call handler 'Error' method
-      void Error (ErrorCode code);
+      /// Call handler 'ExpressionError' method
+      void ExpressionError (ErrorCode code);
     public:
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                       ExpressionContext&& context);

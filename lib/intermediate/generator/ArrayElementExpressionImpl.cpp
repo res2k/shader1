@@ -45,8 +45,12 @@ namespace s1
     {
       boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
       TypeImplPtr exprType (exprImpl->GetValueType());
+      if (!exprType) return TypeImplPtr(); // Assume error already handled
       if (exprType->typeClass != TypeImpl::Array)
-        throw Exception (NotAnArray);
+      {
+        ExpressionError (NotAnArray);
+        return TypeImplPtr();
+      }
       return boost::static_pointer_cast<TypeImpl> (exprType->avmBase);
     }
     
@@ -61,7 +65,10 @@ namespace s1
       
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
-        throw Exception (IndexNotAnInteger);
+      {
+        ExpressionError (IndexNotAnInteger);
+        return RegisterPtr();
+      }
       
       RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), classify));
       
@@ -72,8 +79,9 @@ namespace s1
       else
       {
         RegisterPtr arrayReg (arrayExprImpl->AddToSequence (block, Intermediate));
-        
         RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
+        if (!arrayReg || !indexReg) return RegisterPtr(); // Assume error already handled
+
         RegisterPtr orgIndexReg (indexReg);
         if (!indexType->IsEqual (*(handler->GetUintType())))
         {
@@ -104,13 +112,18 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
       boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));
       TypeImplPtr indexType (indexExprImpl->GetValueType());
+      if (!indexType) return; // Assume error already handled
       
       RegisterPtr arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));
       RegisterPtr arrayRegDst (arrayExprImpl->AddToSequence (block, Intermediate, true));
-      if (!arrayRegDst)
-        throw Exception (ArrayNotAnLValue);
-      
       RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
+      if (!arrayRegDst)
+      {
+        ExpressionError (ArrayNotAnLValue);
+        return;
+      }
+      if (!arrayRegSrc || !indexReg) return; // Assume error already handled
+
       RegisterPtr orgIndexReg (indexReg);
       if (!indexType->IsEqual (*(handler->GetUintType())))
       {

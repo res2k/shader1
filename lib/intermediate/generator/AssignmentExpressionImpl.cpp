@@ -57,7 +57,8 @@ namespace s1
 
       if (!valueType->CompatibleLossy (*(targetType.get())))
       {
-        throw Exception (AssignmentTypesIncompatible);
+        ExpressionError (AssignmentTypesIncompatible);
+        return TypeImplPtr();
       }
       
       return targetType;
@@ -77,16 +78,19 @@ namespace s1
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
       boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
+      if (!targetType || !valueType) return RegisterPtr(); // Assume error already handled
 
       RegisterPtr exprDestinationReg;
       // Evaluate 'value'
       exprDestinationReg = value->AddToSequence (block, Intermediate);
+      if (!exprDestinationReg) return RegisterPtr(); // Assume error already handled
       NameImplPtr targetName (target->GetExpressionName());
       NameImplPtr valueName (value->GetExpressionName());
       if (!valueType->IsEqual (*(targetType.get())))
       {
         // Set up register for left-side value
         RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
+        if (!targetReg) return RegisterPtr(); // Assume error already handled
         // Generate cast to targetReg
         handler->GenerateCast (seq, targetReg, targetType,
                                exprDestinationReg, valueType);
@@ -109,6 +113,7 @@ namespace s1
         }
         // Set up register for left-side value
         RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
+        if (!targetReg) return RegisterPtr(); // Assume error already handled
         // Generate another assignment from exprDestinationReg to targetReg
         SequenceOpPtr seqOp;
         seqOp = SequenceOpPtr (new SequenceOpAssign (targetReg, exprDestinationReg));

@@ -46,6 +46,7 @@ namespace s1
     {
       TypeImplPtr type1 = operand1->GetValueType();
       TypeImplPtr type2 = operand2->GetValueType();
+      if (!type1 || !type2) return TypeImplPtr(); // Assume error already handled
       
       TypeImplPtr baseType1, baseType2;
       unsigned int vectorDim1 = 0, vectorDim2 = 0;
@@ -68,12 +69,14 @@ namespace s1
       if (!baseType1->CompatibleLossy (*(handler->GetFloatType().get()))
         || !baseType2->CompatibleLossy (*(handler->GetFloatType().get())))
       {
-        throw Exception (OperandTypesInvalid);
+        ExpressionError (OperandTypesInvalid);
+        return TypeImplPtr();
       }
       
       if ((vectorDim1 != 0) && (vectorDim2 != 0) && (vectorDim1 != vectorDim2))
       {
-        throw Exception (OperandTypesIncompatible);
+        ExpressionError (OperandTypesIncompatible);
+        return TypeImplPtr();
       }
       
       // Determine type in which to perform computation
@@ -99,7 +102,8 @@ namespace s1
         
       if (!valueType)
       {
-        throw Exception (OperandTypesIncompatible);
+        ExpressionError (OperandTypesIncompatible);
+        return TypeImplPtr();
       }
       
       return valueType;
@@ -110,13 +114,15 @@ namespace s1
                                                                                                 bool asLvalue)
     {
       if (asLvalue) return RegisterPtr();
-      
+
+      boost::shared_ptr<TypeImpl> valueType = GetValueType ();
+      if (!valueType) return RegisterPtr(); // Assume error already handled
+
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      boost::shared_ptr<TypeImpl> valueType = GetValueType ();
-        
       // Set up registers for operand values
       auto operandRegs = GetSourceRegisters (block, valueType);
+      if (!operandRegs) return RegisterPtr(); // Assume error already handled
       auto reg1 = std::get<0> (*operandRegs).reg;
       auto reg2 = std::get<1> (*operandRegs).reg;
       

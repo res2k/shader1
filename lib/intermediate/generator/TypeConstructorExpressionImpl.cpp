@@ -44,10 +44,11 @@ namespace s1
     {
     }
 
-    void IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::ExtractBaseExpressionRegs (BlockImpl& block,
+    bool IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::ExtractBaseExpressionRegs (BlockImpl& block,
                                                                                                           std::vector<RegisterPtr>& regs,
                                                                                                           PostActionList& postActions)
     {
+      bool successful = true;
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
@@ -58,7 +59,9 @@ namespace s1
       {
         boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
         TypeImplPtr exprType (exprImpl->GetValueType());
+        if (!exprType) { successful = false; continue; } // Assume error already handled
         RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
+        if (!srcExprReg) { successful = false; continue; } // Assume error already handled
         postActions.emplace_back (exprImpl, srcExprReg);
         
         switch (exprType->typeClass)
@@ -102,6 +105,7 @@ namespace s1
           break;
         }
       }
+      return successful;
     }
 
     RegisterPtr
@@ -118,15 +122,23 @@ namespace s1
       case TypeImpl::Base:
         {
           if (params.size() > 1)
-            throw Exception (TooManyTypeCtorArgs);
+          {
+            ExpressionError (TooManyTypeCtorArgs);
+            return RegisterPtr();
+          }
           if (params.size() < 1)
-            throw Exception (TooFewTypeCtorArgs);
+          {
+            ExpressionError (TooFewTypeCtorArgs);
+            return RegisterPtr();
+          }
           
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           ExpressionPtr srcExpr (params[0]);
           boost::shared_ptr<ExpressionImpl> srcExprImpl (boost::static_pointer_cast<ExpressionImpl> (srcExpr));
           RegisterPtr srcReg (srcExprImpl->AddToSequence (block, Intermediate, false));
+          if (!srcReg) return RegisterPtr(); // Assume error already handled
           TypeImplPtr srcType (srcExprImpl->GetValueType());
+          if (!srcType) return RegisterPtr(); // Assume error already handled
           if (type->IsEqual (*srcType))
           {
             // If type is the same, just generate assignment
@@ -148,7 +160,7 @@ namespace s1
           // Extract operands of base type from params (extract vector comps etc.)
           std::vector<RegisterPtr> srcRegs;
           PostActionList postActions;
-          ExtractBaseExpressionRegs (block, srcRegs, postActions);
+          if (!ExtractBaseExpressionRegs (block, srcRegs, postActions)) return RegisterPtr(); // Assume error already handled
           
           unsigned int desiredDim;
           if (type->typeClass == TypeImpl::Vector)
@@ -165,9 +177,15 @@ namespace s1
           else
           {
             if (srcRegs.size() > desiredDim)
-              throw Exception (TooManyTypeCtorArgs);
+            {
+              ExpressionError (TooManyTypeCtorArgs);
+              return RegisterPtr();
+            }
             if (srcRegs.size() < desiredDim)
-              throw Exception (TooFewTypeCtorArgs);
+            {
+              ExpressionError (TooFewTypeCtorArgs);
+              return RegisterPtr ();
+            }
           }
           
           TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
@@ -210,14 +228,17 @@ namespace s1
           std::vector<RegisterPtr> srcRegs;
           
           TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
-          
+
+          bool sourcesOk = true;
           for (ExpressionVector::const_iterator expr (params.begin());
               expr != params.end();
               ++expr)
           {
             boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
             TypeImplPtr exprType (exprImpl->GetValueType());
+            if (!exprType) { sourcesOk = false; continue; } // Assume error already handled
             RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
+            if (!srcExprReg) { sourcesOk = false; continue; } ; // Assume error already handled
             
             // Add expression as-is
             if (targetBaseType->IsEqual (*exprType))
@@ -231,7 +252,8 @@ namespace s1
               srcRegs.push_back (srcReg);
             }
           }
-          
+          if (!sourcesOk) return RegisterPtr();
+
           SequenceOpPtr seqOp (new SequenceOpMakeArray (targetReg, srcRegs));
           seq.AddOp (seqOp);
           return targetReg;

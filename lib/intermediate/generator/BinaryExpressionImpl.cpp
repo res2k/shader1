@@ -57,9 +57,13 @@ namespace s1
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
       boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      if (!type1 || !type2) return boost::none; // Assume error already handled
 
       // Set up registers for operand values
       OperandReg r1 = operand1->AddToSequence (block, Intermediate);
+      OperandReg r2 = operand2->AddToSequence (block, Intermediate);
+      if (!r1.reg || !r2.reg) return boost::none; // Assume error already handled
+
       if (!asType->IsEqual (*(type1.get())))
       {
         // Insert cast op
@@ -68,7 +72,6 @@ namespace s1
                                r1.reg, type1);
         r1.reg = newReg1;
       }
-      OperandReg r2 = operand2->AddToSequence (block, Intermediate);
       if (!asType->IsEqual (*(type2.get())))
       {
         // Insert cast op

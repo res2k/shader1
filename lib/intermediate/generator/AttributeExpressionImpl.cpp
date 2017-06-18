@@ -45,7 +45,9 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::GetValueType ()
     {
       boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
-      return handler->GetAttributeType (exprImpl->GetValueType(), attr);
+      auto exprValueType = exprImpl->GetValueType();
+      if (!exprValueType) return TypeImplPtr(); // Assume error already handled
+      return handler->GetAttributeType (exprValueType, attr);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequence (BlockImpl& block,
@@ -66,6 +68,7 @@ namespace s1
           RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
           boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
           RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
+          if (!exprValueReg) return RegisterPtr(); // Assume error already handled
           
           SequenceOpPtr seqOp (new SequenceOpGetArrayLength (targetReg, exprValueReg));
           seq.AddOp (seqOp);
@@ -96,6 +99,7 @@ namespace s1
           {
             boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
             RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
+            if (!exprValueReg) return RegisterPtr(); // Assume error already handled
             
             TypeImplPtr valueType (GetValueType());
             RegisterPtr targetReg;
@@ -153,13 +157,18 @@ namespace s1
       boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
       
       RegisterPtr originalTarget (exprImpl->AddToSequence (block, Intermediate, false));
+      if (!originalTarget) return; // Assume error already handled
       exprImpl->AddToSequencePostAction (block, originalTarget, false);
       
       RegisterPtr actualTarget (exprImpl->AddToSequence (block, Intermediate, true));
       if (!actualTarget)
-        throw Exception (SwizzledExpressionNotAnLValue);
+      {
+        ExpressionError (SwizzledExpressionNotAnLValue);
+        return;
+      }
       
       TypeImplPtr originalValueType (exprImpl->GetValueType());
+      if (!originalValueType) return; // Assume error already handled
       TypeImplPtr originalValueCompType (boost::static_pointer_cast<TypeImpl> (originalValueType->avmBase));
       TypeImplPtr valueType (GetValueType());
       
@@ -171,7 +180,10 @@ namespace s1
       {
         unsigned int comp = attr.GetSwizzleComp (c);
         if (compDefined & (1 << comp))
-          throw Exception (MultipleUseOfComponentInLValueSwizzle);
+        {
+          ExpressionError (MultipleUseOfComponentInLValueSwizzle);
+          return;
+        }
 
         if (valueType->typeClass == TypeImpl::Vector)
         {

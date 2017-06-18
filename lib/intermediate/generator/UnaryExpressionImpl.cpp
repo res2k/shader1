@@ -50,6 +50,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::GetValueType()
     {
       boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
+      if (!operandType) return TypeImplPtr(); // Assume error already handled
       boost::shared_ptr<TypeImpl> valueType;
       
       switch (op)
@@ -60,22 +61,22 @@ namespace s1
           valueType = operandType;
         else if (operandType->IsEqual (*(handler->GetUintType())))
           valueType = handler->GetIntType();
-        else
-          throw Exception (OperandTypesInvalid);
         break;
       case Inv:
         if (operandType->IsEqual (*(handler->GetUintType()))
             || operandType->IsEqual (*(handler->GetIntType())))
           valueType = operandType;
-        else
-          throw Exception (OperandTypesInvalid);
         break;
       case Not:
         if (operandType->IsEqual (*(handler->GetBoolType())))
           valueType = operandType;
-        else
-          throw Exception (OperandTypesInvalid);
         break;
+      }
+
+      if (!valueType)
+      {
+        ExpressionError (OperandTypesInvalid);
+        return TypeImplPtr();
       }
       
       return valueType;
@@ -88,13 +89,15 @@ namespace s1
       if (asLvalue) return RegisterPtr();
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-      boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
-      
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
+      if (!valueType) return RegisterPtr(); // Assume error already handled
+      boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
+      if (!operandType) return RegisterPtr(); // Assume error already handled
 
       // Set up register for operand value
       RegisterPtr orgReg, reg;
       orgReg = reg = operand->AddToSequence (block, Intermediate);
+      if (!reg) return RegisterPtr(); // Assume error already handled
       if (!valueType->IsEqual (*(operandType.get())))
       {
         // Insert cast op
