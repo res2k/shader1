@@ -54,11 +54,10 @@ namespace s1
       return valueType;
     }
 
-    template<typename T>
-    static OUTCOME_V2_NAMESPACE::result<T, ErrorCode> ParseNumber (int base, const uc::String& str,
+    template<typename T, T Base, bool Negative>
+    static OUTCOME_V2_NAMESPACE::result<T, ErrorCode> ParseNumber (const uc::String& str,
                                                                    uc::String::size_type begin,
-                                                                   uc::String::size_type end,
-                                                                   bool negative)
+                                                                   uc::String::size_type end)
     {
       T val (0);
       for (uc::String::size_type i = begin; i < end; i++)
@@ -69,11 +68,11 @@ namespace s1
         {
           digitVal = digit - '0';
         }
-        else if ((digit >= 'a') && (digit < 'a' + (base - 10)))
+        else if ((digit >= 'a') && (digit < 'a' + (Base - 10)))
         {
           digitVal = digit - 'a' + 10;
         }
-        else if ((digit >= 'A') && (digit < 'A' + (base - 10)))
+        else if ((digit >= 'A') && (digit < 'A' + (Base - 10)))
         {
           digitVal = digit - 'A' + 10;
         }
@@ -81,29 +80,29 @@ namespace s1
           return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
 
         // Over-/underflow check
-        if (((std::numeric_limits<T>::max() / static_cast<T> (base)) < val)
-            || ((std::numeric_limits<T>::min() / static_cast<T> (base)) > val))
+        if (((std::numeric_limits<T>::max() / Base) < val)
+            || ((std::numeric_limits<T>::min() / Base) > val))
         {
           return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
         }
 
-        if (negative)
+        if (Negative)
         {
           // Underflow check
-          if ((std::numeric_limits<T>::min() + static_cast<T> (digitVal)) > (val * static_cast<T> (base)))
+          if ((std::numeric_limits<T>::min() + static_cast<T> (digitVal)) > (val * Base))
           {
             return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
           }
-          val = (val * static_cast<T> (base)) - static_cast<T> (digitVal);
+          val = (val * Base) - static_cast<T> (digitVal);
         }
         else
         {
           // Overflow check
-          if ((std::numeric_limits<T>::max() - (val * static_cast<T> (base))) < static_cast<T> (digitVal))
+          if ((std::numeric_limits<T>::max() - (val * Base)) < static_cast<T> (digitVal))
           {
             return OUTCOME_V2_NAMESPACE::failure (NumberParseError);
           }
-          val = (val * static_cast<T> (base)) + static_cast<T> (digitVal);
+          val = (val * Base) + static_cast<T> (digitVal);
         }
       }
       return OUTCOME_V2_NAMESPACE::success (val);
@@ -119,15 +118,15 @@ namespace s1
 
       if (str.startsWith ("0x") || str.startsWith ("0X"))
       {
-        return ParseNumber<T> (16, str, 2, str.length(), false);
+        return ParseNumber<T, 16, false> (str, 2, str.length());
       }
       else if (str.startsWith ("-"))
       {
-        return ParseNumber<T> (10, str, 1, str.length(), true);
+        return ParseNumber<T, 10, true> (str, 1, str.length());
       }
       else
       {
-        return ParseNumber<T> (10, str, 0, str.length(), false);
+        return ParseNumber<T, 10, false> (str, 0, str.length());
       }
     }
 
