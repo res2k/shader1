@@ -37,25 +37,10 @@ namespace s1
       ArithmeticOp op,
       const boost::shared_ptr<ExpressionImpl>& operand1,
       const boost::shared_ptr<ExpressionImpl>& operand2)
-       : ExpressionImpl (handler, std::move (context)), op (op), operand1 (operand1), operand2 (operand2)
+       : BinaryExpressionImpl (handler, std::move (context), operand1, operand2), op (op)
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameImplSet
-    IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::QueryWrittenNames (bool asLvalue)
-    {
-      NameImplSet set;
-      {
-        NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
-        set.insert (op1Set.begin(), op1Set.end());
-      }
-      {
-        NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
-        set.insert (op2Set.begin(), op2Set.end());
-      }
-      return set;
-    }
-      
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetValueType()
     {
@@ -127,32 +112,13 @@ namespace s1
       if (asLvalue) return RegisterPtr();
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-      boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
-      boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
       
       boost::shared_ptr<TypeImpl> valueType = GetValueType ();
         
       // Set up registers for operand values
-      RegisterPtr orgReg1, reg1;
-      orgReg1 = reg1 = operand1->AddToSequence (block, Intermediate);
-      if (!valueType->IsEqual (*(type1.get())))
-      {
-        // Insert cast op
-        RegisterPtr newReg1 (handler->AllocateRegister (seq, valueType, Intermediate));
-        handler->GenerateCast (seq, newReg1, valueType,
-                               reg1, type1);
-        reg1 = newReg1;
-      }
-      RegisterPtr orgReg2, reg2;
-      orgReg2 = reg2 = operand2->AddToSequence (block, Intermediate);
-      if (!valueType->IsEqual (*(type2.get())))
-      {
-        // Insert cast op
-        RegisterPtr newReg2 (handler->AllocateRegister (seq, valueType, Intermediate));
-        handler->GenerateCast (seq, newReg2, valueType,
-                               reg2, type2);
-        reg2 = newReg2;
-      }
+      auto operandRegs = GetSourceRegisters (block, valueType);
+      auto reg1 = std::get<0> (*operandRegs).reg;
+      auto reg2 = std::get<1> (*operandRegs).reg;
       
       RegisterPtr destination (handler->AllocateRegister (seq, GetValueType(), classify));
       
@@ -179,8 +145,8 @@ namespace s1
       assert (seqOp);
       seq.AddOp (seqOp);
       
-      operand1->AddToSequencePostAction (block, orgReg1, false);
-      operand2->AddToSequencePostAction (block, orgReg2, false);
+      operand1->AddToSequencePostAction (block, std::get<0> (*operandRegs).orig, false);
+      operand2->AddToSequencePostAction (block, std::get<1> (*operandRegs).orig, false);
       
       return destination;
     }

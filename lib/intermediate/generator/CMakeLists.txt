@@ -3,6 +3,7 @@ file(GLOB generator_sources
      ArrayElementExpressionImpl.h
      AssignmentExpressionImpl.h
      AttributeExpressionImpl.h
+     BinaryExpressionImpl.h
      BlockImpl.h
      BoolExpressionImpl.h
      ComparisonExpressionImpl.h
@@ -22,6 +23,7 @@ file(GLOB generator_sources
      ArrayElementExpressionImpl.cpp
      AssignmentExpressionImpl.cpp
      AttributeExpressionImpl.cpp
+     BinaryExpressionImpl.cpp
      BlockImpl.cpp
      BoolExpressionImpl.cpp
      ComparisonExpressionImpl.cpp

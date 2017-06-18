@@ -56,6 +56,7 @@ namespace s1
       class ArrayElementExpressionImpl;
       class AssignmentExpressionImpl;
       class AttributeExpressionImpl;
+      class BinaryExpressionImpl;
       class BoolExpressionImpl;
       class ComparisonExpressionImpl;
       class FunctionCallExpressionImpl;

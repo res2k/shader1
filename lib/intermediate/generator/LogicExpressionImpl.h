@@ -18,26 +18,23 @@
 #ifndef __INTERMEDIATE_LOGICEXPRESSIONIMPL_H__
 #define __INTERMEDIATE_LOGICEXPRESSIONIMPL_H__
 
-#include "ExpressionImpl.h"
+#include "BinaryExpressionImpl.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::LogicExpressionImpl : public ExpressionImpl
+    class IntermediateGeneratorSemanticsHandler::LogicExpressionImpl
+      : public BinaryExpressionImpl
     {
       LogicOp op;
-      boost::shared_ptr<ExpressionImpl> operand1;
-      boost::shared_ptr<ExpressionImpl> operand2;
     public:
       LogicExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                            ExpressionContext&& context,
                            LogicOp op,
                            const boost::shared_ptr<ExpressionImpl>& operand1,
                            const boost::shared_ptr<ExpressionImpl>& operand2);
-      
-      NameImplSet QueryWrittenNames (bool asLvalue);
-      
+
       boost::shared_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
