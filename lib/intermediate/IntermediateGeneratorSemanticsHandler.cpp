@@ -598,21 +598,27 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAttributeAccess (ExpressionPtr expr,
                                                                                 const uc::String& attr)
     {
+      if (!expr) return ExpressionPtr(); // Assume error already handled
       Attribute attrInfo (IdentifyAttribute (attr));
       if (attrInfo.attrClass == Attribute::Unknown)
-        throw Exception (InvalidAttribute);
+      {
+        ExpressionError (ExpressionContext(), InvalidAttribute);
+        return ExpressionPtr();
+      }
       return boost::make_shared<AttributeExpressionImpl> (this, ExpressionContext(), expr, attrInfo);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArrayElementAccess (ExpressionPtr arrayExpr,
                                                                                    ExpressionPtr elementIndexExpr)
     {
+      if (!arrayExpr || !elementIndexExpr) return ExpressionPtr(); // Assume error already handled
       return boost::make_shared<ArrayElementExpressionImpl> (this, ExpressionContext(), arrayExpr, elementIndexExpr);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAssignExpression (ExpressionPtr target,
                                           ExpressionPtr value)
     {
+      if (!target || !value) return ExpressionPtr(); // Assume error already handled
       return ExpressionPtr (new AssignmentExpressionImpl (this,
                                                           ExpressionContext(),
                                                           boost::static_pointer_cast<ExpressionImpl> (target),
@@ -623,6 +629,7 @@ namespace s1
                                                                                      ExpressionPtr operand1,
                                                                                      ExpressionPtr operand2)
     {
+      if (!operand1 || !operand2) return ExpressionPtr(); // Assume error already handled
       return ExpressionPtr (new ArithmeticExpressionImpl (this,
                                                           ExpressionContext(),
                                                           op,
@@ -633,6 +640,7 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateUnaryExpression (UnaryOp op,
                                                                                 ExpressionPtr operand)
     {
+      if (!operand) return ExpressionPtr(); // Assume error already handled
       return boost::make_shared<UnaryExpressionImpl> (this, ExpressionContext(), op,
                                                       boost::static_pointer_cast<ExpressionImpl> (operand));
     }
@@ -641,6 +649,7 @@ namespace s1
                                                                                   ExpressionPtr ifExpr,
                                                                                   ExpressionPtr thenExpr)
     {
+      if (!condition || !ifExpr || !thenExpr) return ExpressionPtr(); // Assume error already handled
       return boost::make_shared<TernaryExpressionImpl> (this,
                                                         ExpressionContext(),
                                                         boost::static_pointer_cast<ExpressionImpl> (condition),
@@ -652,6 +661,7 @@ namespace s1
                                                                                      ExpressionPtr operand1,
                                                                                      ExpressionPtr operand2)
     {
+      if (!operand1 || !operand2) return ExpressionPtr(); // Assume error already handled
       return ExpressionPtr (
         boost::make_shared<ComparisonExpressionImpl> (this,
                                                       ExpressionContext(),
@@ -664,6 +674,7 @@ namespace s1
                                                                                 ExpressionPtr operand1,
                                                                                 ExpressionPtr operand2)
     {
+      if (!operand1 || !operand2) return ExpressionPtr(); // Assume error already handled
       return ExpressionPtr (
         boost::make_shared<LogicExpressionImpl> (this,
                                                  ExpressionContext(),
@@ -676,6 +687,10 @@ namespace s1
                                                                                        const ExpressionVector& params)
     {
       assert (functionName->GetType() == SemanticsHandler::Name::Function);
+      for (const auto& param : params)
+      {
+        if (!param) return ExpressionPtr(); // Assume error already handled
+      }
 
       return ExpressionPtr (
         boost::make_shared<FunctionCallExpressionImpl> (this,
@@ -687,6 +702,11 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,
                                                                                           const ExpressionVector& params)
     {
+      for (const auto& param : params)
+      {
+        if (!param) return ExpressionPtr(); // Assume error already handled
+      }
+
       return ExpressionPtr (
         boost::make_shared<TypeConstructorExpressionImpl> (this,
                                                            ExpressionContext(),
