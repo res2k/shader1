@@ -31,7 +31,9 @@ CombiningItemModel::CombiningItemModel (QObject* parent) : QAbstractItemModel (p
 {}
 
 CombiningItemModel::~CombiningItemModel ()
-{}
+{
+  sourceToRow.clear_and_dispose ([=](Model* p){ delete p; });
+}
 
 void CombiningItemModel::addModel (QAbstractItemModel* model)
 {
@@ -58,9 +60,9 @@ void CombiningItemModel::addModel (QAbstractItemModel* model)
 
   ConnectSignals (model);
 
-  auto tree_node = modelsTree.emplace_back (model);
-  modelsTree.set_node_value (tree_node, modelRows);
-  modelTreeNodeMap[model] = tree_node;
+  auto tree_node = new Model (model, modelRows);
+  sourceToRow.push_back (*tree_node);
+  sourceToModel.insert_equal (*tree_node);
 
   /* Subscribe to signals to we can update the modelsTree if the root row count changes.
    * TODO?: Is this sufficient? What if the ModelHierarchyMirror<> signal handlers
@@ -119,7 +121,7 @@ void CombiningItemModel::fetchMore (const QModelIndex &parent)
 
 bool CombiningItemModel::hasChildren (const QModelIndex& parent) const
 {
-  if (!parent.isValid()) return !modelsTree.empty();
+  if (!parent.isValid()) return !sourceToRow.empty();
   auto modelAndIndex = TranslateModelIndex (parent);
   return modelAndIndex.first->hasChildren (modelAndIndex.second);
 }
@@ -145,7 +147,7 @@ int CombiningItemModel::rowCount (const QModelIndex &parent) const
 {
   if (!parent.isValid())
   {
-    return modelsTree.root_sum ();
+    return sourceToRow.empty() ? 0 : sourceToRow.root_sum ();
   }
   else
   {
@@ -168,9 +170,9 @@ std::pair<QAbstractItemModel*, QModelIndex> CombiningItemModel::TranslateModelIn
   }
 
   // Index is top level, extract original model & row inside of it
-  auto tree_node = modelsTree.get_node_by_sum (index.row ());
-  auto model = modelsTree.get_node_data (tree_node);
-  auto firstModelRow = modelsTree.get_sum_for_node (tree_node);
+  auto tree_it = sourceToRow.get_iterator_by_sum (index.row ());
+  auto firstModelRow = sourceToRow.get_sum_for_iterator (tree_it);
+  auto model = tree_it->sourceModel;
   return std::make_pair (model, model->index (index.row() - firstModelRow, index.column()));
 }
 
@@ -182,9 +184,9 @@ QModelIndex CombiningItemModel::TranslateSourceIndex (QAbstractItemModel* model,
     return this->index (index.row(), index.column(), parentIndex);
   }
 
-  auto tree_node = modelTreeNodeMap.find (model)->second;
-  assert (modelsTree.get_node_data (tree_node) == model);
-  auto firstModelRow = modelsTree.get_sum_for_node (tree_node);
+  auto tree_it = sourceToModel.find (model);
+  assert (tree_it->sourceModel == model);
+  auto firstModelRow = sourceToRow.get_sum_for_iterator (sourceToRow.iterator_to (*tree_it));
   return this->index (firstModelRow + index.row(), index.column(), QModelIndex());
 }
 
@@ -204,9 +206,22 @@ void CombiningItemModel::sourceRowsChanged (const QModelIndex& parent)
 {
   if (parent.isValid ()) return;
 
+  struct Compare
+  {
+    bool operator()(const Model& a, QAbstractItemModel* b) const
+    {
+      return a.sourceModel < b;
+    }
+    bool operator()(QAbstractItemModel* a, const Model& b) const
+    {
+      return a < b.sourceModel;
+    }
+  };
+
   // Handle a change in the top-level row count
   auto model = sourceModel ();
-  auto tree_node = modelTreeNodeMap.find (model)->second;
-  assert (modelsTree.get_node_data (tree_node) == model);
-  modelsTree.set_node_value (tree_node, model->rowCount());
+  auto tree_it = sourceToModel.find (model, Compare ());
+  assert (tree_it->sourceModel == model);
+  tree_it->rowCount = model->rowCount ();
+  sourceToRow.update_sums (sourceToRow.iterator_to (*tree_it));
 }

@@ -38,18 +38,17 @@ NodeHierarchy::Node::~Node ()
 
 NodeHierarchy::Node* NodeHierarchy::Node::AddChild (int row, int col)
 {
-  assert(rows.root_sum() >= row);
-  auto rows_node = rows.get_node_by_sum (row);
-  if (!rows_node) rows_node = rows.emplace_back();
+  assert(rows.empty() || rows.root_sum() >= row);
+  auto rows_it = rows.get_iterator_by_sum (row);
+  if (rows_it == rows.end()) rows_it = rows.emplace_back();
 
-  auto& cols = rows.get_node_data (rows_node);
-  assert (cols.root_sum() >= col);
-  auto cols_node = cols.get_node_by_sum (col);
-  if (!cols_node) cols_node = cols.emplace_back();
+  auto& cols = *rows_it;
+  assert (cols.empty() || cols.root_sum() >= col);
+  auto cols_it = cols.get_iterator_by_sum (col);
+  if (cols_it == cols.end()) cols_it = cols.emplace_back();
 
-  auto newNodePtr = &(cols.get_node_data (cols_node));
-  newNodePtr->parent = this;
-  return newNodePtr;
+  cols_it->parent = this;
+  return &(*cols_it);
 }
 
 void NodeHierarchy::Node::Clear ()
@@ -60,39 +59,39 @@ void NodeHierarchy::Node::Clear ()
 void NodeHierarchy::Node::LocateChild (const Node* child, int& row, int& col) const
 {
   // Find ColumnsDataTree from Node
-  auto col_node = ColumnsDataTree::get_data_node (*child);
-  auto& cols = ColumnsDataTree::get_tree (col_node);
-  col = cols.get_sum_for_node (col_node);
+  auto col_it = ColumnsDataTree::s_iterator_to (*child);
+  auto& cols = ColumnsDataTree::container_from_iterator (col_it);
+  col = cols.get_sum_for_iterator (col_it);
 
   // Find RowsDataTree from cols
-  auto row_node = RowsDataTree::get_data_node (cols);
-  auto& rows = RowsDataTree::get_tree (row_node);
-  row = rows.get_sum_for_node (row_node);
+  auto row_it = RowsDataTree::s_iterator_to (static_cast<const RowsData&> (cols));
+  auto& rows = RowsDataTree::container_from_iterator (row_it);
+  row = rows.get_sum_for_iterator (row_it);
 }
 
 NodeHierarchy::Node* NodeHierarchy::Node::ChildFromIndex (int row, int col)
 {
-  auto rows_node = rows.get_node_by_sum (row);
-  assert (rows_node);
+  auto rows_it = rows.get_iterator_by_sum (row);
+  assert (rows_it != rows.end());
 
-  auto& cols = rows.get_node_data (rows_node);
-  auto cols_node = cols.get_node_by_sum (col);
-  assert (cols_node);
+  auto& cols = *rows_it;
+  auto cols_it = cols.get_iterator_by_sum (col);
+  assert (cols_it != cols.end());
 
-  return &(ColumnsDataTree::get_node_data (cols_node));
+  return &(*cols_it);
 }
 
 void NodeHierarchy::Node::InsertColumns (int first, int last)
 {
   for (auto& cols : rows)
   {
-    if (first < cols.root_sum ())
+    if (!cols.empty() && (first < cols.root_sum ()))
     {
-      auto insert_pos = cols.get_node_by_sum (first);
+      auto insert_pos = cols.get_iterator_by_sum (first);
       for (int c = first; c <= last; c++)
       {
         auto new_node = cols.emplace (insert_pos);
-        ColumnsDataTree::get_node_data (new_node).parent = this;
+        new_node->parent = this;
       }
     }
     else
@@ -100,7 +99,7 @@ void NodeHierarchy::Node::InsertColumns (int first, int last)
       for (int c = first; c <= last; c++)
       {
         auto new_node = cols.emplace_back ();
-        ColumnsDataTree::get_node_data (new_node).parent = this;
+        new_node->parent = this;
       }
     }
   }
@@ -115,12 +114,10 @@ void NodeHierarchy::Node::MoveColumns (int start, int end, Node* destination, in
        (srcRow != srcEnd) && (dstRow != dstEnd);
        ++srcRow, ++dstRow)
   {
-    auto srcCol = srcRow->get_node_by_sum (start);
-    auto srcColEnd = srcRow->get_node_by_sum (end + 1);
-    if (!srcColEnd) srcColEnd = srcRow->end_node();
+    auto srcCol = srcRow->get_iterator_by_sum (start);
+    auto srcColEnd = srcRow->get_iterator_by_sum (end + 1);
 
-    auto dstCol = dstRow->get_node_by_sum (column);
-    if (!dstCol) dstCol = dstRow->end_node();
+    auto dstCol = dstRow->get_iterator_by_sum (column);
 
     while (srcCol != srcColEnd)
     {
@@ -136,15 +133,12 @@ void NodeHierarchy::Node::RemoveColumns (int first, int last)
        row != rowEnd;
        ++row)
   {
-    auto col = row->get_node_by_sum (first);
-    auto colEnd = row->get_node_by_sum (last + 1);
-    if (!colEnd) colEnd = row->end_node();
+    auto col = row->get_iterator_by_sum (first);
+    auto colEnd = row->get_iterator_by_sum (last + 1);
 
     while (col != colEnd)
     {
-      auto next_col = row->next_node (col);
-      row->erase_node (col);
-      col = next_col;
+      col = row->erase (col);
     }
   }
 }
@@ -152,19 +146,19 @@ void NodeHierarchy::Node::RemoveColumns (int first, int last)
 void NodeHierarchy::Node::InsertRows (int first, int last, int numColumns)
 {
   auto create_columns =
-    [=](RowsDataTree::node_type row)
+    [=](RowsDataTree::iterator row)
     {
-      auto& cols = RowsDataTree::get_node_data (row);
+      auto& cols = *row;
       for (int c = 0; c < numColumns; c++)
       {
         auto new_node = cols.emplace_back();
-        ColumnsDataTree::get_node_data (new_node).parent = this;
+        new_node->parent = this;
       }
     };
 
-  if (first < rows.root_sum ())
+  if (!rows.empty() && (first < rows.root_sum ()))
   {
-    auto insert_pos = rows.get_node_by_sum (first);
+    auto insert_pos = rows.get_iterator_by_sum (first);
     for (int r = first; r <= last; r++)
     {
       auto new_row = rows.emplace (insert_pos);
@@ -183,12 +177,10 @@ void NodeHierarchy::Node::InsertRows (int first, int last, int numColumns)
 
 void NodeHierarchy::Node::MoveRows (int start, int end, Node* destination, int row)
 {
-  auto srcRow = rows.get_node_by_sum (start);
-  auto srcRowEnd = rows.get_node_by_sum (end + 1);
-  if (!srcRowEnd) srcRowEnd = rows.end_node();
+  auto srcRow = rows.get_iterator_by_sum (start);
+  auto srcRowEnd = rows.get_iterator_by_sum (end + 1);
 
-  auto dstRow = destination->rows.get_node_by_sum (row);
-  if (!dstRow) dstRow = destination->rows.end_node();
+  auto dstRow = destination->rows.get_iterator_by_sum (row);
 
   while (srcRow != srcRowEnd)
   {
@@ -198,14 +190,11 @@ void NodeHierarchy::Node::MoveRows (int start, int end, Node* destination, int r
 
 void NodeHierarchy::Node::RemoveRows (int first, int last)
 {
-  auto row = rows.get_node_by_sum (first);
-  auto rowEnd = rows.get_node_by_sum (last + 1);
-  if (!rowEnd) rowEnd = rows.end_node();
+  auto row = rows.get_iterator_by_sum (first);
+  auto rowEnd = rows.get_iterator_by_sum (last + 1);
 
   while (row != rowEnd)
   {
-    auto next_row = rows.next_node (row);
-    rows.erase_node (row);
-    row = next_row;
+    row = rows.erase (row);
   }
 }

@@ -33,6 +33,7 @@
 #include <QAbstractItemModel>
 
 #include "ModelHierarchyMirror.h"
+#include "sum_tree/intrusive.h"
 
 #include <unordered_map>
 
@@ -74,17 +75,40 @@ protected:
   /// Convenience wrapper for TranslateSourceIndex(), for use from slots only!
   QModelIndex mapFromSource (const QModelIndex& index) const;
 
+  friend class ModelHierarchyMirror<CombiningItemModel>;
   /* This combination of data structures was chosen because it can:
    * 1. Retain original order of insertion (for display purposes)
    * 2. Quickly go from a row number to the model for that row
    * 3. Quickly handle changes in row counts
    * 4. Go from model to associated data (and it's row number)
    */
-  typedef sum_tree::Tree<QAbstractItemModel*, sum_tree::sum_traits::user_value<>, sum_tree::value_traits::unsorted> ModelsTree;
-  ModelsTree modelsTree;
-  std::unordered_map<QAbstractItemModel*, ModelsTree::node_type> modelTreeNodeMap;
+  struct SourceToRowTag;
+  typedef boost::intrusive::set_base_hook<boost::intrusive::link_mode<boost::intrusive::normal_link>,
+                                          boost::intrusive::tag<SourceToRowTag>> SourceToRowSetHook;
+  typedef sum_tree::intrusive::sum_base_hook<int> SourceToRowSumHook;
+  struct SourceToModelTag;
+  typedef boost::intrusive::set_base_hook<boost::intrusive::link_mode<boost::intrusive::normal_link>,
+                                          boost::intrusive::tag<SourceToModelTag>> SourceToModelSetHook;
+  struct Model : public SourceToRowSetHook,
+                 public SourceToRowSumHook,
+                 public SourceToModelSetHook
+  {
+    QAbstractItemModel* sourceModel;
+    int rowCount;
 
-  friend class ModelHierarchyMirror<CombiningItemModel>;
+    Model (QAbstractItemModel* sourceModel, int rowCount = 0)
+      : sourceModel (sourceModel), rowCount (rowCount) {}
+
+    bool operator<(const Model& other) const { return sourceModel < other.sourceModel;  }
+  };
+  typedef sum_tree::intrusive::rbtree<Model, boost::intrusive::base_hook<SourceToRowSetHook>,
+                                      sum_tree::intrusive::sum_base<SourceToRowSumHook>,
+                                      sum_tree::intrusive::addend_member<Model, int, &Model::rowCount>,
+                                      boost::intrusive::constant_time_size<false>> SourceToRowTree;
+  SourceToRowTree sourceToRow;
+  typedef boost::intrusive::rbtree<Model, boost::intrusive::base_hook<SourceToModelSetHook>,
+                                   boost::intrusive::constant_time_size<false>> SourceToModelTree;
+  SourceToModelTree sourceToModel;
 protected slots:
   void sourceRowsChanged (const QModelIndex& parent);
 };

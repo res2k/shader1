@@ -15,13 +15,22 @@ if(Qt5_FOUND)
       models/NodeHierarchy.h
       models/SubindexModel.cpp
       models/SubindexModel.h
-      models/sum_tree.h
+      models/sum_tree/intrusive.h
       )
   add_library(qml_shader_models STATIC EXCLUDE_FROM_ALL
               ${qml_shader_models_sources})
   target_link_libraries(qml_shader_models
                         Qt5::Widgets)
   target_compile_features(qml_shader_models PUBLIC ${S1_REQUIRED_CXX_FEATURES})
+
+  if(CXXTEST_FOUND)
+    set(sum_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/sum_tree/t/sum_tree.h)
+    CXXTEST_ADD_TEST(test_sum_tree test_sum_tree.cpp
+                    ${sum_tree_test_sources})
+    target_include_directories(test_sum_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
+    set_property(TARGET test_sum_tree PROPERTY EXCLUDE_FROM_ALL YES)
+    AutoBuildTest(test_sum_tree)
+  endif()
 
   qt5_add_resources(MATERIAL_ICONS_QRC material_icons/MaterialIcons.qrc OPTIONS --compress 9 --threshold 0)
   set(qml_shader_material_icons_sources
