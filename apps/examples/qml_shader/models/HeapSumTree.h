@@ -31,11 +31,14 @@
 
 #include "sum_tree/intrusive.h"
 
-template <typename T, typename... A>
-class HeapSumTree : public sum_tree::intrusive::rbtree<T, A...>
+template <typename T, typename... Options>
+class HeapSumTree : public sum_tree::intrusive::rbtree<T, Options...>
 {
-  typedef sum_tree::intrusive::rbtree<T, A...> tree_type;
+  typedef sum_tree::intrusive::rbtree<T, Options...> tree_type;
 public:
+  typedef typename tree_type::iterator iterator;
+  typedef typename tree_type::const_iterator const_iterator;
+
   HeapSumTree () {}
   HeapSumTree (const HeapSumTree& other) = delete;
   HeapSumTree (HeapSumTree&& other) : tree_type (std::move (other)) {}

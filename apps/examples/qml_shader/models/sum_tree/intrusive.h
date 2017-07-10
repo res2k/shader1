@@ -131,6 +131,8 @@ namespace boost
       typedef typename base_algo::node_traits node_traits;
       typedef sum_tree::intrusive_impl::sum_tree_algo_base<node_traits, S, A> sum_tree_algo_base;
     public:
+      typedef typename base_algo::insert_commit_data insert_commit_data;
+
       static void rotate_left_no_parent_fix(const node_ptr& p, const node_ptr& p_right)
       {
         base_algo::rotate_left_no_parent_fix (p, p_right);
@@ -422,6 +424,7 @@ namespace sum_tree
       typedef typename boost::intrusive::rbtree_impl<CombinedValueTraits, VoidOrKeyOfValue, VoidOrKeyComp, SizeType, ConstantTimeSize, HeaderHolder> base_tree_impl;
     public:
       typedef typename base_tree_impl::iterator iterator;
+      typedef typename base_tree_impl::const_iterator const_iterator;
 
       typedef typename sum_traits::value_type sum_type;
 
@@ -431,27 +434,27 @@ namespace sum_tree
 
       sum_type root_sum() const
       {
-        auto root_it = root ();
+        auto root_it = this->root ();
         assert (root_it != end());
         return sum_traits::get_sum (value_traits::to_node_ptr (*root_it));
       }
       iterator get_iterator_by_sum (sum_type value)
       {
-        auto root_it = root ();
-        if (root_it == end ()) return end ();
+        auto root_it = this->root ();
+        if (root_it == this->end ()) return this->end ();
         auto root_node = value_traits::to_node_ptr (*root_it);
-        if (value >= sum_traits::get_sum (root_node)) return end ();
+        if (value >= sum_traits::get_sum (root_node)) return this->end ();
         auto node = tree_algo::get_node_by_sum (root_node, value);
-        return iterator_to (*(value_traits::to_value_ptr (node)));
+        return this->iterator_to (*(value_traits::to_value_ptr (node)));
       }
       const_iterator get_iterator_by_sum (sum_type value) const
       {
-        auto root_it = root ();
-        if (root_it == end ()) return end ();
+        auto root_it = this->root ();
+        if (root_it == this->end ()) return this->end ();
         auto root_node = value_traits::to_node_ptr (*root_it);
-        if (value >= sum_traits::get_sum (root_node)) return end ();
+        if (value >= sum_traits::get_sum (root_node)) return this->end ();
         auto node = tree_algo::get_node_by_sum (root_node, value);
-        return iterator_to (*(value_traits::to_value_ptr (node)));
+        return this->iterator_to (*(value_traits::to_value_ptr (node)));
       }
       /// Get sum of all predecessors for an element (doesn't include element!)
       sum_type get_sum_for_iterator (const_iterator it) const
@@ -473,12 +476,12 @@ namespace sum_tree
        */
       iterator transfer (iterator before, iterator source)
       {
-        auto& source_tree = container_from_iterator (source);
+        auto& source_tree = this->container_from_iterator (source);
 
         auto& source_data = *source;
         auto source_next = source_tree.erase (source);
 
-        auto& dest_tree = container_from_iterator (before);
+        auto& dest_tree = this->container_from_iterator (before);
         dest_tree.insert_before (before, source_data);
 
         return source_next;
@@ -536,7 +539,7 @@ namespace sum_tree
 
       rbtree () {}
       rbtree (const rbtree& other) = delete;
-      rbtree (rbtree&& other) : tree_impl (std::move (other)) {}
+      rbtree (rbtree&& other) : Base (std::move (other)) {}
 
       static rbtree& container_from_end_iterator (iterator it)
       { return static_cast<rbtree&> (Base::container_from_end_iterator (it)); }
