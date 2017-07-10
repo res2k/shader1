@@ -35,7 +35,6 @@
 #include <limits>
 
 #include <boost/intrusive/intrusive_fwd.hpp>
-//#include <boost/intrusive/detail/algo_type.hpp>
 
 #include <boost/intrusive/detail/hook_traits.hpp>
 #include <boost/intrusive/pack_options.hpp>
