@@ -541,6 +541,20 @@ KEYWORDS
     case lexer::TernaryElse:    return ":";
     case lexer::LogicOr:        return "||";
     case lexer::LogicAnd:       return "&&";
+
+    case lexer::kwBoolVec:      return "boolN";
+    case lexer::kwUnsignedVec:  return "unsignedN";
+    case lexer::kwIntVec:       return "intN";
+    case lexer::kwFloatVec:     return "floatN";
+    case lexer::kwBoolMat:      return "boolNxM";
+    case lexer::kwUnsignedMat:  return "unsignedNxM";
+    case lexer::kwIntMat:       return "intNxM";
+    case lexer::kwFloatMat:     return "floatNxM";
+
+    case lexer::MatFlag:
+    case lexer::VecFlag:
+    case lexer::TypeFlagMask:
+      break;
     }
     return 0;
   }
