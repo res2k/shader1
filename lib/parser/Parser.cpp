@@ -722,6 +722,8 @@ namespace s1
           return ParseTypeVector (isUnsigned);
         case lexer::MatFlag:
           return ParseTypeMatrix (isUnsigned);
+        default:
+          break;
         }
       }
       break;
