@@ -275,4 +275,51 @@ public:
       TS_ASSERT_EQUALS(count, nodeCount)
     }
   }
+
+  void testCustomAddend2_unsorted (void)
+  {
+    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    struct Node :
+      public boost::intrusive::set_base_hook<>,
+      public sum_hook
+    {
+      size_t addend = 0;
+    };
+    typedef sum_tree::intrusive::rbtree<Node,
+      sum_tree::intrusive::sum_base<sum_hook>,
+      sum_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
+
+    std::vector<Node> nodeStorage;
+    tree_type tree;
+    static const size_t nodeCount = 10;
+    static const size_t nodeAddends[nodeCount] = { 3, 1, 2, 1, 4, 10, 5, 2, 2, 1 };
+
+    static const size_t expectedNodeSums[nodeCount] = { 0, 3, 4, 6, 7, 11, 21, 26, 28, 30 };
+    static const size_t expectedRootSum = 31;
+
+    nodeStorage.reserve (nodeCount);
+    for (size_t i = 0; i < nodeCount; i++)
+    {
+      nodeStorage.emplace_back ();
+      auto& newNode = nodeStorage.back ();
+      newNode.addend = nodeAddends[i];
+
+      tree.push_back (newNode);
+    }
+
+    TS_ASSERT_EQUALS (tree.root_sum(), expectedRootSum);
+
+    {
+      size_t count = 0;
+      for (const auto& treeNode : tree)
+      {
+        TS_ASSERT_LESS_THAN(count, nodeCount);
+        auto nodeIterator = tree.iterator_to (treeNode);
+        auto nodeSum = tree.get_sum_for_iterator (nodeIterator);
+        TS_ASSERT_EQUALS (nodeSum, expectedNodeSums[count]);
+        count++;
+      }
+      TS_ASSERT_EQUALS(count, nodeCount)
+    }
+  }
 };
