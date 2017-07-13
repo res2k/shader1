@@ -47,6 +47,19 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_CompiledProgram);
  */
 S1_API(const char*) s1_compiledprogram_get_string (s1_CompiledProgram* program);
 
+S1TYPE_DECLARE_FWD(ByteStream);
+/**
+ * Obtain the string of a generated program.
+ * \param program The compile program object.
+ * \returns The program string as a byte stream.
+ *   If obtaining the string failed, \NULL is returned, and the error status
+ *   is saved in the library's last error code.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * \memberof s1_CompiledProgram
+ */
+S1_API(s1_ByteStream*) s1_compiledprogram_create_stream (s1_CompiledProgram* program);
+
 #if defined(__cplusplus)
 namespace s1
 {
@@ -76,6 +89,17 @@ namespace s1
         return s1_compiledprogram_get_string (this);
       }
 
+      /**
+       * Obtain the string of a generated program.
+       * \returns The program string as a byte stream.
+       *   If obtaining the string failed, \NULL is returned, and the error status
+       *   is saved in the library's last error code.
+       */
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateStream ()
+      {
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_compiledprogram_create_stream (this));
+      }
     };
   S1_NS_CXXAPI_END
 

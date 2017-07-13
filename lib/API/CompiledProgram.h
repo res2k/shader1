@@ -31,15 +31,19 @@ namespace s1
 {
   namespace api_impl
   {
+    class ByteStream;
+
     class CompiledProgram : public s1::LibraryObject
     {
     public:
       CompiledProgram (s1::Library* lib, Compiler::Backend::ProgramPtr compiledProgram);
 
       const char* GetString ();
+      boost::intrusive_ptr<ByteStream> CreateStream ();
     protected:
       Compiler::Backend::ProgramPtr compiledProgram;
-      boost::optional<std::string> flatString;
+      struct FlatString;
+      boost::intrusive_ptr<FlatString> flatString;
     };
   } // namespace api_impl
 } // namespace s1
