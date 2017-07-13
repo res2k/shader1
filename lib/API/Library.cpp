@@ -26,6 +26,7 @@
 #include "compiler/Backend.h"
 #include "compiler/Options.h"
 
+#include "ByteStream.h"
 #include "Program.h"
 #include "ResultCodeHelper.h"
 #include "StringArg.h"
@@ -306,3 +307,48 @@ s1_String* s1_string_create_wcs (s1_Library* obj, const wchar_t* string, const w
 {
   return s1_string_create_internal (obj, string, invalidPos);
 }
+
+s1_ByteStream* s1_byte_stream_create_from_data (s1_Library* obj, const char* data,
+                                                size_t dataSize,
+                                                s1_byte_stream_data_cleanup_func cleanupFunc,
+                                                uintptr_t cleanupContext)
+{
+  S1_ASSERT_MSG(obj, "NULL Library", nullptr);
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
+  if (!data && (dataSize != 0)) return lib->ReturnErrorCode (S1_E_INVALID_ARG_N (0), nullptr);
+
+  return lib->Return (lib->Try (
+    [=]() -> s1::Result<s1_ByteStream*> {
+      boost::intrusive_ptr<s1::api_impl::ByteStream> stream (
+        new s1::api_impl::DataByteStream (lib, data, dataSize, cleanupFunc, cleanupContext));
+      stream->AddRef ();
+      return stream->DowncastEvil<s1_ByteStream> ();
+    }), nullptr);
+}
+
+s1_ByteStream* s1_byte_stream_create_from_callback (s1_Library* obj,
+                                                    uintptr_t userContext,
+                                                    s1_byte_stream_data_func dataFunc,
+                                                    s1_byte_stream_cleanup_func cleanupFunc,
+                                                    s1_byte_stream_create_restarted_func createRestartedFunc,
+                                                    size_t size)
+{
+  S1_ASSERT_MSG(obj, "NULL Library", nullptr);
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
+  if (!dataFunc)  return lib->ReturnErrorCode (S1_E_INVALID_ARG_N (1), nullptr);
+
+  return lib->Return (lib->Try (
+    [=]() -> s1::Result<s1_ByteStream*> {
+      boost::intrusive_ptr<s1::api_impl::ByteStream> stream (
+        new s1::api_impl::CallbackByteStream (lib, userContext, dataFunc,
+                                              cleanupFunc, createRestartedFunc,
+                                              size));
+      stream->AddRef ();
+      return stream->DowncastEvil<s1_ByteStream> ();
+    }), nullptr);
+}
+

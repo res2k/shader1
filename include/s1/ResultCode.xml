@@ -91,6 +91,12 @@
       The input contained an invalid encoding for a code point (overlong encoding).
       </doc>
     </code>
+    <code name="E_STREAM_NOT_RESTARTABLE" value="13">
+      <descr>Stream does not support restarting</descr>
+      <doc>
+      The stream does not support restarting.
+      </doc>
+    </code>
   </component>
   <component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
     <code name="E_INVALID_OPTIMIZATION" value="0">

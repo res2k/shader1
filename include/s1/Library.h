@@ -216,6 +216,7 @@ typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data)
 S1_API(s1_Program*) s1_program_create_from_stream (s1_Library* lib, s1_stream_input_func streamFunc,
                                                    uintptr_t userContext,
                                                    unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
+// TODO: Use s1_ByteStream
 
 S1TYPE_DECLARE_FWD(Backend);
 /**
@@ -280,6 +281,70 @@ S1_API(s1_String*) s1_string_create_u32 (s1_Library* lib, const s1_char32* strin
 S1_API(s1_String*) s1_string_create (s1_Library* lib, s1_StringArg string,
                                      size_t* invalidPos S1_ARG_DEFAULT(S1_NULL));
 
+S1TYPE_DECLARE_FWD(ByteStream);
+/**
+ * Byte stream cleanup function pointer.
+ * \param cleanupContext Argument of the same name passed to s1_byte_stream_create_from_data().
+ * \param data Pointer to data as passed to s1_byte_stream_create_from_data().
+ */
+typedef void (*s1_byte_stream_data_cleanup_func)(uintptr_t cleanupContext, const char* data);
+
+/**
+ * Create a byte stream object from raw data.
+ * \param lib Parent library.
+ * \param data Pointer to the data.
+ * \param dataSize Size of the data.
+ * \param cleanupFunc Optional function that is called when the byte stream data can be cleaned
+ *   up.
+ * \param cleanupContext Optional argument to cleanup function.
+ * \remarks The buffer pointed to by \a data must be valid for the lifetime of the byte stream!
+ * \memberof s1_Library
+ */
+S1_API(s1_ByteStream*) s1_byte_stream_create_from_data (s1_Library* lib, const char* data,
+                                                        size_t dataSize,
+                                                        s1_byte_stream_data_cleanup_func cleanupFunc S1_ARG_DEFAULT(S1_NULL),
+                                                        uintptr_t cleanupContext S1_ARG_DEFAULT(0));
+
+/**
+ * Byte stream data streaming function pointer.
+ * \param userContext User context value provided to s1_byte_stream_create_from_callback.
+ * \param data Outputs pointer to the next block of available data.
+ * \returns Size of the block returned in \a data. Return 0 if no other data is
+ *   available.
+ */
+typedef size_t (*s1_byte_stream_data_func)(uintptr_t userContext, const char** data);
+/**
+ * Byte stream cleanup function pointer.
+ * \param userContext Argument of the same name passed to s1_byte_stream_create_from_callback().
+ */
+typedef void (*s1_byte_stream_cleanup_func)(uintptr_t userContext);
+/**
+ * Byte stream "create restarted" function pointer.
+ * \param userContext User context value provided to s1_byte_stream_create_from_callback.
+ * \param stream Outputs pointer to the new s1_ByteStream instance that represents the
+ *   same stream, but restarted.
+ * \returns A return code to be set after s1_byte_stream_create_restarted().
+ */
+typedef s1_ResultCode (*s1_byte_stream_create_restarted_func)(uintptr_t userContext, s1_ByteStream** stream);
+
+/**
+ * Create a byte stream object with callback functions providing the data.
+ * \param lib Parent library.
+ * \param userContext Context information for streaming start function.
+ * \param dataFunc Function to get next streamed data.
+ * \param cleanupFunc Optional function that is called when the byte stream can be cleaned up.
+ * \param createRestartedFunc Optional function that is called when a restarted copy of the
+ *   stream is requested.
+ * \param size Optional argument with the value returned by s1_byte_stream_size().
+ * \memberof s1_Library
+ */
+S1_API(s1_ByteStream*) s1_byte_stream_create_from_callback (s1_Library* lib,
+                                                            uintptr_t userContext,
+                                                            s1_byte_stream_data_func dataFunc,
+                                                            s1_byte_stream_cleanup_func cleanupFunc S1_ARG_DEFAULT(S1_NULL),
+                                                            s1_byte_stream_create_restarted_func createRestartedFunc S1_ARG_DEFAULT(S1_NULL),
+                                                            size_t size S1_ARG_DEFAULT(~(size_t)0));
+
 #if defined(__cplusplus)
 #include "s1/cxxapi_detail.h"
 #include <assert.h>
@@ -307,6 +372,67 @@ namespace s1
         _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS("stream callback")
         return 0;
       }
+
+      template<typename CleanupFunc>
+      static void CleanupDataFuncWrapper (uintptr_t funcObj, const char* data)
+      {
+        try
+        {
+          CleanupFunc* cleanup = reinterpret_cast<CleanupFunc*> (funcObj);
+          (*cleanup)(data);
+          delete cleanup;
+          return;
+        }
+        _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS("data stream cleanup")
+      }
+
+      template<typename DataFunc, typename CleanupFunc, typename CreateRestartedFunc>
+      struct ByteStreamCallbacks
+      {
+        DataFunc data;
+        CleanupFunc cleanup;
+        CreateRestartedFunc createRestarted;
+
+      #if defined(S1_HAVE_RVALUES)
+        ByteStreamCallbacks (DataFunc&& data, CleanupFunc&& cleanup, CreateRestartedFunc&& createRestarted)
+          : data (std::move (data)), cleanup (std::move (cleanup)), createRestarted (std::move (createRestarted))
+        {}
+      #else
+        ByteStreamCallbacks (DataFunc data, CleanupFunc cleanup, CreateRestartedFunc createRestarted)
+          : data (data), cleanup (cleanup), createRestarted (createRestarted)
+        {}
+      #endif
+
+        static size_t Data (uintptr_t callbacks, const char** data)
+        {
+          try
+          {
+            return (reinterpret_cast<ByteStreamCallbacks*> (callbacks))->data (*data);
+          }
+          _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS("callback stream data")
+          return 0;
+        }
+        static void Cleanup (uintptr_t callbacks)
+        {
+          try
+          {
+            ByteStreamCallbacks* callbacks_p = reinterpret_cast<ByteStreamCallbacks*> (callbacks);
+            callbacks_p->cleanup ();
+            delete callbacks_p;
+            return;
+          }
+          _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS("callback stream cleanup")
+        }
+        static s1_ResultCode CreateRestarted (uintptr_t callbacks, ByteStream** restartedStream)
+        {
+          try
+          {
+            return (reinterpret_cast<ByteStreamCallbacks*> (callbacks))->createRestarted (*restartedStream);
+          }
+          _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS ("callback stream create restarted")
+          return S1_E_STREAM_NOT_RESTARTABLE;
+        }
+      };
 
       template<typename T> static uintptr_t WrapperArg (T& arg)
       { return reinterpret_cast<uintptr_t> (&arg); }
@@ -594,6 +720,166 @@ namespace s1
       {
         return S1_RETURN_MOVE_REF(String,
                                   s1_string_create (this, string, &invalidPos));
+      }
+
+      /**
+       * Create a byte stream object from raw data.
+       * \param data Pointer to the data.
+       * \param dataSize Size of the data.
+       * \param cleanupFunc Optional function that is called when the byte stream data can be
+       *   cleaned up.
+       * \param cleanupContext Optional argument to cleanup function.
+       * \remarks The buffer pointed to by \a data must be valid for the lifetime of the byte
+       *   stream!
+       */
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateByteStreamFromData (const char* data,
+                                                                    size_t dataSize,
+                                                                    s1_byte_stream_data_cleanup_func cleanupFunc = S1_NULL,
+                                                                    uintptr_t cleanupContext = 0)
+      {
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_byte_stream_create_from_data (this, data, dataSize, cleanupFunc, cleanupContext));
+      }
+      /**
+       * Create a byte stream object from raw data.
+       * \param data Pointer to the data.
+       * \param dataSize Size of the data.
+       * \param cleanupFunc Functor to clean up the streamed data.
+       *   The functor must provide a <tt>void operator()(const char*)</tt>, cleaning up the
+       *   data when the byte stream is destroyed.
+       * \remarks The buffer pointed to by \a data must be valid for the lifetime of the byte
+       *   stream!
+       */
+      template<typename CleanupFunc>
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateByteStreamFromData (const char* data, size_t dataSize,
+                                                                    CleanupFunc cleanupFunc)
+      {
+        // The functor persist in the object, so always make a copy
+      #if defined(S1_HAVE_RVALUES)
+        CleanupFunc* cleanup_p = new CleanupFunc (std::move (cleanupFunc));
+      #else
+        CleanupFunc* cleanup_p = new CleanupFunc (cleanupFunc);
+      #endif
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_byte_stream_create_from_data (this, data, dataSize,
+                                                                   &CleanupDataFuncWrapper<CleanupFunc>,
+                                                                   reinterpret_cast<uintptr_t> (cleanup_p)));
+      }
+
+      /**
+       * Create a byte stream object with callback functions providing the data.
+       * \param userContext Context information for streaming start function.
+       * \param dataFunc Function to get next streamed data.
+       * \param cleanupFunc Optional function that is called when the byte stream can be
+       *   cleaned up.
+       * \param createRestartedFunc Optional function that is called when a restarted copy of
+       *   the stream is requested.
+       * \param size Optional argument with the value returned by s1_byte_stream_size().
+       */
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateByteStreamFromCallback (uintptr_t userContext,
+                                                                        s1_byte_stream_data_func dataFunc,
+                                                                        s1_byte_stream_cleanup_func cleanupFunc = S1_NULL,
+                                                                        s1_byte_stream_create_restarted_func createRestartedFunc = S1_NULL,
+                                                                        size_t size = ~(size_t)0)
+      {
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_byte_stream_create_from_callback (this, userContext,
+                                                                       dataFunc,
+                                                                       cleanupFunc,
+                                                                       createRestartedFunc,
+                                                                       size));
+      }
+
+      /**
+       * Create a byte stream object with callback functions providing the data.
+       * \param dataFunc Functor providing stream data.
+       *   The functor must provide an <tt>size_t operator()(const char*&)</tt>, writing a
+       *   pointer to the next block of data into the reference argument and returning the
+       *   size of that data, or 0 if no additional data is available.
+       * \param size Optional argument with the value returned by s1_byte_stream_size().
+       */
+      template<typename DataFunc>
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateByteStreamFromCallback (DataFunc dataFunc,
+                                                                        size_t size = ~(size_t)0)
+      {
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_byte_stream_create_from_callback (this,
+                                                                       WrapperArg (dataFunc),
+                                                                       &StreamFuncWrapper<typename detail::remove_pointer<DataFunc>::type>,
+                                                                       nullptr,
+                                                                       nullptr,
+                                                                       size));
+      }
+
+      /**
+       * Create a byte stream object with callback functions providing the data.
+       * \param dataFunc Functor providing stream data.
+       *   The functor must provide an <tt>size_t operator()(const char*&)</tt>, writing a
+       *   pointer to the next block of data into the reference argument and returning the
+       *   size of that data, or 0 if no additional data is available.
+       * \param cleanupFunc Functor providing cleanup.
+       *   The functor must provide an <tt>void operator()()</tt> that performs any required
+       *   cleanup of the streamed data.
+       * \param size Optional argument with the value returned by s1_byte_stream_size().
+       */
+      template<typename DataFunc, typename CleanupFunc>
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateByteStreamFromCallback (DataFunc dataFunc,
+                                                                        CleanupFunc cleanupFunc,
+                                                                        size_t size = ~(size_t)0)
+      {
+        typedef ByteStreamCallbacks<DataFunc, CleanupFunc, s1_ResultCode (*)(s1_ByteStream** stream)> Callbacks;
+        // The functors persist in the object, so always make copies
+        Callbacks* callbacks = new Callbacks (
+        #if defined(S1_HAVE_RVALUES)
+          std::move (dataFunc), std::move (cleanupFunc), nullptr
+        #else
+          dataFunc, cleanupFunc, S1_NULL
+        #endif
+          );
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_byte_stream_create_from_callback (this, reinterpret_cast<uintptr_t> (callbacks),
+                                                                       &Callbacks::Data,
+                                                                       &Callbacks::Cleanup,
+                                                                       nullptr,
+                                                                       size));
+      }
+
+      /**
+       * Create a byte stream object with callback functions providing the data.
+       * \param dataFunc Functor providing stream data.
+       *   The functor must provide an <tt>size_t operator()(const char*&)</tt>, writing a
+       *   pointer to the next block of data into the reference argument and returning the
+       *   size of that data, or 0 if no additional data is available.
+       * \param cleanupFunc Functor providing cleanup.
+       *   The functor must provide an <tt>void operator()()</tt> that performs any required
+       *   cleanup of the streamed data.
+       * \param createRestartedFunc Functor providing a restarted copy of the stream.
+       *   The functor must provide an <tt>s1_ResultCode operator()(ByteStream*&)</tt>, writing
+       *   a pointer to new ByteStream instance that allows reading the data from the start and
+       *   returning a return code to be set after ByteStream::CreateRestarted().
+       * \param size Optional argument with the value returned by s1_byte_stream_size().
+       */
+      template<typename DataFunc, typename CleanupFunc, typename CreateRestartedFunc>
+      S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateByteStreamFromCallback (DataFunc dataFunc,
+                                                                        CleanupFunc cleanupFunc,
+                                                                        CreateRestartedFunc createRestartedFunc,
+                                                                        size_t size = ~(size_t)0)
+      {
+        typedef ByteStreamCallbacks<DataFunc, CleanupFunc, CreateRestartedFunc> Callbacks;
+        // The functors persist in the object, so always make copies
+        Callbacks* callbacks = new Callbacks (
+        #if defined(S1_HAVE_RVALUES)
+          std::move (dataFunc), std::move (cleanupFunc), std::move (createRestartedFunc)
+        #else
+          dataFunc, cleanupFunc, createRestartedFunc
+        #endif
+          );
+        return S1_RETURN_MOVE_REF(ByteStream,
+                                  s1_byte_stream_create_from_callback (this, reinterpret_cast<uintptr_t> (callbacks),
+                                                                       &Callbacks::Data,
+                                                                       &Callbacks::Cleanup,
+                                                                       &Callbacks::CreateRestarted,
+                                                                       size));
       }
     };
   S1_NS_CXXAPI_END

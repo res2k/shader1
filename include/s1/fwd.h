@@ -27,6 +27,7 @@
 
 S1TYPE_DECLARE_FWD(Backend);
 S1TYPE_DECLARE_FWD(BackendOptions);
+S1TYPE_DECLARE_FWD(ByteStream);
 S1TYPE_DECLARE_FWD(CompiledProgram);
 S1TYPE_DECLARE_FWD(Library);
 S1TYPE_DECLARE_FWD(LibraryObject);
@@ -40,6 +41,7 @@ namespace s1
 #if !defined(S1_BUILD) && !defined(DOXYGEN_RUN)
   typedef cxxapi::Backend Backend;
   typedef cxxapi::BackendOptions BackendOptions;
+  typedef cxxapi::ByteStream ByteStream;
   typedef cxxapi::CompiledProgram CompiledProgram;
   typedef cxxapi::Library Library;
   typedef cxxapi::LibraryObject LibraryObject;

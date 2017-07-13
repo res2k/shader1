@@ -11,6 +11,7 @@ set(s1_sources
     cxxapi_detail.cpp
     Backend.cpp
     BackendOptions.cpp
+    ByteStream.cpp
     CompiledProgram.cpp
     CompiledProgram.h
     DebugMessageHandler.cpp
