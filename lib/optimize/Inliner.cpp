@@ -100,7 +100,7 @@ namespace s1
 
     //-----------------------------------------------------------------------
 
-    format::StaticFormatter FormatBlockSuffix ("$b{0}");
+    static format::StaticFormatter FormatBlockSuffix ("$b{0}");
 
     void Inliner::InlineBlockVisitor::OpBlock (const intermediate::SequencePtr& seq,
                                                const Sequence::IdentifierToRegMap& identToRegID_imp,

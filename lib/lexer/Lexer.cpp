@@ -559,8 +559,8 @@ KEYWORDS
     return 0;
   }
 
-  format::StaticFormatter FormatVector ("{0}{1}");
-  format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
+  static format::StaticFormatter FormatVector ("{0}{1}");
+  static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
   
   std::string Lexer::GetTokenStr (const Token& token)
   {

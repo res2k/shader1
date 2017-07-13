@@ -1441,7 +1441,7 @@ namespace s1
       return avail->second;
     }
 
-    format::StaticFormatter FormatTransferIdent ("{0}$tf{1}");
+    static format::StaticFormatter FormatTransferIdent ("{0}$tf{1}");
 
     uc::String SequenceSplitter::GetTransferIdent (const uc::String& origName)
     {
