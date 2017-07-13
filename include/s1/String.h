@@ -38,7 +38,7 @@
  * \remarks A String object may or may not be attached to a library; thus querying
  * the library (via s1_libraryobject_get_library) may legitimately return \NULL.
  * \createdby s1_create_string(), s1_create_string_independent()
- * \extends s1_Object
+ * \extends s1_LibraryObject
  */
 S1TYPE_DECLARE(S1TYPE_INFO_s1_String);
 
@@ -137,7 +137,7 @@ namespace s1
     class String : public LibraryObject
     {
     public:
-      /// Smart pointer class for Library instances.
+      /// Smart pointer class for String instances.
       typedef Ptr<String> Pointer;
 
       //@{

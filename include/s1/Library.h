@@ -574,6 +574,7 @@ namespace s1
        * \param string Contents of the string. Passing \NULL will result in an error.
        * \param invalidPos Returns position of the (first) invalid input, if any,
        *   in code units of the input string.
+       * \returns A new string object.
        * In case of a decoding error a valid String object will be returned; however,
        * place holder characters will be present in the string. \a invalidPos will point
        * to the position of the (first) invalid input and an appropriate error
