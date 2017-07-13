@@ -280,6 +280,8 @@ S1_API(s1_String*) s1_string_create (s1_Library* lib, s1_StringArg string,
                                      size_t* invalidPos S1_ARG_DEFAULT(S1_NULL));
 
 #if defined(__cplusplus)
+#include "s1/cxxapi_detail.h"
+
 namespace s1
 {
   S1_NS_CXXAPI_BEGIN
@@ -298,6 +300,11 @@ namespace s1
       {
         return (*reinterpret_cast<StreamFunc*> (funcObj))(*data);
       }
+
+      template<typename T> static uintptr_t WrapperArg (T& arg)
+      { return reinterpret_cast<uintptr_t> (&arg); }
+      template<typename T> static uintptr_t WrapperArg (T* arg)
+      { return reinterpret_cast<uintptr_t> (arg); }
     public:
       /// Smart pointer class for Library instances.
       typedef Ptr<Library> Pointer;
@@ -457,7 +464,6 @@ namespace s1
                                   s1_program_create_from_stream (this, streamFunc, userContext, compatLevel));
       }
 
-      //@{
       /**
        * Create a program object from a stream.
        * \param streamFunc Functor providing streaming input of source code. Source must be encoded in UTF-8.
@@ -475,18 +481,10 @@ namespace s1
                                                                 unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
         return S1_RETURN_MOVE_REF(Program,
-                                  s1_program_create_from_stream (this, &StreamFuncWrapper<StreamFunc>,
-                                                                 reinterpret_cast<uintptr_t> (&streamFunc), compatLevel));
+                                  s1_program_create_from_stream (this,
+                                                                 &StreamFuncWrapper<typename detail::remove_pointer<StreamFunc>::type>,
+                                                                 WrapperArg (streamFunc), compatLevel));
       }
-      template<typename StreamFunc>
-      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (StreamFunc* streamFunc,
-                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
-      {
-        return S1_RETURN_MOVE_REF(Program,
-                                  s1_program_create_from_stream (this, &StreamFuncWrapper<StreamFunc>,
-                                                                 reinterpret_cast<uintptr_t> (streamFunc), compatLevel));
-      }
-      //@}
 
       /**
        * Create a backend object.
