@@ -210,6 +210,7 @@ typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data)
  *   using s1_release().
  * In case of an error, \NULL is returned and the error status is saved in the library's
  * last error code.
+ * \warning If you implement \a streamFunc in C++ you should handle all exceptions!
  * \memberof s1_Library
  */
 S1_API(s1_Program*) s1_program_create_from_stream (s1_Library* lib, s1_stream_input_func streamFunc,
@@ -461,6 +462,7 @@ namespace s1
        * \returns A new program object.
        * In case of an error, \NULL is returned and the error status is saved in the library's
        * last error code.
+       * \warning You should handle all exceptions in streamFunc!
        */
       S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (s1_stream_input_func streamFunc,
                                                                 uintptr_t userContext,
