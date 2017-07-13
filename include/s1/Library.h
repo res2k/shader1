@@ -281,6 +281,7 @@ S1_API(s1_String*) s1_string_create (s1_Library* lib, s1_StringArg string,
 
 #if defined(__cplusplus)
 #include "s1/cxxapi_detail.h"
+#include <assert.h>
 
 namespace s1
 {
@@ -298,7 +299,12 @@ namespace s1
       template<typename StreamFunc>
       static size_t StreamFuncWrapper (uintptr_t funcObj, const char** data)
       {
-        return (*reinterpret_cast<StreamFunc*> (funcObj))(*data);
+        try
+        {
+          return (*reinterpret_cast<StreamFunc*> (funcObj))(*data);
+        }
+        _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS("stream callback")
+        return 0;
       }
 
       template<typename T> static uintptr_t WrapperArg (T& arg)

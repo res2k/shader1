@@ -8,6 +8,7 @@ add_custom_command(OUTPUT ResultCode.cpp
                    DEPENDS ${S1_INC_PUBLIC}/ResultCode.xml ResultCode.cpp.tpl)
 
 set(s1_sources
+    cxxapi_detail.cpp
     Backend.cpp
     BackendOptions.cpp
     CompiledProgram.cpp

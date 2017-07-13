@@ -65,6 +65,18 @@
 #  define S1_FORCEINLINE
 #endif
 
+#ifdef __GNUC__
+#  define S1_FUNCTION_NAME    __PRETTY_FUNCTION__
+#elif defined(_MSC_VER)
+#  define S1_FUNCTION_NAME    __FUNCSIG__
+#else
+  /**\def S1_FORCEINLINE
+   * \internal
+   * Resolved to name of current function (or 0)
+   */
+#  define S1_FUNCTION_NAME    0
+#endif
+
 #if defined(DOXYGEN_RUN) \
   || (defined(__cplusplus) && (__cplusplus >= 201103L)) \
   || (defined(__cplusplus) && defined(_MSC_VER) && (_MSC_VER >= 1600))
