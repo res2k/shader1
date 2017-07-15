@@ -55,18 +55,18 @@ namespace s1
      * Helper method to set a library error code and return an arbitrary result.
      */
     template<typename T>
-    inline const T& ReturnErrorCode (s1_ResultCode code, const T& result)
+    inline T&& ReturnErrorCode (s1_ResultCode code, T&& result)
     {
-      return lib->ReturnErrorCode (code, result);
+      return lib->ReturnErrorCode (code, std::forward<T> (result));
     }
     /**
      * Helper method to set the library error code to #S1_SUCCESS
      * and return an arbitrary result.
      */
     template<typename T>
-    inline const T& ReturnSuccess (const T& result)
+    inline T&& ReturnSuccess (T&& result)
     {
-      return ReturnErrorCode (S1_SUCCESS, result);
+      return ReturnErrorCode (S1_SUCCESS, std::forward<T> (result));
     }
     //@{
     /**
