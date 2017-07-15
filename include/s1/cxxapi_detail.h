@@ -53,7 +53,9 @@ namespace s1
      * \param function Name of the function where the exception occured.
      * \param what String returned by \c what(), if available.
      */
-    static void PrintUnhandledException (const char* location, const char* function, const char* what)
+    static inline void PrintUnhandledException (const char* location,
+                                                const char* function,
+                                                const char* what)
     {
       _s1_print_unhandled_exception (location, function, what);
     }
@@ -75,7 +77,7 @@ namespace s1
   {                                                                                               \
     ::s1::cxxapi::detail::PrintUnhandledException (Descr, S1_FUNCTION_NAME, 0);                   \
   }                                                                                               \
-  assert (("Unhandled exception in " ## Descr) && false);
+  assert (("Unhandled exception in " Descr) && false);
 
 #endif // defined(__cplusplus)
 
