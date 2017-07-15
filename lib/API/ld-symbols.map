@@ -1,4 +1,4 @@
 {
-  global: s1_*;
+  global: s1_*; _s1_*;
   local: *;
 };
