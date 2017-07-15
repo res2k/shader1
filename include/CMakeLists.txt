@@ -14,6 +14,7 @@ if(CXXTEST_FOUND)
   set_property(TARGET api_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
   set(api_test_sources
+       ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiByteStream.h
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiLibrary.h
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiLibraryObject.h
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiObject.h
