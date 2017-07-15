@@ -30,7 +30,6 @@
 
 #include "s1/ResultCode.h"
 
-#include <boost/call_traits.hpp>
 #include <boost/intrusive_ptr.hpp>
 
 #include <type_traits>
@@ -165,7 +164,7 @@ namespace s1
      * Sets error code from result and returns value from result or the default value.
      */
     template<typename T>
-    inline const T& Return (const Result<T>& result, typename boost::call_traits<T>::param_type defaultVal)
+    inline const T& Return (const Result<T>& result, const T& defaultVal)
     {
       SetLastError (result.code(), result.errorInfo());
       return result.get_value_or (defaultVal);

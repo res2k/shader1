@@ -74,7 +74,7 @@ namespace s1
      * Sets error code from result and returns value from result or the default value.
      */
     template<typename T>
-    inline const T& Return (const Result<T>& result, typename boost::call_traits<T>::param_type defaultVal)
+    inline const T& Return (const Result<T>& result, const T& defaultVal)
     {
       return lib->Return (result, defaultVal);
     }
