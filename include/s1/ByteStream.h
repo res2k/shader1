@@ -49,6 +49,9 @@ S1TYPE_DECLARE(S1TYPE_INFO_s1_ByteStream);
  * \returns \em Unreliable size of the stream.
  *   The size of the stream may be underreported, overreported or entirely
  *   unknown (return value of #S1_BYTE_STREAM_SIZE_UNKNOWN).
+ * \remarks Implementations may set a result code of #S_STREAM_SIZE_PROBABLY_TOO_SMALL
+ *   or #S_STREAM_SIZE_PROBABLY_TOO_LARGE as a suggestion whether the reported size is
+ *   likely smaller or larger than the actual size.
  * \memberof s1_ByteStream
  */
 S1_API(size_t) s1_byte_stream_size (s1_ByteStream* byteStream);
@@ -96,6 +99,9 @@ namespace s1
        * \returns \em Unreliable size of the stream.
        *   The size of the stream may be underreported, overreported or entirely
        *   unknown (return value of #S1_BYTE_STREAM_SIZE_UNKNOWN).
+       * \remarks Implementations may set a result code of #S_STREAM_SIZE_PROBABLY_TOO_SMALL
+       *   or #S_STREAM_SIZE_PROBABLY_TOO_LARGE as a suggestion whether the reported size is
+       *   likely smaller or larger than the actual size.
        */
       size_t Size ()
       {

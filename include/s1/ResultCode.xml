@@ -97,6 +97,18 @@
       The stream does not support restarting.
       </doc>
     </code>
+    <code name="S_STREAM_SIZE_PROBABLY_TOO_SMALL" value="14" type="success">
+      <descr>Reported stream size is probably too small</descr>
+      <doc>
+      The reported stream size is probably too small.
+      </doc>
+    </code>
+    <code name="S_STREAM_SIZE_PROBABLY_TOO_LARGE" value="15" type="success">
+      <descr>Reported stream size is probably too large</descr>
+      <doc>
+      The reported stream size is probably too large.
+      </doc>
+    </code>
   </component>
   <component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
     <code name="E_INVALID_OPTIMIZATION" value="0">
