@@ -102,7 +102,7 @@ namespace s1
       targetFP
     };
     virtual ProgramPtr GenerateProgram (CompileTarget target,
-					const intermediate::ProgramPtr& prog,
+                                        const intermediate::ProgramPtr& prog,
                                         OptionsPtr options) = 0;
   };
 } // namespace s1
