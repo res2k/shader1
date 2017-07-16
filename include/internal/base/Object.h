@@ -23,7 +23,7 @@
 
 #include "s1/Object.h"
 
-#include <boost/atomic.hpp>
+#include <atomic>
 
 namespace s1
 {
@@ -40,15 +40,15 @@ namespace s1
     /// Add a reference to the object. Returns new reference count.
     int AddRef ()
     {
-      return refCount.fetch_add (1, boost::memory_order_relaxed)+1;
+      return refCount.fetch_add (1, std::memory_order_relaxed)+1;
     }
     /// Release a reference to the object. Returns new reference count.
     int Release ()
     {
-      int newRC (refCount.fetch_sub (1, boost::memory_order_release)-1);
+      int newRC (refCount.fetch_sub (1, std::memory_order_release)-1);
       if (newRC == 0)
       {
-        boost::atomic_thread_fence(boost::memory_order_acquire);
+        std::atomic_thread_fence(std::memory_order_acquire);
         delete this;
       }
       return newRC;
@@ -77,7 +77,7 @@ namespace s1
     }
     /** @} */
   private:
-    boost::atomic<int32_t> refCount;
+    std::atomic<int32_t> refCount;
   };
 
   /**\name Casts to externally visible instance layout
