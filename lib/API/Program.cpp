@@ -24,6 +24,7 @@
 #include "compiler/Program.h"
 #include "splitter/Frequency.h"
 
+#include "CompiledProgram.h"
 #include "StringArg.h"
 #include "StringObj.h"
 
@@ -68,9 +69,9 @@ namespace s1
       wrapped_program.reset();
     }
 
-    Compiler::Backend::ProgramPtr Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
-                                                               Compiler::Backend::CompileTarget target,
-                                                               Compiler::Backend::OptionsPtr backendOptions)
+    boost::intrusive_ptr<CompiledProgram> Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
+                                                                       Compiler::Backend::CompileTarget target,
+                                                                       Compiler::Backend::OptionsPtr backendOptions)
     {
       // FIXME!!!: This is rather inefficient!
       if (!wrapped_program)
@@ -88,8 +89,11 @@ namespace s1
       {
         inputArraySizes.emplace (inputSize.first, inputSize.second);
       }
-      return wrapped_program->GetCompiledProgram (entryFunction->StrUCS(), options, inputFreqFlags, inputArraySizes, backend, target,
-                                                  backendOptions);
+      auto compiledProgram =
+        wrapped_program->GetCompiledProgram (entryFunction->StrUCS(), options, inputFreqFlags, inputArraySizes, backend, target,
+                                             backendOptions);
+      if (!compiledProgram) return nullptr;
+      return new api_impl::CompiledProgram (GetLibrary(), compiledProgram);
     }
 
     s1::ResultCode Program::SetOptions (const s1::Compiler::OptionsPtr& options)

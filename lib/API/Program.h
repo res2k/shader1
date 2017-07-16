@@ -38,6 +38,8 @@ namespace s1
 {
   namespace api_impl
   {
+    class CompiledProgram;
+
     class Program : public s1::LibraryObject
     {
     protected:
@@ -58,9 +60,9 @@ namespace s1
       Program (s1::Library* lib, Compiler& compiler, const std::string& source);
       Program (s1::Library* lib, Compiler& compiler, std::function<size_t (const char*&)> streamFunc);
 
-      Compiler::Backend::ProgramPtr GetCompiledProgram (const Compiler::BackendPtr& backend,
-                                                        Compiler::Backend::CompileTarget target,
-                                                        Compiler::Backend::OptionsPtr backendOptions);
+      boost::intrusive_ptr<CompiledProgram> GetCompiledProgram (const Compiler::BackendPtr& backend,
+                                                                Compiler::Backend::CompileTarget target,
+                                                                Compiler::Backend::OptionsPtr backendOptions);
 
       /**\name Methods mapping to public API
        * @{ */

@@ -22,6 +22,7 @@
 #include "s1/BackendOptions.h"
 
 #include "compiler/Backend.h"
+#include "CompiledProgram.h"
 #include "Program.h"
 
 s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
@@ -53,7 +54,7 @@ s1_CompiledProgram* s1_backend_generate_program (s1_Backend* backend,
       }
 
       auto options_impl (s1::EvilUpcast<s1::Compiler::Backend::Options> (options));
-      s1::Compiler::Backend::ProgramPtr compiled_program (
+      auto compiled_program (
         program_impl->GetCompiledProgram (backend_impl, impl_target, options_impl));
       if (!compiled_program)
       {

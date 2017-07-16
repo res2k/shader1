@@ -12,6 +12,7 @@ set(s1_sources
     Backend.cpp
     BackendOptions.cpp
     CompiledProgram.cpp
+    CompiledProgram.h
     DebugMessageHandler.cpp
     Library.cpp
     LibraryObject.cpp
