@@ -22,6 +22,7 @@
 #include "s1/BackendOptions.h"
 
 #include "compiler/Backend.h"
+#include "compiler/BackendProgram.h"
 #include "CompiledProgram.h"
 #include "Program.h"
 

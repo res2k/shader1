@@ -18,6 +18,7 @@
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
 
+#include "compiler/BackendProgram.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
 

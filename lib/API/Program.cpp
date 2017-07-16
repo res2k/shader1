@@ -21,6 +21,7 @@
 #include "Program.h"
 
 #include "base/uc/String_optional.h"
+#include "compiler/BackendProgram.h"
 #include "compiler/Program.h"
 #include "splitter/Frequency.h"
 

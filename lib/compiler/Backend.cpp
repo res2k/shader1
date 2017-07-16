@@ -22,19 +22,6 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 namespace s1
 {
-  std::string Compiler::Backend::FlattenStringArray (const codegen::StringsArrayPtr& strings)
-  {
-    std::string str;
-    for (size_t i = 0; i < strings->Size(); i++)
-    {
-      str.append (strings->Get (i));
-      str.append ("\n");
-    }
-    return str;
-  }
-
-  //-------------------------------------------------------------------------
-
   Compiler::Backend::Options::FlagPair Compiler::Backend::Options::ParseFlagPair (const uc::String& string)
   {
     if (string.startsWith ("no-"))

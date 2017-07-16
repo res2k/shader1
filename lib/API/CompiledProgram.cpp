@@ -21,6 +21,19 @@
 #include "CompiledProgram.h"
 
 #include "compiler/Backend.h"
+#include "compiler/BackendProgram.h"
+
+/// Join the strings arrays with newlines.
+static std::string FlattenStringArray (const s1::codegen::StringsArrayPtr& strings)
+{
+  std::string str;
+  for (size_t i = 0; i < strings->Size(); i++)
+  {
+    str.append (strings->Get (i));
+    str.append ("\n");
+  }
+  return str;
+}
 
 namespace s1
 {
@@ -32,7 +45,11 @@ namespace s1
 
     const char* CompiledProgram::GetString ()
     {
-      return compiledProgram->GetProgramString().c_str();
+      if (!flatString)
+      {
+        flatString = FlattenStringArray (compiledProgram->GetProgramLines());
+      }
+      return flatString->c_str();
     }
   } // namespace api_impl
 } // namespace s1

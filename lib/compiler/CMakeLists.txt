@@ -8,6 +8,8 @@ set(compiler_sources
      Options.cpp
      Program.cpp
      ${S1_INC}/compiler/Backend.h
+     ${S1_INC}/compiler/BackendProgram.h
+     ${S1_INC}/compiler/BackendProgramImpl.h
      ${S1_INC}/compiler/Compiler.h
      ${S1_INC}/compiler/Options.h
      ${S1_INC}/compiler/Program.h

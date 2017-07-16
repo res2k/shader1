@@ -22,6 +22,7 @@
 
 #include "codegen/glsl/GLSLGenerator.h"
 #include "codegen/glsl/GLSLOptions.h"
+#include "compiler/BackendProgramImpl.h"
 
 #include <boost/make_shared.hpp>
 
@@ -71,7 +72,7 @@ namespace s1
       codegen::StringsArrayPtr outputProg (
         codegen.Generate (prog, freq, effectiveOptions));
       
-      return ProgramPtr (new GLSLProgram (GetLibrary(), FlattenStringArray (outputProg)));
+      return ProgramPtr (new GLSLProgram (outputProg));
     }
 
   } // namespace compiler
