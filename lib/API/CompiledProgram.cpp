@@ -48,6 +48,7 @@ namespace s1
       if (!flatString)
       {
         flatString = FlattenStringArray (compiledProgram->GetProgramLines());
+        compiledProgram->DiscardLines ();
       }
       return flatString->c_str();
     }

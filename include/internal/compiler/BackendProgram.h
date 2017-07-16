@@ -30,6 +30,8 @@ namespace s1
     virtual ~Program () {}
 
     virtual const codegen::StringsArrayPtr& GetProgramLines () = 0;
+    /// Discard pointer to lines
+    virtual void DiscardLines () = 0;
   };
 } // namespace s1
 

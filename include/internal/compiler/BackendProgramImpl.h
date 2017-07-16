@@ -34,6 +34,10 @@ namespace s1
     {
       return programLines;
     }
+    void DiscardLines () override
+    {
+      programLines.reset ();
+    }
   };
 } // namespace s1
 
