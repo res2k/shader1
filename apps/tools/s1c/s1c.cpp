@@ -27,6 +27,7 @@
 
 #include "s1/Backend.h"
 #include "s1/BackendOptions.h"
+#include "s1/ByteStream.h"
 #include "s1/CompiledProgram.h"
 #include "s1/Library.h"
 #include "s1/Options.h"
@@ -96,6 +97,17 @@ std::string LastErrorString (Library* lib)
   const char* info = lib->GetLastErrorInfo ();
   if (info) s.append ((boost::format (": %1%") % info).str ());
   return s;
+}
+
+// Print an s1::ByteStream to the given ostream
+static void PrintStream (std::ostream& out, s1::ByteStream::Pointer stream)
+{
+  size_t blockSize;
+  const char* block;
+  while ((blockSize = stream->Next (block)) > 0)
+  {
+    out.write (block, blockSize);
+  }
 }
 
 // Some abstractions for char vs wchar_t
@@ -474,7 +486,8 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     }
     else
     {
-      std::cout << compiled->GetString () << std::endl;
+      PrintStream (std::cout, compiled->CreateStream ());
+      std::cout << std::endl;
     }
   }
   else
@@ -487,7 +500,8 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     }
     else
     {
-      std::cout << compiledVP->GetString () << std::endl;
+      PrintStream (std::cout, compiledVP->CreateStream ());
+      std::cout << std::endl;
     }
     CompiledProgram::Pointer compiledFP (
       compilerBackend->GenerateProgram (compilerProg, S1_TARGET_FP, backendOptions));
@@ -497,7 +511,8 @@ int MainFunc (const int argc, const ArgChar* const argv[])
     }
     else
     {
-      std::cout << compiledFP->GetString () << std::endl;
+      PrintStream (std::cout, compiledFP->CreateStream ());
+      std::cout << std::endl;
     }
   }
   return 0;
