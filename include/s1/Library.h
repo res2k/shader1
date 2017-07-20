@@ -189,15 +189,6 @@ S1_API(s1_Program*) s1_program_create_from_string (s1_Library* lib, const char* 
                                                   size_t sourceSize,
                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
-/**
- * Input stream function pointer.
- * \param userContext User context value provided along with the function pointer.
- * \param data Outputs pointer to the next block of available data.
- * \returns Size of the block returned in \a data. Return 0 if no other data is
- *   available.
- */
-typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data);
-
 S1TYPE_DECLARE_FWD(ByteStream);
 /**
  * Create a program object from a stream.
@@ -216,25 +207,6 @@ S1TYPE_DECLARE_FWD(ByteStream);
  * \memberof s1_Library
  */
 S1_API(s1_Program*) s1_program_create_from_stream (s1_Library* lib, s1_ByteStream* stream,
-                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
-
-/**
- * Create a program object from a stream.
- * \param lib Parent library.
- * \param streamFunc Function providing streaming input of source code. Source must be encoded in UTF-8.
- * \param userContext Context information for streaming input function.
- * \param compatLevel Program compatibility level.
- *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
- * \returns A new program object.
- *   The returned object will already have a reference, release the reference
- *   using s1_release().
- * In case of an error, \NULL is returned and the error status is saved in the library's
- * last error code.
- * \warning If you implement \a streamFunc in C++ you should handle all exceptions!
- * \memberof s1_Library
- */
-S1_API(s1_Program*) s1_program_create_from_stream_func (s1_Library* lib, s1_stream_input_func streamFunc,
-                                                   uintptr_t userContext,
                                                    unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 
 S1TYPE_DECLARE_FWD(Backend);
@@ -613,47 +585,6 @@ namespace s1
       {
         return S1_RETURN_MOVE_REF(Program,
                                   s1_program_create_from_stream (this, stream, compatLevel));
-      }
-
-      /**
-       * Create a program object from a stream.
-       * \param streamFunc Function providing streaming input of source code. Source must be encoded in UTF-8.
-       * \param userContext Context information for streaming input function.
-       * \param compatLevel Program compatibility level.
-       *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
-       * \returns A new program object.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
-       * last error code.
-       * \warning You should handle all exceptions in streamFunc!
-       */
-      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStreamFunc (s1_stream_input_func streamFunc,
-                                                                uintptr_t userContext,
-                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
-      {
-        return S1_RETURN_MOVE_REF(Program,
-                                  s1_program_create_from_stream_func (this, streamFunc, userContext, compatLevel));
-      }
-
-      /**
-       * Create a program object from a stream.
-       * \param streamFunc Functor providing streaming input of source code. Source must be encoded in UTF-8.
-       *   The functor must provide an <tt>size_t operator()(const char*&)</tt>, writing a pointer to the
-       *   next block of data into the reference argument and returning the size of that data, or 0 if
-       *   no additional data is available.
-       * \param compatLevel Program compatibility level.
-       *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
-       * \returns A new program object.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
-       * last error code.
-       */
-      template<typename StreamFunc>
-      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStreamFunc (StreamFunc streamFunc,
-                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
-      {
-        return S1_RETURN_MOVE_REF(Program,
-                                  s1_program_create_from_stream_func (this,
-                                                                 &StreamFuncWrapper<typename detail::remove_pointer<StreamFunc>::type>,
-                                                                 WrapperArg (streamFunc), compatLevel));
       }
 
       /**
