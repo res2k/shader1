@@ -193,6 +193,38 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     }), nullptr);
 }
 
+s1_Program* s1_program_create_from_stream (s1_Library* obj, s1_ByteStream* stream,
+                                           unsigned int compatLevel)
+{
+  S1_ASSERT_MSG(obj, "NULL Library", nullptr);
+  s1::Library* lib (s1::EvilUpcast<s1::api_impl::Library> (obj));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (lib->GetDebugMessageHandler ());
+
+  if (!stream)
+  {
+    lib->SetLastError (S1_E_INVALID_ARG_N (0));
+    return nullptr;
+  }
+
+  if (compatLevel > S1_COMPATIBILITY_LATEST)
+  {
+    lib->SetLastError (S1_E_INCOMPATIBLE);
+    return nullptr;
+  }
+
+  auto stream_impl = s1::EvilUpcast<s1::api_impl::ByteStream> (stream);
+  auto wrapStreamFunc =
+    [=](const char*& data) -> size_t
+    { return stream_impl->Next (data); };
+  return lib->Return (lib->Try (
+    [=]() {
+      boost::intrusive_ptr<s1::api_impl::Program> program (
+        new s1::api_impl::Program (lib, lib->GetCompiler (), wrapStreamFunc));
+      program->AddRef ();
+      return program->DowncastEvil<s1_Program> ();
+    }), nullptr);
+}
+
 s1_Program* s1_program_create_from_stream_func (s1_Library* obj, s1_stream_input_func streamFunc,
                                            uintptr_t userContext, unsigned int compatLevel)
 {

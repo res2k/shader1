@@ -198,6 +198,26 @@ S1_API(s1_Program*) s1_program_create_from_string (s1_Library* lib, const char* 
  */
 typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data);
 
+S1TYPE_DECLARE_FWD(ByteStream);
+/**
+ * Create a program object from a stream.
+ * \param lib Parent library.
+ * \param stream Pointer to stream with source code. Source must be encoded in UTF-8.
+ *    Create a stream using s1_byte_stream_create_from_data() or
+ *    s1_byte_stream_create_from_callback().
+ * \param compatLevel Program compatibility level.
+ *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
+ * \returns A new program object.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ * In case of an error, \NULL is returned and the error status is saved in the library's
+ * last error code.
+ * \warning If you implement \a streamFunc in C++ you should handle all exceptions!
+ * \memberof s1_Library
+ */
+S1_API(s1_Program*) s1_program_create_from_stream (s1_Library* lib, s1_ByteStream* stream,
+                                                   unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
+
 /**
  * Create a program object from a stream.
  * \param lib Parent library.
@@ -216,7 +236,6 @@ typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data)
 S1_API(s1_Program*) s1_program_create_from_stream_func (s1_Library* lib, s1_stream_input_func streamFunc,
                                                    uintptr_t userContext,
                                                    unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
-// TODO: Use s1_ByteStream
 
 S1TYPE_DECLARE_FWD(Backend);
 /**
@@ -281,7 +300,6 @@ S1_API(s1_String*) s1_string_create_u32 (s1_Library* lib, const s1_char32* strin
 S1_API(s1_String*) s1_string_create (s1_Library* lib, s1_StringArg string,
                                      size_t* invalidPos S1_ARG_DEFAULT(S1_NULL));
 
-S1TYPE_DECLARE_FWD(ByteStream);
 /**
  * Byte stream cleanup function pointer.
  * \param cleanupContext Argument of the same name passed to s1_byte_stream_create_from_data().
@@ -577,6 +595,24 @@ namespace s1
       {
         return S1_RETURN_MOVE_REF(Program,
           s1_program_create_from_string (this, source, sourceSize, compatLevel));
+      }
+
+      /**
+       * Create a program object from a stream.
+       * \param stream Pointer to stream with source code. Source must be encoded in UTF-8.
+       *    Create a stream using CreateByteStreamFromData() or CreateByteStreamFromCallback().
+       * \param compatLevel Program compatibility level.
+       *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
+       * \returns A new program object.
+       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * last error code.
+       * \warning You should handle all exceptions in streamFunc!
+       */
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (ByteStream* stream,
+                                                                unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
+      {
+        return S1_RETURN_MOVE_REF(Program,
+                                  s1_program_create_from_stream (this, stream, compatLevel));
       }
 
       /**
