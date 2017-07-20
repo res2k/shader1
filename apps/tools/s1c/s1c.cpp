@@ -444,7 +444,13 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   Program::Pointer compilerProg;
   {
     InputFileStream inStream (options.inputFileName);
-    compilerProg = lib->CreateProgramFromStreamFunc (&inStream);
+    s1::ByteStream::Pointer inputByteStream = lib->CreateByteStreamFromCallback (&inStream);
+    if (!inputByteStream)
+    {
+      std::cerr << "Error creating stream: " << LastErrorString (lib) << std::endl;
+      return 4;
+    }
+    compilerProg = lib->CreateProgramFromStream (inputByteStream);
     if (inStream.HadInputError ())
     {
       return 4;
