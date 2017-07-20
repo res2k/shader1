@@ -213,7 +213,7 @@ typedef size_t (*s1_stream_input_func)(uintptr_t userContext, const char** data)
  * \warning If you implement \a streamFunc in C++ you should handle all exceptions!
  * \memberof s1_Library
  */
-S1_API(s1_Program*) s1_program_create_from_stream (s1_Library* lib, s1_stream_input_func streamFunc,
+S1_API(s1_Program*) s1_program_create_from_stream_func (s1_Library* lib, s1_stream_input_func streamFunc,
                                                    uintptr_t userContext,
                                                    unsigned int compatLevel S1_ARG_DEFAULT(S1_COMPATIBILITY_LATEST));
 // TODO: Use s1_ByteStream
@@ -590,12 +590,12 @@ namespace s1
        * last error code.
        * \warning You should handle all exceptions in streamFunc!
        */
-      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (s1_stream_input_func streamFunc,
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStreamFunc (s1_stream_input_func streamFunc,
                                                                 uintptr_t userContext,
                                                                 unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
         return S1_RETURN_MOVE_REF(Program,
-                                  s1_program_create_from_stream (this, streamFunc, userContext, compatLevel));
+                                  s1_program_create_from_stream_func (this, streamFunc, userContext, compatLevel));
       }
 
       /**
@@ -611,11 +611,11 @@ namespace s1
        * last error code.
        */
       template<typename StreamFunc>
-      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStream (StreamFunc streamFunc,
+      S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromStreamFunc (StreamFunc streamFunc,
                                                                 unsigned int compatLevel = S1_COMPATIBILITY_LATEST)
       {
         return S1_RETURN_MOVE_REF(Program,
-                                  s1_program_create_from_stream (this,
+                                  s1_program_create_from_stream_func (this,
                                                                  &StreamFuncWrapper<typename detail::remove_pointer<StreamFunc>::type>,
                                                                  WrapperArg (streamFunc), compatLevel));
       }

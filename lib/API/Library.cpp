@@ -193,7 +193,7 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     }), nullptr);
 }
 
-s1_Program* s1_program_create_from_stream (s1_Library* obj, s1_stream_input_func streamFunc,
+s1_Program* s1_program_create_from_stream_func (s1_Library* obj, s1_stream_input_func streamFunc,
                                            uintptr_t userContext, unsigned int compatLevel)
 {
   S1_ASSERT_MSG(obj, "NULL Library", nullptr);

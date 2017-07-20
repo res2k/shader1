@@ -444,7 +444,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
   Program::Pointer compilerProg;
   {
     InputFileStream inStream (options.inputFileName);
-    compilerProg = lib->CreateProgramFromStream (&inStream);
+    compilerProg = lib->CreateProgramFromStreamFunc (&inStream);
     if (inStream.HadInputError ())
     {
       return 4;
