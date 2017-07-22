@@ -45,10 +45,9 @@ namespace s1
     return BackendPtr ();
   }
 
-  Compiler::ProgramPtr Compiler::CreateProgram (const char* inputData, size_t inputSize)
+  Compiler::ProgramPtr Compiler::CreateProgram (uc::Stream::Source& inputStream)
   {
-    uc::SimpleBufferStreamSource source (inputData, inputSize);
-    uc::Stream uniStream (source);
+    uc::Stream uniStream (inputStream);
     return ProgramPtr (new Program (&uniStream));
   }
 } // namespace s1

@@ -193,6 +193,22 @@ s1_Program* s1_program_create_from_string (s1_Library* obj, const char* source,
     }), nullptr);
 }
 
+namespace
+{
+  class ByteStreamStreamSource : public s1::uc::Stream::Source
+  {
+  public:
+    ByteStreamStreamSource (s1::api_impl::ByteStream* stream) : stream (stream) {}
+
+    size_t NextData (const char*& data) override
+    {
+      return stream->Next (data);
+    }
+  private:
+    s1::api_impl::ByteStream* stream;
+  };
+} // anonymous namespace
+
 s1_Program* s1_program_create_from_stream (s1_Library* obj, s1_ByteStream* stream,
                                            unsigned int compatLevel)
 {
@@ -213,13 +229,11 @@ s1_Program* s1_program_create_from_stream (s1_Library* obj, s1_ByteStream* strea
   }
 
   auto stream_impl = s1::EvilUpcast<s1::api_impl::ByteStream> (stream);
-  auto wrapStreamFunc =
-    [=](const char*& data) -> size_t
-    { return stream_impl->Next (data); };
   return lib->Return (lib->Try (
     [=]() {
+      ByteStreamStreamSource streamSource (stream_impl);
       boost::intrusive_ptr<s1::api_impl::Program> program (
-        new s1::api_impl::Program (lib, lib->GetCompiler (), wrapStreamFunc));
+        new s1::api_impl::Program (lib, lib->GetCompiler (), streamSource));
       program->AddRef ();
       return program->DowncastEvil<s1_Program> ();
     }), nullptr);

@@ -57,7 +57,7 @@ namespace s1
       Compiler::ProgramPtr wrapped_program;
     public:
       Program (s1::Library* lib, Compiler& compiler, const std::string& source);
-      Program (s1::Library* lib, Compiler& compiler, std::function<size_t (const char*&)> streamFunc);
+      Program (s1::Library* lib, Compiler& compiler, uc::Stream::Source& stream);
 
       boost::intrusive_ptr<CompiledProgram> GetCompiledProgram (const Compiler::BackendPtr& backend,
                                                                 Compiler::Backend::CompileTarget target,

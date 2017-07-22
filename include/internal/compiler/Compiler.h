@@ -18,6 +18,8 @@
 #ifndef __COMPILER_COMPILER_H__
 #define __COMPILER_COMPILER_H__
 
+#include "base/uc/Stream.h"
+
 #include <boost/intrusive_ptr.hpp>
 
 namespace s1
@@ -48,7 +50,7 @@ namespace s1
     class Program;
     typedef boost::intrusive_ptr<Program> ProgramPtr;
     
-    ProgramPtr CreateProgram (const char* inputData, size_t inputSize);
+    ProgramPtr CreateProgram (uc::Stream::Source& inputStream);
     
     // Methods to specify input
     // Optimization getters/setters

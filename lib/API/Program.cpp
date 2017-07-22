@@ -20,6 +20,7 @@
 
 #include "Program.h"
 
+#include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/String_optional.h"
 #include "compiler/BackendProgram.h"
 #include "compiler/Program.h"
@@ -52,21 +53,14 @@ namespace s1
     {
       this->source = source;
 
-      wrapped_program = compiler.CreateProgram (source.data(), source.size());
+      uc::SimpleBufferStreamSource stream (source.data(), source.size());
+      wrapped_program = compiler.CreateProgram (stream);
     }
 
-    Program::Program (s1::Library* lib, Compiler& compiler, std::function<size_t (const char*&)> streamFunc)
+    Program::Program (s1::Library* lib, Compiler& compiler, uc::Stream::Source& stream)
       : Program (lib, compiler)
     {
-      // FIXME: Kind of stupid... Should (eventually) be able to pass stream directly to CreateProgram()
-      const char* data;
-      size_t dataSize;
-      while ((dataSize = streamFunc (data)) != 0)
-      {
-        source.append (data, dataSize);
-      }
-
-      wrapped_program = compiler.CreateProgram (source.data(), source.size());
+      wrapped_program = compiler.CreateProgram (stream);
     }
 
     boost::intrusive_ptr<CompiledProgram> Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
