@@ -65,11 +65,6 @@ namespace s1
       }
     }
 
-    void Program::Dirty()
-    {
-      wrapped_program.reset();
-    }
-
     boost::intrusive_ptr<CompiledProgram> Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
                                                                        Compiler::Backend::CompileTarget target,
                                                                        Compiler::Backend::OptionsPtr backendOptions)
