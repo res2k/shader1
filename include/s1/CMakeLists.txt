@@ -45,7 +45,7 @@ add_custom_command(OUTPUT ResultCode_defs.h
                   COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
                       ${RESULTCODE_FILES}
                       -t ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode_defs.h.tpl > ResultCode_defs.h
-                  DEPENDS ResultCode.xml ResultCode_defs.h.tpl)
+                  DEPENDS ${RESULTCODE_FILES} ResultCode_defs.h.tpl)
 add_custom_target(generate_ResultCode_defs DEPENDS ResultCode_defs.h
                   COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_ResultCode_defs")
 add_dependencies(generate_ResultCode generate_ResultCode_defs)
