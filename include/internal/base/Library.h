@@ -28,7 +28,7 @@
 #include "base/Result.h"
 #include "compiler/Compiler.h"
 
-#include "s1/ResultCode.h"
+#include "s1/ResultCode_defs_base.h"
 
 #include <boost/intrusive_ptr.hpp>
 

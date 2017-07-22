@@ -22,6 +22,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #define __BASE_RESULT_H__
 
 #include "ResultCode_internal.h"
+#include "s1/ResultCode_defs_base.h"
 
 #include <memory>
 

@@ -20,6 +20,8 @@
 
 #include "Program.h"
 
+#include "s1/ResultCode_defs_program.h"
+
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/String_optional.h"
 #include "compiler/BackendProgram.h"

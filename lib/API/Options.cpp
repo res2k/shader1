@@ -19,6 +19,7 @@
 #include "base/ResultCode_internal.h"
 
 #include "s1/Options.h"
+#include "s1/ResultCode_defs_compileroptions.h"
 
 #include "base/uc/String_optional.h"
 #include "compiler/Options.h"

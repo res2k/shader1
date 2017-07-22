@@ -1,0 +1,33 @@
+<!DOCTYPE codes [
+  <!--ENTITY lsquo "&#x2018;">
+  <!ENTITY rsquo "&#x2019;">
+  <!ENTITY ndash "&#x2013;"-->
+  <!ENTITY lsquo "'">
+  <!ENTITY rsquo "'">
+  <!ENTITY ndash "-">
+]>
+<!--
+    Shader1
+    Copyright (c) 2015-2017 Frank Richter
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+-->
+<codes>
+  <component name="BACKEND" value="2" descr="backend-related" docgroup="Backend-related result codes">
+    <code name="E_UNKNOWN_BACKEND" value="0">
+      <descr>An unknown backend was requested</descr>
+    </code>
+    <code name="E_GENERATE_FAILED" value="1">
+      <descr>Program generation failed</descr>
+    </code>
+  </component>
+</codes>

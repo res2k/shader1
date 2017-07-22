@@ -118,8 +118,10 @@ typedef unsigned int s1_ResultCode;
 #define S1_ERROR_EQUAL(Code1, Code2)            (S1_CLEAR_EXTRA(Code1) == S1_CLEAR_EXTRA(Code2))
 /** @} */
 
+#if !defined(S1_BUILD)
 // Actual result code definitions, generated from XML
 #include "s1/ResultCode_defs.h"
+#endif // !defined(S1_BUILD)
 
 /**
  * Get error code description for a result code.

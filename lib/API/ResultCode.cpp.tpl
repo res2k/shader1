@@ -22,6 +22,10 @@
 
 #include "base/common.h"
 
+{{for comp in components}}
+#include "s1/ResultCode_defs_{{comp.attrib['name'].lower()}}.h"
+{{endfor}}
+
 #include "ResultCodeHelper.h"
 
 {{def code_ident(name)}}S1_{{name}}{{enddef}}

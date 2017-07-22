@@ -20,6 +20,7 @@
 
 #include "s1/Backend.h"
 #include "s1/BackendOptions.h"
+#include "s1/ResultCode_defs_backend.h"
 
 #include "compiler/Backend.h"
 #include "compiler/BackendProgram.h"

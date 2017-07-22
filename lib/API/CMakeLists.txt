@@ -1,11 +1,16 @@
 # Supply a version script to hide all symbols but our own
 CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/ld-symbols.map")
 
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${S1_INC_PUBLIC}/ResultCode_components.txt)
+file(STRINGS ${S1_INC_PUBLIC}/ResultCode_components.txt RESULTCODE_COMPONENTS)
+foreach(comp ${RESULTCODE_COMPONENTS})
+  list(APPEND RESULTCODE_INPUT ${S1_INC_PUBLIC}/ResultCode_${comp}.xml)
+endforeach(comp)
 add_custom_command(OUTPUT ResultCode.cpp
                    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
-                      ${S1_INC_PUBLIC}/ResultCode.xml
+                      ${RESULTCODE_INPUT}
                       -t ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.cpp.tpl > ResultCode.cpp
-                   DEPENDS ${S1_INC_PUBLIC}/ResultCode.xml ResultCode.cpp.tpl)
+                   DEPENDS ${RESULTCODE_INPUT} ResultCode.cpp.tpl)
 
 set(s1_sources
     cxxapi_detail.cpp

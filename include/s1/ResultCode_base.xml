@@ -8,7 +8,7 @@
 ]>
 <!--
     Shader1
-    Copyright (c) 2015 Frank Richter
+    Copyright (c) 2015-2017 Frank Richter
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the wxWindows Library Licence.
@@ -108,30 +108,6 @@
       <doc>
       The reported stream size is probably too large.
       </doc>
-    </code>
-  </component>
-  <component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
-    <code name="E_INVALID_OPTIMIZATION" value="0">
-      <descr>The optimization option was invalid</descr>
-    </code>
-  </component>
-  <component name="BACKEND" value="2" descr="backend-related" docgroup="Backend-related result codes">
-    <code name="E_UNKNOWN_BACKEND" value="0">
-      <descr>An unknown backend was requested</descr>
-    </code>
-    <code name="E_GENERATE_FAILED" value="1">
-      <descr>Program generation failed</descr>
-    </code>
-  </component>
-  <component name="PROGRAM" value="3" descr="program-related" docgroup="Program-related result codes">
-    <code name="E_INVALID_FREQUENCY" value="0">
-      <descr>An invalid input parameter frequency was given</descr>
-    </code>
-    <code name="E_UNKNOWN_PARAMETER" value="1">
-      <descr>A program input parameter is not known</descr>
-    </code>
-    <code name="E_INCOMPATIBLE" value="2">
-      <descr>The requested compatibility level is not supported</descr>
     </code>
   </component>
 </codes>

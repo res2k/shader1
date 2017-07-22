@@ -1,7 +1,14 @@
-/*
+<!DOCTYPE codes [
+  <!--ENTITY lsquo "&#x2018;">
+  <!ENTITY rsquo "&#x2019;">
+  <!ENTITY ndash "&#x2013;"-->
+  <!ENTITY lsquo "'">
+  <!ENTITY rsquo "'">
+  <!ENTITY ndash "-">
+]>
+<!--
     Shader1
-    Copyright (c) 2017 Frank Richter
-
+    Copyright (c) 2015-2017 Frank Richter
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the wxWindows Library Licence.
@@ -13,18 +20,11 @@
     Please see the wxWindows Library Licence for more details.
     The licence texts can be found in the source distribution files
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
-*/
-
-#include "base/ResultCode_internal.h"
-#include "s1/ResultCode_defs_base.h"
-#include "base/common.h"
-
-#include "base/uc/StringOverflowException.h"
-
-namespace s1
-{
-  namespace uc
-  {
-    StringOverflowException::StringOverflowException () : s1::Exception (S1_E_STRING_TOO_LONG) {}
-  } // namespace uc
-} // namespace s1
+-->
+<codes>
+  <component name="COMPILEROPTIONS" value="1" descr="compiler options" docgroup="Compiler options result codes">
+    <code name="E_INVALID_OPTIMIZATION" value="0">
+      <descr>The optimization option was invalid</descr>
+    </code>
+  </component>
+</codes>

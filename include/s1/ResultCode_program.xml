@@ -1,0 +1,36 @@
+<!DOCTYPE codes [
+  <!--ENTITY lsquo "&#x2018;">
+  <!ENTITY rsquo "&#x2019;">
+  <!ENTITY ndash "&#x2013;"-->
+  <!ENTITY lsquo "'">
+  <!ENTITY rsquo "'">
+  <!ENTITY ndash "-">
+]>
+<!--
+    Shader1
+    Copyright (c) 2015-2017 Frank Richter
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+-->
+<codes>
+  <component name="PROGRAM" value="3" descr="program-related" docgroup="Program-related result codes">
+    <code name="E_INVALID_FREQUENCY" value="0">
+      <descr>An invalid input parameter frequency was given</descr>
+    </code>
+    <code name="E_UNKNOWN_PARAMETER" value="1">
+      <descr>A program input parameter is not known</descr>
+    </code>
+    <code name="E_INCOMPATIBLE" value="2">
+      <descr>The requested compatibility level is not supported</descr>
+    </code>
+  </component>
+</codes>

@@ -3,7 +3,7 @@
 //
 /*
     Shader1
-    Copyright (c) 2015 Frank Richter
+    Copyright (c) 2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -19,45 +19,17 @@
 */
 
 /**\file
- * Result code values
+ * Result code values master header
  */
 #ifndef __S1_RESULTCODE_DEFS_H__
 #define __S1_RESULTCODE_DEFS_H__
 
-{{def comp_ident(comp)}}S1_RESULT_COMP_{{comp}}{{enddef}}
-{{def code_ident(name)}}S1_{{name}}{{enddef}}
-{{def code_make_def(comp, tag)}}{{if 'type' in tag.attrib and tag.attrib['type'] == 'success'}}S1_MAKE_SUCCESS{{else}}S1_MAKE_ERROR{{endif}}({{comp_ident(comp)}}, {{tag.attrib['value']}}){{enddef}}
-{{def code_make_def_ext(comp, tag, ext)}}{{if 'type' in tag.attrib and tag.attrib['type'] == 'success'}}S1_MAKE_SUCCESS_X{{else}}S1_MAKE_ERROR_X{{endif}}({{comp_ident(comp)}}, {{tag.attrib['value']}}, {{ext}}){{enddef}}
-{{py:
-# Format a string for multi-line doxygen comment
-def doclines(str):
-  return "\n".join(map(lambda s: " * "+s.strip(), str.strip().splitlines()))
-}}
+#if defined(S1_BUILD)
+  #error "Include specific result code headers!"
+#endif
+
 {{for comp in components}}
-
-/**\name {{comp.attrib['docgroup']}}
- * @{ */
-/**\def {{comp_ident(comp.attrib['name'])}}
- * \hideinitializer
- * Result component: {{comp.attrib['descr']}}
- */
-#define {{comp_ident(comp.attrib['name'])}} {{comp.attrib['value']}}u
-
-{{for code in comp.getchildren()}}
-/**\def {{code_ident(code.attrib['name'])}}
- * \hideinitializer
-{{if code.find('doc') != None}}{{code.find('doc').text|doclines}}{{else}}{{code.find('descr').text|doclines}}{{endif}}
- */
-#define {{code_ident(code.attrib['name'])}} {{code_make_def(comp.attrib['name'], code)}}
-{{if 'name_ext' in code.attrib}}
-/**\def {{code_ident(code.attrib['name_ext'])}}(N)
- * \hideinitializer
-{{if code.find('doc_ext') != None}}{{code.find('doc_ext').text|doclines}}{{else}}{{code.find('descr').text|doclines}}{{endif}}
- */
-#define {{code_ident(code.attrib['name_ext'])}}(N) {{code_make_def_ext(comp.attrib['name'], code, '((unsigned)N) + 1')}}
-{{endif}}
-{{endfor}}
-/** @} */
+#include "ResultCode_defs_{{comp.attrib['name'].lower()}}.h"
 {{endfor}}
 
 #endif // __S1_RESULTCODE_DEFS_H__
