@@ -44,6 +44,8 @@ namespace s1
     
     intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
     intermediate::ProgramPtr intermediateProg;
+    /// Entry function used to generate intermediateProg
+    uc::String lastEntryFunction;
     
     intermediate::ProgramPtr splitProgs[splitter::freqNum];
     

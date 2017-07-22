@@ -147,9 +147,11 @@ namespace s1
                                                                        Backend::CompileTarget target,
                                                                        Backend::OptionsPtr options)
   {
-    if (!intermediateProg)
+    if (!intermediateProg || (entryFunction != lastEntryFunction))
     {
-      intermediateProg = intermediateHandler.GetProgram(entryFunction);
+      intermediateProg = intermediateHandler.GetProgram (entryFunction);
+      if (!intermediateProg) return Backend::ProgramPtr ();
+      lastEntryFunction = entryFunction;
       SetProgramOutputParameters ();
       
       for (unsigned int n = 0; n < splitter::freqNum; n++)
