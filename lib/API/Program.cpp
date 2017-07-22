@@ -51,6 +51,8 @@ namespace s1
       : Program (lib, compiler)
     {
       this->source = source;
+
+      wrapped_program = compiler.CreateProgram (source.data(), source.size());
     }
 
     Program::Program (s1::Library* lib, Compiler& compiler, std::function<size_t (const char*&)> streamFunc)
@@ -63,18 +65,14 @@ namespace s1
       {
         source.append (data, dataSize);
       }
+
+      wrapped_program = compiler.CreateProgram (source.data(), source.size());
     }
 
     boost::intrusive_ptr<CompiledProgram> Program::GetCompiledProgram (const Compiler::BackendPtr& backend,
                                                                        Compiler::Backend::CompileTarget target,
                                                                        Compiler::Backend::OptionsPtr backendOptions)
     {
-      // FIXME!!!: This is rather inefficient!
-      if (!wrapped_program)
-      {
-        wrapped_program = compiler.CreateProgram (source.data(), source.size());
-      }
-      
       Compiler::Program::FreqFlagMap inputFreqFlags;
       for(const InputFreqMapType::value_type& inputFreq : inputFreqMap)
       {
