@@ -17,10 +17,10 @@
 
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
+#include "s1/ResultCode_defs_backend.h"
 
 #include "s1/Backend.h"
 #include "s1/BackendOptions.h"
-#include "s1/ResultCode_defs_backend.h"
 
 #include "compiler/Backend.h"
 #include "compiler/BackendProgram.h"

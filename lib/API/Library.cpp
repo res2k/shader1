@@ -17,11 +17,11 @@
 
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
-
-#include "s1/Library.h"
 #include "s1/ResultCode_defs_backend.h"
 #include "s1/ResultCode_defs_base.h"
 #include "s1/ResultCode_defs_program.h"
+
+#include "s1/Library.h"
 
 #include "base/DebugMessageHandler.h"
 #include "base/Library.h"

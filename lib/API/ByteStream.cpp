@@ -17,6 +17,7 @@
 
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
+#include "s1/ResultCode_defs_base.h"
 
 #include "ByteStream.h"
 

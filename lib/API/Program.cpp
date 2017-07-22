@@ -17,10 +17,9 @@
 
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
+#include "s1/ResultCode_defs_program.h"
 
 #include "Program.h"
-
-#include "s1/ResultCode_defs_program.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/String_optional.h"
