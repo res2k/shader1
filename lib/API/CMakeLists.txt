@@ -4,7 +4,7 @@ CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE
 add_custom_command(OUTPUT ResultCode.cpp
                    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
                       ${S1_INC_PUBLIC}/ResultCode.xml
-                      ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.cpp.tpl > ResultCode.cpp
+                      -t ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.cpp.tpl > ResultCode.cpp
                    DEPENDS ${S1_INC_PUBLIC}/ResultCode.xml ResultCode.cpp.tpl)
 
 set(s1_sources
