@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ElementTree
 
 parser = argparse.ArgumentParser(description='Generate some file from a error/result/codes XML file.')
 parser.add_argument('input_file', metavar='XML-FILE', nargs='+', help='input XML file')
-parser.add_argument('-t,--template', dest='template_file', metavar='TEMPLATE-FILE', help='results template file')
+parser.add_argument('--template', '-t', dest='template_file', metavar='TEMPLATE-FILE', help='results template file', required=True)
 
 components = []
 args = parser.parse_args()
