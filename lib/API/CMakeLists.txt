@@ -9,6 +9,7 @@ endforeach(comp)
 add_custom_command(OUTPUT ResultCode.cpp
                    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
                       ${RESULTCODE_INPUT}
+                      -r components
                       -t ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode.cpp.tpl > ResultCode.cpp
                    DEPENDS ${RESULTCODE_INPUT} ResultCode.cpp.tpl)
 
