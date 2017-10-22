@@ -71,6 +71,7 @@ namespace s1
         u.ull = x;
         if (_BitScanForward (&index, u.ul[0])) return index;
         _BitScanForward (&index, u.ul[1]);
+        // Scanning from right, check low dword first
         return sizeof(unsigned long) * CHAR_BIT + index;
       #endif
     #else
@@ -119,9 +120,10 @@ namespace s1
           unsigned long ul[2];
         } u;
         u.ull = x;
-        if (_BitScanReverse (&index, u.ul[0])) return index;
-        _BitScanReverse (&index, u.ul[1]);
-        return sizeof(unsigned long) * CHAR_BIT + index;
+        // Scanning from left, check high dword first
+        if (_BitScanReverse (&index, u.ul[1])) return sizeof(unsigned long) * CHAR_BIT + index;
+        _BitScanReverse (&index, u.ul[0]);
+        return index;
       #endif
     #else
       return (CHAR_BIT * sizeof (unsigned long long) - __builtin_clzll (x) - 1);
