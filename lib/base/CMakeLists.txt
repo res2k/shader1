@@ -53,7 +53,8 @@ ENDIF()
 
 if(CXXTEST_FOUND)
   s1_add_cxxtest(test_Base
-                 SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.h
+                 SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/bit_scan.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
