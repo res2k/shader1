@@ -5,14 +5,11 @@ sudo: false
 addons:
   apt:
     packages:
-      - cmake
-      - cmake-data
       - cxxtest
       - gcc-6
       - g++-6
     sources: &sources
       - ubuntu-toolchain-r-test
-      - george-edison55-precise-backports
 
 cache:
   directories:
@@ -43,6 +40,17 @@ install:
       { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
     fi
     CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
+
+  # Install a recent CMake
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      CMAKE_URL="https://cmake.org/files/v3.2/cmake-3.2.3-Linux-x86_64.tar.gz"
+      mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+    else
+      brew upgrade cmake || brew install cmake
+    fi
+  - cmake --version
 
 before_script:
   # Go back to the root of the project and setup the build directory
