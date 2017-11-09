@@ -24,6 +24,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include "Char.h"
 
 #include <boost/convert/detail/char.hpp>
+#include <boost/mpl/bool.hpp>
 
 namespace boost { namespace cnv
 {
@@ -31,6 +32,11 @@ namespace boost { namespace cnv
   {
     template<> struct is_char<s1::uc::Char> : mpl:: true_ {};
   }
+
+#if BOOST_VERSION >= 106500
+  template<> inline s1::uc::Char to_upper (s1::uc::Char c)
+  { return static_cast<s1::uc::Char> (std::towupper (static_cast<wchar_t> (c))); }
+#endif
 }}
 
 

@@ -261,10 +261,10 @@ if(NOT S1_PREBUILT)
 endif()
 include_directories(include)
 
-# Make boost.outcome available
+# Make outcome available
 add_subdirectory(
-  "${CMAKE_CURRENT_SOURCE_DIR}/boost.outcome"  # path to outcome source
-  "${CMAKE_CURRENT_BINARY_DIR}/boost.outcome"  # your choice of where to put binaries
+  "${CMAKE_CURRENT_SOURCE_DIR}/outcome"  # path to outcome source
+  "${CMAKE_CURRENT_BINARY_DIR}/outcome"  # your choice of where to put binaries
   EXCLUDE_FROM_ALL                             # please only lazy build outcome on demand
 )
 
