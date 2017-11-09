@@ -12,6 +12,7 @@ addons:
       - g++-6
     sources: &sources
       - ubuntu-toolchain-r-test
+      - george-edison55-precise-backports
 
 cache:
   directories:
