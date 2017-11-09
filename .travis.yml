@@ -5,6 +5,8 @@ sudo: false
 addons:
   apt:
     packages:
+      - cmake
+      - cmake-data
       - cxxtest
       - gcc-6
       - g++-6
@@ -44,7 +46,7 @@ install:
 before_script:
   # Go back to the root of the project and setup the build directory
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir -p build && cd build && cmake .. ${CMAKE_OPTIONS}) || (cat ${TRAVIS_BUILD_DIR}/build/CMakeFiles/CMakeOutput.log; cat ${TRAVIS_BUILD_DIR}/build/CMakeFiles/CMakeError.log)
+  - (mkdir -p build && cd build && cmake .. ${CMAKE_OPTIONS})
 
 script:
   - (cd build && make -j2 -k) && (cd build && ctest --output-on-failure -j2)
