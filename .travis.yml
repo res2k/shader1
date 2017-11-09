@@ -1,1 +1,50 @@
+# This Travis configuration borrows from the Boost.Hana one.
 language: cpp
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - cxxtest
+      - g++-6
+    sources: &sources
+      - ubuntu-toolchain-r-test
+
+cache:
+  directories:
+    - ${TRAVIS_BUILD_DIR}/deps/boost-1.65.1
+ 
+matrix:
+  include:
+    - os: linux
+      env: COMPILER=g++-6 BOOST_VERSION=1.65.1
+      compiler: gcc
+
+install:
+  # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
+
+  - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.65.1; fi
+
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+
+  # Install Boost headers
+  - |
+      BOOST_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}
+      if [[ -z "$(ls -A ${BOOST_DIR})" ]]; then
+        BOOST_URL="http://sourceforge.net/projects/boost/files/boost/${BOOST_VERSION}/boost_${BOOST_VERSION//\./_}.tar.gz"
+        mkdir -p ${BOOST_DIR}
+        { travis_retry wget -O - ${BOOST_URL} | tar --strip-components=1 -xz -C ${BOOST_DIR}; } || exit 1
+      fi
+    fi
+    CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
+
+before_script:
+  # Go back to the root of the project and setup the build directory
+  - cd ${TRAVIS_BUILD_DIR}
+  - (mkdir build && cd build && cmake .. ${CMAKE_OPTIONS})
+
+script:
+  - (cd build && make -j2 -k) && (cd build && ctest --output-on-failure -j2)
+ 
