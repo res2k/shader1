@@ -48,3 +48,11 @@ before_script:
 
 script:
   - (cd build && make -j2 -k) && (cd build && ctest --output-on-failure -j2)
+
+after_failure:
+  - |
+    echo "Dumping CMakeOutput.log"
+    cat ${TRAVIS_BUILD_DIR}/build/CMakeFiles/CMakeOutput.log
+  - |
+    echo "Dumping CMakeError.log"
+    cat ${TRAVIS_BUILD_DIR}/build/CMakeFiles/CMakeError.log
