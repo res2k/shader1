@@ -6,6 +6,7 @@ addons:
   apt:
     packages:
       - cxxtest
+      - gcc-6
       - g++-6
     sources: &sources
       - ubuntu-toolchain-r-test
@@ -17,7 +18,7 @@ cache:
 matrix:
   include:
     - os: linux
-      env: COMPILER=g++-6 BOOST_VERSION=1.65.1
+      env: COMPILER=g++-6 COMPILER_C=gcc-6 BOOST_VERSION=1.65.1
       compiler: gcc
 
 install:
@@ -28,6 +29,7 @@ install:
   - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.65.1; fi
 
   - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+  - if [[ "${COMPILER_C}" != "" ]]; then export CC=${COMPILER_C}; fi
 
   # Install Boost headers
   - |
@@ -42,7 +44,7 @@ install:
 before_script:
   # Go back to the root of the project and setup the build directory
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir build && cd build && cmake .. ${CMAKE_OPTIONS})
+  - (mkdir -p build && cd build && cmake .. ${CMAKE_OPTIONS})
 
 script:
   - (cd build && make -j2 -k) && (cd build && ctest --output-on-failure -j2)
