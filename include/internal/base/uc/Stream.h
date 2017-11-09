@@ -21,7 +21,7 @@
 #include "Char.h"
 #include "UTF8Decoder.h"
 
-#include <boost/outcome/outcome.hpp>
+#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -89,7 +89,14 @@ namespace uc
     /// Advance stream
     Stream& operator++() noexcept;
 
-    typedef boost::outcome::expected<Char32, Error> FetchResult;
+    class FetchResult : public OUTCOME_V2_NAMESPACE::result<Char32, Error>
+    {
+      typedef OUTCOME_V2_NAMESPACE::result<Char32, Error> base_type;
+    public:
+      FetchResult () : base_type (0) {}
+      template<typename... Arg>
+      FetchResult (Arg&&... a) : base_type (std::forward<Arg> (a)...) {}
+    };
     /// Return current character
     FetchResult operator* () const;
   protected:
