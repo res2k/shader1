@@ -25,6 +25,8 @@
 #include <intrin.h>
 #endif
 
+#include <limits.h>
+
 namespace s1
 {
   namespace bit_scan
