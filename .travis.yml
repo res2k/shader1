@@ -35,8 +35,8 @@ install:
 
   - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.65.1; fi
 
-  - if [[ "${COMPILER}" != "" ]]; then export CXX="ccache ${COMPILER}"; fi
-  - if [[ "${COMPILER_C}" != "" ]]; then export CC="ccache ${COMPILER_C}"; fi
+  - if [[ "${COMPILER}" != "" ]]; then export CXX="${COMPILER}"; fi
+  - if [[ "${COMPILER_C}" != "" ]]; then export CC="${COMPILER_C}"; fi
 
   # Install Boost headers
   - |
@@ -71,7 +71,7 @@ install:
 before_script:
   # Go back to the root of the project and setup the build directory
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir travis-build && cd travis-build && cmake .. ${CMAKE_OPTIONS})
+  - (mkdir travis-build && cd travis-build && CC="ccache $CC" CXX="ccache $CXX" cmake .. ${CMAKE_OPTIONS})
 
 script:
   - cd travis-build && make -j2 -k && make -j2 -k build_tests && ctest --output-on-failure -j2
