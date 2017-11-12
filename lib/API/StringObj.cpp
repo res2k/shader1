@@ -137,7 +137,7 @@ S1_API(s1_ResultCode) s1_string_independent_create (s1_String** newStrObj, s1_St
   *newStrObj = nullptr;
 
   return s1::api_impl::String::Try (
-    [=]() -> s1::Result<nullptr_t> {
+    [=]() -> s1::Result<std::nullptr_t> {
       auto createResult = s1::api_impl::String::Create (nullptr, string);
       auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 1));
       boost::intrusive_ptr<s1::api_impl::String> newString = std::get<1> (createResult);
@@ -157,7 +157,7 @@ static s1_ResultCode s1_string_independent_create_internal (s1_String** newStrOb
   if (!string) return S1_E_INVALID_ARG_N (1);
 
   return s1::api_impl::String::Try (
-    [=]() -> s1::Result<nullptr_t> {
+    [=]() -> s1::Result<std::nullptr_t> {
       auto createResult = s1::api_impl::String::Create (nullptr, string);
       auto createResultCode = static_cast<s1::ResultCode> (s1::detail::ChangeResultCodeArgumentIndex (std::get<0> (createResult), 1));
       boost::intrusive_ptr<s1::api_impl::String> newString = std::get<1> (createResult);
