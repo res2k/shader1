@@ -20,6 +20,7 @@
 
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"

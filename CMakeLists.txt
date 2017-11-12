@@ -1,5 +1,5 @@
 PROJECT(s1)
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.3.2)
 if(POLICY CMP0060)
   cmake_policy(SET CMP0060 NEW)
 endif()

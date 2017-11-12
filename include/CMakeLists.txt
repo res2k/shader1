@@ -14,6 +14,7 @@ if(CXXTEST_FOUND)
   add_dependencies(api_testlib generate_Object)
   set_property(TARGET api_testlib PROPERTY COMPILE_DEFINITIONS S1_BUILD)
   set_property(TARGET api_testlib PROPERTY EXCLUDE_FROM_ALL YES)
+  target_include_directories(api_testlib PRIVATE ${CMAKE_SOURCE_DIR}/outcome/include)
 
   set(api_test_sources
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiByteStream.h
