@@ -773,8 +773,8 @@ namespace s1
                                   s1_byte_stream_create_from_callback (this,
                                                                        WrapperArg (dataFunc),
                                                                        &StreamFuncWrapper<typename detail::remove_pointer<DataFunc>::type>,
-                                                                       nullptr,
-                                                                       nullptr,
+                                                                       S1_NULL,
+                                                                       S1_NULL,
                                                                        size));
       }
 
@@ -807,7 +807,7 @@ namespace s1
                                   s1_byte_stream_create_from_callback (this, reinterpret_cast<uintptr_t> (callbacks),
                                                                        &Callbacks::Data,
                                                                        &Callbacks::Cleanup,
-                                                                       nullptr,
+                                                                       S1_NULL,
                                                                        size));
       }
 
