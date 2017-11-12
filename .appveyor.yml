@@ -16,6 +16,8 @@ branches:
     - /pr\/.+/
 
 install:
+  git submodule update --init --recursive
+
   # All external dependencies are installed in C:\projects\deps
   - mkdir C:\projects\deps
   - cd C:\projects\deps
