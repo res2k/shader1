@@ -48,7 +48,7 @@ static const char* result_code_string (s1_ResultCode code)
 
   error_str = s1_get_result_code_str (code);
   if (error_str) return error_str;
-  sprintf (buf, "0x%0.8x", code);
+  sprintf (buf, "0x%.8x", code);
   return buf;
 }
 
