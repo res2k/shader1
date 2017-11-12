@@ -58,8 +58,8 @@ install:
     CXXTEST_URL=https://github.com/CxxTest/cxxtest/releases/download/4.4/cxxtest-4.4.tar.gz
     mkdir -p ${CXXTEST_DIR}
     { travis_retry wget -O - ${CXXTEST_URL} | tar --strip-components=1 -xz -C ${CXXTEST_DIR}; } || exit 1
-    CMAKE_OPTIONS+=" -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=${CXXTESTGEN_DIR}/bin/cxxtestgen"
-    CMAKE_OPTIONS+=" -DCXXTEST_INCLUDE_DIR=${CXXTESTGEN_DIR}"
+    CMAKE_OPTIONS+=" -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=${CXXTEST_DIR}/bin/cxxtestgen"
+    CMAKE_OPTIONS+=" -DCXXTEST_INCLUDE_DIR=${CXXTEST_DIR}"
 
 before_script:
   # Go back to the root of the project and setup the build directory
