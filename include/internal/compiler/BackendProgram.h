@@ -15,8 +15,8 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __COMPILER_BACKENDPROGRAM_H__
-#define __COMPILER_BACKENDPROGRAM_H___
+#ifndef COMPILER_BACKENDPROGRAM_H_
+#define COMPILER_BACKENDPROGRAM_H_
 
 #include "Backend.h"
 
@@ -35,4 +35,4 @@ namespace s1
   };
 } // namespace s1
 
-#endif // __COMPILER_BACKENDPROGRAM_H__
+#endif // COMPILER_BACKENDPROGRAM_H_
