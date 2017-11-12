@@ -14,7 +14,7 @@ addons:
 cache:
   ccache: true
   directories:
-    - ${TRAVIS_BUILD_DIR}/deps/boost-1.65.1
+    - ${TRAVIS_BUILD_DIR}/travis-deps/boost-1.65.1
 
 matrix:
   include:
@@ -23,8 +23,8 @@ matrix:
       compiler: gcc
 
 install:
-  # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
-  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/travis-deps/
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/travis-deps"
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
   - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.65.1; fi
@@ -56,7 +56,7 @@ install:
 before_script:
   # Go back to the root of the project and setup the build directory
   - cd ${TRAVIS_BUILD_DIR}
-  - (mkdir -p build && cd build && cmake .. ${CMAKE_OPTIONS})
+  - (mkdir travis-build && cd travis-build && cmake .. ${CMAKE_OPTIONS})
 
 script:
-  - cd build && make -j2 -k && make -j2 -k build_tests && ctest --output-on-failure -j2
+  - cd travis-build && make -j2 -k && make -j2 -k build_tests && ctest --output-on-failure -j2
