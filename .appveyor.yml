@@ -1,0 +1,56 @@
+# Copyright Louis Dionne 2013-2017
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
+
+os:
+  - Visual Studio 2017
+
+build:
+  verbosity: detailed
+
+configuration:
+  - Debug
+
+branches:
+  except:
+    - /pr\/.+/
+
+install:
+  - git submodule update --init --recursive
+
+  # All external dependencies are installed in C:\projects\deps
+  - mkdir C:\projects\deps
+  - cd C:\projects\deps
+
+  # Install Ninja
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\projects\deps\ninja > nul
+  - set PATH=C:\projects\deps\ninja;%PATH%
+  - ninja --version
+
+  # Install Boost headers
+  - set BOOST_URL="http://sourceforge.net/projects/boost/files/boost/1.65.1/boost_1_65_1.7z"
+  - appveyor DownloadFile %BOOST_URL% -FileName boost.7z
+  - 7z x boost.7z -oC:\projects\deps > nul
+    
+  # Install cxxtest
+  - set CXXTEST_URL="https://github.com/CxxTest/cxxtest/releases/download/4.4/cxxtest-4.4.zip"
+  - appveyor DownloadFile %CXXTEST_URL% -FileName cxxtest.zip
+  - 7z x cxxtest.zip -oC:\projects\deps > nul
+
+
+before_build:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+  - cd C:\projects\shader1
+
+
+build_script:
+  - "SET PATH=C:/Python36-x64;%PATH%"
+  - mkdir appveyor-build
+  - cd appveyor-build
+  - cmake .. -GNinja -DBOOST_ROOT=C:/projects/deps/boost_1_65_1 -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
+  - cmake --build .
+  - cmake --build . --target build_tests
+  - "SET PATH=C:/projects/shader1/appveyor-build/Debug;%PATH%"
+  - ctest --output-on-failure
