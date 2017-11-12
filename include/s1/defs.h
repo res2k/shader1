@@ -89,15 +89,6 @@
  */
 #define S1_HAVE_NULLPTR
 
-/**\def S1_NULL
- * \NULL pointer value for arguments etc.
- */
-#if defined(S1_HAVE_NULLPTR)
-#define S1_NULL    nullptr
-#else
-#define S1_NULL    NULL
-#endif
-
 // On some MSVC versions we need to pull in some header to get charXX_t
 #if defined(_MSC_VER)
 #if _MSC_VER >= 1900
@@ -112,6 +103,15 @@
  * Defined if compiler natively supports \c charXX_t types.
  */
 #define S1_HAVE_CHARXX_T
+#endif
+
+/**\def S1_NULL
+ * \NULL pointer value for arguments etc.
+ */
+#if defined(S1_HAVE_NULLPTR)
+#define S1_NULL    nullptr
+#else
+#define S1_NULL    NULL
 #endif
 
 /// Boolean type.
