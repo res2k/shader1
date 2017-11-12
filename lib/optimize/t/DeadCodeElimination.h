@@ -20,6 +20,7 @@
 #include <boost/make_shared.hpp>
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "intermediate/SequenceBuilder.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
