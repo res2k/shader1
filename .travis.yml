@@ -4,11 +4,6 @@ sudo: false
 
 addons:
   apt:
-    packages:
-      - gcc-6
-      - g++-6
-      - gcc-7
-      - g++-7
     sources: &sources
       - ubuntu-toolchain-r-test
 
@@ -20,10 +15,20 @@ cache:
 matrix:
   include:
     - os: linux
+      addons:
+        apt:
+          packages:
+            - gcc-6
+            - g++-6
       env: GCC_VERSION=6 BOOST_VERSION=default
       compiler: gcc
 
     - os: linux
+      addons:
+        apt:
+          packages:
+            - gcc-7
+            - g++-7
       env: GCC_VERSION=7 BOOST_VERSION=default
       compiler: gcc
 
