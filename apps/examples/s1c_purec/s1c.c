@@ -186,8 +186,8 @@ int main (const int argc, const char* const argv[])
   /* Check for BOM */
   {
     unsigned char bom_buf[3];
-    if (fread (bom_buf, 1, sizeof (bom_buf), infile) < sizeof (bom_buf))
-      || (feof (infile) || (bom_buf[0] != 0xEF) || (bom_buf[1] != 0xBB) || (bom_buf[2] != 0xBF))
+    if ((fread (bom_buf, 1, sizeof (bom_buf), infile) < sizeof (bom_buf))
+      || (feof (infile) || (bom_buf[0] != 0xEF) || (bom_buf[1] != 0xBB) || (bom_buf[2] != 0xBF)))
     {
       /* Not a BOM, reset */
       fseek (infile, 0, SEEK_SET);
