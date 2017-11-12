@@ -88,7 +88,7 @@ namespace s1
     /// Convenience: Assign a result code. Clears the value
     Result& operator= (ResultCode resultCode)
     {
-      resultCode = resultCode;
+      this->resultCode = resultCode;
       val = boost::none;
       return *this;
     }
