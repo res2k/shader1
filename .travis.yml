@@ -20,12 +20,12 @@ cache:
 matrix:
   include:
     - os: linux
-      env: COMPILER=g++-6 COMPILER_C=gcc-6 BOOST_VERSION=1.65.1
+      env: COMPILER=g++-6 COMPILER_C=gcc-6 BOOST_VERSION=default
       compiler: gcc
 
   include:
     - os: linux
-      env: COMPILER=g++-7 COMPILER_C=gcc-7 BOOST_VERSION=1.65.1
+      env: COMPILER=g++-7 COMPILER_C=gcc-7 BOOST_VERSION=default
       compiler: gcc
 
 install:
