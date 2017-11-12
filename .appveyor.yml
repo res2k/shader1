@@ -59,5 +59,5 @@ build_script:
   - cd appveyor-build
   - cmake .. -GNinja -DBOOST_ROOT=C:/projects/deps/boost_1_65_1 -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
   - cmake --build .
-  - cmake --build . --target built_tests
+  - cmake --build . --target build_tests
   - ctest --output-on-failure
