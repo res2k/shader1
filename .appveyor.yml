@@ -32,7 +32,7 @@ install:
   # Install Boost headers
   - set BOOST_URL="http://sourceforge.net/projects/boost/files/boost/1.65.1/boost_1_65_1.7z"
   - appveyor DownloadFile %BOOST_URL% -FileName boost.7z
-  - 7z x boost.zip -oC:\projects\deps > nul
+  - 7z x boost.7z -oC:\projects\deps > nul
     
   # Install cxxtest
   - set CXXTEST_URL="https://github.com/CxxTest/cxxtest/releases/download/4.4/cxxtest-4.4.zip"
