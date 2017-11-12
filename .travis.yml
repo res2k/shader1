@@ -7,6 +7,8 @@ addons:
     packages:
       - gcc-6
       - g++-6
+      - gcc-7
+      - g++-7
     sources: &sources
       - ubuntu-toolchain-r-test
 
@@ -19,6 +21,11 @@ matrix:
   include:
     - os: linux
       env: COMPILER=g++-6 COMPILER_C=gcc-6 BOOST_VERSION=1.65.1
+      compiler: gcc
+
+  include:
+    - os: linux
+      env: COMPILER=g++-7 COMPILER_C=gcc-7 BOOST_VERSION=1.65.1
       compiler: gcc
 
 install:
