@@ -186,8 +186,8 @@ int main (const int argc, const char* const argv[])
   /* Check for BOM */
   {
     unsigned char bom_buf[3];
-    fread (bom_buf, 1, sizeof (bom_buf), infile);
-    if (feof (infile) || (bom_buf[0] != 0xEF) || (bom_buf[1] != 0xBB) || (bom_buf[2] != 0xBF))
+    if (fread (bom_buf, 1, sizeof (bom_buf), infile) < sizeof (bom_buf))
+      || (feof (infile) || (bom_buf[0] != 0xEF) || (bom_buf[1] != 0xBB) || (bom_buf[2] != 0xBF))
     {
       /* Not a BOM, reset */
       fseek (infile, 0, SEEK_SET);
@@ -196,11 +196,17 @@ int main (const int argc, const char* const argv[])
   {
     int start_pos = ftell (infile);
     fseek (infile, 0, SEEK_END);
-    source_size = ftell (infile);
+    source_size = ftell (infile) - start_pos;
     fseek (infile, start_pos, SEEK_SET);
-    
+
     source_str = malloc (source_size);
-    fread (source_str, 1, source_size, infile);
+    if (fread (source_str, 1, source_size, infile) < source_size)
+    {
+      exit_code = 1;
+      fprintf (stderr, "error %d reading from %s\n", ferror (infile), input_file_name);
+      fclose (infile);
+      goto cleanup_backend;
+    }
   }
   fclose (infile);
 
