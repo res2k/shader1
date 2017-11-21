@@ -28,8 +28,8 @@ matrix:
           packages:
             - gcc-6
             - g++-6
-      env: GCC_VERSION=6 BOOST_VERSION=default
-      compiler: gcc
+      env: BOOST_VERSION=default
+      compiler: g++-6
 
     - os: linux
       addons:
@@ -40,8 +40,8 @@ matrix:
           packages:
             - gcc-7
             - g++-7
-      env: GCC_VERSION=7 BOOST_VERSION=default
-      compiler: gcc
+      env: BOOST_VERSION=default
+      compiler: g++-7
 
     - os: linux
       addons:
@@ -51,8 +51,8 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-      env: CLANG_VERSION=4.0 BOOST_VERSION=default
-      compiler: clang
+      env: BOOST_VERSION=default
+      compiler: clang-4.0
 
 install:
   # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/travis-deps/
@@ -60,9 +60,6 @@ install:
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
   - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.65.1; fi
-
-  - if [[ "${GCC_VERSION}" != "" ]]; then export CXX="g++-${GCC_VERSION}"; export CC="gcc-${GCC_VERSION}"; fi
-  - if [[ "${CLANG_VERSION}" != "" ]]; then export CXX="clang++-${CLANG_VERSION}"; export CC="clang-${CLANG_VERSION}"; fi
 
   # Install Boost headers
   - |
