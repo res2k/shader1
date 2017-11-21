@@ -28,7 +28,7 @@ matrix:
           packages:
             - gcc-6
             - g++-6
-      env: BOOST_VERSION=default
+      env: BOOST_VERSION=default CC=gcc-6 CXX=g++-6
       compiler: g++-6
 
     - os: linux
@@ -40,7 +40,7 @@ matrix:
           packages:
             - gcc-7
             - g++-7
-      env: BOOST_VERSION=default
+      env: BOOST_VERSION=default CC=gcc-7 CXX=g++-7
       compiler: g++-7
 
     - os: linux
@@ -51,7 +51,7 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-      env: BOOST_VERSION=default
+      env: BOOST_VERSION=default CC=clang-4.0 CXX=clang++-4.0
       compiler: clang-4.0
 
 install:
