@@ -20,7 +20,8 @@ foreach(cached_var ${OVERRIDE_CACHE_VARS})
   # Remove the settings we applied from the cached var
   string(REPLACE " " ";" ${cached_var}_AS_LIST "${COMPUTED_${cached_var}}")
   foreach(part ${${cached_var}_AS_LIST})
-    string(REPLACE "${part}" "" CMAKE_${cached_var} "${CMAKE_${cached_var}}")
+    # Note: Space after 'part' is important!
+    string(REPLACE "${part} " "" CMAKE_${cached_var} "${CMAKE_${cached_var}}")
   endforeach()
   string(STRIP "${CMAKE_${cached_var}}" CMAKE_${cached_var})
 endforeach()
@@ -69,8 +70,12 @@ function(CxxCompilerFlagStringAppend flagvar flagstr)
   string(REGEX REPLACE "[^A-Z0-9]" "_" auto_flag_var "${auto_flag_var}")
   CxxCompilerFlagString (CXX_${auto_flag_var} "${flagstr}")
   if(NOT "${CXX_${auto_flag_var}}" EQUAL "")
-    set(${flagvar} "${${flagvar}} ${CXX_${auto_flag_var}}" PARENT_SCOPE)
+    set(${flagvar} "${${flagvar}} ${CXX_${auto_flag_var}} " PARENT_SCOPE)
   endif()
+endfunction()
+
+function(FlagStringAppend flagvar flagstr)
+  set(${flagvar} "${${flagvar}} ${flagstr} " PARENT_SCOPE)
 endfunction()
 
 if(NOT MSVC)
@@ -91,8 +96,8 @@ endif()
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
 CxxCompilerFlagString (CXX_NO_AS_NEEDED_FLAG "-Wl,--no-as-needed")
 CxxCompilerFlagString (CXX_NO_UNDEFINED_FLAG "-Wl,--no-undefined")
-set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG}")
-set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_AS_NEEDED_FLAG} ${CXX_NO_UNDEFINED_FLAG}")
+FlagStringAppend(CACHE_EXE_LINKER_FLAGS "${CXX_AS_NEEDED_FLAG}")
+FlagStringAppend(CACHE_SHARED_LINKER_FLAGS "${CXX_AS_NEEDED_FLAG} ${CXX_NO_UNDEFINED_FLAG}")
 
 if(NOT MSVC)
   # Force pthreads to be always linked; even if no function as such is used we
@@ -120,13 +125,13 @@ endif()
 
 # Look for symbolic link options
 CxxCompilerFlagString (CXX_SYMBOLIC_LINK_FLAG "-Wl,-Bsymbolic -Wl,-Bsymbolic-functions")
-set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_SYMBOLIC_LINK_FLAG}")
-set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_SYMBOLIC_LINK_FLAG}")
+FlagStringAppend(CACHE_EXE_LINKER_FLAGS "${CXX_SYMBOLIC_LINK_FLAG}")
+FlagStringAppend(CACHE_SHARED_LINKER_FLAGS "${CXX_SYMBOLIC_LINK_FLAG}")
 
 # Look for section GC options
 CxxCompilerFlagString (CXX_LINK_GC_SECTIONS "-Wl,--gc-sections")
-set(CACHE_EXE_LINKER_FLAGS "${CACHE_EXE_LINKER_FLAGS} ${CXX_LINK_GC_SECTIONS}")
-set(CACHE_SHARED_LINKER_FLAGS "${CACHE_SHARED_LINKER_FLAGS} ${CXX_LINK_GC_SECTIONS}")
+FlagStringAppend(CACHE_EXE_LINKER_FLAGS "${CXX_LINK_GC_SECTIONS}")
+FlagStringAppend(CACHE_SHARED_LINKER_FLAGS "${CXX_LINK_GC_SECTIONS}")
 
 CHECK_TYPE_SIZE(wchar_t CXX_SIZEOF_WCHAR_T BUILTIN_TYPES_ONLY LANGUAGE CXX)
 CHECK_SYMBOL_EXISTS(mbrtoc16 uchar.h HAVE_UCHAR_H_MBRTOC16)
@@ -165,14 +170,14 @@ if(MSVC)
   # Check for omission of unused COMDATs
   CxxCompilerFlagString (CXX_ZCINLINE " /Zc:inline")
   
-  SET(EXTRA_RELEASE_FLAGS "${CXX_GW}${CXX_ZCINLINE}")
-  set(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}${EXTRA_RELEASE_FLAGS}")
-  set(CACHE_CXX_FLAGS_RELEASE "${CACHE_CXX_FLAGS_RELEASE}${EXTRA_RELEASE_FLAGS}")
-  set(CACHE_CXX_FLAGS_MINSIZEREL "${CACHE_CXX_FLAGS_MINSIZEREL}${EXTRA_RELEASE_FLAGS}")
+  SET(EXTRA_RELEASE_FLAGS "${CXX_GW}${CXX_ZCINLINE} ")
+  FlagStringAppend(CACHE_CXX_FLAGS_RELWITHDEBINFO "${EXTRA_RELEASE_FLAGS}")
+  FlagStringAppend(CACHE_CXX_FLAGS_RELEASE "${EXTRA_RELEASE_FLAGS}")
+  FlagStringAppend(CACHE_CXX_FLAGS_MINSIZEREL "${EXTRA_RELEASE_FLAGS}")
   
   # Check for extended optimized build debug info
   CxxCompilerFlagString (CXX_ZO " /Zo")
-  set(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}${CXX_ZO}")
+  FlagStringAppend(CACHE_CXX_FLAGS_RELWITHDEBINFO "${CXX_ZO} ")
   # New option in VC 12. Needed when more than one project writes to a PDB
   CxxCompilerFlagString (CXX_PDB_SYNC "/FS")
   # Interpret source files as UTF-8
@@ -181,7 +186,7 @@ endif()
 
 # Build everything with -fPIC to allow linking into shared libs
 if(UNIX)
-  set(CACHE_CXX_FLAGS "${CACHE_CXX_FLAGS} -fPIC")
+  FlagStringAppend(CACHE_CXX_FLAGS "-fPIC")
   set(WITH_PIC YES)
 endif()
 
@@ -192,7 +197,7 @@ if(S1_BUILD_LTO)
   if(CMAKE_COMPILER_IS_GNUCXX)
     CxxCompilerFlagString (CXX_LTO_FLAG "-flto")
     CxxCompilerFlagString (CXX_NO_LTO_FLAG "-fno-lto")
-    set(CACHE_CXX_FLAGS "${CACHE_CXX_FLAGS} ${CXX_LTO_FLAG}")
+    FlagStringAppend(CACHE_CXX_FLAGS "${CXX_LTO_FLAG}")
     # Set CMAKE_AR/_NM_/_RANLIB to gcc-* variants
     foreach(tool ar nm ranlib)
       string(TOUPPER "${tool}" tool_u)
@@ -203,10 +208,10 @@ if(S1_BUILD_LTO)
     endforeach()
   elseif(MSVC)
     foreach(mode RELEASE MINSIZEREL RELWITHDEBINFO)
-      set(CACHE_CXX_FLAGS_${mode} "${CACHE_CXX_FLAGS_${mode}} /GL")
-      set(CACHE_EXE_LINKER_FLAGS_${mode} "${CACHE_EXE_LINKER_FLAGS_${mode}} /LTCG")
-      set(CACHE_SHARED_LINKER_FLAGS_${mode} "${CACHE_SHARED_LINKER_FLAGS_${mode}} /LTCG")
-      set(CACHE_STATIC_LINKER_FLAGS_${mode} "${CACHE_STATIC_LINKER_FLAGS_${mode}} /LTCG")
+      FlagStringAppend(CACHE_CXX_FLAGS_${mode} "/GL")
+      FlagStringAppend(CACHE_EXE_LINKER_FLAGS_${mode} "/LTCG")
+      FlagStringAppend(CACHE_SHARED_LINKER_FLAGS_${mode} "/LTCG")
+      FlagStringAppend(CACHE_STATIC_LINKER_FLAGS_${mode} "/LTCG")
     endforeach()
   else()
     message(WARNING "LTO/LTCG is not supported for your compiler")
