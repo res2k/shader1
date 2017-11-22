@@ -40,6 +40,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(s1_add_library)
 include(s1_add_cxxtest)
 include(s1_boost)
+include(s1_detect_stdlib)
 
 if(CXXTEST_FOUND)
   include_directories(${CXXTEST_INCLUDE_DIR})
@@ -104,6 +105,9 @@ if(NOT MSVC)
   # still need thread support to be present.
   set(CMAKE_THREAD_LIBS_INIT "${CXX_NO_AS_NEEDED_FLAG} ${CMAKE_THREAD_LIBS_INIT}")
 endif()
+
+s1_detect_stdlib(CXX_STDLIB)
+message(STATUS "Detected C++ standard library: ${CXX_STDLIB}")
 
 # Check if we can link the C++ standard library statically
 set(S1_STATIC_LIBSTDCXX ON CACHE BOOL "Whether to statically link libstdc++")
