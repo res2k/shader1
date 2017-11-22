@@ -17,7 +17,12 @@ foreach(release_mode RELEASE RELWITHDEBINFO MINSIZEREL)
        STATIC_LINKER_FLAGS_${release_mode})
 endforeach()
 foreach(cached_var ${OVERRIDE_CACHE_VARS})
-  set(CACHE_${cached_var} ${CMAKE_${cached_var}})
+  # Remove the settings we applied from the cached var
+  string(REPLACE " " ";" ${cached_var}_AS_LIST "${COMPUTED_${cached_var}}")
+  foreach(part ${${cached_var}_AS_LIST})
+    string(REPLACE "${part}" "" CMAKE_${cached_var} "${CMAKE_${cached_var}}")
+  endforeach()
+  string(STRIP "${CMAKE_${cached_var}}" CMAKE_${cached_var})
 endforeach()
 
 if(NOT CMAKE_BUILD_TYPE AND NOT MSVC)
@@ -210,12 +215,11 @@ endif()
 
 # Update cache values with config check results
 foreach(cached_var ${OVERRIDE_CACHE_VARS})
-  if(NOT CACHE_SET_${cached_var})
-    set_property(CACHE CMAKE_${cached_var}
-                 PROPERTY VALUE ${CACHE_${cached_var}})
-    set(CACHE_SET_${cached_var} 1
-        CACHE INTERNAL "The CMAKE_${cached_var} variable was augmented with our own settings.")
-  endif()
+  # Save the values we computed for subsequent removal
+  set(COMPUTED_${cached_var} ${CACHE_${cached_var}}
+      CACHE INTERNAL "Our own settings for CMAKE_${cached_var}.")
+  set_property(CACHE CMAKE_${cached_var}
+               PROPERTY VALUE "${CACHE_${cached_var}} ${CMAKE_${cached_var}}")
 endforeach()
 
 # Configuration settings only relevant for building
