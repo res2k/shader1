@@ -223,8 +223,9 @@ foreach(cached_var ${OVERRIDE_CACHE_VARS})
   # Save the values we computed for subsequent removal
   set(COMPUTED_${cached_var} ${CACHE_${cached_var}}
       CACHE INTERNAL "Our own settings for CMAKE_${cached_var}.")
+  set(CMAKE_${cached_var} "${CACHE_${cached_var}} ${CMAKE_${cached_var}}")
   set_property(CACHE CMAKE_${cached_var}
-               PROPERTY VALUE "${CACHE_${cached_var}} ${CMAKE_${cached_var}}")
+               PROPERTY VALUE ${CMAKE_${cached_var}})
 endforeach()
 
 # Configuration settings only relevant for building
