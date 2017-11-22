@@ -106,24 +106,36 @@ if(NOT MSVC)
   set(CMAKE_THREAD_LIBS_INIT "${CXX_NO_AS_NEEDED_FLAG} ${CMAKE_THREAD_LIBS_INIT}")
 endif()
 
+# Build shared libs by default
+set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
+set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
+
 s1_detect_stdlib(CXX_STDLIB)
 message(STATUS "Detected C++ standard library: ${CXX_STDLIB}")
 
-# Check if we can link the C++ standard library statically
-set(S1_STATIC_LIBSTDCXX ON CACHE BOOL "Whether to statically link libstdc++")
-if(S1_STATIC_LIBSTDCXX)
-  CxxCompilerFlagString (CXX_STATIC_LIBSTDCXX_FLAG "-static-libstdc++")
-  if(CXX_STATIC_LIBSTDCXX_FLAG)
+function(VerifyStaticLinkFlag FLAG)
+  if(${FLAG})
     # The flag is supported, but it may not actually work.
-    message(STATUS "Checking if ${CXX_STATIC_LIBSTDCXX_FLAG} works")
-    try_compile(STATIC_LIBSTDCXX_WORKS
+    message(STATUS "Checking if ${${FLAG}} works")
+    try_compile(${FLAG}_WORKS
                 ${CMAKE_CURRENT_BINARY_DIR}
                 ${CMAKE_CURRENT_SOURCE_DIR}/config-tests/static-libstdcxx.cpp
-                LINK_LIBRARIES ${CXX_STATIC_LIBSTDCXX_FLAG})
-    message(STATUS "Checking if ${CXX_STATIC_LIBSTDCXX_FLAG} works - ${STATIC_LIBSTDCXX_WORKS}")
-    if(NOT STATIC_LIBSTDCXX_WORKS)
-      set(CXX_STATIC_LIBSTDCXX_FLAG "")
+                LINK_LIBRARIES ${${FLAG}})
+    message(STATUS "Checking if ${${FLAG}} works - ${${FLAG}_WORKS}")
+    if(NOT ${FLAG}_WORKS)
+      set(${FLAG} "" PARENT_SCOPE)
     endif()
+  endif()
+endfunction()
+
+# Prefer a static standard lib.
+SET(S1_STATIC_STDLIB ${S1_BUILD_SHARED} CACHE BOOL "Whether to link the C++ standard library statically")
+if(CXX_STDLIB STREQUAL "msvcrt")
+  SET(S1_STATIC_CRT ${S1_STATIC_STDLIB})
+elseif(CXX_STDLIB STREQUAL "libstdc++")
+  if(S1_STATIC_STDLIB)
+    CxxCompilerFlagString (CXX_STATIC_LIBSTDCXX_FLAG "-static-libstdc++")
+    VerifyStaticLinkFlag (CXX_STATIC_LIBSTDCXX_FLAG)
   endif()
 endif()
 
@@ -142,13 +154,7 @@ CHECK_SYMBOL_EXISTS(mbrtoc16 uchar.h HAVE_UCHAR_H_MBRTOC16)
 CHECK_CXX_SYMBOL_EXISTS(_msize malloc.h HAVE__MSIZE)
 CHECK_CXX_SYMBOL_EXISTS(malloc_usable_size malloc.h HAVE_MALLOC_USABLE_SIZE)
 
-# Build shared libs by default
-set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
-set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})
-
-# Prefer a static MSVC runtime.
-SET(S1_STATIC_CRT ${S1_BUILD_SHARED} CACHE BOOL "Whether to link the MSVC runtime statically")
-# However, if we're on a version based off the universal, always use a dynamic UCRT component
+# If we're on a version based off the universal always prefer a dynamic UCRT component
 SET(S1_UCRT_DYNAMIC ON CACHE BOOL "Whether to always use a dynamic MSVC universal runtime")
 
 if(MSVC)
