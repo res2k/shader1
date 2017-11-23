@@ -19,7 +19,9 @@
 */
 
 /**\file
- * Result code values master header
+ * Result code values definitions
+ * \internal
+ * Master header pulling in files with actual definitions
  */
 #ifndef __S1_RESULTCODE_DEFS_H__
 #define __S1_RESULTCODE_DEFS_H__
@@ -28,8 +30,10 @@
   #error "Include specific result code headers!"
 #endif
 
+#if !defined(DOXYGEN_RUN)
 {{for comp in components}}
 #include "ResultCode_defs_{{comp.attrib['name'].lower()}}.h"
 {{endfor}}
+#endif // !defined(DOXYGEN_RUN)
 
 #endif // __S1_RESULTCODE_DEFS_H__

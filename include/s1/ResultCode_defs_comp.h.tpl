@@ -28,7 +28,7 @@ def doclines(str):
 }}
 
 {{for comp in components}}
-/**\file
+/*
  * Result code values for: {{comp.attrib['docgroup']}}
  */
 #ifndef __S1_RESULTCODE_DEFS_{{comp.attrib['name']}}_H__
