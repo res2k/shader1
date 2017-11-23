@@ -7,8 +7,6 @@ if(CXXTEST_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800")
   endif()
 
-  include_directories(${CMAKE_SOURCE_DIR}/boost.outcome/include)
-
   file(GLOB api_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
   add_library(api_testlib STATIC ${api_testlib_sources})
   add_dependencies(api_testlib generate_Object)
