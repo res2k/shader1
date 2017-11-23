@@ -38,6 +38,7 @@ namespace s1
 {
   S1_NS_CXXAPI_BEGIN
 
+  /// \internal C++ API implementation details
   namespace detail
   {
     template<class T> struct remove_pointer                    { typedef T type; };
@@ -66,6 +67,7 @@ namespace s1
 
 /**
  * \def _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS(Descr)
+ * \internal
  * Macro to generate a default catch() block in functor wrappers
  */
 #define _S1_DEFAULT_CATCH_UNHANDLED_EXCEPTIONS(Descr)                                             \
