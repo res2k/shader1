@@ -29,7 +29,7 @@ matrix:
             - gcc-6
             - g++-6
       env: GCC_VERSION=6 BOOST_VERSION=default
-      compiler: gcc
+      compiler: gcc-6
 
     - os: linux
       addons:
@@ -41,7 +41,7 @@ matrix:
             - gcc-7
             - g++-7
       env: GCC_VERSION=7 BOOST_VERSION=default
-      compiler: gcc
+      compiler: gcc-7
 
     - os: linux
       addons:
@@ -51,9 +51,9 @@ matrix:
             - llvm-toolchain-trusty-4.0
           packages:
             - clang-4.0
-            - g++-7
+            - libstdc++-7-dev
       env: CLANG_VERSION=4.0 BOOST_VERSION=default
-      compiler: clang
+      compiler: clang-4.0
 
 install:
   # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/travis-deps/
