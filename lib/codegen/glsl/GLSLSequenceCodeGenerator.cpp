@@ -21,7 +21,11 @@
 
 #include "GLSLTraits.h"
 
+#include "base/format/uc_String.h"
+
 #include "codegen/glsl/GLSLOptions.h"
+
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {
