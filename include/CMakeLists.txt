@@ -10,9 +10,9 @@ if(CXXTEST_FOUND)
   file(GLOB api_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
   add_library(api_testlib STATIC ${api_testlib_sources})
   add_dependencies(api_testlib generate_Object)
-  set_property(TARGET api_testlib PROPERTY CXX_STANDARD 14)
   set_property(TARGET api_testlib PROPERTY COMPILE_DEFINITIONS S1_BUILD)
   set_property(TARGET api_testlib PROPERTY EXCLUDE_FROM_ALL YES)
+  target_compile_features(api_testlib PUBLIC $<TARGET_PROPERTY:outcome::hl,INTERFACE_COMPILE_FEATURES>)
   target_include_directories(api_testlib PRIVATE ${CMAKE_SOURCE_DIR}/outcome/include)
 
   set(api_test_sources
@@ -25,7 +25,6 @@ if(CXXTEST_FOUND)
   CXXTEST_ADD_TEST(test_Api test_Api.cpp
                    ${api_test_sources})
   target_link_libraries(test_Api api_testlib s1)
-  set_property(TARGET test_Api PROPERTY CXX_STANDARD 11)
   set_property(TARGET test_Api PROPERTY EXCLUDE_FROM_ALL YES)
   # Make sure S1 lib is found
   set_property(TARGET test_Api PROPERTY ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
