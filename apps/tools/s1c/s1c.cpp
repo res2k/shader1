@@ -33,13 +33,12 @@
 #include "s1/Options.h"
 #include "s1/ResultCode.h"
 
-#include <boost/convert.hpp>
-#include <boost/convert/spirit.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/program_options.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -80,15 +79,24 @@ static inline std::wstring to_wide (const wchar_t* orig)
   return orig;
 }
 
+template<typename T, typename S>
+boost::optional<T> convert (const S& src)
+{
+  T x;
+  if (boost::conversion::try_lexical_convert (src, x))
+    return x;
+  return boost::none;
+}
+
 // Get string for a result code
 std::string ResultCodeString (ResultCode code)
 {
   const char* s = GetResultCodeStr (code);
   if (s) return s;
 
-  boost::cnv::spirit cnv;
-  return std::string ("0x") + boost::convert<std::string> (code,
-    cnv (boost::cnv::parameter::base = boost::cnv::base::hex)).value();
+  char buf[16];
+  snprintf (buf, sizeof (buf), "0x%.8x", code);
+  return buf;
 }
 // Get result string for last library error
 std::string LastErrorString (Library* lib)
@@ -149,7 +157,7 @@ public:
       // TODO: --help-optimization
       ("help", "print command line help");
     bpo::options_description compile_desc ("Compilation options");
-    boost::optional<std::string> defaultOptStr (boost::convert<std::string> (int (defaultEnableOptimizationLevel), boost::cnv::spirit ()));
+    boost::optional<std::string> defaultOptStr (convert<std::string> (int (defaultEnableOptimizationLevel)));
     compile_desc.add_options ()
       ("opt,O", 
         bpo::wvalue<arg_string_vec> ()->composing()->value_name("<flag>")
@@ -261,7 +269,7 @@ public:
             std::cerr << "Multiple array size specifications for parameter: " << to_local (paramName) << std::endl;
             paramsWarnedSize.insert (paramName);
           }
-          boost::optional<size_t> arraySize (boost::convert<size_t> (option.value[1].c_str(), boost::cnv::spirit ()));
+          boost::optional<size_t> arraySize (convert<size_t> (option.value[1].c_str()));
           if (!arraySize)
           {
             throw std::runtime_error ((boost::format ("Invalid array size '%2%' for parameter '%1%'")
@@ -313,7 +321,7 @@ private:
     }
     else
     {
-      boost::optional<int> optLevel (boost::convert<int> (optArg, boost::cnv::spirit ()));
+      boost::optional<int> optLevel (convert<int> (optArg));
       if (optLevel)
         parseRes = compilerOpts->SetOptLevel (*optLevel);
       else
