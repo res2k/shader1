@@ -28,6 +28,7 @@ if(Qt5_FOUND)
     CXXTEST_ADD_TEST(test_sum_tree test_sum_tree.cpp
                     ${sum_tree_test_sources})
     target_include_directories(test_sum_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
+    set_property(TARGET test_sum_tree PROPERTY CXX_STANDARD 11)
     set_property(TARGET test_sum_tree PROPERTY EXCLUDE_FROM_ALL YES)
     AutoBuildTest(test_sum_tree)
   endif()
