@@ -281,8 +281,7 @@ namespace s1
           return 1 << f;
         }
       }
-      assert (false);
-      return 0;
+      S1_ASSERT_NOT_REACHED (0);
     }
 
     void SequenceSplitter::InputVisitor::OpConstBool (const RegisterPtr& destination,
