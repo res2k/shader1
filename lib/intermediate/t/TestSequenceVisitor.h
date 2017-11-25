@@ -119,12 +119,12 @@ public:
 
   std::vector<SequenceEntry> entries;
 
-  void PreVisitOp (const s1::intermediate::SequenceOpPtr& op) {}
-  void PostVisitOp () {}
-  void VisitEnd() {}
+  void PreVisitOp (const s1::intermediate::SequenceOpPtr& op) override {}
+  void PostVisitOp () override {}
+  void VisitEnd() override {}
 
   void OpConstBool (const RegisterPtr& destination,
-                    bool value)
+                    bool value) override
   {
     SequenceEntry entry;
     entry.op = opConstBool;
@@ -134,7 +134,7 @@ public:
   }
 
   void OpConstInt (const RegisterPtr& destination,
-                   int value)
+                   int value) override
   {
     SequenceEntry entry;
     entry.op = opConstInt;
@@ -144,7 +144,7 @@ public:
   }
 
   void OpConstUInt (const RegisterPtr& destination,
-                    unsigned int value)
+                    unsigned int value) override
   {
     SequenceEntry entry;
     entry.op = opConstUInt;
@@ -154,7 +154,7 @@ public:
   }
 
   void OpConstFloat (const RegisterPtr& destination,
-                     float value)
+                     float value) override
   {
     SequenceEntry entry;
     entry.op = opConstFloat;
@@ -165,7 +165,7 @@ public:
 
 
   void OpAssign (const RegisterPtr& destination,
-                 const RegisterPtr& source)
+                 const RegisterPtr& source) override
   {
     SequenceEntry entry;
     entry.op = opAssignment;
@@ -177,7 +177,7 @@ public:
 
   void OpCast (const RegisterPtr& destination,
                s1::intermediate::BasicType destType,
-               const RegisterPtr& source)
+               const RegisterPtr& source) override
   {
     SequenceEntry entry;
     switch (destType)
@@ -203,7 +203,7 @@ public:
 
   void OpMakeVector (const RegisterPtr& destination,
                      s1::intermediate::BasicType compType,
-                     const std::vector<RegisterPtr>& sources)
+                     const std::vector<RegisterPtr>& sources) override
   {
     SequenceEntry entry;
     switch (compType)
@@ -270,7 +270,7 @@ public:
   void OpMakeMatrix (const RegisterPtr& destination,
                      s1::intermediate::BasicType compType,
                      unsigned int matrixRows, unsigned int matrixCols,
-                     const std::vector<RegisterPtr>& sources)
+                     const std::vector<RegisterPtr>& sources) override
   {
     SequenceEntry entry;
     switch (compType)
@@ -309,7 +309,7 @@ public:
 
 
   void OpMakeArray (const RegisterPtr& destination,
-                    const std::vector<RegisterPtr>& sources)
+                    const std::vector<RegisterPtr>& sources) override
   {
     SequenceEntry entry;
     entry.op = opMakeArray;
@@ -320,7 +320,7 @@ public:
 
   void OpExtractArrayElement (const RegisterPtr& destination,
                               const RegisterPtr& source,
-                              const RegisterPtr& index)
+                              const RegisterPtr& index) override
   {
     SequenceEntry entry;
     entry.op = opExtractArrayElement;
@@ -333,7 +333,7 @@ public:
   void OpChangeArrayElement (const RegisterPtr& destination,
                              const RegisterPtr& source,
                              const RegisterPtr& index,
-                             const RegisterPtr& newValue)
+                             const RegisterPtr& newValue) override
   {
     SequenceEntry entry;
     entry.op = opChangeArrayElement;
@@ -345,7 +345,7 @@ public:
   }
 
   void OpGetArrayLength (const RegisterPtr& destination,
-                         const RegisterPtr& array)
+                         const RegisterPtr& array) override
   {
     SequenceEntry entry;
     entry.op = opGetArrayLength;
@@ -357,7 +357,7 @@ public:
 
   void OpExtractVectorComponent (const RegisterPtr& destination,
                                  const RegisterPtr& source,
-                                 unsigned int comp)
+                                 unsigned int comp) override
   {
     SequenceEntry entry;
     entry.op = opExtractVectorComponent ;
@@ -371,7 +371,7 @@ public:
   void OpArith (const RegisterPtr& destination,
                 ArithmeticOp op,
                 const RegisterPtr& source1,
-                const RegisterPtr& source2)
+                const RegisterPtr& source2) override
   {
     SequenceEntry entry;
     switch (op)
@@ -402,7 +402,7 @@ public:
   void OpLogic (const RegisterPtr& destination,
                 LogicOp op,
                 const RegisterPtr& source1,
-                const RegisterPtr& source2)
+                const RegisterPtr& source2) override
   {
     SequenceEntry entry;
     switch (op)
@@ -423,7 +423,7 @@ public:
 
   void OpUnary (const RegisterPtr& destination,
                 UnaryOp op,
-                const RegisterPtr& source)
+                const RegisterPtr& source) override
   {
     SequenceEntry entry;
     switch (op)
@@ -447,7 +447,7 @@ public:
   void OpCompare (const RegisterPtr& destination,
                   CompareOp op,
                   const RegisterPtr& source1,
-                  const RegisterPtr& source2)
+                  const RegisterPtr& source2) override
   {
     SequenceEntry entry;
     switch (op)
@@ -479,7 +479,7 @@ public:
 
   void OpBlock (const boost::shared_ptr<Sequence>& seq,
                 const Sequence::IdentifierToRegMap&,
-                const Sequence::IdentifierToRegMap&)
+                const Sequence::IdentifierToRegMap&) override
   {
     boost::shared_ptr<TestSequenceVisitor> blockVisitor = boost::make_shared<TestSequenceVisitor> ();
     seq->Visit (*blockVisitor);
@@ -492,7 +492,7 @@ public:
 
   void OpBranch (const RegisterPtr& conditionReg,
                  const s1::intermediate::SequenceOpPtr& seqOpIf,
-                 const s1::intermediate::SequenceOpPtr& seqOpElse)
+                 const s1::intermediate::SequenceOpPtr& seqOpElse) override
   {
     boost::shared_ptr<TestSequenceVisitor> ifVisitor = boost::make_shared<TestSequenceVisitor> ();
     if (seqOpIf) seqOpIf->Visit (*ifVisitor);
@@ -509,7 +509,7 @@ public:
 
   void OpWhile (const RegisterPtr& conditionReg,
                 const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-                const s1::intermediate::SequenceOpPtr& seqOpBody)
+                const s1::intermediate::SequenceOpPtr& seqOpBody) override
   {
     boost::shared_ptr<TestSequenceVisitor> whileVisitor = boost::make_shared<TestSequenceVisitor> ();
     seqOpBody->Visit (*whileVisitor);
@@ -524,7 +524,7 @@ public:
   void OpSampleTexture (const RegisterPtr& destination,
                         SampleTextureOp what,
                         const RegisterPtr& sampler,
-                        const RegisterPtr& coord)
+                        const RegisterPtr& coord) override
   {
     SequenceEntry entry;
     switch (what)
@@ -548,7 +548,7 @@ public:
     entries.push_back (entry);
   }
 
-  void OpReturn (const std::vector<RegisterPtr>& outParamVals)
+  void OpReturn (const std::vector<RegisterPtr>& outParamVals) override
   {
     SequenceEntry entry;
     entry.op = opReturn;
@@ -558,7 +558,7 @@ public:
 
   void OpFunctionCall (const s1::uc::String& funcIdent,
                        const std::vector<RegisterPtr>& inParams,
-                       const std::vector<RegisterPtr>& outParams)
+                       const std::vector<RegisterPtr>& outParams) override
   {
     SequenceEntry entry;
     entry.op = opFunctionCall;
@@ -570,7 +570,7 @@ public:
 
   void OpBuiltinCall (const RegisterPtr& destination,
                       s1::intermediate::BuiltinFunction what,
-                      const std::vector<RegisterPtr>& inParams)
+                      const std::vector<RegisterPtr>& inParams) override
   {
     SequenceEntry entry;
     entry.op = opBuiltinCall;
