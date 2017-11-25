@@ -6,4 +6,6 @@ set_target_properties(s1c PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DI
 # Require C++11 features if set globally
 if(S1_REQUIRED_CXX_FEATURES)
   target_compile_features(s1c PRIVATE ${S1_REQUIRED_CXX_FEATURES})
+else()
+  set_target_properties(s1c PROPERTIES CXX_STANDARD 98) # Check API compatibility
 endif()
