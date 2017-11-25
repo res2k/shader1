@@ -44,7 +44,7 @@ public:
     std::string str ("a");
     s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // ASCII is UTF-8 is encoded as identity
@@ -61,7 +61,7 @@ public:
     std::string str ("\xE2\x98\xBA");
     s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test UTF-8 encoded Unicode character
@@ -79,7 +79,7 @@ public:
     std::string str ("\xF0\x9D\x94\xBD");
     s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test UTF-8 encoded Unicode character from beyond the BMP (>= 0x10000)
@@ -113,7 +113,7 @@ public:
     std::string str ("a\xE2\x98");
     s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
@@ -134,7 +134,7 @@ public:
     std::string str ("\xE2\x98" "a");
     s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Incomplete UTF-8 encoded char should be an error
@@ -155,7 +155,7 @@ public:
     std::string str ("\xC0\x8a" "a");
     s1::uc::SimpleBufferStreamSource in (str.data (), str.size ());
     s1::uc::Stream ustream (in);
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Overlong UTF-8 encoded char should be an error
@@ -231,7 +231,7 @@ public:
     MyUnicodeStream in (str.data(), str.size());
     s1::uc::Stream ustream (in);
     
-    s1::uc::Char32 ch;
+    s1::uc::Char32 ch = 0;
     for (size_t i = 0; i < testSize; i++)
     {
       TS_ASSERT_EQUALS ((bool)ustream, true);
