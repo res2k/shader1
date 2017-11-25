@@ -179,7 +179,7 @@ namespace s1
         switch (type)
         {
         case s1::parser::SemanticsHandler::Void:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (intermediate::Int);
           break;
         case s1::parser::SemanticsHandler::Bool:
           return intermediate::Bool;
