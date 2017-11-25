@@ -34,8 +34,8 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
-											     const ExpressionPtr& baseExpr,
-											     const IntermediateGeneratorSemanticsHandler::Attribute& attr)
+                                                                                             const ExpressionPtr& baseExpr,
+                                                                                             const IntermediateGeneratorSemanticsHandler::Attribute& attr)
      : ExpressionImpl (handler), baseExpr (baseExpr), attr (attr)
     {}
     
@@ -47,8 +47,8 @@ namespace s1
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequence (BlockImpl& block,
-											       RegisterClassification classify,
-											       bool asLvalue)
+                                                                                               RegisterClassification classify,
+                                                                                               bool asLvalue)
     {
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
@@ -56,93 +56,93 @@ namespace s1
       {
       default:
       case IntermediateGeneratorSemanticsHandler::Attribute::Unknown:
-	assert (false);
-	return RegisterPtr ();
+        assert (false);
+        return RegisterPtr ();
       case IntermediateGeneratorSemanticsHandler::Attribute::arrayLength:
-	{
-	  if (asLvalue) return RegisterPtr ();
-	  
-	  RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
-	  boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
-	  RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
-	  
-	  SequenceOpPtr seqOp (new SequenceOpGetArrayLength (targetReg, exprValueReg));
-	  seq.AddOp (seqOp);
-	  
-	  exprImpl->AddToSequencePostAction (block, exprValueReg, false);
-	  
-	  return targetReg;
-	}
-	break;
+        {
+          if (asLvalue) return RegisterPtr ();
+          
+          RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
+          boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
+          RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
+          
+          SequenceOpPtr seqOp (new SequenceOpGetArrayLength (targetReg, exprValueReg));
+          seq.AddOp (seqOp);
+          
+          exprImpl->AddToSequencePostAction (block, exprValueReg, false);
+          
+          return targetReg;
+        }
+        break;
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixRow:
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixCol:
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixTranspose:
       case IntermediateGeneratorSemanticsHandler::Attribute::matrixInvert:
-	{
-	  if (asLvalue) return RegisterPtr ();
-	  
-	  return RegisterPtr ();
-	}
-	break;
+        {
+          if (asLvalue) return RegisterPtr ();
+          
+          return RegisterPtr ();
+        }
+        break;
       case IntermediateGeneratorSemanticsHandler::Attribute::vectorSwizzle:
-	{
-	  if (asLvalue)
-	  {
-	    RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
-	    return targetReg;
-	  }
-	  else
-	  {
-	    boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
-	    RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
-	    
-	    TypeImplPtr valueType (GetValueType());
-	    RegisterPtr targetReg;
-	    if (attr.swizzleCompNum > 1)
-	    {
-	      // multi-component swizzle
-	      targetReg = handler->AllocateRegister (seq, valueType, classify);
-	      TypeImplPtr valueCompType (boost::static_pointer_cast<TypeImpl> (valueType->avmBase));
-	      std::vector<RegisterPtr> compRegs;
-	      for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
-	      {
-		RegisterPtr compReg (handler->AllocateRegister (seq, valueCompType, classify));
-		SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, exprValueReg, attr.GetSwizzleComp (c)));
-		seq.AddOp (seqOp);
-		compRegs.push_back (compReg);
-	      }
-	      BasicType vecType;
-	      switch (valueCompType->base)
-	      {
-	      case Bool: 	vecType = intermediate::Bool; break;
-	      case Int: 	vecType = intermediate::Int; break;
-	      case UInt: 	vecType = intermediate::UInt; break;
-	      case Float: vecType = intermediate::Float; break;
-	      default:	return RegisterPtr();
-	      }
-	      SequenceOpPtr seqOp (new SequenceOpMakeVector (targetReg, vecType, compRegs));
-	      seq.AddOp (seqOp);
-	    }
-	    else
-	    {
-	      RegisterPtr compReg (handler->AllocateRegister (seq, valueType, classify));
-	      SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, exprValueReg, attr.GetSwizzleComp (0)));
-	      seq.AddOp (seqOp);
-	      targetReg = compReg;
-	    }
-	    
-	    exprImpl->AddToSequencePostAction (block, exprValueReg, false);
-	    
-	    return targetReg;
-	  }
-	}
-	break;
+        {
+          if (asLvalue)
+          {
+            RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
+            return targetReg;
+          }
+          else
+          {
+            boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
+            RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
+            
+            TypeImplPtr valueType (GetValueType());
+            RegisterPtr targetReg;
+            if (attr.swizzleCompNum > 1)
+            {
+              // multi-component swizzle
+              targetReg = handler->AllocateRegister (seq, valueType, classify);
+              TypeImplPtr valueCompType (boost::static_pointer_cast<TypeImpl> (valueType->avmBase));
+              std::vector<RegisterPtr> compRegs;
+              for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
+              {
+                RegisterPtr compReg (handler->AllocateRegister (seq, valueCompType, classify));
+                SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, exprValueReg, attr.GetSwizzleComp (c)));
+                seq.AddOp (seqOp);
+                compRegs.push_back (compReg);
+              }
+              BasicType vecType;
+              switch (valueCompType->base)
+              {
+              case Bool: 	vecType = intermediate::Bool; break;
+              case Int: 	vecType = intermediate::Int; break;
+              case UInt: 	vecType = intermediate::UInt; break;
+              case Float: vecType = intermediate::Float; break;
+              default:	return RegisterPtr();
+              }
+              SequenceOpPtr seqOp (new SequenceOpMakeVector (targetReg, vecType, compRegs));
+              seq.AddOp (seqOp);
+            }
+            else
+            {
+              RegisterPtr compReg (handler->AllocateRegister (seq, valueType, classify));
+              SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, exprValueReg, attr.GetSwizzleComp (0)));
+              seq.AddOp (seqOp);
+              targetReg = compReg;
+            }
+            
+            exprImpl->AddToSequencePostAction (block, exprValueReg, false);
+            
+            return targetReg;
+          }
+        }
+        break;
       }
     }
 
     void IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequencePostAction (BlockImpl& block,
-												  const RegisterPtr& target,
-												  bool wasLvalue)
+                                                                                                  const RegisterPtr& target,
+                                                                                                  bool wasLvalue)
     {
       if (!wasLvalue) return;
       
@@ -156,7 +156,7 @@ namespace s1
       
       RegisterPtr actualTarget (exprImpl->AddToSequence (block, Intermediate, true));
       if (!actualTarget)
-	throw Exception (SwizzledExpressionNotAnLValue);
+        throw Exception (SwizzledExpressionNotAnLValue);
       
       TypeImplPtr originalValueType (exprImpl->GetValueType());
       TypeImplPtr originalValueCompType (boost::static_pointer_cast<TypeImpl> (originalValueType->avmBase));
@@ -168,34 +168,34 @@ namespace s1
       
       for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
       {
-	unsigned int comp = attr.GetSwizzleComp (c);
-	if (compDefined & (1 << comp))
-	  throw Exception (MultipleUseOfComponentInLValueSwizzle);
+        unsigned int comp = attr.GetSwizzleComp (c);
+        if (compDefined & (1 << comp))
+          throw Exception (MultipleUseOfComponentInLValueSwizzle);
 
-	if (valueType->typeClass == TypeImpl::Vector)
-	{
-	  RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
-	  SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, target, c));
-	  seq.AddOp (seqOp);
-	  compRegs[comp] = compReg;
-	}
-	else
-	{
-	  compRegs[comp] = target;
-	}
-	
-	compDefined |= 1 << comp;
+        if (valueType->typeClass == TypeImpl::Vector)
+        {
+          RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
+          SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, target, c));
+          seq.AddOp (seqOp);
+          compRegs[comp] = compReg;
+        }
+        else
+        {
+          compRegs[comp] = target;
+        }
+        
+        compDefined |= 1 << comp;
       }
       
       for (unsigned int c = 0; c < originalValueType->vectorDim; c++)
       {
-	if (!(compDefined & (1 << c)))
-	{
-	  RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
-	  SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, originalTarget, c));
-	  seq.AddOp (seqOp);
-	  compRegs[c] = compReg;
-	}
+        if (!(compDefined & (1 << c)))
+        {
+          RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
+          SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, originalTarget, c));
+          seq.AddOp (seqOp);
+          compRegs[c] = compReg;
+        }
       }
       BasicType vecType;
       switch (originalValueCompType->base)
