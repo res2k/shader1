@@ -65,8 +65,7 @@ namespace s1
           && (matrixCols == to.matrixCols)
           && (matrixRows == to.matrixRows);
       }
-      assert (false);
-      return false;
+      S1_ASSERT_NOT_REACHED (false);
     }
     
     bool CommonSemanticsHandler::CommonType::CompatibleLossy (const CommonType& to) const
@@ -110,8 +109,7 @@ namespace s1
           && (matrixCols == other.matrixCols)
           && (matrixRows == other.matrixRows);
       }
-      assert (false);
-      return false;
+      S1_ASSERT_NOT_REACHED (false);
     }
 
     bool CommonSemanticsHandler::CommonType::IsPrecisionHigherEqual (const CommonType& other) const
@@ -153,8 +151,7 @@ namespace s1
           && (matrixCols == other.matrixCols)
           && (matrixRows == other.matrixRows);
       }
-      assert (false);
-      return false;
+      S1_ASSERT_NOT_REACHED (false);
     }
 
     static format::StaticFormatter FormatArray ("{0}[]");
@@ -207,8 +204,7 @@ namespace s1
           return s;
         }
       }
-      assert (false);
-      return uc::String();
+      S1_ASSERT_NOT_REACHED (uc::String());
     }
     
     boost::shared_ptr<CommonSemanticsHandler::CommonType>

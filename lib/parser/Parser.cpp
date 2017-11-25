@@ -486,7 +486,7 @@ namespace s1
         op = SemanticsHandler::Mod;
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (expr);
       }
       NextToken();
       Expression expr2 = ParseExprUnary (scope);
@@ -511,7 +511,7 @@ namespace s1
         op = SemanticsHandler::Sub;
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (expr);
       }
       NextToken();
       Expression expr2 = ParseExprMultiplication (scope);
@@ -531,8 +531,7 @@ namespace s1
       switch (currentToken.typeOrID)
       {
       default:
-        assert (false);
-        // Fall through (silence compiler)
+        S1_ASSERT_NOT_REACHED (expr);
       case lexer::BitwiseInvert:
         op = SemanticsHandler::Inv;
         break;
@@ -579,7 +578,7 @@ namespace s1
         op = SemanticsHandler::NotEquals;
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (expr);
       }
       NextToken();
       Expression expr2 = ParseExprComparison (scope);
@@ -612,7 +611,7 @@ namespace s1
         op = SemanticsHandler::SmallerEqual;
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (expr);
       }
       NextToken();
       Expression expr2 = ParseExprAddition (scope);
