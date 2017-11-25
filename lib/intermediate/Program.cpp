@@ -93,8 +93,7 @@ namespace s1
       case Position:	return splitter::freqVertex;
       case Color:	return splitter::freqFragment;
       }
-      assert (false);
-      return -1;
+      S1_ASSERT_NOT_REACHED (-1);
     }
     
   } // namespace intermediate

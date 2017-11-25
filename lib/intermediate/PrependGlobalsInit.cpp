@@ -76,8 +76,7 @@ namespace s1
     CloningSequenceVisitor* PrependGlobalsInit::Clone (const SequenceBuilderPtr& newSequenceBuilder,
                                                        const RegisterMap& regMap)
     {
-      assert(false);
-      return nullptr;
+      S1_ASSERT_NOT_REACHED (nullptr);
     }
   } // namespace intermediate
 } // namespace s1

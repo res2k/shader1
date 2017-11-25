@@ -534,8 +534,7 @@ namespace s1
       case UInt: return uintType;
       case Float: return floatType;
       }
-      assert (false);
-      return TypePtr();
+      S1_ASSERT_NOT_REACHED (TypePtr());
     }
 
     TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (SamplerType dim)

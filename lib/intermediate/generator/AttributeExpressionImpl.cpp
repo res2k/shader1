@@ -56,8 +56,7 @@ namespace s1
       {
       default:
       case IntermediateGeneratorSemanticsHandler::Attribute::Unknown:
-        assert (false);
-        return RegisterPtr ();
+        S1_ASSERT_NOT_REACHED (RegisterPtr ());
       case IntermediateGeneratorSemanticsHandler::Attribute::arrayLength:
         {
           if (asLvalue) return RegisterPtr ();

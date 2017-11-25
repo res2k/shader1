@@ -62,94 +62,94 @@ namespace s1
 
       void OpConstBool (const RegisterPtr& destination,
                         bool value) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpConstInt (const RegisterPtr& destination,
                         int value) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpConstUInt (const RegisterPtr& destination,
                         unsigned int value) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpConstFloat (const RegisterPtr& destination,
                           float value) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpAssign (const RegisterPtr& destination,
                       const RegisterPtr& source) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpCast (const RegisterPtr& destination,
                     BasicType destType,
                     const RegisterPtr& source) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpMakeVector (const RegisterPtr& destination,
                           BasicType compType,
                           const std::vector<RegisterPtr>& sources) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpVectorDot (const RegisterPtr& destination,
                         const RegisterPtr& source1,
                         const RegisterPtr& source2) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpVectorCross (const RegisterPtr& destination,
                           const RegisterPtr& source1,
                           const RegisterPtr& source2) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpVectorNormalize (const RegisterPtr& destination,
                               const RegisterPtr& source) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpVectorLength (const RegisterPtr& destination,
                            const RegisterPtr& source) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpMakeMatrix (const RegisterPtr& destination,
                           BasicType compType,
                           unsigned int matrixRows, unsigned int matrixCols,
                           const std::vector<RegisterPtr>& sources) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpMakeArray (const RegisterPtr& destination,
                         const std::vector<RegisterPtr>& sources) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpExtractArrayElement (const RegisterPtr& destination,
                                   const RegisterPtr& source,
                                   const RegisterPtr& index) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpChangeArrayElement (const RegisterPtr& destination,
                                   const RegisterPtr& source,
                                   const RegisterPtr& index,
                                   const RegisterPtr& newValue) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpGetArrayLength (const RegisterPtr& destination,
                               const RegisterPtr& array) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpExtractVectorComponent (const RegisterPtr& destination,
                                       const RegisterPtr& source,
                                       unsigned int comp) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpArith (const RegisterPtr& destination,
                     ArithmeticOp op,
                     const RegisterPtr& source1,
                     const RegisterPtr& source2) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpLogic (const RegisterPtr& destination,
                     LogicOp op,
                     const RegisterPtr& source1,
                     const RegisterPtr& source2) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpUnary (const RegisterPtr& destination,
                     UnaryOp op,
                     const RegisterPtr& source) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpCompare (const RegisterPtr& destination,
                       CompareOp op,
                       const RegisterPtr& source1,
                       const RegisterPtr& source2) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpBlock (const SequencePtr& seq,
                     const Sequence::IdentifierToRegMap& identToReg_imp,
@@ -161,30 +161,29 @@ namespace s1
       void OpBranch (const RegisterPtr& conditionReg,
                       const SequenceOpPtr& seqOpIf,
                       const SequenceOpPtr& seqOpElse) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpWhile (const RegisterPtr& conditionReg,
                     const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
                     const SequenceOpPtr& seqOpBody) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
 
       void OpReturn (const std::vector<RegisterPtr>& outParamVals) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpFunctionCall (const uc::String& funcIdent,
                             const std::vector<RegisterPtr>& inParams,
                             const std::vector<RegisterPtr>& outParams) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
       void OpBuiltinCall (const RegisterPtr& destination,
                           BuiltinFunction what,
                           const std::vector<RegisterPtr>& inParams) override
-      { assert (false); }
+      { S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID); }
     protected:
       CloningSequenceVisitor* owner;
 
       CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
                                      const RegisterMap& regMap) override
       {
-        assert (false);
-        return 0;
+        S1_ASSERT_NOT_REACHED (nullptr);
       }
     };
 
