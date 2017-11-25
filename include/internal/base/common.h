@@ -90,6 +90,9 @@ namespace s1
     assert ((x) && msg);                                      \
     _S1_ASSERT_MSG_RET(x, ret)                                \
   } while(0)
+/// \internal Assertion for code that is not expected to be reached
+#define S1_ASSERT_NOT_REACHED(ret)                            \
+  S1_ASSERT_MSG(false, "code should not be reached", ret)
 
 // Definitions for wchar_t encoding.
 // Assumes a world where wchar_t is always some UTF.
