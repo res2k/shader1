@@ -318,7 +318,7 @@ namespace s1
         newOp = new intermediate::SequenceOpConst (dest, val.b);
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (SequenceOpPtr ());
       }
       return newOp;
     }
@@ -392,7 +392,7 @@ namespace s1
         target = TargetType (sourceVal->comp[0].f);
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
     }
 
@@ -420,7 +420,7 @@ namespace s1
           DoCast (newVal->comp[0].f, srcType, srcConst->second);
           break;
         default:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
         }
         constRegs[destination] = newVal;
 
@@ -601,7 +601,7 @@ namespace s1
           cols1 = source1->GetOriginalType ()->GetVectorTypeComponents ();
           break;
         default:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
         }
         unsigned int rows2, cols2;
         switch (source2->GetOriginalType ()->GetTypeClass ())
@@ -615,7 +615,7 @@ namespace s1
           cols2 = 1;
           break;
         default:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
         }
         assert (cols1 == rows2);
         HandleBuiltinMatrixMul (destination,
@@ -775,7 +775,7 @@ namespace s1
           newVal->comp[0].b = srcVal->comp[comp].b;
           break;
         default:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
         }
         constRegs[destination] = newVal;
 
@@ -808,7 +808,7 @@ namespace s1
         break;
       default:
         nComps = 0;
-        assert (false);
+        S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
     }
 
@@ -825,7 +825,7 @@ namespace s1
       case parser::SemanticsHandler::UInt: 	basicType = intermediate::UInt; break;
       case parser::SemanticsHandler::Float: 	basicType = intermediate::Float; break;
       case parser::SemanticsHandler::Bool: 	basicType = intermediate::Bool; break;
-      default:				assert (false);
+      default: S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
 
       SequenceOpPtr newOp;
@@ -863,7 +863,7 @@ namespace s1
         }
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
 
       AddOpToSequence (newOp);
@@ -891,7 +891,7 @@ namespace s1
         result = static_cast<T> (func(src1Val.b, src2Val.b));
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
     }
 
@@ -938,7 +938,7 @@ namespace s1
             Functor2Call (newVal->comp[c].b, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
         default:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (false);
         }
         constRegs[destination] = newVal;
 
@@ -980,14 +980,13 @@ namespace s1
           case intermediate::SequenceVisitor::Mul:	return src1 * src2;
           case intermediate::SequenceVisitor::Div:	return src1 / src2;
           case intermediate::SequenceVisitor::Mod:	return Modulo (src1, src2);
-          default:					assert (false); return 0;
+          default: S1_ASSERT_NOT_REACHED (0);
           }
         }
 
         bool operator() (bool src1, bool src2)
         {
-          assert (false);
-          return false;
+          S1_ASSERT_NOT_REACHED (false);
         }
       };
     }
@@ -1023,7 +1022,7 @@ namespace s1
           {
           case intermediate::SequenceVisitor::And:	return src1 && src2;
           case intermediate::SequenceVisitor::Or:	return src1 || src2;
-          default:					assert (false); return 0;
+          default: S1_ASSERT_NOT_REACHED (0);
           }
         }
       };
@@ -1077,7 +1076,7 @@ namespace s1
             newVal->comp[c].b = func (srcVal->comp[c].b);
           break;
         default:
-          assert (false);
+          S1_ASSERT_NOT_REACHED (false);
         }
         constRegs[destination] = newVal;
 
@@ -1110,7 +1109,7 @@ namespace s1
           case intermediate::SequenceVisitor::Neg:	return -src;
           case intermediate::SequenceVisitor::Not:	return !src;
           case intermediate::SequenceVisitor::Inv:	return ~src;
-          default:					assert (false); return 0;
+          default: S1_ASSERT_NOT_REACHED (0);
           }
         }
 
@@ -1121,8 +1120,7 @@ namespace s1
             case intermediate::SequenceVisitor::Not:
               return !src;
             default:
-              assert (false);
-              return false;
+              S1_ASSERT_NOT_REACHED (false);
           }
         }
 
@@ -1132,7 +1130,7 @@ namespace s1
           {
           case intermediate::SequenceVisitor::Neg:	return -src;
           case intermediate::SequenceVisitor::Not:	return !src;
-          default:					assert (false); return 0;
+          default: S1_ASSERT_NOT_REACHED (0);
           }
         }
       };
@@ -1172,7 +1170,7 @@ namespace s1
           case intermediate::SequenceVisitor::LT:	return src1 < src2;
           case intermediate::SequenceVisitor::GE:	return src1 >= src2;
           case intermediate::SequenceVisitor::GT:	return src1 > src2;
-          default:					assert (false); return 0;
+          default: S1_ASSERT_NOT_REACHED (0);
           }
         }
       };
@@ -1355,7 +1353,7 @@ namespace s1
         }
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (false);
       }
       constRegs[destination] = newVal;
 
@@ -1408,7 +1406,7 @@ namespace s1
         }
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (false);
       }
       constRegs[destination] = newVal;
 
@@ -1462,7 +1460,7 @@ namespace s1
         }
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (false);
       }
       constRegs[destination] = newVal;
 
@@ -1514,7 +1512,7 @@ namespace s1
         }
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (false);
       }
       constRegs[destination] = newVal;
 
@@ -1598,7 +1596,7 @@ namespace s1
         }
         break;
       default:
-        assert (false);
+        S1_ASSERT_NOT_REACHED (false);
       }
       constRegs[destination] = newVal;
 
