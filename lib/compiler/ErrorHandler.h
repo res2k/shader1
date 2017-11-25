@@ -39,7 +39,7 @@ public:
   /**\name s1::LexerErrorHandler
    * @{ */
   void ParseError (s1::parser::ErrorCode code, const s1::Lexer::Token& encounteredToken,
-		   s1::Lexer::TokenType expectedToken);
+		   s1::Lexer::TokenType expectedToken) override;
   /** @} */
   
   void IntermediateError (s1::intermediate::ErrorCode code);
