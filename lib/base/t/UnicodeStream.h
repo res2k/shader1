@@ -210,7 +210,7 @@ public:
     {
       TS_ASSERT_EQUALS ((bool)ustream, true);
       
-      s1::uc::Char32 ch;
+      s1::uc::Char32 ch = 0;
       TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
       TS_ASSERT_EQUALS (ch, 'a');
       TS_ASSERT_THROWS_NOTHING (++ustream);
