@@ -55,18 +55,6 @@ matrix:
       env: CLANG_VERSION=4.0 BOOST_VERSION=default CMAKE_OPTIONS="-DS1_SKIP_TEST_17=on"
       compiler: clang-4.0
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
-          packages:
-            - clang-4.0
-            - libstdc++-7-dev
-      env: CLANG_VERSION=4.0 BOOST_VERSION=default LTO=on CMAKE_OPTIONS="-DS1_SKIP_TEST_17=on"
-      compiler: clang-4.0
-
 install:
   # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/travis-deps/
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/travis-deps"
