@@ -135,8 +135,7 @@ namespace s1
       }
     }
 
-    assert (false);
-    return splitter::freqUniform;
+    S1_ASSERT_NOT_REACHED (splitter::freqUniform);
   }
 
   Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const uc::String& entryFunction,
@@ -210,7 +209,6 @@ namespace s1
       return backend->GenerateProgram (target, optProg, options);
     }
     
-    assert (false);
-    return Backend::ProgramPtr();
+    S1_ASSERT_NOT_REACHED (Backend::ProgramPtr());
   }
 } // namespace s1
