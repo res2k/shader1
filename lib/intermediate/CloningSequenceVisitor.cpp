@@ -61,30 +61,30 @@ namespace s1
        : CloningSequenceVisitor (newSequenceBuilder), owner (owner) {}
 
       void OpConstBool (const RegisterPtr& destination,
-                        bool value)
+                        bool value) override
       { assert (false); }
       void OpConstInt (const RegisterPtr& destination,
-                        int value)
+                        int value) override
       { assert (false); }
       void OpConstUInt (const RegisterPtr& destination,
-                        unsigned int value)
+                        unsigned int value) override
       { assert (false); }
       void OpConstFloat (const RegisterPtr& destination,
-                          float value)
+                          float value) override
       { assert (false); }
 
       void OpAssign (const RegisterPtr& destination,
-                      const RegisterPtr& source)
+                      const RegisterPtr& source) override
       { assert (false); }
 
       void OpCast (const RegisterPtr& destination,
                     BasicType destType,
-                    const RegisterPtr& source)
+                    const RegisterPtr& source) override
       { assert (false); }
 
       void OpMakeVector (const RegisterPtr& destination,
                           BasicType compType,
-                          const std::vector<RegisterPtr>& sources)
+                          const std::vector<RegisterPtr>& sources) override
       { assert (false); }
       void OpVectorDot (const RegisterPtr& destination,
                         const RegisterPtr& source1,
@@ -104,84 +104,84 @@ namespace s1
       void OpMakeMatrix (const RegisterPtr& destination,
                           BasicType compType,
                           unsigned int matrixRows, unsigned int matrixCols,
-                          const std::vector<RegisterPtr>& sources)
+                          const std::vector<RegisterPtr>& sources) override
       { assert (false); }
 
       void OpMakeArray (const RegisterPtr& destination,
-                        const std::vector<RegisterPtr>& sources)
+                        const std::vector<RegisterPtr>& sources) override
       { assert (false); }
       void OpExtractArrayElement (const RegisterPtr& destination,
                                   const RegisterPtr& source,
-                                  const RegisterPtr& index)
+                                  const RegisterPtr& index) override
       { assert (false); }
       void OpChangeArrayElement (const RegisterPtr& destination,
                                   const RegisterPtr& source,
                                   const RegisterPtr& index,
-                                  const RegisterPtr& newValue)
+                                  const RegisterPtr& newValue) override
       { assert (false); }
       void OpGetArrayLength (const RegisterPtr& destination,
-                              const RegisterPtr& array)
+                              const RegisterPtr& array) override
       { assert (false); }
 
       void OpExtractVectorComponent (const RegisterPtr& destination,
                                       const RegisterPtr& source,
-                                      unsigned int comp)
+                                      unsigned int comp) override
       { assert (false); }
 
       void OpArith (const RegisterPtr& destination,
                     ArithmeticOp op,
                     const RegisterPtr& source1,
-                    const RegisterPtr& source2)
+                    const RegisterPtr& source2) override
       { assert (false); }
 
       void OpLogic (const RegisterPtr& destination,
                     LogicOp op,
                     const RegisterPtr& source1,
-                    const RegisterPtr& source2)
+                    const RegisterPtr& source2) override
       { assert (false); }
 
       void OpUnary (const RegisterPtr& destination,
                     UnaryOp op,
-                    const RegisterPtr& source)
+                    const RegisterPtr& source) override
       { assert (false); }
 
       void OpCompare (const RegisterPtr& destination,
                       CompareOp op,
                       const RegisterPtr& source1,
-                      const RegisterPtr& source2)
+                      const RegisterPtr& source2) override
       { assert (false); }
 
       void OpBlock (const SequencePtr& seq,
                     const Sequence::IdentifierToRegMap& identToReg_imp,
-                    const Sequence::IdentifierToRegMap& identToReg_exp)
+                    const Sequence::IdentifierToRegMap& identToReg_exp) override
       {
         AddOpToSequence (owner->NestedBlock (seq, identToReg_imp, identToReg_exp));
       }
 
       void OpBranch (const RegisterPtr& conditionReg,
                       const SequenceOpPtr& seqOpIf,
-                      const SequenceOpPtr& seqOpElse)
+                      const SequenceOpPtr& seqOpElse) override
       { assert (false); }
       void OpWhile (const RegisterPtr& conditionReg,
                     const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-                    const SequenceOpPtr& seqOpBody)
+                    const SequenceOpPtr& seqOpBody) override
       { assert (false); }
 
-      void OpReturn (const std::vector<RegisterPtr>& outParamVals)
+      void OpReturn (const std::vector<RegisterPtr>& outParamVals) override
       { assert (false); }
       void OpFunctionCall (const uc::String& funcIdent,
                             const std::vector<RegisterPtr>& inParams,
-                            const std::vector<RegisterPtr>& outParams)
+                            const std::vector<RegisterPtr>& outParams) override
       { assert (false); }
       void OpBuiltinCall (const RegisterPtr& destination,
                           BuiltinFunction what,
-                          const std::vector<RegisterPtr>& inParams)
+                          const std::vector<RegisterPtr>& inParams) override
       { assert (false); }
     protected:
       CloningSequenceVisitor* owner;
 
       CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
-                                    const RegisterMap& regMap)
+                                     const RegisterMap& regMap) override
       {
         assert (false);
         return 0;

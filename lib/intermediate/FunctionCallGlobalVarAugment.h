@@ -37,20 +37,20 @@ namespace s1
                                     const std::vector<IntermediateGeneratorSemanticsHandler::NamePtr>& globals,
                                     int level = 0);
 
-      RegisterPtr MapRegisterIn (const RegisterPtr& reg);
-      RegisterPtr MapRegisterOut (const RegisterPtr& reg);
-      void AddOpToSequence (const SequenceOpPtr& seqOp);
-      void PreVisitOp (const SequenceOpPtr& op);
-      void VisitEnd ();
+      RegisterPtr MapRegisterIn (const RegisterPtr& reg) override;
+      RegisterPtr MapRegisterOut (const RegisterPtr& reg) override;
+      void AddOpToSequence (const SequenceOpPtr& seqOp) override;
+      void PreVisitOp (const SequenceOpPtr& op) override;
+      void VisitEnd () override;
 
       void OpWhile (const RegisterPtr& conditionReg,
                     const std::vector<std::pair<RegisterPtr, RegisterPtr> >& loopedRegs,
-                    const SequenceOpPtr& seqOpBody);
+                    const SequenceOpPtr& seqOpBody) override;
 
-      void OpReturn (const std::vector<RegisterPtr>& outParamVals);
+      void OpReturn (const std::vector<RegisterPtr>& outParamVals) override;
       void OpFunctionCall (const uc::String& funcIdent,
         const std::vector<RegisterPtr>& inParams,
-        const std::vector<RegisterPtr>& outParams);
+        const std::vector<RegisterPtr>& outParams) override;
     protected:
       /// Nesting level, used to generate unique register names
       int level;
@@ -77,11 +77,11 @@ namespace s1
                                       const Sequence::IdentifierToRegMap& identToReg_imp,
                                       const Sequence::IdentifierToRegMap& identToReg_exp) override;
 
-      virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
+      CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
         const SequencePtr& oldSequence,
-        const RegisterMap& regMap);
-      virtual CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
-        const RegisterMap& regMap);
+        const RegisterMap& regMap) override;
+      CloningSequenceVisitor* Clone (const SequenceBuilderPtr& newSequenceBuilder,
+        const RegisterMap& regMap) override;
     };
   } // namespace intermediate
 } // namespace s1
