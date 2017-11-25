@@ -34,7 +34,7 @@ public:
     traits.ConvertIdentifier (s1::uc::String ("a")).toUTF8String (glslIdentifier);
     for (auto ch : glslIdentifier)
     {
-      TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
+      TS_ASSERT((static_cast<uint8_t> (ch) < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
 
@@ -45,7 +45,7 @@ public:
     traits.ConvertIdentifier (s1::uc::String ("a!b\"c$d%e&f/g(h)i=j?k\\l,m;n.o:p-q_r#s*t~u+v@w[x]y{z}")).toUTF8String (glslIdentifier);
     for (auto ch : glslIdentifier)
     {
-      TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
+      TS_ASSERT((static_cast<uint8_t> (ch) < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
   
@@ -57,7 +57,7 @@ public:
     traits.ConvertIdentifier (s1::uc::String (ustr)).toUTF8String (glslIdentifier);
     for (auto ch : glslIdentifier)
     {
-      TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
+      TS_ASSERT((static_cast<uint8_t> (ch) < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
 
@@ -874,7 +874,7 @@ public:
     traits.ConvertIdentifier (s1::uc::String (ustr)).toUTF8String (glslIdentifier);
     for (auto ch : glslIdentifier)
     {
-      TS_ASSERT((ch < 128) && (isalnum (ch) || (ch == '_')));
+      TS_ASSERT((static_cast<uint8_t> (ch) < 128) && (isalnum (ch) || (ch == '_')));
     }
   }
 };
