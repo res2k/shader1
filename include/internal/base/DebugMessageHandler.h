@@ -92,7 +92,9 @@ namespace s1
   namespace detail
   {
     /// Thread-specific debug message handler
-    extern S1_THREAD_LOCAL DebugMessageHandler* threadHandler;
+    /* Note: this used to be 'extern thread_local', but that had the issue of an
+     * undefined 'TLS init' function on gcc+clang, so this construct instead */
+    extern DebugMessageHandler*& GetThreadHandler();
   } // namespace detail
 
   /// Helper: Sets a "scope" for a temporary thread-specific debug message handler
@@ -101,12 +103,12 @@ namespace s1
   public:
     ScopedThreadDebugMessageHandler (DebugMessageHandler& handler)
     {
-      prevHandler = detail::threadHandler;
-      detail::threadHandler = &handler;
+      prevHandler = detail::GetThreadHandler();
+      detail::GetThreadHandler() = &handler;
     }
     ~ScopedThreadDebugMessageHandler ()
     {
-      detail::threadHandler = prevHandler;
+      detail::GetThreadHandler() = prevHandler;
     }
   private:
     DebugMessageHandler* prevHandler;
@@ -118,9 +120,9 @@ namespace s1
     static void PrintMessage (T msg)
     {
       // First, try thread-specific handler
-      if (threadHandler)
+      if (auto th = GetThreadHandler())
       {
-        if (threadHandler->PrintMessage (msg)) return;
+        if (th->PrintMessage (msg)) return;
       }
       // Next, the global handler
       if (AccessGlobalDebugMessageHandler ([=](const DebugMessageHandler& h) { return h.PrintMessage (msg); }))

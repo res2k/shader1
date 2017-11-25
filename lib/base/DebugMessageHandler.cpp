@@ -209,7 +209,12 @@ namespace s1
   {
     GlobalDebugMessageHandler globalHandler;
 
-    S1_THREAD_LOCAL DebugMessageHandler* threadHandler = nullptr;
+    static S1_THREAD_LOCAL DebugMessageHandler* threadHandler = nullptr;
+
+    DebugMessageHandler*& GetThreadHandler()
+    {
+      return threadHandler;
+    }
   } // namespace detail
 
   void DefaultDebugMessageHandler::PrintMessage (const uc::String& str)
