@@ -315,7 +315,7 @@ namespace s1
       newString.reserve (s1.length () + s2.length ());
       newString.append (s1);
       newString.append (s2);
-      return std::move (newString);
+      return newString;
     }
 
     bool String::operator==(const String& other) const
