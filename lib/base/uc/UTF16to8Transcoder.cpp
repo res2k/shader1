@@ -35,7 +35,7 @@ namespace s1
       {
       case UTF16Decoder::drCharacterIncomplete:      return UTF16to8Transcoder::trCharacterIncomplete;
       default:
-        assert(false); // Should already be handled
+        S1_ASSERT_NOT_REACHED (UTF16to8Transcoder::trSuccess); // Should already be handled
         break;
       }
       return UTF16to8Transcoder::trSuccess;

@@ -37,7 +37,7 @@ namespace s1
       case UTF8Decoder::drCharacterInvalid:         return UTF8to16Transcoder::trCharacterInvalid;
       case UTF8Decoder::drEncodingInvalid:          return UTF8to16Transcoder::trEncodingInvalid;
       default:
-        assert(false); // Should already be handled
+        S1_ASSERT_NOT_REACHED (UTF8to16Transcoder::trSuccess); // Should already be handled
         break;
       }
       return UTF8to16Transcoder::trSuccess;
