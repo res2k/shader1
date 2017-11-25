@@ -112,7 +112,7 @@ public:
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("foo")),
       const s1::parser::Exception& e,
-      e.GetCode() == s1::parser::IdentifierUndeclared
+      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::IdentifierUndeclared)
     );
   }
   
@@ -137,7 +137,7 @@ public:
                             s1::uc::String ("a"), 
                             SemanticsHandler::ExpressionPtr(), false),
       const s1::parser::Exception& e,
-      e.GetCode() == s1::parser::IdentifierAlreadyDeclared
+      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::IdentifierAlreadyDeclared)
     );
   }  
   
