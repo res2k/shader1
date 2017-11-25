@@ -77,7 +77,7 @@ install:
   - if [[ "${GCC_VERSION}" != "" ]]; then export CXX="g++-${GCC_VERSION}"; export CC="gcc-${GCC_VERSION}"; fi
   - if [[ "${CLANG_VERSION}" != "" ]]; then export CXX="clang++-${CLANG_VERSION}"; export CC="clang-${CLANG_VERSION}"; fi
 
-  - if [[ "${LTO} != "" ]]; then CMAKE_OPTIONS+=" -DS1_BUILD_LTO=${LTO}"; fi
+  - if [[ "${LTO}" != "" ]]; then CMAKE_OPTIONS+=" -DS1_BUILD_LTO=${LTO}"; fi
 
   # Install Boost headers
   - |
