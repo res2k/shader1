@@ -983,6 +983,12 @@ namespace s1
           default:					assert (false); return 0;
           }
         }
+
+        bool operator() (bool src1, bool src2)
+        {
+          assert (false);
+          return false;
+        }
       };
     }
 
@@ -1105,6 +1111,18 @@ namespace s1
           case intermediate::SequenceVisitor::Not:	return !src;
           case intermediate::SequenceVisitor::Inv:	return ~src;
           default:					assert (false); return 0;
+          }
+        }
+
+        float operator() (bool src)
+        {
+          switch (op)
+          {
+            case intermediate::SequenceVisitor::Not:
+              return !src;
+            default:
+              assert (false);
+              return false;
           }
         }
 
