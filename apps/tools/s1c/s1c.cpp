@@ -340,6 +340,71 @@ private:
 * the default stream ifstream */
 typedef boost::iostreams::stream<boost::iostreams::file_descriptor_source> ifstream;
 
+/* An S1 input stream implementation (satisfying \c s1::Library::CreateByteStreamFromCallback
+ * requirements) reading from an \c if stream.
+ * Assumes files to be UTF-8. Handles the BOM.
+ */
+class InputFileStream
+{
+  bool errorState;
+  ifstream inputFile;
+  size_t fileSize;
+  char buf[256];
+public:
+  InputFileStream (const boost::filesystem::path& path) : errorState (false)
+  {
+    try
+    {
+      inputFile.open (boost::filesystem::path (path));
+      // Check for BOM
+      {
+        unsigned char bomBuf[3];
+        inputFile.read ((char*)bomBuf, 3);
+        if (inputFile.eof () || (bomBuf[0] != 0xEF) || (bomBuf[1] != 0xBB) || (bomBuf[2] != 0xBF))
+        {
+          // Not a BOM, reset
+          inputFile.clear ();
+          inputFile.seekg (0);
+        }
+      }
+      inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
+      size_t startPos (inputFile.tellg ());
+      inputFile.seekg (0, std::ios_base::end);
+      fileSize = inputFile.tellg ();
+      fileSize = fileSize - startPos;
+      inputFile.seekg (startPos, std::ios_base::beg);
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      errorState = true;
+    }
+  }
+
+  bool HadInputError () const { return errorState;  }
+
+  size_t operator()(const char*& data)
+  {
+    if (errorState) return 0;
+    if (fileSize == 0) return 0;
+
+    try
+    {
+      inputFile.read (buf, std::min (fileSize, sizeof (buf)));
+      size_t nRead (inputFile.gcount ());
+      data = buf;
+      fileSize -= nRead;
+      return nRead;
+    }
+    catch (std::exception& e)
+    {
+      std::cerr << e.what() << std::endl;
+      errorState = true;
+      return 0;
+    }
+  }
+};
+
 int MainFunc (const int argc, const ArgChar* const argv[])
 {
   std::locale::global (std::locale (""));
@@ -388,67 +453,7 @@ int MainFunc (const int argc, const ArgChar* const argv[])
       }
     }
   }
-  
-  class InputFileStream
-  {
-    bool errorState;
-    ifstream inputFile;
-    size_t fileSize;
-    char buf[256];
-  public:
-    InputFileStream (const boost::filesystem::path& path) : errorState (false)
-    {
-      try
-      {
-        inputFile.open (boost::filesystem::path (path));
-        // Check for BOM
-        {
-          unsigned char bomBuf[3];
-          inputFile.read ((char*)bomBuf, 3);
-          if (inputFile.eof () || (bomBuf[0] != 0xEF) || (bomBuf[1] != 0xBB) || (bomBuf[2] != 0xBF))
-          {
-            // Not a BOM, reset
-            inputFile.clear ();
-            inputFile.seekg (0);
-          }
-        }
-        inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
-        size_t startPos (inputFile.tellg ());
-        inputFile.seekg (0, std::ios_base::end);
-        fileSize = inputFile.tellg ();
-        fileSize = fileSize - startPos;
-        inputFile.seekg (startPos, std::ios_base::beg);
-      }
-      catch (std::exception& e)
-      {
-        std::cerr << e.what() << std::endl;
-        errorState = true;
-      }
-    }
 
-    bool HadInputError () const { return errorState;  }
-
-    size_t operator()(const char*& data)
-    {
-      if (errorState) return 0;
-      if (fileSize == 0) return 0;
-
-      try
-      {
-        inputFile.read (buf, std::min (fileSize, sizeof (buf)));
-        size_t nRead (inputFile.gcount ());
-        data = buf;
-        fileSize -= nRead;
-        return nRead;
-      }
-      catch (std::exception& e)
-      {
-        std::cerr << e.what() << std::endl;
-        errorState = true;
-        return 0;
-      }
-    }
-  };
   Program::Pointer compilerProg;
   {
     InputFileStream inStream (options.inputFileName);
