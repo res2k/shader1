@@ -22,11 +22,28 @@ if(CXXTEST_FOUND)
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiObject.h
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiResultCode.h
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiString.h)
-  CXXTEST_ADD_TEST(test_Api test_Api.cpp
-                   ${api_test_sources})
-  target_link_libraries(test_Api api_testlib s1)
-  set_property(TARGET test_Api PROPERTY EXCLUDE_FROM_ALL YES)
-  # Make sure S1 lib is found
-  set_property(TARGET test_Api PROPERTY ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-  AutoBuildTest(test_Api)
+  set(api_test_sources_11
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiByteStream_c++11.h)
+  foreach(try_std default 98 11 17)
+    # Provide ability to skip test with certain standards,
+    # if necessary
+    if(NOT S1_SKIP_TEST_${try_std})
+      list(APPEND TEST_STD ${try_std})
+    endif()
+  endforeach()
+  foreach(std ${TEST_STD})
+    if(api_test_sources_${std})
+      list(APPEND api_test_sources ${api_test_sources_${std}})
+    endif()
+    CXXTEST_ADD_TEST(test_Api_${std} test_Api_${std}.cpp
+                    ${api_test_sources})
+    target_link_libraries(test_Api_${std} api_testlib s1)
+    if(NOT ${std} STREQUAL "default")
+      set_target_properties(test_Api_${std} PROPERTIES CXX_STANDARD ${std})
+    endif()
+    set_property(TARGET test_Api_${std} PROPERTY EXCLUDE_FROM_ALL YES)
+    # Make sure S1 lib is found
+    set_property(TARGET test_Api_${std} PROPERTY ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+    AutoBuildTest(test_Api_${std})
+  endforeach()
 endif()
