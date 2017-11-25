@@ -24,7 +24,7 @@ if(CXXTEST_FOUND)
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiString.h)
   set(api_test_sources_11
       ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiByteStream_c++11.h)
-  foreach(try_std default 98 11 17)
+  foreach(try_std default 98 11 14 17)
     # Provide ability to skip test with certain standards,
     # if necessary
     if(NOT S1_SKIP_TEST_${try_std})
