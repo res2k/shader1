@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
