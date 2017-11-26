@@ -21,9 +21,7 @@
 
 #include "base/Library.h"
 
-#include <condition_variable>
-#include <mutex>
-#include <thread>
+#include "Barrier.h"
 
 #define THREAD_A_CODE_1     S1_MAKE_ERROR(0xf, 1001)
 #define THREAD_B_CODE_1     S1_MAKE_SUCCESS(0xf, 2001)
@@ -34,32 +32,6 @@
 // Test that library last errors are stored per thread
 class LibraryLastErrorTestSuite : public CxxTest::TestSuite 
 {
-  class Barrier
-  {
-    std::mutex m;
-    std::condition_variable cv;
-    unsigned int threshold;
-    unsigned int count = 0;
-    unsigned int sense = 0;
-  public:
-    Barrier (unsigned int threshold) : threshold (threshold) {}
-
-    void wait ()
-    {
-      std::unique_lock<std::mutex> lock (m);
-      auto localSense = sense;
-      if (++count == threshold)
-      {
-        count = 0;
-        ++sense;
-        cv.notify_all ();
-      }
-      else
-      {
-        cv.wait (lock, [=](){ return sense != localSense; });
-      }
-    }
-  };
 public:
   void testLastError1 ()
   {
