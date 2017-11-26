@@ -20,6 +20,16 @@
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 
+template<typename T>
+static inline typename std::make_unsigned<T>::type as_unsigned (T x)
+{
+  return static_cast<typename std::make_unsigned<T>::type> (x);
+}
+
+#define TS_ASSERT_EQUALS_CH(A, B)                                     \
+  TS_ASSERT_EQUALS(static_cast<uint_least32_t> (as_unsigned (A)),     \
+                   static_cast<uint_least32_t> (B))
+
 class UnicodeStreamTestSuite : public CxxTest::TestSuite 
 {
 public:
@@ -49,7 +59,7 @@ public:
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // ASCII is UTF-8 is encoded as identity
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, s1::uc::Char32 ('a'));
+    TS_ASSERT_EQUALS_CH (ch, 'a');
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -66,7 +76,7 @@ public:
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test UTF-8 encoded Unicode character
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, s1::uc::Char32 (0x263a));
+    TS_ASSERT_EQUALS_CH (ch, 0x263a);
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -84,7 +94,7 @@ public:
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test UTF-8 encoded Unicode character from beyond the BMP (>= 0x10000)
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, 0x1d53d);
+    TS_ASSERT_EQUALS_CH (ch, 0x1d53d);
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -118,7 +128,7 @@ public:
     TS_ASSERT_EQUALS ((bool)ustream, true);
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
     // First char should work w/o problems
-    TS_ASSERT_EQUALS (ch, 'a');
+    TS_ASSERT_EQUALS_CH (ch, 'a');
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Incomplete UTF-8 encoded char should be an error
     TS_ASSERT_EQUALS ((*ustream).error(), s1::uc::Stream::Error::utf8CharacterIncomplete);
@@ -142,7 +152,7 @@ public:
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // After that, input should recover
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, 'a');
+    TS_ASSERT_EQUALS_CH (ch, 'a');
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -163,7 +173,7 @@ public:
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // After that, input should recover
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, 'a');
+    TS_ASSERT_EQUALS_CH (ch, 'a');
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -212,7 +222,7 @@ public:
       
       s1::uc::Char32 ch = 0;
       TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-      TS_ASSERT_EQUALS (ch, 'a');
+      TS_ASSERT_EQUALS_CH (ch, 'a');
       TS_ASSERT_THROWS_NOTHING (++ustream);
     }
     // Check end is end
@@ -237,13 +247,13 @@ public:
       TS_ASSERT_EQUALS ((bool)ustream, true);
       
       TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-      TS_ASSERT_EQUALS (ch, 'a');
+      TS_ASSERT_EQUALS_CH (ch, 'a');
       TS_ASSERT_THROWS_NOTHING (++ustream);
     }
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test UTF-8 encoded Unicode character
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, 0x263a);
+    TS_ASSERT_EQUALS_CH (ch, 0x263a);
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
