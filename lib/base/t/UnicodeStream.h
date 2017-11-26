@@ -49,7 +49,7 @@ public:
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // ASCII is UTF-8 is encoded as identity
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, 'a');
+    TS_ASSERT_EQUALS (ch, s1::uc::Char32 ('a'));
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
@@ -66,7 +66,7 @@ public:
     TS_ASSERT_EQUALS ((bool)ustream, true);
     // Test UTF-8 encoded Unicode character
     TS_ASSERT_THROWS_NOTHING ((ch = (*ustream).value()));
-    TS_ASSERT_EQUALS (ch, 0x263a);
+    TS_ASSERT_EQUALS (ch, s1::uc::Char32 (0x263a));
     TS_ASSERT_THROWS_NOTHING (++ustream);
     // Check end is end
     TS_ASSERT_EQUALS ((bool)ustream, false);
