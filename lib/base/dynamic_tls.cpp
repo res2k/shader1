@@ -317,6 +317,9 @@ namespace s1
               free (prevBlocksPtr);
             }
           }
+
+          if (!newInline)
+            blocksData = newBlocksPtr;
         }
 
         auto old_count = bitCount;
