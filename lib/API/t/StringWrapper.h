@@ -23,7 +23,7 @@
 #include <type_traits>
 
 template<typename T>
-typename std::make_unsigned<T>::type as_unsigned (T x)
+static inline typename std::make_unsigned<T>::type as_unsigned (T x)
 {
   return static_cast<typename std::make_unsigned<T>::type> (x);
 }
