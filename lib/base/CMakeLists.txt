@@ -57,6 +57,7 @@ if(CXXTEST_FOUND)
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/LibraryLastError.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
