@@ -29,9 +29,9 @@ public:
     TS_ASSERT_EQUALS (std::char_traits<char>::length (empty.GetUTF8 ()), 0);
     TS_ASSERT_EQUALS (empty.GetUTF8 ()[0], 0);
     TS_ASSERT_EQUALS (std::char_traits<char16_t>::length (empty.GetUTF16 ()), 0);
-    TS_ASSERT_EQUALS (empty.GetUTF16 ()[0], 0);
+    TS_ASSERT_EQUALS (empty.GetUTF16 ()[0], 0u);
     TS_ASSERT_EQUALS (std::char_traits<char32_t>::length (empty.GetUTF32 ()), 0);
-    TS_ASSERT_EQUALS (empty.GetUTF32 ()[0], 0);
+    TS_ASSERT_EQUALS (empty.GetUTF32 ()[0], 0u);
     TS_ASSERT_EQUALS (std::char_traits<wchar_t>::length (empty.GetWCS ()), 0);
     TS_ASSERT_EQUALS (empty.GetWCS ()[0], 0);
   }
