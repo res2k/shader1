@@ -21,6 +21,10 @@
 
 #include "base/Library.h"
 
+#include <condition_variable>
+#include <mutex>
+#include <thread>
+
 #define THREAD_A_CODE_1     S1_MAKE_ERROR(0xf, 1001)
 #define THREAD_B_CODE_1     S1_MAKE_SUCCESS(0xf, 2001)
 
