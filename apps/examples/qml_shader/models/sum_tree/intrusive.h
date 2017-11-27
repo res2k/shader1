@@ -434,7 +434,7 @@ namespace sum_tree
       sum_type root_sum() const
       {
         auto root_it = this->root ();
-        assert (root_it != end());
+        assert (root_it != this->end());
         return sum_traits::get_sum (value_traits::to_node_ptr (*root_it));
       }
       iterator get_iterator_by_sum (sum_type value)
