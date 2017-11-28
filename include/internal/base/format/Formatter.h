@@ -110,7 +110,7 @@ namespace s1
       {
         DestType dest;
         operator() (dest, a...);
-        return std::move (dest);
+        return dest;
       }
     };
 
