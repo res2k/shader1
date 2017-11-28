@@ -166,14 +166,6 @@ if(MSVC)
   # Silence remaining annoyances
   add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 
-  # More aggressive optimization flags for release configs
-  string(REPLACE "/Ob1" "" CACHE_C_FLAGS_RELWITHDEBINFO "${CACHE_C_FLAGS_RELWITHDEBINFO}")
-  string(REPLACE "/Ob1" "" CACHE_CXX_FLAGS_RELWITHDEBINFO "${CACHE_CXX_FLAGS_RELWITHDEBINFO}")
-  string(REPLACE "/Ob2" "" CACHE_C_FLAGS_RELEASE "${CACHE_C_FLAGS_RELEASE}")
-  string(REPLACE "/Ob2" "" CACHE_CXX_FLAGS_RELEASE "${CACHE_CXX_FLAGS_RELEASE}")
-  string(REPLACE "/Ob1" "" CACHE_C_FLAGS_MINSIZEREL "${CACHE_C_FLAGS_MINSIZEREL}")
-  string(REPLACE "/Ob1" "" CACHE_CXX_FLAGS_MINSIZEREL "${CACHE_CXX_FLAGS_MINSIZEREL}")
-
   # Check for data COMDATs (eq. to gcc's -fdata-sections)
   CxxCompilerFlagString (CXX_GW " /Gw")
   # Check for omission of unused COMDATs
@@ -243,6 +235,24 @@ foreach(cached_var ${OVERRIDE_CACHE_VARS})
   set(COMPUTED_${cached_var} ${CACHE_${cached_var}}
       CACHE INTERNAL "Our own settings for CMAKE_${cached_var}.")
   set(CMAKE_${cached_var} "${CACHE_${cached_var}} ${CMAKE_${cached_var}}")
+endforeach()
+
+# Remove some options from default build flags
+### FIXME: Also removes user-set options :(
+if(MSVC)
+  # More aggressive optimization flags for release configs
+  string(REPLACE "/Ob1" "" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+  string(REPLACE "/Ob1" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+  string(REPLACE "/Ob2" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+  string(REPLACE "/Ob2" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+  string(REPLACE "/Ob1" "" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
+  string(REPLACE "/Ob1" "" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL}")
+
+  string(REPLACE " /INCREMENTAL " "" CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO " ${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} ")
+  string(REPLACE " /INCREMENTAL " "" CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO " ${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} ")
+endif()
+
+foreach(cached_var ${OVERRIDE_CACHE_VARS})
   set_property(CACHE CMAKE_${cached_var}
                PROPERTY VALUE ${CMAKE_${cached_var}})
 endforeach()
