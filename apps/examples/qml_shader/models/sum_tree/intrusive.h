@@ -466,7 +466,7 @@ namespace sum_tree
       void update_sums (iterator it)
       {
         auto node = value_traits::to_node_ptr (*it);
-         tree_algo::update_sums (node);
+        tree_algo::update_ancestry_sums (node);
       }
 
       /**

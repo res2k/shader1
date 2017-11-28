@@ -322,4 +322,73 @@ public:
       TS_ASSERT_EQUALS(count, nodeCount)
     }
   }
+
+  void testCustomAddendChanged (void)
+  {
+    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    struct Node :
+      public boost::intrusive::set_base_hook<>,
+      public sum_hook
+    {
+      size_t value = 0;
+      size_t addend = 0;
+
+      bool operator< (const Node& other) const
+      { return value < other.value; }
+    };
+    typedef sum_tree::intrusive::rbtree<Node,
+                                        sum_tree::intrusive::sum_base<sum_hook>,
+                                        sum_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
+
+    std::vector<Node> nodeStorage;
+    tree_type tree;
+    static const size_t nodeCount = 5;
+
+    nodeStorage.reserve (nodeCount);
+    for (size_t i = 0; i < nodeCount; i++)
+    {
+      nodeStorage.emplace_back ();
+      auto& newNode = nodeStorage.back ();
+      newNode.value = i ;
+
+      tree.push_back (newNode);
+    }
+
+    TS_ASSERT_EQUALS (tree.root_sum(), 0);
+
+    static const size_t nodeAddends[nodeCount] = { 3, 1, 2, 1, 4 };
+
+    static const size_t expectedNodeSums[nodeCount] = { 0, 3, 4, 6, 7 };
+    static const size_t expectedRootSum = 11;
+    static const size_t expectedValues[expectedRootSum] = { 0, 0, 0, 1, 2, 2, 3, 4, 4, 4, 4 };
+
+    for (size_t i = 0; i < nodeCount; i++)
+    {
+      auto& node = nodeStorage[i];
+      node.addend = nodeAddends[i];
+      tree.update_sums (tree.iterator_to (node));
+    }
+
+    TS_ASSERT_EQUALS (tree.root_sum(), expectedRootSum);
+
+    for (size_t i = 0; i < boost::size (expectedValues); i++)
+    {
+      const auto& treeNode = *(tree.get_iterator_by_sum (i));
+      TS_ASSERT_EQUALS (treeNode.value, expectedValues[i]);
+    }
+
+    {
+      size_t count = 0;
+      for (const auto& treeNode : tree)
+      {
+        TS_ASSERT_LESS_THAN(count, nodeCount);
+        auto nodeIterator = tree.iterator_to (treeNode);
+        auto nodeSum = tree.get_sum_for_iterator (nodeIterator);
+        TS_ASSERT_EQUALS (nodeSum, expectedNodeSums[count]);
+        count++;
+      }
+      TS_ASSERT_EQUALS(count, nodeCount)
+    }
+  }
+
 };
