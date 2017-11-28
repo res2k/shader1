@@ -21,6 +21,7 @@
 #ifndef __BASE_FORMAT_FORMATTER_H__
 #define __BASE_FORMAT_FORMATTER_H__
 
+#include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/inc.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -117,26 +118,24 @@ namespace s1
     /**
      * Helper to declare a static formatter instance (for repeated use).
      */
+    template<const char* const Format>
     class StaticFormatter
     {
-      const char* format;
       std::once_flag formatterInit;
       boost::scoped_ptr<Formatter<> > formatter;
 
-      static void NewFormatter (StaticFormatter* this_)
+      static void NewFormatter (StaticFormatter<Format>* this_, const char* format)
       {
-        this_->formatter.reset (new Formatter<> (this_->format));
+        this_->formatter.reset (new Formatter<> (format));
         this_->formatter->CompactParsedFormat ();
       }
 
-      const Formatter<>& GetFormatter ()
+      const Formatter<>& GetFormatter (const char* format)
       {
-        std::call_once (formatterInit, &NewFormatter, this);
+        std::call_once (formatterInit, &NewFormatter, this, format);
         return *formatter;
       }
     public:
-      StaticFormatter (const char* format) : format (format) {}
-
       /**
       * Actual formatting.
       * \param dest Destination string.
@@ -146,7 +145,7 @@ namespace s1
       template<typename DestType, typename ...Args>
       void operator() (DestType& dest, const Args&... a)
       {
-        GetFormatter () (dest, a...);
+        GetFormatter (Format) (dest, a...);
       }
 
       /**
@@ -158,14 +157,15 @@ namespace s1
       template<typename DestType, typename ...Args>
       DestType to (const Args&... a)
       {
-        return GetFormatter ().to<DestType> (a...);
+        return GetFormatter (Format).to<DestType> (a...);
       }
     };
   } // namespace format
 
   /// Declare a StaticFormatter instance
-  #define DECLARE_STATIC_FORMATTER(Name, Format)      \
-    static format::StaticFormatter Name (Format)
+  #define DECLARE_STATIC_FORMATTER(Name, Format)                                              \
+    extern const char BOOST_PP_CAT(BOOST_PP_CAT(Name, _fmtstr), __LINE__)[] = Format;         \
+    static format::StaticFormatter<BOOST_PP_CAT(BOOST_PP_CAT(Name, _fmtstr), __LINE__)> Name
 } // namespace s1
 
 #endif // __BASE_FORMAT_FORMATTER_H__

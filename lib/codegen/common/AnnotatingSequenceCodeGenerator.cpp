@@ -260,15 +260,16 @@ namespace s1
     BOOST_PP_COMMA() DebugCommentArgHelper<BOOST_PP_CAT(A, N)>::FormatArg (BOOST_PP_CAT(a, N))
 
 #define _DEFINE_DEBUG_COMMENT(Z, ArgNum, Data)                                                \
+    DECLARE_STATIC_FORMATTER(BOOST_PP_CAT(DebugComment_fmt_, ArgNum), "// {0} ->"             \
+      BOOST_PP_REPEAT_FROM_TO_ ## Z (0, BOOST_PP_INC(ArgNum),                                 \
+        _GENERATE_FMT_PLACEHOLDER, _));                                                       \
+                                                                                              \
     template<BOOST_PP_ENUM_PARAMS_Z(Z, BOOST_PP_INC(ArgNum), typename A)>                     \
     void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const char* opStr            \
       BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
     {                                                                                         \
-      DECLARE_STATIC_FORMATTER(fmt, "// {0} ->"                                               \
-        BOOST_PP_REPEAT_FROM_TO_ ## Z (0, BOOST_PP_INC(ArgNum),                               \
-          _GENERATE_FMT_PLACEHOLDER, _));                                                     \
       uc::String commentStr;                                                                  \
-      fmt (commentStr, opStr                                                                  \
+      BOOST_PP_CAT(DebugComment_fmt_, ArgNum) (commentStr, opStr                              \
         BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_FMT_ARGUMENT, _));             \
       target->AddString (commentStr);                                                         \
     }
