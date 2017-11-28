@@ -23,9 +23,8 @@
 
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/inc.hpp>
-#include <boost/scoped_ptr.hpp>
 
-#include <mutex>
+#include <atomic>
 #include <vector>
 
 #include "FormatStringTraits.h"
@@ -121,21 +120,32 @@ namespace s1
     template<const char* const Format>
     class StaticFormatter
     {
-      std::once_flag formatterInit;
-      boost::scoped_ptr<Formatter<> > formatter;
-
-      static void NewFormatter (StaticFormatter<Format>* this_, const char* format)
-      {
-        this_->formatter.reset (new Formatter<> (format));
-        this_->formatter->CompactParsedFormat ();
-      }
+      std::atomic<Formatter<>*> formatter;
 
       const Formatter<>& GetFormatter (const char* format)
       {
-        std::call_once (formatterInit, &NewFormatter, this, format);
-        return *formatter;
+        Formatter<>* fmtPtr = formatter.load (std::memory_order_acquire);
+        if (!fmtPtr)
+        {
+          fmtPtr = new Formatter<> (format);
+          fmtPtr->CompactParsedFormat ();
+          Formatter<>* expectedPtr = nullptr;
+          if (!formatter.compare_exchange_strong (expectedPtr, fmtPtr))
+          {
+            delete fmtPtr;
+            fmtPtr = expectedPtr;
+          }
+        }
+        return *fmtPtr;
       }
     public:
+      StaticFormatter () : formatter (nullptr) {}
+      ~StaticFormatter ()
+      {
+        if (auto fmtPtr = formatter.load (std::memory_order_acquire))
+          delete fmtPtr;
+      }
+
       /**
       * Actual formatting.
       * \param dest Destination string.
