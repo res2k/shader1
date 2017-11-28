@@ -138,6 +138,10 @@ namespace s1
         }
         return *fmtPtr;
       }
+      const Formatter<>& GetFormatter ()
+      {
+        return GetFormatter (Format);
+      }
     public:
       StaticFormatter () : formatter (nullptr) {}
       ~StaticFormatter ()
@@ -155,7 +159,7 @@ namespace s1
       template<typename DestType, typename ...Args>
       void operator() (DestType& dest, const Args&... a)
       {
-        GetFormatter (Format) (dest, a...);
+        GetFormatter() (dest, a...);
       }
 
       /**
@@ -167,7 +171,7 @@ namespace s1
       template<typename DestType, typename ...Args>
       DestType to (const Args&... a)
       {
-        return GetFormatter (Format).to<DestType> (a...);
+        return GetFormatter().template to<DestType> (a...);
       }
     };
   } // namespace format
