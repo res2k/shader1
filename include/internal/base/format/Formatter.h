@@ -162,6 +162,10 @@ namespace s1
       }
     };
   } // namespace format
+
+  /// Declare a StaticFormatter instance
+  #define DECLARE_STATIC_FORMATTER(Name, Format)      \
+    static format::StaticFormatter Name (Format)
 } // namespace s1
 
 #endif // __BASE_FORMAT_FORMATTER_H__

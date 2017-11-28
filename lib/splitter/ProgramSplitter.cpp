@@ -55,8 +55,8 @@ namespace s1
       return sig;
     }
 
-    static format::StaticFormatter FormatTransferIdent ("tf${0}");
-    static format::StaticFormatter FormatTransferIdentN ("tf${0}${1}");
+    DECLARE_STATIC_FORMATTER(FormatTransferIdent, "tf${0}");
+    DECLARE_STATIC_FORMATTER(FormatTransferIdentN, "tf${0}${1}");
     
     ProgramSplitter::SplitFunctionsResult ProgramSplitter::GetSplitFunctions (
       const uc::String& originalIdent, const std::vector<unsigned int>& inputParamFreqFlags)

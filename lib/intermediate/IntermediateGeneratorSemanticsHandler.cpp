@@ -81,7 +81,7 @@ namespace s1
     {
     }
 
-    static format::StaticFormatter FormatTSArray ("A{0}");
+    DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
 
     static inline std::string GetBaseTypeString (parser::SemanticsHandler::BaseType base, unsigned int rows, unsigned int cols)
     {
@@ -165,8 +165,8 @@ namespace s1
       return boost::static_pointer_cast<TypeImpl> (CommonSemanticsHandler::GetAttributeType (expressionType, attr));
     }
 
-    static format::StaticFormatter FormatRegPrefixName ("{0}{1}");
-    static format::StaticFormatter FormatRegTmp ("{0}tmp{1}");
+    DECLARE_STATIC_FORMATTER(FormatRegPrefixName, "{0}{1}");
+    DECLARE_STATIC_FORMATTER(FormatRegTmp, "{0}tmp{1}");
 
     SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameImplSet& exportedNames)
     {

@@ -286,7 +286,7 @@ namespace s1
                           const std::vector<RegisterPtr>& inParams) override;
     };
 
-    static format::StaticFormatter FormatFoldReg ("$fold{0}");
+    DECLARE_STATIC_FORMATTER(FormatFoldReg, "$fold{0}");
 
     intermediate::RegisterPtr
     ConstantFolding::FoldingVisitor::NewConstReg (const intermediate::Sequence::TypePtr& type)

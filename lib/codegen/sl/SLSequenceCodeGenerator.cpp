@@ -158,7 +158,7 @@ namespace s1
         }
       }
 
-      static format::StaticFormatter FormatAssign ("{0} = {1};");
+      DECLARE_STATIC_FORMATTER(FormatAssign, "{0} = {1};");
 
       void SequenceCodeGenerator::CodegenVisitor::EmitAssign (const uc::String& destination,
                                                               const RegisterPtr& value)
@@ -197,7 +197,7 @@ namespace s1
         EmitFunctionCall (destination, function, owner->GetOutputRegisterName (source1).c_str ());
       }
 
-      static format::StaticFormatter FormatBinaryArgs ("{0}, {1}");
+      DECLARE_STATIC_FORMATTER(FormatBinaryArgs, "{0}, {1}");
 
       void SequenceCodeGenerator::CodegenVisitor::EmitFunctionCall (const RegisterPtr& destination,
                                                                     const char* function,
@@ -407,7 +407,7 @@ namespace s1
         EmitFunctionCall (destination, "length", source);
       }
 
-      static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
+      DECLARE_STATIC_FORMATTER(FormatMatrix, "{0}{1}x{2}");
 
       void SequenceCodeGenerator::CodegenVisitor::OpMakeMatrix (const RegisterPtr& destination,
                                                                 intermediate::BasicType compType,
@@ -610,8 +610,8 @@ namespace s1
         }
       }
 
-      static format::StaticFormatter FormatImpMapEntry (" {1} -> \"{0}\"\n");
-      static format::StaticFormatter FormatExpMapEntry (" {1} <- \"{0}\"\n");
+      DECLARE_STATIC_FORMATTER(FormatImpMapEntry, " {1} -> \"{0}\"\n");
+      DECLARE_STATIC_FORMATTER(FormatExpMapEntry, " {1} <- \"{0}\"\n");
 
       void SequenceCodeGenerator::CodegenVisitor::OpBlock (const intermediate::SequencePtr& seq,
                                                            const Sequence::IdentifierToRegMap& identToRegID_imp,
@@ -937,8 +937,8 @@ namespace s1
         return true;
       }
 
-      static format::StaticFormatter FormatDeclaration ("{0} {1}{2};");
-      static format::StaticFormatter FormatDeclarationInit ("{0} {1}{2} = {3};");
+      DECLARE_STATIC_FORMATTER(FormatDeclaration, "{0} {1}{2};");
+      DECLARE_STATIC_FORMATTER(FormatDeclarationInit, "{0} {1}{2} = {3};");
 
       void SequenceCodeGenerator::EmitDeclaration (
         const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,

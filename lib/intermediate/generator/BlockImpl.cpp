@@ -44,8 +44,8 @@ namespace s1
   {
     const char IntermediateGeneratorSemanticsHandler::BlockImpl::varReturnValueName[] = "$retval";
 
-    static format::StaticFormatter FormatCondName ("$cond{0}");
-    static format::StaticFormatter FormatRetvalName ("$retval{0}");
+    DECLARE_STATIC_FORMATTER(FormatCondName, "$cond{0}");
+    DECLARE_STATIC_FORMATTER(FormatRetvalName, "$retval{0}");
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                  ScopePtr innerScope)
@@ -528,7 +528,7 @@ namespace s1
                                   sequenceBuilder->GetIdentifierToRegisterMap ());
     }
 
-    static format::StaticFormatter FormatTernaryResult ("$tr{0}{1}");
+    DECLARE_STATIC_FORMATTER(FormatTernaryResult, "$tr{0}{1}");
 
     IntermediateGeneratorSemanticsHandler::NameImplPtr
     IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (const TypeImplPtr& resultType)
@@ -548,7 +548,7 @@ namespace s1
       return newVar;
     }
 
-    static format::StaticFormatter FormatImportedReg ("{0}_B{1}");
+    DECLARE_STATIC_FORMATTER(FormatImportedReg, "{0}_B{1}");
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
                                                                                       bool writeable)

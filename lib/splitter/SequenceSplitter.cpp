@@ -83,7 +83,7 @@ namespace s1
       return f;
     }
 
-    static format::StaticFormatter FormatOutput ("{0}$OUT{1}");
+    DECLARE_STATIC_FORMATTER(FormatOutput, "{0}$OUT{1}");
 
     void SequenceSplitter::InputVisitor::VisitEnd ()
     {
@@ -1440,7 +1440,7 @@ namespace s1
       return avail->second;
     }
 
-    static format::StaticFormatter FormatTransferIdent ("{0}$tf{1}");
+    DECLARE_STATIC_FORMATTER(FormatTransferIdent, "{0}$tf{1}");
 
     uc::String SequenceSplitter::GetTransferIdent (const uc::String& origName)
     {

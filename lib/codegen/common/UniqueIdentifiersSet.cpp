@@ -28,7 +28,7 @@ namespace s1
 {
   namespace codegen
   {
-    static format::StaticFormatter FormatUniqueID ("{0}_{1}");
+    DECLARE_STATIC_FORMATTER(FormatUniqueID, "{0}_{1}");
 
     uc::String UniqueIdentifiersSet::Get (const uc::String& identifier)
     {

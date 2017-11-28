@@ -42,7 +42,7 @@ namespace s1
       {
       }
 
-      static format::StaticFormatter FormatParam ("{0} {1} {2}{3}");
+      DECLARE_STATIC_FORMATTER(FormatParam, "{0} {1} {2}{3}");
 
       void FunctionCodeGenerator::ParamAdder::Add (const char* attr,
                                                    const uc::String& type,
@@ -115,7 +115,7 @@ namespace s1
         return Generate (funcName.c_str (), func, prog, frequency);
       }
 
-      static format::StaticFormatter FormatFuncDecl ("void {0} ({1})");
+      DECLARE_STATIC_FORMATTER(FormatFuncDecl, "void {0} ({1})");
 
       StringsArrayPtr FunctionCodeGenerator::Generate (const char* identifier,
                                                        const intermediate::ProgramFunctionPtr& func,

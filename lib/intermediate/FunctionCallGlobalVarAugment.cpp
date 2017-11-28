@@ -30,7 +30,7 @@ namespace s1
 {
   namespace intermediate
   {
-    static format::StaticFormatter FormatLevelSuffix ("{0}$B{1}");
+    DECLARE_STATIC_FORMATTER(FormatLevelSuffix, "{0}$B{1}");
 
     FunctionCallGlobalVarAugment::FunctionCallGlobalVarAugment (
       const SequenceBuilderPtr& newSequenceBuilder,

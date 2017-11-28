@@ -25,8 +25,11 @@
 
 #include "base/format/Formatter.tpp"
 
-static s1::format::StaticFormatter FormatUnhandledException ("Unhandled exception in {0}: {1}");
-static s1::format::StaticFormatter FormatUnhandledExceptionWithFunc ("Unhandled exception in {0} ({1}): {2}");
+namespace s1
+{
+  DECLARE_STATIC_FORMATTER(FormatUnhandledException, "Unhandled exception in {0}: {1}");
+  DECLARE_STATIC_FORMATTER(FormatUnhandledExceptionWithFunc, "Unhandled exception in {0} ({1}): {2}");
+} // namespace s1
 
 void _s1_print_unhandled_exception (const char* locationDescription, const char* function, const char* what)
 {
@@ -42,11 +45,11 @@ void _s1_print_unhandled_exception (const char* locationDescription, const char*
   s1::uc::String msg;
   if (function)
   {
-    msg = FormatUnhandledExceptionWithFunc.to<s1::uc::String> (locationDescription, function, whatStr);
+    msg = s1::FormatUnhandledExceptionWithFunc.to<s1::uc::String> (locationDescription, function, whatStr);
   }
   else
   {
-    msg = FormatUnhandledException.to<s1::uc::String> (locationDescription, whatStr);
+    msg = s1::FormatUnhandledException.to<s1::uc::String> (locationDescription, whatStr);
   }
   s1::PrintDebugMessage (msg);
 }

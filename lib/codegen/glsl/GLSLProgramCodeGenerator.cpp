@@ -47,7 +47,7 @@ namespace s1
         return static_cast<const Options&> (options);
       }
       
-      static format::StaticFormatter FormatTransferVal ("varying {0} v2f_{1}{2};");
+      DECLARE_STATIC_FORMATTER(FormatTransferVal, "varying {0} v2f_{1}{2};");
 
       StringsArrayPtr ProgramCodeGenerator::GeneratePreamble (const intermediate::ProgramPtr& prog, int frequency)
       {
@@ -81,8 +81,8 @@ namespace s1
         return resultStrings;
       }
 
-      static format::StaticFormatter FormatInputVarU ("uniform {0} {1}{2};");
-      static format::StaticFormatter FormatInputVarV ("attribute {0} {1}{2};");
+      DECLARE_STATIC_FORMATTER(FormatInputVarU, "uniform {0} {1}{2};");
+      DECLARE_STATIC_FORMATTER(FormatInputVarV, "attribute {0} {1}{2};");
 
       void ProgramCodeGenerator::GenerateEntryFunctionInputs (StringsArray& strings,
                                                               int progFreq,

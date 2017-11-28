@@ -162,7 +162,7 @@ namespace s1
         return std::move (p);
       }
 
-      static format::StaticFormatter FormatTransferID ("v2f_{0}");
+      DECLARE_STATIC_FORMATTER(FormatTransferID, "v2f_{0}");
 
       std::vector<SequenceCodeGenerator::InputTransferPair>
         SequenceCodeGenerator::GenerateTransfersIn () const

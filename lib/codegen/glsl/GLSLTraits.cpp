@@ -81,10 +81,10 @@ namespace s1
         return uc::String ();
       }
 
-      static format::StaticFormatter FormatTypeVector ("{0}vec{1}");
-      static format::StaticFormatter FormatTypeMatrixShort ("mat{0}");
-      static format::StaticFormatter FormatTypeMatrix ("mat{0}x{1}");
-      static format::StaticFormatter FormatSuffix ("{0}[{1}]");
+      DECLARE_STATIC_FORMATTER(FormatTypeVector, "{0}vec{1}");
+      DECLARE_STATIC_FORMATTER(FormatTypeMatrixShort, "mat{0}");
+      DECLARE_STATIC_FORMATTER(FormatTypeMatrix, "mat{0}x{1}");
+      DECLARE_STATIC_FORMATTER(FormatSuffix, "{0}[{1}]");
 
       uc::String Traits::FormatVector (intermediate::BasicType type, unsigned int componentCount) const
       {

@@ -35,7 +35,7 @@ namespace s1
 {
   namespace intermediate
   {
-    static format::StaticFormatter FormatRegGeneration ("{0}.{1}");
+    DECLARE_STATIC_FORMATTER(FormatRegGeneration, "{0}.{1}");
 
     Sequence::Register::Register (const uc::String& name, const TypePtr& originalType)
      : originalName (name), generation (0), name (name), originalType (originalType)

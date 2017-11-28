@@ -98,7 +98,7 @@ namespace s1
         }
       };
 
-      static format::StaticFormatter FormatPair ("({0}, {1})");
+      DECLARE_STATIC_FORMATTER(FormatPair, "({0}, {1})");
 
       template<typename T, typename U>
       struct DebugCommentArgHelper<std::pair<T, U> >
@@ -264,7 +264,7 @@ namespace s1
     void AnnotatingSequenceCodeGenerator::Visitor::DebugComment (const char* opStr            \
       BOOST_PP_REPEAT_ ## Z (BOOST_PP_INC(ArgNum), _GENERATE_METHOD_PARAM, _)) const          \
     {                                                                                         \
-      static format::StaticFormatter fmt ("// {0} ->"                                         \
+      DECLARE_STATIC_FORMATTER(fmt, "// {0} ->"                                               \
         BOOST_PP_REPEAT_FROM_TO_ ## Z (0, BOOST_PP_INC(ArgNum),                               \
           _GENERATE_FMT_PLACEHOLDER, _));                                                     \
       uc::String commentStr;                                                                  \
@@ -348,7 +348,7 @@ namespace s1
       DEBUG_COMMENT ("Cast", (destination)(destType)(source));
     }
 
-    static format::StaticFormatter FormatVector ("{0}{1}");
+    DECLARE_STATIC_FORMATTER(FormatVector, "{0}{1}");
 
     void AnnotatingSequenceCodeGenerator::Visitor::OpMakeVector (const RegisterPtr& destination,
                                                                  intermediate::BasicType compType,
@@ -383,7 +383,7 @@ namespace s1
       DEBUG_COMMENT ("VectorLength", (destination)(source));
     }
 
-    static format::StaticFormatter FormatMatrix ("{0}{1}x{2}");
+    DECLARE_STATIC_FORMATTER(FormatMatrix, "{0}{1}x{2}");
 
     void AnnotatingSequenceCodeGenerator::Visitor::OpMakeMatrix (const RegisterPtr& destination,
                                                                  intermediate::BasicType compType,
@@ -471,8 +471,8 @@ namespace s1
       DEBUG_COMMENT ("Compare", (destination)(op)(source1)(source2));
     }
 
-    static format::StaticFormatter FormatImpMapEntry (" {1} -> \"{0}\"\n");
-    static format::StaticFormatter FormatExpMapEntry (" {1} <- \"{0}\"\n");
+    DECLARE_STATIC_FORMATTER(FormatImpMapEntry, " {1} -> \"{0}\"\n");
+    DECLARE_STATIC_FORMATTER(FormatExpMapEntry, " {1} <- \"{0}\"\n");
 
     void AnnotatingSequenceCodeGenerator::Visitor::BeforeOpBlock (const Sequence::IdentifierToRegMap& identToRegID_imp)
     {
@@ -567,8 +567,8 @@ namespace s1
     {
     }
 
-    static format::StaticFormatter FormatSeqImpEntry (" \"{0}\" -> {1}\n");
-    static format::StaticFormatter FormatSeqExpEntry (" \"{0}\" <- {1}\n");
+    DECLARE_STATIC_FORMATTER(FormatSeqImpEntry, " \"{0}\" -> {1}\n");
+    DECLARE_STATIC_FORMATTER(FormatSeqExpEntry, " \"{0}\" <- {1}\n");
 
     void AnnotatingSequenceCodeGenerator::BeforeSequence (Visitor& visitor)
     {
