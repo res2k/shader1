@@ -173,19 +173,20 @@ if(MSVC)
   string(REPLACE "/Ob2" "" CACHE_CXX_FLAGS_RELEASE "${CACHE_CXX_FLAGS_RELEASE}")
   string(REPLACE "/Ob1" "" CACHE_C_FLAGS_MINSIZEREL "${CACHE_C_FLAGS_MINSIZEREL}")
   string(REPLACE "/Ob1" "" CACHE_CXX_FLAGS_MINSIZEREL "${CACHE_CXX_FLAGS_MINSIZEREL}")
-  # Re-enable certain optimizations
-  string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO /opt:ref" CACHE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CACHE_EXE_LINKER_FLAGS_RELWITHDEBINFO}")
-  string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO /opt:ref" CACHE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CACHE_SHARED_LINKER_FLAGS_RELWITHDEBINFO}")
 
   # Check for data COMDATs (eq. to gcc's -fdata-sections)
   CxxCompilerFlagString (CXX_GW " /Gw")
   # Check for omission of unused COMDATs
   CxxCompilerFlagString (CXX_ZCINLINE " /Zc:inline")
-  
+
+  # Apply more optimization flags
   SET(EXTRA_RELEASE_FLAGS "${CXX_GW}${CXX_ZCINLINE} ")
-  FlagStringAppend(CACHE_CXX_FLAGS_RELWITHDEBINFO "${EXTRA_RELEASE_FLAGS}")
-  FlagStringAppend(CACHE_CXX_FLAGS_RELEASE "${EXTRA_RELEASE_FLAGS}")
-  FlagStringAppend(CACHE_CXX_FLAGS_MINSIZEREL "${EXTRA_RELEASE_FLAGS}")
+  SET(EXTRA_RELEASE_LINK_FLAGS "/opt:ref /opt:icf")
+  foreach(release_mode RELEASE RELWITHDEBINFO MINSIZEREL)
+    FlagStringAppend(CACHE_CXX_FLAGS_${release_mode} "${EXTRA_RELEASE_FLAGS}")
+    FlagStringAppend(CACHE_EXE_LINKER_FLAGS_${release_mode} "${EXTRA_RELEASE_LINK_FLAGS}")
+    FlagStringAppend(CACHE_SHARED_LINKER_FLAGS_${release_mode} "${EXTRA_RELEASE_LINK_FLAGS}")
+  endforeach()
   
   # Check for extended optimized build debug info
   CxxCompilerFlagString (CXX_ZO " /Zo")
