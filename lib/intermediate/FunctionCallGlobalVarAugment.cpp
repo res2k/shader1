@@ -129,9 +129,9 @@ namespace s1
     RegisterPtr FunctionCallGlobalVarAugment::MapRegisterOut (const RegisterPtr& reg)
     {
       OriginalNameToGlobalMap::const_iterator origNameGlobal = originalNameToGlobal.find (reg->GetOriginalName ());
-      const uc::String& globalName = origNameGlobal->second;
       if (origNameGlobal != originalNameToGlobal.end ())
       {
+        const uc::String& globalName = origNameGlobal->second;
         GlobalVarRegsMap::const_iterator globalVarIt = globalVarRegsOut.find (globalName);
         RegisterPtr newReg;
         assert (globalVarIt != globalVarRegsOut.end ());
