@@ -31,8 +31,10 @@
 
 #include <algorithm>
 #include <atomic>
+#include <memory>
 #include <new>
 #include <unordered_set>
+#include <vector>
 
 #include <boost/optional.hpp>
 
