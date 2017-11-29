@@ -27,6 +27,7 @@ if(Qt5_FOUND)
     set(sum_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/sum_tree/t/sum_tree.h)
     CXXTEST_ADD_TEST(test_sum_tree test_sum_tree.cpp
                     ${sum_tree_test_sources})
+    set_property(SOURCE test_sum_tree.cpp PROPERTY SKIP_AUTOGEN ON)
     target_include_directories(test_sum_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
     set_property(TARGET test_sum_tree PROPERTY CXX_STANDARD 11)
     set_property(TARGET test_sum_tree PROPERTY EXCLUDE_FROM_ALL YES)
@@ -34,6 +35,7 @@ if(Qt5_FOUND)
   endif()
 
   qt5_add_resources(MATERIAL_ICONS_QRC material_icons/MaterialIcons.qrc OPTIONS --compress 9 --threshold 0)
+  set_property(SOURCE ${MATERIAL_ICONS_QRC} PROPERTY SKIP_AUTOGEN ON)
   set(qml_shader_material_icons_sources
       material_icons/MaterialIcons.cpp
       material_icons/MaterialIcons.h
@@ -45,6 +47,7 @@ if(Qt5_FOUND)
                         Qt5::Gui)
 
   qt5_add_resources(QML_SHADER_QRC qml_shader.qrc OPTIONS --compress 9 --threshold 0)
+  set_property(SOURCE ${QML_SHADER_QRC} PROPERTY SKIP_AUTOGEN ON)
   set(qml_shader_sources
       main.cpp
       AssetBrowsingModel.cpp
