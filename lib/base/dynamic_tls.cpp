@@ -34,7 +34,6 @@
 #include <new>
 #include <unordered_set>
 
-#include <boost/dynamic_bitset.hpp>
 #include <boost/optional.hpp>
 
 namespace s1
