@@ -108,6 +108,9 @@ if(NOT MSVC)
   set(CMAKE_THREAD_LIBS_INIT "${CXX_NO_AS_NEEDED_FLAG} ${CMAKE_THREAD_LIBS_INIT}")
 endif()
 
+# Use critical sections instead of std::mutex with MSVC
+set(S1_PREFER_CRITICAL_SECTIONS ON CACHE BOOL "Whether to use critical sections instead of std::mutex with MSVC")
+
 # Build shared libs by default
 set(S1_BUILD_SHARED ON CACHE BOOL "Whether to build Shader1 as a shared library")
 set(BUILD_SHARED_LIBS ${S1_BUILD_SHARED})

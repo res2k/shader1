@@ -23,9 +23,8 @@
 
 #include "s1/DebugMessageHandler.h"
 
+#include "Mutex.h"
 #include "uc/String.h"
-
-#include <mutex>
 
 namespace s1
 {
@@ -74,7 +73,7 @@ namespace s1
     /// Global debug message handler
     struct GlobalDebugMessageHandler
     {
-      std::mutex mutex;
+      Mutex mutex;
       DebugMessageHandler handler;
     };
     extern GlobalDebugMessageHandler globalHandler;
@@ -85,7 +84,7 @@ namespace s1
   template<typename F>
   static typename std::result_of<F (DebugMessageHandler&)>::type AccessGlobalDebugMessageHandler (F function)
   {
-    std::lock_guard<std::mutex> lock_globalHandler (detail::globalHandler.mutex);
+    std::lock_guard<Mutex> lock_globalHandler (detail::globalHandler.mutex);
     return function (detail::globalHandler.handler);
   }
 

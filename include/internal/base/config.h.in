@@ -27,4 +27,7 @@
 // whether malloc_usable_size() is available
 #cmakedefine HAVE_MALLOC_USABLE_SIZE @HAVE_MALLOC_USABLE_SIZE@
 
+// whether to use critical sections instead of std::mutex with MSVC
+#cmakedefine S1_PREFER_CRITICAL_SECTIONS
+
 #endif // __BASE_CONFIG_H__

@@ -2,6 +2,7 @@ set(base_sources
     DebugMessageHandler.cpp
     dynamic_tls.cpp
     math_error_handler.cpp
+    Mutex.cpp
     PrintAssert.cpp
     format/Formatter.cpp
     ${S1_INC}/base/common.h

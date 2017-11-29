@@ -24,13 +24,13 @@
 #include "base/dynamic_tls.h"
 
 #include "base/bit_scan.h"
+#include "base/Mutex.h"
 
 #include <malloc.h>
 #include <string.h>
 
 #include <algorithm>
 #include <atomic>
-#include <mutex>
 #include <new>
 #include <unordered_set>
 
@@ -445,7 +445,7 @@ namespace s1
 
     struct GlobalData
     {
-      std::mutex mutex;
+      Mutex mutex;
       /// Total number of slots required in per-thread data
       std::atomic<size_t> requiredSlotCount;
       /// Bits indicating used slots
@@ -468,7 +468,7 @@ namespace s1
       PerThreadData ()
       {
         // Store ourselves in global set of known threads
-        std::lock_guard<std::mutex> lockGlobal (globalData.mutex);
+        std::lock_guard<Mutex> lockGlobal (globalData.mutex);
         globalData.threads.insert (this);
       }
       ~PerThreadData ()
@@ -478,7 +478,7 @@ namespace s1
         size_t n = 0;
 
         {
-          std::lock_guard<std::mutex> lockGlobal (globalData.mutex);
+          std::lock_guard<Mutex> lockGlobal (globalData.mutex);
           // For each seen slot:
           size_t num_slots = std::min (valuesSize, globalData.slotInfo.size());
           for (size_t i = 0; i < num_slots; i++)
@@ -517,7 +517,7 @@ namespace s1
 
     Handle Alloc (DestructorFunc dtor, uintptr_t dtorContext)
     {
-      std::lock_guard<std::mutex> lockGlobal (globalData.mutex);
+      std::lock_guard<Mutex> lockGlobal (globalData.mutex);
 
       // Find an unused handle
       size_t unused_index = globalData.usedSlots.find_first_unset ();
@@ -548,7 +548,7 @@ namespace s1
       void** slot_values;
       size_t num_slot_values = 0;
       {
-        std::lock_guard<std::mutex> lockGlobal (globalData.mutex);
+        std::lock_guard<Mutex> lockGlobal (globalData.mutex);
 
         if ((slot >= globalData.usedSlots.size()) || !globalData.usedSlots.test (slot))
           return; // Invalid slot index
