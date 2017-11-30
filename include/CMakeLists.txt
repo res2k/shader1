@@ -47,3 +47,5 @@ if(CXXTEST_FOUND)
     AutoBuildTest(test_Api_${std})
   endforeach()
 endif()
+
+add_subdirectory(internal)
