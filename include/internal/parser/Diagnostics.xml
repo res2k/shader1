@@ -1,0 +1,54 @@
+<!DOCTYPE errors [
+  <!--ENTITY lsquo "&#x2018;">
+  <!ENTITY rsquo "&#x2019;">
+  <!ENTITY ndash "&#x2013;"-->
+  <!ENTITY lsquo "'">
+  <!ENTITY rsquo "'">
+  <!ENTITY ndash "-">
+]>
+<!--
+    Shader1
+    Copyright (c) 2017 Frank Richter
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+-->
+<!--
+Diagnostic error definitions for the various components involved in compilation.
+-->
+<diagnostics>
+  <component name="parser">
+    <error id="UnexpectedToken">
+      <descr>Unexpected token</descr>
+    </error>
+    <error id="IdentifierAlreadyDeclared">
+      <descr>Identifier already declared</descr>
+    </error>
+    <error id="IdentifierUndeclared">
+      <descr>Identifier undeclared</descr>
+    </error>
+    <error id="DeclarationNotAllowedInScope">
+      <descr>Declaration not allowed in this scope</descr>
+    </error>
+    <error id="ExpectedTypeName">
+      <descr>Expected type name</descr>
+    </error>
+    <error id="OutParameterWithDefault">
+      <descr>&lsquo;out&rsquo; parameter with default value</descr>
+    </error>
+    <error id="ConflictingQualifiersForInParam">
+      <descr>Conflicting qualifiers for &lsquo;in&rsquo; parameter</descr>
+    </error>
+    <error id="QualifiersNotAllowed">
+      <descr>Qualifiers not allowed here</descr>
+    </error>
+  </component>
+</diagnostics>

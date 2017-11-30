@@ -1,5 +1,5 @@
 # Generate diagnostics headers
-set(DIAGNOSTICS_COMPS)
+set(DIAGNOSTICS_COMPS parser)
 
 add_custom_target(generate_Diagnostics)
 

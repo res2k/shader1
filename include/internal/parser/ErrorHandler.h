@@ -18,7 +18,7 @@
 #ifndef __PARSER_ERRORHANDLER_H__
 #define __PARSER_ERRORHANDLER_H__
 
-#include "ErrorCode.h"
+#include "parser/Diagnostics.h"
 #include "lexer/Lexer.h"
 
 namespace s1
@@ -27,7 +27,7 @@ namespace s1
   {
     struct ErrorHandler
     {
-      virtual void ParseError (ErrorCode code, const Lexer::Token& encounteredToken,
+      virtual void ParseError (Error code, const Lexer::Token& encounteredToken,
 			       Lexer::TokenType expectedToken) {}
     };
   } // namespace parser

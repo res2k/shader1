@@ -18,7 +18,7 @@
 #ifndef __PARSER_EXCEPTION_H__
 #define __PARSER_EXCEPTION_H__
 
-#include "ErrorCode.h"
+#include "parser/Diagnostics.h"
 #include "lexer/Lexer.h"
 
 #include <exception>
@@ -29,19 +29,19 @@ namespace s1
   {
     class Exception : public std::exception
     {
-      ErrorCode code;
+      Error code;
       Lexer::Token encounteredToken;
       Lexer::TokenType expectedToken;
     public:
       ~Exception() throw () {}
       
-      Exception (ErrorCode code) : code (code), expectedToken (lexer::Invalid) {}
-      Exception (ErrorCode code, const Lexer::Token& encounteredToken,
+      Exception (Error code) : code (code), expectedToken (lexer::Invalid) {}
+      Exception (Error code, const Lexer::Token& encounteredToken,
                  Lexer::TokenType expectedToken = lexer::Invalid)
        : code (code), encounteredToken (encounteredToken),
          expectedToken (expectedToken) {}
       
-      ErrorCode GetCode() const { return code; }
+      Error GetCode() const { return code; }
       Lexer::Token GetEncounteredToken() const { return encounteredToken; }
       Lexer::TokenType GetExpectedToken() const { return expectedToken; }
       

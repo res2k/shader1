@@ -326,7 +326,7 @@ public:
     TS_ASSERT_THROWS_ASSERT(
       testScope->ResolveIdentifier (s1::uc::String ("a")),
       const s1::parser::Exception& e,
-      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::IdentifierUndeclared)
+      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::Error::IdentifierUndeclared)
     );
   }
 

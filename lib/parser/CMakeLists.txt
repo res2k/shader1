@@ -2,14 +2,16 @@ set(parser_sources
     CommonSemanticsHandler.cpp
     Parser.cpp
     ${S1_INC}/parser/CommonSemanticsHandler.h
-    ${S1_INC}/parser/ErrorCode.h
     ${S1_INC}/parser/ErrorHandler.h
     ${S1_INC}/parser/Exception.h
     ${S1_INC}/parser/Parser.h
-    ${S1_INC}/parser/SemanticsHandler.h)
+    ${S1_INC}/parser/SemanticsHandler.h
+    ${CMAKE_BINARY_DIR}/include/internal/parser/Diagnostics.h
+    )
 s1_add_library(parser
                SOURCES ${parser_sources}
                LINK lexer)
+add_dependencies(parser generate_Diagnostics_parser)
 IF(S1LIB_PDB)
   target_compile_options(parser PRIVATE ${S1LIB_PDB})
 ENDIF()

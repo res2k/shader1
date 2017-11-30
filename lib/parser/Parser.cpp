@@ -19,7 +19,7 @@
 
 #include "parser/Parser.h"
 
-#include "parser/ErrorCode.h"
+#include "parser/Diagnostics.h"
 #include "parser/Exception.h"
 
 #include <assert.h>
@@ -79,12 +79,12 @@ namespace s1
   void Parser::Expect (Lexer::TokenType tokenType)
   {
     if (currentToken.typeOrID != tokenType)
-      throw Exception (parser::UnexpectedToken, currentToken, tokenType);
+      throw Exception (parser::Error::UnexpectedToken, currentToken, tokenType);
   }
   
   void Parser::UnexpectedToken ()
   {
-    throw Exception (parser::UnexpectedToken, currentToken);
+    throw Exception (parser::Error::UnexpectedToken, currentToken);
   }
 
   void Parser::ParseProgram ()
@@ -741,7 +741,7 @@ namespace s1
         }
         else
         {
-          throw Exception (parser::ExpectedTypeName, currentToken);
+          throw Exception (parser::Error::ExpectedTypeName, currentToken);
         }
         NextToken ();
         return type;
@@ -1016,18 +1016,18 @@ namespace s1
         // Handle default value
         NextToken ();
         if (paramDirection == SemanticsHandler::Scope::dirOut)
-          throw Exception (OutParameterWithDefault);
+          throw Exception (Error::OutParameterWithDefault);
         newParam.defaultValue = ParseExpression (scope);
       }
       if ((((paramDirection & SemanticsHandler::Scope::dirIn) == 0)
           || ((paramDirection & SemanticsHandler::Scope::dirOut) != 0))
         && (numFreqQualifiers > 0))
       {
-        throw Exception (QualifiersNotAllowed);
+        throw Exception (Error::QualifiersNotAllowed);
       }
       else if (numFreqQualifiers > 1)
       {
-        throw Exception (ConflictingQualifiersForInParam);
+        throw Exception (Error::ConflictingQualifiersForInParam);
       }
       params.push_back (newParam);
       if (currentToken.typeOrID == lexer::Separator)

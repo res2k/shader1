@@ -31,7 +31,7 @@ void TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::Strin
   IdentifierMap::iterator ident = identifiers.find (identifier);
   if (ident != identifiers.end())
   {
-    throw parser::Exception (parser::IdentifierAlreadyDeclared);
+    throw parser::Exception (parser::Error::IdentifierAlreadyDeclared);
   }
   if (parent)
     parent->CheckIdentifierUnique (identifier);
@@ -84,6 +84,6 @@ NamePtr TestSemanticsHandler::TestScope::ResolveIdentifier (const s1::uc::String
   }
   if (parent)
     return parent->ResolveIdentifier (identifier);
-  throw parser::Exception (parser::IdentifierUndeclared);
+  throw parser::Exception (parser::Error::IdentifierUndeclared);
 }
 

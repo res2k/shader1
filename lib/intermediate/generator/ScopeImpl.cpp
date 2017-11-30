@@ -42,7 +42,7 @@ namespace s1
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-        throw parser::Exception (parser::IdentifierAlreadyDeclared);
+        throw parser::Exception (parser::Error::IdentifierAlreadyDeclared);
       }
       if (parent)
         parent->CheckIdentifierUnique (identifier);
@@ -53,7 +53,7 @@ namespace s1
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if ((ident != identifiers.end()) && (ident->second->GetType() != Name::Function))
       {
-        throw parser::Exception (parser::IdentifierAlreadyDeclared);
+        throw parser::Exception (parser::Error::IdentifierAlreadyDeclared);
       }
       if ((ident != identifiers.end()) && (ident->second)) return ident->second;
       if (parent)
@@ -115,7 +115,7 @@ namespace s1
                                                                             const FunctionFormalParameters& params)
     {
       if (level >= Function)
-        throw parser::Exception (parser::DeclarationNotAllowedInScope);
+        throw parser::Exception (parser::Error::DeclarationNotAllowedInScope);
       NamePtr funcName (CheckIdentifierIsFunction (identifier));
       if (funcName == NamePtr ())
       {
@@ -177,7 +177,7 @@ namespace s1
     {
       NameImplPtr name (ResolveIdentifierInternal (identifier));
       if (!name)
-        throw parser::Exception (parser::IdentifierUndeclared);
+        throw parser::Exception (parser::Error::IdentifierUndeclared);
       return name;
     }
 
@@ -197,7 +197,7 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
     {
       if (level >= Function)
-        throw parser::Exception (parser::DeclarationNotAllowedInScope);
+        throw parser::Exception (parser::Error::DeclarationNotAllowedInScope);
 
       const uc::String& identifier = builtin->GetIdentifier();
       const FunctionFormalParameters& params = builtin->GetFormalParameters();

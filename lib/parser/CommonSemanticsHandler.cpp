@@ -396,7 +396,7 @@ namespace s1
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-        throw Exception (parser::IdentifierAlreadyDeclared);
+        throw Exception (parser::Error::IdentifierAlreadyDeclared);
       }
       if (parent)
         parent->CheckIdentifierUnique (identifier);
@@ -433,7 +433,7 @@ namespace s1
                                                       const FunctionFormalParameters& params)
     {
       if (level >= Function)
-        throw Exception (DeclarationNotAllowedInScope);
+        throw Exception (Error::DeclarationNotAllowedInScope);
       CheckIdentifierUnique (identifier);
       NamePtr newName (new CommonName (identifier, Name::Function, returnType));
       identifiers[identifier] = newName;
@@ -455,7 +455,7 @@ namespace s1
       }
       if (parent)
         return parent->ResolveIdentifier (identifier);
-      throw Exception (IdentifierUndeclared);
+      throw Exception (Error::IdentifierUndeclared);
     }
     
     CommonSemanticsHandler::ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,

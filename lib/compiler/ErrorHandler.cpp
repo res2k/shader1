@@ -26,14 +26,14 @@ namespace s1
 namespace compiler
 {
   
-void ErrorHandler::ParseError (parser::ErrorCode code, const Lexer::Token& encounteredToken,
+void ErrorHandler::ParseError (parser::Error code, const Lexer::Token& encounteredToken,
                                lexer::TokenType expectedToken)
 {
   const char* errorStr = "???";
   switch (code)
   {
 #define ERRORCODE(X)	\
-  case parser::X: errorStr = #X; break
+  case parser::Error::X: errorStr = #X; break
   ERRORCODE(UnexpectedToken);
   ERRORCODE(IdentifierAlreadyDeclared);
   ERRORCODE(IdentifierUndeclared);
