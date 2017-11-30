@@ -57,13 +57,13 @@ namespace s1
       if (candidates.size() == 0)
       {
         // No candidates
-        ExpressionError (NoMatchingFunctionOverload);
+        ExpressionError (Error::NoMatchingFunctionOverload);
         return false;
       }
       else if (candidates.size() > 1)
       {
         // Ambiguous overload
-        ExpressionError (AmbiguousFunctionOverload);
+        ExpressionError (Error::AmbiguousFunctionOverload);
         return false;
       }
       overload = candidates[0];
@@ -167,7 +167,7 @@ namespace s1
           RegisterPtr outReg (fetchedRegs[i].second);
           if (!outReg)
           {
-            ExpressionError (ActualParameterNotAnLValue);
+            ExpressionError (Error::ActualParameterNotAnLvalue);
             paramsOkay = false;
             continue;
           }

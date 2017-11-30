@@ -163,7 +163,7 @@ namespace s1
       RegisterPtr actualTarget (exprImpl->AddToSequence (block, Intermediate, true));
       if (!actualTarget)
       {
-        ExpressionError (SwizzledExpressionNotAnLValue);
+        ExpressionError (Error::SwizzledExpressionNotAnLvalue);
         return;
       }
       
@@ -181,7 +181,7 @@ namespace s1
         unsigned int comp = attr.GetSwizzleComp (c);
         if (compDefined & (1 << comp))
         {
-          ExpressionError (MultipleUseOfComponentInLValueSwizzle);
+          ExpressionError (Error::MultipleUseOfComponentInLvalueSwizzle);
           return;
         }
 

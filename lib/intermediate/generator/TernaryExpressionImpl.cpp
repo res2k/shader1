@@ -64,7 +64,7 @@ namespace s1
         
       if (!valueType)
       {
-        ExpressionError (TernaryExpressionTypesIncompatible);
+        ExpressionError (Error::TernaryExpressionTypesIncompatible);
         return TypeImplPtr();
       }
       

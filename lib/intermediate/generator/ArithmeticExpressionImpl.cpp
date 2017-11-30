@@ -69,13 +69,13 @@ namespace s1
       if (!baseType1->CompatibleLossy (*(handler->GetFloatType().get()))
         || !baseType2->CompatibleLossy (*(handler->GetFloatType().get())))
       {
-        ExpressionError (OperandTypesInvalid);
+        ExpressionError (Error::OperandTypesInvalid);
         return TypeImplPtr();
       }
       
       if ((vectorDim1 != 0) && (vectorDim2 != 0) && (vectorDim1 != vectorDim2))
       {
-        ExpressionError (OperandTypesIncompatible);
+        ExpressionError (Error::OperandTypesIncompatible);
         return TypeImplPtr();
       }
       
@@ -102,7 +102,7 @@ namespace s1
         
       if (!valueType)
       {
-        ExpressionError (OperandTypesIncompatible);
+        ExpressionError (Error::OperandTypesIncompatible);
         return TypeImplPtr();
       }
       

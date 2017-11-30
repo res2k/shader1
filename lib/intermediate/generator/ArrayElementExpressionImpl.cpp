@@ -48,7 +48,7 @@ namespace s1
       if (!exprType) return TypeImplPtr(); // Assume error already handled
       if (exprType->typeClass != TypeImpl::Array)
       {
-        ExpressionError (NotAnArray);
+        ExpressionError (Error::NotAnArray);
         return TypeImplPtr();
       }
       return boost::static_pointer_cast<TypeImpl> (exprType->avmBase);
@@ -66,7 +66,7 @@ namespace s1
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
       {
-        ExpressionError (IndexNotAnInteger);
+        ExpressionError (Error::IndexNotAnInteger);
         return RegisterPtr();
       }
       
@@ -124,7 +124,7 @@ namespace s1
       RegisterPtr indexReg (indexExprImpl->AddToSequence (block, Index));
       if (!arrayRegDst)
       {
-        ExpressionError (ArrayNotAnLValue);
+        ExpressionError (Error::ArrayNotAnLvalue);
         return;
       }
       if (!arrayRegSrc || !indexReg) return; // Assume error already handled

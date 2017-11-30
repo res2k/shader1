@@ -62,21 +62,21 @@ void ErrorHandler::ParseError (parser::Error code, const Lexer::Token& encounter
   std::cerr << std::endl;
 }
 
-void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
+void ErrorHandler::IntermediateError (s1::intermediate::Error code)
 {
   const char* errorStr = "???";
   switch (code)
   {
 #define ERRORCODE(X)	\
-  case intermediate::X: errorStr = #X; break
+  case intermediate::Error::X: errorStr = #X; break
   ERRORCODE(OperandTypesIncompatible);
   ERRORCODE(OperandTypesInvalid);
   ERRORCODE(AssignmentTypesIncompatible);
-  ERRORCODE(AssignmentTargetIsNotAnLValue);
+  ERRORCODE(AssignmentTargetIsNotAnLvalue);
   ERRORCODE(InvalidTypeCast);
   ERRORCODE(NoMatchingFunctionOverload);
   ERRORCODE(AmbiguousFunctionOverload);
-  ERRORCODE(ActualParameterNotAnLValue);
+  ERRORCODE(ActualParameterNotAnLvalue);
   ERRORCODE(TernaryExpressionTypesIncompatible);
   ERRORCODE(NumberParseError);
   ERRORCODE(TooManyTypeCtorArgs);
@@ -84,9 +84,9 @@ void ErrorHandler::IntermediateError (s1::intermediate::ErrorCode code)
   ERRORCODE(InvalidAttribute);
   ERRORCODE(NotAnArray);
   ERRORCODE(IndexNotAnInteger);
-  ERRORCODE(SwizzledExpressionNotAnLValue);
-  ERRORCODE(MultipleUseOfComponentInLValueSwizzle);
-  ERRORCODE(ArrayNotAnLValue);
+  ERRORCODE(SwizzledExpressionNotAnLvalue);
+  ERRORCODE(MultipleUseOfComponentInLvalueSwizzle);
+  ERRORCODE(ArrayNotAnLvalue);
 #undef ERRORCODE
   }
   

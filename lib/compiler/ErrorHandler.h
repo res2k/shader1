@@ -18,7 +18,7 @@
 #ifndef __ERRORHANDLER_H__
 #define __ERRORHANDLER_H__
 
-#include "intermediate/ErrorCode.h"
+#include "intermediate/Diagnostics.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/ErrorHandler.h"
 
@@ -42,7 +42,7 @@ public:
 		   s1::Lexer::TokenType expectedToken) override;
   /** @} */
   
-  void IntermediateError (s1::intermediate::ErrorCode code);
+  void IntermediateError (s1::intermediate::Error code);
 };
 
 } // namespace compiler

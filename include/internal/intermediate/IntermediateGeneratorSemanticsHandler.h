@@ -31,7 +31,7 @@ namespace s1
 {
   namespace intermediate
   {
-    enum ErrorCode : int;
+    enum struct Error : unsigned int;
 
     class IntermediateGeneratorSemanticsHandler :
       public s1::parser::CommonSemanticsHandler
@@ -131,7 +131,7 @@ namespace s1
        * @{ */
       // TODO: void Warning ()
       /// Signal an error in intermediate generation
-      void ExpressionError (const ExpressionContext& context, ErrorCode code);
+      void ExpressionError (const ExpressionContext& context, Error code);
       /** @} */
 
       /**\name Basic types
@@ -165,7 +165,7 @@ namespace s1
       static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
 
-      typedef OUTCOME_V2_NAMESPACE::result<void, ErrorCode> result_void;
+      typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
       result_void GenerateCast (SequenceBuilder& seqBuilder,
                                 const RegisterPtr& castDestination,
                                 const TypeImplPtr& typeDestination,

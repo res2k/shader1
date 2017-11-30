@@ -365,7 +365,7 @@ public:
     // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignMalformedInput1 (void)
@@ -389,7 +389,7 @@ public:
     // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignMalformedInput2 (void)
@@ -413,7 +413,7 @@ public:
     // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignMalformedInput3 (void)
@@ -437,7 +437,7 @@ public:
     // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignUIntOverflow (void)
@@ -464,7 +464,7 @@ public:
     // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignIntUnderflow (void)
@@ -491,7 +491,7 @@ public:
     // TODO: Need to get error code via error handler
     TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
                             const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::NumberParseError));
+                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
   }
 
   /* TODO: uint underflow, int overflow

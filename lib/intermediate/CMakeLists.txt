@@ -15,7 +15,6 @@ file(GLOB intermediate_sources
      ${S1_INC}/intermediate/BasicType.h
      ${S1_INC}/intermediate/BuiltinFunction.h
      ${S1_INC}/intermediate/CloningSequenceVisitor.h
-     ${S1_INC}/intermediate/ErrorCode.h
      ${S1_INC}/intermediate/Exception.h
      ${S1_INC}/intermediate/FunctionGraph.h
      ${S1_INC}/intermediate/IntermediateGeneratorSemanticsHandler.h
@@ -25,7 +24,9 @@ file(GLOB intermediate_sources
      ${S1_INC}/intermediate/Sequence.h
      ${S1_INC}/intermediate/SequenceBuilder.h
      ${S1_INC}/intermediate/SequenceVisitor.h
-     ${S1_INC}/intermediate/forwarddecl.h)
+     ${S1_INC}/intermediate/forwarddecl.h
+     ${CMAKE_BINARY_DIR}/include/internal/intermediate/Diagnostics.h
+     )
 
 include_directories(generator .)
 add_subdirectory(generator)
@@ -34,6 +35,7 @@ add_subdirectory(SequenceOp)
 s1_add_library(intermediate
                SOURCES ${intermediate_sources}
                LINK intermediate_generator intermediate_seqop parser)
+add_dependencies(intermediate generate_Diagnostics_intermediate)
 IF(S1LIB_PDB)
   target_compile_options(intermediate_generator PRIVATE ${S1LIB_PDB})
   target_compile_options(intermediate_seqop PRIVATE ${S1LIB_PDB})

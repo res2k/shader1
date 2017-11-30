@@ -75,7 +75,7 @@ namespace s1
 
       if (!valueType)
       {
-        ExpressionError (OperandTypesInvalid);
+        ExpressionError (Error::OperandTypesInvalid);
         return TypeImplPtr();
       }
       

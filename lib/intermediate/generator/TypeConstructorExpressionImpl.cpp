@@ -135,12 +135,12 @@ namespace s1
         {
           if (params.size() > 1)
           {
-            ExpressionError (TooManyTypeCtorArgs);
+            ExpressionError (Error::TooManyTypeCtorArgs);
             return RegisterPtr();
           }
           if (params.size() < 1)
           {
-            ExpressionError (TooFewTypeCtorArgs);
+            ExpressionError (Error::TooFewTypeCtorArgs);
             return RegisterPtr();
           }
           
@@ -195,12 +195,12 @@ namespace s1
           {
             if (srcRegs.size() > desiredDim)
             {
-              ExpressionError (TooManyTypeCtorArgs);
+              ExpressionError (Error::TooManyTypeCtorArgs);
               return RegisterPtr();
             }
             if (srcRegs.size() < desiredDim)
             {
-              ExpressionError (TooFewTypeCtorArgs);
+              ExpressionError (Error::TooFewTypeCtorArgs);
               return RegisterPtr ();
             }
           }

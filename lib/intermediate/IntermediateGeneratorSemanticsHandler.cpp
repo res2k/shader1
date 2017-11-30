@@ -81,10 +81,10 @@ namespace s1
     {
     }
 
-    void IntermediateGeneratorSemanticsHandler::ExpressionError (const ExpressionContext& context, ErrorCode code)
+    void IntermediateGeneratorSemanticsHandler::ExpressionError (const ExpressionContext& context, Error code)
     {
       // TODO: Actual propagation to a handler
-      fprintf (stderr, "intermediate generation error: %d\n", static_cast<int> (code));
+      fprintf (stderr, "intermediate generation error: %u\n", static_cast<unsigned int> (code));
     }
 
     DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
@@ -402,7 +402,7 @@ namespace s1
         break;
       }
 
-      return InvalidTypeCast;
+      return Error::InvalidTypeCast;
     }
 
     void IntermediateGeneratorSemanticsHandler::CompleteProgram ()
@@ -602,7 +602,7 @@ namespace s1
       Attribute attrInfo (IdentifyAttribute (attr));
       if (attrInfo.attrClass == Attribute::Unknown)
       {
-        ExpressionError (ExpressionContext(), InvalidAttribute);
+        ExpressionError (ExpressionContext(), Error::InvalidAttribute);
         return ExpressionPtr();
       }
       return boost::make_shared<AttributeExpressionImpl> (this, ExpressionContext(), expr, attrInfo);

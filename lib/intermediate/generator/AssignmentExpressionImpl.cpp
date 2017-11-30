@@ -57,7 +57,7 @@ namespace s1
 
       if (!valueType->CompatibleLossy (*(targetType.get())))
       {
-        ExpressionError (AssignmentTypesIncompatible);
+        ExpressionError (Error::AssignmentTypesIncompatible);
         return TypeImplPtr();
       }
       

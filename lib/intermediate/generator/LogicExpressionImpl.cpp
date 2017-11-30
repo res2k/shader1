@@ -52,7 +52,7 @@ namespace s1
       if (!type1->IsEqual (*(handler->GetBoolType().get()))
         || !type2->IsEqual (*(handler->GetBoolType().get())))
       {
-        ExpressionError (OperandTypesInvalid);
+        ExpressionError (Error::OperandTypesInvalid);
         return TypeImplPtr();
       }
       

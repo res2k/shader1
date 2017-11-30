@@ -31,7 +31,7 @@ namespace s1
       ExpressionContext context;
 
       /// Call handler 'ExpressionError' method
-      void ExpressionError (ErrorCode code);
+      void ExpressionError (Error code);
     public:
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                       ExpressionContext&& context);

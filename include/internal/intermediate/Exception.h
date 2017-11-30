@@ -18,7 +18,7 @@
 #ifndef __INTERMEDIATE_EXCEPTION_H__
 #define __INTERMEDIATE_EXCEPTION_H__
 
-#include "ErrorCode.h"
+#include "intermediate/Diagnostics.h"
 #include "lexer/Lexer.h"
 
 #include <exception>
@@ -29,15 +29,15 @@ namespace s1
   {
     class Exception : public std::exception
     {
-      ErrorCode code;
+      Error code;
     public:
       ~Exception() throw () {}
       
-      Exception (ErrorCode code) : code (code) {}
+      Exception (Error code) : code (code) {}
       
       const char* what() const throw() { return "intermediate::Exception"; }
       
-      ErrorCode GetCode() const { return code; }
+      Error GetCode() const { return code; }
     };
   } // namespace intermediate
 } // namespace s1

@@ -48,7 +48,7 @@ namespace s1
       void FlushVariableInitializers();
 
       /// Call handler 'Error' method with context of expression
-      void ExpressionError (const ExpressionPtr& expr, ErrorCode code);
+      void ExpressionError (const ExpressionPtr& expr, Error code);
       
       struct NameReg
       {
@@ -89,9 +89,9 @@ namespace s1
       void FinishBlock() { FlushVariableInitializers(); }
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
 
-      typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, ErrorCode> result_RegisterPtr;
+      typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;
       result_RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);
-      typedef OUTCOME_V2_NAMESPACE::result<void, ErrorCode> result_void;
+      typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
       result_void OverrideNameRegister (const NameImplPtr& name, const RegisterPtr& reg);
       
       const NameImplSet& GetExportedNames() const { return exportedNames; }

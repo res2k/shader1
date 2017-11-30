@@ -1,0 +1,89 @@
+<!DOCTYPE errors [
+  <!--ENTITY lsquo "&#x2018;">
+  <!ENTITY rsquo "&#x2019;">
+  <!ENTITY ndash "&#x2013;"-->
+  <!ENTITY lsquo "'">
+  <!ENTITY rsquo "'">
+  <!ENTITY ndash "-">
+]>
+<!--
+    Shader1
+    Copyright (c) 2017 Frank Richter
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the wxWindows Library Licence.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Please see the wxWindows Library Licence for more details.
+    The licence texts can be found in the source distribution files
+    LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
+-->
+<!--
+Diagnostic error definitions for the various components involved in compilation.
+-->
+<diagnostics>
+  <component name="intermediate">
+    <!-- Note: some error codes represent incorrect/errorneous input,
+         some represent wrong internal state/are triggered by bugs.
+         The latter codes should probably be separated/have a special range -->
+    <error id="OperandTypesIncompatible">
+      <descr>Operand types are incompatible with each other</descr>
+    </error>
+    <error id="OperandTypesInvalid">
+      <descr>Operand types are not valid for the operation</descr>
+    </error>
+    <error id="AssignmentTypesIncompatible">
+      <descr>Trying to assign to a variable of incompatible type</descr>
+    </error>
+    <error id="AssignmentTargetIsNotAnLvalue">
+      <descr>Assignment target is not an L-value</descr>
+    </error>
+    <error id="InvalidTypeCast">
+      <descr>Invalid type cast</descr>
+    </error>
+    <error id="NoMatchingFunctionOverload">
+      <descr>No matching function overload</descr>
+    </error>
+    <error id="AmbiguousFunctionOverload">
+      <descr>Ambiguous function overload</descr>
+    </error>
+    <error id="ActualParameterNotAnLvalue">
+      <descr>Actual parameter is not an L-value</descr>
+    </error>
+    <error id="TernaryExpressionTypesIncompatible">
+      <descr>The types of the &lsquo;if&rsquo; and &lsquo;else&rsquo; expression of a ternary expression are incompatible</descr>
+    </error>
+    <error id="TooManyTypeCtorArgs">
+      <descr>Too many arguments to type constructor</descr>
+    </error>
+    <error id="TooFewTypeCtorArgs">
+      <descr>Too few arguments to type constructor</descr>
+    </error>
+    <error id="InvalidAttribute">
+      <descr>Invalid attribute</descr>
+    </error>
+    <error id="NotAnArray">
+      <descr>Value is not of an array type</descr>
+    </error>
+    <error id="IndexNotAnInteger">
+      <descr>Index type not an integer type</descr>
+    </error>
+    <error id="SwizzledExpressionNotAnLvalue">
+      <descr>Swizzled expression is not an L-value</descr>
+    </error>
+    <error id="MultipleUseOfComponentInLvalueSwizzle">
+      <descr>A component was used multiple times in an L-value swizzle</descr>
+    </error>
+    <error id="ArrayNotAnLvalue">
+      <descr>Array is not an L-value</descr>
+    </error>
+  </component>
+  <component name="intermediate_internal">
+    <error id="NumberParseError">
+      <descr>Error parsing number string</descr>
+    </error>
+  </component>
+</diagnostics>

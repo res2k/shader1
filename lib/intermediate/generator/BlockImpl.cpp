@@ -540,7 +540,7 @@ namespace s1
       }
     }
 
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const ExpressionPtr& expr, ErrorCode code)
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const ExpressionPtr& expr, Error code)
     {
       handler->ExpressionError (static_cast<ExpressionImpl*> (expr.get())->GetExpressionContext(), code);
     }
@@ -627,7 +627,7 @@ namespace s1
       
       if (doExport && name->varConstant)
       {
-        return OUTCOME_V2_NAMESPACE::failure (AssignmentTargetIsNotAnLValue);
+        return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
       }
       
       NameReg& nameReg = nameRegisters[name];
@@ -666,7 +666,7 @@ namespace s1
         if (writeable)
         {
           if (name->varConstant)
-            return OUTCOME_V2_NAMESPACE::failure (AssignmentTargetIsNotAnLValue);
+            return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
           reg = handler->AllocateRegister (*sequenceBuilder, reg);
           sequenceBuilder->SetIdentifierRegister (name->identifier, reg);
         }
