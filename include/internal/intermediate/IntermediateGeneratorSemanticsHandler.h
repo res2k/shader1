@@ -20,6 +20,7 @@
 
 #include "base/uc/String.h"
 
+#include "diagnostics/forwarddecl.h"
 #include "parser/CommonSemanticsHandler.h"
 
 #include "forwarddecl.h"
@@ -71,6 +72,9 @@ namespace s1
 
       typedef boost::shared_ptr<NameImpl> NameImplPtr;
       typedef std::unordered_set<NameImplPtr> NameImplSet;
+
+      /// Diagnostics handler
+      diagnostics::Handler* diagnosticsHandler = nullptr;
 
       typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
       TypeImplPtr voidType;
@@ -126,6 +130,10 @@ namespace s1
 
       IntermediateGeneratorSemanticsHandler ();
       ~IntermediateGeneratorSemanticsHandler ();
+
+      /// Set diagnostics handler
+      void SetDiagnosticsHandler (diagnostics::Handler* diagnosticsHandler)
+      { this->diagnosticsHandler = diagnosticsHandler; }
 
       /**\name Error handling
        * @{ */

@@ -20,6 +20,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
+#include "diagnostics/Handler.h"
 #include "intermediate/Exception.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
@@ -83,8 +84,8 @@ namespace s1
 
     void IntermediateGeneratorSemanticsHandler::ExpressionError (const ExpressionContext& context, Error code)
     {
-      // TODO: Actual propagation to a handler
-      fprintf (stderr, "intermediate generation error: %u\n", static_cast<unsigned int> (code));
+      if (diagnosticsHandler)
+        diagnosticsHandler->SemanticError (code); // TODO: Do something sensible w/ context
     }
 
     DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
