@@ -23,6 +23,7 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
 #include "BlockImpl.h"
+#include "TestDiagnosticsHandler.h"
 #include "TestSequenceVisitor.h"
 
 #include "IntermediateTestTraits.h"
@@ -45,6 +46,13 @@ class IntermediateExprTestSuite : public CxxTest::TestSuite
 
       using Superclass::sequenceBuilder;
     };
+
+    TestDiagnosticsHandler diagnostics;
+
+    TestSemanticsHandler ()
+    {
+      SetDiagnosticsHandler (&diagnostics);
+    }
   };
 public:
   void testExprAssignConstFloat (void)
@@ -362,10 +370,9 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
-    // TODO: Need to get error code via error handler
-    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
-                            const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
+    testBlock->AddExpressionCommand (assignExpr);
+    TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
+                     static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignMalformedInput1 (void)
@@ -386,10 +393,9 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
-    // TODO: Need to get error code via error handler
-    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
-                            const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
+    testBlock->AddExpressionCommand (assignExpr);
+    TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
+                     static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignMalformedInput2 (void)
@@ -410,10 +416,9 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
-    // TODO: Need to get error code via error handler
-    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
-                            const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
+    testBlock->AddExpressionCommand (assignExpr);
+    TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
+                     static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignMalformedInput3 (void)
@@ -434,10 +439,9 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
-    // TODO: Need to get error code via error handler
-    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
-                            const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
+    testBlock->AddExpressionCommand (assignExpr);
+    TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
+                     static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignUIntOverflow (void)
@@ -461,10 +465,9 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
-    // TODO: Need to get error code via error handler
-    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
-                            const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
+    testBlock->AddExpressionCommand (assignExpr);
+    TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
+                     static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
   }
 
   void testExprAssignIntUnderflow (void)
@@ -488,10 +491,9 @@ public:
     TestSemanticsHandler::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
-    // TODO: Need to get error code via error handler
-    TS_ASSERT_THROWS_ASSERT(testBlock->AddExpressionCommand (assignExpr),
-                            const Exception& e,
-                            TS_ASSERT_EQUALS(e.GetCode(), s1::intermediate::Error::NumberParseError));
+    testBlock->AddExpressionCommand (assignExpr);
+    TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
+                     static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
   }
 
   /* TODO: uint underflow, int overflow
