@@ -48,7 +48,7 @@ namespace s1
       void FlushVariableInitializers();
 
       /// Call handler 'Error' method with context of expression
-      void ExpressionError (const ExpressionPtr& expr, Error code);
+      void ExpressionError (const Expression& expr, Error code);
       
       struct NameReg
       {

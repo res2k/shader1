@@ -113,7 +113,7 @@ namespace s1
         auto retValReg = GetRegisterForName (varReturnValue, false);
         if (!retValReg)
         {
-          ExpressionError (returnValue, retValReg.error ());
+          ExpressionError (*returnValue, retValReg.error ());
           return;
         }
         retValRegs.push_back (retValReg.value());
@@ -174,7 +174,7 @@ namespace s1
             auto reg = GetRegisterForName (import->first, false);
             if (!reg)
             {
-              ExpressionError (branchCondition, reg.error ());
+              ExpressionError (*branchCondition, reg.error ());
               continue;
             }
             readRegistersIf.push_back (reg.value());
@@ -191,7 +191,7 @@ namespace s1
             auto reg = GetRegisterForName (import->first, false);
             if (!reg)
             {
-              ExpressionError (branchCondition, reg.error ());
+              ExpressionError (*branchCondition, reg.error ());
               continue;
             }
             readRegistersElse.push_back (reg.value());
@@ -244,7 +244,7 @@ namespace s1
           auto reg = GetRegisterForName (*exportedName, true);
           if (!reg)
           {
-            ExpressionError (branchCondition, reg.error ());
+            ExpressionError (*branchCondition, reg.error ());
             continue;
           }
           writtenRegistersIf.push_back (reg.value());
@@ -269,7 +269,7 @@ namespace s1
             auto newReg = GetRegisterForName (*exportedName, true);
             if (!newReg)
             {
-              ExpressionError (branchCondition, newReg.error ());
+              ExpressionError (*branchCondition, newReg.error ());
               continue;
             }
             reg = newReg.value ();
@@ -349,13 +349,13 @@ namespace s1
         auto regIn = GetRegisterForName (*loopVar, false);
         if (!regIn)
         {
-          ExpressionError (loopCond, regIn.error ());
+          ExpressionError (*loopCond, regIn.error ());
           continue;
         }
         auto regOut = GetRegisterForName (*loopVar, true);
         if (!regOut)
         {
-          ExpressionError (loopCond, regOut.error ());
+          ExpressionError (*loopCond, regOut.error ());
           continue;
         }
         loopedRegs.emplace_back (regIn.value(), regOut.value());
@@ -372,7 +372,7 @@ namespace s1
       auto condReg = GetRegisterForName (varCondition, false);
       if (!condReg)
       {
-        ExpressionError (loopCond, condReg.error ());
+        ExpressionError (*loopCond, condReg.error ());
         return;
       }
       
@@ -458,13 +458,13 @@ namespace s1
         auto regIn = GetRegisterForName (*loopVar, false);
         if (!regIn)
         {
-          ExpressionError (loopCond, regIn.error ());
+          ExpressionError (*loopCond, regIn.error ());
           continue;
         }
         auto regOut = GetRegisterForName (*loopVar, true);
         if (!regOut)
         {
-          ExpressionError (loopCond, regOut.error ());
+          ExpressionError (*loopCond, regOut.error ());
           continue;
         }
         loopedRegs.emplace_back (regIn.value(), regOut.value());
@@ -488,7 +488,7 @@ namespace s1
       auto condReg = GetRegisterForName (varCondition, false);
       if (!condReg)
       {
-        ExpressionError (loopCond, condReg.error ());
+        ExpressionError (*loopCond, condReg.error ());
         return;
       }
 
@@ -540,9 +540,9 @@ namespace s1
       }
     }
 
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const ExpressionPtr& expr, Error code)
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const Expression& expr, Error code)
     {
-      handler->ExpressionError (static_cast<ExpressionImpl*> (expr.get())->GetExpressionContext(), code);
+      handler->ExpressionError (static_cast<const ExpressionImpl&> (expr).GetExpressionContext(), code);
     }
     
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,

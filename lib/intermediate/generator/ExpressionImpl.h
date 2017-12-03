@@ -36,7 +36,7 @@ namespace s1
       ExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                       ExpressionContext&& context);
 
-      const ExpressionContext& GetExpressionContext ();
+      const ExpressionContext& GetExpressionContext () const;
       virtual NameImplPtr GetExpressionName() { return NameImplPtr (); }
       
       virtual void AddToSequence (BlockImpl& block);

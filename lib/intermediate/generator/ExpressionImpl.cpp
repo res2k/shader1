@@ -37,7 +37,7 @@ namespace s1
     }
 
     const IntermediateGeneratorSemanticsHandler::ExpressionContext&
-    IntermediateGeneratorSemanticsHandler::ExpressionImpl::GetExpressionContext ()
+    IntermediateGeneratorSemanticsHandler::ExpressionImpl::GetExpressionContext () const
     {
       return context;
     }
