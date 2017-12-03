@@ -553,21 +553,6 @@ namespace s1
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
-      // Call GetRegisterForName for all imports as a constness check
-      {
-        for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
-             import != blockImpl->nameRegisters.end();
-             ++import)
-        {
-          if (!import->second.isImported) continue;
-          if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
-              && !import->second.initiallyWriteable)
-          {
-            GetRegisterForName (import->first, false);
-          }
-        }
-      }
-      
       /* Pass 'snapshot' of identifiers-to-register-ID map
          When resolving imports, the registers for variables _at the time of the block
          insertion_ is needed, hence the snapshot.
