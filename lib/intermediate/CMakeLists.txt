@@ -25,7 +25,6 @@ file(GLOB intermediate_sources
      ${S1_INC}/intermediate/SequenceBuilder.h
      ${S1_INC}/intermediate/SequenceVisitor.h
      ${S1_INC}/intermediate/forwarddecl.h
-     ${CMAKE_BINARY_DIR}/include/internal/intermediate/Diagnostics.h
      )
 
 include_directories(generator .)

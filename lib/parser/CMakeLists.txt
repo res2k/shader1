@@ -6,7 +6,6 @@ set(parser_sources
     ${S1_INC}/parser/Exception.h
     ${S1_INC}/parser/Parser.h
     ${S1_INC}/parser/SemanticsHandler.h
-    ${CMAKE_BINARY_DIR}/include/internal/parser/Diagnostics.h
     )
 s1_add_library(parser
                SOURCES ${parser_sources}
