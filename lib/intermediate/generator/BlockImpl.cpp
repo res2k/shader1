@@ -376,7 +376,7 @@ namespace s1
         return;
       }
       
-      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, std::make_pair (std::cref (*loopCond), std::cref (loopVars))));
+      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (new SequenceOpWhile (condReg.value(), loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
@@ -492,7 +492,7 @@ namespace s1
         return;
       }
 
-      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, std::make_pair (std::cref (*loopCond), std::cref (loopVars))));
+      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
       SequenceOpPtr seqOp (new SequenceOpWhile (condReg.value(), loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
@@ -546,35 +546,44 @@ namespace s1
     }
     
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
-                                                                                      boost::optional<LoopOptPair> loopOpt)
+                                                                                      const NameImplSet& loopNames)
     {
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (block));
       blockImpl->FinishBlock();
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
-        /* Pass 'snapshot' of identifiers-to-register-ID map
-           When resolving imports, the registers for variables _at the time of the block
-           insertion_ is needed, hence the snapshot.
-           Also, do it before allocating new registers for the 'written registers',
-           as we want the ID before that */
-      Sequence::IdentifierToRegMap identifierToRegIDMap (sequenceBuilder->GetIdentifierToRegisterMap ());
-      if (loopOpt)
+      // Call GetRegisterForName for all imports as a constness check
       {
-        const auto& loopExpr = loopOpt->first;
-        const auto& loopNames = loopOpt->second;
-        // Generate register IDs for all values the nested block exports
+        for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
+             import != blockImpl->nameRegisters.end();
+             ++import)
         {
-          for (NameImplSet::const_iterator exportedName = blockImpl->exportedNames.begin();
-              exportedName != blockImpl->exportedNames.end();
-              exportedName++)
+          if (!import->second.isImported) continue;
+          if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+              && !import->second.initiallyWriteable)
           {
-            /* "Loop names" are treated somewhat special as the caller will have taken care of
-              allocating writeable regs for these names. */
-            bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
-            auto reg = GetRegisterForName (*exportedName,  !isLoopName);
-            if (!reg) ExpressionError (loopExpr, reg.error());
+            GetRegisterForName (import->first, false);
           }
+        }
+      }
+      
+      /* Pass 'snapshot' of identifiers-to-register-ID map
+         When resolving imports, the registers for variables _at the time of the block
+         insertion_ is needed, hence the snapshot.
+         Also, do it before allocating new registers for the 'written registers',
+         as we want the ID before that */
+      Sequence::IdentifierToRegMap identifierToRegIDMap (sequenceBuilder->GetIdentifierToRegisterMap ());
+      // Generate register IDs for all values the nested block exports
+      {
+        for (NameImplSet::const_iterator exportedName = blockImpl->exportedNames.begin();
+             exportedName != blockImpl->exportedNames.end();
+             exportedName++)
+        {
+          /* "Loop names" are treated somewhat special as the caller will have taken care of
+             allocating writeable regs for these names. */
+          bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
+          GetRegisterForName (*exportedName, !isLoopName);
         }
       }
       // Apply overrides for register IDs of exported identifiers

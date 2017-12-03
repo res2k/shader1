@@ -21,8 +21,6 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
 
-#include <boost/optional.hpp>
-
 #include <outcome/outcome.hpp>
 
 namespace s1
@@ -65,9 +63,7 @@ namespace s1
       NameRegMap nameRegisters;
       NameImplSet exportedNames;
       
-      typedef std::pair<const Expression&, const NameImplSet&> LoopOptPair;
-      SequenceOpPtr CreateBlockSeqOp (BlockPtr block,
-                                      boost::optional<LoopOptPair> loopOpt = boost::none);
+      SequenceOpPtr CreateBlockSeqOp (BlockPtr block, const NameImplSet& loopNames = NameImplSet());
     public:
       static const char varReturnValueName[];
       
