@@ -73,8 +73,8 @@ namespace s1
     {
       for(const SequenceOpPtr& op : ops)
       {
-	visitor.PreVisitOp (op);
-	op->Visit (visitor);
+        visitor.PreVisitOp (op);
+        op->Visit (visitor);
         visitor.PostVisitOp ();
       }
       visitor.VisitEnd ();
@@ -85,7 +85,7 @@ namespace s1
       for(const SequenceOpPtr& op : boost::adaptors::reverse(ops))
       {
         visitor.PreVisitOp (op);
-	op->Visit (visitor);
+        op->Visit (visitor);
         visitor.PostVisitOp ();
       }
       visitor.VisitEnd ();
@@ -109,8 +109,8 @@ namespace s1
       RegisterSet allReadRegisters;
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
-	const RegisterSet& opRead = (*op)->GetReadRegisters();
-	allReadRegisters.insert (opRead.begin(), opRead.end());
+        const RegisterSet& opRead = (*op)->GetReadRegisters();
+        allReadRegisters.insert (opRead.begin(), opRead.end());
       }
       return allReadRegisters;
     }
@@ -120,8 +120,8 @@ namespace s1
       RegisterSet allWrittenRegisters;
       for (OpsVector::const_iterator op = ops.begin(); op != ops.end(); ++op)
       {
-	const RegisterSet& opWritten = (*op)->GetWrittenRegisters();
-	allWrittenRegisters.insert (opWritten.begin(), opWritten.end());
+        const RegisterSet& opWritten = (*op)->GetWrittenRegisters();
+        allWrittenRegisters.insert (opWritten.begin(), opWritten.end());
       }
       return allWrittenRegisters;
     }
@@ -133,12 +133,12 @@ namespace s1
       RegisterImpMappings::iterator it = imports.begin();
       while (it != imports.end())
       {
-	IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
-	if (outerReg != identToReg.end())
-	{
-	  importRegs.insert (outerReg->second);
-	}
-	++it;
+        IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
+        if (outerReg != identToReg.end())
+        {
+          importRegs.insert (outerReg->second);
+        }
+        ++it;
       }
       return importRegs;
     }
@@ -150,10 +150,10 @@ namespace s1
       RegisterExpMappings::iterator it = exports.begin();
       while (it != exports.end())
       {
-	IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
-	assert (outerReg != identToReg.end());
-	exportRegs.insert (outerReg->second);
-	++it;
+        IdentifierToRegMap::const_iterator outerReg = identToReg.find (it->first);
+        assert (outerReg != identToReg.end());
+        exportRegs.insert (outerReg->second);
+        ++it;
       }
       return exportRegs;
     }
