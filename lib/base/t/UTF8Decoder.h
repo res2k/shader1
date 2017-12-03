@@ -19,6 +19,8 @@
 
 #include "base/uc/UTF8Decoder.h"
 
+#include "assert_equals_ch.h"
+
 class UTF8DecoderSuite : public CxxTest::TestSuite 
 {
 public:
@@ -32,7 +34,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drInputUnderrun);
-    TS_ASSERT_EQUALS(ch, 0x12345678);
+    TS_ASSERT_EQUALS_CH(ch, 0x12345678);
   }
 
   // Test UTF8Decoder with ASCII input
@@ -46,7 +48,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, 'X');
+    TS_ASSERT_EQUALS_CH(ch, 'X');
   }
 
   // Test UTF8Decoder with a character encoded in 2 bytes
@@ -60,7 +62,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, 0xeb);
+    TS_ASSERT_EQUALS_CH(ch, 0xeb);
   }
 
   // Test UTF8Decoder with characters encoded in 3 bytes
@@ -74,7 +76,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, 0x1e37);
+    TS_ASSERT_EQUALS_CH(ch, 0x1e37);
   }
 
   // Test UTF8Decoder with characters encoded in 4 bytes
@@ -88,7 +90,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, 0x1f600);
+    TS_ASSERT_EQUALS_CH(ch, 0x1f600);
   }
 
   // Test UTF8Decoder with malformed input (overlong encoding)
@@ -102,7 +104,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drEncodingInvalid);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
   }
 
   // Test UTF8Decoder with malformed input (broken encoding)
@@ -116,7 +118,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drInputUnderrun);
-    TS_ASSERT_EQUALS(ch, 0x12345678);
+    TS_ASSERT_EQUALS_CH(ch, 0x12345678);
   }
 
   // Test UTF8Decoder with malformed input (broken encoding)
@@ -130,7 +132,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterIncomplete);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
   }
 
   // Test UTF8Decoder with malformed input (encoded surrogate half)
@@ -144,7 +146,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterInvalid);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
   }
 
   // Test UTF8Decoder with malformed input (encoded surrogate half)
@@ -158,7 +160,7 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterInvalid);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
   }
 
   // Test UTF8Decoder with malformed input (overlong encoding) and continuation afterwards
@@ -172,11 +174,11 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 1);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drEncodingInvalid);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, '*');
+    TS_ASSERT_EQUALS_CH(ch, '*');
   }
 
   // Test UTF8Decoder with malformed input (broken encoding) and continuation afterwards
@@ -190,11 +192,11 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 1);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterIncomplete);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, '*');
+    TS_ASSERT_EQUALS_CH(ch, '*');
   }
 
   // Test UTF8Decoder with malformed input (broken encoding) and continuation afterwards
@@ -208,11 +210,11 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 1);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterIncomplete);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, '*');
+    TS_ASSERT_EQUALS_CH(ch, '*');
   }
 
   // Test UTF8Decoder with malformed input (broken encoding) and continuation afterwards
@@ -226,11 +228,11 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 2);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterIncomplete);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, 0xeb);
+    TS_ASSERT_EQUALS_CH(ch, 0xeb);
   }
 
   // Test UTF8Decoder with malformed input (broken encoding) and continuation afterwards
@@ -244,11 +246,11 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 3);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterIncomplete);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, 0x1e37);
+    TS_ASSERT_EQUALS_CH(ch, 0x1e37);
   }
 
   // Test UTF8Decoder with malformed input (encoded surrogate half) and continuation afterwards
@@ -262,11 +264,11 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 1);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterInvalid);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, '*');
+    TS_ASSERT_EQUALS_CH(ch, '*');
   }
 
   // Test UTF8Decoder with malformed input (encoded surrogate half) and continuation afterwards
@@ -280,10 +282,10 @@ public:
     s1::uc::UTF8Decoder::DecodeResult result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd - 1);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drCharacterInvalid);
-    TS_ASSERT_EQUALS(ch, 0xfffd);
+    TS_ASSERT_EQUALS_CH(ch, 0xfffd);
     result = decoder (input, inputEnd, ch);
     TS_ASSERT_EQUALS(input, inputEnd);
     TS_ASSERT_EQUALS(result, s1::uc::UTF8Decoder::drSuccess);
-    TS_ASSERT_EQUALS(ch, '*');
+    TS_ASSERT_EQUALS_CH(ch, '*');
   }
 };

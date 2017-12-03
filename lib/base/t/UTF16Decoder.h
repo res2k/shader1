@@ -19,6 +19,8 @@
 
 #include "base/uc/UTF16Decoder.h"
 
+#include "assert_equals_ch.h"
+
 class UTF16DecoderSuite : public CxxTest::TestSuite 
 {
 public:
@@ -33,7 +35,7 @@ public:
     s1::uc::UTF16Decoder::DecodeResult result = decoder (input, inputEnd, outChar);
     TS_ASSERT_EQUALS(result, s1::uc::UTF16Decoder::drSuccess);
     TS_ASSERT_EQUALS(input - chars_utf16, 1);
-    TS_ASSERT_EQUALS(outChar, 0x20ac);
+    TS_ASSERT_EQUALS_CH(outChar, 0x20ac);
   }
 
   // Test UTF16Encoder with non-BMP input
@@ -47,7 +49,7 @@ public:
     s1::uc::UTF16Decoder::DecodeResult result = decoder (input, inputEnd, outChar);
     TS_ASSERT_EQUALS(result, s1::uc::UTF16Decoder::drSuccess);
     TS_ASSERT_EQUALS(input - chars_utf16, 2);
-    TS_ASSERT_EQUALS(outChar, 0x1f600);
+    TS_ASSERT_EQUALS_CH(outChar, 0x1f600);
   }
 
   // Test UTF16Encoder with malformed input (surrogate half)

@@ -20,15 +20,7 @@
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 
-template<typename T>
-static inline typename std::make_unsigned<T>::type as_unsigned (T x)
-{
-  return static_cast<typename std::make_unsigned<T>::type> (x);
-}
-
-#define TS_ASSERT_EQUALS_CH(A, B)                                     \
-  TS_ASSERT_EQUALS(static_cast<uint_least32_t> (as_unsigned (A)),     \
-                   static_cast<uint_least32_t> (B))
+#include "assert_equals_ch.h"
 
 class UnicodeStreamTestSuite : public CxxTest::TestSuite 
 {
