@@ -376,7 +376,7 @@ namespace s1
         return;
       }
       
-      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
+      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, static_cast<ExpressionImpl&>(*loopCond).GetExpressionContext(), loopVars));
       SequenceOpPtr seqOp (new SequenceOpWhile (condReg.value(), loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
@@ -492,7 +492,7 @@ namespace s1
         return;
       }
 
-      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, loopVars));
+      SequenceOpPtr seqOpBody (CreateBlockSeqOp (newBlock, static_cast<ExpressionImpl&>(*loopCond).GetExpressionContext(), loopVars));
       SequenceOpPtr seqOp (new SequenceOpWhile (condReg.value(), loopedRegs, seqOpBody));
       sequenceBuilder->AddOp (seqOp);
     }
@@ -500,7 +500,7 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (BlockPtr block)
     {
       FlushVariableInitializers();
-      SequenceOpPtr seqOp (CreateBlockSeqOp (block));
+      SequenceOpPtr seqOp (CreateBlockSeqOp (block, ExpressionContext ()));
       sequenceBuilder->AddOp (seqOp);
     }
     
@@ -546,6 +546,7 @@ namespace s1
     }
     
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
+                                                                                      const ExpressionContext& errorContext,
                                                                                       const NameImplSet& loopNames)
     {
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (block));
@@ -563,7 +564,9 @@ namespace s1
           if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
-            GetRegisterForName (import->first, false);
+            auto reg = GetRegisterForName (import->first, false);
+            if (!reg)
+              handler->ExpressionError (errorContext, reg.error());
           }
         }
       }
@@ -583,7 +586,9 @@ namespace s1
           /* "Loop names" are treated somewhat special as the caller will have taken care of
              allocating writeable regs for these names. */
           bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
-          GetRegisterForName (*exportedName, !isLoopName);
+          auto reg = GetRegisterForName (*exportedName, !isLoopName);
+          if (!reg)
+            handler->ExpressionError (errorContext, reg.error());
         }
       }
       // Apply overrides for register IDs of exported identifiers

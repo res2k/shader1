@@ -63,7 +63,9 @@ namespace s1
       NameRegMap nameRegisters;
       NameImplSet exportedNames;
       
-      SequenceOpPtr CreateBlockSeqOp (BlockPtr block, const NameImplSet& loopNames = NameImplSet());
+      SequenceOpPtr CreateBlockSeqOp (BlockPtr block,
+                                      const ExpressionContext& errorContext,
+                                      const NameImplSet& loopNames = NameImplSet());
     public:
       static const char varReturnValueName[];
       
