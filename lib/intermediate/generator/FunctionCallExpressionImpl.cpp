@@ -21,7 +21,7 @@
 
 #include "BlockImpl.h"
 #include "Builtin.h"
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"

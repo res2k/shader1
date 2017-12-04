@@ -20,7 +20,7 @@
 #include "AssignmentExpressionImpl.h"
 
 #include "BlockImpl.h"
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "TypeImpl.h"

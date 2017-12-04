@@ -22,7 +22,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "intermediate/SequenceOp/SequenceOpBranch.h"

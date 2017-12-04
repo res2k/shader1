@@ -20,7 +20,6 @@
 #include "ComparisonExpressionImpl.h"
 
 #include "BlockImpl.h"
-#include "intermediate/Exception.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpCompare.h"
 #include "TypeImpl.h"

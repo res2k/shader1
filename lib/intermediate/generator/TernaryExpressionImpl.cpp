@@ -20,7 +20,7 @@
 #include "TernaryExpressionImpl.h"
 
 #include "BlockImpl.h"
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "NameImpl.h"
 #include "TypeImpl.h"
 

@@ -19,7 +19,7 @@
 
 #include "base/common.h"
 
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
 #include "BlockImpl.h"

@@ -15,7 +15,6 @@ file(GLOB intermediate_sources
      ${S1_INC}/intermediate/BasicType.h
      ${S1_INC}/intermediate/BuiltinFunction.h
      ${S1_INC}/intermediate/CloningSequenceVisitor.h
-     ${S1_INC}/intermediate/Exception.h
      ${S1_INC}/intermediate/FunctionGraph.h
      ${S1_INC}/intermediate/IntermediateGeneratorSemanticsHandler.h
      ${S1_INC}/intermediate/NullVisitor.h

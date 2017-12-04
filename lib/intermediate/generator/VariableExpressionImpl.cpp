@@ -20,7 +20,6 @@
 #include "VariableExpressionImpl.h"
 
 #include "BlockImpl.h"
-#include "intermediate/Exception.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "NameImpl.h"
 #include "ScopeImpl.h"

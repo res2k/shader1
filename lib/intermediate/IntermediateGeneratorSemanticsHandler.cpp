@@ -21,7 +21,7 @@
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
 #include "diagnostics/Handler.h"
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Program.h"
 #include "intermediate/ProgramFunction.h"

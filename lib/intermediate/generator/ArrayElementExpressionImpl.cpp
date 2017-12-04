@@ -19,7 +19,7 @@
 
 #include "ArrayElementExpressionImpl.h"
 
-#include "intermediate/Exception.h"
+#include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpChangeArrayElement.h"
 #include "intermediate/SequenceOp/SequenceOpExtractArrayElement.h"
