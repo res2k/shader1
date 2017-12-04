@@ -348,7 +348,7 @@ class InputFileStream
 {
   bool errorState;
   ifstream inputFile;
-  size_t fileSize;
+  std::streamsize fileSize;
   char buf[256];
 public:
   InputFileStream (const boost::filesystem::path& path) : errorState (false)
@@ -368,7 +368,7 @@ public:
         }
       }
       inputFile.exceptions (std::ios_base::badbit | std::ios_base::failbit);
-      size_t startPos (inputFile.tellg ());
+      std::streamoff startPos (inputFile.tellg ());
       inputFile.seekg (0, std::ios_base::end);
       fileSize = inputFile.tellg ();
       fileSize = fileSize - startPos;
@@ -390,11 +390,11 @@ public:
 
     try
     {
-      inputFile.read (buf, std::min (fileSize, sizeof (buf)));
-      size_t nRead (inputFile.gcount ());
+      inputFile.read (buf, std::min<std::streamsize> (fileSize, sizeof (buf)));
+      std::streamsize nRead (inputFile.gcount ());
       data = buf;
       fileSize -= nRead;
-      return nRead;
+      return static_cast<size_t> (nRead);
     }
     catch (std::exception& e)
     {
