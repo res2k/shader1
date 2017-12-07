@@ -21,6 +21,9 @@
 #ifndef DIAGNOSTICS_HANDLER_H__
 #define DIAGNOSTICS_HANDLER_H__
 
+#include "lexer/Token.h"
+#include "lexer/TokenType.h"
+
 #include <type_traits>
 
 namespace s1
@@ -31,6 +34,14 @@ namespace s1
     {
       virtual ~Handler() {}
 
+      /// Parse error
+      template<typename T>
+      typename std::enable_if<std::is_enum<T>::value>::type ParseError (T code,
+                                                                        const lexer::Token& encounteredToken,
+                                                                        lexer::TokenType expectedToken)
+      {
+        ParseErrorImpl (static_cast<unsigned int> (code), encounteredToken, expectedToken);
+      }
       /// Semantic errors: Usually detected during intermediate generation
       template<typename T>
       typename std::enable_if<std::is_enum<T>::value>::type SemanticError (T code)
@@ -38,6 +49,9 @@ namespace s1
         SemanticErrorImpl (static_cast<unsigned int> (code));
       }
     protected:
+      virtual void ParseErrorImpl (unsigned int code,
+                                   const lexer::Token& encounteredToken,
+                                   lexer::TokenType expectedToken) = 0;
       virtual void SemanticErrorImpl (unsigned int code) = 0;
     };
   } // namespace diagnostics

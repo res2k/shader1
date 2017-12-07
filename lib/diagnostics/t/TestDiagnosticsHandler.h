@@ -24,10 +24,23 @@ class TestDiagnosticsHandler : public s1::diagnostics::Handler
 {
 public:
   void SemanticErrorImpl (unsigned int code) override { semanticError.code = code; }
+  void ParseErrorImpl (unsigned int code,
+                       const s1::lexer::Token& encounteredToken,
+                       s1::lexer::TokenType expectedToken) override
+  {
+    parseError.code = code;
+    parseError.encounteredToken = encounteredToken;
+    parseError.expectedToken = expectedToken;
+  }
 
   struct {
     unsigned int code = 0;
   } semanticError;
+  struct {
+    unsigned int code = 0;
+    s1::lexer::Token encounteredToken;
+    s1::lexer::TokenType expectedToken = s1::lexer::TokenType::Invalid;
+  } parseError;
 };
 
 #endif // TESTDIAGNOSTICSHANDLER_H_
