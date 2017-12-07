@@ -27,14 +27,16 @@
 
 #include "ParserTestTraits.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
+
 class ParserProgramTestSuite : public CxxTest::TestSuite 
 {
   class TestParser : public s1::Parser
   {
   public:
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-		s1::parser::ErrorHandler& errorHandler)
-     : Parser (inputLexer, semanticsHandler, errorHandler) {}
+                s1::diagnostics::Handler& diagnosticsHandler)
+     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
      
     using s1::Parser::ParseProgram;
   };
@@ -49,10 +51,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramSimple2 (void)
@@ -65,10 +68,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramLessSimple (void)
@@ -81,10 +85,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramLessSimple2 (void)
@@ -97,10 +102,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramGlobalVar (void)
@@ -113,10 +119,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
 
   void testProgramGlobalConst (void)
@@ -129,10 +136,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramFunctionCall (void)
@@ -145,10 +153,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramFunctionCall2 (void)
@@ -161,10 +170,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramFunctionCallCast (void)
@@ -177,10 +187,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
   void testProgramExprNoResult (void)
@@ -193,11 +204,11 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
   }
   
 };
-// 

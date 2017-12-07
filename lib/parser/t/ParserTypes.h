@@ -26,14 +26,16 @@
 
 #include "ParserTestTraits.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
+
 class ParserTypesTestSuite : public CxxTest::TestSuite 
 {
   class TestParser : public s1::Parser
   {
   public:
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-		s1::parser::ErrorHandler& errorHandler)
-     : Parser (inputLexer, semanticsHandler, errorHandler) {}
+                s1::diagnostics::Handler& diagnosticsHandler)
+     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
     
     using s1::Parser::Type;
     Type ParseType() { return s1::Parser::ParseType (TestSemanticsHandler::ScopePtr()); }
@@ -47,11 +49,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -66,11 +69,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -85,11 +89,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -104,11 +109,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -123,11 +129,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -142,11 +149,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -161,11 +169,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -180,11 +189,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -199,11 +209,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -222,11 +233,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -245,11 +257,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -268,11 +281,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -291,11 +305,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -315,11 +330,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -339,11 +355,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -363,11 +380,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -387,11 +405,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Array);
@@ -409,11 +428,12 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Array);

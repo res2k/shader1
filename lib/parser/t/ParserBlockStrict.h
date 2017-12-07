@@ -28,14 +28,16 @@
 
 #include "ParserTestTraits.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
+
 class ParserBlockStrictTestSuite : public CxxTest::TestSuite
 {
   class TestParser : public s1::Parser
   {
   public:
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-                s1::parser::ErrorHandler& errorHandler)
-     : Parser (inputLexer, semanticsHandler, errorHandler) {}
+                s1::diagnostics::Handler& diagnosticsHandler)
+     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
 
     using s1::Parser::ParseBlock;
   };
@@ -50,12 +52,13 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -85,12 +88,13 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -139,12 +143,13 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -193,12 +198,13 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -231,12 +237,13 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -279,12 +286,13 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -314,12 +322,14 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code,
+                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -340,7 +350,7 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
@@ -373,7 +383,7 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
@@ -406,7 +416,7 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
 
     SemanticsHandler::BlockPtr block (
