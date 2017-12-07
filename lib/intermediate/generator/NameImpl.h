@@ -44,7 +44,7 @@ namespace s1
         : CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope),
           isOutputParam (isOutputParam) {}
 
-      TypeImplPtr GetValueType () const { return boost::static_pointer_cast<TypeImpl> (valueType); }
+      TypeImplPtr GetValueTypeImpl () const { return boost::static_pointer_cast<TypeImpl> (valueType); }
     };
   } // namespace intermediate
 } // namespace s1
