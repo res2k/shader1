@@ -70,7 +70,7 @@ namespace s1
 
     FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (FunctionInfoPtr funcInfo, const BlockPtr& block)
     {
-      return FunctionPtr (new FunctionImpl (handler, funcInfo, block));
+      return FunctionPtr (new FunctionImpl (funcInfo, block));
     }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
