@@ -30,9 +30,9 @@ namespace s1
   using namespace parser;
   
   Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler,
-                  ErrorHandler& errorHandler)
+                  diagnostics::Handler& diagnosticsHandler)
    : inputLexer (inputLexer), semanticsHandler (semanticsHandler),
-     errorHandler (errorHandler)
+    diagnosticsHandler (diagnosticsHandler)
   {
     NextToken ();
     
@@ -48,7 +48,7 @@ namespace s1
     catch (const Exception& e)
     {
       /* emit error */
-      errorHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
+      diagnosticsHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
     }
   }
   
@@ -197,7 +197,7 @@ namespace s1
       catch (const Exception& e)
       {
         /* emit error */
-        errorHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
+        diagnosticsHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
         // Seek next ';' (end of statement) or '}' (end of block)
         while ((currentToken.typeOrID != lexer::Semicolon)
           && (currentToken.typeOrID != lexer::BraceR)

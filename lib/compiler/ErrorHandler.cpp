@@ -19,6 +19,8 @@
 
 #include "ErrorHandler.h"
 
+#include "lexer/Lexer.h"
+
 #include <iostream>
 
 namespace s1
@@ -26,11 +28,12 @@ namespace s1
 namespace compiler
 {
   
-void ErrorHandler::ParseError (parser::Error code, const Lexer::Token& encounteredToken,
-                               lexer::TokenType expectedToken)
+void ErrorHandler::ParseErrorImpl (unsigned int code,
+                                   const lexer::Token& encounteredToken,
+                                   lexer::TokenType expectedToken)
 {
   const char* errorStr = "???";
-  switch (code)
+  switch (static_cast<parser::Error> (code))
   {
 #define ERRORCODE(X)	\
   case parser::Error::X: errorStr = #X; break

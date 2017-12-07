@@ -21,7 +21,7 @@
 #include "diagnostics/Handler.h"
 #include "intermediate/Diagnostics.h"
 #include "lexer/LexerErrorHandler.h"
-#include "parser/ErrorHandler.h"
+#include "parser/Diagnostics.h"
 
 namespace s1
 {
@@ -29,7 +29,6 @@ namespace compiler
 {
   
 class ErrorHandler : public LexerErrorHandler,
-                     public parser::ErrorHandler,
                      public diagnostics::Handler
 {
 public:
@@ -37,15 +36,12 @@ public:
    * @{ */
   void InputInvalidCharacter (const lexer::TokenLocation&) override { }
   /** @} */
-  
-  /**\name s1::LexerErrorHandler
-   * @{ */
-  void ParseError (s1::parser::Error code, const s1::Lexer::Token& encounteredToken,
-		   s1::Lexer::TokenType expectedToken) override;
-  /** @} */
 protected:
   /**\name diagnostics::Handler implementation
    * @{ */
+  void ParseErrorImpl (unsigned int code,
+                       const lexer::Token& encounteredToken,
+                       lexer::TokenType expectedToken) override;
   void SemanticErrorImpl (unsigned int code) override;
   /** @} */
 };

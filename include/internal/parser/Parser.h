@@ -20,10 +20,10 @@
 
 #include "lexer/Lexer.h"
 
-#include "ErrorHandler.h"
 #include "SemanticsHandler.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
+#include "diagnostics/Handler.h"
 
 #include <vector>
 
@@ -40,13 +40,13 @@ namespace s1
      * \param semanticsHandler Handler for errors
      */
     Parser (Lexer& inputLexer, parser::SemanticsHandler& semanticsHandler,
-	    parser::ErrorHandler& errorHandler);
+            diagnostics::Handler& diagnosticsHandler);
     
     void Parse ();
   protected:
     Lexer& inputLexer;
     parser::SemanticsHandler& semanticsHandler;
-    parser::ErrorHandler& errorHandler;
+    diagnostics::Handler& diagnosticsHandler;
     /// Scope with builtin definitions
     parser::SemanticsHandler::ScopePtr builtinScope;
     
