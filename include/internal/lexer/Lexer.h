@@ -18,6 +18,7 @@
 #ifndef __LEXER_LEXER_H__
 #define __LEXER_LEXER_H__
 
+#include "Token.h"
 #include "TokenLocation.h"
 #include "TokenType.h"
 
@@ -33,30 +34,9 @@ namespace s1
   class Lexer
   {
   public:
+    typedef lexer::Token Token;
     typedef lexer::TokenLocation Location;
     typedef lexer::TokenType TokenType;
-
-    /// Token object
-    struct Token
-    {
-      /// Type/symbol/keyword ID of this token
-      TokenType typeOrID = lexer::Invalid;
-      /// Original string for this token
-      uc::String tokenString;
-      /// For vectors: vector dimension; For matrices: number of columns
-      int dimension1 = 0;
-      /// For matrices: number of rows
-      int dimension2 = 0;
-
-      /// Location of token in source
-      Location location;
-
-      Token () {}
-      Token (TokenType type) : typeOrID (type) {}
-      Token (TokenType type, const uc::String& tokenString) : typeOrID (type), tokenString (tokenString) {}
-      Token (TokenType type, uc::Char32 tokenChar) : typeOrID (type), tokenString (tokenChar) {}
-      Token (TokenType type, const char* tokenString) : typeOrID (type), tokenString (tokenString) {}
-    };
     
     Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler);
     
