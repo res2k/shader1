@@ -29,6 +29,7 @@
 #include "parser/Parser.h"
 #include "splitter/ProgramSplitter.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
 #include "../../intermediate/t/CommonChecks.h"
 
 class SplitterNestedBlockTestSuite : public CxxTest::TestSuite 
@@ -53,7 +54,7 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::intermediate::IntermediateGeneratorSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     s1::Parser parser (lexer, semanticsHandler, parserErrorHandler);
     semanticsHandler.CompleteProgram();
     
