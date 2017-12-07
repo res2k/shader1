@@ -34,6 +34,8 @@
 
 #include "StringSubstitute.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
+
 using namespace s1::intermediate;
 using namespace s1::codegen;
 
@@ -43,8 +45,8 @@ class NestedBlockTestSuite : public CxxTest::TestSuite
   {
   public:
     TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-		s1::parser::ErrorHandler& errorHandler)
-     : Parser (inputLexer, semanticsHandler, errorHandler) {}
+                s1::diagnostics::Handler& diagnosticsHandler)
+     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
     
     using s1::Parser::ParseBlock;
   };
@@ -129,7 +131,7 @@ public:
     s1::LexerErrorHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    s1::parser::ErrorHandler parserErrorHandler;
+    TestDiagnosticsHandler parserErrorHandler;
     TestParser parser (lexer, semanticsHandler, parserErrorHandler);
     
     // global scope is required so BlockImpl can create some unique var names
@@ -139,6 +141,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
