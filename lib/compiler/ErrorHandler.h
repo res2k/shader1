@@ -18,6 +18,7 @@
 #ifndef __ERRORHANDLER_H__
 #define __ERRORHANDLER_H__
 
+#include "diagnostics/Handler.h"
 #include "intermediate/Diagnostics.h"
 #include "lexer/LexerErrorHandler.h"
 #include "parser/ErrorHandler.h"
@@ -28,7 +29,8 @@ namespace compiler
 {
   
 class ErrorHandler : public LexerErrorHandler,
-		     public parser::ErrorHandler
+                     public parser::ErrorHandler,
+                     public diagnostics::Handler
 {
 public:
   /**\name s1::LexerErrorHandler
@@ -41,8 +43,11 @@ public:
   void ParseError (s1::parser::Error code, const s1::Lexer::Token& encounteredToken,
 		   s1::Lexer::TokenType expectedToken) override;
   /** @} */
-  
-  void IntermediateError (s1::intermediate::Error code);
+protected:
+  /**\name diagnostics::Handler implementation
+   * @{ */
+  void SemanticErrorImpl (unsigned int code) override;
+  /** @} */
 };
 
 } // namespace compiler

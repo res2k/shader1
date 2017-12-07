@@ -62,10 +62,10 @@ void ErrorHandler::ParseError (parser::Error code, const Lexer::Token& encounter
   std::cerr << std::endl;
 }
 
-void ErrorHandler::IntermediateError (s1::intermediate::Error code)
+void ErrorHandler::SemanticErrorImpl (unsigned int code)
 {
   const char* errorStr = "???";
-  switch (code)
+  switch (static_cast<s1::intermediate::Error> (code))
   {
 #define ERRORCODE(X)	\
   case intermediate::Error::X: errorStr = #X; break

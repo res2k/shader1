@@ -38,6 +38,7 @@ namespace s1
   Compiler::Program::Program (uc::Stream* inputStream)
   {
     compiler::ErrorHandler errorHandler; // TODO: real error handler
+    intermediateHandler.SetDiagnosticsHandler (&errorHandler);
     Lexer lexer (*inputStream, errorHandler);
     
     Parser parser (lexer, intermediateHandler, errorHandler);
