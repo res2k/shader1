@@ -23,8 +23,9 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
 #include "BlockImpl.h"
-#include "TestDiagnosticsHandler.h"
 #include "TestSequenceVisitor.h"
+
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
 #include "IntermediateTestTraits.h"
 
