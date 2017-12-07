@@ -2,7 +2,6 @@ set(parser_sources
     CommonSemanticsHandler.cpp
     Parser.cpp
     ${S1_INC}/parser/CommonSemanticsHandler.h
-    ${S1_INC}/parser/ErrorHandler.h
     ${S1_INC}/parser/Exception.h
     ${S1_INC}/parser/Parser.h
     ${S1_INC}/parser/SemanticsHandler.h
