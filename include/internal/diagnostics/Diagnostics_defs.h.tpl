@@ -24,6 +24,10 @@
 #define {{namespace.upper()}}_DIAGNOSTICS_H_
 
 {{py:
+# Strip leading & trailing spaces from all lines
+def striplines(str):
+  return "\n".join(map(lambda s: s.strip(), str.strip().splitlines()))
+
 # Use hash to obtain some (hopefully) unique base value for diagnostic codes
 def hash16(x):
   return hash(x) & 0xffff
@@ -42,7 +46,10 @@ namespace s1
       /**\name Group: {{comp.attrib['name']}}
        * @{ */
 {{for loop, error in looper(comp.findall('error'))}}
-      /// {{error.find('descr').text}}
+      {{if error.find('doc') == None}}/// {{error.find('descr').text}}{{else}}/**
+       * {{error.find('descr').text}}
+       * {{error.find('doc').text|striplines|autoindent}}
+       */{{endif}}
       {{error.attrib['id']}}{{if loop.first}} = S1_DIAGNOSTICS_ERRORS_BASE_VALUE({{comp.attrib['name']|hash16}}u){{endif}}{{if not (comp_loop.last and loop.last)}},{{endif}}
 {{endfor}}
       /** @} */
