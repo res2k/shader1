@@ -17,9 +17,10 @@ looper you can get a better sense of the context.  Use like::
     3 c
 
 """
+from __future__ import absolute_import, division, print_function
 
 import sys
-from tempita.compat3 import basestring_
+from .compat3 import basestring_
 
 __all__ = ['looper']
 
@@ -149,8 +150,7 @@ class loop_pos(object):
     def _compare_group(self, item, other, getter):
         if getter is None:
             return item != other
-        elif (isinstance(getter, basestring_)
-              and getter.startswith('.')):
+        elif (isinstance(getter, basestring_) and getter.startswith('.')):
             getter = getter[1:]
             if getter.endswith('()'):
                 getter = getter[:-2]
