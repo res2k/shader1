@@ -1,5 +1,5 @@
 # Generate diagnostics headers
-set(DIAGNOSTICS_COMPS intermediate parser)
+set(DIAGNOSTICS_COMPS lexer intermediate parser)
 
 add_custom_target(generate_Diagnostics)
 
