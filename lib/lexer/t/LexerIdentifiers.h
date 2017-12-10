@@ -21,10 +21,8 @@
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 
 #include "LexerTestTraits.h"
-#include "TestErrorHandler.h"
 
 class LexerIdentifierTestSuite : public CxxTest::TestSuite 
 {
@@ -34,7 +32,7 @@ public:
     std::string inStr ("foo bar  ");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -72,7 +70,7 @@ public:
     std::string inStr ("f00 b4r  ");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -110,7 +108,7 @@ public:
     std::string inStr ("\xCE\xB1"); // alpha
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -137,7 +135,7 @@ public:
     std::string inStr ("_foo bar_ b_az ");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -187,7 +185,7 @@ public:
     std::string inStr ("o\xCC\x88 \xC3\xB6"); // <o, combining-diaeresis>, <ö>
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token1;
     s1::Lexer::Token token2;

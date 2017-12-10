@@ -22,11 +22,12 @@
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "base/uc/Stream.h"
 
+#include "lexer/Diagnostics.h"
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 
 #include "LexerTestTraits.h"
-#include "TestErrorHandler.h"
+
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
 class LexerBasicTestSuite : public CxxTest::TestSuite 
 {
@@ -36,7 +37,7 @@ public:
     std::string empty;
     s1::uc::SimpleBufferStreamSource in (empty.data (), empty.size ());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -58,7 +59,7 @@ public:
     std::string inStr ("  \r   \t  \n   ");
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -80,7 +81,7 @@ public:
     std::string inStr ("\xE2\x98");
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
-    TestErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -89,9 +90,10 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Error handle should've been triggered
-    TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
-    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.line, 0);
-    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.column, 0);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code,
+                      static_cast<unsigned int> (s1::lexer::Error::InvalidInputSequence));
+    TS_ASSERT_EQUALS (errorHandler.lexerError.location.line, 0);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.location.column, 0);
     // Invalid input sequence should result in an Invalid token
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Invalid);
     // Trying to forward never throws
@@ -106,7 +108,7 @@ public:
     std::string inStr ("a" "\xE2\x98" "b");
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
-    TestErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -125,9 +127,10 @@ public:
     // Any attempt to get current token should never throw anything
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     // Error handler should've been triggered
-    TS_ASSERT_EQUALS (errorHandler.invalidCharFound, true);
-    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.line, 0);
-    TS_ASSERT_EQUALS (errorHandler.invalidCharLocation.column, 1);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code,
+                      static_cast<unsigned int> (s1::lexer::Error::InvalidInputSequence));
+    TS_ASSERT_EQUALS (errorHandler.lexerError.location.line, 0);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.location.column, 1);
     // Invalid input sequence should result in an Invalid token
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::Invalid);
     TS_ASSERT_EQUALS (token.location.line, 0);
@@ -166,7 +169,7 @@ public:
         {"||", 54}, {"&&", 57} };
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
-    TestErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -197,7 +200,7 @@ public:
     std::string inStr ("| &");
     s1::uc::SimpleBufferStreamSource in (inStr.data (), inStr.size ());
     s1::uc::Stream ustream (in);
-    TestErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 

@@ -20,10 +20,8 @@
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 
 #include "LexerTestTraits.h"
-#include "TestErrorHandler.h"
 
 class LexerKeywordsTestSuite : public CxxTest::TestSuite 
 {
@@ -35,7 +33,7 @@ public:
                        "bool unsigned int float");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    TestErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -62,7 +60,7 @@ public:
     std::string inStr ("int2 int3x2 float5 float32 bool3");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    TestErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 

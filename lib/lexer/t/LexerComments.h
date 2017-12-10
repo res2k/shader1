@@ -21,9 +21,10 @@
 #include "base/uc/Stream.h"
 
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 
 #include "LexerTestTraits.h"
+
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
 class LexerCommentsTestSuite : public CxxTest::TestSuite 
 {
@@ -33,7 +34,7 @@ public:
     std::string inStr ("// foo");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -55,7 +56,7 @@ public:
     std::string inStr ("// foo\n");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -77,7 +78,7 @@ public:
     std::string inStr ("a\n// foo\nb");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -113,7 +114,7 @@ public:
     std::string inStr ("/* foo */");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -135,7 +136,7 @@ public:
     std::string inStr ("/* foo\n bar */");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -157,7 +158,7 @@ public:
     std::string inStr ("a\n/* foo */\nb");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
@@ -193,7 +194,7 @@ public:
     std::string inStr ("a\n/* foo\nbar */\nb");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::Lexer::Token token;
 
