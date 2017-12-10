@@ -19,7 +19,6 @@
 
 #include "base/common.h"
 
-#include "lexer/LexerErrorHandler.h"
 #include "parser/Exception.h"
 #include "parser/Parser.h"
 
@@ -48,14 +47,13 @@ public:
     std::string inStr ("void main() {}");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramSimple2 (void)
@@ -65,14 +63,13 @@ public:
     std::string inStr ("void main (out float4 pos, out float4 color) {}");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramLessSimple (void)
@@ -82,14 +79,13 @@ public:
     std::string inStr ("void main() { int foo = 1; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramLessSimple2 (void)
@@ -99,14 +95,13 @@ public:
     std::string inStr ("void main() { int foo = 1, bar; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramGlobalVar (void)
@@ -116,14 +111,13 @@ public:
     std::string inStr ("int bar; void main() { int foo = bar; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
 
   void testProgramGlobalConst (void)
@@ -133,14 +127,13 @@ public:
     std::string inStr ("const int bar = 1; void main() { int foo = bar; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramFunctionCall (void)
@@ -150,14 +143,13 @@ public:
     std::string inStr ("void Foo() {} void main() { Foo(); }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramFunctionCall2 (void)
@@ -167,14 +159,13 @@ public:
     std::string inStr ("int Foo() { return 1; } void main() { int x = Foo(); }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramFunctionCallCast (void)
@@ -184,14 +175,13 @@ public:
     std::string inStr ("void main() { int x; x = float (1.2); }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
   void testProgramExprNoResult (void)
@@ -201,14 +191,13 @@ public:
     std::string inStr ("void main() { int x, y; x + y; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
   }
   
 };

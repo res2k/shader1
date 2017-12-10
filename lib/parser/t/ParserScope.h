@@ -19,7 +19,6 @@
 
 #include "base/common.h"
 
-#include "lexer/LexerErrorHandler.h"
 #include "parser/Exception.h"
 #include "parser/Parser.h"
 

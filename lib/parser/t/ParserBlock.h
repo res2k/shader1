@@ -20,7 +20,6 @@
 #include "base/common.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
-#include "lexer/LexerErrorHandler.h"
 #include "parser/Exception.h"
 #include "parser/Parser.h"
 
@@ -51,16 +50,15 @@ public:
     std::string inStr ("a = b;");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -74,16 +72,15 @@ public:
     std::string inStr ("a = b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code,
+    TS_ASSERT_EQUALS (errorHandler.parseError.code,
                       static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
@@ -98,16 +95,15 @@ public:
     std::string inStr ("if (a) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -124,16 +120,15 @@ public:
     std::string inStr ("if (a) { c = d; } else { c = e; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -154,16 +149,15 @@ public:
     std::string inStr ("while (a) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -180,16 +174,15 @@ public:
     std::string inStr ("for (a; b; b = b+1) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -206,16 +199,15 @@ public:
     std::string inStr ("{ a = b; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -231,16 +223,15 @@ public:
     std::string inStr ("a = b error; c=d;");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code,
+    TS_ASSERT_EQUALS (errorHandler.parseError.code,
                       static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());

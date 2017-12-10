@@ -19,7 +19,6 @@
 
 #include "base/common.h"
 
-#include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 
 #include "TestSemanticsHandler.h"
@@ -46,15 +45,14 @@ public:
     std::string inStr ("bool");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -66,15 +64,14 @@ public:
     std::string inStr ("int");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -86,15 +83,14 @@ public:
     std::string inStr ("unsigned int");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -106,15 +102,14 @@ public:
     std::string inStr ("float");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -126,15 +121,14 @@ public:
     std::string inStr ("sampler1D");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -146,15 +140,14 @@ public:
     std::string inStr ("sampler2D");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -166,15 +159,14 @@ public:
     std::string inStr ("sampler3D");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -186,15 +178,14 @@ public:
     std::string inStr ("samplerCUBE");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
@@ -206,15 +197,14 @@ public:
     std::string inStr ("bool3");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -230,15 +220,14 @@ public:
     std::string inStr ("int3");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -254,15 +243,14 @@ public:
     std::string inStr ("unsigned int3");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -278,15 +266,14 @@ public:
     std::string inStr ("float3");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Vector);
@@ -302,15 +289,14 @@ public:
     std::string inStr ("bool3x2");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -327,15 +313,14 @@ public:
     std::string inStr ("int3x2");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -352,15 +337,14 @@ public:
     std::string inStr ("unsigned int3x2");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -377,15 +361,14 @@ public:
     std::string inStr ("float3x2");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
@@ -402,15 +385,14 @@ public:
     std::string inStr ("int[]");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Array);
@@ -425,15 +407,14 @@ public:
     std::string inStr ("int[][]");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TestSemanticsHandler::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Array);
