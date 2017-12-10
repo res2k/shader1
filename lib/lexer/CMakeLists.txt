@@ -2,6 +2,9 @@ s1_add_library(lexer
                SOURCES
                Lexer.cpp
                ${S1_INC}/lexer/Lexer.h
+               ${S1_INC}/lexer/Token.h
+               ${S1_INC}/lexer/TokenLocation.h
+               ${S1_INC}/lexer/TokenType.h
                LINK base)
 IF(S1LIB_PDB)
   target_compile_options(lexer PRIVATE ${S1LIB_PDB})
