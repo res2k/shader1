@@ -23,8 +23,8 @@
 {{def code_make_def_ext(comp, tag, ext)}}{{if 'type' in tag.attrib and tag.attrib['type'] == 'success'}}S1_MAKE_SUCCESS_X{{else}}S1_MAKE_ERROR_X{{endif}}({{comp_ident(comp)}}, {{tag.attrib['value']}}, {{ext}}){{enddef}}
 {{py:
 # Format a string for multi-line doxygen comment
-def doclines(str):
-  return "\n".join(map(lambda s: " * "+s.strip(), str.strip().splitlines()))
+def striplines(str):
+  return "\n".join(map(lambda s: s.strip(), str.strip().splitlines()))
 }}
 
 {{for comp in components}}
@@ -45,13 +45,13 @@ def doclines(str):
 {{for code in comp.getchildren()}}
 /**\def {{code_ident(code.attrib['name'])}}
  * \hideinitializer
-{{if code.find('doc') != None}}{{code.find('doc').text|doclines}}{{else}}{{code.find('descr').text|doclines}}{{endif}}
+ * {{if code.find('doc') != None}}{{code.find('doc').text|striplines|autoindent}}{{else}}{{code.find('descr').text|striplines|autoindent}}{{endif}}
  */
 #define {{code_ident(code.attrib['name'])}} {{code_make_def(comp.attrib['name'], code)}}
 {{if 'name_ext' in code.attrib}}
 /**\def {{code_ident(code.attrib['name_ext'])}}(N)
  * \hideinitializer
-{{if code.find('doc_ext') != None}}{{code.find('doc_ext').text|doclines}}{{else}}{{code.find('descr').text|doclines}}{{endif}}
+ * {{if code.find('doc_ext') != None}}{{code.find('doc_ext').text|striplines|autoindent}}{{else}}{{code.find('descr').text|striplines|autoindent}}{{endif}}
  */
 #define {{code_ident(code.attrib['name_ext'])}}(N) {{code_make_def_ext(comp.attrib['name'], code, '((unsigned)N) + 1')}}
 {{endif}}
