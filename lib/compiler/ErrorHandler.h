@@ -19,26 +19,18 @@
 #define __ERRORHANDLER_H__
 
 #include "diagnostics/Handler.h"
-#include "intermediate/Diagnostics.h"
-#include "lexer/LexerErrorHandler.h"
-#include "parser/Diagnostics.h"
 
 namespace s1
 {
 namespace compiler
 {
   
-class ErrorHandler : public LexerErrorHandler,
-                     public diagnostics::Handler
+class ErrorHandler : public diagnostics::Handler
 {
-public:
-  /**\name s1::LexerErrorHandler
-   * @{ */
-  void InputInvalidCharacter (const lexer::TokenLocation&) override { }
-  /** @} */
 protected:
   /**\name diagnostics::Handler implementation
    * @{ */
+  void LexerErrorImpl (unsigned int code, const lexer::TokenLocation& location) override;
   void ParseErrorImpl (unsigned int code,
                        const lexer::Token& encounteredToken,
                        lexer::TokenType expectedToken) override;

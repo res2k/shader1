@@ -19,7 +19,9 @@
 
 #include "ErrorHandler.h"
 
+#include "intermediate/Diagnostics.h"
 #include "lexer/Lexer.h"
+#include "parser/Diagnostics.h"
 
 #include <iostream>
 
@@ -27,7 +29,11 @@ namespace s1
 {
 namespace compiler
 {
-  
+void ErrorHandler::LexerErrorImpl (unsigned int code, const lexer::TokenLocation& location)
+{
+  // TODO: Actually do something
+}
+
 void ErrorHandler::ParseErrorImpl (unsigned int code,
                                    const lexer::Token& encounteredToken,
                                    lexer::TokenType expectedToken)
