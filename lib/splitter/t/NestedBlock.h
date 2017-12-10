@@ -25,7 +25,6 @@
 #include "intermediate/ProgramFunction.h"
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 #include "splitter/ProgramSplitter.h"
 
@@ -51,11 +50,10 @@ public:
     );
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler  errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     s1::intermediate::IntermediateGeneratorSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    s1::Parser parser (lexer, semanticsHandler, parserErrorHandler);
+    s1::Parser parser (lexer, semanticsHandler, errorHandler);
     semanticsHandler.CompleteProgram();
     
     s1::splitter::ProgramSplitter splitter;
