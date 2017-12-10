@@ -17,10 +17,10 @@
 
 #include "base/common.h"
 #include "lexer/Lexer.h"
-#include "lexer/LexerErrorHandler.h"
 
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
+#include "lexer/Diagnostics.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -53,8 +53,8 @@ namespace s1
   KEYWORD ("while",             lexer::kwWhile)         \
   KEYWORD ("for",               lexer::kwFor)
   
-  Lexer::Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler)
-   : inputChars (inputChars), errorHandler (errorHandler),
+  Lexer::Lexer (uc::Stream& inputChars, diagnostics::Handler& diagnosticsHandler)
+   : inputChars (inputChars), diagnosticsHandler (diagnosticsHandler),
      currentToken (lexer::EndOfFile)
   {
 #define KEYWORD(Str, Symbol)	\
@@ -482,7 +482,7 @@ KEYWORDS
     else
     {
       // Signal error handler ...
-      errorHandler.InputInvalidCharacter (currentLocation);
+      diagnosticsHandler.LexerError (lexer::Error::InvalidInputSequence, currentLocation);
       // ... and set character to the 'replacer' one
       currentChar = uc::ReplacementChar;
     }

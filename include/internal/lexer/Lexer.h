@@ -24,13 +24,12 @@
 
 #include "base/uc/Stream.h"
 #include "base/uc/String.h"
+#include "diagnostics/Handler.h"
 
 #include <boost/unordered_map.hpp>
 
 namespace s1
 {
-  struct LexerErrorHandler;
-  
   class Lexer
   {
   public:
@@ -38,7 +37,7 @@ namespace s1
     typedef lexer::TokenLocation Location;
     typedef lexer::TokenType TokenType;
     
-    Lexer (uc::Stream& inputChars, LexerErrorHandler& errorHandler);
+    Lexer (uc::Stream& inputChars, diagnostics::Handler& diagnosticsHandler);
     
     /// Returns whether more token are available
     operator bool() const throw();
@@ -60,7 +59,7 @@ namespace s1
     //@}
   protected:
     uc::Stream& inputChars;
-    LexerErrorHandler& errorHandler;
+    diagnostics::Handler& diagnosticsHandler;
     
     typedef boost::unordered_map<uc::String, TokenType> KeywordMap;
     /// Map of identifier strings to keyword names

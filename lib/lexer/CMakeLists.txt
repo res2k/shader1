@@ -6,6 +6,7 @@ s1_add_library(lexer
                ${S1_INC}/lexer/TokenLocation.h
                ${S1_INC}/lexer/TokenType.h
                LINK base)
+add_dependencies(lexer generate_Diagnostics_lexer)
 IF(S1LIB_PDB)
   target_compile_options(lexer PRIVATE ${S1LIB_PDB})
 ENDIF()
