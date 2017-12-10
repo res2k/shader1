@@ -23,6 +23,11 @@
 class TestDiagnosticsHandler : public s1::diagnostics::Handler
 {
 public:
+  void LexerErrorImpl (unsigned int code, const s1::lexer::TokenLocation& location) override
+  {
+    lexerError.code = code;
+    lexerError.location = location;
+  }
   void SemanticErrorImpl (unsigned int code) override { semanticError.code = code; }
   void ParseErrorImpl (unsigned int code,
                        const s1::lexer::Token& encounteredToken,
@@ -33,6 +38,10 @@ public:
     parseError.expectedToken = expectedToken;
   }
 
+  struct {
+    unsigned int code = 0;
+    s1::lexer::TokenLocation location;
+  } lexerError;
   struct {
     unsigned int code = 0;
   } semanticError;
