@@ -20,7 +20,6 @@
 #include <boost/make_shared.hpp>
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
-#include "lexer/LexerErrorHandler.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
 #include "TypeImpl.h"
@@ -71,11 +70,10 @@ public:
 
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
@@ -84,7 +82,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
@@ -115,11 +113,10 @@ public:
 
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
@@ -128,7 +125,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
@@ -163,11 +160,10 @@ public:
 
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
@@ -176,7 +172,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
@@ -225,11 +221,10 @@ public:
 
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
@@ -238,7 +233,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
@@ -289,11 +284,10 @@ public:
 
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
@@ -302,7 +296,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
@@ -351,11 +345,10 @@ public:
 
     s1::uc::SimpleBufferStreamSource in (blockSource, strlen (blockSource));
     s1::uc::Stream ustream (in);
-    s1::LexerErrorHandler errorHandler;
+    TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
-    TestDiagnosticsHandler parserErrorHandler;
-    TestParser parser (lexer, semanticsHandler, parserErrorHandler);
+    TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
     SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
@@ -364,7 +357,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (parserErrorHandler.parseError.code, 0);
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
