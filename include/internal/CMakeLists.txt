@@ -1,5 +1,6 @@
 # Generate diagnostics headers
-set(DIAGNOSTICS_COMPS lexer intermediate parser)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS Diagnostics_components.txt)
+file(STRINGS Diagnostics_components.txt DIAGNOSTICS_COMPS)
 
 add_custom_target(generate_Diagnostics)
 
