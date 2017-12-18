@@ -52,6 +52,7 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/outcome/include)
 
 add_subdirectory(base)
+add_subdirectory(diagnostics)
 add_subdirectory(lexer)
 add_subdirectory(parser)
 add_subdirectory(intermediate)

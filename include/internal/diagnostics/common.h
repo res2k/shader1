@@ -25,5 +25,18 @@
 // TODO...
 //#define S1_DIAGNOSTICS_WARNINGS_BASE_VALUE(val)     (val << 16) + 0x8000 + 1
 
+namespace s1
+{
+  namespace diagnostics
+  {
+    /**
+     * Return "ID string" for a diagnostic code.
+     * This is the "id" field from the diagnostics XML, but with a case
+     * conversion applied: "DiagnosticCode" becomes "diagnostic-code".
+     */
+    const char* GetIdString (unsigned int code);
+  } //namespace diagnostics
+} // namespace s1
+
 #endif // S1_DIAGNOSTICS_COMMON_H_
 
