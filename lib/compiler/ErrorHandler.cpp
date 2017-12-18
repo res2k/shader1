@@ -19,6 +19,7 @@
 
 #include "ErrorHandler.h"
 
+#include "diagnostics/common.h"
 #include "intermediate/Diagnostics.h"
 #include "lexer/Lexer.h"
 #include "parser/Diagnostics.h"
@@ -38,21 +39,8 @@ void ErrorHandler::ParseErrorImpl (unsigned int code,
                                    const lexer::Token& encounteredToken,
                                    lexer::TokenType expectedToken)
 {
-  const char* errorStr = "???";
-  switch (static_cast<parser::Error> (code))
-  {
-#define ERRORCODE(X)	\
-  case parser::Error::X: errorStr = #X; break
-  ERRORCODE(UnexpectedToken);
-  ERRORCODE(IdentifierAlreadyDeclared);
-  ERRORCODE(IdentifierUndeclared);
-  ERRORCODE(DeclarationNotAllowedInScope);
-  ERRORCODE(ExpectedTypeName);
-  ERRORCODE(OutParameterWithDefault);
-  ERRORCODE(ConflictingQualifiersForInParam);
-  ERRORCODE(QualifiersNotAllowed);
-#undef ERRORCODE
-  }
+  const char* errorStr = diagnostics::GetIdString (code);
+  if (!errorStr) errorStr = "???";
   
   std::cerr << errorStr;
   std::cerr << "; ";
@@ -73,32 +61,9 @@ void ErrorHandler::ParseErrorImpl (unsigned int code,
 
 void ErrorHandler::SemanticErrorImpl (unsigned int code)
 {
-  const char* errorStr = "???";
-  switch (static_cast<s1::intermediate::Error> (code))
-  {
-#define ERRORCODE(X)	\
-  case intermediate::Error::X: errorStr = #X; break
-  ERRORCODE(OperandTypesIncompatible);
-  ERRORCODE(OperandTypesInvalid);
-  ERRORCODE(AssignmentTypesIncompatible);
-  ERRORCODE(AssignmentTargetIsNotAnLvalue);
-  ERRORCODE(InvalidTypeCast);
-  ERRORCODE(NoMatchingFunctionOverload);
-  ERRORCODE(AmbiguousFunctionOverload);
-  ERRORCODE(ActualParameterNotAnLvalue);
-  ERRORCODE(TernaryExpressionTypesIncompatible);
-  ERRORCODE(NumberParseError);
-  ERRORCODE(TooManyTypeCtorArgs);
-  ERRORCODE(TooFewTypeCtorArgs);
-  ERRORCODE(InvalidAttribute);
-  ERRORCODE(NotAnArray);
-  ERRORCODE(IndexNotAnInteger);
-  ERRORCODE(SwizzledExpressionNotAnLvalue);
-  ERRORCODE(MultipleUseOfComponentInLvalueSwizzle);
-  ERRORCODE(ArrayNotAnLvalue);
-#undef ERRORCODE
-  }
-  
+  const char* errorStr = diagnostics::GetIdString (code);
+  if (!errorStr) errorStr = "???";
+
   std::cerr << errorStr;
   std::cerr << std::endl;
 }
