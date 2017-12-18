@@ -101,7 +101,7 @@ namespace s1
   private:
     T* obj;
   public:
-    /// Construct with a \NULL pointer.
+    /// Construct with a \nullptr pointer.
     MoveRefPtr () : obj (S1_NULL) {}
     /// Construct from \a p, never adding a reference
     MoveRefPtr (T* p) : obj (p) { }
@@ -174,7 +174,7 @@ namespace s1
   private:
     T* obj;
   public:
-    /// Construct with a \NULL pointer.
+    /// Construct with a \nullptr pointer.
     Ptr () : obj (S1_NULL) {}
     /// Construct from \a p, adding a reference
     Ptr (T* p) : obj (p)

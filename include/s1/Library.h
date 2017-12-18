@@ -436,7 +436,7 @@ namespace s1
        * Create a library object. A library object generally serves as a factory
        * for all available object types.
        * \param lib Reference to a smart pointer receiving the new library object.
-       *   Receives \NULL in case of error.
+       *   Receives \nullptr in case of error.
        * \returns If successful, the return code fulfills #S1_SUCCESSFUL.
        *   Otherwise, the return code is an error code indicating why the
        *   library could not be created.
@@ -466,7 +466,7 @@ namespace s1
       /**
        * Return additional information for the last error code set by a function.
        * In some cases, additional information for an error result is available.
-       * This function will return any such information, or \NULL if none is
+       * This function will return any such information, or \nullptr if none is
        * available.
        * String is only guaranteed valid until the next S1 function call.
        */
@@ -498,7 +498,7 @@ namespace s1
 
       /**
        * Obtain UTF-8 version of library debug message handler.
-       * \returns UTF-8 version of global debug message handler, or \NULL if none set
+       * \returns UTF-8 version of global debug message handler, or \nullptr if none set
        *   (this includes a wide string version being set).
        * \sa \ref debug_message_handlers
        */
@@ -509,7 +509,7 @@ namespace s1
       /**
       * Obtain UTF-8 version of library debug message handler.
       * \param userContext Argument to receive "user context" value.
-      * \returns UTF-8 version of global debug message handler, or \NULL if none set
+      * \returns UTF-8 version of global debug message handler, or \nullptr if none set
       *   (this includes a wide string version being set).
        * \sa \ref debug_message_handlers
       */
@@ -520,7 +520,7 @@ namespace s1
 
       /**
        * Obtain wide string version of global debug message handler.
-       * \returns wide string version of global debug message handler, or \NULL if none set
+       * \returns wide string version of global debug message handler, or \nullptr if none set
        *   (this includes an UTF-8 version being set).
        * \sa \ref debug_message_handlers
        */
@@ -531,7 +531,7 @@ namespace s1
       /**
        * Obtain wide string version of global debug message handler.
        * \param userContext Argument to receive "user context" value.
-       * \returns wide string version of global debug message handler, or \NULL if none set
+       * \returns wide string version of global debug message handler, or \nullptr if none set
        *   (this includes an UTF-8 version being set).
        * \sa \ref debug_message_handlers
        */
@@ -543,7 +543,7 @@ namespace s1
       /**
        * Create a compiler options objects.
        * \returns The new compiler options objects.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
        * last error code.
       */
       S1_RETURN_MOVE_REF_TYPE(Options) CreateOptions ()
@@ -558,7 +558,7 @@ namespace s1
        * \param compatLevel Program compatibility level.
        *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
        * \returns A new program object.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
        * last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(Program) CreateProgramFromString (const char* source,
@@ -576,7 +576,7 @@ namespace s1
        * \param compatLevel Program compatibility level.
        *    If not sure use #S1_COMPATIBILITY_LATEST here. \sa \ref compat_level
        * \returns A new program object.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
        * last error code.
        * \warning You should handle all exceptions in streamFunc!
        */
@@ -592,7 +592,7 @@ namespace s1
        * \param backend Name of the backend to create.
        *   Currently only <tt>"glsl"</tt> is supported.
        * \returns A new backend object.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
        * last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(Backend) CreateBackend (StringArg backend)
@@ -603,12 +603,12 @@ namespace s1
 
       //@{
       /** Create a string object.
-       * \param string Contents of the string. Passing \NULL will result in an error.
+       * \param string Contents of the string. Passing \nullptr will result in an error.
        * \returns A new string object.
        * In case of a decoding error a valid String object will be returned; however,
        * place holder characters will be present in the string. An appropriate error
        * status is saved in the library's last error code.
-       * In case of other errors, \NULL is returned and the error status is saved in
+       * In case of other errors, \nullptr is returned and the error status is saved in
        * the library's last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (const char* string)
@@ -639,14 +639,14 @@ namespace s1
       //@}
       //@{
       /** Create a string object.
-       * \param string Contents of the string. Passing \NULL will result in an error.
+       * \param string Contents of the string. Passing \nullptr will result in an error.
        * \param invalidPos Returns position of the (first) invalid input, if any.
        * \returns A new string object.
        * In case of a decoding error a valid String object will be returned; however,
        * place holder characters will be present in the string. \a invalidPos will point
        * to the position of the (first) invalid input and an appropriate error
        * status is saved in the library's last error code.
-       * In case of other errors, \NULL is returned and the error status is saved in
+       * In case of other errors, \nullptr is returned and the error status is saved in
        * the library's last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (const char* string, const char*& invalidPos)
@@ -672,7 +672,7 @@ namespace s1
       //@}
       /**
        * Create a string object.
-       * \param string Contents of the string. Passing \NULL will result in an error.
+       * \param string Contents of the string. Passing \nullptr will result in an error.
        * \param invalidPos Returns position of the (first) invalid input, if any,
        *   in code units of the input string.
        * \returns A new string object.
@@ -680,7 +680,7 @@ namespace s1
        * place holder characters will be present in the string. \a invalidPos will point
        * to the position of the (first) invalid input and an appropriate error
        * status is saved in the library's last error code.
-       * In case of other errors, \NULL is returned and the error status is saved in
+       * In case of other errors, \nullptr is returned and the error status is saved in
        * the library's last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(String) CreateString (StringArg string, size_t& invalidPos)

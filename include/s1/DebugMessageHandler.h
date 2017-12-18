@@ -152,7 +152,7 @@ namespace s1
 
   /**
    * Obtain UTF-8 variant of global debug message handler.
-   * \returns UTF-8 variant of global debug message handler, or \NULL if none set
+   * \returns UTF-8 variant of global debug message handler, or \nullptr if none set
    *   (this includes a wide string variant being set).
    * \sa \ref debug_message_handlers
    */
@@ -163,7 +163,7 @@ namespace s1
   /**
    * Obtain UTF-8 variant of global debug message handler.
    * \param userContext Argument to receive "user context" value.
-   * \returns UTF-8 variant of global debug message handler, or \NULL if none set
+   * \returns UTF-8 variant of global debug message handler, or \nullptr if none set
    *   (this includes a wide string variant being set).
    * \sa \ref debug_message_handlers
    */
@@ -174,7 +174,7 @@ namespace s1
 
   /**
    * Obtain UTF-8 variant of global debug message handler.
-   * \returns UTF-8 variant of global debug message handler, or \NULL if none set
+   * \returns UTF-8 variant of global debug message handler, or \nullptr if none set
    *   (this includes a wide string variant being set).
    * \sa \ref debug_message_handlers
    */
@@ -185,7 +185,7 @@ namespace s1
   /**
    * Obtain UTF-8 variant of global debug message handler.
    * \param userContext Argument to receive "user context" value.
-   * \returns UTF-8 variant of global debug message handler, or \NULL if none set
+   * \returns UTF-8 variant of global debug message handler, or \nullptr if none set
    *   (this includes a wide string variant being set).
    * \sa \ref debug_message_handlers
    */

@@ -75,7 +75,7 @@ namespace s1
     /**
      * Get TLS slot value for current thread.
      * \param slot The handle value identifying the slot.
-     * \returns \NULL if no value was set previously.
+     * \returns \nullptr if no value was set previously.
      */
     void* GetValue (Handle slot);
   } // namespace dynamic_tls

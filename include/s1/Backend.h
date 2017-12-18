@@ -105,7 +105,7 @@ namespace s1
        * \param target Targeted shader stage.
        * \param program Program to generate code from.
        * \param options Optional backend options.
-       * \returns A new compiled shader program or \NULL in case of an error.
+       * \returns A new compiled shader program or \nullptr in case of an error.
        * In that case the error status is saved in the library's
        * last error code.
        */
@@ -119,7 +119,7 @@ namespace s1
       /**
        * Create a backend options object.
        * \returns A new backend options object.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
        * last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(BackendOptions) CreateBackendOptions ()

@@ -122,7 +122,7 @@ namespace s1
        * Create a clone of the byte stream in a state that allows reading the
        * data from the start.
        * \returns A new byte stream object.
-       * A stream may be not be restartable in which case \NULL is returned.
+       * A stream may be not be restartable in which case \nullptr is returned.
        */
       S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateRestarted ()
       {

@@ -79,7 +79,7 @@ namespace s1
       /**
        * Obtain the string of a generated program.
        * \returns The program string.
-       *   If obtaining the string failed, \NULL is returned, and the error status
+       *   If obtaining the string failed, \nullptr is returned, and the error status
        *   is saved in the library's last error code.
        * \remarks The returned string is valid as long as the compiled
        *  program object exists.
@@ -92,7 +92,7 @@ namespace s1
       /**
        * Obtain the string of a generated program.
        * \returns The program string as a byte stream.
-       *   If obtaining the string failed, \NULL is returned, and the error status
+       *   If obtaining the string failed, \nullptr is returned, and the error status
        *   is saved in the library's last error code.
        */
       S1_RETURN_MOVE_REF_TYPE(ByteStream) CreateStream ()

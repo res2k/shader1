@@ -185,6 +185,7 @@ TAB_SIZE               = 4
 # You can put \n's in the value part of an alias to insert newlines.
 
 ALIASES                = NULL="<span style='font-variant: small-caps;'>null</span>"     \
+                         nullptr="\c nullptr"                                           \
                          createdby="\par Created by:\n"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).

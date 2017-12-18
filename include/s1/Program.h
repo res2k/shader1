@@ -211,7 +211,7 @@ namespace s1
       /**
        * Get program compilation options.
        * \returns The program compilation options.
-       * In case of an error, \NULL is returned and the error status is saved in the library's
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
        * last error code.
        * \remarks You will \em not get back the object passed to s1_program_set_options().
        */
@@ -236,7 +236,7 @@ namespace s1
 
       /**
        * Get the entry function of a program.
-       * \returns The program's entry function or \NULL in case if an error.
+       * \returns The program's entry function or \nullptr in case if an error.
        * Does \em not add a reference to the returned object.
        * In that case the error status is saved in the library's
        * last error code.
