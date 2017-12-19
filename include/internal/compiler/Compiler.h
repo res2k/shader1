@@ -51,6 +51,8 @@ namespace s1
     typedef boost::intrusive_ptr<Program> ProgramPtr;
     
     ProgramPtr CreateProgram (uc::Stream::Source& inputStream);
+
+    class ProgramDiagnostics;
     
     // Methods to specify input
     // Optimization getters/setters

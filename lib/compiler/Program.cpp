@@ -21,6 +21,7 @@
 #include "compiler/BackendProgram.h"
 #include "compiler/Options.h"
 #include "compiler/Program.h"
+#include "compiler/ProgramDiagnostics.h"
 
 #include "base/DebugMessageHandler.h"
 #include "base/uc/Stream.h"
@@ -31,20 +32,20 @@
 #include "parser/Parser.h"
 #include "splitter/ProgramSplitter.h"
 
-#include "ErrorHandler.h"
-
 namespace s1
 {
-  Compiler::Program::Program (uc::Stream* inputStream)
+  Compiler::Program::Program (uc::Stream* inputStream) : diagnostics (new ProgramDiagnostics)
   {
-    compiler::ErrorHandler errorHandler; // TODO: real error handler
-    intermediateHandler.SetDiagnosticsHandler (&errorHandler);
-    Lexer lexer (*inputStream, errorHandler);
+    intermediateHandler.SetDiagnosticsHandler (diagnostics.get());
+    Lexer lexer (*inputStream, *diagnostics);
     
-    Parser parser (lexer, intermediateHandler, errorHandler);
+    Parser parser (lexer, intermediateHandler, *diagnostics);
     parser.Parse ();
     intermediateHandler.CompleteProgram();
   }
+
+  Compiler::Program::~Program ()
+  {}
 
   void Compiler::Program::SetProgramOutputParameters ()
   {

@@ -3,16 +3,16 @@ set(compiler_sources
      BackendGLSL.h
      BackendGLSL.cpp
      Compiler.cpp
-     ErrorHandler.cpp
-     ErrorHandler.h
      Options.cpp
      Program.cpp
+     ProgramDiagnostics.cpp
      ${S1_INC}/compiler/Backend.h
      ${S1_INC}/compiler/BackendProgram.h
      ${S1_INC}/compiler/BackendProgramImpl.h
      ${S1_INC}/compiler/Compiler.h
      ${S1_INC}/compiler/Options.h
      ${S1_INC}/compiler/Program.h
+     ${S1_INC}/compiler/ProgramDiagnostics.h
      )
 s1_add_library(compiler
                SOURCES ${compiler_sources}

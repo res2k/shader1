@@ -42,6 +42,7 @@ namespace s1
     
     OptionsPtr compilerOptions;
     
+    std::unique_ptr<ProgramDiagnostics> diagnostics;
     intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
     intermediate::ProgramPtr intermediateProg;
     /// Entry function used to generate intermediateProg
@@ -53,6 +54,8 @@ namespace s1
   public:
     typedef boost::unordered_map<uc::String, unsigned int> FreqFlagMap;
     typedef intermediate::Program::ParameterArraySizes ArraySizeMap;
+
+    ~Program ();
     
     Compiler::Backend::ProgramPtr GetCompiledProgram (const uc::String& entryFunction,
                                                       const OptionsPtr& compilerOptions,
