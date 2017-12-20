@@ -23,6 +23,7 @@
 
 #include "Compiler.h"
 
+#include "base/LibraryObject.h"
 #include "base/uc/String.h"
 #include "diagnostics/Handler.h"
 
@@ -32,10 +33,11 @@
 namespace s1
 {
   /// Container for program compilation diagnostics
-  class Compiler::ProgramDiagnostics : public diagnostics::Handler
+  class Compiler::ProgramDiagnostics : public LibraryObject,
+                                       public diagnostics::Handler
   {
   public:
-    ProgramDiagnostics ();
+    ProgramDiagnostics (Library* lib);
     ~ProgramDiagnostics ();
   protected:
     struct Entry;

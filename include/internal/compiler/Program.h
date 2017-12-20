@@ -38,11 +38,11 @@ namespace s1
   protected:
     friend class Compiler;
     
-    Program (uc::Stream* inputStream);
+    Program (Library* lib, uc::Stream* inputStream);
     
     OptionsPtr compilerOptions;
     
-    std::unique_ptr<ProgramDiagnostics> diagnostics;
+    ProgramDiagnosticsPtr diagnostics;
     intermediate::IntermediateGeneratorSemanticsHandler intermediateHandler;
     intermediate::ProgramPtr intermediateProg;
     /// Entry function used to generate intermediateProg
@@ -56,6 +56,8 @@ namespace s1
     typedef intermediate::Program::ParameterArraySizes ArraySizeMap;
 
     ~Program ();
+
+    ProgramDiagnostics* GetDiagnostics() const;
     
     Compiler::Backend::ProgramPtr GetCompiledProgram (const uc::String& entryFunction,
                                                       const OptionsPtr& compilerOptions,

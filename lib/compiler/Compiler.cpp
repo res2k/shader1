@@ -48,6 +48,6 @@ namespace s1
   Compiler::ProgramPtr Compiler::CreateProgram (uc::Stream::Source& inputStream)
   {
     uc::Stream uniStream (inputStream);
-    return ProgramPtr (new Program (&uniStream));
+    return ProgramPtr (new Program (lib, &uniStream));
   }
 } // namespace s1

@@ -34,7 +34,8 @@
 
 namespace s1
 {
-  Compiler::Program::Program (uc::Stream* inputStream) : diagnostics (new ProgramDiagnostics)
+  Compiler::Program::Program (Library* lib, uc::Stream* inputStream)
+    : diagnostics (new ProgramDiagnostics (lib))
   {
     intermediateHandler.SetDiagnosticsHandler (diagnostics.get());
     Lexer lexer (*inputStream, *diagnostics);
@@ -138,6 +139,11 @@ namespace s1
     }
 
     S1_ASSERT_NOT_REACHED (splitter::freqUniform);
+  }
+
+  Compiler::ProgramDiagnostics* Compiler::Program::GetDiagnostics() const
+  {
+    return diagnostics.get();
   }
 
   Compiler::Backend::ProgramPtr Compiler::Program::GetCompiledProgram (const uc::String& entryFunction,

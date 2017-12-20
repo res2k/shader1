@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/ResultCode_internal.h"
 
 #include "compiler/ProgramDiagnostics.h"
 
@@ -30,7 +31,9 @@ namespace s1
     boost::optional<uc::String> info2;
   };
 
-  Compiler::ProgramDiagnostics::ProgramDiagnostics () {}
+  Compiler::ProgramDiagnostics::ProgramDiagnostics (s1::Library* lib)
+    : LibraryObject (lib)
+  {}
 
   Compiler::ProgramDiagnostics::~ProgramDiagnostics () {}
 
