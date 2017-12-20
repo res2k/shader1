@@ -34,6 +34,7 @@
 #include "s1/CompiledProgram.h"
 #include "s1/Library.h"
 #include "s1/Options.h"
+#include "s1/ProgramDiagnostics.h"
 #include "s1/ResultCode.h"
 
 #include <errno.h>
@@ -66,6 +67,22 @@ static void print_lib_error (const char* message, s1_Library* lib)
 static void print_syntax (const char* exec_name)
 {
   fprintf (stderr, "Syntax: %s [input filename]\n", exec_name);
+}
+
+static void print_diagnostics (s1_ProgramDiagnostics* program_diagnostics)
+{
+  size_t i, diag_num = s1_programdiagnostics_get_count (program_diagnostics);
+  for (i = 0; i < diag_num; i++)
+  {
+    switch (s1_programdiagnostics_get_class (program_diagnostics, i))
+    {
+    case S1_DIAGNOSTIC_INVALID:
+      continue;
+    case S1_DIAGNOSTIC_ERROR:
+      fprintf (stderr, "error: %s\n", s1_programdiagnostics_get_id (program_diagnostics, i));
+      break;
+    }
+  }
 }
 
 enum
@@ -300,6 +317,8 @@ int main (const int argc, const char* const argv[])
     }
     arg_num++;
   }
+
+  print_diagnostics (s1_program_get_diagnostics (program));
 
   {
     s1_CompiledProgram* compiled_vp = s1_backend_generate_program (backend, program, S1_TARGET_VP, 0);
