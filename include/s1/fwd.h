@@ -33,6 +33,7 @@ S1TYPE_DECLARE_FWD(Library);
 S1TYPE_DECLARE_FWD(LibraryObject);
 S1TYPE_DECLARE_FWD(Options);
 S1TYPE_DECLARE_FWD(Program);
+S1TYPE_DECLARE_FWD(ProgramDiagnostics);
 S1TYPE_DECLARE_FWD(String);
 
 #if defined(__cplusplus)
@@ -47,6 +48,7 @@ namespace s1
   typedef cxxapi::LibraryObject LibraryObject;
   typedef cxxapi::Options Options;
   typedef cxxapi::Program Program;
+  typedef cxxapi::ProgramDiagnostics ProgramDiagnostics;
   typedef cxxapi::String String;
 #endif // !defined(S1_BUILD)
 } // namespace s1

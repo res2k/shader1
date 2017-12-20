@@ -66,6 +66,19 @@ S1_API(s1_bool) s1_program_set_options (s1_Program* program, s1_Options* options
  */
 S1_API(s1_Options*) s1_program_get_options (s1_Program* program);
 
+S1TYPE_DECLARE_FWD(ProgramDiagnostics);
+
+/**
+ * Get program diagnostics.
+ * \param program Program object.
+ * \returns The program diagnostics.
+ * Does \em not add a reference to the returned object.
+ * In case of an error, \NULL is returned and the error status is saved in the library's
+ * last error code.
+ * \memberof s1_Program
+ */
+S1_API(s1_ProgramDiagnostics*) s1_program_get_diagnostics (s1_Program* program);
+
 S1TYPE_DECLARE_FWD(String);
 
 /**
@@ -218,6 +231,17 @@ namespace s1
       Options* GetOptions ()
       {
         return s1_program_get_options (this);
+      }
+
+      /**
+       * Get program diagnostics.
+       * \returns The program diagnostics.
+       * In case of an error, \nullptr is returned and the error status is saved in the library's
+       * last error code.
+       */
+      ProgramDiagnostics* GetDiagnostics ()
+      {
+        return s1_program_get_diagnostics (this);
       }
 
       /**

@@ -26,6 +26,7 @@ set(s1_sources
     Object.cpp
     Options.cpp
     Program.cpp
+    ProgramDiagnostics.cpp
     ResultCode.cpp
     ResultCodeHelper.cpp
     ResultCodeHelper.h

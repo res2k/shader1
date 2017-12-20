@@ -67,6 +67,8 @@ namespace s1
        * @{ */
       s1::ResultCode SetOptions (const s1::Compiler::OptionsPtr& options);
       const s1::Compiler::OptionsPtr& GetOptions() const;
+
+      s1::Compiler::ProgramDiagnostics* GetDiagnostics() const;
       
       s1::ResultCode SetEntry (boost::intrusive_ptr<String> entry);
       Result<String*> GetEntry () const;

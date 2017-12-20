@@ -25,6 +25,7 @@
 #include "base/uc/String_optional.h"
 #include "compiler/BackendProgram.h"
 #include "compiler/Program.h"
+#include "compiler/ProgramDiagnostics.h"
 #include "splitter/Frequency.h"
 
 #include "CompiledProgram.h"
@@ -91,6 +92,11 @@ namespace s1
       return S1_SUCCESS;
     }
     const s1::Compiler::OptionsPtr& Program::GetOptions() const { return options; }
+
+    s1::Compiler::ProgramDiagnostics* Program::GetDiagnostics() const
+    {
+      return wrapped_program->GetDiagnostics();
+    }
     
     s1::ResultCode Program::SetEntry (boost::intrusive_ptr<String> entry)
     {
@@ -176,6 +182,16 @@ s1_Options* s1_program_get_options (s1_Program* program)
 
   s1::Compiler::OptionsPtr options_impl (program_impl->GetOptions());
   return program_impl->ReturnSuccess (options_impl->DowncastEvil<s1_Options> ());
+}
+
+s1_ProgramDiagnostics* s1_program_get_diagnostics (s1_Program* program)
+{
+  S1_ASSERT_MSG(program, "NULL Program", nullptr);
+  s1::api_impl::Program* program_impl (s1::EvilUpcast<s1::api_impl::Program> (program));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (program_impl->GetDebugMessageHandler ());
+
+  return program_impl->ReturnSuccess (
+    program_impl->GetDiagnostics()->DowncastEvil<s1_ProgramDiagnostics> ());
 }
 
 s1_bool s1_program_set_entry_function (s1_Program* program, s1_StringArg string)
