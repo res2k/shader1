@@ -20,6 +20,7 @@
 
 #include "compiler/ProgramDiagnostics.h"
 
+#include "diagnostics/common.h"
 #include "lexer/Lexer.h"
 
 namespace s1
@@ -36,6 +37,23 @@ namespace s1
   {}
 
   Compiler::ProgramDiagnostics::~ProgramDiagnostics () {}
+
+  size_t Compiler::ProgramDiagnostics::GetCount() const
+  {
+    return entries.size();
+  }
+
+  Result<Compiler::ProgramDiagnostics::Class> Compiler::ProgramDiagnostics::Classify (size_t index) const
+  {
+    if (index >= entries.size ()) return S1_E_INVALID_ARG_N (0);
+    return Class::Error;
+  }
+
+  Result<const char*> Compiler::ProgramDiagnostics::Id (size_t index) const
+  {
+    if (index >= entries.size ()) return S1_E_INVALID_ARG_N (0);
+    return diagnostics::GetIdString (entries[index].code);
+  }
 
   void Compiler::ProgramDiagnostics::Add (unsigned int code,
                                           boost::optional<const uc::String&> info1,

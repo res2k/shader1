@@ -39,6 +39,18 @@ namespace s1
   public:
     ProgramDiagnostics (Library* lib);
     ~ProgramDiagnostics ();
+
+    /// Return number of entries
+    size_t GetCount() const;
+    /// Diagnostic information class
+    enum struct Class
+    {
+      Error
+    };
+    /// Obtain diagnostic information for an entry
+    Result<Class> Classify (size_t index) const;
+    /// Obtain diagnostic ID for an entry
+    Result<const char*> Id (size_t index) const;
   protected:
     struct Entry;
     boost::container::deque<Entry> entries;
