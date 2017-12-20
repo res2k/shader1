@@ -31,6 +31,7 @@
 #include "s1/CompiledProgram.h"
 #include "s1/Library.h"
 #include "s1/Options.h"
+#include "s1/ProgramDiagnostics.h"
 #include "s1/ResultCode.h"
 
 #include <boost/filesystem/path.hpp>
@@ -405,6 +406,21 @@ public:
   }
 };
 
+static void PrintDiagnostics (ProgramDiagnostics* programDiagnostics)
+{
+  for (size_t i = 0, n = programDiagnostics->GetCount(); i < n; i++)
+  {
+    switch (programDiagnostics->GetClass (i))
+    {
+    case S1_DIAGNOSTIC_INVALID:
+      continue;
+    case S1_DIAGNOSTIC_ERROR:
+      std::cerr << "error: " << programDiagnostics->GetID (i) << std::endl;
+      break;
+    }
+  }
+}
+
 int MainFunc (const int argc, const ArgChar* const argv[])
 {
   std::locale::global (std::locale (""));
@@ -494,6 +510,8 @@ int MainFunc (const int argc, const ArgChar* const argv[])
         << LastErrorString (lib) << std::endl;
     }
   }
+
+  PrintDiagnostics (compilerProg->GetDiagnostics ());
 
   if (options.noSplit)
   {
