@@ -31,7 +31,7 @@ namespace s1
 {
   namespace multi_optional_detail
   {
-    template<typename T>
+    template<typename T, bool IsTrivial = std::is_trivial<T>::value>
     class Storage
     {
       uint8_t data alignas(T)[sizeof(T)];
@@ -60,6 +60,42 @@ namespace s1
       {
         const uint8_t* p = &(data[0]);
         return *(reinterpret_cast<const T*> (p));
+      }
+      //@}
+    };
+
+    template<typename T>
+    class Storage<T, true>
+    {
+      T data;
+    public:
+      //@{
+      /// Construct (unconditionally)
+      void construct ()
+      {
+        data = T ();
+      }
+      template<typename U>
+      void construct (U&& arg)
+      {
+        data = std::forward<U> (arg);
+      }
+      //@}
+      /// Destroy (unconditionally)
+      void destroy ()
+      {
+        data.~T();
+      }
+
+      //@{
+      /// Obtain reference to contained data
+      T& get_ref ()
+      {
+        return data;
+      }
+      const T& get_ref () const
+      {
+        return data;
       }
       //@}
     };
