@@ -20,6 +20,7 @@
 
 #include "compiler/ProgramDiagnostics.h"
 
+#include "base/MultiOptional.h"
 #include "diagnostics/common.h"
 #include "lexer/Lexer.h"
 
@@ -28,8 +29,7 @@ namespace s1
   struct Compiler::ProgramDiagnostics::Entry
   {
     unsigned int code;
-    boost::optional<uc::String> info1;
-    boost::optional<uc::String> info2;
+    s1::MultiOptional<uc::String, uc::String> info;
   };
 
   Compiler::ProgramDiagnostics::ProgramDiagnostics (s1::Library* lib)
@@ -61,8 +61,8 @@ namespace s1
   {
     Entry newEntry;
     newEntry.code = code;
-    if (info1) newEntry.info1 = *info1;
-    if (info2) newEntry.info2 = *info2;
+    if (info1) newEntry.info.emplace<0> (*info1);
+    if (info2) newEntry.info.emplace<1> (*info2);
     entries.push_back (std::move (newEntry));
   }
 
