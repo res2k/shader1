@@ -24,7 +24,6 @@
 #include <bitset>
 
 #include <boost/mpl/at.hpp>
-#include <boost/mpl/range_c.hpp>
 #include <boost/mpl/size.hpp>
 #include <boost/mpl/vector.hpp>
 
@@ -83,9 +82,9 @@ namespace s1
     typedef boost::mpl::vector<T...> types;
     MultiOptional () {}
     template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
-    MultiOptional (const MultiOptional<U...>& other) { assign_from_after<0> (other); }
+    MultiOptional (const MultiOptional<U...>& other) { construct_from_after<0> (other); }
     template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
-    MultiOptional (MultiOptional<U...>&& other) { assign_from_after<0> (std::move (other)); }
+    MultiOptional (MultiOptional<U...>&& other) { construct_from_after<0> (std::move (other)); }
     ~MultiOptional () { destroy_all_after<0> (); }
 
     template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
@@ -233,8 +232,8 @@ namespace s1
     }
     //@}
   protected:
+    template<typename... U> friend class MultiOptional;
     enum { N = boost::mpl::size<types>::value };
-    typedef typename boost::mpl::range_c<size_t, 0, N>::type indices_range_type;
 
     std::bitset<N> constructed;
     std::tuple<multi_optional_detail::Storage<T>...> storage;
@@ -270,12 +269,47 @@ namespace s1
     }
 
     //@{
+    /// Construct from other MultiOptional
+    template<size_t I, typename... U>
+    typename std::enable_if <I < N>::type construct_from_after (const MultiOptional<U...>& other)
+    {
+      assert (!constructed[I]);
+      if (other.has_value<I> ())
+      {
+        std::get<I> (storage).construct (other.get_ref<I> ());
+        constructed[I] = true;
+      }
+      construct_from_after<I + 1> (other);
+    }
+    template<size_t I, typename... U>
+    typename std::enable_if<I == N>::type construct_from_after (const MultiOptional<U...>& other)
+    {
+    }
+
+    template<size_t I, typename... U>
+    typename std::enable_if <I < N>::type construct_from_after (MultiOptional<U...>&& other)
+    {
+      assert (!constructed[I]);
+      if (other.has_value<I> ())
+      {
+        std::get<I> (storage).construct (std::move (other.get_ref<I> ()));
+        constructed[I] = true;
+      }
+      construct_from_after<I + 1> (std::move (other));
+    }
+    template<size_t I, typename... U>
+    typename std::enable_if<I == N>::type construct_from_after (MultiOptional<U...>&& other)
+    {
+    }
+    //@}
+
+    //@{
     /// Copy from other MultiOptional
     template<size_t I, typename... U>
     typename std::enable_if <I < N>::type assign_from_after (const MultiOptional<U...>& other)
     {
       if (other.template has_value<I> ())
-        assign<I> (other.template value<I> ());
+        assign<I> (other.template get_ref<I> ());
       else
         reset<I> ();
       assign_from_after<I + 1> (other);
@@ -288,8 +322,8 @@ namespace s1
     template<size_t I, typename... U>
     typename std::enable_if <I < N>::type assign_from_after (MultiOptional<U...>&& other)
     {
-      if (other.template  has_value<I> ())
-        assign<I> (std::move (other.template value<I> ()));
+      if (other.template has_value<I> ())
+        assign<I> (std::move (other.template get_ref<I> ()));
       else
         reset<I> ();
       assign_from_after<I + 1> (std::move (other));
