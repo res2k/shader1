@@ -254,8 +254,8 @@ namespace s1
     template<size_t I, typename... U>
     typename std::enable_if <I < N>::type assign_from_after (const MultiOptional<U...>& other)
     {
-      if (other.has_value<I> ())
-        assign<I> (other.value<I> ());
+      if (other.template has_value<I> ())
+        assign<I> (other.template value<I> ());
       else
         reset<I> ();
       assign_from_after<I + 1> (other);
@@ -268,8 +268,8 @@ namespace s1
     template<size_t I, typename... U>
     typename std::enable_if <I < N>::type assign_from_after (MultiOptional<U...>&& other)
     {
-      if (other.has_value<I> ())
-        assign<I> (std::move (other.value<I> ()));
+      if (other.template  has_value<I> ())
+        assign<I> (std::move (other.template value<I> ()));
       else
         reset<I> ();
       assign_from_after<I + 1> (std::move (other));
