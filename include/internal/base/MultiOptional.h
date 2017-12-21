@@ -132,29 +132,29 @@ namespace s1
 
       ElementProxy& operator= (const U& value)
       {
-        owner.assign<I> (std::forward<U> (value));
+        owner.template assign<I> (std::forward<U> (value));
         return *this;
       }
       ElementProxy& operator= (U&& value)
       {
-        owner.assign<I> (std::forward<U> (value));
+        owner.template assign<I> (std::forward<U> (value));
         return *this;
       }
       ElementProxy& operator= (none_t)
       {
-        owner.reset<I> ();
+        owner.template reset<I> ();
         return *this;
       }
 
-      U& operator*() const { return owner.get_ref<I> (); }
+      U& operator*() const { return owner.template get_ref<I> (); }
 
-      bool has_value() const { return owner.has_value<I> (); }
-      U& value() const { return owner.value<I> (); }
+      bool has_value() const { return owner.template has_value<I> (); }
+      U& value() const { return owner.template value<I> (); }
 
       template<typename... V>
-      void emplace (V&&... args) { owner.emplace<I> (std::forward<V> (args)...); }
+      void emplace (V&&... args) { owner.template emplace<I> (std::forward<V> (args)...); }
 
-      void reset () { owner.reset<I> (); }
+      void reset () { owner.template reset<I> (); }
     };
 
     /// Const element proxy class
@@ -168,10 +168,10 @@ namespace s1
     public:
       ~ElementConstProxy() {}
 
-      const U& operator*() const { return owner.get_ref<I> (); }
+      const U& operator*() const { return owner.template get_ref<I> (); }
 
-      bool has_value() const { return owner.has_value<I> (); }
-      const U& value() const { return owner.value<I> (); }
+      bool has_value() const { return owner.template has_value<I> (); }
+      const U& value() const { return owner.template value<I> (); }
     };
 
     //@{
