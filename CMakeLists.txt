@@ -286,6 +286,7 @@ set(ALL_REQUIRED_CXX_FEATURES
     cxx_nullptr
     cxx_override
     cxx_range_for
+    cxx_reference_qualified_functions
     cxx_rvalue_references
     cxx_static_assert
     cxx_strong_enums

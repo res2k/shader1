@@ -12,6 +12,7 @@ set(base_sources
     ${S1_INC}/base/Library.h
     ${S1_INC}/base/LibraryObject.h
     ${S1_INC}/base/math_error_handler.h
+    ${S1_INC}/base/MultiOptional.h
     ${S1_INC}/base/Object.h
     ${S1_INC}/base/Result.h
     ${S1_INC}/base/ResultCode_internal.h
@@ -60,6 +61,7 @@ if(CXXTEST_FOUND)
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/LibraryLastError.h
+                         ${CMAKE_CURRENT_SOURCE_DIR}/t/MultiOptional.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
