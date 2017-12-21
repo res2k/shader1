@@ -33,9 +33,36 @@ namespace s1
   namespace multi_optional_detail
   {
     template<typename T>
-    struct Storage
+    class Storage
     {
       uint8_t data alignas(T)[sizeof(T)];
+    public:
+      /// Construct (unconditionally)
+      template<typename... U>
+      void construct (U&&... args)
+      {
+        new (data) T (std::forward<U> (args)...);
+      }
+      /// Destroy (unconditionally)
+      void destroy ()
+      {
+        uint8_t* p = &(data[0]);
+        reinterpret_cast<T*> (p)->~T();
+      }
+
+      //@{
+      /// Obtain reference to contained data
+      T& get_ref ()
+      {
+        uint8_t* p = &(data[0]);
+        return *(reinterpret_cast<T*> (p));
+      }
+      const T& get_ref () const
+      {
+        const uint8_t* p = &(data[0]);
+        return *(reinterpret_cast<const T*> (p));
+      }
+      //@}
     };
   } // multi_optional_detail
 
@@ -114,13 +141,11 @@ namespace s1
     template<size_t I, typename... U>
     void emplace (U&&... args)
     {
-      typedef typename boost::mpl::at_c<types, I>::type element_type;
-      auto element_data = &(std::get<I> (storage).data);
       if (constructed[I])
       {
-        reinterpret_cast<element_type*> (element_data)->~element_type ();
+        std::get<I> (storage).destroy ();
       }
-      new (element_data) element_type (std::forward<U> (args)...);
+      std::get<I> (storage).construct (std::forward<U> (args)...);
       constructed[I] = true;
     }
 
@@ -128,10 +153,9 @@ namespace s1
     template<size_t I>
     void reset ()
     {
-      typedef typename boost::mpl::at_c<types, I>::type element_type;
       if (constructed[I])
       {
-        get_ref<I>().~element_type ();
+        std::get<I> (storage).destroy ();
         constructed[I] = false;
       }
     }
@@ -220,15 +244,13 @@ namespace s1
     template<size_t I>
     typename boost::mpl::at_c<types, I>::type& get_ref ()
     {
-      uint8_t* p = &(std::get<I> (storage).data[0]);
-      return *(reinterpret_cast<typename boost::mpl::at_c<types, I>::type *> (p));
+      return std::get<I> (storage).get_ref ();
     }
 
     template<size_t I>
     const typename boost::mpl::at_c<types, I>::type& get_ref () const
     {
-      const uint8_t* p = &(std::get<I> (storage).data[0]);
-      return *(reinterpret_cast<const typename boost::mpl::at_c<types, I>::type *> (p));
+      return std::get<I> (storage).get_ref ();
     }
     //@}
 
@@ -236,15 +258,13 @@ namespace s1
     template<size_t I, typename U>
     void assign (U&& value)
     {
-      typedef typename boost::mpl::at_c<types, I>::type element_type;
-      auto element_data = &(std::get<I> (storage).data);
       if (constructed[I])
       {
-        *(reinterpret_cast<element_type*> (element_data)) = std::forward<U> (value);
+        std::get<I> (storage).get_ref() = std::forward<U> (value);
       }
       else
       {
-        new (element_data) element_type (std::forward<U> (value));
+        std::get<I> (storage).construct (std::forward<U> (value));
         constructed[I] = true;
       }
     }
@@ -285,11 +305,7 @@ namespace s1
     template<size_t I>
     typename std::enable_if<I < N>::type destroy_all_after ()
     {
-      typedef typename boost::mpl::at_c<types, I>::type element_type;
-      if (constructed[I])
-      {
-        get_ref<I>().~element_type ();
-      }
+      if (constructed[I]) std::get<I> (storage).destroy ();
       destroy_all_after<I + 1> ();
     }
     template<size_t I>
