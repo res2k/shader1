@@ -73,6 +73,28 @@ public:
       TS_ASSERT_EQUALS(*(const_x.get<0> ()), const_x.value<0> ());
       TS_ASSERT_EQUALS(*(x.get<0> ()), *(const_x.get<0> ()));
     }
+
+    typedef s1::MultiOptional<long> TestType2;
+    {
+      TestType x;
+      TS_ASSERT(!x.has_value<0> ());
+      TestType2 y;
+      y.emplace<0> (42);
+      TS_ASSERT(y.has_value<0> ());
+      TS_ASSERT_EQUALS(y.value<0> (), 42);
+      x = y;
+      TS_ASSERT(x.has_value<0> ());
+      TS_ASSERT_EQUALS(x.value<0> (), 42);
+    }
+    {
+      TestType2 y;
+      y.emplace<0> (42);
+      TS_ASSERT(y.has_value<0> ());
+      TS_ASSERT_EQUALS(y.value<0> (), 42);
+      TestType x (y);
+      TS_ASSERT(x.has_value<0> ());
+      TS_ASSERT_EQUALS(x.value<0> (), 42);
+    }
   }
 
   void testTwoElements (void)
@@ -149,6 +171,48 @@ public:
       TS_ASSERT_EQUALS(const_x.value<1> (), *(const_x.get<1> ()));
       TS_ASSERT_EQUALS(*(const_x.get<1> ()), const_x.value<1> ());
       TS_ASSERT_EQUALS(*(x.get<1> ()), *(const_x.get<1> ()));
+    }
+
+    typedef s1::MultiOptional<std::string, const wchar_t*> TestType2;
+    {
+      TestType x;
+      TS_ASSERT(!x.has_value<0> ());
+      TestType2 y;
+      y.emplace<0> ("foo");
+      TS_ASSERT(y.has_value<0> ());
+      TS_ASSERT_EQUALS(y.value<0> (), "foo");
+      x = y;
+      TS_ASSERT(x.has_value<0> ());
+      TS_ASSERT_EQUALS(x.value<0> (), "foo");
+    }
+    {
+      TestType2 y;
+      y.emplace<0> ("foo");
+      TS_ASSERT(y.has_value<0> ());
+      TS_ASSERT_EQUALS(y.value<0> (), "foo");
+      TestType x (y);
+      TS_ASSERT(x.has_value<0> ());
+      TS_ASSERT_EQUALS(x.value<0> (), "foo");
+    }
+    {
+      TestType x;
+      TS_ASSERT(!x.has_value<1> ());
+      TestType2 y;
+      y.emplace<1> (L"bar");
+      TS_ASSERT(y.has_value<1> ());
+      TS_ASSERT_EQUALS(y.value<1> (), L"bar");
+      x = std::move (y);
+      TS_ASSERT(x.has_value<1> ());
+      TS_ASSERT_EQUALS(x.value<1> (), L"bar");
+    }
+    {
+      TestType2 y;
+      y.emplace<1> (L"bar");
+      TS_ASSERT(y.has_value<1> ());
+      TS_ASSERT_EQUALS(y.value<1> (), L"bar");
+      TestType x (std::move (y));
+      TS_ASSERT(x.has_value<1> ());
+      TS_ASSERT_EQUALS(x.value<1> (), L"bar");
     }
   }
 };

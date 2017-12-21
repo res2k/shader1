@@ -55,7 +55,24 @@ namespace s1
   public:
     typedef boost::mpl::vector<T...> types;
     MultiOptional () {}
+    template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
+    MultiOptional (const MultiOptional<U...>& other) { assign_from_after<0> (other); }
+    template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
+    MultiOptional (MultiOptional<U...>&& other) { assign_from_after<0> (std::move (other)); }
     ~MultiOptional () { destroy_all_after<0> (); }
+
+    template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
+    MultiOptional& operator= (const MultiOptional<U...>& other)
+    {
+      assign_from_after<0> (other);
+      return *this;
+    }
+    template<typename... U, typename = std::enable_if<sizeof...(T) == sizeof...(U)>>
+    MultiOptional& operator= (MultiOptional<U...>&& other)
+    {
+      assign_from_after<0> (std::move (other));
+      return *this;
+    }
 
     /// Check whether optional has a specific value.
     template<size_t I>
@@ -231,6 +248,37 @@ namespace s1
         constructed[I] = true;
       }
     }
+
+    //@{
+    /// Copy from other MultiOptional
+    template<size_t I, typename... U>
+    typename std::enable_if <I < N>::type assign_from_after (const MultiOptional<U...>& other)
+    {
+      if (other.has_value<I> ())
+        assign<I> (other.value<I> ());
+      else
+        reset<I> ();
+      assign_from_after<I + 1> (other);
+    }
+    template<size_t I, typename... U>
+    typename std::enable_if<I == N>::type assign_from_after (const MultiOptional<U...>& other)
+    {
+    }
+
+    template<size_t I, typename... U>
+    typename std::enable_if <I < N>::type assign_from_after (MultiOptional<U...>&& other)
+    {
+      if (other.has_value<I> ())
+        assign<I> (std::move (other.value<I> ()));
+      else
+        reset<I> ();
+      assign_from_after<I + 1> (std::move (other));
+    }
+    template<size_t I, typename... U>
+    typename std::enable_if<I == N>::type assign_from_after (MultiOptional<U...>&& other)
+    {
+    }
+    //@}
 
     //@{
     /// Destroy multiple elements
