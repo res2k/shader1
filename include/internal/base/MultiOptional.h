@@ -151,8 +151,8 @@ namespace s1
       bool has_value() const { return owner.has_value<I> (); }
       U& value() const { return owner.value<I> (); }
 
-      template<typename... U>
-      void emplace (U&&... args) { owner.emplace<I, U...> (std::forward<U> (args)...); }
+      template<typename... V>
+      void emplace (V&&... args) { owner.emplace<I> (std::forward<V> (args)...); }
 
       void reset () { owner.reset<I> (); }
     };
