@@ -203,13 +203,15 @@ namespace s1
     template<size_t I>
     typename boost::mpl::at_c<types, I>::type& get_ref ()
     {
-      return *(reinterpret_cast<typename boost::mpl::at_c<types, I>::type *> (&(std::get<I> (storage).data)));
+      uint8_t* p = &(std::get<I> (storage).data[0]);
+      return *(reinterpret_cast<typename boost::mpl::at_c<types, I>::type *> (p));
     }
 
     template<size_t I>
     const typename boost::mpl::at_c<types, I>::type& get_ref () const
     {
-      return *(reinterpret_cast<const typename boost::mpl::at_c<types, I>::type *> (&(std::get<I> (storage).data)));
+      const uint8_t* p = &(std::get<I> (storage).data[0]);
+      return *(reinterpret_cast<const typename boost::mpl::at_c<types, I>::type *> (p));
     }
     //@}
 
