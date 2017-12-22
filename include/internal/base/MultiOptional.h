@@ -310,9 +310,9 @@ namespace s1
     typename std::enable_if <I < N>::type construct_from_after (const MultiOptional<U...>& other)
     {
       assert (!constructed[I]);
-      if (other.has_value<I> ())
+      if (other.template has_value<I> ())
       {
-        std::get<I> (storage).construct (other.get_ref<I> ());
+        std::get<I> (storage).construct (other.template get_ref<I> ());
         constructed[I] = true;
       }
       construct_from_after<I + 1> (other);
@@ -326,9 +326,9 @@ namespace s1
     typename std::enable_if <I < N>::type construct_from_after (MultiOptional<U...>&& other)
     {
       assert (!constructed[I]);
-      if (other.has_value<I> ())
+      if (other.template has_value<I> ())
       {
-        std::get<I> (storage).construct (std::move (other.get_ref<I> ()));
+        std::get<I> (storage).construct (std::move (other.template get_ref<I> ()));
         constructed[I] = true;
       }
       construct_from_after<I + 1> (std::move (other));
