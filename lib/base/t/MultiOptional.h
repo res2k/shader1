@@ -73,7 +73,11 @@ public:
       TS_ASSERT_EQUALS(*(const_x.get<0> ()), const_x.value<0> ());
       TS_ASSERT_EQUALS(*(x.get<0> ()), *(const_x.get<0> ()));
     }
+  }
 
+  void testOneElementCopy (void)
+  {
+    typedef s1::MultiOptional<int> TestType;
     typedef s1::MultiOptional<long> TestType2;
     {
       TestType x;
@@ -172,7 +176,11 @@ public:
       TS_ASSERT_EQUALS(*(const_x.get<1> ()), const_x.value<1> ());
       TS_ASSERT_EQUALS(*(x.get<1> ()), *(const_x.get<1> ()));
     }
+  }
 
+  void testTwoElementsCopy (void)
+  {
+    typedef s1::MultiOptional<std::string, std::wstring> TestType;
     typedef s1::MultiOptional<std::string, const wchar_t*> TestType2;
     {
       TestType x;
