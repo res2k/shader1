@@ -39,10 +39,11 @@ namespace s1
 {
   namespace {{namespace}}
   {
-    /// Diagnostic code values for: {{namespace}}
+    /// Diagnostic error code values for: {{namespace}}
     enum struct Error : unsigned int
     {
 {{for comp_loop, comp in looper(components)}}
+{{if len(comp.findall('error')) > 0}}
       /**\name Group: {{comp.attrib['name']}}
        * @{ */
 {{for loop, error in looper(comp.findall('error'))}}
@@ -53,6 +54,26 @@ namespace s1
       {{error.attrib['id']}}{{if loop.first}} = S1_DIAGNOSTICS_ERRORS_BASE_VALUE({{comp.attrib['name']|hash16}}u){{endif}}{{if not (comp_loop.last and loop.last)}},{{endif}}
 {{endfor}}
       /** @} */
+{{endif}}
+{{endfor}}
+    };
+
+    /// Diagnostic warning code values for: {{namespace}}
+    enum struct Warning : unsigned int
+    {
+{{for comp_loop, comp in looper(components)}}
+{{if len(comp.findall('warning')) > 0}}
+      /**\name Group: {{comp.attrib['name']}}
+       * @{ */
+{{for loop, warning in looper(comp.findall('warning'))}}
+      {{if warning.find('doc') == None}}/// {{warning.find('descr').text}}{{else}}/**
+       * {{warning.find('descr').text}}
+       * {{warning.find('doc').text|striplines|autoindent}}
+       */{{endif}}
+      {{warning.attrib['id']}}{{if loop.first}} = S1_DIAGNOSTICS_WARNINGS_BASE_VALUE({{comp.attrib['name']|hash16}}u){{endif}}{{if not (comp_loop.last and loop.last)}},{{endif}}
+{{endfor}}
+      /** @} */
+{{endif}}
 {{endfor}}
     };
   } // namespace {{namespace}}

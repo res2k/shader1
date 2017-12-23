@@ -49,6 +49,10 @@ namespace s1
         case static_cast<unsigned int> ({{namespace}}::Error::{{error.attrib['id']}}):
           return "{{error.attrib['id']|id_case}}";
 {{endfor}}
+{{for loop, warning in looper(comp.findall('warning'))}}
+        case static_cast<unsigned int> ({{namespace}}::Warning::{{warning.attrib['id']}}):
+          return "{{warning.attrib['id']|id_case}}";
+{{endfor}}
         }
         return nullptr;
       }

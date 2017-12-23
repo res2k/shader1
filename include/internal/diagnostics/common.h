@@ -20,10 +20,10 @@
 #ifndef S1_DIAGNOSTICS_COMMON_H_
 #define S1_DIAGNOSTICS_COMMON_H_
 
-/// Compute a base value for diagnostics enums
+/// Compute a base value for diagnostics error enums
 #define S1_DIAGNOSTICS_ERRORS_BASE_VALUE(val)       (val << 16) + 1
-// TODO...
-//#define S1_DIAGNOSTICS_WARNINGS_BASE_VALUE(val)     (val << 16) + 0x8000 + 1
+/// Compute a base value for diagnostics warning enums
+#define S1_DIAGNOSTICS_WARNINGS_BASE_VALUE(val)     (val << 16) + 0x8000 + 1
 
 namespace s1
 {
