@@ -102,9 +102,9 @@ namespace s1
   } // multi_optional_detail
 
   typedef boost::bad_optional_access bad_optional_access;
-  typedef boost::none_t none_t;
+  typedef boost::none_t nullopt_t;
 
-  const none_t none = boost::none;
+  const nullopt_t nullopt = boost::none;
 
   /**
    * Class to store multiple optional values.
@@ -216,7 +216,7 @@ namespace s1
         owner.template assign<I> (std::forward<U> (value));
         return *this;
       }
-      ElementProxy& operator= (none_t)
+      ElementProxy& operator= (nullopt_t)
       {
         owner.template reset<I> ();
         return *this;

@@ -61,7 +61,7 @@ public:
       TestType x;
       x.get<0> () = 42;
       TS_ASSERT(x.has_value<0> ());
-      x.get<0> () = s1::none;
+      x.get<0> () = s1::nullopt;
       TS_ASSERT(!x.has_value<0> ());
     }
     {
@@ -158,7 +158,7 @@ public:
       x.get<0> () = "foo";
       TS_ASSERT(x.has_value<0> ());
       TS_ASSERT(!x.has_value<1> ());
-      x.get<0> () = s1::none;
+      x.get<0> () = s1::nullopt;
       TS_ASSERT(!x.has_value<0> ());
       TS_ASSERT(!x.has_value<1> ());
     }
