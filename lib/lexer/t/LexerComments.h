@@ -49,6 +49,7 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
   
   void testLineComment2(void)
@@ -71,6 +72,7 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
   
   void testLineComment3(void)
@@ -107,6 +109,7 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
   
   void testBlockComment1(void)
@@ -129,6 +132,7 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
   
   void testBlockComment2(void)
@@ -151,6 +155,7 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
   
   void testBlockComment3(void)
@@ -187,6 +192,7 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
 
   void testBlockComment4(void)
@@ -223,5 +229,6 @@ public:
     // Still at end
     TS_ASSERT_THROWS_NOTHING ((token = *lexer));
     TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code, 0);
   }
 };
