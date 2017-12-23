@@ -267,6 +267,20 @@ namespace s1
       return proxy_type (*this);
     }
     //@}
+
+    /// Swap contained values with another instance
+    void swap (MultiOptional& right)
+    {
+      using std::swap;
+      swap_all_after<0> (right);
+      // Swap bits last
+      swap (constructed, right.constructed);
+    }
+
+    friend void swap (MultiOptional& left, MultiOptional& right)
+    {
+      left.swap (right);
+    }
   protected:
     template<typename... U> friend class MultiOptional;
     enum { N = boost::mpl::size<types>::value };
@@ -366,6 +380,44 @@ namespace s1
     }
     template<size_t I, typename... U>
     typename std::enable_if<I == N>::type assign_from_after (MultiOptional<U...>&& other)
+    {
+    }
+    //@}
+
+    //@{
+    /// Swap contained values with another instance
+    template<size_t I>
+    typename std::enable_if <I < N>::type swap_all_after (MultiOptional& right)
+    {
+      using std::swap;
+      if (has_value<I> ())
+      {
+        if (right.template has_value<I> ())
+        {
+          swap (get_ref<I> (), right.template get_ref<I> ());
+        }
+        else
+        {
+          std::get<I> (right.storage).construct (std::move (get_ref<I> ()));
+          std::get<I> (storage).destroy ();
+        }
+      }
+      else
+      {
+        if (right.template has_value<I> ())
+        {
+          std::get<I> (storage).construct (std::move (right.template get_ref<I> ()));
+          std::get<I> (right.storage).destroy ();
+        }
+        else
+        {
+          // Nothing to do
+        }
+      }
+      swap_all_after<I + 1> (right);
+    }
+    template<size_t I>
+    typename std::enable_if<I == N>::type swap_all_after (MultiOptional& right)
     {
     }
     //@}
