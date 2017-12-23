@@ -22,7 +22,7 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 -->
 <!--
-Diagnostic error definitions for the various components involved in compilation.
+Diagnostic definitions for the various components involved in compilation.
 -->
 <diagnostics>
   <component name="lexer">
@@ -31,5 +31,10 @@ Diagnostic error definitions for the various components involved in compilation.
       <doc>Triggered when an invalid input sequence is encountered.
       An example would be an incomplete UTF-8 encoding sequence.</doc>
     </error>
+    <warning id="InvalidInputSequence">
+      <descr>Invalid input sequence in comment</descr>
+      <doc>Triggered when an invalid input sequence is encountered in a comment.
+      An example would be an incomplete UTF-8 encoding sequence.</doc>
+    </warning>
   </component>
 </diagnostics>

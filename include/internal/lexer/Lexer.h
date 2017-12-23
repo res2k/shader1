@@ -85,8 +85,11 @@ namespace s1
     uc::String tokenBuffer;
     /// Controls whether character should be added to tokenBuffer
     enum TokenBuffer { bufferUse = 0, bufferSkip = 0x1, bufferClearPrevious = 0x2 };
+    /// Severity of invalid characters
+    enum struct InvalidInputSeverity { Error, Warning };
     /// Read next character from input stream.
-    void NextChar (unsigned int buffer = bufferUse);
+    void NextChar (unsigned int buffer = bufferUse,
+                   InvalidInputSeverity iis = InvalidInputSeverity::Error);
     enum { LookAhead = 2 };
     /// Next character in input stream. Set by NextChar().
     uc::Stream::FetchResult nextChar[LookAhead];

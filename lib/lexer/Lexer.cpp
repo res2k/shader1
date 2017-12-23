@@ -421,7 +421,7 @@ KEYWORDS
       // Line comment
       do
       {
-        NextChar (bufferSkip);
+        NextChar (bufferSkip, InvalidInputSeverity::Warning);
       }
       while ((currentChar != uc::InvalidChar32) && (currentChar != '\n'));
       // Let '\n' be handled by regular code
@@ -433,10 +433,10 @@ KEYWORDS
       // Block comment
       do
       {
-        NextChar (bufferSkip);
+        NextChar (bufferSkip, InvalidInputSeverity::Warning);
         if (currentChar == '*')
         {
-          NextChar (bufferSkip);
+          NextChar (bufferSkip, InvalidInputSeverity::Warning);
           // Check for ending '*/'
           if (currentChar == '/')
           {
@@ -452,7 +452,7 @@ KEYWORDS
     return false;
   }
 
-  void Lexer::NextChar (unsigned int buffer)
+  void Lexer::NextChar (unsigned int buffer, InvalidInputSeverity iis)
   {
     if ((buffer & bufferClearPrevious) != 0) tokenBuffer.clear();
 
@@ -482,7 +482,10 @@ KEYWORDS
     else
     {
       // Signal error handler ...
-      diagnosticsHandler.LexerError (lexer::Error::InvalidInputSequence, currentLocation);
+      if (iis == InvalidInputSeverity::Error)
+        diagnosticsHandler.LexerError (lexer::Error::InvalidInputSequence, currentLocation);
+      else
+        diagnosticsHandler.LexerError (lexer::Warning::InvalidInputSequence, currentLocation);
       // ... and set character to the 'replacer' one
       currentChar = uc::ReplacementChar;
     }
