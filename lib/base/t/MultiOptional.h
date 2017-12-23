@@ -274,8 +274,8 @@ public:
       swap (x, y);
       TS_ASSERT(!x.has_value<0> ());
       TS_ASSERT(!x.has_value<1> ());
-      TS_ASSERT(y.has_value<0> ());
-      TS_ASSERT(!y.has_value<1> ());
+      TS_ASSERT(!y.has_value<0> ());
+      TS_ASSERT(y.has_value<1> ());
       TS_ASSERT_EQUALS(y.value<1> (), L"bar");
     }
   }
