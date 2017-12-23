@@ -414,6 +414,7 @@ KEYWORDS
   bool Lexer::ParseComment ()
   {
     S1_ASSERT(currentChar == '/', false);
+    auto startLocation = currentLocation;
     uc::Char32 next = PeekChar();
     if (next == '/')
     {
@@ -441,11 +442,13 @@ KEYWORDS
           if (currentChar == '/')
           {
             NextChar (bufferSkip);
-            break;
+            return true;
           }
         }
       }
       while (currentChar != uc::InvalidChar32);
+      if (currentChar == uc::InvalidChar32)
+        diagnosticsHandler.LexerError (lexer::Warning::UnterminatedBlockComment, startLocation);
       return true;
     }
     // else: something else

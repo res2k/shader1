@@ -36,5 +36,9 @@ Diagnostic definitions for the various components involved in compilation.
       <doc>Triggered when an invalid input sequence is encountered in a comment.
       An example would be an incomplete UTF-8 encoding sequence.</doc>
     </warning>
+    <warning id="UnterminatedBlockComment">
+      <descr>Unterminated block comment</descr>
+      <doc>A block comment was not terminated when the end of file was reached.</doc>
+    </warning>
   </component>
 </diagnostics>

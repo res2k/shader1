@@ -331,4 +331,54 @@ public:
     TS_ASSERT_EQUALS (errorHandler.lexerError.code,
                       static_cast<unsigned int> (s1::lexer::Warning::InvalidInputSequence));
   }
+
+  void testBlockCommentUnterminated(void)
+  {
+    std::string inStr ("/* foo ");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token;
+
+    // Comment-only stream should report "no tokens"
+    TS_ASSERT_EQUALS ((bool)lexer, false);
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // We should be at EOF from the start
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+    // Still at end
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    // Error handler should've been triggered
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code,
+                      static_cast<unsigned int> (s1::lexer::Warning::UnterminatedBlockComment));
+  }
+
+  void testBlockCommentUnterminated2(void)
+  {
+    std::string inStr ("/* foo\n");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    s1::Lexer::Token token;
+
+    // Comment-only stream should report "no tokens"
+    TS_ASSERT_EQUALS ((bool)lexer, false);
+    // Any attempt to get current token should never throw anything
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    // We should be at EOF from the start
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    // Trying to forward never throws
+    TS_ASSERT_THROWS_NOTHING (++lexer);
+    // Still at end
+    TS_ASSERT_THROWS_NOTHING ((token = *lexer));
+    TS_ASSERT_EQUALS (token.typeOrID, s1::lexer::EndOfFile);
+    // Error handler should've been triggered
+    TS_ASSERT_EQUALS (errorHandler.lexerError.code,
+                      static_cast<unsigned int> (s1::lexer::Warning::UnterminatedBlockComment));
+  }
 };
