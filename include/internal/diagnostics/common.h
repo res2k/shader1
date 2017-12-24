@@ -29,6 +29,12 @@ namespace s1
 {
   namespace diagnostics
   {
+    /// Checks if a diagnostic code belongs to a warning
+    static inline bool IsWarning (unsigned int code)
+    {
+      return (code & 0x8000) != 0;
+    }
+
     /**
      * Return "ID string" for a diagnostic code.
      * This is the "id" field from the diagnostics XML, but with a case

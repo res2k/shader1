@@ -46,7 +46,7 @@ namespace s1
   Result<Compiler::ProgramDiagnostics::Class> Compiler::ProgramDiagnostics::Classify (size_t index) const
   {
     if (index >= entries.size ()) return S1_E_INVALID_ARG_N (0);
-    return Class::Error;
+    return diagnostics::IsWarning (entries[index].code) ? Class::Warning : Class::Error;
   }
 
   Result<const char*> Compiler::ProgramDiagnostics::Id (size_t index) const

@@ -41,7 +41,9 @@ enum s1_DiagnosticClass
   /// Invalid class
   S1_DIAGNOSTIC_INVALID = -1,
   /// Compilation error
-  S1_DIAGNOSTIC_ERROR = 0
+  S1_DIAGNOSTIC_ERROR = 0,
+  /// Compilation warning
+  S1_DIAGNOSTIC_WARNING
 };
 
 /**

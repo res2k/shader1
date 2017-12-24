@@ -45,7 +45,7 @@ namespace s1
     /// Diagnostic information class
     enum struct Class
     {
-      Error
+      Error, Warning
     };
     /// Obtain diagnostic information for an entry
     Result<Class> Classify (size_t index) const;

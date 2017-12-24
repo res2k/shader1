@@ -54,6 +54,8 @@ enum s1_DiagnosticClass s1_programdiagnostics_get_class (
           {
           case s1::Compiler::ProgramDiagnostics::Class::Error:
             return S1_DIAGNOSTIC_ERROR;
+          case s1::Compiler::ProgramDiagnostics::Class::Warning:
+            return S1_DIAGNOSTIC_WARNING;
           }
           return S1_DIAGNOSTIC_INVALID;
         }
