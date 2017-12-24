@@ -77,9 +77,12 @@ static void print_diagnostics (s1_ProgramDiagnostics* program_diagnostics)
     switch (s1_programdiagnostics_get_class (program_diagnostics, i))
     {
     case S1_DIAGNOSTIC_INVALID:
-      continue;
+      break;
     case S1_DIAGNOSTIC_ERROR:
       fprintf (stderr, "error: %s\n", s1_programdiagnostics_get_id (program_diagnostics, i));
+      break;
+    case S1_DIAGNOSTIC_WARNING:
+      fprintf (stderr, "warning: %s\n", s1_programdiagnostics_get_id (program_diagnostics, i));
       break;
     }
   }
