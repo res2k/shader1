@@ -413,9 +413,12 @@ static void PrintDiagnostics (ProgramDiagnostics* programDiagnostics)
     switch (programDiagnostics->GetClass (i))
     {
     case S1_DIAGNOSTIC_INVALID:
-      continue;
+      break;
     case S1_DIAGNOSTIC_ERROR:
       std::cerr << "error: " << programDiagnostics->GetID (i) << std::endl;
+      break;
+    case S1_DIAGNOSTIC_WARNING:
+      std::cerr << "warning: " << programDiagnostics->GetID (i) << std::endl;
       break;
     }
   }
