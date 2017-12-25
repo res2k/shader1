@@ -176,7 +176,7 @@ namespace s1
 
     /// Construct an element in-place
     template<size_t I, typename... U>
-    void emplace (U&&... args)
+    typename boost::mpl::at_c<types, I>::type& emplace (U&&... args)
     {
       if (constructed[I])
       {
@@ -184,6 +184,7 @@ namespace s1
       }
       std::get<I> (storage).construct (std::forward<U> (args)...);
       constructed[I] = true;
+      return get_ref<I> ();
     }
 
     /// Reset an element
