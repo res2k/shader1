@@ -19,7 +19,7 @@
 #include "lexer/Lexer.h"
 
 #include "base/format/Formatter.h"
-#include "base/format/std_string.h"
+#include "base/format/uc_string.h"
 #include "lexer/Diagnostics.h"
 
 #include <assert.h>
@@ -510,7 +510,7 @@ KEYWORDS
     switch (token)
     {
 #define KEYWORD(Str, Symbol)	\
-    case Symbol: return Str;
+    case Symbol: return "'" Str "'";
 KEYWORDS
 #undef KEYWORD
 
@@ -520,68 +520,67 @@ KEYWORDS
     case lexer::Identifier:     return "<Identifier>";
     case lexer::Numeric:        return "<Numeric>";
     
-    case lexer::Semicolon:      return ";";
-    case lexer::ParenL:         return "(";
-    case lexer::ParenR:         return ")";
-    case lexer::BracketL:       return "[";
-    case lexer::BracketR:       return "]";
-    case lexer::BraceL:         return "{";
-    case lexer::BraceR:         return "}";
-    case lexer::Member:         return ".";
-    case lexer::Separator:      return ",";
-    case lexer::Equals:         return "==";
-    case lexer::NotEquals:      return "!=";
-    case lexer::Larger:         return ">";
-    case lexer::LargerEqual:    return ">=";
-    case lexer::Smaller:        return "<";
-    case lexer::SmallerEqual:   return "<=";
-    case lexer::Assign:         return "=";
-    case lexer::Plus:           return "+";
-    case lexer::Minus:          return "-";
-    case lexer::Mult:           return "*";
-    case lexer::Div:            return "/";
-    case lexer::Mod:            return "%";
-    case lexer::BitwiseInvert:  return "~";
-    case lexer::LogicInvert:    return "!";
-    case lexer::TernaryIf:      return "?";
-    case lexer::TernaryElse:    return ":";
-    case lexer::LogicOr:        return "||";
-    case lexer::LogicAnd:       return "&&";
+    case lexer::Semicolon:      return "';'";
+    case lexer::ParenL:         return "'('";
+    case lexer::ParenR:         return "')'";
+    case lexer::BracketL:       return "'['";
+    case lexer::BracketR:       return "']'";
+    case lexer::BraceL:         return "'{'";
+    case lexer::BraceR:         return "'}'";
+    case lexer::Member:         return "'.'";
+    case lexer::Separator:      return "','";
+    case lexer::Equals:         return "'=='";
+    case lexer::NotEquals:      return "'!='";
+    case lexer::Larger:         return "'>'";
+    case lexer::LargerEqual:    return "'>='";
+    case lexer::Smaller:        return "'<'";
+    case lexer::SmallerEqual:   return "'<='";
+    case lexer::Assign:         return "'='";
+    case lexer::Plus:           return "'+'";
+    case lexer::Minus:          return "'-'";
+    case lexer::Mult:           return "'*'";
+    case lexer::Div:            return "'/'";
+    case lexer::Mod:            return "'%'";
+    case lexer::BitwiseInvert:  return "'~'";
+    case lexer::LogicInvert:    return "'!'";
+    case lexer::TernaryIf:      return "'?'";
+    case lexer::TernaryElse:    return "':'";
+    case lexer::LogicOr:        return "'||'";
+    case lexer::LogicAnd:       return "'&&'";
 
-    case lexer::kwBoolVec:      return "boolN";
-    case lexer::kwUnsignedVec:  return "unsignedN";
-    case lexer::kwIntVec:       return "intN";
-    case lexer::kwFloatVec:     return "floatN";
-    case lexer::kwBoolMat:      return "boolNxM";
-    case lexer::kwUnsignedMat:  return "unsignedNxM";
-    case lexer::kwIntMat:       return "intNxM";
-    case lexer::kwFloatMat:     return "floatNxM";
+    case lexer::kwBoolVec:      return "<boolN>";
+    case lexer::kwUnsignedVec:  return "<unsignedN>";
+    case lexer::kwIntVec:       return "<intN>";
+    case lexer::kwFloatVec:     return "<floatN>";
+    case lexer::kwBoolMat:      return "<boolNxM>";
+    case lexer::kwUnsignedMat:  return "<unsignedNxM>";
+    case lexer::kwIntMat:       return "<intNxM>";
+    case lexer::kwFloatMat:     return "<floatNxM>";
 
     case lexer::MatFlag:
     case lexer::VecFlag:
     case lexer::TypeFlagMask:
       break;
     }
-    return 0;
+    return nullptr;
   }
 
-  DECLARE_STATIC_FORMATTER(FormatVector, "{0}{1}");
-  DECLARE_STATIC_FORMATTER(FormatMatrix, "{0}{1}x{2}");
+  DECLARE_STATIC_FORMATTER(FormatVector, "'{0}{1}'");
+  DECLARE_STATIC_FORMATTER(FormatMatrix, "'{0}{1}x{2}'");
+  DECLARE_STATIC_FORMATTER(FormatIdentifier, "\"{0}\"");
   
-  std::string Lexer::GetTokenStr (const Token& token)
+  uc::String Lexer::GetTokenStr (const Token& token)
   {
+    if (token.typeOrID == lexer::Identifier)
+      return FormatIdentifier.to<uc::String> (token.tokenString);
     const char* baseTokenStr (GetTokenStr (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask)));
     if ((token.typeOrID & lexer::VecFlag) != 0)
     {
-      std::string s;
-      FormatVector (s, baseTokenStr, token.dimension1);
-      return s;
+      return FormatVector.to<uc::String> (baseTokenStr, token.dimension1);
     }
     else if ((token.typeOrID & lexer::MatFlag) != 0)
     {
-      std::string s;
-      FormatMatrix (s, baseTokenStr, token.dimension1, token.dimension2);
-      return s;
+      return FormatMatrix.to<uc::String> (baseTokenStr, token.dimension1, token.dimension2);
     }
     return baseTokenStr;
   }

@@ -55,7 +55,7 @@ namespace s1
     //@{
     /// Return token string
     static const char* GetTokenStr (TokenType token);
-    static std::string GetTokenStr (const Token& token);
+    static uc::String GetTokenStr (const Token& token);
     //@}
   protected:
     uc::Stream& inputChars;

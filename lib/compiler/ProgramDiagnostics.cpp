@@ -86,7 +86,7 @@ namespace s1
                                                      const lexer::Token& encounteredToken,
                                                      lexer::TokenType expectedToken)
   {
-    uc::String encounteredTokenStr (Lexer::GetTokenStr (encounteredToken).c_str());
+    uc::String encounteredTokenStr (Lexer::GetTokenStr (encounteredToken));
     uc::String expectedTokenStr (Lexer::GetTokenStr (expectedToken));
     Add (code, encounteredTokenStr, expectedTokenStr);
   }
