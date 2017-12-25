@@ -31,16 +31,12 @@ namespace s1
   {
     String::CreateResultType String::Create (s1::Library* lib, uc::String&& str)
     {
-      boost::intrusive_ptr<String> strObj;
-      strObj.reset (new String (std::move (str), lib));
-      return std::make_tuple (S1_SUCCESS, strObj, (size_t)~0);
+      return std::make_tuple (S1_SUCCESS, CreateInternal (lib, std::move (str)), (size_t)~0);
     }
 
     String::CreateResultType String::Create (s1::Library* lib, const uc::String& str)
     {
-      boost::intrusive_ptr<String> strObj;
-      strObj.reset (new String (str, lib));
-      return std::make_tuple (S1_SUCCESS, strObj, (size_t)~0);
+      return std::make_tuple (S1_SUCCESS, CreateInternal (lib, str), (size_t)~0);
     }
 
     static ResultCode TranslateStringConversionError (uc::String::ConversionError error)
@@ -126,6 +122,16 @@ namespace s1
     String::CreateResultType String::Create (s1::Library* lib, cxxapi::StringArg str)
     {
       return VisitStringArg (str, StringCreateVisitor (lib));
+    }
+
+    boost::intrusive_ptr<String> String::CreateInternal (s1::Library* lib, uc::String&& str)
+    {
+      return boost::intrusive_ptr<String> (new String (std::move (str), lib));
+    }
+
+    boost::intrusive_ptr<String> String::CreateInternal (s1::Library* lib, const uc::String& str)
+    {
+      return boost::intrusive_ptr<String> (new String (str, lib));
     }
   } // namespace api_impl
 } // namespace s1

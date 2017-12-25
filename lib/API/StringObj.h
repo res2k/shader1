@@ -53,6 +53,9 @@ namespace s1
       static CreateResultType Create (s1::Library* lib, const s1_char32* str, size_t len = (size_t)~0);
       static CreateResultType Create (s1::Library* lib, const wchar_t* str, size_t len = (size_t)~0);
       static CreateResultType Create (s1::Library* lib, cxxapi::StringArg str);
+
+      static boost::intrusive_ptr<String> CreateInternal (s1::Library* lib, uc::String&& str);
+      static boost::intrusive_ptr<String> CreateInternal (s1::Library* lib, const uc::String& str);
       //@}
 
       const uc::String& StrUCS () const { return str.GetUCS (); }
