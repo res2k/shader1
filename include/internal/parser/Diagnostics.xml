@@ -27,7 +27,7 @@ Diagnostic error definitions for the various components involved in compilation.
 <diagnostics>
   <component name="parser">
     <error id="UnexpectedToken">
-      <descr>Unexpected token</descr>
+      <descr>Unexpected token: got {0}, expected {1}</descr>
     </error>
     <error id="IdentifierAlreadyDeclared">
       <descr>Identifier already declared</descr>
