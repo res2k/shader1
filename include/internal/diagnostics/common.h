@@ -24,6 +24,8 @@
 #define S1_DIAGNOSTICS_ERRORS_BASE_VALUE(val)       (val << 16) + 1
 /// Compute a base value for diagnostics warning enums
 #define S1_DIAGNOSTICS_WARNINGS_BASE_VALUE(val)     (val << 16) + 0x8000 + 1
+/// Extract base value from a diagnostic code
+#define S1_DIAGNOSTICS_EXTRACT_BASE_VALUE(code)     ((code) >> 16)
 
 namespace s1
 {
@@ -41,6 +43,10 @@ namespace s1
      * conversion applied: "DiagnosticCode" becomes "diagnostic-code".
      */
     const char* GetIdString (unsigned int code);
+    /**
+     * Return description string for a diagnostic code.
+     */
+    const char* GetDescriptionString (unsigned int code);
   } //namespace diagnostics
 } // namespace s1
 

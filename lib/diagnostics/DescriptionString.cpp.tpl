@@ -39,17 +39,17 @@ namespace s1
     namespace detail
     {
 {{for comp in components}}
-      const char* GetIdStringFor{{comp.attrib['name']|camel_case}} (unsigned int code);
+      const char* GetDescriptionStringFor{{comp.attrib['name']|camel_case}} (unsigned int code);
 {{endfor}}
     } // namespace detail
 
-    const char* GetIdString (unsigned int code)
+    const char* GetDescriptionString (unsigned int code)
     {
       switch(S1_DIAGNOSTICS_EXTRACT_BASE_VALUE(code))
       {
 {{for comp in components}}
       case {{comp.attrib['name']|hash16}}:
-        return detail::GetIdStringFor{{comp.attrib['name']|camel_case}} (code);
+        return detail::GetDescriptionStringFor{{comp.attrib['name']|camel_case}} (code);
 {{endfor}}
       }
       return nullptr;

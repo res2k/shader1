@@ -21,15 +21,12 @@
 #include "base/common.h"
 
 #include "diagnostics/common.h"
+#include "{{namespace}}/Diagnostics.h"
 
 {{py:
 # Format component names as CamelCase
 def camel_case(s):
   return ''.join(filter(lambda x: x.isalpha(), s.title()))
-
-# Use hash to obtain some (hopefully) unique base value for diagnostic codes
-def hash16(x):
-  return hash(x) & 0xffff
 }}
 
 namespace s1
@@ -39,20 +36,23 @@ namespace s1
     namespace detail
     {
 {{for comp in components}}
-      const char* GetIdStringFor{{comp.attrib['name']|camel_case}} (unsigned int code);
+      const char* GetDescriptionStringFor{{comp.attrib['name']|camel_case}} (unsigned int code)
+      {
+        switch (code)
+        {
+{{for loop, error in looper(comp.findall('error'))}}
+        case static_cast<unsigned int> ({{namespace}}::Error::{{error.attrib['id']}}):
+          return "{{error.find('descr').text}}";
+{{endfor}}
+{{for loop, warning in looper(comp.findall('warning'))}}
+        case static_cast<unsigned int> ({{namespace}}::Warning::{{warning.attrib['id']}}):
+          return "{{warning.find('descr').text}}";
+{{endfor}}
+        }
+        return nullptr;
+      }
+
 {{endfor}}
     } // namespace detail
-
-    const char* GetIdString (unsigned int code)
-    {
-      switch(S1_DIAGNOSTICS_EXTRACT_BASE_VALUE(code))
-      {
-{{for comp in components}}
-      case {{comp.attrib['name']|hash16}}:
-        return detail::GetIdStringFor{{comp.attrib['name']|camel_case}} (code);
-{{endfor}}
-      }
-      return nullptr;
-    }
   } //namespace diagnostics
 } // namespace s1
