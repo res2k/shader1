@@ -33,6 +33,7 @@
 #include "s1/Options.h"
 #include "s1/ProgramDiagnostics.h"
 #include "s1/ResultCode.h"
+#include "s1/String.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
@@ -415,10 +416,14 @@ static void PrintDiagnostics (ProgramDiagnostics* programDiagnostics)
     case S1_DIAGNOSTIC_INVALID:
       break;
     case S1_DIAGNOSTIC_ERROR:
-      std::cerr << "error: " << programDiagnostics->GetID (i) << std::endl;
+      std::cerr << "error: "
+        << to_local (programDiagnostics->CreateDescription (i)->WCS())
+        << std::endl;
       break;
     case S1_DIAGNOSTIC_WARNING:
-      std::cerr << "warning: " << programDiagnostics->GetID (i) << std::endl;
+      std::cerr << "warning: "
+        << to_local (programDiagnostics->CreateDescription (i)->WCS())
+        << std::endl;
       break;
     }
   }
