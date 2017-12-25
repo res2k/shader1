@@ -19,7 +19,7 @@
 #include "lexer/Lexer.h"
 
 #include "base/format/Formatter.h"
-#include "base/format/uc_string.h"
+#include "base/format/uc_String.h"
 #include "lexer/Diagnostics.h"
 
 #include <assert.h>
