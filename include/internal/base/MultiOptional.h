@@ -26,6 +26,8 @@
 #include <boost/mpl/at.hpp>
 #include <boost/mpl/size.hpp>
 #include <boost/mpl/vector.hpp>
+#include <boost/none.hpp>
+#include <boost/optional/bad_optional_access.hpp>
 
 namespace s1
 {
