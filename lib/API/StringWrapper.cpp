@@ -24,45 +24,25 @@ namespace s1
   {
     StringWrapper::StringWrapper (StringWrapper&& s) : StringWrapper (std::move (s.str))
     {
-      if (s.haveUTF8)
-      {
-        new (storeStrUTF8) std::string (std::move (s.GetStrUTF8()));
-        haveUTF8 = s.haveUTF8;
-      }
-      if (s.haveUTF32)
-      {
-        new (storeStrUTF32) c32string (std::move (s.GetStrUTF32()));
-        haveUTF32 = s.haveUTF32;
-      }
-      s.Clear();
+      storeStrUTF = std::move (s.storeStrUTF);
     }
 
     StringWrapper& StringWrapper::operator= (StringWrapper&& s)
     {
       str = std::move (s.str);
-      if (s.haveUTF8)
-      {
-        new (storeStrUTF8) std::string (std::move (s.GetStrUTF8()));
-        haveUTF8 = s.haveUTF8;
-      }
-      if (s.haveUTF32)
-      {
-        new (storeStrUTF32) c32string (std::move (s.GetStrUTF32()));
-        haveUTF32 = s.haveUTF32;
-      }
-      s.Clear();
+      storeStrUTF = std::move (s.storeStrUTF);
       return *this;
     }
 
     const char* StringWrapper::GetUTF8 () const
     {
-      if (!haveUTF8)
+      if (!storeStrUTF.has_value<0> ())
       {
-        new (storeStrUTF8) std::string;
-        str.toUTF8String (GetStrUTF8());
-        haveUTF8 = true;
+        auto& strUTF8 = storeStrUTF.emplace<0> ();
+        str.toUTF8String (strUTF8);
+        return strUTF8.c_str ();
       }
-      return GetStrUTF8().c_str ();
+      return storeStrUTF.value<0> ().c_str ();
     }
 
     const s1_char16* StringWrapper::GetUTF16 () const
@@ -72,18 +52,18 @@ namespace s1
 
     const s1_char32* StringWrapper::GetUTF32 () const
     {
-      if (!haveUTF32)
+      if (!storeStrUTF.has_value<1> ())
       {
-        new (storeStrUTF32) c32string;
-        GetStrUTF32().reserve (str.size ());
+        auto& strUTF32 = storeStrUTF.emplace<1> ();
+        strUTF32.reserve (str.size ());
         uc::String::CharacterIterator charIt (str);
         while (charIt.hasNext ())
         {
-          GetStrUTF32().push_back (charIt.next32PostInc ());
+          strUTF32.push_back (charIt.next32PostInc ());
         }
-        haveUTF32 = true;
+        return strUTF32.c_str ();
       }
-      return GetStrUTF32().c_str ();
+      return storeStrUTF.value<1> ().c_str ();
     }
 
     const wchar_t* StringWrapper::GetWCS () const

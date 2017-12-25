@@ -21,6 +21,7 @@
 #ifndef __S1_CXXAPI_STRINGWRAPPER_HPP__
 #define __S1_CXXAPI_STRINGWRAPPER_HPP__
 
+#include "base/MultiOptional.h"
 #include "base/uc/String.h"
 
 namespace s1
@@ -35,51 +36,23 @@ namespace s1
       /// Original string
       uc::String str;
 
-      /// Whether an UTF-8 encoded version is cached
-      mutable bool haveUTF8 : 1;
-      /// Whether an UTF-32 encoded version is cached
-      mutable bool haveUTF32 : 1;
-
-      /// UTF-8 encoded version
-      mutable uint8_t storeStrUTF8 alignas(std::string)[sizeof(std::string)];
       typedef std::basic_string<s1_char32> c32string;
-      /// UTF-32 encoded version
-      mutable uint8_t storeStrUTF32 alignas(c32string)[sizeof (c32string)];
-
-      /// Get UTF-8 string instance
-      std::string& GetStrUTF8 () const
-      {
-        uint8_t* p = storeStrUTF8;
-        return *(reinterpret_cast<std::string*> (p));
-      }
-      /// Get UTF-32 string instance
-      c32string& GetStrUTF32 () const
-      {
-        uint8_t* p = storeStrUTF32;
-        return *(reinterpret_cast<c32string*> (p));
-      }
+      /// UTF-8 and UTF-32 encoded versions
+      mutable MultiOptional<std::string, c32string> storeStrUTF;
 
       /// Clear all encoded strings
       void Clear ()
       {
-        if (haveUTF8)
-        {
-          GetStrUTF8().~basic_string ();
-          haveUTF8 = false;
-        }
-        if (haveUTF32)
-        {
-          GetStrUTF32 ().~c32string ();
-          haveUTF32 = false;
-        }
+        storeStrUTF.reset<0> ();
+        storeStrUTF.reset<1> ();
       }
     public:
-      StringWrapper () : haveUTF8 (false), haveUTF32 (false) {}
-      StringWrapper (const uc::String& s) : str (s), haveUTF8 (false), haveUTF32 (false) {}
-      StringWrapper (uc::String&& s) : str (std::move (s)), haveUTF8 (false), haveUTF32 (false) {}
+      StringWrapper () {}
+      StringWrapper (const uc::String& s) : str (s) {}
+      StringWrapper (uc::String&& s) : str (std::move (s)) {}
       StringWrapper (StringWrapper&& s);
       StringWrapper (const StringWrapper& s) : StringWrapper (s.GetUCS()) {}
-      ~StringWrapper () { Clear (); }
+      ~StringWrapper () { }
 
       StringWrapper& operator= (const uc::String& s)
       {
