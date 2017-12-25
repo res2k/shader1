@@ -52,7 +52,9 @@ namespace s1
   Result<const char*> Compiler::ProgramDiagnostics::Id (size_t index) const
   {
     if (index >= entries.size ()) return S1_E_INVALID_ARG_N (0);
-    return diagnostics::GetIdString (entries[index].code);
+    auto id_str = diagnostics::GetIdString (entries[index].code);
+    S1_ASSERT_MSG (id_str, "A diagnostic code is invalid", nullptr);
+    return id_str;
   }
 
   void Compiler::ProgramDiagnostics::Add (unsigned int code,
