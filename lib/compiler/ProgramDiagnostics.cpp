@@ -57,6 +57,14 @@ namespace s1
     return id_str;
   }
 
+  Result<uc::String> Compiler::ProgramDiagnostics::Description (size_t index) const
+  {
+    if (index >= entries.size ()) return S1_E_INVALID_ARG_N (0);
+    auto descr_str = diagnostics::GetDescriptionString (entries[index].code);
+    S1_ASSERT_MSG (descr_str, "A diagnostic code is invalid", uc::String ());
+    return descr_str;
+  }
+
   void Compiler::ProgramDiagnostics::Add (unsigned int code,
                                           boost::optional<const uc::String&> info1,
                                           boost::optional<const uc::String&> info2)

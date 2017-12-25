@@ -51,6 +51,8 @@ namespace s1
     Result<Class> Classify (size_t index) const;
     /// Obtain diagnostic ID for an entry
     Result<const char*> Id (size_t index) const;
+    /// Obtain description for an entry
+    Result<uc::String> Description (size_t index) const;
   protected:
     struct Entry;
     boost::container::deque<Entry> entries;
