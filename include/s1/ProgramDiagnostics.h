@@ -83,6 +83,22 @@ S1_API(enum s1_DiagnosticClass) s1_programdiagnostics_get_class (
 S1_API(const char*) s1_programdiagnostics_get_id (s1_ProgramDiagnostics* diagnostics,
   size_t diagnosticIndex);
 
+/**
+ * Obtain descriptive string for an individual diagnostic information.
+ * \param diagnostics Program diagnostics object.
+ * \param diagnosticIndex Index of individual diagnostic information.
+ * \returns A new string object containing a description of the individual
+ *   diagnostic information in container. The string is suitable for human
+ *   consumption.
+ *   The returned object will already have a reference, release the reference
+ *   using s1_release().
+ *   In case of an error, the error status is saved in the library's
+ *   last error code, and the return value is \NULL.
+ * \memberof s1_ProgramDiagnostics
+ */
+S1_API(s1_String*) s1_programdiagnostics_create_description (s1_ProgramDiagnostics* diagnostics,
+  size_t diagnosticIndex);
+
 #if defined(__cplusplus)
 namespace s1
 {
@@ -135,6 +151,21 @@ namespace s1
       const char* GetID (size_t diagnosticIndex)
       {
         return s1_programdiagnostics_get_id (this, diagnosticIndex);
+      }
+
+      /**
+       * Obtain descriptive string for an individual diagnostic information.
+       * \param diagnosticIndex Index of individual diagnostic information.
+       * \returns A new string object containing a description of the individual
+       *   diagnostic information in container. The string is suitable for human
+       *   consumption.
+       *   In case of an error, the error status is saved in the library's
+       *   last error code, and the return value is \nullptr.
+       */
+      S1_RETURN_MOVE_REF_TYPE(String) CreateDescription (size_t diagnosticIndex)
+      {
+        return S1_RETURN_MOVE_REF(String,
+                                  s1_programdiagnostics_create_description (this, diagnosticIndex));
       }
     };
   S1_NS_CXXAPI_END

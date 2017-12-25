@@ -22,6 +22,8 @@
 
 #include "compiler/ProgramDiagnostics.h"
 
+#include "StringObj.h"
+
 size_t s1_programdiagnostics_get_count (s1_ProgramDiagnostics* diagnostics)
 {
   S1_ASSERT_MSG(diagnostics, "NULL ProgramDiagnostics", 0);
@@ -78,3 +80,23 @@ const char* s1_programdiagnostics_get_id (s1_ProgramDiagnostics* diagnostics,
     }), nullptr);
 }
 
+s1_String* s1_programdiagnostics_create_description (s1_ProgramDiagnostics* diagnostics,
+  size_t diagnosticIndex)
+{
+  S1_ASSERT_MSG(diagnostics, "NULL ProgramDiagnostics", nullptr);
+  s1::Compiler::ProgramDiagnostics* diagnostics_impl (
+    s1::EvilUpcast<s1::Compiler::ProgramDiagnostics> (diagnostics));
+  s1::ScopedThreadDebugMessageHandler setMsgHandler (diagnostics_impl->GetDebugMessageHandler ());
+
+  return diagnostics_impl->Return (diagnostics_impl->Try (
+    [=]() {
+      auto lib = diagnostics_impl->GetLibrary ();
+      return diagnostics_impl->Description (diagnosticIndex).filter (
+        [=](s1::uc::String&& str)
+        {
+         auto newString = s1::api_impl::String::CreateInternal (lib, str);
+          if (newString) newString->AddRef ();
+          return newString->DowncastEvil<s1_String> ();
+        });
+    }), nullptr);
+}
