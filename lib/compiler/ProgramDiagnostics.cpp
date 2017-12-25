@@ -20,9 +20,13 @@
 
 #include "compiler/ProgramDiagnostics.h"
 
+#include "base/format/Formatter.h"
+#include "base/format/uc_String.h"
 #include "base/MultiOptional.h"
 #include "diagnostics/common.h"
 #include "lexer/Lexer.h"
+
+#include "base/format/Formatter.tpp"
 
 namespace s1
 {
@@ -60,9 +64,13 @@ namespace s1
   Result<uc::String> Compiler::ProgramDiagnostics::Description (size_t index) const
   {
     if (index >= entries.size ()) return S1_E_INVALID_ARG_N (0);
-    auto descr_str = diagnostics::GetDescriptionString (entries[index].code);
-    S1_ASSERT_MSG (descr_str, "A diagnostic code is invalid", uc::String ());
-    return descr_str;
+    const auto& entry = entries[index];
+    auto descr_str = diagnostics::GetDescriptionString (entry.code);
+    uc::String empty_str;
+    S1_ASSERT_MSG (descr_str, "A diagnostic code is invalid", empty_str);
+    format::Formatter<> formatDescription (descr_str);
+    return formatDescription.to<uc::String> (entry.info.value_or<0> (empty_str),
+                                             entry.info.value_or<1> (empty_str));
   }
 
   void Compiler::ProgramDiagnostics::Add (unsigned int code,
