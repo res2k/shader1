@@ -36,6 +36,7 @@
 #include "s1/Options.h"
 #include "s1/ProgramDiagnostics.h"
 #include "s1/ResultCode.h"
+#include "s1/String.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -72,6 +73,7 @@ static void print_syntax (const char* exec_name)
 static void print_diagnostics (s1_ProgramDiagnostics* program_diagnostics)
 {
   size_t i, diag_num = s1_programdiagnostics_get_count (program_diagnostics);
+  s1_String* diag_str;
   for (i = 0; i < diag_num; i++)
   {
     switch (s1_programdiagnostics_get_class (program_diagnostics, i))
@@ -79,10 +81,14 @@ static void print_diagnostics (s1_ProgramDiagnostics* program_diagnostics)
     case S1_DIAGNOSTIC_INVALID:
       break;
     case S1_DIAGNOSTIC_ERROR:
-      fprintf (stderr, "error: %s\n", s1_programdiagnostics_get_id (program_diagnostics, i));
+      diag_str = s1_programdiagnostics_create_description (program_diagnostics, i);
+      fprintf (stderr, "error: %s\n", s1_string_u8 (diag_str));
+      s1_release (diag_str);
       break;
     case S1_DIAGNOSTIC_WARNING:
-      fprintf (stderr, "warning: %s\n", s1_programdiagnostics_get_id (program_diagnostics, i));
+      diag_str = s1_programdiagnostics_create_description (program_diagnostics, i);
+      fprintf (stderr, "warning: %s\n", s1_string_u8 (diag_str));
+      s1_release (diag_str);
       break;
     }
   }
