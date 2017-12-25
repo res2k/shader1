@@ -174,6 +174,26 @@ namespace s1
     }
     //@}
 
+    //@{
+    /// Get value of an element, or a default value
+    template<size_t I, typename U> typename boost::mpl::at_c<types, I>::type value_or (U&& default_val) const &
+    {
+      static_assert (I < N, "index out of range");
+      if (constructed[I])
+        return get_ref<I> ();
+      else
+        return std::forward<U> (default_val);
+    }
+    template<size_t I, typename U> typename boost::mpl::at_c<types, I>::type value_or (U&& default_val) &&
+    {
+      static_assert (I < N, "index out of range");
+      if (constructed[I])
+        return std::move (get_ref<I> ());
+      else
+        return std::forward<U> (default_val);
+    }
+    //@}
+
     /// Construct an element in-place
     template<size_t I, typename... U>
     typename boost::mpl::at_c<types, I>::type& emplace (U&&... args)
