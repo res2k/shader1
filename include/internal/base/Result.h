@@ -135,9 +135,10 @@ namespace s1
     value_type& get_value_or (value_type& v) { return val.get_value_or (v); }
     //@}
 
+    //@{
     /// Apply a "filter" functor to this result's value, if it contains one
     template<typename F>
-    Result<typename std::result_of<F (T)>::type> filter (F func)
+    Result<typename std::result_of<F (T)>::type> filter (F func) const&
     {
       typedef Result<typename std::result_of<F (T)>::type> result_type;
       if (val)
@@ -147,6 +148,18 @@ namespace s1
       else
         return result_type (resultCode);
     }
+    template<typename F>
+    Result<typename std::result_of<F (T)>::type> filter (F func) &&
+    {
+      typedef Result<typename std::result_of<F (T)>::type> result_type;
+      if (val)
+        return result_type (func (*std::move (val)), resultCode);
+      else if (resultErrorInfo)
+        return result_type (resultCode, *resultErrorInfo);
+      else
+        return result_type (resultCode);
+    }
+    //@}
   };
 
 } // namespace s1
