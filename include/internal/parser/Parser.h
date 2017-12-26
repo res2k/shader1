@@ -90,6 +90,7 @@ namespace s1
     Expression ParseExprConstBool ();
     
     // Types
+    bool IsWellKnownType (int& peekAfterType);
     bool IsType (const Scope& scope, int& peekAfterType);
     bool IsType (const Scope& scope) { int dummy; return IsType (scope, dummy); }
     typedef parser::SemanticsHandler::TypePtr Type;

@@ -634,7 +634,7 @@ namespace s1
     return expr;
   }
   
-  bool Parser::IsType (const Scope& scope, int& peekAfterType)
+  bool Parser::IsWellKnownType (int& peekAfterType)
   {
     Lexer::TokenType tokenID = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
     peekAfterType = 0;
@@ -655,15 +655,28 @@ namespace s1
     case lexer::kwSamplerCUBE:
       isType = true;
       break;
-    case lexer::Identifier:
-      /* Might be a type alias */
-      {
-        Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
-        isType = (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
-      }
-      break;
     default:
       break;
+    }
+    return isType;
+  }
+
+  bool Parser::IsType (const Scope& scope, int& peekAfterType)
+  {
+    Lexer::TokenType tokenID = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
+    peekAfterType = 0;
+    bool isType = false;
+    if (currentToken.typeOrID == lexer::Identifier)
+    {
+      /* Might be a type alias */
+      Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
+      isType = (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
+    }
+    else
+    {
+      int peekWellKnown;
+      if ((isType = IsWellKnownType (peekWellKnown)))
+        peekAfterType += peekWellKnown;
     }
     if (isType)
     {
