@@ -25,7 +25,7 @@
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "diagnostics/Handler.h"
 
-#include <vector>
+#include <boost/container/deque.hpp>
 
 namespace s1
 {
@@ -52,7 +52,7 @@ namespace s1
     
     Lexer::Token currentToken;
     void NextToken ();
-    std::vector<Lexer::Token> nextTokens;
+    boost::container::deque<Lexer::Token> nextTokens;
     const Lexer::Token& Peek (size_t lookahead = 0);
     
     /// Expect a certain token, throw an "unexpected token" error if some other is encountered

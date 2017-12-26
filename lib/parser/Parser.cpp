@@ -61,8 +61,8 @@ namespace s1
     }
     else
     {
-      currentToken = nextTokens[0];
-      nextTokens.erase (nextTokens.begin());
+      currentToken = nextTokens.front ();
+      nextTokens.pop_front ();
     }
   }
   
