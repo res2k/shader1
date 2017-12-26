@@ -7,6 +7,7 @@ set(parser_sources
     ${S1_INC}/parser/SemanticsHandler.h
     )
 set(parser_sources_ast_h
+    ${S1_INC}/parser/ast/ExprValue.h
     ${S1_INC}/parser/ast/forwarddecl.h
     ${S1_INC}/parser/ast/Identifier.h
     ${S1_INC}/parser/ast/Node.h

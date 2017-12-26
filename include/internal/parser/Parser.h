@@ -89,6 +89,7 @@ namespace s1
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (const Scope& scope);
     Expression ParseExprBase (const Scope& scope);
+    parser::ast::ExprValuePtr AstParseExprValue ();
     Expression ParseAttributeOrArrayAccess (const Scope& scope, Expression baseExpr);
     Expression ParseExprMultiplication (const Scope& scope);
     Expression ParseExprAddition (const Scope& scope);
@@ -98,7 +99,6 @@ namespace s1
     Expression ParseExprComparison (const Scope& scope);
     Expression ParseExprLogicOr (const Scope& scope);
     Expression ParseExprLogicAnd (const Scope& scope);
-    Expression ParseExprConstBool ();
     
     // Types
     bool IsWellKnownType (int& peekAfterType);

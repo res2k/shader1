@@ -19,12 +19,15 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/ExprValue.h"
 #include "parser/ast/Identifier.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
 
 #include <assert.h>
 #include <bitset>
+
+#include <boost/optional.hpp>
 
 namespace s1
 {
@@ -407,68 +410,99 @@ namespace s1
   Parser::Expression Parser::ParseExprBase (const Scope& scope)
   {
     Expression expr;
-    int beyondType = 0;
-    bool isType (false);
-    if ((currentToken.typeOrID == lexer::Identifier)
-        || ((isType = IsType (scope, beyondType))
-          && (Peek (beyondType).typeOrID == lexer::ParenL)))
+    boost::optional<uc::String> identifier;
+    if (auto astValue = AstParseExprValue ())
     {
-      /* Expression could be: 
-         * a variable/attribute value,
-         * function call,
-         * type constructor
-       */
-      Type type;
-      Name idName;
-      if (isType)
-        type = ParseType (scope);
+      const auto& token = astValue->value;
+      if (token.typeOrID == lexer::Identifier)
+      {
+        identifier = token.tokenString;
+      }
+      else if (token.typeOrID == lexer::Numeric)
+      {
+        expr = semanticsHandler.CreateConstNumericExpression (token.tokenString);
+      }
+      else if ((token.typeOrID == lexer::kwTrue) || (token.typeOrID == lexer::kwFalse))
+      {
+        expr = semanticsHandler.CreateConstBoolExpression ((token.typeOrID == lexer::kwTrue));
+      }
       else
       {
-        idName = scope->ResolveIdentifier (currentToken.tokenString);
-        NextToken();
+        S1_ASSERT_NOT_REACHED(Parser::Expression ());
       }
-      /* if identifier is function name ... */
-      if (isType || (idName->GetType() == SemanticsHandler::Name::Function))
+    }
+    if (!expr)
+    {
+      int beyondType = 0;
+      bool isType (false);
+      if (identifier
+          || ((isType = IsType (scope, beyondType))
+            && (Peek (beyondType).typeOrID == lexer::ParenL)))
       {
-        // ... parse function call
-        SemanticsHandler::ExpressionVector params;
-        ParseFuncParamActual (scope, params);
+        /* Expression could be:
+          * a variable/attribute value,
+          * function call,
+          * type constructor
+        */
+        Type type;
+        Name idName;
         if (isType)
-          expr = semanticsHandler.CreateTypeConstructorExpression (type, params);
+          type = ParseType (scope);
         else
-          expr = semanticsHandler.CreateFunctionCallExpression (idName, params);
+        {
+          idName = scope->ResolveIdentifier (*identifier);
+        }
+        /* if identifier is function name ... */
+        if (isType || (idName->GetType() == SemanticsHandler::Name::Function))
+        {
+          // ... parse function call
+          SemanticsHandler::ExpressionVector params;
+          ParseFuncParamActual (scope, params);
+          if (isType)
+            expr = semanticsHandler.CreateTypeConstructorExpression (type, params);
+          else
+            expr = semanticsHandler.CreateFunctionCallExpression (idName, params);
+        }
+        else
+        {
+          expr = semanticsHandler.CreateVariableExpression (idName);
+        }
+      }
+      else if (currentToken.typeOrID == lexer::ParenL)
+      {
+        // '(' - nested expression
+        NextToken();
+        expr = ParseExpression (scope);
+        Expect (lexer::ParenR);
+        NextToken ();
       }
       else
       {
-        expr = semanticsHandler.CreateVariableExpression (idName);
+        UnexpectedToken();
       }
-    }
-    else if (currentToken.typeOrID == lexer::ParenL)
-    {
-      // '(' - nested expression
-      NextToken();
-      expr = ParseExpression (scope);
-      Expect (lexer::ParenR);
-      NextToken ();
-    }
-    else if ((currentToken.typeOrID == lexer::kwTrue) || (currentToken.typeOrID == lexer::kwFalse))
-    {
-      // boolean constant
-      expr = ParseExprConstBool();
-    }
-    else if (currentToken.typeOrID == lexer::Numeric)
-    {
-      // numeric constant
-      expr = semanticsHandler.CreateConstNumericExpression (currentToken.tokenString);
-      NextToken();
-    }
-    else
-    {
-      UnexpectedToken();
     }
     return ParseAttributeOrArrayAccess (scope, expr);
   }
-  
+
+  ast::ExprValuePtr Parser::AstParseExprValue ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        ast::ExprValuePtr node;
+        // Variable, boolean constant, or numeric constant
+        if ((currentToken.typeOrID == lexer::Identifier)
+            || (currentToken.typeOrID == lexer::kwTrue) || (currentToken.typeOrID == lexer::kwFalse)
+            || (currentToken.typeOrID == lexer::Numeric))
+        {
+          node.reset (new ast::ExprValue (currentToken));
+          NextToken ();
+        }
+        // else: None of the above
+        return node;
+      });
+  }
+
   Parser::Expression Parser::ParseAttributeOrArrayAccess (const Scope& scope,
                                                           Expression baseExpr)
   {
@@ -671,14 +705,6 @@ namespace s1
       Expression expr2 = ParseExprCompareEqual (scope);
       expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::And, expr, expr2);
     }
-    return expr;
-  }
-  
-  Parser::Expression Parser::ParseExprConstBool ()
-  {
-    Expression expr = semanticsHandler.CreateConstBoolExpression (
-      currentToken.typeOrID == lexer::kwTrue);
-    NextToken();
     return expr;
   }
   

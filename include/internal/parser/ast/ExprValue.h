@@ -16,12 +16,15 @@
 */
 
 /**\file
- * AST forward declaration
+ * AST expression value
  */
-#ifndef S1_PARSER_AST_FORWARDDECL_H_
-#define S1_PARSER_AST_FORWARDDECL_H_
+#ifndef S1_PARSER_AST_EXPRVALUE_H_
+#define S1_PARSER_AST_EXPRVALUE_H_
 
-#include <memory>
+#include "forwarddecl.h"
+#include "Node.h"
+
+#include <boost/variant.hpp>
 
 namespace s1
 {
@@ -29,14 +32,16 @@ namespace s1
   {
     namespace ast
     {
-      struct Identifier;
-      struct Node;
-      typedef std::unique_ptr<Node> NodePtr;
+      /// AST expression value
+      struct ExprValue : public Node
+      {
+        lexer::Token value;
 
-      struct ExprValue;
-      typedef std::unique_ptr<ExprValue> ExprValuePtr;
+        template<typename U>
+        ExprValue (U&& arg) : value (std::forward<U> (arg)) {}
+      };
     } // namespace ast
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_FORWARDDECL_H_
+#endif // S1_PARSER_AST_EXPRVALUE_H_
