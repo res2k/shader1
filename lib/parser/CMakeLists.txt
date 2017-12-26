@@ -6,9 +6,15 @@ set(parser_sources
     ${S1_INC}/parser/Parser.h
     ${S1_INC}/parser/SemanticsHandler.h
     )
+set(parser_sources_ast_h
+    ${S1_INC}/parser/ast/forwarddecl.h
+    ${S1_INC}/parser/ast/Identifier.h
+    ${S1_INC}/parser/ast/Node.h
+    )
 s1_add_library(parser
-               SOURCES ${parser_sources}
+               SOURCES ${parser_sources} ${parser_sources_ast_h}
                LINK lexer)
+source_group("ast Headers" FILES ${parser_sources_ast_h})
 add_dependencies(parser generate_Diagnostics_parser)
 IF(S1LIB_PDB)
   target_compile_options(parser PRIVATE ${S1LIB_PDB})

@@ -19,6 +19,7 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/Identifier.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
 
@@ -54,6 +55,7 @@ namespace s1
   
   void Parser::NextToken ()
   {
+    previousToken = currentToken;
     if (nextTokens.size() == 0)
     {
       currentToken = *inputLexer;
@@ -75,7 +77,53 @@ namespace s1
     }
     return nextTokens[lookahead];
   }
-  
+
+  namespace
+  {
+    // Helper: Set end and start location for a AST parse result
+    template<typename T>
+    static inline void SetParseResultLocation (T& value,
+                                               lexer::TokenLocation&& startLocation,
+                                               lexer::TokenLocation&& endLocation)
+    {
+      // Assume T derives from ast::Node
+      if (value)
+      {
+        value->startLocation = std::move (startLocation);
+        value->endLocation = std::move (endLocation);
+      }
+    }
+
+    template<typename T, typename U, typename V>
+    static inline void SetParseResultLocation (OUTCOME_V2_NAMESPACE::result<T, U, V>& value,
+                                               lexer::TokenLocation&& startLocation,
+                                               lexer::TokenLocation&& endLocation)
+    {
+      // Assume T derives from ast::Node
+      if (value.has_value())
+      {
+        SetParseResultLocation (value.value (), std::move (startLocation), std::move (endLocation));
+      }
+    }
+  } // anonymous namespace
+
+  template<typename F>
+  typename std::result_of<F()>::type Parser::CommonAstParseNode (F func)
+  {
+    auto startLocation = currentToken.location;
+    auto result = func ();
+    SetParseResultLocation (result, std::move (startLocation), lexer::TokenLocation (previousToken.location));
+    return result;
+  }
+
+  ast::Identifier Parser::AstParseIdentifier ()
+  {
+    Expect (lexer::Identifier);
+    ast::Identifier astIdent = ast::Identifier{ currentToken };
+    NextToken ();
+    return astIdent;
+  }
+
   void Parser::Expect (Lexer::TokenType tokenType)
   {
     if (currentToken.typeOrID != tokenType)

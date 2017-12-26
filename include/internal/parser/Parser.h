@@ -20,6 +20,7 @@
 
 #include "lexer/Lexer.h"
 
+#include "ast/forwarddecl.h"
 #include "SemanticsHandler.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
@@ -51,10 +52,20 @@ namespace s1
     parser::SemanticsHandler::ScopePtr builtinScope;
     
     Lexer::Token currentToken;
+    Lexer::Token previousToken;
     void NextToken ();
     boost::container::deque<Lexer::Token> nextTokens;
     const Lexer::Token& Peek (size_t lookahead = 0);
-    
+
+    /**
+     * AST node parsing helper.
+     * Calls func(), recording the starting and ending location
+     */
+    template<typename F>
+    typename std::result_of<F()>::type CommonAstParseNode (F func);
+    /// AST parsing helper: guaranteed return of an identifier
+    parser::ast::Identifier AstParseIdentifier ();
+
     /// Expect a certain token, throw an "unexpected token" error if some other is encountered
     void Expect (Lexer::TokenType tokenType);
     /// Throw an "unexpected token" error
