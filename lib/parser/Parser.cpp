@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2017 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -94,7 +94,6 @@ namespace s1
     Expect (lexer::EndOfFile);
   }
   
-//@@SNIP ParseProgramStatements.txt
   void Parser::ParseProgramStatements (const Scope& scope)
   {
     while (true)
@@ -103,10 +102,7 @@ namespace s1
       bool isType = IsType (scope, beyondType);
       if (currentToken.typeOrID == lexer::kwConst)
       {
-        /* Konstantendeklaration */
-//@@ENDSNIP
         /* constant declaration */
-//@@SNIP ParseProgramStatements.txt
         ParseConstDeclare (scope);
         Expect (lexer::Semicolon);
         NextToken();
@@ -118,18 +114,12 @@ namespace s1
         if ((currentToken.typeOrID == lexer::kwVoid)
             || (Peek (beyondType+1).typeOrID == lexer::ParenL))
         {
-          /* Funktionsdeklaration */
-//@@ENDSNIP
           /* Function declaration */
-//@@SNIP ParseProgramStatements.txt
           ParseFuncDeclare (scope);
         }
         else
         {
-          /* Variablendeklaration */
-//@@ENDSNIP
           /* Variable declaration */
-//@@SNIP ParseProgramStatements.txt
           ParseVarDeclare (scope);
           Expect (lexer::Semicolon);
           NextToken();
@@ -137,24 +127,16 @@ namespace s1
       }
       else if (currentToken.typeOrID == lexer::kwTypedef)
       {
-        /* Typdefinition */
-//@@ENDSNIP
         /* Type definition */
-//@@SNIP ParseProgramStatements.txt
         ParseTypedef (scope);
         Expect (lexer::Semicolon);
         NextToken();
       }
       else
-        /* Unbekanntes Token - aufrufende Methode wird Fehler
-           auslösen (erwartet "end of file"-Token) */
-//@@ENDSNIP
         /* Unknown token - let ParseProgram throw error */
-//@@SNIP ParseProgramStatements.txt
         break;
     }
   }
-//@@ENDSNIP
   
   void Parser::ParseBlock (Block block)
   {
@@ -897,34 +879,29 @@ namespace s1
     NextToken();
   }
 
-//@@SNIP ParseFuncDeclare.txt
   void Parser::ParseFuncDeclare (const Scope& scope)
   {
-    // Rückgabetyp parsen
+    // Parse return type
     Type returnType = ParseFuncType (scope);
-    // Funktionsbezeichner parsen
+    // Parse function identifier
     Expect (lexer::Identifier);
     uc::String functionIdentifier (currentToken.tokenString);
     NextToken ();
-    // Formale Parameter parsen
+    // Parse formal parameters
     Expect (lexer::ParenL);
     SemanticsHandler::Scope::FunctionFormalParameters params;
     ParseFuncParamFormal (scope, params);
-    // Funktion zu 'Scope' hinzufügen, Anweisungsblock speichern
-//@@ENDSNIP
     // Add function to scope, get block
-//@@SNIP ParseFuncDeclare.txt
     Function func (scope->AddFunction (returnType, functionIdentifier, params));
     Block inFunctionBlock = func->GetBody();;
     Expect (lexer::BraceL);
     NextToken();
-    // Anweisungen in Block verarbeiten
+    // Handle expressions in block
     ParseBlock (inFunctionBlock);
     func->Finish ();
     Expect (lexer::BraceR);
     NextToken();
   }
-//@@ENDSNIP
   
   Parser::Type Parser::ParseFuncType (const Scope& scope)
   {
@@ -1132,22 +1109,21 @@ namespace s1
     scope->AddVariable (type, varIdentifier, initExpr, true);
   }
 
-//@@SNIP ParseIf.txt
   void Parser::ParseIf (Block block)
   {
-    // 'if' überspringen
+    // Skip 'if'
     NextToken();
     Expect (lexer::ParenL);
     NextToken();
-    // Bedingung parsen
+    // Parse condition
     Expression conditionExpr = ParseExpression (block->GetInnerScope());
     Expect (lexer::ParenR);
     NextToken();
     Expect (lexer::BraceL);
     NextToken();
-    // 'if'-Block erstellen, ...
+    // Create 'if' block ...
     Block ifBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
-    // ... einlesen
+    // ... and parse
     ParseBlock (ifBlock);
     Expect (lexer::BraceR);
     NextToken();
@@ -1157,17 +1133,16 @@ namespace s1
       NextToken();
       Expect (lexer::BraceL);
       NextToken();
-      // 'else'-Block erstellen, ...
+      // Create 'else' block ...
       elseBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
-      // ... einlesen
+      // ... and parse
       ParseBlock (elseBlock);
       Expect (lexer::BraceR);
       NextToken();
     }
-    // Instruktion zu umgebenden Block hinzufügen
+    // Add instructions to surrounding block
     block->AddBranching (conditionExpr, ifBlock, elseBlock);
   }
-//@@ENDSNIP
 
   void Parser::ParseLoopFor (Block block)
   {
