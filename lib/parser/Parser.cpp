@@ -21,6 +21,7 @@
 
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/Identifier.h"
+#include "parser/ast/Type.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
 
@@ -762,16 +763,74 @@ namespace s1
     }
     return isType;
   }
-  
-  Parser::Type Parser::ParseTypeBase (const Scope& scope)
+
+  Parser::AstParseTypeResult Parser::AstParseType ()
   {
+    return CommonAstParseNode (
+      [&]() -> Parser::AstParseTypeResult
+      {
+        ast::TypePtr type;
+        if (currentToken.typeOrID == lexer::Identifier)
+        {
+          // Assume type alias
+          type.reset (new ast::Type (ast::Identifier{ currentToken }));
+          NextToken ();
+        }
+        else
+        {
+          int wellKnownExtra;
+          if (IsWellKnownType (wellKnownExtra))
+          {
+            ast::Type::WellKnownType wellKnownTokens;
+            for (int i = 0; i <= wellKnownExtra; i++)
+            {
+              wellKnownTokens.push_back (currentToken);
+              NextToken ();
+            }
+            type.reset (new ast::Type (std::move (wellKnownTokens)));
+          }
+          else
+          {
+            return ParseError{ parser::Error::ExpectedTypeName, currentToken };
+          }
+        }
+        while ((currentToken.typeOrID == lexer::BracketL)
+          && (Peek (0).typeOrID == lexer::BracketR))
+        {
+          type.reset (new ast::Type (ast::Type::ArrayType{ std::move (type) }));
+          NextToken ();
+          NextToken ();
+        }
+        return type;
+      });
+  }
+
+  Parser::Type Parser::ParseTypeBase (parser::ast::Type& astType, const Scope& scope)
+  {
+    if (auto typeIdentifier = boost::get<ast::Identifier> (&astType.value))
+    {
+      Name typeName = scope->ResolveIdentifier (typeIdentifier->GetString());
+      Type type;
+      if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
+      {
+        return typeName->GetAliasedType();
+      }
+      else
+      {
+        throw Exception (parser::Error::ExpectedTypeName, typeIdentifier->token);
+      }
+    }
+    auto typeTokens = boost::get<ast::Type::WellKnownType> (&astType.value);
+    S1_ASSERT(typeTokens, Type ());
+
+    auto currentTypeToken = (*typeTokens).at (0);
     bool isUnsigned = false;
-    auto baseToken = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
+    auto baseToken = static_cast<lexer::TokenType> (currentTypeToken.typeOrID & ~lexer::TypeFlagMask);
     if (baseToken == lexer::kwUnsigned)
     {
       isUnsigned = true;
-      NextToken();
-      baseToken = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
+      currentTypeToken = (*typeTokens).at (1);
+      baseToken = static_cast<lexer::TokenType> (currentTypeToken.typeOrID & ~lexer::TypeFlagMask);
     }
     switch (baseToken)
     {
@@ -779,17 +838,17 @@ namespace s1
     case lexer::kwInt:
     case lexer::kwFloat:
       {
-        switch (static_cast<lexer::TokenType> (currentToken.typeOrID & lexer::TypeFlagMask))
+        switch (static_cast<lexer::TokenType> (currentTypeToken.typeOrID & lexer::TypeFlagMask))
         {
         case 0:
           if (baseToken == lexer::kwBool)
-            return ParseTypeBool ();
+            return ParseTypeBool (currentTypeToken);
           else
-            return ParseTypeNumeric (isUnsigned);
+            return ParseTypeNumeric (isUnsigned, currentTypeToken);
         case lexer::VecFlag:
-          return ParseTypeVector (isUnsigned);
+          return ParseTypeVector (isUnsigned, currentTypeToken);
         case lexer::MatFlag:
-          return ParseTypeMatrix (isUnsigned);
+          return ParseTypeMatrix (isUnsigned, currentTypeToken);
         default:
           break;
         }
@@ -799,71 +858,64 @@ namespace s1
     case lexer::kwSampler2D:
     case lexer::kwSampler3D:
     case lexer::kwSamplerCUBE:
-      return ParseTypeSampler ();
-    case lexer::Identifier:
-      {
-        Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
-        Type type;
-        if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
-        {
-          type = typeName->GetAliasedType();
-        }
-        else
-        {
-          throw Exception (parser::Error::ExpectedTypeName, currentToken);
-        }
-        NextToken ();
-        return type;
-      }
-      break;
-    default:
-      UnexpectedToken ();
+      return ParseTypeSampler (currentTypeToken);
     }
+    S1_ASSERT_NOT_REACHED_MSG("unhandled type", Type ());
     return Type ();
   }
   
   Parser::Type Parser::ParseType (const Scope& scope)
   {
-    Type type = ParseTypeBase (scope);
-    if (currentToken.typeOrID == lexer::BracketL)
+    auto astType = AstParseType ();
+    if (astType.has_error ())
+      throw Exception (astType.error ().error, astType.error ().token);
+    S1_ASSERT(astType.value(), Type ());
+    return ParseType (*astType.value(), scope);
+  }
+
+  Parser::Type Parser::ParseType (ast::Type& astType, const Scope& scope)
+  {
+    if (auto arrayType = boost::get<ast::Type::ArrayType> (&astType.value))
     {
-      type = ParseTypeArray (type);
+      auto type = ParseType (*arrayType->containedType, scope);
+      return semanticsHandler.CreateArrayType (type);
     }
-    return type;
+    else
+    {
+      return ParseTypeBase (astType, scope);
+    }
   }
   
-  Parser::Type Parser::ParseTypeBool ()
+  Parser::Type Parser::ParseTypeBool (const Lexer::Token& /*token*/)
   {
-    NextToken();
     return semanticsHandler.CreateType (SemanticsHandler::Bool);
   }
   
-  Parser::Type Parser::ParseTypeNumeric (bool isUnsigned)
+  Parser::Type Parser::ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token)
   {
     Type type;
-    switch (currentToken.typeOrID)
+    switch (token.typeOrID)
     {
     case lexer::kwInt:
       /* int */
       type = semanticsHandler.CreateType (
         isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
-      NextToken();
       break;
     case lexer::kwFloat:
       /* float */
       type = semanticsHandler.CreateType (SemanticsHandler::Float);
-      NextToken();
+      // TODO: Err if unsigned
       break;
     default:
-      UnexpectedToken ();
+      S1_ASSERT_NOT_REACHED(Type());
     }
     return type;
   }
   
-  Parser::Type Parser::ParseTypeVector (bool isUnsigned)
+  Parser::Type Parser::ParseTypeVector (bool isUnsigned, const Lexer::Token& token)
   {
     Type baseType;
-    switch (static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask))
+    switch (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
       baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
@@ -878,17 +930,16 @@ namespace s1
       baseType = semanticsHandler.CreateType (SemanticsHandler::Float);
       break;
     default:
-      UnexpectedToken ();
+      S1_ASSERT_NOT_REACHED(Type());
     }
-    Type vecType = semanticsHandler.CreateVectorType (baseType, currentToken.dimension1);
-    NextToken();
+    Type vecType = semanticsHandler.CreateVectorType (baseType, token.dimension1);
     return vecType;
   }
   
-  Parser::Type Parser::ParseTypeMatrix (bool isUnsigned)
+  Parser::Type Parser::ParseTypeMatrix (bool isUnsigned, const Lexer::Token& token)
   {
     Type baseType;
-    switch (static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask))
+    switch (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
       baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
@@ -903,54 +954,35 @@ namespace s1
       baseType = semanticsHandler.CreateType (SemanticsHandler::Float);
       break;
     default:
-      UnexpectedToken ();
+      S1_ASSERT_NOT_REACHED(Type());
     }
-    Type matType = semanticsHandler.CreateMatrixType (baseType, currentToken.dimension1,
-                                                   currentToken.dimension2);
-    NextToken();
+    Type matType = semanticsHandler.CreateMatrixType (baseType, token.dimension1, token.dimension2);
     return matType;
   }
   
-  Parser::Type Parser::ParseTypeSampler ()
+  Parser::Type Parser::ParseTypeSampler (const Lexer::Token& token)
   {
     Type type;
-    switch (currentToken.typeOrID)
+    switch (token.typeOrID)
     {
     case lexer::kwSampler1D:
       /* 1D sampler */
       type = semanticsHandler.CreateSamplerType (SemanticsHandler::_1D);
-      NextToken();
       break;
     case lexer::kwSampler2D:
       /* 2D sampler */
       type = semanticsHandler.CreateSamplerType (SemanticsHandler::_2D);
-      NextToken();
       break;
     case lexer::kwSampler3D:
       /* 3D sampler */
       type = semanticsHandler.CreateSamplerType (SemanticsHandler::_3D);
-      NextToken();
       break;
     case lexer::kwSamplerCUBE:
       /* CUBE sampler */
       type = semanticsHandler.CreateSamplerType (SemanticsHandler::CUBE);
-      NextToken();
       break;
     default:
-      UnexpectedToken ();
-    }
-    return type;
-  }
-  
-  Parser::Type Parser::ParseTypeArray (Type baseType)
-  {
-    NextToken();
-    Expect (lexer::BracketR);
-    Type type = semanticsHandler.CreateArrayType (baseType);
-    NextToken ();
-    if (currentToken.typeOrID == lexer::BracketL)
-    {
-      type = ParseTypeArray (type);
+      S1_ASSERT_NOT_REACHED(Type());
     }
     return type;
   }

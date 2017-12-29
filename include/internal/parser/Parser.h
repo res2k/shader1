@@ -21,6 +21,7 @@
 #include "lexer/Lexer.h"
 
 #include "ast/forwarddecl.h"
+#include "parser/Diagnostics.h"
 #include "SemanticsHandler.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
@@ -57,6 +58,14 @@ namespace s1
     boost::container::deque<Lexer::Token> nextTokens;
     const Lexer::Token& Peek (size_t lookahead = 0);
 
+    /// Parse error info
+    struct ParseError
+    {
+      /// Error code
+      parser::Error error;
+      /// Offending token
+      lexer::Token token;
+    };
     /**
      * AST node parsing helper.
      * Calls func(), recording the starting and ending location
@@ -104,15 +113,17 @@ namespace s1
     bool IsWellKnownType (int& peekAfterType);
     bool IsType (const Scope& scope, int& peekAfterType);
     bool IsType (const Scope& scope) { int dummy; return IsType (scope, dummy); }
+    typedef OUTCOME_V2_NAMESPACE::result<parser::ast::TypePtr, ParseError> AstParseTypeResult;
+    AstParseTypeResult AstParseType ();
     typedef parser::SemanticsHandler::TypePtr Type;
-    Type ParseTypeBase (const Scope& scope);
+    Type ParseTypeBase (parser::ast::Type& astType, const Scope& scope);
     Type ParseType (const Scope& scope);
-    Type ParseTypeBool ();
-    Type ParseTypeNumeric (bool isUnsigned);
-    Type ParseTypeVector (bool isUnsigned);
-    Type ParseTypeMatrix (bool isUnsigned);
-    Type ParseTypeSampler ();
-    Type ParseTypeArray (Type baseType);
+    Type ParseType (parser::ast::Type& astType, const Scope& scope);
+    Type ParseTypeBool (const Lexer::Token& token);
+    Type ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token);
+    Type ParseTypeVector (bool isUnsigned, const Lexer::Token& token);
+    Type ParseTypeMatrix (bool isUnsigned, const Lexer::Token& token);
+    Type ParseTypeSampler (const Lexer::Token& token);
     void ParseTypedef (const Scope& scope);
     
     // Functions

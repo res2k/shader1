@@ -16,12 +16,19 @@
 */
 
 /**\file
- * AST forward declaration
+ * AST type
  */
-#ifndef S1_PARSER_AST_FORWARDDECL_H_
-#define S1_PARSER_AST_FORWARDDECL_H_
+#ifndef S1_PARSER_AST_TYPE_H_
+#define S1_PARSER_AST_TYPE_H_
 
-#include <memory>
+#include "Identifier.h"
+#include "Node.h"
+
+#include "base/uc/String.h"
+#include "lexer/Token.h"
+
+#include <boost/container/static_vector.hpp>
+#include <boost/variant.hpp>
 
 namespace s1
 {
@@ -29,16 +36,22 @@ namespace s1
   {
     namespace ast
     {
-      struct Identifier;
-      struct Node;
-      typedef std::unique_ptr<Node> NodePtr;
+      /// AST type
+      struct Type : public Node
+      {
+        typedef boost::container::static_vector<lexer::Token, 2> WellKnownType;
+        struct ArrayType
+        {
+          TypePtr containedType;
+        };
 
-      struct ExprValue;
-      typedef std::unique_ptr<ExprValue> ExprValuePtr;
-      struct Type;
-      typedef std::unique_ptr<Type> TypePtr;
+        boost::variant<WellKnownType, Identifier, ArrayType> value;
+
+        template<typename U>
+        Type (U&& arg) : value (std::forward<U> (arg)) {}
+      };
     } // namespace ast
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_FORWARDDECL_H_
+#endif // S1_PARSER_AST_TYPE_H_
