@@ -669,5 +669,25 @@ public:
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = int2 (1, 2))");
   }
+
+  void testArrayCtor (void)
+  {
+    std::string inStr ("x = float[] (1.0, 2.0, 3.0)");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+                                    TestSemanticsHandler::Global));
+
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TestSemanticsHandler::TestExpressionBase* testExpr =
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = float[] (1.0, 2.0, 3.0))");
+  }
 };
-// 
