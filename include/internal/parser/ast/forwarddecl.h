@@ -33,6 +33,20 @@ namespace s1
       struct Node;
       typedef std::unique_ptr<Node> NodePtr;
 
+      struct Expr;
+      typedef std::unique_ptr<Expr> ExprPtr;
+      struct ExprArrayElement;
+      typedef std::unique_ptr<ExprArrayElement> ExprArrayElementPtr;
+      struct ExprAttribute;
+      typedef std::unique_ptr<ExprAttribute> ExprAttributePtr;
+      struct ExprBinary;
+      typedef std::unique_ptr<ExprBinary> ExprBinaryPtr;
+      struct ExprFunctionCall;
+      typedef std::unique_ptr<ExprFunctionCall> ExprFunctionCallPtr;
+      struct ExprTernary;
+      typedef std::unique_ptr<ExprTernary> ExprTernaryPtr;
+      struct ExprUnary;
+      typedef std::unique_ptr<ExprUnary> ExprUnaryPtr;
       struct ExprValue;
       typedef std::unique_ptr<ExprValue> ExprValuePtr;
       struct Type;

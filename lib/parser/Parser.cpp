@@ -19,6 +19,7 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/Expr.h"
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/Identifier.h"
 #include "parser/ast/Type.h"
@@ -350,6 +351,289 @@ namespace s1
     return false;
   }
   
+  ast::ExprPtr Parser::AstParseExpression ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprLogicOr ();
+        if (currentToken.typeOrID == lexer::Assign)
+        {
+          auto opToken = currentToken;
+          // Assignment expression
+          NextToken();
+          auto assignedExpr = AstParseExpression ();
+          ast::ExprBinaryPtr assignmentExpr (
+            new ast::ExprBinary (std::move (expr), opToken, std::move (assignedExpr)));;
+          expr.reset (new ast::Expr (std::move (assignmentExpr)));
+        }
+        else if (currentToken.typeOrID == lexer::TernaryIf)
+        {
+          expr = AstParseExprTernary (std::move (expr));
+        }
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprBase ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        ast::ExprPtr expr;
+        auto astValue = AstParseExprValue ();
+        if (astValue)
+        {
+          /* Need to check if it's identifier + '('.
+          * We have a function call in that case */
+          if ((astValue->value.typeOrID != lexer::Identifier)
+              || (currentToken.typeOrID != lexer::ParenL))
+          {
+            expr.reset (new ast::Expr (std::move (astValue)));
+          }
+          else
+          {
+            // Expression is a function call
+            auto params = AstParseFuncParamActual ();
+            ast::ExprFunctionCallPtr funcCallExpr (new ast::ExprFunctionCall (
+              ast::Identifier{ astValue->value }, std::move (params)));
+            expr.reset (new ast::Expr (std::move (funcCallExpr)));
+          }
+        }
+        if (!expr)
+        {
+          int beyondType = 0;
+          if (IsWellKnownTypeOrArray (beyondType) && (Peek (beyondType).typeOrID == lexer::ParenL))
+          {
+            // Expression is a type cast or ctor.
+            auto astType = AstParseType ();
+            if (astType.has_error ())
+              throw Exception (astType.error ().error, astType.error ().token);
+            auto params = AstParseFuncParamActual ();
+            ast::ExprFunctionCallPtr funcCallExpr (new ast::ExprFunctionCall (
+              std::move (astType.value()), std::move (params)));
+            expr.reset (new ast::Expr (std::move (funcCallExpr)));
+          }
+          else if (currentToken.typeOrID == lexer::ParenL)
+          {
+            // '(' - nested expression
+            NextToken();
+            expr = AstParseExpression ();
+            Expect (lexer::ParenR);
+            NextToken ();
+          }
+          else
+          {
+            UnexpectedToken();
+          }
+        }
+        return AstParseAttributeOrArrayAccess (std::move (expr));
+      });
+  }
+
+  ast::ExprValuePtr Parser::AstParseExprValue ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        ast::ExprValuePtr node;
+        // Variable, boolean constant, or numeric constant
+        if ((currentToken.typeOrID == lexer::Identifier)
+            || (currentToken.typeOrID == lexer::kwTrue) || (currentToken.typeOrID == lexer::kwFalse)
+            || (currentToken.typeOrID == lexer::Numeric))
+        {
+          node.reset (new ast::ExprValue (currentToken));
+          NextToken ();
+        }
+        // else: None of the above
+        return node;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseAttributeOrArrayAccess (ast::ExprPtr&& baseExpr)
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        ast::ExprPtr expr = std::move (baseExpr);
+        while (true)
+        {
+          if (currentToken.typeOrID == lexer::Member)
+          {
+            NextToken ();
+            auto attr = AstParseIdentifier ();
+            auto attributeExpr = ast::ExprAttributePtr (new ast::ExprAttribute (std::move (expr), std::move (attr)));
+            expr.reset (new ast::Expr (std::move (attributeExpr)));
+          }
+          else if (currentToken.typeOrID == lexer::BracketL)
+          {
+            NextToken();
+            auto indexExpr = AstParseExpression ();
+            Expect (lexer::BracketR);
+            NextToken();
+            auto arrayElementExpr = ast::ExprArrayElementPtr (new ast::ExprArrayElement (std::move (expr), std::move (indexExpr)));
+            expr.reset (new ast::Expr (std::move (arrayElementExpr)));
+          }
+          else
+            break;
+        }
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprMultiplication ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprUnary ();
+        while ((currentToken.typeOrID == lexer::Mult)
+          || (currentToken.typeOrID == lexer::Div)
+          || (currentToken.typeOrID == lexer::Mod))
+        {
+          auto opToken = currentToken;
+          NextToken();
+          auto expr2 = AstParseExprUnary ();
+          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
+          expr.reset (new ast::Expr (std::move (binExpr)));
+        }
+        return expr;
+    });
+  }
+
+  ast::ExprPtr Parser::AstParseExprAddition ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprMultiplication ();
+        while ((currentToken.typeOrID == lexer::Plus)
+          || (currentToken.typeOrID == lexer::Minus))
+        {
+          auto opToken = currentToken;
+          NextToken();
+          auto expr2 = AstParseExprMultiplication ();
+          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
+          expr.reset (new ast::Expr (std::move (binExpr)));
+        }
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprUnary ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        ast::ExprPtr expr;
+        if ((currentToken.typeOrID == lexer::BitwiseInvert)
+          || (currentToken.typeOrID == lexer::LogicInvert)
+          || (currentToken.typeOrID == lexer::Minus))
+        {
+          auto opToken = currentToken;
+          NextToken();
+          expr = AstParseExprBase ();
+          ast::ExprUnaryPtr unaryExpr (new ast::ExprUnary (opToken, std::move (expr)));
+          expr.reset (new ast::Expr (std::move (unaryExpr)));
+        }
+        else
+          expr = AstParseExprBase ();
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprTernary (ast::ExprPtr&& prefix)
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr (std::move (prefix));
+        NextToken();
+        auto expr2 = AstParseExpression ();
+        Expect (lexer::TernaryElse);
+        NextToken();
+        auto expr3 = AstParseExpression ();
+        ast::ExprTernaryPtr ternaryExpr (new ast::ExprTernary (std::move (expr), std::move (expr2), std::move (expr3)));
+        return ast::ExprPtr (new ast::Expr (std::move (ternaryExpr)));
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprCompareEqual ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprComparison ();
+        while ((currentToken.typeOrID == lexer::Equals)
+          || (currentToken.typeOrID == lexer::NotEquals))
+        {
+          auto opToken = currentToken;
+          NextToken();
+          auto expr2 = AstParseExprComparison ();
+          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
+          expr.reset (new ast::Expr (std::move (binExpr)));
+        }
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprComparison ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprAddition ();
+        while ((currentToken.typeOrID == lexer::Larger)
+          || (currentToken.typeOrID == lexer::LargerEqual)
+          || (currentToken.typeOrID == lexer::Smaller)
+          || (currentToken.typeOrID == lexer::SmallerEqual))
+        {
+          auto opToken = currentToken;
+          NextToken();
+          auto expr2 = AstParseExprAddition ();
+          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
+          expr.reset (new ast::Expr (std::move (binExpr)));
+        }
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprLogicOr ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprLogicAnd ();
+        while (currentToken.typeOrID == lexer::LogicOr)
+        {
+          auto opToken = currentToken;
+          NextToken();
+          auto expr2 = AstParseExprLogicAnd ();
+          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
+          expr.reset (new ast::Expr (std::move (binExpr)));
+        }
+        return expr;
+      });
+  }
+
+  ast::ExprPtr Parser::AstParseExprLogicAnd ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        auto expr = AstParseExprCompareEqual ();
+        while (currentToken.typeOrID == lexer::LogicAnd)
+        {
+          auto opToken = currentToken;
+          NextToken();
+          auto expr2 = AstParseExprCompareEqual ();
+          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
+          expr.reset (new ast::Expr (std::move (binExpr)));
+        }
+        return expr;
+      });
+  }
+
   bool Parser::IsExpression (const Scope& scope)
   {
     if ((currentToken.typeOrID == lexer::ParenL)
@@ -393,320 +677,231 @@ namespace s1
   
   Parser::Expression Parser::ParseExpression (const Scope& scope)
   {
-    Expression expr = ParseExprLogicOr (scope);
-    if (currentToken.typeOrID == lexer::Assign)
-    {
-      // Assignment expression
-      NextToken();
-      Expression assignedExpr = ParseExpression (scope);
-      expr = semanticsHandler.CreateAssignExpression (expr, assignedExpr);
-    }
-    else if (currentToken.typeOrID == lexer::TernaryIf)
-    {
-      expr = ParseExprTernary (expr, scope);
-    }
-    return expr;
+    auto astExpr = AstParseExpression ();
+    S1_ASSERT(astExpr, Parser::Expression());
+
+    return ParseExpression (scope, *astExpr);
   }
 
-  Parser::Expression Parser::ParseExprBase (const Scope& scope)
+  Parser::Expression Parser::ParseExpression (const Scope& scope, const ast::Expr& astExpr)
   {
-    Expression expr;
-    boost::optional<uc::String> identifier;
-    if (auto astValue = AstParseExprValue ())
+    if (auto exprValue = boost::get<ast::ExprValuePtr> (&astExpr.value))
     {
-      const auto& token = astValue->value;
-      if (token.typeOrID == lexer::Identifier)
-      {
-        identifier = token.tokenString;
-      }
-      else if (token.typeOrID == lexer::Numeric)
-      {
-        expr = semanticsHandler.CreateConstNumericExpression (token.tokenString);
-      }
-      else if ((token.typeOrID == lexer::kwTrue) || (token.typeOrID == lexer::kwFalse))
-      {
-        expr = semanticsHandler.CreateConstBoolExpression ((token.typeOrID == lexer::kwTrue));
-      }
-      else
-      {
-        S1_ASSERT_NOT_REACHED(Parser::Expression ());
-      }
+      return ParseExprValue (scope, **exprValue);
     }
-    if (!expr)
+    else if (auto exprBinary = boost::get<ast::ExprBinaryPtr> (&astExpr.value))
     {
-      int beyondType = 0;
-      bool isType (false);
-      if (identifier
-          || ((isType = IsType (scope, beyondType))
-            && (Peek (beyondType).typeOrID == lexer::ParenL)))
-      {
-        /* Expression could be:
-          * a variable/attribute value,
-          * function call,
-          * type constructor
-        */
-        Type type;
-        Name idName;
-        if (isType)
-          type = ParseType (scope);
-        else
-        {
-          idName = scope->ResolveIdentifier (*identifier);
-        }
-        /* if identifier is function name ... */
-        if (isType || (idName->GetType() == SemanticsHandler::Name::Function))
-        {
-          // ... parse function call
-          SemanticsHandler::ExpressionVector params;
-          ParseFuncParamActual (scope, params);
-          if (isType)
-            expr = semanticsHandler.CreateTypeConstructorExpression (type, params);
-          else
-            expr = semanticsHandler.CreateFunctionCallExpression (idName, params);
-        }
-        else
-        {
-          expr = semanticsHandler.CreateVariableExpression (idName);
-        }
-      }
-      else if (currentToken.typeOrID == lexer::ParenL)
-      {
-        // '(' - nested expression
-        NextToken();
-        expr = ParseExpression (scope);
-        Expect (lexer::ParenR);
-        NextToken ();
-      }
-      else
-      {
-        UnexpectedToken();
-      }
+      return ParseExprBinary (scope, **exprBinary);
     }
-    return ParseAttributeOrArrayAccess (scope, expr);
+    else if (auto exprUnary = boost::get<ast::ExprUnaryPtr> (&astExpr.value))
+    {
+      return ParseExprUnary (scope, **exprUnary);
+    }
+    else if (auto exprTernary = boost::get<ast::ExprTernaryPtr> (&astExpr.value))
+    {
+      return ParseExprTernary (scope, **exprTernary);
+    }
+    else if (auto exprFunctionCall = boost::get<ast::ExprFunctionCallPtr> (&astExpr.value))
+    {
+      return ParseExprFunctionCall (scope, **exprFunctionCall);
+    }
+    else if (auto exprAttribute = boost::get<ast::ExprAttributePtr> (&astExpr.value))
+    {
+      return ParseExprAttribute (scope, **exprAttribute);
+    }
+    else if (auto exprArrayElement = boost::get<ast::ExprArrayElementPtr> (&astExpr.value))
+    {
+      return ParseExprArrayElement (scope, **exprArrayElement);
+    }
+    // else
+    S1_ASSERT_NOT_REACHED(Expression ());
   }
 
-  ast::ExprValuePtr Parser::AstParseExprValue ()
+  Parser::Expression Parser::ParseExprValue (const Scope& scope, const ast::ExprValue& astExprValue)
   {
-    return CommonAstParseNode (
-      [&]()
-      {
-        ast::ExprValuePtr node;
-        // Variable, boolean constant, or numeric constant
-        if ((currentToken.typeOrID == lexer::Identifier)
-            || (currentToken.typeOrID == lexer::kwTrue) || (currentToken.typeOrID == lexer::kwFalse)
-            || (currentToken.typeOrID == lexer::Numeric))
-        {
-          node.reset (new ast::ExprValue (currentToken));
-          NextToken ();
-        }
-        // else: None of the above
-        return node;
-      });
-  }
-
-  Parser::Expression Parser::ParseAttributeOrArrayAccess (const Scope& scope,
-                                                          Expression baseExpr)
-  {
-    Parser::Expression expr = baseExpr;
-    while (true)
+    const auto& token = astExprValue.value;
+    if (token.typeOrID == lexer::Identifier)
     {
-      if (currentToken.typeOrID == lexer::Member)
+      auto idName = scope->ResolveIdentifier (token.tokenString);
+      if (idName->GetType() != SemanticsHandler::Name::Variable)
       {
-        NextToken ();
-        Expect (lexer::Identifier);
-        expr = semanticsHandler.CreateAttributeAccess (expr, currentToken.tokenString);
-        NextToken();
+        // TODO: Report error?
       }
-      else if (currentToken.typeOrID == lexer::BracketL)
-      {
-        NextToken();
-        Expression indexExpr = ParseExpression (scope);
-        Expect (lexer::BracketR);
-        NextToken();
-        expr = semanticsHandler.CreateArrayElementAccess (expr, indexExpr);
-      }
-      else
-        break;
+      return semanticsHandler.CreateVariableExpression (idName);
     }
-    return expr;
-  }
-  
-  Parser::Expression Parser::ParseExprMultiplication (const Scope& scope)
-  {
-    Expression expr = ParseExprUnary (scope);
-    while ((currentToken.typeOrID == lexer::Mult)
-      || (currentToken.typeOrID == lexer::Div)
-      || (currentToken.typeOrID == lexer::Mod))
+    else if (token.typeOrID == lexer::Numeric)
     {
-      SemanticsHandler::ArithmeticOp op;
-      switch (currentToken.typeOrID)
-      {
-      case lexer::Mult:
-        op = SemanticsHandler::Mul;
-        break;
-      case lexer::Div:
-        op = SemanticsHandler::Div;
-        break;
-      case lexer::Mod:
-        op = SemanticsHandler::Mod;
-        break;
-      default:
-        S1_ASSERT_NOT_REACHED (expr);
-      }
-      NextToken();
-      Expression expr2 = ParseExprUnary (scope);
-      expr = semanticsHandler.CreateArithmeticExpression (op, expr, expr2);
+      return semanticsHandler.CreateConstNumericExpression (token.tokenString);
     }
-    return expr;
-  }
-  
-  Parser::Expression Parser::ParseExprAddition (const Scope& scope)
-  {
-    Expression expr = ParseExprMultiplication (scope);
-    while ((currentToken.typeOrID == lexer::Plus)
-      || (currentToken.typeOrID == lexer::Minus))
+    else if ((token.typeOrID == lexer::kwTrue) || (token.typeOrID == lexer::kwFalse))
     {
-      SemanticsHandler::ArithmeticOp op;
-      switch (currentToken.typeOrID)
-      {
-      case lexer::Plus:
-        op = SemanticsHandler::Add;
-        break;
-      case lexer::Minus:
-        op = SemanticsHandler::Sub;
-        break;
-      default:
-        S1_ASSERT_NOT_REACHED (expr);
-      }
-      NextToken();
-      Expression expr2 = ParseExprMultiplication (scope);
-      expr = semanticsHandler.CreateArithmeticExpression (op, expr, expr2);
-    }
-    return expr;
-  }
-  
-  Parser::Expression Parser::ParseExprUnary (const Scope& scope)
-  {
-    Expression expr;
-    if ((currentToken.typeOrID == lexer::BitwiseInvert)
-      || (currentToken.typeOrID == lexer::LogicInvert)
-      || (currentToken.typeOrID == lexer::Minus))
-    {
-      SemanticsHandler::UnaryOp op;
-      switch (currentToken.typeOrID)
-      {
-      default:
-        S1_ASSERT_NOT_REACHED (expr);
-      case lexer::BitwiseInvert:
-        op = SemanticsHandler::Inv;
-        break;
-      case lexer::LogicInvert:
-        op = SemanticsHandler::Not;
-        break;
-      case lexer::Minus:
-        op = SemanticsHandler::Neg;
-        break;
-      }
-      NextToken();
-      expr = ParseExprBase (scope);
-      expr = semanticsHandler.CreateUnaryExpression (op, expr);
+      return semanticsHandler.CreateConstBoolExpression ((token.typeOrID == lexer::kwTrue));
     }
     else
-      expr = ParseExprBase (scope);
-    return expr;
-  }
-  
-  Parser::Expression Parser::ParseExprTernary (const Expression& prefix, const Scope& scope)
-  {
-    Expression expr (prefix);
-    NextToken();
-    Expression expr2 = ParseExpression (scope);
-    Expect (lexer::TernaryElse);
-    NextToken();
-    Expression expr3 = ParseExpression (scope);
-    return semanticsHandler.CreateTernaryExpression (expr, expr2, expr3);
-  }
-  
-  Parser::Expression Parser::ParseExprCompareEqual (const Scope& scope)
-  {
-    Expression expr = ParseExprComparison (scope);
-    while ((currentToken.typeOrID == lexer::Equals)
-      || (currentToken.typeOrID == lexer::NotEquals))
     {
-      SemanticsHandler::CompareOp op;
-      switch (currentToken.typeOrID)
-      {
-      case lexer::Equals:
-        op = SemanticsHandler::Equals;
-        break;
-      case lexer::NotEquals:
-        op = SemanticsHandler::NotEquals;
-        break;
-      default:
-        S1_ASSERT_NOT_REACHED (expr);
-      }
-      NextToken();
-      Expression expr2 = ParseExprComparison (scope);
-      expr = semanticsHandler.CreateComparisonExpression (op, expr, expr2);
+      S1_ASSERT_NOT_REACHED(Parser::Expression ());
     }
-    return expr;
+  }
+
+  Parser::Expression Parser::ParseExprArrayElement (const Scope& scope, const ast::ExprArrayElement& astExprArrayElement)
+  {
+    return semanticsHandler.CreateArrayElementAccess (ParseExpression (scope, *astExprArrayElement.value),
+                                                      ParseExpression (scope, *astExprArrayElement.index));
+  }
+
+  Parser::Expression Parser::ParseExprAttribute (const Scope& scope, const ast::ExprAttribute& astExprAttribute)
+  {
+    return semanticsHandler.CreateAttributeAccess (ParseExpression (scope, *astExprAttribute.value),
+                                                   astExprAttribute.attr.GetString());
+  }
+
+  Parser::Expression Parser::ParseExprFunctionCall (const Scope& scope, const ast::ExprFunctionCall& astExprFunctionCall)
+  {
+    SemanticsHandler::ExpressionVector paramExprs;
+    paramExprs.reserve (astExprFunctionCall.args.size());
+    for (const auto& paramAstExpr : astExprFunctionCall.args)
+    {
+      paramExprs.push_back (ParseExpression (scope, *paramAstExpr));
+    }
+    if (auto astType = boost::get<ast::TypePtr> (&astExprFunctionCall.identifierOrType))
+    {
+      return semanticsHandler.CreateTypeConstructorExpression (ParseType (**astType, scope), paramExprs);
+    }
+    else
+    {
+      const auto& identifier = boost::get<ast::Identifier> (astExprFunctionCall.identifierOrType).GetString();
+      auto idName = scope->ResolveIdentifier (identifier);
+      return semanticsHandler.CreateFunctionCallExpression (idName, paramExprs);
+    }
+  }
+
+  Parser::Expression Parser::ParseExprBinary (const Scope& scope, const ast::ExprBinary& astExprBinary)
+  {
+    switch (astExprBinary.op.typeOrID)
+    {
+    case lexer::Assign:
+      return semanticsHandler.CreateAssignExpression (ParseExpression (scope, *astExprBinary.left),
+                                                      ParseExpression (scope, *astExprBinary.right));
+    case lexer::Mult:
+    case lexer::Div:
+    case lexer::Mod:
+    case lexer::Plus:
+    case lexer::Minus:
+      return ParseExprArithmetic (scope, astExprBinary);
+    case lexer::Equals:
+    case lexer::NotEquals:
+    case lexer::Larger:
+    case lexer::LargerEqual:
+    case lexer::Smaller:
+    case lexer::SmallerEqual:
+      return ParseExprComparison (scope, astExprBinary);
+    case lexer::LogicOr:
+    case lexer::LogicAnd:
+      return ParseExprLogic (scope, astExprBinary);
+    }
+    S1_ASSERT_NOT_REACHED (Parser::Expression ());
+  }
+
+  Parser::Expression Parser::ParseExprArithmetic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
+  {
+    SemanticsHandler::ArithmeticOp op;
+    switch (astExprBinary.op.typeOrID)
+    {
+    case lexer::Mult:
+      op = SemanticsHandler::Mul;
+      break;
+    case lexer::Div:
+      op = SemanticsHandler::Div;
+      break;
+    case lexer::Mod:
+      op = SemanticsHandler::Mod;
+      break;
+    case lexer::Plus:
+      op = SemanticsHandler::Add;
+      break;
+    case lexer::Minus:
+      op = SemanticsHandler::Sub;
+      break;
+    default:
+      S1_ASSERT_NOT_REACHED (Parser::Expression ());
+    }
+    return semanticsHandler.CreateArithmeticExpression (op,
+                                                        ParseExpression (scope, *astExprBinary.left),
+                                                        ParseExpression (scope, *astExprBinary.right));
   }
   
-  Parser::Expression Parser::ParseExprComparison (const Scope& scope)
+  Parser::Expression Parser::ParseExprUnary (const Scope& scope, const parser::ast::ExprUnary& astExprUnary)
   {
-    Expression expr = ParseExprAddition (scope);
-    while ((currentToken.typeOrID == lexer::Larger)
-      || (currentToken.typeOrID == lexer::LargerEqual)
-      || (currentToken.typeOrID == lexer::Smaller)
-      || (currentToken.typeOrID == lexer::SmallerEqual))
+    SemanticsHandler::UnaryOp op;
+    switch (astExprUnary.op.typeOrID)
     {
-      SemanticsHandler::CompareOp op;
-      switch (currentToken.typeOrID)
-      {
-      case lexer::Larger:
-        op = SemanticsHandler::Larger;
-        break;
-      case lexer::LargerEqual:
-        op = SemanticsHandler::LargerEqual;
-        break;
-      case lexer::Smaller:
-        op = SemanticsHandler::Smaller;
-        break;
-      case lexer::SmallerEqual:
-        op = SemanticsHandler::SmallerEqual;
-        break;
-      default:
-        S1_ASSERT_NOT_REACHED (expr);
-      }
-      NextToken();
-      Expression expr2 = ParseExprAddition (scope);
-      expr = semanticsHandler.CreateComparisonExpression (op, expr, expr2);
+    default:
+      S1_ASSERT_NOT_REACHED (Parser::Expression ());
+    case lexer::BitwiseInvert:
+      op = SemanticsHandler::Inv;
+      break;
+    case lexer::LogicInvert:
+      op = SemanticsHandler::Not;
+      break;
+    case lexer::Minus:
+      op = SemanticsHandler::Neg;
+      break;
     }
-    return expr;
+    return semanticsHandler.CreateUnaryExpression (op, ParseExpression (scope, *astExprUnary.right));
   }
   
-  Parser::Expression Parser::ParseExprLogicOr (const Scope& scope)
+  Parser::Expression Parser::ParseExprTernary (const Scope& scope, const parser::ast::ExprTernary& astExprTernary)
   {
-    Expression expr = ParseExprLogicAnd (scope);
-    while (currentToken.typeOrID == lexer::LogicOr)
-    {
-      NextToken();
-      Expression expr2 = ParseExprLogicAnd (scope);
-      expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::Or, expr, expr2);
-    }
-    return expr;
+    return semanticsHandler.CreateTernaryExpression (ParseExpression (scope, *astExprTernary.cond),
+                                                     ParseExpression (scope, *astExprTernary.trueExpr),
+                                                     ParseExpression (scope, *astExprTernary.falseExpr));
   }
   
-  Parser::Expression Parser::ParseExprLogicAnd (const Scope& scope)
+  Parser::Expression Parser::ParseExprComparison (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
   {
-    Expression expr = ParseExprCompareEqual (scope);
-    while (currentToken.typeOrID == lexer::LogicAnd)
+    SemanticsHandler::CompareOp op;
+    switch (astExprBinary.op.typeOrID)
     {
-      NextToken();
-      Expression expr2 = ParseExprCompareEqual (scope);
-      expr = semanticsHandler.CreateLogicExpression (SemanticsHandler::And, expr, expr2);
+    case lexer::Equals:
+      op = SemanticsHandler::Equals;
+      break;
+    case lexer::NotEquals:
+      op = SemanticsHandler::NotEquals;
+      break;
+    case lexer::Larger:
+      op = SemanticsHandler::Larger;
+      break;
+    case lexer::LargerEqual:
+      op = SemanticsHandler::LargerEqual;
+      break;
+    case lexer::Smaller:
+      op = SemanticsHandler::Smaller;
+      break;
+    case lexer::SmallerEqual:
+      op = SemanticsHandler::SmallerEqual;
+      break;
+    default:
+      S1_ASSERT_NOT_REACHED (Parser::Expression ());
     }
-    return expr;
+    return semanticsHandler.CreateComparisonExpression (op,
+                                                        ParseExpression (scope, *astExprBinary.left),
+                                                        ParseExpression (scope, *astExprBinary.right));
+  }
+  
+  Parser::Expression Parser::ParseExprLogic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
+  {
+    switch (astExprBinary.op.typeOrID)
+    {
+    case lexer::LogicOr:
+      return semanticsHandler.CreateLogicExpression (SemanticsHandler::Or,
+                                                     ParseExpression (scope, *astExprBinary.left),
+                                                     ParseExpression (scope, *astExprBinary.right));
+    case lexer::LogicAnd:
+      return semanticsHandler.CreateLogicExpression (SemanticsHandler::And,
+                                                     ParseExpression (scope, *astExprBinary.left),
+                                                     ParseExpression (scope, *astExprBinary.right));
+    }
+    S1_ASSERT_NOT_REACHED (Parser::Expression ());
   }
   
   bool Parser::IsWellKnownType (int& peekAfterType)
@@ -734,6 +929,20 @@ namespace s1
       break;
     }
     return isType;
+  }
+
+  bool Parser::IsWellKnownTypeOrArray (int& peekAfterType)
+  {
+    if (IsWellKnownType (peekAfterType))
+    {
+      while ((Peek (peekAfterType).typeOrID == lexer::BracketL)
+        && (Peek (peekAfterType+1).typeOrID == lexer::BracketR))
+      {
+        peekAfterType += 2;
+      }
+      return true;
+    }
+    return false;
   }
 
   bool Parser::IsType (const Scope& scope, int& peekAfterType)
@@ -1042,7 +1251,8 @@ namespace s1
   void Parser::ParseFuncParamFormal (const Scope& scope, SemanticsHandler::Scope::FunctionFormalParameters& params)
   {
     // Skip '('
-    NextToken();
+    Expect (lexer::ParenL);
+    NextToken ();
     while (true)
     {
       if (currentToken.typeOrID == lexer::ParenR)
@@ -1135,8 +1345,9 @@ namespace s1
   
   //void ParseFuncCall ();
 
-  void Parser::ParseFuncParamActual (const Scope& scope, parser::SemanticsHandler::ExpressionVector& params)
+  std::vector<ast::ExprPtr> Parser::AstParseFuncParamActual ()
   {
+    std::vector<ast::ExprPtr> params;
     // Skip '('
     NextToken();
     while (true)
@@ -1147,15 +1358,16 @@ namespace s1
         NextToken ();
         break;
       }
-      
-      Expression expr = ParseExpression (scope);
-      params.push_back (expr);
+
+      auto expr = AstParseExpression ();
+      params.emplace_back (std::move (expr));
 
       if (currentToken.typeOrID == lexer::Separator)
         NextToken ();
       else if (currentToken.typeOrID != lexer::ParenR)
         UnexpectedToken ();
     }
+    return params;
   }
 
   void Parser::ParseVarDeclare (const Scope& scope)

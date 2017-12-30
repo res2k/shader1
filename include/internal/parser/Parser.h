@@ -92,25 +92,39 @@ namespace s1
     // Expressions
     bool IsBinaryOperationToken (Lexer::TokenType tokenType);
     bool IsUnaryOperationToken (Lexer::TokenType tokenType);
+    parser::ast::ExprPtr AstParseExpression ();
+    parser::ast::ExprPtr AstParseExprBase ();
+    parser::ast::ExprValuePtr AstParseExprValue ();
+    parser::ast::ExprPtr AstParseAttributeOrArrayAccess (parser::ast::ExprPtr&& baseExpr);
+    parser::ast::ExprPtr AstParseExprMultiplication ();
+    parser::ast::ExprPtr AstParseExprAddition ();
+    parser::ast::ExprPtr AstParseExprUnary ();
+    parser::ast::ExprPtr AstParseExprTernary (parser::ast::ExprPtr&& prefix);
+    parser::ast::ExprPtr AstParseExprCompareEqual ();
+    parser::ast::ExprPtr AstParseExprComparison ();
+    parser::ast::ExprPtr AstParseExprLogicOr ();
+    parser::ast::ExprPtr AstParseExprLogicAnd ();
+
     /// Returns whether the current token is the start of an expression.
     bool IsExpression (const Scope& scope);
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (const Scope& scope);
-    Expression ParseExprBase (const Scope& scope);
-    parser::ast::ExprValuePtr AstParseExprValue ();
-    Expression ParseAttributeOrArrayAccess (const Scope& scope, Expression baseExpr);
-    Expression ParseExprMultiplication (const Scope& scope);
-    Expression ParseExprAddition (const Scope& scope);
-    Expression ParseExprUnary (const Scope& scope);
-    Expression ParseExprTernary (const Expression& prefix, const Scope& scope);
-    Expression ParseExprCompareEqual (const Scope& scope);
-    Expression ParseExprComparison (const Scope& scope);
-    Expression ParseExprLogicOr (const Scope& scope);
-    Expression ParseExprLogicAnd (const Scope& scope);
+    Expression ParseExpression (const Scope& scope, const parser::ast::Expr& astExpr);
+    Expression ParseExprValue (const Scope& scope, const parser::ast::ExprValue& astExprValue);
+    Expression ParseExprArrayElement (const Scope& scope, const parser::ast::ExprArrayElement& astExprArrayElement);
+    Expression ParseExprAttribute (const Scope& scope, const parser::ast::ExprAttribute& astExprAttribute);
+    Expression ParseExprFunctionCall (const Scope& scope, const parser::ast::ExprFunctionCall& astExprFunctionCall);
+    Expression ParseExprBinary (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
+    Expression ParseExprArithmetic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
+    Expression ParseExprUnary (const Scope& scope, const parser::ast::ExprUnary& astExprUnary);
+    Expression ParseExprTernary (const Scope& scope, const parser::ast::ExprTernary& astExprTernary);
+    Expression ParseExprComparison (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
+    Expression ParseExprLogic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
     
     // Types
     bool IsWellKnownType (int& peekAfterType);
+    bool IsWellKnownTypeOrArray (int& peekAfterType);
     bool IsType (const Scope& scope, int& peekAfterType);
     bool IsType (const Scope& scope) { int dummy; return IsType (scope, dummy); }
     typedef OUTCOME_V2_NAMESPACE::result<parser::ast::TypePtr, ParseError> AstParseTypeResult;
@@ -132,7 +146,7 @@ namespace s1
     Parser::Type ParseFuncType (const Scope& scope);
     void ParseFuncParamFormal (const Scope& scope,
 			       parser::SemanticsHandler::Scope::FunctionFormalParameters& params);
-    void ParseFuncParamActual (const Scope& scope, parser::SemanticsHandler::ExpressionVector& params);
+    std::vector<parser::ast::ExprPtr> AstParseFuncParamActual ();
     
     // Variables
     void ParseVarDeclare (const Scope& scope);

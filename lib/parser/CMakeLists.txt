@@ -7,6 +7,13 @@ set(parser_sources
     ${S1_INC}/parser/SemanticsHandler.h
     )
 set(parser_sources_ast_h
+    ${S1_INC}/parser/ast/Expr.h
+    ${S1_INC}/parser/ast/ExprArrayElement.h
+    ${S1_INC}/parser/ast/ExprAttribute.h
+    ${S1_INC}/parser/ast/ExprBinary.h
+    ${S1_INC}/parser/ast/ExprFunctionCall.h
+    ${S1_INC}/parser/ast/ExprTernary.h
+    ${S1_INC}/parser/ast/ExprUnary.h
     ${S1_INC}/parser/ast/ExprValue.h
     ${S1_INC}/parser/ast/forwarddecl.h
     ${S1_INC}/parser/ast/Identifier.h
