@@ -149,9 +149,8 @@ namespace s1
     std::vector<parser::ast::ExprPtr> AstParseFuncParamActual ();
     
     // Variables
+    parser::ast::VarsDeclPtr AstParseVarsDecl ();
     void ParseVarDeclare (const Scope& scope);
-    void ParseVarIdentifierAndInitializerList (const Scope& scope, Type type);
-    void ParseVarIdentifierAndInitializer (const Scope& scope, Type type);
 	
     // Constants
     void ParseConstDeclare (const Scope& scope);

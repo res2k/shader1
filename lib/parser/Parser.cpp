@@ -23,6 +23,7 @@
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/Identifier.h"
 #include "parser/ast/Type.h"
+#include "parser/ast/VarsDecl.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
 
@@ -1370,42 +1371,65 @@ namespace s1
     return params;
   }
 
+  ast::VarsDeclPtr Parser::AstParseVarsDecl ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        // Helper to check for a token and to also consume it
+        auto haveSeparator =
+          [&]()
+          {
+            if (currentToken.typeOrID == lexer::Separator)
+            {
+              NextToken ();
+              return true;
+            }
+            else
+              return false;
+          };
+
+        auto astType = AstParseType ();
+        if (astType.has_error ())
+          throw Exception (astType.error ().error, astType.error ().token);
+        ast::VarsDecl::VarsContainer vars;
+        do
+        {
+          if (currentToken.typeOrID != lexer::Identifier)
+          {
+            diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Identifier);
+            break;
+          }
+          auto identifier = ast::Identifier{ currentToken };
+          NextToken ();
+          ast::ExprPtr initializer;
+          if (currentToken.typeOrID == lexer::Assign)
+          {
+            // Variable has an initializer value
+            NextToken ();
+            initializer = AstParseExpression ();
+          }
+          vars.emplace_back (ast::VarsDecl::Var{ identifier, std::move (initializer) });
+          // ',' - more variables follow
+        } while (haveSeparator ());
+        return ast::VarsDeclPtr (new ast::VarsDecl (std::move (astType.value()), std::move (vars)));
+      });
+  }
+
   void Parser::ParseVarDeclare (const Scope& scope)
   {
-    Type type = ParseType (scope);
-    ParseVarIdentifierAndInitializerList (scope, type);
-  }
-  
-  void Parser::ParseVarIdentifierAndInitializerList (const Scope& scope, Type type)
-  {
-    while (true)
+    auto astVarsDecl = AstParseVarsDecl ();
+    auto type = ParseType (*astVarsDecl->type, scope);
+    for (const auto& astVar : astVarsDecl->vars)
     {
-      ParseVarIdentifierAndInitializer (scope, type);
-      if (currentToken.typeOrID == lexer::Separator)
-      {
-        // ',' - more variables follow
-        NextToken();
-        continue;
-      }
-      break;
+      auto varIdentifier = astVar.identifier.GetString();
+      Expression initExpr;
+      if (astVar.initializer)
+        initExpr = ParseExpression (scope, *astVar.initializer);
+      scope->AddVariable (type, varIdentifier, initExpr, false);
     }
   }
-  
-  void Parser::ParseVarIdentifierAndInitializer (const Scope& scope, Type type)
-  {
-    Expect (lexer::Identifier);
-    uc::String varIdentifier = currentToken.tokenString;
-    NextToken ();
-    Expression initExpr;
-    if (currentToken.typeOrID == lexer::Assign)
-    {
-      // Variable has an initializer value
-      NextToken ();
-      initExpr = ParseExpression (scope);
-    }
-    scope->AddVariable (type, varIdentifier, initExpr, false);
-  }
-      
+
   void Parser::ParseConstDeclare (const Scope& scope)
   {
     NextToken(); // skip 'const'

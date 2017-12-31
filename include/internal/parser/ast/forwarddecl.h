@@ -51,6 +51,8 @@ namespace s1
       typedef std::unique_ptr<ExprValue> ExprValuePtr;
       struct Type;
       typedef std::unique_ptr<Type> TypePtr;
+      struct VarsDecl;
+      typedef std::unique_ptr<VarsDecl> VarsDeclPtr;
     } // namespace ast
   } // namespace parser
 } // namespace s1
