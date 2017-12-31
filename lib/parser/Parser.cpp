@@ -23,6 +23,7 @@
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/Identifier.h"
 #include "parser/ast/Type.h"
+#include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
@@ -1196,16 +1197,35 @@ namespace s1
     }
     return type;
   }
-  
+
+  ast::TypedefPtr Parser::AstParseTypedef ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        // Skip typedef
+        NextToken();
+        // Aliased type
+        auto astType = AstParseType ();
+        if (astType.has_error ())
+          throw Exception (astType.error ().error, astType.error ().token);
+        // Type alias
+        auto aliasIdentifier = AstParseIdentifier ();
+        return ast::TypedefPtr (new ast::Typedef (std::move (astType.value()), std::move (aliasIdentifier)));
+      });
+  }
+
   void Parser::ParseTypedef (const Scope& scope)
   {
-    // Skip typedef
-    NextToken();
-    Type aliasedType = ParseType (scope);
+    auto astTypedef = AstParseTypedef ();
+    ParseTypedef (scope, *astTypedef);
+  }
+
+  void Parser::ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef)
+  {
+    Type aliasedType = ParseType (*astTypedef.type, scope);
     // Add to scope
-    Expect (lexer::Identifier);
-    scope->AddTypeAlias (aliasedType, currentToken.tokenString);
-    NextToken();
+    scope->AddTypeAlias (aliasedType, astTypedef.alias.GetString());
   }
 
   void Parser::ParseFuncDeclare (const Scope& scope)

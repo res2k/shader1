@@ -138,7 +138,9 @@ namespace s1
     Type ParseTypeVector (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeMatrix (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeSampler (const Lexer::Token& token);
+    parser::ast::TypedefPtr AstParseTypedef ();
     void ParseTypedef (const Scope& scope);
+    void ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef);
     
     // Functions
     typedef parser::SemanticsHandler::FunctionPtr Function;

@@ -19,6 +19,7 @@ set(parser_sources_ast_h
     ${S1_INC}/parser/ast/Identifier.h
     ${S1_INC}/parser/ast/Node.h
     ${S1_INC}/parser/ast/Type.h
+    ${S1_INC}/parser/ast/Typedef.h
     ${S1_INC}/parser/ast/VarsDecl.h
     )
 s1_add_library(parser
