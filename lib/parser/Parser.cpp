@@ -19,6 +19,8 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/Block.h"
+#include "parser/ast/BlockStatement.h"
 #include "parser/ast/BlockStatementReturn.h"
 #include "parser/ast/Expr.h"
 #include "parser/ast/ExprValue.h"
@@ -196,61 +198,87 @@ namespace s1
   
   void Parser::ParseBlock (Block block)
   {
-    while (true)
+    auto astBlock = AstParseBlock ();
+    ParseBlock (block, *astBlock);
+  }
+
+  void Parser::ParseBlock (Block block, const parser::ast::Block& astBlock)
+  {
+    Scope blockScope = block->GetInnerScope();
+    for (const auto& statement : astBlock.statements)
     {
-      try
+      if (auto astVarsDecl = boost::get<ast::VarsDeclPtr> (&statement->value))
       {
-        int beyondType;
-        Scope blockScope = block->GetInnerScope();
-        bool isType = IsType (blockScope, beyondType);
-        if (currentToken.typeOrID == lexer::kwConst)
-        {
-          /* constant declaration */
-          ParseConstDeclare (blockScope);
-          Expect (lexer::Semicolon);
-          NextToken();
-        }
-        else if (isType && (Peek (beyondType).typeOrID == lexer::Identifier))
-        {
-          /* Variable declaration */
-          ParseVarDeclare (blockScope);
-          Expect (lexer::Semicolon);
-          NextToken();
-        }
-        else if (currentToken.typeOrID == lexer::kwTypedef)
-        {
-          /* Type definition */
-          ParseTypedef (blockScope);
-          Expect (lexer::Semicolon);
-          NextToken();
-        }
-        else if (IsCommand ())
-        {
-          ParseCommand (block);
-        }
-        else
-          break;
-        /* TODO: could improve behaviour in case unexpected tokens are encountered */
+        ParseVarDeclare (blockScope, **astVarsDecl);
       }
-      catch (const Exception& e)
+      else if (auto astTypedef = boost::get<ast::TypedefPtr> (&statement->value))
       {
-        /* emit error */
-        diagnosticsHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
-        // Seek next ';' (end of statement) or '}' (end of block)
-        while ((currentToken.typeOrID != lexer::Semicolon)
-          && (currentToken.typeOrID != lexer::BraceR)
-          && (currentToken.typeOrID != lexer::EndOfFile))
+        ParseTypedef (blockScope, **astTypedef);
+      }
+      else if (auto astExpr = boost::get<ast::ExprPtr> (&statement->value))
+      {
+        auto expr = ParseExpression (blockScope, **astExpr);
+        block->AddExpressionCommand (expr);
+      }
+      else if (auto astStatementReturn = boost::get<ast::BlockStatementReturnPtr> (&statement->value))
+      {
+        Expression returnExpr;
+        if ((*astStatementReturn)->expr)
         {
-          NextToken();
+          /* Return with some value */
+          returnExpr = ParseExpression (blockScope, *(*astStatementReturn)->expr);
         }
-        if (currentToken.typeOrID == lexer::Semicolon)
+        block->AddReturnCommand (returnExpr);
+      }
+      else if (auto astStatementFor = boost::get<ast::BlockStatementForPtr> (&statement->value))
+      {
+        Expression initExpr, loopTestExpr, loopFootExpr;
+        if ((*astStatementFor)->initExpr)
         {
-          NextToken ();
-          continue;
+          initExpr = ParseExpression (blockScope, *(*astStatementFor)->initExpr);
         }
-        else
-          // '}', exit block
-          break;
+        if ((*astStatementFor)->condition)
+        {
+          loopTestExpr = ParseExpression (blockScope, *(*astStatementFor)->condition);
+        }
+        if ((*astStatementFor)->footExpr)
+        {
+          loopFootExpr = ParseExpression (blockScope, *(*astStatementFor)->footExpr);
+        }
+        Block newBlock = semanticsHandler.CreateBlock (blockScope);
+        ParseBlock (newBlock, *(*astStatementFor)->bodyBlock);
+        block->AddForLoop (initExpr, loopTestExpr, loopFootExpr, newBlock);
+      }
+      else if (auto astStatementIf = boost::get<ast::BlockStatementIfPtr> (&statement->value))
+      {
+        auto conditionExpr = ParseExpression (blockScope, *(*astStatementIf)->condition);
+        Block ifBlock = semanticsHandler.CreateBlock (blockScope);
+        ParseBlock (ifBlock, *(*astStatementIf)->ifBlock);
+        Block elseBlock;
+        if ((*astStatementIf)->elseBlock)
+        {
+          elseBlock = semanticsHandler.CreateBlock (blockScope);
+          ParseBlock (elseBlock, *(*astStatementIf)->elseBlock);
+        }
+        block->AddBranching (conditionExpr, ifBlock, elseBlock);
+      }
+      else if (auto astStatementWhile = boost::get<ast::BlockStatementWhilePtr> (&statement->value))
+      {
+        auto loopTestExpr = ParseExpression (blockScope, *(*astStatementWhile)->condition);
+        Block newBlock = semanticsHandler.CreateBlock (blockScope);
+        ParseBlock (newBlock, *(*astStatementWhile)->bodyBlock);
+        block->AddWhileLoop (loopTestExpr, newBlock);
+      }
+      else if (auto astBlock = boost::get<ast::BlockPtr> (&statement->value))
+      {
+        /* nested block */
+        Block newBlock = semanticsHandler.CreateBlock (blockScope);
+        ParseBlock (newBlock, **astBlock);
+        block->AddNestedBlock (newBlock);
+      }
+      else
+      {
+        S1_ASSERT_NOT_REACHED(S1_ASSERT_RET_VOID);
       }
     }
   }
@@ -265,52 +293,110 @@ namespace s1
       || (currentToken.typeOrID == lexer::BraceL);
   }
   
-  void Parser::ParseCommand (Block block)
+  ast::BlockPtr Parser::AstParseBlock ()
   {
-    Scope blockScope = block->GetInnerScope();
-    if (IsExpression ())
-    {
-      Expression expr = ParseExpression (blockScope);
-      Expect (lexer::Semicolon);
-      NextToken();
-      block->AddExpressionCommand (expr);
-    }
-    else if (currentToken.typeOrID == lexer::kwReturn)
-    {
-      auto astReturn = AstParseStatementReturn ();
-      Expression returnExpr;
-      if (astReturn->expr)
+    return CommonAstParseNode (
+      [&]()
       {
-        /* Return with some value */
-        returnExpr = ParseExpression (blockScope, *astReturn->expr);
-      }
-      block->AddReturnCommand (returnExpr);
-    }
-    else if (currentToken.typeOrID == lexer::kwIf)
-    {
-      /* 'if' */
-      ParseIf (block);
-    }
-    else if (currentToken.typeOrID == lexer::kwWhile)
-    {
-      /* 'while' */
-      ParseLoopWhile (block);
-    }
-    else if (currentToken.typeOrID == lexer::kwFor)
-    {
-      /* 'for' */
-      ParseLoopFor (block);
-    }
-    else if (currentToken.typeOrID == lexer::BraceL)
-    {
-      /* nested block */
-      NextToken ();
-      Block newBlock = semanticsHandler.CreateBlock (blockScope);
-      ParseBlock (newBlock);
-      Expect (lexer::BraceR);
-      NextToken ();
-      block->AddNestedBlock (newBlock);
-    }
+        ast::Block::StatementsContainer statements;
+        while (true)
+        {
+          try
+          {
+            int beyondType;
+            bool isType = IsWellKnownTypeOrArray (beyondType);
+            if (currentToken.typeOrID == lexer::kwConst)
+            {
+              /* constant declaration */
+              NextToken(); // skip 'const'
+              auto astConsts = AstParseVarsDecl (true);
+              statements.emplace_back (new ast::BlockStatement (std::move (astConsts)));
+              Expect (lexer::Semicolon);
+              NextToken();
+            }
+            else if ((isType && (Peek (beyondType).typeOrID == lexer::Identifier))
+                || ((currentToken.typeOrID == lexer::Identifier) && (Peek ().typeOrID == lexer::Identifier)))
+            {
+              /* Variable declaration */
+              auto astVars = AstParseVarsDecl ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astVars)));
+              Expect (lexer::Semicolon);
+              NextToken();
+            }
+            else if (currentToken.typeOrID == lexer::kwTypedef)
+            {
+              /* Type definition */
+              auto astTypedef = AstParseTypedef ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astTypedef)));
+              Expect (lexer::Semicolon);
+              NextToken();
+            }
+            else if (IsExpression ())
+            {
+              auto astExpr = AstParseExpression ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astExpr)));
+              Expect (lexer::Semicolon);
+              NextToken();
+            }
+            else if (currentToken.typeOrID == lexer::kwReturn)
+            {
+              auto astReturn = AstParseStatementReturn ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astReturn)));
+            }
+            else if (currentToken.typeOrID == lexer::kwIf)
+            {
+              /* 'if' */
+              auto astIf = AstParseIf ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astIf)));
+            }
+            else if (currentToken.typeOrID == lexer::kwWhile)
+            {
+              /* 'while' */
+              auto astWhile = AstParseWhile ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astWhile)));
+            }
+            else if (currentToken.typeOrID == lexer::kwFor)
+            {
+              /* 'for' */
+              auto astFor = AstParseFor ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astFor)));
+            }
+            else if (currentToken.typeOrID == lexer::BraceL)
+            {
+              /* nested block */
+              NextToken ();
+              auto astBlock = AstParseBlock ();
+              statements.emplace_back (new ast::BlockStatement (std::move (astBlock)));
+              Expect (lexer::BraceR);
+              NextToken ();
+            }
+            else
+              break;
+            /* TODO: could improve behaviour in case unexpected tokens are encountered */
+          }
+          catch (const Exception& e)
+          {
+            /* emit error */
+            diagnosticsHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
+            // Seek next ';' (end of statement) or '}' (end of block)
+            while ((currentToken.typeOrID != lexer::Semicolon)
+              && (currentToken.typeOrID != lexer::BraceR)
+              && (currentToken.typeOrID != lexer::EndOfFile))
+            {
+              NextToken();
+            }
+            if (currentToken.typeOrID == lexer::Semicolon)
+            {
+              NextToken ();
+              continue;
+            }
+            else
+              // '}', exit block
+              break;
+          }
+        }
+        return ast::BlockPtr (new ast::Block (std::move (statements)));
+      });
   }
 
   ast::BlockStatementReturnPtr Parser::AstParseStatementReturn ()
@@ -1484,84 +1570,95 @@ namespace s1
     ParseVarDeclare (scope, *astConstsDecl);
   }
 
-  void Parser::ParseIf (Block block)
+  ast::BlockStatementForPtr Parser::AstParseFor ()
   {
-    // Skip 'if'
-    NextToken();
-    Expect (lexer::ParenL);
-    NextToken();
-    // Parse condition
-    Expression conditionExpr = ParseExpression (block->GetInnerScope());
-    Expect (lexer::ParenR);
-    NextToken();
-    Expect (lexer::BraceL);
-    NextToken();
-    // Create 'if' block ...
-    Block ifBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
-    // ... and parse
-    ParseBlock (ifBlock);
-    Expect (lexer::BraceR);
-    NextToken();
-    Block elseBlock;
-    if (currentToken.typeOrID == lexer::kwElse)
-    {
-      NextToken();
-      Expect (lexer::BraceL);
-      NextToken();
-      // Create 'else' block ...
-      elseBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
-      // ... and parse
-      ParseBlock (elseBlock);
-      Expect (lexer::BraceR);
-      NextToken();
-    }
-    // Add instructions to surrounding block
-    block->AddBranching (conditionExpr, ifBlock, elseBlock);
+    return CommonAstParseNode (
+      [&]()
+      {
+        NextToken();
+        Expect (lexer::ParenL);
+        NextToken();
+        ast::ExprPtr initExpr;
+        if (currentToken.typeOrID != lexer::Semicolon)
+          initExpr = AstParseExpression ();
+        Expect (lexer::Semicolon);
+        NextToken();
+        ast::ExprPtr loopTestExpr;
+        if (currentToken.typeOrID != lexer::Semicolon)
+          loopTestExpr = AstParseExpression ();
+        Expect (lexer::Semicolon);
+        NextToken();
+        ast::ExprPtr loopFootExpr;
+        if (currentToken.typeOrID != lexer::Semicolon)
+          loopFootExpr = AstParseExpression ();
+        Expect (lexer::ParenR);
+        NextToken();
+        Expect (lexer::BraceL);
+        NextToken();
+        auto body = AstParseBlock ();
+        Expect (lexer::BraceR);
+        NextToken();
+        return ast::BlockStatementForPtr (new ast::BlockStatementFor (std::move (initExpr),
+                                                                      std::move (loopTestExpr),
+                                                                      std::move (loopFootExpr),
+                                                                      std::move (body)));
+      });
   }
 
-  void Parser::ParseLoopFor (Block block)
+  ast::BlockStatementIfPtr Parser::AstParseIf ()
   {
-    NextToken();
-    Expect (lexer::ParenL);
-    NextToken();
-    Expression initExpr;
-    if (currentToken.typeOrID != lexer::Semicolon)
-      initExpr = ParseExpression (block->GetInnerScope());
-    Expect (lexer::Semicolon);
-    NextToken();
-    Expression loopTestExpr;
-    if (currentToken.typeOrID != lexer::Semicolon)
-      loopTestExpr = ParseExpression (block->GetInnerScope());
-    Expect (lexer::Semicolon);
-    NextToken();
-    Expression loopFootExpr;
-    if (currentToken.typeOrID != lexer::Semicolon)
-      loopFootExpr = ParseExpression (block->GetInnerScope());
-    Expect (lexer::ParenR);
-    NextToken();
-    Expect (lexer::BraceL);
-    NextToken();
-    Block newBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
-    ParseBlock (newBlock);
-    Expect (lexer::BraceR);
-    NextToken();
-    block->AddForLoop (initExpr, loopTestExpr, loopFootExpr, newBlock);
+    return CommonAstParseNode (
+      [&]()
+      {
+        // Skip 'if'
+        NextToken();
+        Expect (lexer::ParenL);
+        NextToken();
+        // Parse condition
+        auto conditionExpr = AstParseExpression ();
+        Expect (lexer::ParenR);
+        NextToken();
+        Expect (lexer::BraceL);
+        NextToken();
+        // Parse 'if' block
+        auto ifBlock = AstParseBlock ();
+        Expect (lexer::BraceR);
+        NextToken();
+        ast::BlockPtr elseBlock;
+        if (currentToken.typeOrID == lexer::kwElse)
+        {
+          NextToken();
+          Expect (lexer::BraceL);
+          NextToken();
+          // Parse 'else' block
+          elseBlock = AstParseBlock ();
+          Expect (lexer::BraceR);
+          NextToken();
+        }
+        return ast::BlockStatementIfPtr (new ast::BlockStatementIf (std::move (conditionExpr),
+                                                                    std::move (ifBlock),
+                                                                    std::move (elseBlock)));
+      });
   }
-  
-  void Parser::ParseLoopWhile (Block block)
+
+  ast::BlockStatementWhilePtr Parser::AstParseWhile ()
   {
-    NextToken();
-    Expect (lexer::ParenL);
-    NextToken();
-    Expression loopTestExpr = ParseExpression (block->GetInnerScope());
-    Expect (lexer::ParenR);
-    NextToken();
-    Expect (lexer::BraceL);
-    NextToken();
-    Block newBlock = semanticsHandler.CreateBlock (block->GetInnerScope());
-    ParseBlock (newBlock);
-    Expect (lexer::BraceR);
-    NextToken();
-    block->AddWhileLoop (loopTestExpr, newBlock);
+    return CommonAstParseNode (
+      [&]()
+      {
+        NextToken();
+        Expect (lexer::ParenL);
+        NextToken();
+        auto loopTestExpr = AstParseExpression ();
+        Expect (lexer::ParenR);
+        NextToken();
+        Expect (lexer::BraceL);
+        NextToken();
+        auto body = AstParseBlock ();
+        Expect (lexer::BraceR);
+        NextToken();
+        return ast::BlockStatementWhilePtr (new ast::BlockStatementWhile (std::move (loopTestExpr),
+                                                                          std::move (body)));
+      });
   }
 } // namespace s1

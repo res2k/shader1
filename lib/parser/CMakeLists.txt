@@ -7,6 +7,11 @@ set(parser_sources
     ${S1_INC}/parser/SemanticsHandler.h
     )
 set(parser_sources_ast_h
+    ${S1_INC}/parser/ast/Block.h
+    ${S1_INC}/parser/ast/BlockStatement.h
+    ${S1_INC}/parser/ast/BlockStatementFor.h
+    ${S1_INC}/parser/ast/BlockStatementIf.h
+    ${S1_INC}/parser/ast/BlockStatementWhile.h
     ${S1_INC}/parser/ast/BlockStatementReturn.h
     ${S1_INC}/parser/ast/Expr.h
     ${S1_INC}/parser/ast/ExprArrayElement.h

@@ -33,6 +33,16 @@ namespace s1
       struct Node;
       typedef std::unique_ptr<Node> NodePtr;
 
+      struct Block;
+      typedef std::unique_ptr<Block> BlockPtr;
+      struct BlockStatement;
+      typedef std::unique_ptr<BlockStatement> BlockStatementPtr;
+      struct BlockStatementFor;
+      typedef std::unique_ptr<BlockStatementFor> BlockStatementForPtr;
+      struct BlockStatementIf;
+      typedef std::unique_ptr<BlockStatementIf> BlockStatementIfPtr;
+      struct BlockStatementWhile;
+      typedef std::unique_ptr<BlockStatementWhile> BlockStatementWhilePtr;
       struct BlockStatementReturn;
       typedef std::unique_ptr<BlockStatementReturn> BlockStatementReturnPtr;
       struct Expr;

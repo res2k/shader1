@@ -76,7 +76,7 @@ public:
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
-                     "");
+                     "  (a = b);\n");
   }
 
   void testBlockBranch (void)
@@ -227,6 +227,7 @@ public:
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
+                     "  (a = b);\n"
                      "  (c = d);\n");
   }
 };

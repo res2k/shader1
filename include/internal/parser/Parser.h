@@ -86,8 +86,9 @@ namespace s1
     void ParseProgram ();
     void ParseProgramStatements (const Scope& scope);
     void ParseBlock (Block block);
+    void ParseBlock (Block block, const parser::ast::Block& astBlock);
     bool IsCommand ();
-    void ParseCommand (Block block);
+    parser::ast::BlockPtr AstParseBlock ();
     parser::ast::BlockStatementReturnPtr AstParseStatementReturn ();
 
     // Expressions
@@ -160,9 +161,9 @@ namespace s1
     void ParseConstDeclare (const Scope& scope);
 
     // Branches, Loops
-    void ParseIf (Block block);
-    void ParseLoopFor (Block block); 
-    void ParseLoopWhile (Block block); 
+    parser::ast::BlockStatementForPtr AstParseFor ();
+    parser::ast::BlockStatementIfPtr AstParseIf ();
+    parser::ast::BlockStatementWhilePtr AstParseWhile ();
   };
 } // namespace s1
 
