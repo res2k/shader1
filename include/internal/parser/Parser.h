@@ -88,6 +88,7 @@ namespace s1
     void ParseBlock (Block block);
     bool IsCommand (const Scope& scope);
     void ParseCommand (Block block);
+    parser::ast::BlockStatementReturnPtr AstParseStatementReturn ();
 
     // Expressions
     bool IsBinaryOperationToken (Lexer::TokenType tokenType);

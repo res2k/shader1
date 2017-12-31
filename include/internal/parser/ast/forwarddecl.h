@@ -33,6 +33,8 @@ namespace s1
       struct Node;
       typedef std::unique_ptr<Node> NodePtr;
 
+      struct BlockStatementReturn;
+      typedef std::unique_ptr<BlockStatementReturn> BlockStatementReturnPtr;
       struct Expr;
       typedef std::unique_ptr<Expr> ExprPtr;
       struct ExprArrayElement;

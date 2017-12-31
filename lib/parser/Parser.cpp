@@ -19,6 +19,7 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/BlockStatementReturn.h"
 #include "parser/ast/Expr.h"
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/Identifier.h"
@@ -276,17 +277,14 @@ namespace s1
     }
     else if (currentToken.typeOrID == lexer::kwReturn)
     {
-      /* 'return' instruction */
-      NextToken();
+      auto astReturn = AstParseStatementReturn ();
       Expression returnExpr;
-      if (IsExpression (blockScope))
+      if (astReturn->expr)
       {
         /* Return with some value */
-        returnExpr = ParseExpression (blockScope);
+        returnExpr = ParseExpression (blockScope, *astReturn->expr);
       }
       block->AddReturnCommand (returnExpr);
-      Expect (lexer::Semicolon);
-      NextToken();
     }
     else if (currentToken.typeOrID == lexer::kwIf)
     {
@@ -313,6 +311,24 @@ namespace s1
       NextToken ();
       block->AddNestedBlock (newBlock);
     }
+  }
+
+  ast::BlockStatementReturnPtr Parser::AstParseStatementReturn ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        /* 'return' instruction */
+        NextToken();
+        ast::ExprPtr returnExpr;
+        if (currentToken.typeOrID != lexer::Semicolon)
+        {
+          returnExpr = AstParseExpression ();
+        }
+        Expect (lexer::Semicolon);
+        NextToken();
+        return ast::BlockStatementReturnPtr (new ast::BlockStatementReturn (std::move (returnExpr)));
+      });
   }
   
   bool Parser::IsBinaryOperationToken (Lexer::TokenType tokenType)
