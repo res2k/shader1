@@ -224,7 +224,7 @@ namespace s1
           Expect (lexer::Semicolon);
           NextToken();
         }
-        else if (IsCommand (blockScope))
+        else if (IsCommand ())
         {
           ParseCommand (block);
         }
@@ -255,9 +255,9 @@ namespace s1
     }
   }
   
-  bool Parser::IsCommand (const Scope& scope)
+  bool Parser::IsCommand ()
   {
-    return IsExpression (scope)
+    return IsExpression ()
       || (currentToken.typeOrID == lexer::kwReturn)
       || (currentToken.typeOrID == lexer::kwIf)
       || (currentToken.typeOrID == lexer::kwWhile)
@@ -268,7 +268,7 @@ namespace s1
   void Parser::ParseCommand (Block block)
   {
     Scope blockScope = block->GetInnerScope();
-    if (IsExpression (blockScope))
+    if (IsExpression ())
     {
       Expression expr = ParseExpression (blockScope);
       Expect (lexer::Semicolon);
@@ -652,7 +652,7 @@ namespace s1
       });
   }
 
-  bool Parser::IsExpression (const Scope& scope)
+  bool Parser::IsExpression ()
   {
     if ((currentToken.typeOrID == lexer::ParenL)
         || (currentToken.typeOrID == lexer::kwTrue)
@@ -685,7 +685,7 @@ namespace s1
           && (Peek ().typeOrID == lexer::ParenL))
       return true;
     int checkForParens = 0;
-    if (IsType (scope, checkForParens))
+    if (IsWellKnownTypeOrArray (checkForParens))
     {
       if (Peek (checkForParens).typeOrID == lexer::ParenL)
         return true;

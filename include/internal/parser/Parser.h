@@ -86,7 +86,7 @@ namespace s1
     void ParseProgram ();
     void ParseProgramStatements (const Scope& scope);
     void ParseBlock (Block block);
-    bool IsCommand (const Scope& scope);
+    bool IsCommand ();
     void ParseCommand (Block block);
     parser::ast::BlockStatementReturnPtr AstParseStatementReturn ();
 
@@ -107,7 +107,7 @@ namespace s1
     parser::ast::ExprPtr AstParseExprLogicAnd ();
 
     /// Returns whether the current token is the start of an expression.
-    bool IsExpression (const Scope& scope);
+    bool IsExpression ();
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (const Scope& scope);
