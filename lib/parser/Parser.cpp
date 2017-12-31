@@ -1371,7 +1371,7 @@ namespace s1
     return params;
   }
 
-  ast::VarsDeclPtr Parser::AstParseVarsDecl ()
+  ast::VarsDeclPtr Parser::AstParseVarsDecl (bool isConst)
   {
     return CommonAstParseNode (
       [&]()
@@ -1409,59 +1409,43 @@ namespace s1
             NextToken ();
             initializer = AstParseExpression ();
           }
+          else if (isConst)
+          {
+            // TODO: Give it's own error
+            diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Assign);
+            break;
+          }
           vars.emplace_back (ast::VarsDecl::Var{ identifier, std::move (initializer) });
           // ',' - more variables follow
         } while (haveSeparator ());
-        return ast::VarsDeclPtr (new ast::VarsDecl (std::move (astType.value()), std::move (vars)));
+        return ast::VarsDeclPtr (new ast::VarsDecl (isConst, std::move (astType.value()), std::move (vars)));
       });
   }
 
   void Parser::ParseVarDeclare (const Scope& scope)
   {
     auto astVarsDecl = AstParseVarsDecl ();
-    auto type = ParseType (*astVarsDecl->type, scope);
-    for (const auto& astVar : astVarsDecl->vars)
+    ParseVarDeclare (scope, *astVarsDecl);
+  }
+
+  void Parser::ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl)
+  {
+    auto type = ParseType (*astVarsDecl.type, scope);
+    for (const auto& astVar : astVarsDecl.vars)
     {
       auto varIdentifier = astVar.identifier.GetString();
       Expression initExpr;
       if (astVar.initializer)
         initExpr = ParseExpression (scope, *astVar.initializer);
-      scope->AddVariable (type, varIdentifier, initExpr, false);
+      scope->AddVariable (type, varIdentifier, initExpr, astVarsDecl.isConst);
     }
   }
 
   void Parser::ParseConstDeclare (const Scope& scope)
   {
     NextToken(); // skip 'const'
-    Type type = ParseType (scope);
-    ParseConstIdentifierAndInitializerList (scope, type);
-  }
-  
-  void Parser::ParseConstIdentifierAndInitializerList (const Scope& scope, Type type)
-  {
-    do
-    {
-      ParseConstIdentifierAndInitializer (scope, type);
-      if (currentToken.typeOrID == lexer::Separator)
-      {
-        // ',' - more constants follow
-        NextToken();
-        continue;
-      }
-    }
-    while (false);
-  }
-  
-  void Parser::ParseConstIdentifierAndInitializer (const Scope& scope, Type type)
-  {
-    Expect (lexer::Identifier);
-    uc::String varIdentifier = currentToken.tokenString;
-    NextToken ();
-    // initializer value is required
-    Expect (lexer::Assign);
-    NextToken ();
-    Expression initExpr = ParseExpression (scope);
-    scope->AddVariable (type, varIdentifier, initExpr, true);
+    auto astConstsDecl = AstParseVarsDecl (true);
+    ParseVarDeclare (scope, *astConstsDecl);
   }
 
   void Parser::ParseIf (Block block)

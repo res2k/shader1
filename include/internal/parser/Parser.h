@@ -149,13 +149,12 @@ namespace s1
     std::vector<parser::ast::ExprPtr> AstParseFuncParamActual ();
     
     // Variables
-    parser::ast::VarsDeclPtr AstParseVarsDecl ();
+    parser::ast::VarsDeclPtr AstParseVarsDecl (bool isConst = false);
     void ParseVarDeclare (const Scope& scope);
+    void ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl);
 	
     // Constants
     void ParseConstDeclare (const Scope& scope);
-    void ParseConstIdentifierAndInitializerList (const Scope& scope, Type type);
-    void ParseConstIdentifierAndInitializer (const Scope& scope, Type type);
 
     // Branches, Loops
     void ParseIf (Block block);

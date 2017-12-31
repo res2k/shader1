@@ -34,6 +34,7 @@ namespace s1
       /// AST variable declaration
       struct VarsDecl : public Node
       {
+        bool isConst;
         TypePtr type;
         struct Var
         {
@@ -43,8 +44,8 @@ namespace s1
         typedef boost::container::deque<Var> VarsContainer;
         VarsContainer vars;
 
-        VarsDecl (TypePtr&& type, VarsContainer&& vars)
-          : type (std::move (type)), vars (std::move (vars)) {}
+        VarsDecl (bool isConst, TypePtr&& type, VarsContainer&& vars)
+          : isConst (isConst), type (std::move (type)), vars (std::move (vars)) {}
       };
     } // namespace ast
   } // namespace parser
