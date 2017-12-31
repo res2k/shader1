@@ -270,6 +270,47 @@ public:
     }
   }
 
+  void testBlockVarDeclInitMultiError (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("int a = 1+2, ;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+
+    SemanticsHandler::BlockPtr block (
+      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TS_ASSERT_EQUALS (errorHandler.parseError.code,
+                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+    TestSemanticsHandler::TestScope* testScope =
+      static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
+    {
+      SemanticsHandler::NamePtr varRequested;
+      TS_ASSERT_THROWS_NOTHING(
+        varRequested =
+          testScope->ResolveIdentifier (s1::uc::String ("a"))
+      );
+      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TestSemanticsHandler::TestName* testName =
+        static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
+      TS_ASSERT_DIFFERS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TestSemanticsHandler::TestExpressionBase* testExpr =
+        static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
+      TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
+      TS_ASSERT_EQUALS (testName->varConstant, false);
+      TestSemanticsHandler::TestType* testType =
+        static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
+      TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
+      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    }
+  }
+
   void testBlockConstDecl (void)
   {
     using namespace s1::parser;
