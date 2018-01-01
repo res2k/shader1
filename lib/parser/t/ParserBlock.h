@@ -26,21 +26,12 @@
 #include "TestSemanticsHandlerSloppyIdentifiers.h"
 
 #include "ParserTestTraits.h"
+#include "TestParser.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
 class ParserBlockTestSuite : public CxxTest::TestSuite
 {
-  class TestParser : public s1::Parser
-  {
-  public:
-    TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-                s1::diagnostics::Handler& diagnosticsHandler)
-     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
-
-    using s1::Parser::ParseBlock;
-  };
-
   typedef TestSemanticsHandlerSloppyIdentifiers TestSemanticsHandler;
 public:
   void testBlockExpr (void)

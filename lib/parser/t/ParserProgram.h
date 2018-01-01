@@ -25,20 +25,12 @@
 #include "TestSemanticsHandler.h"
 
 #include "ParserTestTraits.h"
+#include "TestParser.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
 class ParserProgramTestSuite : public CxxTest::TestSuite 
 {
-  class TestParser : public s1::Parser
-  {
-  public:
-    TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-                s1::diagnostics::Handler& diagnosticsHandler)
-     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
-     
-    using s1::Parser::ParseProgram;
-  };
 public:
   void testProgramSimple (void)
   {

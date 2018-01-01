@@ -34,22 +34,13 @@
 #include "t/IntermediateTestTraits.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
+#include "../../parser/t/TestParser.h"
 
 using namespace s1::intermediate;
 using namespace s1::optimize;
 
 class ConstantFoldingTestSuite : public CxxTest::TestSuite
 {
-  class TestParser : public s1::Parser
-  {
-  public:
-    TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
-                s1::diagnostics::Handler& diagnosticsHandler)
-     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
-
-    using s1::Parser::ParseBlock;
-  };
-
   class TestSemanticsHandler : public IntermediateGeneratorSemanticsHandler
   {
   public:
