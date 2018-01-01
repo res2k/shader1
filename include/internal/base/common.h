@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -90,9 +90,20 @@ namespace s1
     assert ((x) && msg);                                      \
     _S1_ASSERT_MSG_RET(x, ret)                                \
   } while(0)
+//@{
 /// \internal Assertion for code that is not expected to be reached
+#define S1_ASSERT_NOT_REACHED_MSG(msg, ret)                   \
+  do {                                                        \
+    ::s1::detail::PrintAssert (_S1_ASSERT_STR(__FILE__),      \
+                                __LINE__,                     \
+                                _S1_ASSERT_STR("false"),      \
+                                _S1_ASSERT_STR(msg));         \
+    assert ((msg) && false);                                  \
+    return ret;                                               \
+  } while(0)
 #define S1_ASSERT_NOT_REACHED(ret)                            \
-  S1_ASSERT_MSG(false, "code should not be reached", ret)
+  S1_ASSERT_NOT_REACHED_MSG("code should not be reached", ret)
+//@}
 
 // Definitions for wchar_t encoding.
 // Assumes a world where wchar_t is always some UTF.
