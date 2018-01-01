@@ -814,14 +814,6 @@ namespace s1
     }
     return false;
   }
-  
-  Parser::Expression Parser::ParseExpression (const Scope& scope)
-  {
-    auto astExpr = AstParseExpression ();
-    S1_ASSERT(astExpr, Parser::Expression());
-
-    return ParseExpression (scope, *astExpr);
-  }
 
   Parser::Expression Parser::ParseExpression (const Scope& scope, const ast::Expr& astExpr)
   {

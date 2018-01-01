@@ -30,13 +30,18 @@ public:
     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
 
   using s1::Parser::Expression;
-  using s1::Parser::ParseExpression;
   using s1::Parser::ParseProgram;
 
   void ParseBlock (Block block)
   {
     auto astBlock = AstParseBlock ();
     s1::Parser::ParseBlock (block, *astBlock);
+  }
+
+  Parser::Expression ParseExpression (const Scope& scope)
+  {
+    auto astExpr = AstParseExpression ();
+    return s1::Parser::ParseExpression (scope, *astExpr);
   }
 };
 
