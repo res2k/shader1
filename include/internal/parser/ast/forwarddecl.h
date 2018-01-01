@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -61,6 +61,8 @@ namespace s1
       typedef std::unique_ptr<ExprUnary> ExprUnaryPtr;
       struct ExprValue;
       typedef std::unique_ptr<ExprValue> ExprValuePtr;
+      struct FunctionDecl;
+      typedef std::unique_ptr<FunctionDecl> FunctionDeclPtr;
       struct Type;
       typedef std::unique_ptr<Type> TypePtr;
       struct Typedef;

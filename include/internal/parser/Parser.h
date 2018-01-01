@@ -147,9 +147,11 @@ namespace s1
     // Functions
     typedef parser::SemanticsHandler::FunctionPtr Function;
     void ParseFuncDeclare (const Scope& scope);
-    Parser::Type ParseFuncType (const Scope& scope);
+    void ParseFuncDeclare (const Scope& scope, const parser::ast::FunctionDecl& astFunctionDecl);
+    parser::ast::FunctionDeclPtr AstParseFunctionDecl ();
     void ParseFuncParamFormal (const Scope& scope,
-			       parser::SemanticsHandler::Scope::FunctionFormalParameters& params);
+                               parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
+                               const parser::ast::FunctionDecl& astFunctionDecl);
     std::vector<parser::ast::ExprPtr> AstParseFuncParamActual ();
     
     // Variables

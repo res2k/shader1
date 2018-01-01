@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2017 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include "parser/ast/BlockStatementReturn.h"
 #include "parser/ast/Expr.h"
 #include "parser/ast/ExprValue.h"
+#include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Identifier.h"
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
@@ -1332,103 +1333,155 @@ namespace s1
 
   void Parser::ParseFuncDeclare (const Scope& scope)
   {
-    // Parse return type
-    Type returnType = ParseFuncType (scope);
-    // Parse function identifier
-    Expect (lexer::Identifier);
-    uc::String functionIdentifier (currentToken.tokenString);
-    NextToken ();
+    auto astFunctionDecl = AstParseFunctionDecl ();
+    ParseFuncDeclare (scope, *astFunctionDecl);
+  }
+
+  void Parser::ParseFuncDeclare (const Scope& scope, const ast::FunctionDecl& astFunctionDecl)
+  {
+    Type returnType;
+    if (auto voidResult = boost::get<ast::FunctionDecl::Void> (&astFunctionDecl.resultType))
+    {
+      returnType = semanticsHandler.CreateType (SemanticsHandler::Void);
+    }
+    else
+    {
+      const auto& astType = boost::get<ast::TypePtr> (astFunctionDecl.resultType);
+      returnType = ParseType (*astType, scope);
+    }
+    uc::String functionIdentifier = astFunctionDecl.identifier.GetString();
     // Parse formal parameters
-    Expect (lexer::ParenL);
     SemanticsHandler::Scope::FunctionFormalParameters params;
-    ParseFuncParamFormal (scope, params);
+    ParseFuncParamFormal (scope, params, astFunctionDecl);
     // Add function to scope, get block
     Function func (scope->AddFunction (returnType, functionIdentifier, params));
     Block inFunctionBlock = func->GetBody();;
-    Expect (lexer::BraceL);
-    NextToken();
     // Handle expressions in block
-    ParseBlock (inFunctionBlock);
+    ParseBlock (inFunctionBlock, *astFunctionDecl.body);
     func->Finish ();
-    Expect (lexer::BraceR);
-    NextToken();
   }
-  
-  Parser::Type Parser::ParseFuncType (const Scope& scope)
-  {
-    if (currentToken.typeOrID == lexer::kwVoid)
-    {
-      Parser::Type type = semanticsHandler.CreateType (SemanticsHandler::Void);
-      NextToken ();
-      return type;
-    }
-    else if (IsType (scope))
-    {
-      return ParseType (scope);
-    }
-    else
-      UnexpectedToken();
-    return Parser::Type ();
-  }
-  
-  void Parser::ParseFuncParamFormal (const Scope& scope, SemanticsHandler::Scope::FunctionFormalParameters& params)
-  {
-    // Skip '('
-    Expect (lexer::ParenL);
-    NextToken ();
-    while (true)
-    {
-      if (currentToken.typeOrID == lexer::ParenR)
-      {
-        // End of list
-        NextToken ();
-        break;
-      }
 
-      // TODO: In case of error, skip to next param
+  ast::FunctionDeclPtr Parser::AstParseFunctionDecl ()
+  {
+    return CommonAstParseNode (
+      [&]()
+      {
+        // Parse return type
+        ast::FunctionDecl::VoidOrType returnType;
+        if (currentToken.typeOrID == lexer::kwVoid)
+        {
+          returnType = ast::FunctionDecl::Void ();
+          NextToken ();
+        }
+        else
+        {
+          auto astType = AstParseType ();
+          if (astType.has_error ())
+            throw Exception (astType.error ().error, astType.error ().token);
+          returnType = std::move (astType.value());
+        }
+        // Parse function identifier
+        auto funcIdentifier = AstParseIdentifier ();
+        // Parse formal parameters
+        Expect (lexer::ParenL);
+        NextToken ();
+        ast::FunctionDecl::ParamsContainer params;
+        while (true)
+        {
+          if (currentToken.typeOrID == lexer::ParenR)
+          {
+            // End of list
+            NextToken ();
+            break;
+          }
+
+          // TODO: In case of error, skip to next param
+          ast::FunctionDecl::Param param;
+          while ((currentToken.typeOrID == lexer::kwIn)
+            || (currentToken.typeOrID == lexer::kwOut)
+            || (currentToken.typeOrID == lexer::kwUniform)
+            || (currentToken.typeOrID == lexer::kwAttribute))
+          {
+            param.qualifiers.push_back (currentToken);
+            NextToken ();
+          }
+          {
+            auto astType = AstParseType ();
+            if (astType.has_error ())
+              throw Exception (astType.error ().error, astType.error ().token);
+            param.type = std::move (astType.value ());
+          }
+          param.identifier = AstParseIdentifier ();
+          if (currentToken.typeOrID == lexer::Assign)
+          {
+            // Handle default value
+            NextToken ();
+            param.defaultValue = AstParseExpression ();
+          }
+          params.emplace_back (std::move (param));
+          if (currentToken.typeOrID == lexer::Separator)
+            NextToken ();
+          else if (currentToken.typeOrID != lexer::ParenR)
+            UnexpectedToken ();
+        }
+        // Parse function body
+        Expect (lexer::BraceL);
+        NextToken();
+        auto body = AstParseBlock ();
+        Expect (lexer::BraceR);
+        NextToken();
+        return ast::FunctionDeclPtr (new ast::FunctionDecl (std::move (returnType),
+                                                            std::move (funcIdentifier),
+                                                            std::move (params),
+                                                            std::move (body)));
+      });
+  }
+
+  void Parser::ParseFuncParamFormal (const Scope& scope,
+                                     parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
+                                     const parser::ast::FunctionDecl& astFunctionDecl)
+  {
+    params.reserve (astFunctionDecl.params.size());
+    for (const auto& param : astFunctionDecl.params)
+    {
       int paramDirection = 0;
       SemanticsHandler::Scope::FormalParameterFrequency freqQualifier = SemanticsHandler::Scope::freqAuto;
       int numFreqQualifiers = 0;
-      bool parseQualifiers = true;
-      while (parseQualifiers)
+      for (const auto& qualifierToken : param.qualifiers)
       {
-        if (currentToken.typeOrID == lexer::kwIn)
+        if (qualifierToken.typeOrID == lexer::kwIn)
         {
           // 'in' parameter
-          NextToken();
           if ((paramDirection & SemanticsHandler::Scope::dirIn) != 0)
           {
             // TODO: Warn about redundancy
           }
           paramDirection |= SemanticsHandler::Scope::dirIn;
         }
-        else if (currentToken.typeOrID == lexer::kwOut)
+        else if (qualifierToken.typeOrID == lexer::kwOut)
         {
           // 'out' parameter
-          NextToken();
           if ((paramDirection & SemanticsHandler::Scope::dirOut) != 0)
           {
             // TODO: Warn about redundancy
           }
           paramDirection |= SemanticsHandler::Scope::dirOut;
         }
-        else if (currentToken.typeOrID == lexer::kwUniform)
+        else if (qualifierToken.typeOrID == lexer::kwUniform)
         {
           // 'uniform' qualifier
-          NextToken();
           freqQualifier = SemanticsHandler::Scope::freqUniform;
           numFreqQualifiers++;
         }
-        else if (currentToken.typeOrID == lexer::kwAttribute)
+        else if (qualifierToken.typeOrID == lexer::kwAttribute)
         {
           // 'attribute' qualifier
-          NextToken();
           freqQualifier = SemanticsHandler::Scope::freqAttribute;
           numFreqQualifiers++;
         }
         else
         {
-          parseQualifiers = false;
+          S1_ASSERT_NOT_REACHED_MSG("unhandled qualifier token", S1_ASSERT_RET_VOID);
         }
       }
       // If no explicit direction is given, use 'in'
@@ -1436,17 +1489,14 @@ namespace s1
       SemanticsHandler::Scope::FunctionFormalParameter newParam;
       newParam.dir = (SemanticsHandler::Scope::FormalParameterDirection)paramDirection;
       newParam.freqQualifier = freqQualifier;
-      newParam.type = ParseType (scope);
-      Expect (lexer::Identifier);
-      newParam.identifier = currentToken.tokenString;
-      NextToken ();
-      if (currentToken.typeOrID == lexer::Assign)
+      newParam.type = ParseType (*param.type, scope);
+      newParam.identifier = param.identifier.GetString();
+      if (param.defaultValue)
       {
         // Handle default value
-        NextToken ();
         if (paramDirection == SemanticsHandler::Scope::dirOut)
           throw Exception (Error::OutParameterWithDefault);
-        newParam.defaultValue = ParseExpression (scope);
+        newParam.defaultValue = ParseExpression (scope, *param.defaultValue);
       }
       if ((((paramDirection & SemanticsHandler::Scope::dirIn) == 0)
           || ((paramDirection & SemanticsHandler::Scope::dirOut) != 0))
@@ -1458,11 +1508,7 @@ namespace s1
       {
         throw Exception (Error::ConflictingQualifiersForInParam);
       }
-      params.push_back (newParam);
-      if (currentToken.typeOrID == lexer::Separator)
-        NextToken ();
-      else if (currentToken.typeOrID != lexer::ParenR)
-        UnexpectedToken ();
+      params.push_back (std::move (newParam));
     }
   }
   
