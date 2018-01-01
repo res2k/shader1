@@ -84,7 +84,8 @@ namespace s1
     typedef parser::SemanticsHandler::BlockPtr Block;
     typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();
-    void ParseProgramStatements (const Scope& scope);
+    parser::ast::ProgramPtr AstParseProgram ();
+    void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);
     void ParseBlock (Block block, const parser::ast::Block& astBlock);
     bool IsCommand ();
     parser::ast::BlockPtr AstParseBlock ();

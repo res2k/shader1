@@ -26,6 +26,7 @@
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Identifier.h"
+#include "parser/ast/Program.h"
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
@@ -149,54 +150,94 @@ namespace s1
   void Parser::ParseProgram ()
   {
     Scope globalScope (semanticsHandler.CreateScope (builtinScope, SemanticsHandler::Global));
-    ParseProgramStatements (globalScope);
-    Expect (lexer::EndOfFile);
-  }
-  
-  void Parser::ParseProgramStatements (const Scope& scope)
-  {
-    while (true)
+    auto astProgram = AstParseProgram ();
+    if (currentToken.typeOrID != lexer::EndOfFile)
     {
-      int beyondType;
-      bool isType = IsType (scope, beyondType);
-      if (currentToken.typeOrID == lexer::kwConst)
+      diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Identifier);
+    }
+    ParseProgramStatements (globalScope, *astProgram);
+  }
+
+  ast::ProgramPtr Parser::AstParseProgram ()
+  {
+    return CommonAstParseNode (
+      [&]()
       {
-        /* constant declaration */
-        ParseConstDeclare (scope);
-        Expect (lexer::Semicolon);
-        NextToken();
-      }
-      else if ((isType
-          && (Peek (beyondType).typeOrID == lexer::Identifier))
-        || (currentToken.typeOrID == lexer::kwVoid))
-      {
-        if ((currentToken.typeOrID == lexer::kwVoid)
-            || (Peek (beyondType+1).typeOrID == lexer::ParenL))
+        ast::Program::StatementsContainer statements;
+        while (true)
         {
-          /* Function declaration */
-          ParseFuncDeclare (scope);
+          ast::Program::Statement statement;
+          int beyondType;
+          bool isType = IsWellKnownType (beyondType);
+          if (currentToken.typeOrID == lexer::kwConst)
+          {
+            /* constant declaration */
+            NextToken ();
+            auto decl = AstParseVarsDecl (true);
+            Expect (lexer::Semicolon);
+            NextToken();
+            statement = std::move (decl);
+          }
+          else if (isType
+                  || (currentToken.typeOrID == lexer::kwVoid)
+                  || (Peek (beyondType).typeOrID == lexer::Identifier))
+          {
+            if ((currentToken.typeOrID == lexer::kwVoid)
+                || (Peek (beyondType+1).typeOrID == lexer::ParenL))
+            {
+              /* Function declaration */
+              auto decl = AstParseFunctionDecl ();
+              statement = std::move (decl);
+            }
+            else
+            {
+              /* Variable declaration */
+              auto decl = AstParseVarsDecl (false);
+              Expect (lexer::Semicolon);
+              NextToken();
+              statement = std::move (decl);
+            }
+          }
+          else if (currentToken.typeOrID == lexer::kwTypedef)
+          {
+            /* Type definition */
+            auto typeDef = AstParseTypedef ();
+            Expect (lexer::Semicolon);
+            NextToken();
+            statement = std::move (typeDef);
+          }
+          else
+            /* Unknown token - let caller throw error */
+            break;
+          statements.emplace_back (std::move (statement));
         }
-        else
-        {
-          /* Variable declaration */
-          ParseVarDeclare (scope);
-          Expect (lexer::Semicolon);
-          NextToken();
-        }
-      }
-      else if (currentToken.typeOrID == lexer::kwTypedef)
+        return ast::ProgramPtr (new ast::Program (std::move (statements)));
+      });
+  }
+
+  void Parser::ParseProgramStatements (const Scope& scope, const ast::Program& astProgram)
+  {
+    for (const auto& statement : astProgram.statements)
+    {
+      if (auto astTypedef = boost::get<ast::TypedefPtr> (&statement))
       {
-        /* Type definition */
-        ParseTypedef (scope);
-        Expect (lexer::Semicolon);
-        NextToken();
+        ParseTypedef (scope, **astTypedef);
+      }
+      else if (auto astVarsDecl = boost::get<ast::VarsDeclPtr> (&statement))
+      {
+        ParseVarDeclare (scope, **astVarsDecl);
+      }
+      else if (auto astFuncDecl = boost::get<ast::FunctionDeclPtr> (&statement))
+      {
+        ParseFuncDeclare (scope, **astFuncDecl);
       }
       else
-        /* Unknown token - let ParseProgram throw error */
-        break;
+      {
+        S1_ASSERT_NOT_REACHED_MSG("unhandled program statement", S1_ASSERT_RET_VOID);
+      }
     }
   }
-  
+
   void Parser::ParseBlock (Block block, const parser::ast::Block& astBlock)
   {
     Scope blockScope = block->GetInnerScope();
