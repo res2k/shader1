@@ -197,12 +197,6 @@ namespace s1
     }
   }
   
-  void Parser::ParseBlock (Block block)
-  {
-    auto astBlock = AstParseBlock ();
-    ParseBlock (block, *astBlock);
-  }
-
   void Parser::ParseBlock (Block block, const parser::ast::Block& astBlock)
   {
     Scope blockScope = block->GetInnerScope();

@@ -20,6 +20,8 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/Block.h"
+
 class TestParser : public s1::Parser
 {
 public:
@@ -28,9 +30,14 @@ public:
     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
 
   using s1::Parser::Expression;
-  using s1::Parser::ParseBlock;
   using s1::Parser::ParseExpression;
   using s1::Parser::ParseProgram;
+
+  void ParseBlock (Block block)
+  {
+    auto astBlock = AstParseBlock ();
+    s1::Parser::ParseBlock (block, *astBlock);
+  }
 };
 
 #endif // PARSER_T_TESTPARSER_H_
