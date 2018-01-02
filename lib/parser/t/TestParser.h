@@ -31,6 +31,7 @@ public:
               s1::diagnostics::Handler& diagnosticsHandler)
     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
 
+  using s1::Parser::AstParseExpression;
   s1::parser::ast::TypePtr AstParseType ()
   {
     auto astType = s1::Parser::AstParseType ();
