@@ -18,9 +18,11 @@
 #ifndef PARSER_T_TESTPARSER_H_
 #define PARSER_T_TESTPARSER_H_
 
+#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "parser/ast/Block.h"
+#include "parser/ast/Type.h"
 
 class TestParser : public s1::Parser
 {
@@ -28,6 +30,14 @@ public:
   TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
               s1::diagnostics::Handler& diagnosticsHandler)
     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
+
+  s1::parser::ast::TypePtr AstParseType ()
+  {
+    auto astType = s1::Parser::AstParseType ();
+    if (astType.has_error ())
+      throw s1::parser::Exception (astType.error ().error, astType.error ().token);
+    return std::move (astType.value());
+  }
 
   using s1::Parser::Expression;
   using s1::Parser::ParseProgram;
