@@ -19,9 +19,18 @@ if(CXXTEST_FOUND)
   s1_add_library(parser_testlib STATIC SOURCES ${parser_testlib_sources})
   set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
-  file(GLOB parser_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
+  set(parser_test_sources
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlock.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlockStrict.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonAttrTypes.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonTypeCompat.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserExpr.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserProgram.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserScope.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserTypes.h
+      )
   s1_add_cxxtest(test_Parser
-		 SOURCES ${parser_test_sources}
+                 SOURCES ${parser_test_sources}
                  DEPENDS parser_testlib parser)
 endif()
 
