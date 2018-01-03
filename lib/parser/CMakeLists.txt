@@ -43,6 +43,8 @@ if(CXXTEST_FOUND)
   set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
   set(parser_test_sources
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlock.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlockStrict.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/AstExpr.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/AstTypes.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlock.h

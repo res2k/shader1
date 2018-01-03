@@ -85,6 +85,13 @@
     TS_ASSERT_EQUALS(typeWellKnown[1].dimension2, DIM2);                            \
   } while (0)
 
+// Check if an ast::Type is an alias
+#define AST_TEST_TYPE_IS_ALIAS(TYPE, IDENTIFIER)                                    \
+  do {                                                                              \
+    const auto& typeIdentifier = boost::get<ast::Identifier> ((TYPE).value);        \
+    TS_ASSERT_EQUALS(typeIdentifier.GetString(), IDENTIFIER);                       \
+  } while (0)
+
 // Check if an ast::ExprValue is an identifier
 #define AST_TEST_EXPRVALUE_IS_IDENTIFIER(EXPR_VALUE, TEST_IDENTIFIER)         \
   do {                                                                        \
