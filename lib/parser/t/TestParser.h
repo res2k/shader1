@@ -18,10 +18,12 @@
 #ifndef PARSER_T_TESTPARSER_H_
 #define PARSER_T_TESTPARSER_H_
 
+#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "parser/ast/Block.h"
 #include "parser/ast/Expr.h"
+#include "parser/ast/Type.h"
 
 class TestParser : public s1::Parser
 {
@@ -43,6 +45,14 @@ public:
   {
     auto astExpr = AstBuilder::ParseExpression ();
     return s1::Parser::ParseExpression (scope, *astExpr);
+  }
+
+  Parser::Type ParseType (const Scope& scope)
+  {
+    auto astType = AstBuilder::ParseType ();
+    if (astType.has_error ())
+      throw s1::parser::Exception (astType.error ().error, astType.error ().token);
+    return Parser::ParseType (*astType.value(), scope);
   }
 };
 

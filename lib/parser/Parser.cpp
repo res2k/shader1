@@ -388,75 +388,6 @@ namespace s1
     }
     S1_ASSERT_NOT_REACHED (Parser::Expression ());
   }
-  
-  bool Parser::IsWellKnownType (int& peekAfterType)
-  {
-    Lexer::TokenType tokenID = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
-    peekAfterType = 0;
-    if (currentToken.typeOrID == lexer::kwUnsigned)
-    {
-      peekAfterType++;
-      tokenID = static_cast<lexer::TokenType> (Peek().typeOrID & ~lexer::TypeFlagMask);
-    }
-    bool isType = false;
-    switch (tokenID)
-    {
-    case lexer::kwBool:
-    case lexer::kwInt:
-    case lexer::kwFloat:
-    case lexer::kwSampler1D:
-    case lexer::kwSampler2D:
-    case lexer::kwSampler3D:
-    case lexer::kwSamplerCUBE:
-      isType = true;
-      break;
-    default:
-      break;
-    }
-    return isType;
-  }
-
-  bool Parser::IsWellKnownTypeOrArray (int& peekAfterType)
-  {
-    if (IsWellKnownType (peekAfterType))
-    {
-      while ((Peek (peekAfterType).typeOrID == lexer::BracketL)
-        && (Peek (peekAfterType+1).typeOrID == lexer::BracketR))
-      {
-        peekAfterType += 2;
-      }
-      return true;
-    }
-    return false;
-  }
-
-  bool Parser::IsType (const Scope& scope, int& peekAfterType)
-  {
-    Lexer::TokenType tokenID = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
-    peekAfterType = 0;
-    bool isType = false;
-    if (currentToken.typeOrID == lexer::Identifier)
-    {
-      /* Might be a type alias */
-      Name typeName = scope->ResolveIdentifier (currentToken.tokenString);
-      isType = (typeName->GetType() == SemanticsHandler::Name::TypeAlias);
-    }
-    else
-    {
-      int peekWellKnown;
-      if ((isType = IsWellKnownType (peekWellKnown)))
-        peekAfterType += peekWellKnown;
-    }
-    if (isType)
-    {
-      while ((Peek (peekAfterType).typeOrID == lexer::BracketL)
-        && (Peek (peekAfterType+1).typeOrID == lexer::BracketR))
-      {
-        peekAfterType += 2;
-      }
-    }
-    return isType;
-  }
 
   Parser::Type Parser::ParseTypeBase (parser::ast::Type& astType, const Scope& scope)
   {
@@ -515,15 +446,6 @@ namespace s1
     }
     S1_ASSERT_NOT_REACHED_MSG("unhandled type", Type ());
     return Type ();
-  }
-  
-  Parser::Type Parser::ParseType (const Scope& scope)
-  {
-    auto astType = AstBuilder::ParseType ();
-    if (astType.has_error ())
-      throw Exception (astType.error ().error, astType.error ().token);
-    S1_ASSERT(astType.value(), Type ());
-    return ParseType (*astType.value(), scope);
   }
 
   Parser::Type Parser::ParseType (ast::Type& astType, const Scope& scope)
@@ -640,23 +562,11 @@ namespace s1
     return type;
   }
 
-  void Parser::ParseTypedef (const Scope& scope)
-  {
-    auto astTypedef = AstBuilder::ParseTypedef ();
-    ParseTypedef (scope, *astTypedef);
-  }
-
   void Parser::ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef)
   {
     Type aliasedType = ParseType (*astTypedef.type, scope);
     // Add to scope
     scope->AddTypeAlias (aliasedType, astTypedef.alias.GetString());
-  }
-
-  void Parser::ParseFuncDeclare (const Scope& scope)
-  {
-    auto astFunctionDecl = AstBuilder::ParseFunctionDecl ();
-    ParseFuncDeclare (scope, *astFunctionDecl);
   }
 
   void Parser::ParseFuncDeclare (const Scope& scope, const ast::FunctionDecl& astFunctionDecl)
@@ -758,13 +668,6 @@ namespace s1
     }
   }
 
-
-  void Parser::ParseVarDeclare (const Scope& scope)
-  {
-    auto astVarsDecl = AstBuilder::ParseVarsDecl ();
-    ParseVarDeclare (scope, *astVarsDecl);
-  }
-
   void Parser::ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl)
   {
     auto type = ParseType (*astVarsDecl.type, scope);
@@ -776,12 +679,5 @@ namespace s1
         initExpr = ParseExpression (scope, *astVar.initializer);
       scope->AddVariable (type, varIdentifier, initExpr, astVarsDecl.isConst);
     }
-  }
-
-  void Parser::ParseConstDeclare (const Scope& scope)
-  {
-    NextToken(); // skip 'const'
-    auto astConstsDecl = AstBuilder::ParseVarsDecl (true);
-    ParseVarDeclare (scope, *astConstsDecl);
   }
 } // namespace s1

@@ -67,38 +67,27 @@ namespace s1
     Expression ParseExprTernary (const Scope& scope, const parser::ast::ExprTernary& astExprTernary);
     Expression ParseExprComparison (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
     Expression ParseExprLogic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
-    
+
     // Types
-    bool IsWellKnownType (int& peekAfterType);
-    bool IsWellKnownTypeOrArray (int& peekAfterType);
-    bool IsType (const Scope& scope, int& peekAfterType);
-    bool IsType (const Scope& scope) { int dummy; return IsType (scope, dummy); }
     typedef parser::SemanticsHandler::TypePtr Type;
     Type ParseTypeBase (parser::ast::Type& astType, const Scope& scope);
-    Type ParseType (const Scope& scope);
     Type ParseType (parser::ast::Type& astType, const Scope& scope);
     Type ParseTypeBool (const Lexer::Token& token);
     Type ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeVector (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeMatrix (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeSampler (const Lexer::Token& token);
-    void ParseTypedef (const Scope& scope);
     void ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef);
-    
+
     // Functions
     typedef parser::SemanticsHandler::FunctionPtr Function;
-    void ParseFuncDeclare (const Scope& scope);
     void ParseFuncDeclare (const Scope& scope, const parser::ast::FunctionDecl& astFunctionDecl);
     void ParseFuncParamFormal (const Scope& scope,
                                parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
                                const parser::ast::FunctionDecl& astFunctionDecl);
     
     // Variables
-    void ParseVarDeclare (const Scope& scope);
     void ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl);
-	
-    // Constants
-    void ParseConstDeclare (const Scope& scope);
   };
 } // namespace s1
 
