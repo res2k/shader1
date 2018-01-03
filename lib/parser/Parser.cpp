@@ -30,6 +30,7 @@
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
+#include "parser/AstBuilder.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
 
@@ -39,7 +40,8 @@ namespace s1
   
   Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler,
                   diagnostics::Handler& diagnosticsHandler)
-   : AstBuilder (inputLexer, diagnosticsHandler), semanticsHandler (semanticsHandler)
+   : inputLexer (inputLexer), semanticsHandler (semanticsHandler),
+     diagnosticsHandler (diagnosticsHandler)
   {
     builtinScope = semanticsHandler.CreateScope (Scope (), SemanticsHandler::Builtin);
   }
@@ -60,7 +62,7 @@ namespace s1
   void Parser::ParseProgram ()
   {
     Scope globalScope (semanticsHandler.CreateScope (builtinScope, SemanticsHandler::Global));
-    auto astProgram = AstBuilder::ParseProgram ();
+    auto astProgram = AstBuilder (inputLexer, diagnosticsHandler).ParseProgram ();
     ParseProgramStatements (globalScope, *astProgram);
   }
 

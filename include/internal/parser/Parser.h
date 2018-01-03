@@ -19,7 +19,6 @@
 #define __PARSER_PARSER_H__
 
 #include "ast/forwarddecl.h"
-#include "AstBuilder.h"
 #include "SemanticsHandler.h"
 
 #include "diagnostics/Handler.h"
@@ -29,7 +28,7 @@
 namespace s1
 {
   /// Parser implementation
-  class Parser : public parser::AstBuilder
+  class Parser
   {
   public:    
     /**
@@ -43,7 +42,9 @@ namespace s1
     
     void Parse ();
   protected:
+    Lexer& inputLexer;
     parser::SemanticsHandler& semanticsHandler;
+    diagnostics::Handler& diagnosticsHandler;
     /// Scope with builtin definitions
     parser::SemanticsHandler::ScopePtr builtinScope;
 

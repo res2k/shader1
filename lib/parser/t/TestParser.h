@@ -18,6 +18,8 @@
 #ifndef PARSER_T_TESTPARSER_H_
 #define PARSER_T_TESTPARSER_H_
 
+#include "TestAstBuilder.h"
+
 #include "parser/Exception.h"
 #include "parser/Parser.h"
 
@@ -37,22 +39,20 @@ public:
 
   void ParseBlock (Block block)
   {
-    auto astBlock = AstBuilder::ParseBlock ();
+    auto astBlock = TestAstBuilder (inputLexer, diagnosticsHandler).ParseBlock ();
     s1::Parser::ParseBlock (block, *astBlock);
   }
 
   Parser::Expression ParseExpression (const Scope& scope)
   {
-    auto astExpr = AstBuilder::ParseExpression ();
+    auto astExpr = TestAstBuilder (inputLexer, diagnosticsHandler).ParseExpression ();
     return s1::Parser::ParseExpression (scope, *astExpr);
   }
 
   Parser::Type ParseType (const Scope& scope)
   {
-    auto astType = AstBuilder::ParseType ();
-    if (astType.has_error ())
-      throw s1::parser::Exception (astType.error ().error, astType.error ().token);
-    return Parser::ParseType (*astType.value(), scope);
+    auto astType = TestAstBuilder (inputLexer, diagnosticsHandler).ParseType ();
+    return Parser::ParseType (*astType, scope);
   }
 };
 
