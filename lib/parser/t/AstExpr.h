@@ -21,11 +21,9 @@
 
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "parser/ast/Type.h"
-#include "parser/Parser.h"
 
 #include "AstMacros.h"
-#include "TestParser.h"
-#include "TestSemanticsHandler.h"
+#include "TestAstBuilder.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
@@ -41,11 +39,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_EXPR_IS_IDENTIFIER(*expr, "a");
   }
@@ -59,11 +56,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astExprAttr = boost::get<ast::ExprAttributePtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astExprAttr->value), "a");
@@ -79,11 +75,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astExprAttr = boost::get<ast::ExprAttributePtr> ((*expr).value);
     const auto& astLeftBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*astExprAttr->value).value);
@@ -102,11 +97,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     const auto& astLeftExprAttr = boost::get<ast::ExprAttributePtr> ((*(astBinaryExpr->left)).value);
@@ -125,11 +119,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
@@ -148,11 +141,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Minus);
@@ -172,11 +164,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
@@ -196,11 +187,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
@@ -220,11 +210,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     const auto& astLeftBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*(astBinaryExpr->left)).value);
@@ -247,11 +236,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
@@ -271,11 +259,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::LogicOr);
@@ -295,11 +282,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
@@ -322,11 +308,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::LogicAnd);
@@ -345,11 +330,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Larger);
@@ -372,11 +356,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Assign);
@@ -396,11 +379,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astTernaryExpr = boost::get<ast::ExprTernaryPtr> ((*expr).value);
     const auto& astCondBinaryExpr = boost::get<ast::ExprBinaryPtr> (astTernaryExpr->cond->value);
@@ -420,11 +402,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Plus);
@@ -443,11 +424,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astTernaryExpr = boost::get<ast::ExprTernaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->cond), "a");
@@ -464,11 +444,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astTernaryExpr = boost::get<ast::ExprTernaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->cond), "a");
@@ -488,11 +467,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_EXPR_IS_IDENTIFIER(*expr, "a");
   }
@@ -506,11 +484,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_EXPR_IS_IDENTIFIER(*expr, "a");
   }
@@ -524,11 +501,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
@@ -548,11 +524,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astArrayElementExpr = boost::get<ast::ExprArrayElementPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astArrayElementExpr->value), "a");
@@ -568,11 +543,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astArrayElementExpr = boost::get<ast::ExprArrayElementPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astArrayElementExpr->value), "a");
@@ -591,11 +565,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     const auto& astLeftArrayElementExpr = boost::get<ast::ExprArrayElementPtr> (astBinaryExpr->left->value);
@@ -617,11 +590,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "x");
@@ -641,11 +613,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "x");
@@ -670,11 +641,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "x");
@@ -694,11 +664,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "x");
@@ -719,11 +688,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::ExprPtr expr;
-    TS_ASSERT_THROWS_NOTHING((expr = parser.AstParseExpression ()));
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& astBinaryExpr = boost::get<ast::ExprBinaryPtr> ((*expr).value);
     AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "x");

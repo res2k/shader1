@@ -20,12 +20,9 @@
 #include "base/common.h"
 
 #include "parser/ast/Program.h"
-#include "parser/Exception.h"
-#include "parser/Parser.h"
 
 #include "AstMacros.h"
-#include "TestParser.h"
-#include "TestSemanticsHandler.h"
+#include "TestAstBuilder.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
@@ -41,11 +38,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
@@ -65,11 +61,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
@@ -107,11 +102,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
@@ -139,11 +133,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
@@ -172,11 +165,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
@@ -212,11 +204,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
@@ -252,11 +243,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
@@ -293,11 +283,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
@@ -343,11 +332,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
@@ -385,11 +373,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::ProgramPtr program;
-    TS_ASSERT_THROWS_NOTHING(program = parser.AstParseProgram ());
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);

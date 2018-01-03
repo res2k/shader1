@@ -18,13 +18,10 @@
 #ifndef PARSER_T_TESTPARSER_H_
 #define PARSER_T_TESTPARSER_H_
 
-#include "parser/AstBuilder.h"
-#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "parser/ast/Block.h"
-#include "parser/ast/Program.h"
-#include "parser/ast/Type.h"
+#include "parser/ast/Expr.h"
 
 class TestParser : public s1::Parser
 {
@@ -33,41 +30,18 @@ public:
               s1::diagnostics::Handler& diagnosticsHandler)
     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
 
-  s1::parser::ast::BlockPtr AstParseBlock ()
-  {
-    return AstBuilder::ParseBlock ();
-  }
-
-  s1::parser::ast::ExprPtr AstParseExpression ()
-  {
-    return AstBuilder::ParseExpression ();
-  }
-
-  s1::parser::ast::ProgramPtr AstParseProgram ()
-  {
-    return AstBuilder::ParseProgram ();
-  }
-
-  s1::parser::ast::TypePtr AstParseType ()
-  {
-    auto astType = AstBuilder::ParseType ();
-    if (astType.has_error ())
-      throw s1::parser::Exception (astType.error ().error, astType.error ().token);
-    return std::move (astType.value());
-  }
-
   using s1::Parser::Expression;
   using s1::Parser::ParseProgram;
 
   void ParseBlock (Block block)
   {
-    auto astBlock = AstParseBlock ();
+    auto astBlock = AstBuilder::ParseBlock ();
     s1::Parser::ParseBlock (block, *astBlock);
   }
 
   Parser::Expression ParseExpression (const Scope& scope)
   {
-    auto astExpr = AstParseExpression ();
+    auto astExpr = AstBuilder::ParseExpression ();
     return s1::Parser::ParseExpression (scope, *astExpr);
   }
 };

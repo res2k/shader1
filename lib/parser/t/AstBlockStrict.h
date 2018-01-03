@@ -23,12 +23,9 @@
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
-#include "parser/Exception.h"
-#include "parser/Parser.h"
 
 #include "AstMacros.h"
-#include "TestParser.h"
-#include "TestSemanticsHandler.h"
+#include "TestAstBuilder.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
@@ -44,11 +41,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -70,11 +66,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -98,11 +93,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);
@@ -135,11 +129,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -165,11 +158,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -198,11 +190,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-        TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
                       static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
 
@@ -229,11 +220,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -256,11 +246,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
                       static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
 
@@ -281,11 +270,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -303,11 +291,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);
@@ -332,11 +319,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     s1::parser::ast::BlockPtr block;
-    TS_ASSERT_THROWS_NOTHING((block = parser.AstParseBlock ()));
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);

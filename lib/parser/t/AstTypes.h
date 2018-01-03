@@ -20,13 +20,9 @@
 #include "base/common.h"
 
 #include "parser/ast/Type.h"
-#include "parser/Parser.h"
-
-#include "TestSemanticsHandler.h"
 
 #include "AstMacros.h"
-#include "ParserTestTraits.h"
-#include "TestParser.h"
+#include "TestAstBuilder.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
@@ -42,11 +38,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwBool);
   }
@@ -60,11 +55,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwInt);
   }
@@ -78,11 +72,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN(*type, kwInt);
   }
@@ -96,11 +89,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwFloat);
   }
@@ -114,11 +106,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSampler1D);
   }
@@ -132,11 +123,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSampler2D);
   }
@@ -150,11 +140,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSampler3D);
   }
@@ -168,11 +157,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSamplerCUBE);
   }
@@ -186,11 +174,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN_VEC(*type, kwBool, 3);
   }
@@ -204,11 +191,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN_VEC(*type, kwInt, 3);
   }
@@ -222,11 +208,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN_VEC(*type, kwInt, 3);
   }
@@ -240,11 +225,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN_VEC(*type, kwFloat, 3);
   }
@@ -258,11 +242,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN_MAT(*type, kwBool, 3, 2);
   }
@@ -276,11 +259,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN_MAT(*type, kwInt, 3, 2);
   }
@@ -294,11 +276,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN_MAT(*type, kwInt, 3, 2);
   }
@@ -312,11 +293,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     AST_TEST_TYPE_IS_WELL_KNOWN_MAT(*type, kwFloat, 3, 2);
   }
@@ -330,11 +310,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& typeArray = boost::get<ast::Type::ArrayType> (type->value);
     const auto& typeArrayWellKnown = boost::get<ast::Type::WellKnownType> (typeArray.containedType->value);
@@ -351,11 +330,10 @@ public:
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler; // FIXME: Remove
-    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
 
     ast::TypePtr type;
-    TS_ASSERT_THROWS_NOTHING((type = parser.AstParseType ()));
+    TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
     const auto& typeArray = boost::get<ast::Type::ArrayType> (type->value);
     const auto& typeArrayArray = boost::get<ast::Type::ArrayType> (typeArray.containedType->value);
