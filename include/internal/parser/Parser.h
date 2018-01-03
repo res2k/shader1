@@ -37,7 +37,7 @@ namespace s1
      * Construct parser.
      * \param inputLexer Input token stream
      * \param semanticsHandler Handler for semantics
-     * \param semanticsHandler Handler for errors
+     * \param diagnosticsHandler Handler for errors
      */
     Parser (Lexer& inputLexer, parser::SemanticsHandler& semanticsHandler,
             diagnostics::Handler& diagnosticsHandler);
