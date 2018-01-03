@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -18,21 +18,18 @@
 #ifndef __PARSER_PARSER_H__
 #define __PARSER_PARSER_H__
 
-#include "lexer/Lexer.h"
-
 #include "ast/forwarddecl.h"
-#include "parser/Diagnostics.h"
+#include "AstBuilder.h"
 #include "SemanticsHandler.h"
 
-#include "base/uc/SimpleBufferStreamSource.h"
 #include "diagnostics/Handler.h"
-
-#include <boost/container/deque.hpp>
+#include "lexer/Lexer.h"
+#include "parser/Diagnostics.h"
 
 namespace s1
 {
   /// Parser implementation
-  class Parser
+  class Parser : public parser::AstBuilder
   {
   public:    
     /**
@@ -46,69 +43,17 @@ namespace s1
     
     void Parse ();
   protected:
-    Lexer& inputLexer;
     parser::SemanticsHandler& semanticsHandler;
-    diagnostics::Handler& diagnosticsHandler;
     /// Scope with builtin definitions
     parser::SemanticsHandler::ScopePtr builtinScope;
-    
-    Lexer::Token currentToken;
-    Lexer::Token previousToken;
-    void NextToken ();
-    boost::container::deque<Lexer::Token> nextTokens;
-    const Lexer::Token& Peek (size_t lookahead = 0);
 
-    /// Parse error info
-    struct ParseError
-    {
-      /// Error code
-      parser::Error error;
-      /// Offending token
-      lexer::Token token;
-    };
-    /**
-     * AST node parsing helper.
-     * Calls func(), recording the starting and ending location
-     */
-    template<typename F>
-    typename std::result_of<F()>::type CommonAstParseNode (F func);
-    /// AST parsing helper: guaranteed return of an identifier
-    parser::ast::Identifier AstParseIdentifier ();
-
-    /// Expect a certain token, throw an "unexpected token" error if some other is encountered
-    void Expect (Lexer::TokenType tokenType);
-    /// Throw an "unexpected token" error
-    void UnexpectedToken ();
-    
     // Rough structure
     typedef parser::SemanticsHandler::BlockPtr Block;
     typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();
-    parser::ast::ProgramPtr AstParseProgram ();
     void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);
     void ParseBlock (Block block, const parser::ast::Block& astBlock);
-    bool IsCommand ();
-    parser::ast::BlockPtr AstParseBlock ();
-    parser::ast::BlockStatementReturnPtr AstParseStatementReturn ();
 
-    // Expressions
-    bool IsBinaryOperationToken (Lexer::TokenType tokenType);
-    bool IsUnaryOperationToken (Lexer::TokenType tokenType);
-    parser::ast::ExprPtr AstParseExpression ();
-    parser::ast::ExprPtr AstParseExprBase ();
-    parser::ast::ExprValuePtr AstParseExprValue ();
-    parser::ast::ExprPtr AstParseAttributeOrArrayAccess (parser::ast::ExprPtr&& baseExpr);
-    parser::ast::ExprPtr AstParseExprMultiplication ();
-    parser::ast::ExprPtr AstParseExprAddition ();
-    parser::ast::ExprPtr AstParseExprUnary ();
-    parser::ast::ExprPtr AstParseExprTernary (parser::ast::ExprPtr&& prefix);
-    parser::ast::ExprPtr AstParseExprCompareEqual ();
-    parser::ast::ExprPtr AstParseExprComparison ();
-    parser::ast::ExprPtr AstParseExprLogicOr ();
-    parser::ast::ExprPtr AstParseExprLogicAnd ();
-
-    /// Returns whether the current token is the start of an expression.
-    bool IsExpression ();
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (const Scope& scope, const parser::ast::Expr& astExpr);
@@ -128,8 +73,6 @@ namespace s1
     bool IsWellKnownTypeOrArray (int& peekAfterType);
     bool IsType (const Scope& scope, int& peekAfterType);
     bool IsType (const Scope& scope) { int dummy; return IsType (scope, dummy); }
-    typedef OUTCOME_V2_NAMESPACE::result<parser::ast::TypePtr, ParseError> AstParseTypeResult;
-    AstParseTypeResult AstParseType ();
     typedef parser::SemanticsHandler::TypePtr Type;
     Type ParseTypeBase (parser::ast::Type& astType, const Scope& scope);
     Type ParseType (const Scope& scope);
@@ -139,7 +82,6 @@ namespace s1
     Type ParseTypeVector (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeMatrix (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeSampler (const Lexer::Token& token);
-    parser::ast::TypedefPtr AstParseTypedef ();
     void ParseTypedef (const Scope& scope);
     void ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef);
     
@@ -147,24 +89,16 @@ namespace s1
     typedef parser::SemanticsHandler::FunctionPtr Function;
     void ParseFuncDeclare (const Scope& scope);
     void ParseFuncDeclare (const Scope& scope, const parser::ast::FunctionDecl& astFunctionDecl);
-    parser::ast::FunctionDeclPtr AstParseFunctionDecl ();
     void ParseFuncParamFormal (const Scope& scope,
                                parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
                                const parser::ast::FunctionDecl& astFunctionDecl);
-    std::vector<parser::ast::ExprPtr> AstParseFuncParamActual ();
     
     // Variables
-    parser::ast::VarsDeclPtr AstParseVarsDecl (bool isConst = false);
     void ParseVarDeclare (const Scope& scope);
     void ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl);
 	
     // Constants
     void ParseConstDeclare (const Scope& scope);
-
-    // Branches, Loops
-    parser::ast::BlockStatementForPtr AstParseFor ();
-    parser::ast::BlockStatementIfPtr AstParseIf ();
-    parser::ast::BlockStatementWhilePtr AstParseWhile ();
   };
 } // namespace s1
 
