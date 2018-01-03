@@ -46,6 +46,7 @@ if(CXXTEST_FOUND)
       ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlock.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlockStrict.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/AstExpr.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstProgram.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/AstTypes.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlock.h
       ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlockStrict.h

@@ -33,6 +33,7 @@ public:
 
   using s1::Parser::AstParseBlock;
   using s1::Parser::AstParseExpression;
+  using s1::Parser::AstParseProgram;
   s1::parser::ast::TypePtr AstParseType ()
   {
     auto astType = s1::Parser::AstParseType ();
