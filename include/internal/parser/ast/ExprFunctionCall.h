@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -22,7 +22,9 @@
 #define S1_PARSER_AST_EXPRFUNCTIONCALL_H_
 
 #include "forwarddecl.h"
-#include "Node.h"
+#include "Identifier.h"
+#include "Expr.h"
+#include "VisitorExpr.h"
 
 #include <vector>
 
@@ -35,7 +37,7 @@ namespace s1
     namespace ast
     {
       /// AST function call expression
-      struct ExprFunctionCall : public Node
+      struct ExprFunctionCall : public Expr
       {
         boost::variant<Identifier, TypePtr> identifierOrType;
         std::vector<ExprPtr> args;
@@ -43,6 +45,8 @@ namespace s1
         template<typename U, typename V>
         ExprFunctionCall (U&& id, V&& args)
           : identifierOrType (std::forward<U> (id)), args (std::forward<V> (args)) {}
+
+        void Visit (VisitorExpr& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

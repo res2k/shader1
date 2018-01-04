@@ -23,6 +23,12 @@
 #include "parser/ast/BlockStatement.h"
 #include "parser/ast/BlockStatementReturn.h"
 #include "parser/ast/Expr.h"
+#include "parser/ast/ExprArrayElement.h"
+#include "parser/ast/ExprAttribute.h"
+#include "parser/ast/ExprBinary.h"
+#include "parser/ast/ExprFunctionCall.h"
+#include "parser/ast/ExprUnary.h"
+#include "parser/ast/ExprTernary.h"
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Identifier.h"
@@ -30,6 +36,7 @@
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
+#include "parser/ast/VisitorExpr.h"
 #include "parser/AstBuilder.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
@@ -170,38 +177,51 @@ namespace s1
     }
   }
 
+  class Parser::VisitorExprImpl : public ast::VisitorExpr
+  {
+    Parser& parent;
+    const Scope& scope;
+  public:
+    Parser::Expression parsedExpr;
+
+    VisitorExprImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope) {}
+
+    void operator() (const ast::ExprArrayElement& expr) override
+    {
+      parsedExpr = parent.ParseExprArrayElement (scope, expr);
+    }
+    void operator() (const ast::ExprAttribute& expr) override
+    {
+      parsedExpr = parent.ParseExprAttribute (scope, expr);
+    }
+    void operator() (const ast::ExprBinary& expr) override
+    {
+      parsedExpr = parent.ParseExprBinary (scope, expr);
+    }
+    void operator() (const ast::ExprFunctionCall& expr) override
+    {
+      parsedExpr = parent.ParseExprFunctionCall (scope, expr);
+    }
+    void operator() (const ast::ExprTernary& expr) override
+    {
+      parsedExpr = parent.ParseExprTernary (scope, expr);
+    }
+    void operator() (const ast::ExprUnary& expr) override
+    {
+      parsedExpr = parent.ParseExprUnary (scope, expr);
+    }
+    void operator() (const ast::ExprValue& expr) override
+    {
+      parsedExpr = parent.ParseExprValue (scope, expr);
+    }
+  };
+
   Parser::Expression Parser::ParseExpression (const Scope& scope, const ast::Expr& astExpr)
   {
-    if (auto exprValue = boost::get<ast::ExprValuePtr> (&astExpr.value))
-    {
-      return ParseExprValue (scope, **exprValue);
-    }
-    else if (auto exprBinary = boost::get<ast::ExprBinaryPtr> (&astExpr.value))
-    {
-      return ParseExprBinary (scope, **exprBinary);
-    }
-    else if (auto exprUnary = boost::get<ast::ExprUnaryPtr> (&astExpr.value))
-    {
-      return ParseExprUnary (scope, **exprUnary);
-    }
-    else if (auto exprTernary = boost::get<ast::ExprTernaryPtr> (&astExpr.value))
-    {
-      return ParseExprTernary (scope, **exprTernary);
-    }
-    else if (auto exprFunctionCall = boost::get<ast::ExprFunctionCallPtr> (&astExpr.value))
-    {
-      return ParseExprFunctionCall (scope, **exprFunctionCall);
-    }
-    else if (auto exprAttribute = boost::get<ast::ExprAttributePtr> (&astExpr.value))
-    {
-      return ParseExprAttribute (scope, **exprAttribute);
-    }
-    else if (auto exprArrayElement = boost::get<ast::ExprArrayElementPtr> (&astExpr.value))
-    {
-      return ParseExprArrayElement (scope, **exprArrayElement);
-    }
-    // else
-    S1_ASSERT_NOT_REACHED(Expression ());
+    VisitorExprImpl visitor (*this, scope);
+    astExpr.Visit (visitor);
+    S1_ASSERT(visitor.parsedExpr, Expression ());
+    return std::move (visitor.parsedExpr);
   }
 
   Parser::Expression Parser::ParseExprValue (const Scope& scope, const ast::ExprValue& astExprValue)

@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,8 @@
 #ifndef S1_PARSER_AST_EXPRUNARY_H_
 #define S1_PARSER_AST_EXPRUNARY_H_
 
-#include "Node.h"
+#include "Expr.h"
+#include "VisitorExpr.h"
 
 namespace s1
 {
@@ -30,12 +31,14 @@ namespace s1
     namespace ast
     {
       /// AST unary expression
-      struct ExprUnary : public Node
+      struct ExprUnary : public Expr
       {
         lexer::Token op;
         ExprPtr right;
 
         ExprUnary (lexer::Token op, ExprPtr&& right) : op (op), right (std::move (right)) {}
+
+        void Visit (VisitorExpr& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

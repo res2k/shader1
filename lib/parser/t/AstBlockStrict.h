@@ -143,7 +143,7 @@ public:
     TS_ASSERT_EQUALS(varsDecl->vars.size(), 1u);
     TS_ASSERT_EQUALS(varsDecl->vars[0].identifier.GetString(), "a");
 
-    const auto& varsDeclInitExprBinary = boost::get<ast::ExprBinaryPtr> (varsDecl->vars[0].initializer->value);
+    const auto varsDeclInitExprBinary = dynamic_cast<const ast::ExprBinary*> (varsDecl->vars[0].initializer.get());
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->left), int, 1);
     TS_ASSERT_EQUALS(varsDeclInitExprBinary->op.typeOrID, s1::lexer::Plus);
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->right), int, 2);
@@ -172,7 +172,7 @@ public:
     TS_ASSERT_EQUALS(varsDecl->vars.size(), 2u);
     TS_ASSERT_EQUALS(varsDecl->vars[0].identifier.GetString(), "a");
 
-    const auto& varsDeclInitExprBinary = boost::get<ast::ExprBinaryPtr> (varsDecl->vars[0].initializer->value);
+    const auto varsDeclInitExprBinary = dynamic_cast<const ast::ExprBinary*> (varsDecl->vars[0].initializer.get());
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->left), int, 1);
     TS_ASSERT_EQUALS(varsDeclInitExprBinary->op.typeOrID, s1::lexer::Plus);
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->right), int, 2);
@@ -205,7 +205,7 @@ public:
     TS_ASSERT_EQUALS(varsDecl->vars.size(), 1u);
     TS_ASSERT_EQUALS(varsDecl->vars[0].identifier.GetString(), "a");
 
-    const auto& varsDeclInitExprBinary = boost::get<ast::ExprBinaryPtr> (varsDecl->vars[0].initializer->value);
+    const auto varsDeclInitExprBinary = dynamic_cast<const ast::ExprBinary*> (varsDecl->vars[0].initializer.get());
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->left), int, 1);
     TS_ASSERT_EQUALS(varsDeclInitExprBinary->op.typeOrID, s1::lexer::Plus);
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->right), int, 2);

@@ -20,6 +20,7 @@
 #include "base/common.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
+#include "parser/ast/ExprBinary.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"
@@ -46,7 +47,7 @@ public:
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto& block0Expr = boost::get<ast::ExprPtr> (block->statements[0]->value);
-    const auto& block0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0Expr->value);
+    const auto block0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->left), "a");
     TS_ASSERT_EQUALS(block0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->right), "b");
@@ -70,7 +71,7 @@ public:
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto& block0Expr = boost::get<ast::ExprPtr> (block->statements[0]->value);
-    const auto& block0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0Expr->value);
+    const auto block0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->left), "a");
     TS_ASSERT_EQUALS(block0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->right), "b");
@@ -97,7 +98,7 @@ public:
 
     TS_ASSERT_EQUALS(block0Branch->ifBlock->statements.size(), 1u);
     const auto& block0BranchIf0Expr = boost::get<ast::ExprPtr> (block0Branch->ifBlock->statements[0]->value);
-    const auto& block0BranchIf0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0BranchIf0Expr->value);
+    const auto block0BranchIf0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0BranchIf0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BranchIf0ExprBinary->left), "c");
     TS_ASSERT_EQUALS(block0BranchIf0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BranchIf0ExprBinary->right), "d");
@@ -126,14 +127,14 @@ public:
 
     TS_ASSERT_EQUALS(block0Branch->ifBlock->statements.size(), 1u);
     const auto& block0BranchIf0Expr = boost::get<ast::ExprPtr> (block0Branch->ifBlock->statements[0]->value);
-    const auto& block0BranchIf0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0BranchIf0Expr->value);
+    const auto block0BranchIf0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0BranchIf0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BranchIf0ExprBinary->left), "c");
     TS_ASSERT_EQUALS(block0BranchIf0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BranchIf0ExprBinary->right), "d");
 
     TS_ASSERT_EQUALS(block0Branch->elseBlock->statements.size(), 1u);
     const auto& block0BranchElse0Expr = boost::get<ast::ExprPtr> (block0Branch->elseBlock->statements[0]->value);
-    const auto& block0BranchElse0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0BranchElse0Expr->value);
+    const auto block0BranchElse0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0BranchElse0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BranchElse0ExprBinary->left), "c");
     TS_ASSERT_EQUALS(block0BranchElse0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BranchElse0ExprBinary->right), "e");
@@ -160,7 +161,7 @@ public:
 
     TS_ASSERT_EQUALS(block0While->bodyBlock->statements.size(), 1u);
     const auto& block0Body0Expr = boost::get<ast::ExprPtr> (block0While->bodyBlock->statements[0]->value);
-    const auto& block0Body0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0Body0Expr->value);
+    const auto block0Body0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0Body0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0Body0ExprBinary->left), "c");
     TS_ASSERT_EQUALS(block0Body0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0Body0ExprBinary->right), "d");
@@ -186,17 +187,17 @@ public:
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0For->initExpr), "a");
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0For->condition), "b");
 
-    const auto& block0ForFootExprBinary = boost::get<ast::ExprBinaryPtr> (block0For->footExpr->value);
+    const auto block0ForFootExprBinary = dynamic_cast<const ast::ExprBinary*> (block0For->footExpr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ForFootExprBinary->left), "b");
     TS_ASSERT_EQUALS(block0ForFootExprBinary->op.typeOrID, s1::lexer::Assign);
-    const auto& block0ForFootExprBinaryRight = boost::get<ast::ExprBinaryPtr> (block0ForFootExprBinary->right->value);
+    const auto block0ForFootExprBinaryRight = dynamic_cast<const ast::ExprBinary*> (block0ForFootExprBinary->right.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ForFootExprBinaryRight->left), "b");
     TS_ASSERT_EQUALS(block0ForFootExprBinaryRight->op.typeOrID, s1::lexer::Plus);
     AST_TEST_EXPR_IS_NUMERIC(*(block0ForFootExprBinaryRight->right), int, 1);
 
     TS_ASSERT_EQUALS(block0For->bodyBlock->statements.size(), 1u);
     const auto& block0Body0Expr = boost::get<ast::ExprPtr> (block0For->bodyBlock->statements[0]->value);
-    const auto& block0Body0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0Body0Expr->value);
+    const auto block0Body0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0Body0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0Body0ExprBinary->left), "c");
     TS_ASSERT_EQUALS(block0Body0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0Body0ExprBinary->right), "d");
@@ -222,7 +223,7 @@ public:
 
     TS_ASSERT_EQUALS(block0Block->statements.size(), 1u);
     const auto& block0BlockExpr = boost::get<ast::ExprPtr> (block0Block->statements[0]->value);
-    const auto& block0BlockExprBinary = boost::get<ast::ExprBinaryPtr> (block0BlockExpr->value);
+    const auto block0BlockExprBinary = dynamic_cast<const ast::ExprBinary*> (block0BlockExpr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BlockExprBinary->left), "a");
     TS_ASSERT_EQUALS(block0BlockExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0BlockExprBinary->right), "b");
@@ -246,13 +247,13 @@ public:
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);
     const auto& block0Expr = boost::get<ast::ExprPtr> (block->statements[0]->value);
-    const auto& block0ExprBinary = boost::get<ast::ExprBinaryPtr> (block0Expr->value);
+    const auto block0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->left), "a");
     TS_ASSERT_EQUALS(block0ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->right), "b");
 
     const auto& block1Expr = boost::get<ast::ExprPtr> (block->statements[1]->value);
-    const auto& block1ExprBinary = boost::get<ast::ExprBinaryPtr> (block1Expr->value);
+    const auto block1ExprBinary = dynamic_cast<const ast::ExprBinary*> (block1Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block1ExprBinary->left), "c");
     TS_ASSERT_EQUALS(block1ExprBinary->op.typeOrID, s1::lexer::Assign);
     AST_TEST_EXPR_IS_IDENTIFIER(*(block1ExprBinary->right), "d");

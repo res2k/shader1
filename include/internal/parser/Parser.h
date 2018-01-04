@@ -55,6 +55,7 @@ namespace s1
     void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);
     void ParseBlock (Block block, const parser::ast::Block& astBlock);
 
+    class VisitorExprImpl;
     typedef parser::SemanticsHandler::ExpressionPtr Expression;
     typedef parser::SemanticsHandler::NamePtr Name;
     Expression ParseExpression (const Scope& scope, const parser::ast::Expr& astExpr);

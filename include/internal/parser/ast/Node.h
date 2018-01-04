@@ -22,6 +22,7 @@
 #define S1_PARSER_AST_NODE_H_
 
 #include "forwarddecl.h"
+#include "lexer/TokenLocation.h"
 
 namespace s1
 {

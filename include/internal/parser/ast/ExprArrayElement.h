@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,8 @@
 #ifndef S1_PARSER_AST_EXPRARRAYELEMENT_H_
 #define S1_PARSER_AST_EXPRARRAYELEMENT_H_
 
-#include "Node.h"
+#include "Expr.h"
+#include "VisitorExpr.h"
 
 namespace s1
 {
@@ -30,13 +31,15 @@ namespace s1
     namespace ast
     {
       /// AST array element expression
-      struct ExprArrayElement : public Node
+      struct ExprArrayElement : public Expr
       {
         ExprPtr value;
         ExprPtr index;
 
         ExprArrayElement (ExprPtr&& value, ExprPtr&& index)
           : value (std::move (value)), index (std::move (index)) {}
+
+        void Visit (VisitorExpr& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

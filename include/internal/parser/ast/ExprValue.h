@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -22,9 +22,8 @@
 #define S1_PARSER_AST_EXPRVALUE_H_
 
 #include "forwarddecl.h"
-#include "Node.h"
-
-#include <boost/variant.hpp>
+#include "Expr.h"
+#include "VisitorExpr.h"
 
 namespace s1
 {
@@ -33,12 +32,14 @@ namespace s1
     namespace ast
     {
       /// AST expression value
-      struct ExprValue : public Node
+      struct ExprValue : public Expr
       {
         lexer::Token value;
 
         template<typename U>
         ExprValue (U&& arg) : value (std::forward<U> (arg)) {}
+
+        void Visit (VisitorExpr& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

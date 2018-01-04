@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -21,16 +21,7 @@
 #ifndef S1_PARSER_AST_EXPR_H_
 #define S1_PARSER_AST_EXPR_H_
 
-#include "ExprArrayElement.h"
-#include "ExprAttribute.h"
-#include "ExprBinary.h"
-#include "ExprFunctionCall.h"
-#include "ExprTernary.h"
-#include "ExprUnary.h"
-#include "ExprValue.h"
 #include "Node.h"
-
-#include <boost/variant.hpp>
 
 namespace s1
 {
@@ -38,19 +29,12 @@ namespace s1
   {
     namespace ast
     {
+      struct VisitorExpr;
+
       /// AST expression
       struct Expr : public Node
       {
-        boost::variant<ExprValuePtr,
-                       ExprBinaryPtr,
-                       ExprUnaryPtr,
-                       ExprTernaryPtr,
-                       ExprFunctionCallPtr,
-                       ExprAttributePtr,
-                       ExprArrayElementPtr> value;
-
-        template<typename U>
-        Expr (U&& arg) : value (std::forward<U> (arg)) {}
+        virtual void Visit (VisitorExpr& visitor) const = 0;
       };
     } // namespace ast
   } // namespace parser

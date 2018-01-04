@@ -24,6 +24,12 @@
 #include "parser/ast/BlockStatement.h"
 #include "parser/ast/BlockStatementReturn.h"
 #include "parser/ast/Expr.h"
+#include "parser/ast/ExprArrayElement.h"
+#include "parser/ast/ExprAttribute.h"
+#include "parser/ast/ExprBinary.h"
+#include "parser/ast/ExprFunctionCall.h"
+#include "parser/ast/ExprUnary.h"
+#include "parser/ast/ExprTernary.h"
 #include "parser/ast/ExprValue.h"
 #include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Identifier.h"
@@ -361,9 +367,8 @@ namespace s1
           // Assignment expression
           NextToken();
           auto assignedExpr = ParseExpression ();
-          ast::ExprBinaryPtr assignmentExpr (
+          expr.reset (
             new ast::ExprBinary (std::move (expr), opToken, std::move (assignedExpr)));;
-          expr.reset (new ast::Expr (std::move (assignmentExpr)));
         }
         else if (currentToken.typeOrID == lexer::TernaryIf)
         {
@@ -387,15 +392,14 @@ namespace s1
           if ((astValue->value.typeOrID != lexer::Identifier)
               || (currentToken.typeOrID != lexer::ParenL))
           {
-            expr.reset (new ast::Expr (std::move (astValue)));
+            expr = std::move (astValue);
           }
           else
           {
             // Expression is a function call
             auto params = ParseFuncParamActual ();
-            ast::ExprFunctionCallPtr funcCallExpr (new ast::ExprFunctionCall (
+            expr.reset (new ast::ExprFunctionCall (
               ast::Identifier{ astValue->value }, std::move (params)));
-            expr.reset (new ast::Expr (std::move (funcCallExpr)));
           }
         }
         if (!expr)
@@ -408,9 +412,8 @@ namespace s1
             if (astType.has_error ())
               throw Exception (astType.error ().error, astType.error ().token);
             auto params = ParseFuncParamActual ();
-            ast::ExprFunctionCallPtr funcCallExpr (new ast::ExprFunctionCall (
+            expr.reset (new ast::ExprFunctionCall (
               std::move (astType.value()), std::move (params)));
-            expr.reset (new ast::Expr (std::move (funcCallExpr)));
           }
           else if (currentToken.typeOrID == lexer::ParenL)
           {
@@ -460,8 +463,7 @@ namespace s1
           {
             NextToken ();
             auto attr = ParseIdentifier ();
-            auto attributeExpr = ast::ExprAttributePtr (new ast::ExprAttribute (std::move (expr), std::move (attr)));
-            expr.reset (new ast::Expr (std::move (attributeExpr)));
+            expr.reset (new ast::ExprAttribute (std::move (expr), std::move (attr)));
           }
           else if (currentToken.typeOrID == lexer::BracketL)
           {
@@ -469,8 +471,7 @@ namespace s1
             auto indexExpr = ParseExpression ();
             Expect (lexer::BracketR);
             NextToken();
-            auto arrayElementExpr = ast::ExprArrayElementPtr (new ast::ExprArrayElement (std::move (expr), std::move (indexExpr)));
-            expr.reset (new ast::Expr (std::move (arrayElementExpr)));
+            expr.reset (new ast::ExprArrayElement (std::move (expr), std::move (indexExpr)));
           }
           else
             break;
@@ -492,8 +493,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           auto expr2 = ParseExprUnary ();
-          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
-          expr.reset (new ast::Expr (std::move (binExpr)));
+          expr.reset (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
         }
         return expr;
     });
@@ -511,8 +511,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           auto expr2 = ParseExprMultiplication ();
-          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
-          expr.reset (new ast::Expr (std::move (binExpr)));
+          expr.reset (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
         }
         return expr;
       });
@@ -531,8 +530,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           expr = ParseExprBase ();
-          ast::ExprUnaryPtr unaryExpr (new ast::ExprUnary (opToken, std::move (expr)));
-          expr.reset (new ast::Expr (std::move (unaryExpr)));
+          expr.reset (new ast::ExprUnary (opToken, std::move (expr)));
         }
         else
           expr = ParseExprBase ();
@@ -551,8 +549,7 @@ namespace s1
         Expect (lexer::TernaryElse);
         NextToken();
         auto expr3 = ParseExpression ();
-        ast::ExprTernaryPtr ternaryExpr (new ast::ExprTernary (std::move (expr), std::move (expr2), std::move (expr3)));
-        return ast::ExprPtr (new ast::Expr (std::move (ternaryExpr)));
+        return ast::ExprPtr (new ast::ExprTernary (std::move (expr), std::move (expr2), std::move (expr3)));
       });
   }
 
@@ -568,8 +565,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           auto expr2 = ParseExprComparison ();
-          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
-          expr.reset (new ast::Expr (std::move (binExpr)));
+          expr.reset (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
         }
         return expr;
       });
@@ -589,8 +585,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           auto expr2 = ParseExprAddition ();
-          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
-          expr.reset (new ast::Expr (std::move (binExpr)));
+          expr.reset (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
         }
         return expr;
       });
@@ -607,8 +602,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           auto expr2 = ParseExprLogicAnd ();
-          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
-          expr.reset (new ast::Expr (std::move (binExpr)));
+          expr.reset (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
         }
         return expr;
       });
@@ -625,8 +619,7 @@ namespace s1
           auto opToken = currentToken;
           NextToken();
           auto expr2 = ParseExprCompareEqual ();
-          ast::ExprBinaryPtr binExpr (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
-          expr.reset (new ast::Expr (std::move (binExpr)));
+          expr.reset (new ast::ExprBinary (std::move (expr), opToken, std::move (expr2)));
         }
         return expr;
       });

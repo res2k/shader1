@@ -267,7 +267,7 @@ public:
 
       TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
       const auto& expr = boost::get<ast::ExprPtr> (functionDecl->body->statements[0]->value);
-      const auto& funcCall = boost::get<ast::ExprFunctionCallPtr> (expr->value);
+      const auto funcCall = dynamic_cast<const ast::ExprFunctionCall*> (expr.get());
       const auto& funcCallIdent = boost::get<ast::Identifier> (funcCall->identifierOrType);
       TS_ASSERT_EQUALS(funcCallIdent.GetString(), "Foo");
       TS_ASSERT(funcCall->args.empty());
@@ -316,7 +316,7 @@ public:
       TS_ASSERT_EQUALS(varsDecl->vars.size(), 1u);
       TS_ASSERT_EQUALS(varsDecl->vars[0].identifier.GetString(), "x");
 
-      const auto& varInitFuncCall = boost::get<ast::ExprFunctionCallPtr> (varsDecl->vars[0].initializer->value);
+      const auto varInitFuncCall = dynamic_cast<const ast::ExprFunctionCall*> (varsDecl->vars[0].initializer.get());
       const auto& varInitFuncCallIdent = boost::get<ast::Identifier> (varInitFuncCall->identifierOrType);
       TS_ASSERT_EQUALS(varInitFuncCallIdent.GetString(), "Foo");
       TS_ASSERT(varInitFuncCall->args.empty());
@@ -354,10 +354,10 @@ public:
     TS_ASSERT(!varsDecl->vars[0].initializer);
 
     const auto& assignExpr = boost::get<ast::ExprPtr> (functionDecl->body->statements[1]->value);
-    const auto& assignExprBinary = boost::get<ast::ExprBinaryPtr> (assignExpr->value);
+    const auto assignExprBinary = dynamic_cast<const ast::ExprBinary*> (assignExpr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(assignExprBinary->left), "x");
     TS_ASSERT_EQUALS(assignExprBinary->op.typeOrID, s1::lexer::Assign);
-    const auto& assignRightExprFunctionCall = boost::get<ast::ExprFunctionCallPtr> (assignExprBinary->right->value);
+    const auto assignRightExprFunctionCall = dynamic_cast<const ast::ExprFunctionCall*> (assignExprBinary->right.get());
     const auto& assignRightExprFunctionType = boost::get<ast::TypePtr> (assignRightExprFunctionCall->identifierOrType);
     AST_TEST_TYPE_IS_WELL_KNOWN(*assignRightExprFunctionType, kwFloat);
     TS_ASSERT_EQUALS(assignRightExprFunctionCall->args.size(), 1u);
@@ -397,7 +397,7 @@ public:
     TS_ASSERT(!varsDecl->vars[1].initializer);
 
     const auto& assignExpr = boost::get<ast::ExprPtr> (functionDecl->body->statements[1]->value);
-    const auto& assignExprBinary = boost::get<ast::ExprBinaryPtr> (assignExpr->value);
+    const auto assignExprBinary = dynamic_cast<const ast::ExprBinary*> (assignExpr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(assignExprBinary->left), "x");
     TS_ASSERT_EQUALS(assignExprBinary->op.typeOrID, s1::lexer::Plus);
     AST_TEST_EXPR_IS_IDENTIFIER(*(assignExprBinary->right), "y");

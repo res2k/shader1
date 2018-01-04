@@ -21,6 +21,8 @@
 #ifndef PARSER_T_ASTMACROS_H_
 #define PARSER_T_ASTMACROS_H_
 
+#include "parser/ast/ExprValue.h"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/preprocessor/cat.hpp>
 
@@ -111,15 +113,15 @@
 // Check if an ast::Expr is an identifier
 #define AST_TEST_EXPR_IS_IDENTIFIER(EXPR, TEST_IDENTIFIER)                          \
   do {                                                                              \
-    const auto& astExprValue = boost::get<ast::ExprValuePtr> ((EXPR).value);        \
-    AST_TEST_EXPRVALUE_IS_IDENTIFIER(*astExprValue, TEST_IDENTIFIER);               \
+    const auto& astExprValue = dynamic_cast<const ast::ExprValue&> ((EXPR));        \
+    AST_TEST_EXPRVALUE_IS_IDENTIFIER(astExprValue, TEST_IDENTIFIER);                \
   } while (0)
 
 // Check if an ast::Expr is an integer numeric
 #define AST_TEST_EXPR_IS_NUMERIC(EXPR, TYPE, TEST_VALUE)                            \
   do {                                                                              \
-    const auto& astExprValue = boost::get<ast::ExprValuePtr> ((EXPR).value);        \
-    AST_TEST_EXPRVALUE_IS_NUMERIC(*astExprValue, TYPE, TEST_VALUE);                 \
+    const auto& astExprValue = dynamic_cast<const ast::ExprValue&> ((EXPR));        \
+    AST_TEST_EXPRVALUE_IS_NUMERIC(astExprValue, TYPE, TEST_VALUE);                  \
   } while (0)
 
 #endif // PARSER_T_ASTMACROS_H_

@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,8 @@
 #ifndef S1_PARSER_AST_EXPRTERNARY_H_
 #define S1_PARSER_AST_EXPRTERNARY_H_
 
-#include "Node.h"
+#include "Expr.h"
+#include "VisitorExpr.h"
 
 namespace s1
 {
@@ -30,7 +31,7 @@ namespace s1
     namespace ast
     {
       /// AST ternary expression
-      struct ExprTernary : public Node
+      struct ExprTernary : public Expr
       {
         ExprPtr cond;
         ExprPtr trueExpr;
@@ -38,6 +39,8 @@ namespace s1
 
         ExprTernary (ExprPtr&& cond, ExprPtr&& trueExpr, ExprPtr&& falseExpr)
           : cond (std::move (cond)), trueExpr (std::move (trueExpr)), falseExpr (std::move (falseExpr)) {}
+
+        void Visit (VisitorExpr& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser
