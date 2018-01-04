@@ -19,7 +19,10 @@
 
 #include "base/common.h"
 
+#include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Program.h"
+#include "parser/ast/ProgramStatementFunctionDecl.h"
+#include "parser/ast/ProgramStatementVarsDecl.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"
@@ -45,7 +48,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());
@@ -68,7 +71,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
 
@@ -109,7 +112,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());
@@ -140,7 +143,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());
@@ -172,7 +175,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
-    const auto& globalVarsDecl = boost::get<ast::VarsDeclPtr> (program->statements[0]);
+    const auto& globalVarsDecl = dynamic_cast<const ast::ProgramStatementVarsDecl*> (program->statements[0].get())->varsDecl;
     TS_ASSERT(!globalVarsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*globalVarsDecl->type, kwInt);
 
@@ -180,7 +183,7 @@ public:
     TS_ASSERT_EQUALS(globalVarsDecl->vars[0].identifier.GetString(), "bar");
     TS_ASSERT(!globalVarsDecl->vars[0].initializer);
 
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[1]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[1].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());
@@ -211,7 +214,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
-    const auto& globalVarsDecl = boost::get<ast::VarsDeclPtr> (program->statements[0]);
+    const auto& globalVarsDecl = dynamic_cast<const ast::ProgramStatementVarsDecl*> (program->statements[0].get())->varsDecl;
     TS_ASSERT(globalVarsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*globalVarsDecl->type, kwInt);
 
@@ -219,7 +222,7 @@ public:
     TS_ASSERT_EQUALS(globalVarsDecl->vars[0].identifier.GetString(), "bar");
     AST_TEST_EXPR_IS_NUMERIC(*(globalVarsDecl->vars[0].initializer), int, 1);
 
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[1]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[1].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());
@@ -251,7 +254,7 @@ public:
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
     {
-      const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+      const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
       TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
       TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "Foo");
       TS_ASSERT(functionDecl->params.empty());
@@ -260,7 +263,7 @@ public:
     }
 
     {
-      const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[1]);
+      const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[1].get())->functionDecl;
       TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
       TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
       TS_ASSERT(functionDecl->params.empty());
@@ -291,7 +294,7 @@ public:
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
     {
-      const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+      const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
       const auto& resultType = boost::get<ast::TypePtr> (functionDecl->resultType);
       AST_TEST_TYPE_IS_WELL_KNOWN(*resultType, kwInt);
       TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "Foo");
@@ -303,7 +306,7 @@ public:
     }
 
     {
-      const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[1]);
+      const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[1].get())->functionDecl;
       TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
       TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
       TS_ASSERT(functionDecl->params.empty());
@@ -339,7 +342,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());
@@ -380,7 +383,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
-    const auto& functionDecl = boost::get<ast::FunctionDeclPtr> (program->statements[0]);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
     TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
     TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
     TS_ASSERT(functionDecl->params.empty());

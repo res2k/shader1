@@ -26,10 +26,16 @@ set(parser_sources_ast_h
     ${S1_INC}/parser/ast/forwarddecl.h
     ${S1_INC}/parser/ast/Identifier.h
     ${S1_INC}/parser/ast/Node.h
+    ${S1_INC}/parser/ast/Program.h
+    ${S1_INC}/parser/ast/ProgramStatement.h
+    ${S1_INC}/parser/ast/ProgramStatementFunctionDecl.h
+    ${S1_INC}/parser/ast/ProgramStatementTypedef.h
+    ${S1_INC}/parser/ast/ProgramStatementVarsDecl.h
     ${S1_INC}/parser/ast/Type.h
     ${S1_INC}/parser/ast/Typedef.h
     ${S1_INC}/parser/ast/VarsDecl.h
     ${S1_INC}/parser/ast/VisitorExpr.h
+    ${S1_INC}/parser/ast/VisitorProgramStatement.h
     )
 s1_add_library(parser
                SOURCES ${parser_sources} ${parser_sources_ast_h}

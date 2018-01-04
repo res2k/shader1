@@ -33,6 +33,9 @@
 #include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Identifier.h"
 #include "parser/ast/Program.h"
+#include "parser/ast/ProgramStatementFunctionDecl.h"
+#include "parser/ast/ProgramStatementTypedef.h"
+#include "parser/ast/ProgramStatementVarsDecl.h"
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
@@ -66,6 +69,27 @@ namespace s1
     }
   }
 
+  class Parser::VisitorProgramStatementImpl : public ast::VisitorProgramStatement
+  {
+    Parser& parent;
+    const Scope& scope;
+  public:
+    VisitorProgramStatementImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope) {}
+
+    void operator() (const ast::ProgramStatementFunctionDecl& statement) override
+    {
+      parent.ParseFuncDeclare (scope, *statement.functionDecl);
+    }
+    void operator() (const ast::ProgramStatementTypedef& statement) override
+    {
+      parent.ParseTypedef (scope, *statement.typeDef);
+    }
+    void operator() (const ast::ProgramStatementVarsDecl& statement) override
+    {
+      parent.ParseVarDeclare (scope, *statement.varsDecl);
+    }
+  };
+
   void Parser::ParseProgram ()
   {
     Scope globalScope (semanticsHandler.CreateScope (builtinScope, SemanticsHandler::Global));
@@ -75,24 +99,10 @@ namespace s1
 
   void Parser::ParseProgramStatements (const Scope& scope, const ast::Program& astProgram)
   {
+    VisitorProgramStatementImpl visitor (*this, scope);
     for (const auto& statement : astProgram.statements)
     {
-      if (auto astTypedef = boost::get<ast::TypedefPtr> (&statement))
-      {
-        ParseTypedef (scope, **astTypedef);
-      }
-      else if (auto astVarsDecl = boost::get<ast::VarsDeclPtr> (&statement))
-      {
-        ParseVarDeclare (scope, **astVarsDecl);
-      }
-      else if (auto astFuncDecl = boost::get<ast::FunctionDeclPtr> (&statement))
-      {
-        ParseFuncDeclare (scope, **astFuncDecl);
-      }
-      else
-      {
-        S1_ASSERT_NOT_REACHED_MSG("unhandled program statement", S1_ASSERT_RET_VOID);
-      }
+      statement->Visit (visitor);
     }
   }
 

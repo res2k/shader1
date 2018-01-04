@@ -16,15 +16,12 @@
 */
 
 /**\file
- * AST program
+ * AST program statement
  */
-#ifndef S1_PARSER_AST_PROGRAM_H_
-#define S1_PARSER_AST_PROGRAM_H_
+#ifndef S1_PARSER_AST_PROGRAMSTATEMENT_H_
+#define S1_PARSER_AST_PROGRAMSTATEMENT_H_
 
 #include "Node.h"
-#include "ProgramStatement.h"
-
-#include <boost/container/deque.hpp>
 
 namespace s1
 {
@@ -32,16 +29,15 @@ namespace s1
   {
     namespace ast
     {
-      /// AST program
-      struct Program : public Node
-      {
-        typedef boost::container::deque<ProgramStatementPtr> StatementsContainer;
-        StatementsContainer statements;
+      struct VisitorProgramStatement;
 
-        Program (StatementsContainer&& statements) : statements (std::move (statements)) {}
+      /// AST program statement
+      struct ProgramStatement : public Node
+      {
+        virtual void Visit (VisitorProgramStatement& visitor) const = 0;
       };
     } // namespace ast
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_PROGRAM_H_
+#endif // S1_PARSER_AST_PROGRAMSTATEMENT_H_

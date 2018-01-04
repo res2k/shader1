@@ -49,6 +49,7 @@ namespace s1
     parser::SemanticsHandler::ScopePtr builtinScope;
 
     // Rough structure
+    class VisitorProgramStatementImpl;
     typedef parser::SemanticsHandler::BlockPtr Block;
     typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();

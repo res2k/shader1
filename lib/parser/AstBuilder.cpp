@@ -34,6 +34,9 @@
 #include "parser/ast/FunctionDecl.h"
 #include "parser/ast/Identifier.h"
 #include "parser/ast/Program.h"
+#include "parser/ast/ProgramStatementFunctionDecl.h"
+#include "parser/ast/ProgramStatementTypedef.h"
+#include "parser/ast/ProgramStatementVarsDecl.h"
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
@@ -140,7 +143,7 @@ namespace s1
         ast::Program::StatementsContainer statements;
         while (true)
         {
-          ast::Program::Statement statement;
+          ast::ProgramStatementPtr statement;
           int beyondType;
           bool isType = IsWellKnownType (beyondType);
           if (currentToken.typeOrID == lexer::kwConst)
@@ -150,7 +153,7 @@ namespace s1
             auto decl = ParseVarsDecl (true);
             Expect (lexer::Semicolon);
             NextToken();
-            statement = std::move (decl);
+            statement.reset (new ast::ProgramStatementVarsDecl (std::move (decl)));
           }
           else if (isType
                   || (currentToken.typeOrID == lexer::kwVoid)
@@ -161,7 +164,7 @@ namespace s1
             {
               /* Function declaration */
               auto decl = ParseFunctionDecl ();
-              statement = std::move (decl);
+              statement.reset (new ast::ProgramStatementFunctionDecl (std::move (decl)));
             }
             else
             {
@@ -169,7 +172,7 @@ namespace s1
               auto decl = ParseVarsDecl (false);
               Expect (lexer::Semicolon);
               NextToken();
-              statement = std::move (decl);
+              statement.reset (new ast::ProgramStatementVarsDecl (std::move (decl)));
             }
           }
           else if (currentToken.typeOrID == lexer::kwTypedef)
@@ -178,7 +181,7 @@ namespace s1
             auto typeDef = ParseTypedef ();
             Expect (lexer::Semicolon);
             NextToken();
-            statement = std::move (typeDef);
+            statement.reset (new ast::ProgramStatementTypedef (std::move (typeDef)));
           }
           else
             /* Unknown token - throw error below */

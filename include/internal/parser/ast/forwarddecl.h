@@ -65,6 +65,14 @@ namespace s1
       typedef std::unique_ptr<FunctionDecl> FunctionDeclPtr;
       struct Program;
       typedef std::unique_ptr<Program> ProgramPtr;
+      struct ProgramStatement;
+      typedef std::unique_ptr<ProgramStatement> ProgramStatementPtr;
+      struct ProgramStatementFunctionDecl;
+      typedef std::unique_ptr<ProgramStatementFunctionDecl> ProgramStatementFunctionDeclPtr;
+      struct ProgramStatementTypedef;
+      typedef std::unique_ptr<ProgramStatementTypedef> ProgramStatementTypedefPtr;
+      struct ProgramStatementVarsDecl;
+      typedef std::unique_ptr<ProgramStatementVarsDecl> ProgramStatementVarsDeclPtr;
       struct Type;
       typedef std::unique_ptr<Type> TypePtr;
       struct Typedef;
