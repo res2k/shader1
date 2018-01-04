@@ -34,6 +34,7 @@ set(parser_sources_ast_h
     ${S1_INC}/parser/ast/Type.h
     ${S1_INC}/parser/ast/Typedef.h
     ${S1_INC}/parser/ast/VarsDecl.h
+    ${S1_INC}/parser/ast/VisitorBlockStatement.h
     ${S1_INC}/parser/ast/VisitorExpr.h
     ${S1_INC}/parser/ast/VisitorProgramStatement.h
     )

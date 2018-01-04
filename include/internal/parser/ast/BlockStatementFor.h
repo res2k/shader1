@@ -22,7 +22,8 @@
 #define S1_PARSER_AST_BLOCKSTATEMENTFOR_H_
 
 #include "Expr.h"
-#include "Node.h"
+#include "BlockStatement.h"
+#include "VisitorBlockStatement.h"
 
 namespace s1
 {
@@ -31,7 +32,7 @@ namespace s1
     namespace ast
     {
       /// AST 'for' block statement
-      struct BlockStatementFor : public Node
+      struct BlockStatementFor : public BlockStatement
       {
         ExprPtr initExpr; // may be none
         ExprPtr condition; // may be none
@@ -41,6 +42,8 @@ namespace s1
         BlockStatementFor (ExprPtr&& initExpr, ExprPtr&& condition, ExprPtr&& footExpr, BlockPtr&& bodyBlock)
           : initExpr (std::move (initExpr)), condition (std::move (condition)), footExpr (std::move (footExpr)),
             bodyBlock (std::move (bodyBlock)) {}
+
+        void Visit (VisitorBlockStatement& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

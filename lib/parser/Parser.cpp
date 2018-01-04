@@ -21,7 +21,14 @@
 
 #include "parser/ast/Block.h"
 #include "parser/ast/BlockStatement.h"
+#include "parser/ast/BlockStatementExpr.h"
+#include "parser/ast/BlockStatementFor.h"
+#include "parser/ast/BlockStatementIf.h"
+#include "parser/ast/BlockStatementNestedBlock.h"
 #include "parser/ast/BlockStatementReturn.h"
+#include "parser/ast/BlockStatementTypedef.h"
+#include "parser/ast/BlockStatementVarsDecl.h"
+#include "parser/ast/BlockStatementWhile.h"
 #include "parser/ast/Expr.h"
 #include "parser/ast/ExprArrayElement.h"
 #include "parser/ast/ExprAttribute.h"
@@ -106,84 +113,92 @@ namespace s1
     }
   }
 
+  class Parser::VisitorBlockStatementImpl : public ast::VisitorBlockStatement
+  {
+    Parser& parent;
+    Block block;
+    Scope scope;
+  public:
+    VisitorBlockStatementImpl (Parser& parent, Block block)
+      : parent (parent), block (block), scope (block->GetInnerScope()) {}
+
+    void operator() (const ast::BlockStatementExpr& statement) override
+    {
+      auto expr = parent.ParseExpression (scope, *statement.expr);
+      block->AddExpressionCommand (expr);
+    }
+    void operator() (const ast::BlockStatementFor& statement) override
+    {
+      Expression initExpr, loopTestExpr, loopFootExpr;
+      if (statement.initExpr)
+      {
+        initExpr = parent.ParseExpression (scope, *statement.initExpr);
+      }
+      if (statement.condition)
+      {
+        loopTestExpr = parent.ParseExpression (scope, *statement.condition);
+      }
+      if (statement.footExpr)
+      {
+        loopFootExpr = parent.ParseExpression (scope, *statement.footExpr);
+      }
+      Block newBlock = parent.semanticsHandler.CreateBlock (scope);
+      parent.ParseBlock (newBlock, *statement.bodyBlock);
+      block->AddForLoop (initExpr, loopTestExpr, loopFootExpr, newBlock);
+    }
+    void operator() (const ast::BlockStatementIf& statement) override
+    {
+      auto conditionExpr = parent.ParseExpression (scope, *statement.condition);
+      Block ifBlock = parent.semanticsHandler.CreateBlock (scope);
+      parent.ParseBlock (ifBlock, *statement.ifBlock);
+      Block elseBlock;
+      if (statement.elseBlock)
+      {
+        elseBlock = parent.semanticsHandler.CreateBlock (scope);
+        parent.ParseBlock (elseBlock, *statement.elseBlock);
+      }
+      block->AddBranching (conditionExpr, ifBlock, elseBlock);
+    }
+    void operator() (const ast::BlockStatementNestedBlock& statement) override
+    {
+      /* nested block */
+      Block newBlock = parent.semanticsHandler.CreateBlock (scope);
+      parent.ParseBlock (newBlock, *statement.block);
+      block->AddNestedBlock (newBlock);
+    }
+    void operator() (const ast::BlockStatementReturn& statement) override
+    {
+      Expression returnExpr;
+      if (statement.expr)
+      {
+        /* Return with some value */
+        returnExpr = parent.ParseExpression (scope, *statement.expr);
+      }
+      block->AddReturnCommand (returnExpr);
+    }
+    void operator() (const ast::BlockStatementTypedef& statement) override
+    {
+      parent.ParseTypedef (scope, *statement.typeDef);
+    }
+    void operator() (const ast::BlockStatementVarsDecl& statement) override
+    {
+      parent.ParseVarDeclare (scope, *statement.varsDecl);
+    }
+    void operator() (const ast::BlockStatementWhile& statement) override
+    {
+      auto loopTestExpr = parent.ParseExpression (scope, *statement.condition);
+      Block newBlock = parent.semanticsHandler.CreateBlock (scope);
+      parent.ParseBlock (newBlock, *statement.bodyBlock);
+      block->AddWhileLoop (loopTestExpr, newBlock);
+    }
+  };
+
   void Parser::ParseBlock (Block block, const parser::ast::Block& astBlock)
   {
-    Scope blockScope = block->GetInnerScope();
+    VisitorBlockStatementImpl visitor (*this, block);
     for (const auto& statement : astBlock.statements)
     {
-      if (auto astVarsDecl = boost::get<ast::VarsDeclPtr> (&statement->value))
-      {
-        ParseVarDeclare (blockScope, **astVarsDecl);
-      }
-      else if (auto astTypedef = boost::get<ast::TypedefPtr> (&statement->value))
-      {
-        ParseTypedef (blockScope, **astTypedef);
-      }
-      else if (auto astExpr = boost::get<ast::ExprPtr> (&statement->value))
-      {
-        auto expr = ParseExpression (blockScope, **astExpr);
-        block->AddExpressionCommand (expr);
-      }
-      else if (auto astStatementReturn = boost::get<ast::BlockStatementReturnPtr> (&statement->value))
-      {
-        Expression returnExpr;
-        if ((*astStatementReturn)->expr)
-        {
-          /* Return with some value */
-          returnExpr = ParseExpression (blockScope, *(*astStatementReturn)->expr);
-        }
-        block->AddReturnCommand (returnExpr);
-      }
-      else if (auto astStatementFor = boost::get<ast::BlockStatementForPtr> (&statement->value))
-      {
-        Expression initExpr, loopTestExpr, loopFootExpr;
-        if ((*astStatementFor)->initExpr)
-        {
-          initExpr = ParseExpression (blockScope, *(*astStatementFor)->initExpr);
-        }
-        if ((*astStatementFor)->condition)
-        {
-          loopTestExpr = ParseExpression (blockScope, *(*astStatementFor)->condition);
-        }
-        if ((*astStatementFor)->footExpr)
-        {
-          loopFootExpr = ParseExpression (blockScope, *(*astStatementFor)->footExpr);
-        }
-        Block newBlock = semanticsHandler.CreateBlock (blockScope);
-        ParseBlock (newBlock, *(*astStatementFor)->bodyBlock);
-        block->AddForLoop (initExpr, loopTestExpr, loopFootExpr, newBlock);
-      }
-      else if (auto astStatementIf = boost::get<ast::BlockStatementIfPtr> (&statement->value))
-      {
-        auto conditionExpr = ParseExpression (blockScope, *(*astStatementIf)->condition);
-        Block ifBlock = semanticsHandler.CreateBlock (blockScope);
-        ParseBlock (ifBlock, *(*astStatementIf)->ifBlock);
-        Block elseBlock;
-        if ((*astStatementIf)->elseBlock)
-        {
-          elseBlock = semanticsHandler.CreateBlock (blockScope);
-          ParseBlock (elseBlock, *(*astStatementIf)->elseBlock);
-        }
-        block->AddBranching (conditionExpr, ifBlock, elseBlock);
-      }
-      else if (auto astStatementWhile = boost::get<ast::BlockStatementWhilePtr> (&statement->value))
-      {
-        auto loopTestExpr = ParseExpression (blockScope, *(*astStatementWhile)->condition);
-        Block newBlock = semanticsHandler.CreateBlock (blockScope);
-        ParseBlock (newBlock, *(*astStatementWhile)->bodyBlock);
-        block->AddWhileLoop (loopTestExpr, newBlock);
-      }
-      else if (auto astBlock = boost::get<ast::BlockPtr> (&statement->value))
-      {
-        /* nested block */
-        Block newBlock = semanticsHandler.CreateBlock (blockScope);
-        ParseBlock (newBlock, **astBlock);
-        block->AddNestedBlock (newBlock);
-      }
-      else
-      {
-        S1_ASSERT_NOT_REACHED(S1_ASSERT_RET_VOID);
-      }
+      statement->Visit (visitor);
     }
   }
 

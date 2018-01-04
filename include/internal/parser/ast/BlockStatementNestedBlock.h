@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -16,10 +16,10 @@
 */
 
 /**\file
- * AST 'return' block statement
+ * AST block statement for nested block
  */
-#ifndef S1_PARSER_AST_BLOCKSTATEMENTRETURN_H_
-#define S1_PARSER_AST_BLOCKSTATEMENTRETURN_H_
+#ifndef S1_PARSER_AST_BLOCKSTATEMENTNESTEDBLOCK_H_
+#define S1_PARSER_AST_BLOCKSTATEMENTNESTEDBLOCK_H_
 
 #include "BlockStatement.h"
 #include "VisitorBlockStatement.h"
@@ -30,13 +30,12 @@ namespace s1
   {
     namespace ast
     {
-      /// AST 'return' block statement
-      struct BlockStatementReturn : public BlockStatement
+      /// AST block statement for nested block
+      struct BlockStatementNestedBlock : public BlockStatement
       {
-        ExprPtr expr; // may be none
+        BlockPtr block;
 
-        template<typename U>
-        BlockStatementReturn (U&& arg) : expr (std::forward<U> (arg)) {}
+        BlockStatementNestedBlock (BlockPtr&& block) : block (std::move (block)) {}
 
         void Visit (VisitorBlockStatement& visitor) const override { visitor (*this); }
       };
@@ -44,4 +43,4 @@ namespace s1
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_BLOCKSTATEMENTRETURN_H_
+#endif // S1_PARSER_AST_BLOCKSTATEMENTNESTEDBLOCK_H_

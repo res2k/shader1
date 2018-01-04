@@ -20,6 +20,7 @@
 #include "base/common.h"
 
 #include "parser/ast/FunctionDecl.h"
+#include "parser/ast/BlockStatementReturn.h"
 #include "parser/ast/Program.h"
 #include "parser/ast/ProgramStatementFunctionDecl.h"
 #include "parser/ast/ProgramStatementVarsDecl.h"
@@ -118,7 +119,7 @@ public:
     TS_ASSERT(functionDecl->params.empty());
 
     TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-    const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -149,7 +150,7 @@ public:
     TS_ASSERT(functionDecl->params.empty());
 
     TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-    const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -189,7 +190,7 @@ public:
     TS_ASSERT(functionDecl->params.empty());
 
     TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-    const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -228,7 +229,7 @@ public:
     TS_ASSERT(functionDecl->params.empty());
 
     TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-    const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -269,7 +270,7 @@ public:
       TS_ASSERT(functionDecl->params.empty());
 
       TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-      const auto& expr = boost::get<ast::ExprPtr> (functionDecl->body->statements[0]->value);
+      const auto& expr = dynamic_cast<const ast::BlockStatementExpr*> (functionDecl->body->statements[0].get())->expr;
       const auto funcCall = dynamic_cast<const ast::ExprFunctionCall*> (expr.get());
       const auto& funcCallIdent = boost::get<ast::Identifier> (funcCall->identifierOrType);
       TS_ASSERT_EQUALS(funcCallIdent.GetString(), "Foo");
@@ -301,7 +302,7 @@ public:
       TS_ASSERT(functionDecl->params.empty());
 
       TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-      const auto& returnStatement = boost::get<ast::BlockStatementReturnPtr> (functionDecl->body->statements[0]->value);
+      const auto returnStatement = dynamic_cast<const ast::BlockStatementReturn*> (functionDecl->body->statements[0].get());
       AST_TEST_EXPR_IS_NUMERIC(*(returnStatement->expr), int, 1);
     }
 
@@ -312,7 +313,7 @@ public:
       TS_ASSERT(functionDecl->params.empty());
 
       TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 1u);
-      const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+      const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
       TS_ASSERT(!varsDecl->isConst);
       AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -348,7 +349,7 @@ public:
     TS_ASSERT(functionDecl->params.empty());
 
     TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 2u);
-    const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -356,7 +357,7 @@ public:
     TS_ASSERT_EQUALS(varsDecl->vars[0].identifier.GetString(), "x");
     TS_ASSERT(!varsDecl->vars[0].initializer);
 
-    const auto& assignExpr = boost::get<ast::ExprPtr> (functionDecl->body->statements[1]->value);
+    const auto& assignExpr = dynamic_cast<const ast::BlockStatementExpr*> (functionDecl->body->statements[1].get())->expr;
     const auto assignExprBinary = dynamic_cast<const ast::ExprBinary*> (assignExpr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(assignExprBinary->left), "x");
     TS_ASSERT_EQUALS(assignExprBinary->op.typeOrID, s1::lexer::Assign);
@@ -389,7 +390,7 @@ public:
     TS_ASSERT(functionDecl->params.empty());
 
     TS_ASSERT_EQUALS(functionDecl->body->statements.size(), 2u);
-    const auto& varsDecl = boost::get<ast::VarsDeclPtr> (functionDecl->body->statements[0]->value);
+    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (functionDecl->body->statements[0].get())->varsDecl;
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -399,7 +400,7 @@ public:
     TS_ASSERT_EQUALS(varsDecl->vars[1].identifier.GetString(), "y");
     TS_ASSERT(!varsDecl->vars[1].initializer);
 
-    const auto& assignExpr = boost::get<ast::ExprPtr> (functionDecl->body->statements[1]->value);
+    const auto& assignExpr = dynamic_cast<const ast::BlockStatementExpr*> (functionDecl->body->statements[1].get())->expr;
     const auto assignExprBinary = dynamic_cast<const ast::ExprBinary*> (assignExpr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(assignExprBinary->left), "x");
     TS_ASSERT_EQUALS(assignExprBinary->op.typeOrID, s1::lexer::Plus);

@@ -54,6 +54,7 @@ namespace s1
     typedef parser::SemanticsHandler::ScopePtr Scope;
     void ParseProgram ();
     void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);
+    class VisitorBlockStatementImpl;
     void ParseBlock (Block block, const parser::ast::Block& astBlock);
 
     class VisitorExprImpl;

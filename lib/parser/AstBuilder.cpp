@@ -22,7 +22,14 @@
 #include "diagnostics/Handler.h"
 #include "parser/ast/Block.h"
 #include "parser/ast/BlockStatement.h"
+#include "parser/ast/BlockStatementExpr.h"
+#include "parser/ast/BlockStatementFor.h"
+#include "parser/ast/BlockStatementIf.h"
+#include "parser/ast/BlockStatementNestedBlock.h"
 #include "parser/ast/BlockStatementReturn.h"
+#include "parser/ast/BlockStatementTypedef.h"
+#include "parser/ast/BlockStatementVarsDecl.h"
+#include "parser/ast/BlockStatementWhile.h"
 #include "parser/ast/Expr.h"
 #include "parser/ast/ExprArrayElement.h"
 #include "parser/ast/ExprAttribute.h"
@@ -213,7 +220,7 @@ namespace s1
               /* constant declaration */
               NextToken(); // skip 'const'
               auto astConsts = ParseVarsDecl (true);
-              statements.emplace_back (new ast::BlockStatement (std::move (astConsts)));
+              statements.emplace_back (new ast::BlockStatementVarsDecl (std::move (astConsts)));
               Expect (lexer::Semicolon);
               NextToken();
             }
@@ -222,7 +229,7 @@ namespace s1
             {
               /* Variable declaration */
               auto astVars = ParseVarsDecl ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astVars)));
+              statements.emplace_back (new ast::BlockStatementVarsDecl (std::move (astVars)));
               Expect (lexer::Semicolon);
               NextToken();
             }
@@ -230,46 +237,46 @@ namespace s1
             {
               /* Type definition */
               auto astTypedef = ParseTypedef ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astTypedef)));
+              statements.emplace_back (new ast::BlockStatementTypedef (std::move (astTypedef)));
               Expect (lexer::Semicolon);
               NextToken();
             }
             else if (IsExpression ())
             {
               auto astExpr = ParseExpression ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astExpr)));
+              statements.emplace_back (new ast::BlockStatementExpr (std::move (astExpr)));
               Expect (lexer::Semicolon);
               NextToken();
             }
             else if (currentToken.typeOrID == lexer::kwReturn)
             {
               auto astReturn = ParseStatementReturn ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astReturn)));
+              statements.emplace_back (std::move (astReturn));
             }
             else if (currentToken.typeOrID == lexer::kwIf)
             {
               /* 'if' */
               auto astIf = ParseIf ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astIf)));
+              statements.emplace_back (std::move (astIf));
             }
             else if (currentToken.typeOrID == lexer::kwWhile)
             {
               /* 'while' */
               auto astWhile = ParseWhile ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astWhile)));
+              statements.emplace_back (std::move (astWhile));
             }
             else if (currentToken.typeOrID == lexer::kwFor)
             {
               /* 'for' */
               auto astFor = ParseFor ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astFor)));
+              statements.emplace_back (std::move (astFor));
             }
             else if (currentToken.typeOrID == lexer::BraceL)
             {
               /* nested block */
               NextToken ();
               auto astBlock = ParseBlock ();
-              statements.emplace_back (new ast::BlockStatement (std::move (astBlock)));
+              statements.emplace_back (new ast::BlockStatementNestedBlock (std::move (astBlock)));
               Expect (lexer::BraceR);
               NextToken ();
             }

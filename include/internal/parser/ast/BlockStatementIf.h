@@ -22,6 +22,7 @@
 #define S1_PARSER_AST_BLOCKSTATEMENTIF_H_
 
 #include "Node.h"
+#include "VisitorBlockStatement.h"
 
 namespace s1
 {
@@ -30,7 +31,7 @@ namespace s1
     namespace ast
     {
       /// AST 'if' block statement
-      struct BlockStatementIf : public Node
+      struct BlockStatementIf : public BlockStatement
       {
         ExprPtr condition;
         BlockPtr ifBlock;
@@ -38,6 +39,8 @@ namespace s1
 
         BlockStatementIf (ExprPtr&& condition, BlockPtr&& ifBlock, BlockPtr&& elseBlock)
           : condition (std::move (condition)), ifBlock (std::move (ifBlock)), elseBlock (std::move (elseBlock)) {}
+
+        void Visit (VisitorBlockStatement& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

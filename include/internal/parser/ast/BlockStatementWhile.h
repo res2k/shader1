@@ -21,7 +21,8 @@
 #ifndef S1_PARSER_AST_BLOCKSTATEMENTWHILE_H_
 #define S1_PARSER_AST_BLOCKSTATEMENTWHILE_H_
 
-#include "Node.h"
+#include "BlockStatement.h"
+#include "VisitorBlockStatement.h"
 
 namespace s1
 {
@@ -30,13 +31,15 @@ namespace s1
     namespace ast
     {
       /// AST 'while' block statement
-      struct BlockStatementWhile : public Node
+      struct BlockStatementWhile : public BlockStatement
       {
         ExprPtr condition;
         BlockPtr bodyBlock;
 
         BlockStatementWhile (ExprPtr&& condition, BlockPtr&& bodyBlock)
           : condition (std::move (condition)), bodyBlock (std::move (bodyBlock)) {}
+
+        void Visit (VisitorBlockStatement& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser

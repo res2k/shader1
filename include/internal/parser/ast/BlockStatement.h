@@ -21,14 +21,7 @@
 #ifndef S1_PARSER_AST_BLOCKSTATEMENT_H_
 #define S1_PARSER_AST_BLOCKSTATEMENT_H_
 
-#include "Block.h"
-#include "BlockStatementFor.h"
-#include "BlockStatementIf.h"
-#include "BlockStatementWhile.h"
-#include "BlockStatementReturn.h"
 #include "Node.h"
-
-#include <boost/variant.hpp>
 
 namespace s1
 {
@@ -36,20 +29,12 @@ namespace s1
   {
     namespace ast
     {
+      struct VisitorBlockStatement;
+
       /// AST block statement
       struct BlockStatement : public Node
       {
-        boost::variant<VarsDeclPtr,
-                       TypedefPtr,
-                       ExprPtr,
-                       BlockStatementReturnPtr,
-                       BlockStatementForPtr,
-                       BlockStatementIfPtr,
-                       BlockStatementWhilePtr,
-                       BlockPtr> value;
-
-        template<typename U>
-        BlockStatement (U&& arg) : value (std::forward<U> (arg)) {}
+        virtual void Visit (VisitorBlockStatement& visitor) const = 0;
       };
     } // namespace ast
   } // namespace parser
