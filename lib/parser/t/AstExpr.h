@@ -26,6 +26,7 @@
 #include "parser/ast/ExprTernary.h"
 #include "parser/ast/ExprUnary.h"
 #include "parser/ast/Type.h"
+#include "parser/ast/TypeArray.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"
@@ -703,8 +704,8 @@ public:
     TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Assign);
     const auto astRightFuncCallExpr = dynamic_cast<const ast::ExprFunctionCall*> (astBinaryExpr->right.get());
     const auto& funcType = boost::get<ast::TypePtr> (astRightFuncCallExpr->identifierOrType);
-    const auto& funcTypeArray = boost::get<ast::Type::ArrayType> (funcType->value);
-    AST_TEST_TYPE_IS_WELL_KNOWN(*funcTypeArray.containedType, kwFloat);
+    const auto funcTypeArray = dynamic_cast<const ast::TypeArray*> (funcType.get());
+    AST_TEST_TYPE_IS_WELL_KNOWN(*funcTypeArray->containedType, kwFloat);
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[0]), float, 1.0);
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[1]), float, 2.0);
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[2]), float, 3.0);

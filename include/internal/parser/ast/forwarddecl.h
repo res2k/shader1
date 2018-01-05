@@ -83,8 +83,14 @@ namespace s1
       typedef std::unique_ptr<ProgramStatementVarsDecl> ProgramStatementVarsDeclPtr;
       struct Type;
       typedef std::unique_ptr<Type> TypePtr;
+      struct TypeArray;
+      typedef std::unique_ptr<TypeArray> TypeArrayPtr;
       struct Typedef;
       typedef std::unique_ptr<Typedef> TypedefPtr;
+      struct TypeIdentifier;
+      typedef std::unique_ptr<TypeIdentifier> TypeIdentifierPtr;
+      struct TypeWellKnown;
+      typedef std::unique_ptr<TypeWellKnown> TypeWellKnownPtr;
       struct VarsDecl;
       typedef std::unique_ptr<VarsDecl> VarsDeclPtr;
     } // namespace ast

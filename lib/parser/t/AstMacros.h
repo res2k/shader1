@@ -22,6 +22,8 @@
 #define PARSER_T_ASTMACROS_H_
 
 #include "parser/ast/ExprValue.h"
+#include "parser/ast/TypeIdentifier.h"
+#include "parser/ast/TypeWellKnown.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/preprocessor/cat.hpp>
@@ -29,69 +31,69 @@
 // Check if an ast::Type is a well-known type
 #define AST_TEST_TYPE_IS_WELL_KNOWN(TYPE, TOKEN)                                    \
   do {                                                                              \
-    const auto& typeWellKnown = boost::get<ast::Type::WellKnownType> ((TYPE).value);\
-    TS_ASSERT_EQUALS(typeWellKnown.size(), 1u);                                     \
-    TS_ASSERT_EQUALS(typeWellKnown[0].typeOrID, s1::lexer::TOKEN);                  \
+    const auto& typeWellKnown = dynamic_cast<const ast::TypeWellKnown&> (TYPE);     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens.size(), 1u);                              \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].typeOrID, s1::lexer::TOKEN);           \
   } while (0)
 
 // Check if an ast::Type is an unsigned well-known type
 #define AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN(TYPE, TOKEN)                           \
   do {                                                                              \
-    const auto& typeWellKnown = boost::get<ast::Type::WellKnownType> ((TYPE).value);\
-    TS_ASSERT_EQUALS(typeWellKnown.size(), 2u);                                     \
-    TS_ASSERT_EQUALS(typeWellKnown[0].typeOrID, s1::lexer::kwUnsigned);             \
-    TS_ASSERT_EQUALS(typeWellKnown[1].typeOrID, s1::lexer::TOKEN);                  \
+    const auto& typeWellKnown = dynamic_cast<const ast::TypeWellKnown&> (TYPE);     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens.size(), 2u);                              \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].typeOrID, s1::lexer::kwUnsigned);      \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[1].typeOrID, s1::lexer::TOKEN);           \
   } while (0)
 
 // Check if an ast::Type is a vector of a well-known type
 #define AST_TEST_TYPE_IS_WELL_KNOWN_VEC(TYPE, TOKEN, DIM)                           \
   do {                                                                              \
-    const auto& typeWellKnown = boost::get<ast::Type::WellKnownType> ((TYPE).value);\
-    TS_ASSERT_EQUALS(typeWellKnown.size(), 1u);                                     \
-    TS_ASSERT_EQUALS(typeWellKnown[0].typeOrID,                                     \
+    const auto& typeWellKnown = dynamic_cast<const ast::TypeWellKnown&> (TYPE);     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens.size(), 1u);                              \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].typeOrID,                              \
                      s1::lexer::TOKEN | s1::lexer::VecFlag);                        \
-    TS_ASSERT_EQUALS(typeWellKnown[0].dimension1, DIM);                             \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].dimension1, DIM);                      \
   } while (0)
 
 // Check if an ast::Type is a vector of an unsigned well-known type
 #define AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN_VEC(TYPE, TOKEN, DIM)                  \
   do {                                                                              \
-    const auto& typeWellKnown = boost::get<ast::Type::WellKnownType> ((TYPE).value);\
-    TS_ASSERT_EQUALS(typeWellKnown.size(), 2u);                                     \
-    TS_ASSERT_EQUALS(typeWellKnown[0].typeOrID, s1::lexer::kwUnsigned);             \
-    TS_ASSERT_EQUALS(typeWellKnown[1].typeOrID,                                     \
+    const auto& typeWellKnown = dynamic_cast<const ast::TypeWellKnown&> (TYPE);     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens.size(), 2u);                              \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].typeOrID, s1::lexer::kwUnsigned);      \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[1].typeOrID,                              \
                      s1::lexer::TOKEN | s1::lexer::VecFlag);                        \
-    TS_ASSERT_EQUALS(typeWellKnown[1].dimension1, DIM);                             \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[1].dimension1, DIM);                      \
   } while (0)
 
 // Check if an ast::Type is a matrix of a well-known type
 #define AST_TEST_TYPE_IS_WELL_KNOWN_MAT(TYPE, TOKEN, DIM1, DIM2)                    \
   do {                                                                              \
-    const auto& typeWellKnown = boost::get<ast::Type::WellKnownType> ((TYPE).value);\
-    TS_ASSERT_EQUALS(typeWellKnown.size(), 1u);                                     \
-    TS_ASSERT_EQUALS(typeWellKnown[0].typeOrID,                                     \
+    const auto& typeWellKnown = dynamic_cast<const ast::TypeWellKnown&> (TYPE);     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens.size(), 1u);                              \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].typeOrID,                              \
                      s1::lexer::TOKEN | s1::lexer::MatFlag);                        \
-    TS_ASSERT_EQUALS(typeWellKnown[0].dimension1, DIM1);                            \
-    TS_ASSERT_EQUALS(typeWellKnown[0].dimension2, DIM2);                            \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].dimension1, DIM1);                     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].dimension2, DIM2);                     \
   } while (0)
 
 // Check if an ast::Type is a matrix of an unsigned well-known type
 #define AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN_MAT(TYPE, TOKEN, DIM1, DIM2)           \
   do {                                                                              \
-    const auto& typeWellKnown = boost::get<ast::Type::WellKnownType> ((TYPE).value);\
-    TS_ASSERT_EQUALS(typeWellKnown.size(), 2u);                                     \
-    TS_ASSERT_EQUALS(typeWellKnown[0].typeOrID, s1::lexer::kwUnsigned);             \
-    TS_ASSERT_EQUALS(typeWellKnown[1].typeOrID,                                     \
+    const auto& typeWellKnown = dynamic_cast<const ast::TypeWellKnown&> (TYPE);     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens.size(), 2u);                              \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[0].typeOrID, s1::lexer::kwUnsigned);      \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[1].typeOrID,                              \
                      s1::lexer::TOKEN | s1::lexer::MatFlag);                        \
-    TS_ASSERT_EQUALS(typeWellKnown[1].dimension1, DIM1);                            \
-    TS_ASSERT_EQUALS(typeWellKnown[1].dimension2, DIM2);                            \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[1].dimension1, DIM1);                     \
+    TS_ASSERT_EQUALS(typeWellKnown.tokens[1].dimension2, DIM2);                     \
   } while (0)
 
 // Check if an ast::Type is an alias
 #define AST_TEST_TYPE_IS_ALIAS(TYPE, IDENTIFIER)                                    \
   do {                                                                              \
-    const auto& typeIdentifier = boost::get<ast::Identifier> ((TYPE).value);        \
-    TS_ASSERT_EQUALS(typeIdentifier.GetString(), IDENTIFIER);                       \
+    const auto& typeIdentifier = dynamic_cast<const ast::TypeIdentifier&> (TYPE);   \
+    TS_ASSERT_EQUALS(typeIdentifier.value.GetString(), IDENTIFIER);                 \
   } while (0)
 
 // Check if an ast::ExprValue is an identifier

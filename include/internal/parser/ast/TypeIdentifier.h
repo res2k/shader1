@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -16,12 +16,14 @@
 */
 
 /**\file
- * AST type
+ * AST type for identifiers
  */
-#ifndef S1_PARSER_AST_TYPE_H_
-#define S1_PARSER_AST_TYPE_H_
+#ifndef S1_PARSER_AST_TYPEIDENTIFIER_H_
+#define S1_PARSER_AST_TYPEIDENTIFIER_H_
 
-#include "Node.h"
+#include "Identifier.h"
+#include "Type.h"
+#include "VisitorType.h"
 
 namespace s1
 {
@@ -29,15 +31,17 @@ namespace s1
   {
     namespace ast
     {
-      struct VisitorType;
-
-      /// AST type
-      struct Type : public Node
+      /// AST type for identifiers
+      struct TypeIdentifier : public Type
       {
-        virtual void Visit (VisitorType& visitor) const = 0;
+        Identifier value;
+
+        TypeIdentifier (Identifier&& value) : value (std::move (value)) {}
+
+        void Visit (VisitorType& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_TYPE_H_
+#endif // S1_PARSER_AST_TYPEIDENTIFIER_H_

@@ -315,10 +315,8 @@ public:
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
-    const auto& typeArray = boost::get<ast::Type::ArrayType> (type->value);
-    const auto& typeArrayWellKnown = boost::get<ast::Type::WellKnownType> (typeArray.containedType->value);
-    TS_ASSERT_EQUALS(typeArrayWellKnown.size(), 1u);
-    TS_ASSERT_EQUALS(typeArrayWellKnown[0].typeOrID, s1::lexer::kwInt);
+    const auto typeArray = dynamic_cast<const ast::TypeArray*> (type.get());
+    AST_TEST_TYPE_IS_WELL_KNOWN(*(typeArray->containedType), kwInt);
   }
 
   void testTypeArrayArray (void)
@@ -335,10 +333,8 @@ public:
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
-    const auto& typeArray = boost::get<ast::Type::ArrayType> (type->value);
-    const auto& typeArrayArray = boost::get<ast::Type::ArrayType> (typeArray.containedType->value);
-    const auto& typeArrayArrayWellKnown = boost::get<ast::Type::WellKnownType> (typeArrayArray.containedType->value);
-    TS_ASSERT_EQUALS(typeArrayArrayWellKnown.size(), 1u);
-    TS_ASSERT_EQUALS(typeArrayArrayWellKnown[0].typeOrID, s1::lexer::kwInt);
+    const auto typeArray = dynamic_cast<const ast::TypeArray*> (type.get());
+    const auto typeArrayArray = dynamic_cast<const ast::TypeArray*> (typeArray->containedType.get());
+    AST_TEST_TYPE_IS_WELL_KNOWN(*(typeArrayArray->containedType), kwInt);
   }
 };

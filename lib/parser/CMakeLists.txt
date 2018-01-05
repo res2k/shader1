@@ -32,11 +32,15 @@ set(parser_sources_ast_h
     ${S1_INC}/parser/ast/ProgramStatementTypedef.h
     ${S1_INC}/parser/ast/ProgramStatementVarsDecl.h
     ${S1_INC}/parser/ast/Type.h
+    ${S1_INC}/parser/ast/TypeArray.h
     ${S1_INC}/parser/ast/Typedef.h
+    ${S1_INC}/parser/ast/TypeIdentifier.h
+    ${S1_INC}/parser/ast/TypeWellKnown.h
     ${S1_INC}/parser/ast/VarsDecl.h
     ${S1_INC}/parser/ast/VisitorBlockStatement.h
     ${S1_INC}/parser/ast/VisitorExpr.h
     ${S1_INC}/parser/ast/VisitorProgramStatement.h
+    ${S1_INC}/parser/ast/VisitorType.h
     )
 s1_add_library(parser
                SOURCES ${parser_sources} ${parser_sources_ast_h}

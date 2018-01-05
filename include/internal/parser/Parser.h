@@ -73,8 +73,8 @@ namespace s1
     Expression ParseExprLogic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary);
 
     // Types
+    class VisitorTypeImpl;
     typedef parser::SemanticsHandler::TypePtr Type;
-    Type ParseTypeBase (parser::ast::Type& astType, const Scope& scope);
     Type ParseType (parser::ast::Type& astType, const Scope& scope);
     Type ParseTypeBool (const Lexer::Token& token);
     Type ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token);

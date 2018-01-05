@@ -45,7 +45,10 @@
 #include "parser/ast/ProgramStatementTypedef.h"
 #include "parser/ast/ProgramStatementVarsDecl.h"
 #include "parser/ast/Type.h"
+#include "parser/ast/TypeArray.h"
 #include "parser/ast/Typedef.h"
+#include "parser/ast/TypeIdentifier.h"
+#include "parser/ast/TypeWellKnown.h"
 #include "parser/ast/VarsDecl.h"
 #include "parser/Diagnostics.h"
 #include "parser/Exception.h"
@@ -726,7 +729,7 @@ namespace s1
         if (currentToken.typeOrID == lexer::Identifier)
         {
           // Assume type alias
-          type.reset (new ast::Type (ast::Identifier{ currentToken }));
+          type.reset (new ast::TypeIdentifier (ast::Identifier{ currentToken }));
           NextToken ();
         }
         else
@@ -734,13 +737,13 @@ namespace s1
           int wellKnownExtra;
           if (IsWellKnownType (wellKnownExtra))
           {
-            ast::Type::WellKnownType wellKnownTokens;
+            ast::TypeWellKnown::Tokens wellKnownTokens;
             for (int i = 0; i <= wellKnownExtra; i++)
             {
               wellKnownTokens.push_back (currentToken);
               NextToken ();
             }
-            type.reset (new ast::Type (std::move (wellKnownTokens)));
+            type.reset (new ast::TypeWellKnown (std::move (wellKnownTokens)));
           }
           else
           {
@@ -750,7 +753,7 @@ namespace s1
         while ((currentToken.typeOrID == lexer::BracketL)
           && (Peek (0).typeOrID == lexer::BracketR))
         {
-          type.reset (new ast::Type (ast::Type::ArrayType{ std::move (type) }));
+          type.reset (new ast::TypeArray (std::move (type)));
           NextToken ();
           NextToken ();
         }

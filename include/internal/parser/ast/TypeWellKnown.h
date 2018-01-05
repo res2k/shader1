@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -16,12 +16,15 @@
 */
 
 /**\file
- * AST type
+ * AST type for well-known types
  */
-#ifndef S1_PARSER_AST_TYPE_H_
-#define S1_PARSER_AST_TYPE_H_
+#ifndef S1_PARSER_AST_TYPEWELLKNOWN_H_
+#define S1_PARSER_AST_TYPEWELLKNOWN_H_
 
-#include "Node.h"
+#include "Type.h"
+#include "VisitorType.h"
+
+#include <boost/container/static_vector.hpp>
 
 namespace s1
 {
@@ -29,15 +32,18 @@ namespace s1
   {
     namespace ast
     {
-      struct VisitorType;
-
-      /// AST type
-      struct Type : public Node
+      /// AST type for well-known types
+      struct TypeWellKnown : public Type
       {
-        virtual void Visit (VisitorType& visitor) const = 0;
+        typedef boost::container::static_vector<lexer::Token, 2> Tokens;
+        Tokens tokens;
+
+        TypeWellKnown (Tokens&& tokens) : tokens (std::move (tokens)) {}
+
+        void Visit (VisitorType& visitor) const override { visitor (*this); }
       };
     } // namespace ast
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_TYPE_H_
+#endif // S1_PARSER_AST_TYPEWELLKNOWN_H_

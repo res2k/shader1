@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -16,12 +16,10 @@
 */
 
 /**\file
- * AST type
+ * Visitor interface for AST type
  */
-#ifndef S1_PARSER_AST_TYPE_H_
-#define S1_PARSER_AST_TYPE_H_
-
-#include "Node.h"
+#ifndef S1_PARSER_AST_VISITORTYPE_H_
+#define S1_PARSER_AST_VISITORTYPE_H_
 
 namespace s1
 {
@@ -29,15 +27,21 @@ namespace s1
   {
     namespace ast
     {
-      struct VisitorType;
+      struct TypeArray;
+      struct TypeIdentifier;
+      struct TypeWellKnown;
 
-      /// AST type
-      struct Type : public Node
+      /// Visitor interface for AST type
+      struct VisitorType
       {
-        virtual void Visit (VisitorType& visitor) const = 0;
+        virtual ~VisitorType() {}
+
+        virtual void operator() (const TypeArray& type) = 0;
+        virtual void operator() (const TypeIdentifier& type) = 0;
+        virtual void operator() (const TypeWellKnown& type) = 0;
       };
     } // namespace ast
   } // namespace parser
 } // namespace s1
 
-#endif // S1_PARSER_AST_TYPE_H_
+#endif // S1_PARSER_AST_VISITORTYPE_H_
