@@ -97,7 +97,7 @@ namespace s1
     }
     void operator() (const ast::ProgramStatementVarsDecl& statement) override
     {
-      parent.ParseVarDeclare (scope, *statement.varsDecl);
+      parent.ParseVarDeclare (scope, statement);
     }
   };
 
@@ -186,7 +186,7 @@ namespace s1
     }
     void operator() (const ast::BlockStatementVarsDecl& statement) override
     {
-      parent.ParseVarDeclare (scope, *statement.varsDecl);
+      parent.ParseVarDeclare (scope, statement);
     }
     void operator() (const ast::BlockStatementWhile& statement) override
     {

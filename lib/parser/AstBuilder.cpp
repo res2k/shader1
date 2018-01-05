@@ -159,11 +159,15 @@ namespace s1
           if (currentToken.typeOrID == lexer::kwConst)
           {
             /* constant declaration */
-            NextToken ();
-            auto decl = ParseVarsDecl (true);
-            Expect (lexer::Semicolon);
-            NextToken();
-            statement.reset (new ast::ProgramStatementVarsDecl (std::move (decl)));
+            statement = CommonParseNode (
+              [&]()
+              {
+                NextToken ();
+                auto decl = ParseVarsDecl (true);
+                Expect (lexer::Semicolon);
+                NextToken();
+                return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
+              });
           }
           else if (isType
                   || (currentToken.typeOrID == lexer::kwVoid)
@@ -179,10 +183,14 @@ namespace s1
             else
             {
               /* Variable declaration */
-              auto decl = ParseVarsDecl (false);
-              Expect (lexer::Semicolon);
-              NextToken();
-              statement.reset (new ast::ProgramStatementVarsDecl (std::move (decl)));
+              statement = CommonParseNode (
+                [&]()
+                {
+                  auto decl = ParseVarsDecl (false);
+                  Expect (lexer::Semicolon);
+                  NextToken();
+                  return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
+                });
             }
           }
           else if (currentToken.typeOrID == lexer::kwTypedef)
@@ -221,9 +229,14 @@ namespace s1
             if (currentToken.typeOrID == lexer::kwConst)
             {
               /* constant declaration */
-              NextToken(); // skip 'const'
-              auto astConsts = ParseVarsDecl (true);
-              statements.emplace_back (new ast::BlockStatementVarsDecl (std::move (astConsts)));
+              auto statement = CommonParseNode (
+                [&]()
+                {
+                  NextToken(); // skip 'const'
+                  auto decl = ParseVarsDecl (true);
+                  return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
+                });
+              statements.emplace_back (std::move (statement));
               Expect (lexer::Semicolon);
               NextToken();
             }
@@ -231,8 +244,13 @@ namespace s1
                 || ((currentToken.typeOrID == lexer::Identifier) && (Peek ().typeOrID == lexer::Identifier)))
             {
               /* Variable declaration */
-              auto astVars = ParseVarsDecl ();
-              statements.emplace_back (new ast::BlockStatementVarsDecl (std::move (astVars)));
+              auto statement = CommonParseNode (
+                [&]()
+                {
+                  auto decl = ParseVarsDecl (false);
+                  return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
+                });
+              statements.emplace_back (std::move (statement));
               Expect (lexer::Semicolon);
               NextToken();
             }
@@ -879,55 +897,51 @@ namespace s1
     return params;
   }
 
-  ast::VarsDeclPtr AstBuilder::ParseVarsDecl (bool isConst)
+  ast::VarsDecl AstBuilder::ParseVarsDecl (bool isConst)
   {
-    return CommonParseNode (
+    // Helper to check for a token and to also consume it
+    auto haveSeparator =
       [&]()
       {
-        // Helper to check for a token and to also consume it
-        auto haveSeparator =
-          [&]()
-          {
-            if (currentToken.typeOrID == lexer::Separator)
-            {
-              NextToken ();
-              return true;
-            }
-            else
-              return false;
-          };
-
-        auto astType = ParseType ();
-        if (astType.has_error ())
-          throw Exception (astType.error ().error, astType.error ().token);
-        ast::VarsDecl::VarsContainer vars;
-        do
+        if (currentToken.typeOrID == lexer::Separator)
         {
-          if (currentToken.typeOrID != lexer::Identifier)
-          {
-            diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Identifier);
-            break;
-          }
-          auto identifier = ast::Identifier{ currentToken };
           NextToken ();
-          ast::ExprPtr initializer;
-          if (currentToken.typeOrID == lexer::Assign)
-          {
-            // Variable has an initializer value
-            NextToken ();
-            initializer = ParseExpression ();
-          }
-          else if (isConst)
-          {
-            // TODO: Give it's own error
-            diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Assign);
-            break;
-          }
-          vars.emplace_back (ast::VarsDecl::Var{ identifier, std::move (initializer) });
-          // ',' - more variables follow
-        } while (haveSeparator ());
-        return ast::VarsDeclPtr (new ast::VarsDecl (isConst, std::move (astType.value()), std::move (vars)));
-      });
+          return true;
+        }
+        else
+          return false;
+      };
+
+    auto astType = ParseType ();
+    if (astType.has_error ())
+      throw Exception (astType.error ().error, astType.error ().token);
+    ast::VarsDecl::VarsContainer vars;
+    do
+    {
+      if (currentToken.typeOrID != lexer::Identifier)
+      {
+        diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Identifier);
+        break;
+      }
+      auto identifier = ast::Identifier{ currentToken };
+      NextToken ();
+      ast::ExprPtr initializer;
+      if (currentToken.typeOrID == lexer::Assign)
+      {
+        // Variable has an initializer value
+        NextToken ();
+        initializer = ParseExpression ();
+      }
+      else if (isConst)
+      {
+        // TODO: Give it's own error
+        diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Assign);
+        break;
+      }
+      vars.emplace_back (ast::VarsDecl::Var{ identifier, std::move (initializer) });
+      // ',' - more variables follow
+    } while (haveSeparator ());
+    return ast::VarsDecl (isConst, std::move (astType.value()), std::move (vars));
   }
 
   ast::BlockStatementForPtr AstBuilder::ParseFor ()

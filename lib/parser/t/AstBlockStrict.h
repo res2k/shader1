@@ -50,7 +50,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::VarsDecl*> (block->statements[0].get());
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -75,7 +75,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -103,7 +103,7 @@ public:
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);
     {
-      const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+      const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
       TS_ASSERT(!varsDecl->isConst);
       AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -112,7 +112,7 @@ public:
       TS_ASSERT(!varsDecl->vars[0].initializer);
     }
     {
-      const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[1].get())->varsDecl;
+      const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[1].get());
       TS_ASSERT(!varsDecl->isConst);
       AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -138,7 +138,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -167,7 +167,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -200,7 +200,7 @@ public:
                       static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(!varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -229,7 +229,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -256,7 +256,7 @@ public:
                       static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get())->varsDecl;
+    const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
@@ -334,7 +334,7 @@ public:
       TS_ASSERT_EQUALS(typeDef->alias.GetString(), "MyInt");
     }
     {
-      const auto& varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[1].get())->varsDecl;
+      const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[1].get());
       TS_ASSERT(!varsDecl->isConst);
       AST_TEST_TYPE_IS_ALIAS(*varsDecl->type, "MyInt");
       TS_ASSERT_EQUALS(varsDecl->vars.size(), 1u);

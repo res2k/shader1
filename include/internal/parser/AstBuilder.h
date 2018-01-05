@@ -121,7 +121,7 @@ namespace s1
       std::vector<ast::ExprPtr> ParseFuncParamActual ();
 
       // Variables, Constants
-      ast::VarsDeclPtr ParseVarsDecl (bool isConst = false);
+      ast::VarsDecl ParseVarsDecl (bool isConst = false);
 
       // Branches, Loops
       ast::BlockStatementForPtr ParseFor ();

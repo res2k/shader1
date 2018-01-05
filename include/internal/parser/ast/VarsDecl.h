@@ -21,7 +21,8 @@
 #ifndef S1_PARSER_AST_VARSDECL_H_
 #define S1_PARSER_AST_VARSDECL_H_
 
-#include "Node.h"
+#include "forwarddecl.h"
+#include "Identifier.h"
 
 #include <boost/container/deque.hpp>
 
@@ -32,7 +33,8 @@ namespace s1
     namespace ast
     {
       /// AST variable declaration
-      struct VarsDecl : public Node
+      // Note: intended for use in composition
+      struct VarsDecl
       {
         bool isConst;
         TypePtr type;

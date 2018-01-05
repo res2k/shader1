@@ -92,7 +92,6 @@ namespace s1
       struct TypeWellKnown;
       typedef std::unique_ptr<TypeWellKnown> TypeWellKnownPtr;
       struct VarsDecl;
-      typedef std::unique_ptr<VarsDecl> VarsDeclPtr;
     } // namespace ast
   } // namespace parser
 } // namespace s1

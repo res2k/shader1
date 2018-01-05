@@ -22,6 +22,7 @@
 #define S1_PARSER_AST_BLOCKSTATEMENTVARSDECL_H_
 
 #include "BlockStatement.h"
+#include "VarsDecl.h"
 #include "VisitorBlockStatement.h"
 
 namespace s1
@@ -31,11 +32,10 @@ namespace s1
     namespace ast
     {
       /// AST block statement for variables declaration
-      struct BlockStatementVarsDecl : public BlockStatement
+      struct BlockStatementVarsDecl : public BlockStatement,
+                                      public VarsDecl
       {
-        VarsDeclPtr varsDecl;
-
-        BlockStatementVarsDecl (VarsDeclPtr&& varsDecl) : varsDecl (std::move (varsDecl)) {}
+        BlockStatementVarsDecl (VarsDecl&& varsDecl) : VarsDecl (std::move (varsDecl)) {}
 
         void Visit (VisitorBlockStatement& visitor) const override { visitor (*this); }
       };

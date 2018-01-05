@@ -23,6 +23,7 @@
 
 #include "ProgramStatement.h"
 #include "VisitorProgramStatement.h"
+#include "VarsDecl.h"
 
 namespace s1
 {
@@ -31,11 +32,10 @@ namespace s1
     namespace ast
     {
       /// AST program statement for variables declaration
-      struct ProgramStatementVarsDecl : public ProgramStatement
+      struct ProgramStatementVarsDecl : public ProgramStatement,
+                                        public VarsDecl
       {
-        VarsDeclPtr varsDecl;
-
-        ProgramStatementVarsDecl (VarsDeclPtr&& varsDecl) : varsDecl (std::move (varsDecl)) {}
+        ProgramStatementVarsDecl (VarsDecl&& varsDecl) : VarsDecl (std::move (varsDecl)) {}
 
         void Visit (VisitorProgramStatement& visitor) const override { visitor (*this); }
       };
