@@ -39,4 +39,6 @@ file(GLOB generator_sources
      VariableExpressionImpl.cpp
     )
 s1_add_library(intermediate_generator SOURCES ${generator_sources})
-add_dependencies(intermediate_generator generate_Diagnostics_intermediate)
+add_dependencies(intermediate_generator
+                 generate_Diagnostics_intermediate
+                 generate_Diagnostics_parser)
