@@ -93,7 +93,7 @@ namespace s1
     }
     void operator() (const ast::ProgramStatementTypedef& statement) override
     {
-      parent.ParseTypedef (scope, *statement.typeDef);
+      parent.ParseTypedef (scope, statement);
     }
     void operator() (const ast::ProgramStatementVarsDecl& statement) override
     {
@@ -182,7 +182,7 @@ namespace s1
     }
     void operator() (const ast::BlockStatementTypedef& statement) override
     {
-      parent.ParseTypedef (scope, *statement.typeDef);
+      parent.ParseTypedef (scope, statement);
     }
     void operator() (const ast::BlockStatementVarsDecl& statement) override
     {

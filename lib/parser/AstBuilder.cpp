@@ -196,10 +196,14 @@ namespace s1
           else if (currentToken.typeOrID == lexer::kwTypedef)
           {
             /* Type definition */
-            auto typeDef = ParseTypedef ();
-            Expect (lexer::Semicolon);
-            NextToken();
-            statement.reset (new ast::ProgramStatementTypedef (std::move (typeDef)));
+            statement = CommonParseNode (
+              [&]()
+              {
+                auto typeDef = ParseTypedef ();
+                Expect (lexer::Semicolon);
+                NextToken();
+                return ast::ProgramStatementPtr (new ast::ProgramStatementTypedef (std::move (typeDef)));
+              });
           }
           else
             /* Unknown token - throw error below */
@@ -257,8 +261,13 @@ namespace s1
             else if (currentToken.typeOrID == lexer::kwTypedef)
             {
               /* Type definition */
-              auto astTypedef = ParseTypedef ();
-              statements.emplace_back (new ast::BlockStatementTypedef (std::move (astTypedef)));
+              auto statement = CommonParseNode (
+                [&]()
+                {
+                  auto astTypedef = ParseTypedef ();
+                  return ast::BlockStatementPtr (new ast::BlockStatementTypedef (std::move (astTypedef)));
+                });
+              statements.emplace_back (std::move (statement));
               Expect (lexer::Semicolon);
               NextToken();
             }
@@ -779,21 +788,17 @@ namespace s1
       });
   }
 
-  ast::TypedefPtr AstBuilder::ParseTypedef ()
+  ast::Typedef AstBuilder::ParseTypedef ()
   {
-    return CommonParseNode (
-      [&]()
-      {
-        // Skip typedef
-        NextToken();
-        // Aliased type
-        auto astType = ParseType ();
-        if (astType.has_error ())
-          throw Exception (astType.error ().error, astType.error ().token);
-        // Type alias
-        auto aliasIdentifier = ParseIdentifier ();
-        return ast::TypedefPtr (new ast::Typedef (std::move (astType.value()), std::move (aliasIdentifier)));
-      });
+    // Skip typedef
+    NextToken();
+    // Aliased type
+    auto astType = ParseType ();
+    if (astType.has_error ())
+      throw Exception (astType.error ().error, astType.error ().token);
+    // Type alias
+    auto aliasIdentifier = ParseIdentifier ();
+    return ast::Typedef (std::move (astType.value()), std::move (aliasIdentifier));
   }
 
   ast::FunctionDeclPtr AstBuilder::ParseFunctionDecl ()

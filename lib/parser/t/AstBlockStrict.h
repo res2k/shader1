@@ -279,7 +279,7 @@ public:
     TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
-    const auto& typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get())->typeDef;
+    const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get());
     AST_TEST_TYPE_IS_WELL_KNOWN(*typeDef->type, kwInt);
     TS_ASSERT_EQUALS(typeDef->alias.GetString(), "MyInt");
   }
@@ -301,12 +301,12 @@ public:
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);
     {
-      const auto& typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get())->typeDef;
+      const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get());
       AST_TEST_TYPE_IS_WELL_KNOWN(*typeDef->type, kwInt);
       TS_ASSERT_EQUALS(typeDef->alias.GetString(), "MyInt1");
     }
     {
-      const auto& typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[1].get())->typeDef;
+      const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[1].get());
       AST_TEST_TYPE_IS_ALIAS(*typeDef->type, "MyInt1");
       TS_ASSERT_EQUALS(typeDef->alias.GetString(), "MyInt");
     }
@@ -329,7 +329,7 @@ public:
 
     TS_ASSERT_EQUALS(block->statements.size(), 2u);
     {
-      const auto& typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get())->typeDef;
+      const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get());
       AST_TEST_TYPE_IS_WELL_KNOWN(*typeDef->type, kwInt);
       TS_ASSERT_EQUALS(typeDef->alias.GetString(), "MyInt");
     }

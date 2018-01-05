@@ -21,8 +21,8 @@
 #ifndef S1_PARSER_AST_TYPEDEF_H_
 #define S1_PARSER_AST_TYPEDEF_H_
 
+#include "forwarddecl.h"
 #include "Identifier.h"
-#include "Node.h"
 
 namespace s1
 {
@@ -31,7 +31,8 @@ namespace s1
     namespace ast
     {
       /// AST type definition
-      struct Typedef : public Node
+      // Note: intended for use in composition
+      struct Typedef
       {
         TypePtr type;
         Identifier alias;

@@ -86,7 +86,6 @@ namespace s1
       struct TypeArray;
       typedef std::unique_ptr<TypeArray> TypeArrayPtr;
       struct Typedef;
-      typedef std::unique_ptr<Typedef> TypedefPtr;
       struct TypeIdentifier;
       typedef std::unique_ptr<TypeIdentifier> TypeIdentifierPtr;
       struct TypeWellKnown;

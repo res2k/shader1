@@ -114,7 +114,7 @@ namespace s1
       bool IsWellKnownTypeOrArray (int& peekAfterType);
       typedef OUTCOME_V2_NAMESPACE::result<ast::TypePtr, ParseError> ParseTypeResult;
       ParseTypeResult ParseType ();
-      ast::TypedefPtr ParseTypedef ();
+      ast::Typedef ParseTypedef ();
 
       // Functions
       ast::FunctionDeclPtr ParseFunctionDecl ();

@@ -22,6 +22,7 @@
 #define S1_PARSER_AST_BLOCKSTATEMENTTYPEDEF_H_
 
 #include "BlockStatement.h"
+#include "Typedef.h"
 #include "VisitorBlockStatement.h"
 
 namespace s1
@@ -31,11 +32,10 @@ namespace s1
     namespace ast
     {
       /// AST block statement for type definition
-      struct BlockStatementTypedef : public BlockStatement
+      struct BlockStatementTypedef : public BlockStatement,
+                                     public Typedef
       {
-        TypedefPtr typeDef;
-
-        BlockStatementTypedef (TypedefPtr&& typeDef) : typeDef (std::move (typeDef)) {}
+        BlockStatementTypedef (Typedef&& typeDef) : Typedef (std::move (typeDef)) {}
 
         void Visit (VisitorBlockStatement& visitor) const override { visitor (*this); }
       };

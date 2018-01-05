@@ -22,6 +22,7 @@
 #define S1_PARSER_AST_PROGRAMSTATEMENTTYPEDEF_H_
 
 #include "ProgramStatement.h"
+#include "Typedef.h"
 #include "VisitorProgramStatement.h"
 
 namespace s1
@@ -31,11 +32,10 @@ namespace s1
     namespace ast
     {
       /// AST program statement for type definition
-      struct ProgramStatementTypedef : public ProgramStatement
+      struct ProgramStatementTypedef : public ProgramStatement,
+                                       public Typedef
       {
-        TypedefPtr typeDef;
-
-        ProgramStatementTypedef (TypedefPtr&& typeDef) : typeDef (std::move (typeDef)) {}
+        ProgramStatementTypedef (Typedef&& typeDef) : Typedef (std::move (typeDef)) {}
 
         void Visit (VisitorProgramStatement& visitor) const override { visitor (*this); }
       };
