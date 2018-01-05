@@ -334,6 +334,8 @@ namespace s1
     case lexer::LogicOr:
     case lexer::LogicAnd:
       return ParseExprLogic (scope, astExprBinary);
+    default:
+      break;
     }
     S1_ASSERT_NOT_REACHED (Parser::Expression ());
   }
@@ -436,6 +438,8 @@ namespace s1
       return semanticsHandler.CreateLogicExpression (SemanticsHandler::And,
                                                      ParseExpression (scope, *astExprBinary.left),
                                                      ParseExpression (scope, *astExprBinary.right));
+    default:
+      break;
     }
     S1_ASSERT_NOT_REACHED (Parser::Expression ());
   }
