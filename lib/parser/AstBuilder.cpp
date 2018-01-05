@@ -784,7 +784,7 @@ namespace s1
           NextToken ();
           NextToken ();
         }
-        return type;
+        return std::move (type);
       });
   }
 
