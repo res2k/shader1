@@ -135,7 +135,7 @@ namespace s1
       bool IsWellKnownType (int& peekAfterType);
       bool IsWellKnownTypeOrArray (int& peekAfterType);
       ast::TypePtr ParseType ();
-      ast::Typedef ParseTypedef ();
+      boost::optional<ast::Typedef> ParseTypedef ();
 
       // Functions
       ast::FunctionDeclPtr ParseFunctionDecl ();

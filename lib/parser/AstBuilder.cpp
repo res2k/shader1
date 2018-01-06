@@ -212,6 +212,17 @@ namespace s1
     return Expect (lexer::Semicolon, Error::ExpectedSemicolon);
   }
 
+  // Check if token is some kind of separator
+  static bool IsSeparator (Lexer::TokenType tokenType)
+  {
+    return (tokenType == lexer::Separator)
+      || (tokenType == lexer::Semicolon)
+      || (tokenType == lexer::ParenL)
+      || (tokenType == lexer::ParenR)
+      || (tokenType == lexer::BraceL)
+      || (tokenType == lexer::BraceR);
+  }
+
   ast::ProgramPtr AstBuilder::ParseProgram ()
   {
     return CommonParseNode (
@@ -266,13 +277,14 @@ namespace s1
               {
                 auto typeDef = ParseTypedef ();
                 ExpectSemicolon ();
-                return ast::ProgramStatementPtr (new ast::ProgramStatementTypedef (std::move (typeDef)));
+                return typeDef ? ast::ProgramStatementPtr (new ast::ProgramStatementTypedef (std::move (*typeDef)))
+                               : ast::ProgramStatementPtr ();
               });
           }
           else
             /* Unknown token - throw error below */
             break;
-          statements.emplace_back (std::move (statement));
+          if (statement) statements.emplace_back (std::move (statement));
         }
         if (currentToken.typeOrID != lexer::EndOfFile)
         {
@@ -327,9 +339,10 @@ namespace s1
                 [&]()
                 {
                   auto astTypedef = ParseTypedef ();
-                  return ast::BlockStatementPtr (new ast::BlockStatementTypedef (std::move (astTypedef)));
+                  return astTypedef ? ast::BlockStatementPtr (new ast::BlockStatementTypedef (std::move (*astTypedef)))
+                                    : ast::BlockStatementPtr ();
                 });
-              statements.emplace_back (std::move (statement));
+              if (statement) statements.emplace_back (std::move (statement));
               ExpectSemicolon ();
             }
             else if (IsExpression ())
@@ -855,15 +868,17 @@ namespace s1
       });
   }
 
-  ast::Typedef AstBuilder::ParseTypedef ()
+  boost::optional<ast::Typedef> AstBuilder::ParseTypedef ()
   {
     // Skip typedef
     NextToken();
     // Aliased type
     auto astType = ParseType ();
+    if (!astType && !IsSeparator (currentToken.typeOrID))
+      NextToken (); // Consume token, maybe the rest lines up
     // Type alias
-    auto aliasIdentifier = CheckResult (ParseIdentifier ());
-    return ast::Typedef (std::move (astType), std::move (aliasIdentifier));
+    auto identifier = ParseIdentifierAndReport (); // in case of invalid identifier typedef will be bogus
+    return ast::Typedef (std::move (astType), std::move (identifier.first));
   }
 
   ast::FunctionDeclPtr AstBuilder::ParseFunctionDecl ()
