@@ -126,12 +126,15 @@ namespace s1
     return result;
   }
 
-  ast::Identifier AstBuilder::ParseIdentifier ()
+  AstBuilder::ParseIdentifierResult AstBuilder::ParseIdentifier ()
   {
-    Expect (lexer::Identifier);
     ast::Identifier astIdent = ast::Identifier{ currentToken };
+    if (currentToken.typeOrID != lexer::Identifier)
+    {
+      return std::make_pair (std::move (astIdent), ParseError{ Error::ExpectedIdentifier, currentToken });
+    }
     NextToken ();
-    return astIdent;
+    return std::make_pair (std::move (astIdent), boost::none);
   }
 
   template<typename T>
@@ -148,6 +151,22 @@ namespace s1
     if (result.has_error ())
       throw Exception (result.error ().error, result.error ().token);
     return std::move (result).value();
+  }
+
+  template<typename T>
+  const T& AstBuilder::CheckResult (const std::pair<T, boost::optional<ParseError>>& result)
+  {
+    if (result.second)
+      throw Exception (result.second->error, result.second->token);
+    return result.first;
+  }
+
+  template<typename T>
+  T AstBuilder::CheckResult (std::pair<T, boost::optional<ParseError>>&& result)
+  {
+    if (result.second)
+      throw Exception (result.second->error, result.second->token);
+    return std::move (result.first);
   }
 
   void AstBuilder::Expect (Lexer::TokenType tokenType)
@@ -516,7 +535,7 @@ namespace s1
           if (currentToken.typeOrID == lexer::Member)
           {
             NextToken ();
-            auto attr = ParseIdentifier ();
+            auto attr = CheckResult (ParseIdentifier ());
             expr.reset (new ast::ExprAttribute (std::move (expr), std::move (attr)));
           }
           else if (currentToken.typeOrID == lexer::BracketL)
@@ -809,7 +828,7 @@ namespace s1
     // Aliased type
     auto astType = CheckResult (ParseType ());
     // Type alias
-    auto aliasIdentifier = ParseIdentifier ();
+    auto aliasIdentifier = CheckResult (ParseIdentifier ());
     return ast::Typedef (std::move (astType), std::move (aliasIdentifier));
   }
 
@@ -831,7 +850,7 @@ namespace s1
           returnType = std::move (astType);
         }
         // Parse function identifier
-        auto funcIdentifier = ParseIdentifier ();
+        auto funcIdentifier = CheckResult (ParseIdentifier ());
         // Parse formal parameters
         Expect (lexer::ParenL);
         NextToken ();
@@ -859,7 +878,7 @@ namespace s1
             auto astType = CheckResult (ParseType ());
             param.type = std::move (astType);
           }
-          param.identifier = ParseIdentifier ();
+          param.identifier = CheckResult (ParseIdentifier ());
           if (currentToken.typeOrID == lexer::Assign)
           {
             // Handle default value

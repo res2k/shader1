@@ -28,6 +28,7 @@
 #include <vector>
 
 #include <boost/container/deque.hpp>
+#include <boost/optional.hpp>
 
 namespace s1
 {
@@ -78,8 +79,12 @@ namespace s1
        */
       template<typename F>
       typename std::result_of<F()>::type CommonParseNode (F func);
-      /// AST parsing helper: guaranteed return of an identifier
-      ast::Identifier ParseIdentifier ();
+      typedef std::pair<ast::Identifier, boost::optional<ParseError>> ParseIdentifierResult;
+      /**
+       * AST parsing helper: guaranteed return of an identifier.
+       * If an error is returned the identifier may not be valid.
+       */
+      ParseIdentifierResult ParseIdentifier ();
 
       //@{
       /// Return value in an outcome result or throw Exception
@@ -87,6 +92,10 @@ namespace s1
       const T& CheckResult (const OUTCOME_V2_NAMESPACE::result<T, ParseError>& result);
       template<typename T>
       T CheckResult (OUTCOME_V2_NAMESPACE::result<T, ParseError>&& result);
+      template<typename T>
+      const T& CheckResult (const std::pair<T, boost::optional<ParseError>>& result);
+      template<typename T>
+      T CheckResult (std::pair<T, boost::optional<ParseError>>&& result);
       //@}
       /// Expect a certain token, throw an "unexpected token" error if some other is encountered
       void Expect (Lexer::TokenType tokenType);
