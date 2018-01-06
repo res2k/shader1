@@ -134,6 +134,22 @@ namespace s1
     return astIdent;
   }
 
+  template<typename T>
+  const T& AstBuilder::CheckResult (const OUTCOME_V2_NAMESPACE::result<T, ParseError>& result)
+  {
+    if (result.has_error ())
+      throw Exception (result.error ().error, result.error ().token);
+    return result.value();
+  }
+
+  template<typename T>
+  T AstBuilder::CheckResult (OUTCOME_V2_NAMESPACE::result<T, ParseError>&& result)
+  {
+    if (result.has_error ())
+      throw Exception (result.error ().error, result.error ().token);
+    return std::move (result).value();
+  }
+
   void AstBuilder::Expect (Lexer::TokenType tokenType)
   {
     if (currentToken.typeOrID != tokenType)
@@ -448,12 +464,10 @@ namespace s1
           if (IsWellKnownTypeOrArray (beyondType) && (Peek (beyondType).typeOrID == lexer::ParenL))
           {
             // Expression is a type cast or ctor.
-            auto astType = ParseType ();
-            if (astType.has_error ())
-              throw Exception (astType.error ().error, astType.error ().token);
+            auto astType = CheckResult (ParseType ());
             auto params = ParseFuncParamActual ();
             expr.reset (new ast::ExprFunctionCall (
-              std::move (astType.value()), std::move (params)));
+              std::move (astType), std::move (params)));
           }
           else if (currentToken.typeOrID == lexer::ParenL)
           {
@@ -793,12 +807,10 @@ namespace s1
     // Skip typedef
     NextToken();
     // Aliased type
-    auto astType = ParseType ();
-    if (astType.has_error ())
-      throw Exception (astType.error ().error, astType.error ().token);
+    auto astType = CheckResult (ParseType ());
     // Type alias
     auto aliasIdentifier = ParseIdentifier ();
-    return ast::Typedef (std::move (astType.value()), std::move (aliasIdentifier));
+    return ast::Typedef (std::move (astType), std::move (aliasIdentifier));
   }
 
   ast::FunctionDeclPtr AstBuilder::ParseFunctionDecl ()
@@ -815,10 +827,8 @@ namespace s1
         }
         else
         {
-          auto astType = ParseType ();
-          if (astType.has_error ())
-            throw Exception (astType.error ().error, astType.error ().token);
-          returnType = std::move (astType.value());
+          auto astType = CheckResult (ParseType ());
+          returnType = std::move (astType);
         }
         // Parse function identifier
         auto funcIdentifier = ParseIdentifier ();
@@ -846,10 +856,8 @@ namespace s1
             NextToken ();
           }
           {
-            auto astType = ParseType ();
-            if (astType.has_error ())
-              throw Exception (astType.error ().error, astType.error ().token);
-            param.type = std::move (astType.value ());
+            auto astType = CheckResult (ParseType ());
+            param.type = std::move (astType);
           }
           param.identifier = ParseIdentifier ();
           if (currentToken.typeOrID == lexer::Assign)
@@ -917,9 +925,7 @@ namespace s1
           return false;
       };
 
-    auto astType = ParseType ();
-    if (astType.has_error ())
-      throw Exception (astType.error ().error, astType.error ().token);
+    auto astType = CheckResult (ParseType ());
     ast::VarsDecl::VarsContainer vars;
     do
     {
@@ -946,7 +952,7 @@ namespace s1
       vars.emplace_back (ast::VarsDecl::Var{ identifier, std::move (initializer) });
       // ',' - more variables follow
     } while (haveSeparator ());
-    return ast::VarsDecl (isConst, std::move (astType.value()), std::move (vars));
+    return ast::VarsDecl (isConst, std::move (astType), std::move (vars));
   }
 
   ast::BlockStatementForPtr AstBuilder::ParseFor ()

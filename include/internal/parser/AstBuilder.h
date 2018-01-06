@@ -81,6 +81,13 @@ namespace s1
       /// AST parsing helper: guaranteed return of an identifier
       ast::Identifier ParseIdentifier ();
 
+      //@{
+      /// Return value in an outcome result or throw Exception
+      template<typename T>
+      const T& CheckResult (const OUTCOME_V2_NAMESPACE::result<T, ParseError>& result);
+      template<typename T>
+      T CheckResult (OUTCOME_V2_NAMESPACE::result<T, ParseError>&& result);
+      //@}
       /// Expect a certain token, throw an "unexpected token" error if some other is encountered
       void Expect (Lexer::TokenType tokenType);
       /// Throw an "unexpected token" error
