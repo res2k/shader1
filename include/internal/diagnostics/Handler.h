@@ -46,7 +46,7 @@ namespace s1
       template<typename T>
       typename std::enable_if<std::is_enum<T>::value>::type ParseError (T code,
                                                                         const lexer::Token& encounteredToken,
-                                                                        lexer::TokenType expectedToken)
+                                                                        lexer::TokenType expectedToken = lexer::Invalid)
       {
         ParseErrorImpl (static_cast<unsigned int> (code), encounteredToken, expectedToken);
       }
