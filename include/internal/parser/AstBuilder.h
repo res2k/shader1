@@ -101,6 +101,10 @@ namespace s1
       void Expect (Lexer::TokenType tokenType);
       /// Throw an "unexpected token" error
       void UnexpectedToken ();
+      /// Expect a specific token. Report \c error if another token is encountered. Non-throwing
+      bool Expect (Lexer::TokenType tokenType, Error error);
+      /// Expect a semicolon token. Reports an error if another token is encountered.
+      bool ExpectSemicolon ();
 
       // Rough structure
       ast::BlockPtr ParseBlock ();

@@ -180,6 +180,23 @@ namespace s1
     throw Exception (Error::UnexpectedToken, currentToken);
   }
 
+  bool AstBuilder::Expect (Lexer::TokenType tokenType, Error error)
+  {
+    if (currentToken.typeOrID != tokenType)
+    {
+      diagnosticsHandler.ParseError (error, currentToken, tokenType);
+      // Generally, try to keep going afterwards
+      return false;
+    }
+    NextToken ();
+    return true;
+  }
+
+  bool AstBuilder::ExpectSemicolon ()
+  {
+    return Expect (lexer::Semicolon, Error::ExpectedSemicolon);
+  }
+
   ast::ProgramPtr AstBuilder::ParseProgram ()
   {
     return CommonParseNode (
@@ -199,8 +216,7 @@ namespace s1
               {
                 NextToken ();
                 auto decl = ParseVarsDecl (true);
-                Expect (lexer::Semicolon);
-                NextToken();
+                ExpectSemicolon ();
                 return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
               });
           }
@@ -222,8 +238,7 @@ namespace s1
                 [&]()
                 {
                   auto decl = ParseVarsDecl (false);
-                  Expect (lexer::Semicolon);
-                  NextToken();
+                  ExpectSemicolon ();
                   return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
                 });
             }
@@ -235,8 +250,7 @@ namespace s1
               [&]()
               {
                 auto typeDef = ParseTypedef ();
-                Expect (lexer::Semicolon);
-                NextToken();
+                ExpectSemicolon ();
                 return ast::ProgramStatementPtr (new ast::ProgramStatementTypedef (std::move (typeDef)));
               });
           }
@@ -276,8 +290,7 @@ namespace s1
                   return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
                 });
               statements.emplace_back (std::move (statement));
-              Expect (lexer::Semicolon);
-              NextToken();
+              ExpectSemicolon ();
             }
             else if ((isType && (Peek (beyondType).typeOrID == lexer::Identifier))
                 || ((currentToken.typeOrID == lexer::Identifier) && (Peek ().typeOrID == lexer::Identifier)))
@@ -290,8 +303,7 @@ namespace s1
                   return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
                 });
               statements.emplace_back (std::move (statement));
-              Expect (lexer::Semicolon);
-              NextToken();
+              ExpectSemicolon ();
             }
             else if (currentToken.typeOrID == lexer::kwTypedef)
             {
@@ -303,15 +315,13 @@ namespace s1
                   return ast::BlockStatementPtr (new ast::BlockStatementTypedef (std::move (astTypedef)));
                 });
               statements.emplace_back (std::move (statement));
-              Expect (lexer::Semicolon);
-              NextToken();
+              ExpectSemicolon ();
             }
             else if (IsExpression ())
             {
               auto astExpr = ParseExpression ();
               statements.emplace_back (new ast::BlockStatementExpr (std::move (astExpr)));
-              Expect (lexer::Semicolon);
-              NextToken();
+              ExpectSemicolon ();
             }
             else if (currentToken.typeOrID == lexer::kwReturn)
             {
@@ -386,8 +396,7 @@ namespace s1
         {
           returnExpr = ParseExpression ();
         }
-        Expect (lexer::Semicolon);
-        NextToken();
+        ExpectSemicolon ();
         return ast::BlockStatementReturnPtr (new ast::BlockStatementReturn (std::move (returnExpr)));
       });
   }
@@ -985,13 +994,11 @@ namespace s1
         ast::ExprPtr initExpr;
         if (currentToken.typeOrID != lexer::Semicolon)
           initExpr = ParseExpression ();
-        Expect (lexer::Semicolon);
-        NextToken();
+        ExpectSemicolon ();
         ast::ExprPtr loopTestExpr;
         if (currentToken.typeOrID != lexer::Semicolon)
           loopTestExpr = ParseExpression ();
-        Expect (lexer::Semicolon);
-        NextToken();
+        ExpectSemicolon ();
         ast::ExprPtr loopFootExpr;
         if (currentToken.typeOrID != lexer::Semicolon)
           loopFootExpr = ParseExpression ();

@@ -32,6 +32,9 @@ Diagnostic error definitions for the various components involved in compilation.
     <error id="ExpectedIdentifier">
       <descr>Expected Identifier, got {0}</descr>
     </error>
+    <error id="ExpectedSemicolon">
+      <descr>Expected ';', got {0}</descr>
+    </error>
     <error id="IdentifierAlreadyDeclared">
       <descr>Identifier already declared</descr>
     </error>

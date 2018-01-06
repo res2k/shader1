@@ -72,7 +72,7 @@ public:
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -223,11 +223,12 @@ public:
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
                      "  (a = b);\n"
+                     "  error;\n"
                      "  (c = d);\n");
   }
 };

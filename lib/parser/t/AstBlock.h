@@ -72,7 +72,7 @@ public:
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code,
-                     static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto& block0Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[0].get())->expr;
@@ -248,9 +248,9 @@ public:
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS(errorHandler.parseError.code,
-                     static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
 
-    TS_ASSERT_EQUALS(block->statements.size(), 2u);
+    TS_ASSERT_EQUALS(block->statements.size(), 3u);
     const auto& block0Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[0].get())->expr;
     const auto block0ExprBinary = dynamic_cast<const ast::ExprBinary*> (block0Expr.get());
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->left), "a");
@@ -258,9 +258,12 @@ public:
     AST_TEST_EXPR_IS_IDENTIFIER(*(block0ExprBinary->right), "b");
 
     const auto& block1Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[1].get())->expr;
-    const auto block1ExprBinary = dynamic_cast<const ast::ExprBinary*> (block1Expr.get());
-    AST_TEST_EXPR_IS_IDENTIFIER(*(block1ExprBinary->left), "c");
-    TS_ASSERT_EQUALS(block1ExprBinary->op.typeOrID, s1::lexer::Assign);
-    AST_TEST_EXPR_IS_IDENTIFIER(*(block1ExprBinary->right), "d");
+    AST_TEST_EXPR_IS_IDENTIFIER(*block1Expr, "error");
+
+    const auto& block2Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[2].get())->expr;
+    const auto block2ExprBinary = dynamic_cast<const ast::ExprBinary*> (block2Expr.get());
+    AST_TEST_EXPR_IS_IDENTIFIER(*(block2ExprBinary->left), "c");
+    TS_ASSERT_EQUALS(block2ExprBinary->op.typeOrID, s1::lexer::Assign);
+    AST_TEST_EXPR_IS_IDENTIFIER(*(block2ExprBinary->right), "d");
   }
 };
