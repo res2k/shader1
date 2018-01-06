@@ -492,7 +492,7 @@ namespace s1
           if (IsWellKnownTypeOrArray (beyondType) && (Peek (beyondType).typeOrID == lexer::ParenL))
           {
             // Expression is a type cast or ctor.
-            auto astType = CheckResult (ParseType ());
+            auto astType = ParseType ();
             auto params = ParseFuncParamActual ();
             expr.reset (new ast::ExprFunctionCall (
               std::move (astType), std::move (params)));
@@ -789,10 +789,10 @@ namespace s1
     return false;
   }
 
-  AstBuilder::ParseTypeResult AstBuilder::ParseType ()
+  ast::TypePtr AstBuilder::ParseType ()
   {
     return CommonParseNode (
-      [&]() -> AstBuilder::ParseTypeResult
+      [&]()
       {
         ast::TypePtr type;
         if (currentToken.typeOrID == lexer::Identifier)
@@ -816,14 +816,24 @@ namespace s1
           }
           else
           {
-            return ParseError{ Error::ExpectedTypeName, currentToken };
+            diagnosticsHandler.ParseError (Error::ExpectedTypeOrIdentifier, currentToken);
           }
         }
+        // Skip past array brackets. Try to deal with invalid brackets to some extent
         while ((currentToken.typeOrID == lexer::BracketL)
-          && (Peek (0).typeOrID == lexer::BracketR))
+          || (currentToken.typeOrID == lexer::BracketR))
         {
-          type.reset (new ast::TypeArray (std::move (type)));
-          NextToken ();
+          if (currentToken.typeOrID == lexer::BracketL)
+          {
+            if (Peek (0).typeOrID == lexer::BracketR)
+            {
+              NextToken ();
+              NextToken ();
+              if (type) type.reset (new ast::TypeArray (std::move (type)));
+              continue;
+            }
+          }
+          diagnosticsHandler.ParseError (Error::LoneArrayBracket, currentToken);
           NextToken ();
         }
         return std::move (type);
@@ -835,7 +845,7 @@ namespace s1
     // Skip typedef
     NextToken();
     // Aliased type
-    auto astType = CheckResult (ParseType ());
+    auto astType = ParseType ();
     // Type alias
     auto aliasIdentifier = CheckResult (ParseIdentifier ());
     return ast::Typedef (std::move (astType), std::move (aliasIdentifier));
@@ -855,7 +865,7 @@ namespace s1
         }
         else
         {
-          auto astType = CheckResult (ParseType ());
+          auto astType = ParseType ();
           returnType = std::move (astType);
         }
         // Parse function identifier
@@ -884,7 +894,7 @@ namespace s1
             NextToken ();
           }
           {
-            auto astType = CheckResult (ParseType ());
+            auto astType = ParseType ();
             param.type = std::move (astType);
           }
           param.identifier = CheckResult (ParseIdentifier ());
@@ -953,7 +963,7 @@ namespace s1
           return false;
       };
 
-    auto astType = CheckResult (ParseType ());
+    auto astType = ParseType ();
     ast::VarsDecl::VarsContainer vars;
     do
     {

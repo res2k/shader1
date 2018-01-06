@@ -26,6 +26,9 @@ Diagnostic error definitions for the various components involved in compilation.
 -->
 <diagnostics>
   <component name="parser">
+    <error id="SyntaxError">
+      <descr>Syntax error</descr>
+    </error>
     <error id="UnexpectedToken">
       <descr>Unexpected token: got {0}, expected {1}</descr>
     </error>
@@ -34,6 +37,12 @@ Diagnostic error definitions for the various components involved in compilation.
     </error>
     <error id="ExpectedSemicolon">
       <descr>Expected ';', got {0}</descr>
+    </error>
+    <error id="ExpectedTypeOrIdentifier">
+      <descr>Expected type or Identifier, got {0}</descr>
+    </error>
+    <error id="LoneArrayBracket">
+      <descr>Lone array bracker: {0}</descr>
     </error>
     <error id="IdentifierAlreadyDeclared">
       <descr>Identifier already declared</descr>

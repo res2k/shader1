@@ -34,14 +34,7 @@ public:
   using AstBuilder::ParseBlock;
   using AstBuilder::ParseExpression;
   using AstBuilder::ParseProgram;
-
-  s1::parser::ast::TypePtr ParseType ()
-  {
-    auto astType = AstBuilder::ParseType ();
-    if (astType.has_error ())
-      throw s1::parser::Exception (astType.error ().error, astType.error ().token);
-    return std::move (astType.value());
-  }
+  using AstBuilder::ParseType;
 };
 
 #endif // PARSER_T_TESTASTBUILDER_H_
