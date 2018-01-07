@@ -40,5 +40,11 @@ Diagnostic definitions for the various components involved in compilation.
       <descr>Unterminated block comment</descr>
       <doc>A block comment was not terminated when the end of file was reached.</doc>
     </warning>
+    <warning id="VectorLookalike">
+      <descr>Identifier looks like a vector type</descr>
+    </warning>
+    <warning id="MatrixLookalike">
+      <descr>Identifier looks like a matrix type</descr>
+    </warning>
   </component>
 </diagnostics>

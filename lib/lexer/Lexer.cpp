@@ -286,6 +286,16 @@ KEYWORDS
     return nextToken;
   }
 
+  static inline bool IsNumeric (uc::Char32 ch)
+  {
+    return (ch >= '0') && (ch <= '9');
+  }
+
+  static inline bool IsDimensionChar (uc::Char32 ch)
+  {
+    return (ch >= '1') && (ch <= '4');
+  }
+
   void Lexer::ParseIdentifier ()
   {
     while (IsIDContinueOrReplacer (PeekChar()))
@@ -326,25 +336,31 @@ KEYWORDS
       if (typeCandidate != lexer::Invalid)
       {
         auto dimensionsBuf = dimensions.data ();
-        if ((dimensions.length() == 1)
-            && (dimensionsBuf[0] >= '1')
-            && (dimensionsBuf[0] <= '4'))
+        if ((dimensions.length() == 1) && IsNumeric (dimensionsBuf[0]))
         {
-          // It's a vector!
-          currentToken.typeOrID = static_cast<lexer::TokenType> (typeCandidate | lexer::VecFlag);
-          currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
+          if (IsDimensionChar (dimensionsBuf[0]))
+          {
+            // It's a vector!
+            currentToken.typeOrID = static_cast<lexer::TokenType> (typeCandidate | lexer::VecFlag);
+            currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
+          }
+          else
+            diagnosticsHandler.LexerError (lexer::Warning::VectorLookalike, currentToken.location);
         }
         else if ((dimensions.length() == 3)
-            && (dimensionsBuf[0] >= '1')
-            && (dimensionsBuf[0] <= '4')
+            && IsNumeric (dimensionsBuf[0])
             && (dimensionsBuf[1] == 'x')
-            && (dimensionsBuf[2] >= '1')
-            && (dimensionsBuf[2] <= '4'))
+            && IsNumeric (dimensionsBuf[2]))
         {
-          // It's a matrix!
-          currentToken.typeOrID =  static_cast<lexer::TokenType> (typeCandidate | lexer::MatFlag);
-          currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
-          currentToken.dimension2 = dimensionsBuf[2] - '1' + 1;
+          if (IsDimensionChar (dimensionsBuf[0]) && IsDimensionChar (dimensionsBuf[2]))
+          {
+            // It's a matrix!
+            currentToken.typeOrID =  static_cast<lexer::TokenType> (typeCandidate | lexer::MatFlag);
+            currentToken.dimension1 = dimensionsBuf[0] - '1' + 1;
+            currentToken.dimension2 = dimensionsBuf[2] - '1' + 1;
+          }
+          else
+            diagnosticsHandler.LexerError (lexer::Warning::MatrixLookalike, currentToken.location);
         }
       }
     }
