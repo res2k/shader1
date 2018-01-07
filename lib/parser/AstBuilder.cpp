@@ -131,7 +131,12 @@ namespace s1
     ast::Identifier astIdent = ast::Identifier{ currentToken };
     if (currentToken.typeOrID != lexer::Identifier)
     {
-      return std::make_pair (std::move (astIdent), ParseError{ Error::ExpectedIdentifier, currentToken });
+      /* Heuristic: If it's a token lookalike, skip it anyway.
+       * Idea is to continue parsing if it's a typo or accidental use of a keyword */
+      auto offendingToken = currentToken;
+      Lexer::TokenType tokenID = static_cast<lexer::TokenType> (currentToken.typeOrID & ~lexer::TypeFlagMask);
+      if ((tokenID >= lexer::KeywordFirst) && (tokenID <= lexer::KeywordLast)) NextToken ();
+      return std::make_pair (std::move (astIdent), ParseError{ Error::ExpectedIdentifier, offendingToken });
     }
     NextToken ();
     return std::make_pair (std::move (astIdent), boost::none);
