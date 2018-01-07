@@ -149,8 +149,14 @@ namespace s1
       kwBoolMat = kwBool | MatFlag,
       kwUnsignedMat = kwUnsigned | MatFlag,
       kwIntMat = kwInt | MatFlag,
-      kwFloatMat =kwFloat  | MatFlag
+      kwFloatMat =kwFloat  | MatFlag,
       /** @} */
+
+      // Helper values
+      SymbolFirst = Semicolon,
+      SymbolLast = LogicAnd,
+      KeywordFirst = kwReturn,
+      KeywordLast = kwFloat
     };
   } // namespace lexer
 } // namespace s1
