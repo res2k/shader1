@@ -997,13 +997,7 @@ namespace s1
     ast::VarsDecl::VarsContainer vars;
     do
     {
-      if (currentToken.typeOrID != lexer::Identifier)
-      {
-        diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Identifier);
-        break;
-      }
-      auto identifier = ast::Identifier{ currentToken };
-      NextToken ();
+      auto parsedIdentifier = ParseIdentifierAndReport ();
       ast::ExprPtr initializer;
       if (currentToken.typeOrID == lexer::Assign)
       {
@@ -1013,11 +1007,11 @@ namespace s1
       }
       else if (isConst)
       {
-        // TODO: Give it's own error
-        diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::Assign);
-        break;
+        diagnosticsHandler.ParseError (Error::ExpectedAssign, currentToken);
+        // Try anyway...
+        initializer = ParseExpression ();
       }
-      vars.emplace_back (ast::VarsDecl::Var{ identifier, std::move (initializer) });
+      if (!parsedIdentifier.second) vars.emplace_back (ast::VarsDecl::Var{ parsedIdentifier.first, std::move (initializer) });
       // ',' - more variables follow
     } while (haveSeparator ());
     return ast::VarsDecl (isConst, std::move (astType), std::move (vars));

@@ -197,7 +197,7 @@ public:
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
@@ -253,14 +253,17 @@ public:
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedAssign));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
     TS_ASSERT(varsDecl->isConst);
     AST_TEST_TYPE_IS_WELL_KNOWN(*varsDecl->type, kwInt);
 
-    TS_ASSERT(varsDecl->vars.empty());
+    // Parsing will produce variable w/o initializer
+    TS_ASSERT_EQUALS(varsDecl->vars.size(), 1u);
+    TS_ASSERT_EQUALS(varsDecl->vars[0].identifier.GetString(), "a");
+    TS_ASSERT(!varsDecl->vars[0].initializer);
   }
 
   void testBlockTypedef (void)

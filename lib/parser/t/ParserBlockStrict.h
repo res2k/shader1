@@ -278,7 +278,7 @@ public:
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -354,15 +354,25 @@ public:
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::UnexpectedToken));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedAssign));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
+    // Parsing will produce variable w/o initializer
     SemanticsHandler::NamePtr varRequested;
-    TS_ASSERT_THROWS_ASSERT(
-      testScope->ResolveIdentifier (s1::uc::String ("a")),
-      const s1::parser::Exception& e,
-      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::Error::IdentifierUndeclared)
+    TS_ASSERT_THROWS_NOTHING(
+      varRequested =
+        testScope->ResolveIdentifier (s1::uc::String ("a"))
     );
+    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TestSemanticsHandler::TestName* testName =
+      static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
+    TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varConstant, true);
+    TestSemanticsHandler::TestType* testType =
+      static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
+    TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
   }
 
   void testBlockTypedef (void)
