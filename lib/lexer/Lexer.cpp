@@ -81,6 +81,22 @@ KEYWORDS
     return (currentToken.typeOrID != lexer::EndOfFile) || (currentChar != uc::InvalidChar32) || inputChars;
   }
 
+  /* Helper functions to treat the replacement character as part of an Identifier.
+   * Although the replacement character (0xFFFD) indicates an invalid input sequence
+   * it's useful to treat it as an Identifier character this lets the parser produce
+   * somewhat better output.
+   * The Error handler will have been already called for the invalid input anyway.
+   */
+  static inline bool IsIDStartOrReplacer (uc::Char32 ch)
+  {
+    return uc::IsIDStart (ch) || (ch == uc::ReplacementChar);
+  }
+
+  static inline bool IsIDContinueOrReplacer (uc::Char32 ch)
+  {
+    return uc::IsIDContinue (ch) || (ch == uc::ReplacementChar);
+  }
+
   Lexer& Lexer::operator++() throw()
   {
     /* This is a loop as, after a comment was handled, we still have to obtain
@@ -231,7 +247,7 @@ KEYWORDS
         return *this;
       }
       
-      if ((currentChar == '_') || uc::IsIDStart (currentChar))
+      if ((currentChar == '_') || IsIDStartOrReplacer (currentChar))
       {
         // Identifier
         ParseIdentifier ();
@@ -243,17 +259,8 @@ KEYWORDS
       }
       else
       {
-        if (currentChar != 0xfffd)
-        {
-          /* Replacement character (0xFFFD) indicates an invalid input sequence.
-             Error handler was already called for that. */
-          currentToken = MakeToken (lexer::Unknown);
-        }
-        else
-        {
-          /* Otherwise, it's an unrecognized character. */
-          currentToken = MakeToken (lexer::Invalid);
-        }
+        /* It's an unrecognized character. */
+        currentToken = MakeToken (lexer::Invalid);
         NextChar ();
       }
       
@@ -281,7 +288,7 @@ KEYWORDS
 
   void Lexer::ParseIdentifier ()
   {
-    while (uc::IsIDContinue (PeekChar()))
+    while (IsIDContinueOrReplacer (PeekChar()))
     {
       NextChar ();
     }
