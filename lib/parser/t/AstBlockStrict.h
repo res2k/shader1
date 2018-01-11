@@ -342,4 +342,70 @@ public:
       TS_ASSERT(!varsDecl->vars[0].initializer);
     }
   }
+
+  void testBlockTypedefInvalid1 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("typedef 0 MyInt;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::BlockPtr block;
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTypeOrIdentifier));
+
+    TS_ASSERT_EQUALS(block->statements.size(), 1u);
+    const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get());
+    TS_ASSERT(!typeDef->type);
+    TS_ASSERT_EQUALS(typeDef->alias.GetString(), "MyInt");
+  }
+
+  void testBlockTypedefInvalid2 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("typedef int float;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::BlockPtr block;
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+
+    TS_ASSERT_EQUALS(block->statements.size(), 1u);
+    const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get());
+    AST_TEST_TYPE_IS_WELL_KNOWN(*typeDef->type, kwInt);
+    TS_ASSERT_EQUALS(typeDef->alias.GetString(), "float");
+  }
+
+  void testBlockTypedefInvalid3 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("typedef int;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::BlockPtr block;
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+
+    TS_ASSERT_EQUALS(block->statements.size(), 1u);
+    const auto typeDef = dynamic_cast<const ast::BlockStatementTypedef*> (block->statements[0].get());
+    AST_TEST_TYPE_IS_WELL_KNOWN(*typeDef->type, kwInt);
+    TS_ASSERT_EQUALS(typeDef->alias.GetString(), ";");
+  }
 };
