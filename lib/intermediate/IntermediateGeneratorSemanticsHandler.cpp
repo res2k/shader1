@@ -71,6 +71,7 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
+      invalidType = boost::shared_ptr<TypeImpl> (new TypeImpl (Invalid));
       voidType = boost::shared_ptr<TypeImpl> (new TypeImpl (Void));
       boolType = boost::shared_ptr<TypeImpl> (new TypeImpl (Bool));
       intType = boost::shared_ptr<TypeImpl> (new TypeImpl (Int));
@@ -96,6 +97,7 @@ namespace s1
       // 1st char: base type
       switch (base)
       {
+      case parser::SemanticsHandler::Invalid: typeStr[0] = 'X'; break;
       case parser::SemanticsHandler::Void:    typeStr[0] = 'V'; break;
       case parser::SemanticsHandler::Bool:    typeStr[0] = 'B'; break;
       case parser::SemanticsHandler::Int:     typeStr[0] = 'I'; break;
@@ -537,6 +539,7 @@ namespace s1
     {
       switch (type)
       {
+      case Invalid: return invalidType;
       case Void: return voidType;
       case Bool: return boolType;
       case Int: return intType;

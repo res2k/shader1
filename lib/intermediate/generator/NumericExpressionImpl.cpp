@@ -198,6 +198,7 @@ namespace s1
           seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
+      case Invalid:
       case Void:
       case Bool:
         break;

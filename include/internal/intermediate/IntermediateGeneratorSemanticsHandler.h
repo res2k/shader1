@@ -77,6 +77,7 @@ namespace s1
       diagnostics::Handler* diagnosticsHandler = nullptr;
 
       typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
+      TypeImplPtr invalidType;
       TypeImplPtr voidType;
       TypeImplPtr boolType;
       TypeImplPtr intType;
