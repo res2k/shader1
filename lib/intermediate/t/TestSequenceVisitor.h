@@ -34,10 +34,12 @@ public:
     opConstUInt,
     opConstFloat,
     opAssignment,
+    opCastToInvalid,
     opCastToBool,
     opCastToInt,
     opCastToUInt,
     opCastToFloat,
+    opMakeVectorInvalid,
     opMakeVectorBool,
     opMakeVectorInt,
     opMakeVectorUInt,
@@ -46,6 +48,7 @@ public:
     opVectorDot,
     opVectorLength,
     opVectorNormalize,
+    opMakeMatrixInvalid,
     opMakeMatrixBool,
     opMakeMatrixInt,
     opMakeMatrixUInt,
@@ -182,6 +185,9 @@ public:
     SequenceEntry entry;
     switch (destType)
     {
+    case s1::intermediate::Invalid:
+      entry.op = opCastToInvalid;
+      break;
     case s1::intermediate::Bool:
       entry.op = opCastToBool;
       break;
@@ -208,6 +214,9 @@ public:
     SequenceEntry entry;
     switch (compType)
     {
+    case s1::intermediate::Invalid:
+      entry.op = opMakeVectorInvalid;
+      break;
     case s1::intermediate::Bool:
       entry.op = opMakeVectorBool;
       break;
@@ -275,6 +284,9 @@ public:
     SequenceEntry entry;
     switch (compType)
     {
+    case s1::intermediate::Invalid:
+      entry.op = opMakeMatrixInvalid;
+      break;
     case s1::intermediate::Bool:
       entry.op = opMakeMatrixBool;
       break;

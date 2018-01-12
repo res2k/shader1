@@ -27,6 +27,9 @@ namespace s1
     {
       switch (type)
       {
+      case Invalid:
+        // Do nothing
+        break;
       case Bool:
         visitor.OpConstBool (destination, boolVal);
         break;

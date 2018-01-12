@@ -24,7 +24,7 @@ namespace s1
   {
     enum BasicType
     {
-      Bool, Int, UInt, Float
+      Invalid, Bool, Int, UInt, Float
     };
   } // namespace intermediate
 } // namespace s1
