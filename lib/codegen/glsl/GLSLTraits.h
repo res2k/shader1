@@ -31,6 +31,7 @@ namespace s1
     {
       class Traits : public sl::Traits
       {
+        static uc::String typeStrInvalid;
         static uc::String typeStrBool;
         static uc::String typeStrFloat;
         static uc::String typeStrInt;

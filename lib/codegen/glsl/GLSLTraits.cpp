@@ -36,6 +36,7 @@ namespace s1
   {
     namespace glsl
     {
+      uc::String Traits::typeStrInvalid ("INVALID");
       uc::String Traits::typeStrBool ("bool");
       uc::String Traits::typeStrFloat ("float");
       uc::String Traits::typeStrInt ("int");
@@ -50,6 +51,9 @@ namespace s1
 
         switch (type)
         {
+        case intermediate::Invalid:
+          prefix = "INVALID"; // produce invalid code
+          break;
         case intermediate::Bool:
           prefix = "b";
           break;
@@ -69,6 +73,8 @@ namespace s1
       {
         switch (type)
         {
+        case intermediate::Invalid:
+          return typeStrInvalid;
         case intermediate::Bool:
           return typeStrBool;
         case intermediate::Float:
