@@ -28,17 +28,17 @@ namespace s1
       switch (type)
       {
       case Bool:
-	visitor.OpConstBool (destination, boolVal);
-	break;
+        visitor.OpConstBool (destination, boolVal);
+        break;
       case Int:
-	visitor.OpConstInt (destination, intVal);
-	break;
+        visitor.OpConstInt (destination, intVal);
+        break;
       case UInt:
-	visitor.OpConstUInt (destination, uintVal);
-	break;
+        visitor.OpConstUInt (destination, uintVal);
+        break;
       case Float:
-	visitor.OpConstFloat (destination, floatVal);
-	break;
+        visitor.OpConstFloat (destination, floatVal);
+        break;
       }
     }
     
