@@ -128,6 +128,9 @@ namespace s1
           {
             switch (type->GetBaseType ())
             {
+            case parser::SemanticsHandler::Invalid:
+              typeStr = typeStrInvalid;
+              break;
             case parser::SemanticsHandler::Void:	typeStr = "void"; break;
             case parser::SemanticsHandler::Bool:	typeStr = typeStrBool; break;
             case parser::SemanticsHandler::Int:

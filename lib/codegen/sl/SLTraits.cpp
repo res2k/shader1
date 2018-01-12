@@ -178,6 +178,8 @@ namespace s1
       {
         switch (type)
         {
+        case s1::parser::SemanticsHandler::Invalid:
+          return intermediate::Invalid;
         case s1::parser::SemanticsHandler::Void:
           S1_ASSERT_NOT_REACHED (intermediate::Int);
           break;
