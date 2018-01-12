@@ -166,6 +166,7 @@ namespace s1
         {
           switch (base)
           {
+            case Invalid: return uc::String ("INVALID");
             case Void: return uc::String ("void");
             case Bool: return uc::String ("bool");
             case Int: return uc::String ("int");

@@ -48,7 +48,7 @@ namespace s1
       /**\name Types
        * @{ */
       /// Base types
-      enum BaseType { Void, Bool, Int, UInt, Float };
+      enum BaseType { Invalid, Void, Bool, Int, UInt, Float };
       /// Sampler dimensions
       enum SamplerType { _1D, _2D, _3D, CUBE };
       
