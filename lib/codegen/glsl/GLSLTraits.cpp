@@ -52,6 +52,7 @@ namespace s1
         {
         case intermediate::Bool:
           prefix = "b";
+          break;
         case intermediate::UInt:
           // TODO: unsigned integer - added some time between GLSL 1.10 and 4.50
         case intermediate::Int:
