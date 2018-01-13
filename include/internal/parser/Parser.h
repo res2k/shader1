@@ -75,7 +75,7 @@ namespace s1
     // Types
     class VisitorTypeImpl;
     typedef parser::SemanticsHandler::TypePtr Type;
-    Type ParseType (parser::ast::Type& astType, const Scope& scope);
+    Type ParseType (parser::ast::Type* astType, const Scope& scope);
     Type ParseTypeBool (const Lexer::Token& token);
     Type ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token);
     Type ParseTypeVector (bool isUnsigned, const Lexer::Token& token);

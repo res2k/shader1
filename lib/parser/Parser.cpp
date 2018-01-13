@@ -301,7 +301,7 @@ namespace s1
     }
     if (auto astType = boost::get<ast::TypePtr> (&astExprFunctionCall.identifierOrType))
     {
-      return semanticsHandler.CreateTypeConstructorExpression (ParseType (**astType, scope), paramExprs);
+      return semanticsHandler.CreateTypeConstructorExpression (ParseType (astType->get(), scope), paramExprs);
     }
     else
     {
@@ -456,7 +456,7 @@ namespace s1
 
     void operator() (const ast::TypeArray& type) override
     {
-      auto containedType = parent.ParseType (*type.containedType, scope);
+      auto containedType = parent.ParseType (type.containedType.get(), scope);
       parsedType = parent.semanticsHandler.CreateArrayType (containedType);
     }
     void operator() (const ast::TypeIdentifier& type) override
@@ -519,12 +519,17 @@ namespace s1
     }
   };
 
-  Parser::Type Parser::ParseType (ast::Type& astType, const Scope& scope)
+  Parser::Type Parser::ParseType (ast::Type* astType, const Scope& scope)
   {
-    VisitorTypeImpl visitor (*this, scope);
-    astType.Visit (visitor);
-    S1_ASSERT(visitor.parsedType, Type ());
-    return std::move (visitor.parsedType);
+    if (astType)
+    {
+      VisitorTypeImpl visitor (*this, scope);
+      astType->Visit (visitor);
+      S1_ASSERT (visitor.parsedType, Type());
+      return std::move (visitor.parsedType);
+    }
+    else
+      return semanticsHandler.CreateType (SemanticsHandler::Invalid);
   }
   
   Parser::Type Parser::ParseTypeBool (const Lexer::Token& /*token*/)
@@ -630,7 +635,7 @@ namespace s1
 
   void Parser::ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef)
   {
-    Type aliasedType = ParseType (*astTypedef.type, scope);
+    Type aliasedType = ParseType (astTypedef.type.get(), scope);
     // Add to scope
     scope->AddTypeAlias (aliasedType, astTypedef.alias.GetString());
   }
@@ -645,7 +650,7 @@ namespace s1
     else
     {
       const auto& astType = boost::get<ast::TypePtr> (astFunctionDecl.resultType);
-      returnType = ParseType (*astType, scope);
+      returnType = ParseType (astType.get(), scope);
     }
     uc::String functionIdentifier = astFunctionDecl.identifier.GetString();
     // Parse formal parameters
@@ -711,7 +716,7 @@ namespace s1
       SemanticsHandler::Scope::FunctionFormalParameter newParam;
       newParam.dir = (SemanticsHandler::Scope::FormalParameterDirection)paramDirection;
       newParam.freqQualifier = freqQualifier;
-      newParam.type = ParseType (*param.type, scope);
+      newParam.type = ParseType (param.type.get(), scope);
       newParam.identifier = param.identifier.GetString();
       if (param.defaultValue)
       {
@@ -736,7 +741,7 @@ namespace s1
 
   void Parser::ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl)
   {
-    auto type = ParseType (*astVarsDecl.type, scope);
+    auto type = ParseType (astVarsDecl.type.get(), scope);
     for (const auto& astVar : astVarsDecl.vars)
     {
       auto varIdentifier = astVar.identifier.GetString();

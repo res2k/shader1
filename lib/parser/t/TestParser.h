@@ -52,7 +52,7 @@ public:
   Parser::Type ParseType (const Scope& scope)
   {
     auto astType = TestAstBuilder (inputLexer, diagnosticsHandler).ParseType ();
-    return Parser::ParseType (*astType, scope);
+    return Parser::ParseType (astType.get(), scope);
   }
 };
 
