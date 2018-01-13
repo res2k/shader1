@@ -463,4 +463,94 @@ public:
     TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
   }
 
+  void testBlockTypedefInvalid1 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("typedef 0 MyInt;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+
+    SemanticsHandler::BlockPtr block (
+      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TestSemanticsHandler::TestScope* testScope =
+      static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
+    SemanticsHandler::NamePtr typeRequested;
+    TS_ASSERT_THROWS_NOTHING(
+      typeRequested =
+        testScope->ResolveIdentifier (s1::uc::String ("MyInt"))
+    );
+    TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
+    TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
+    TestSemanticsHandler::TestName* testName =
+      static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
+    TestSemanticsHandler::TestType* testType =
+      static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
+    TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Invalid);
+  }
+
+  void testBlockTypedefInvalid2 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("typedef int float; float a;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+
+    SemanticsHandler::BlockPtr block (
+      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+    TestSemanticsHandler::TestScope* testScope =
+      static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
+
+    SemanticsHandler::NamePtr typeRequested;
+    TS_ASSERT_THROWS_NOTHING(
+      typeRequested =
+        testScope->ResolveIdentifier (s1::uc::String ("float"))
+    );
+    TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
+
+    SemanticsHandler::NamePtr varRequested;
+    TS_ASSERT_THROWS_NOTHING(
+      varRequested =
+        testScope->ResolveIdentifier (s1::uc::String ("a"))
+    );
+    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TestSemanticsHandler::TestName* testName =
+      static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
+    TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varConstant, false);
+    TestSemanticsHandler::TestType* testType =
+      static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
+    TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
+    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Float);
+  }
+
+  void testBlockTypedefInvalid3 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("typedef int;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+
+    SemanticsHandler::BlockPtr block (
+      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
+  }
 };
