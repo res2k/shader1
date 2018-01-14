@@ -128,7 +128,7 @@ namespace s1
 
     void operator() (const ast::BlockStatementExpr& statement) override
     {
-      auto expr = parent.ParseExpression (scope, *statement.expr);
+      auto expr = parent.ParseExpression (scope, statement.expr.get());
       if (expr) block->AddExpressionCommand (expr);
     }
     void operator() (const ast::BlockStatementFor& statement) override
@@ -136,15 +136,15 @@ namespace s1
       Expression initExpr, loopTestExpr, loopFootExpr;
       if (statement.initExpr)
       {
-        initExpr = parent.ParseExpression (scope, *statement.initExpr);
+        initExpr = parent.ParseExpression (scope, statement.initExpr.get());
       }
       if (statement.condition)
       {
-        loopTestExpr = parent.ParseExpression (scope, *statement.condition);
+        loopTestExpr = parent.ParseExpression (scope, statement.condition.get());
       }
       if (statement.footExpr)
       {
-        loopFootExpr = parent.ParseExpression (scope, *statement.footExpr);
+        loopFootExpr = parent.ParseExpression (scope, statement.footExpr.get());
       }
       Block newBlock = parent.semanticsHandler.CreateBlock (scope);
       parent.ParseBlock (newBlock, *statement.bodyBlock);
@@ -152,7 +152,7 @@ namespace s1
     }
     void operator() (const ast::BlockStatementIf& statement) override
     {
-      auto conditionExpr = parent.ParseExpression (scope, *statement.condition);
+      auto conditionExpr = parent.ParseExpression (scope, statement.condition.get());
       Block ifBlock = parent.semanticsHandler.CreateBlock (scope);
       parent.ParseBlock (ifBlock, *statement.ifBlock);
       Block elseBlock;
@@ -176,7 +176,7 @@ namespace s1
       if (statement.expr)
       {
         /* Return with some value */
-        returnExpr = parent.ParseExpression (scope, *statement.expr);
+        returnExpr = parent.ParseExpression (scope, statement.expr.get());
       }
       block->AddReturnCommand (returnExpr);
     }
@@ -190,7 +190,7 @@ namespace s1
     }
     void operator() (const ast::BlockStatementWhile& statement) override
     {
-      auto loopTestExpr = parent.ParseExpression (scope, *statement.condition);
+      auto loopTestExpr = parent.ParseExpression (scope, statement.condition.get());
       Block newBlock = parent.semanticsHandler.CreateBlock (scope);
       parent.ParseBlock (newBlock, *statement.bodyBlock);
       block->AddWhileLoop (loopTestExpr, newBlock);
@@ -245,12 +245,17 @@ namespace s1
     }
   };
 
-  Parser::Expression Parser::ParseExpression (const Scope& scope, const ast::Expr& astExpr)
+  Parser::Expression Parser::ParseExpression (const Scope& scope, const ast::Expr* astExpr)
   {
-    VisitorExprImpl visitor (*this, scope);
-    astExpr.Visit (visitor);
-    S1_ASSERT(visitor.parsedExpr, Expression ());
-    return std::move (*visitor.parsedExpr);
+    if (astExpr)
+    {
+      VisitorExprImpl visitor (*this, scope);
+      astExpr->Visit (visitor);
+      S1_ASSERT (visitor.parsedExpr, Expression ());
+      return std::move (*visitor.parsedExpr);
+    }
+    else
+      return Expression ();
   }
 
   Parser::Expression Parser::ParseExprValue (const Scope& scope, const ast::ExprValue& astExprValue)
@@ -281,13 +286,13 @@ namespace s1
 
   Parser::Expression Parser::ParseExprArrayElement (const Scope& scope, const ast::ExprArrayElement& astExprArrayElement)
   {
-    return semanticsHandler.CreateArrayElementAccess (ParseExpression (scope, *astExprArrayElement.value),
-                                                      ParseExpression (scope, *astExprArrayElement.index));
+    return semanticsHandler.CreateArrayElementAccess (ParseExpression (scope, astExprArrayElement.value.get()),
+                                                      ParseExpression (scope, astExprArrayElement.index.get()));
   }
 
   Parser::Expression Parser::ParseExprAttribute (const Scope& scope, const ast::ExprAttribute& astExprAttribute)
   {
-    return semanticsHandler.CreateAttributeAccess (ParseExpression (scope, *astExprAttribute.value),
+    return semanticsHandler.CreateAttributeAccess (ParseExpression (scope, astExprAttribute.value.get()),
                                                    astExprAttribute.attr.GetString());
   }
 
@@ -297,7 +302,7 @@ namespace s1
     paramExprs.reserve (astExprFunctionCall.args.size());
     for (const auto& paramAstExpr : astExprFunctionCall.args)
     {
-      paramExprs.push_back (ParseExpression (scope, *paramAstExpr));
+      paramExprs.push_back (ParseExpression (scope, paramAstExpr.get()));
     }
     if (auto astType = boost::get<ast::TypePtr> (&astExprFunctionCall.identifierOrType))
     {
@@ -316,8 +321,8 @@ namespace s1
     switch (astExprBinary.op.typeOrID)
     {
     case lexer::Assign:
-      return semanticsHandler.CreateAssignExpression (ParseExpression (scope, *astExprBinary.left),
-                                                      ParseExpression (scope, *astExprBinary.right));
+      return semanticsHandler.CreateAssignExpression (ParseExpression (scope, astExprBinary.left.get()),
+                                                      ParseExpression (scope, astExprBinary.right.get()));
     case lexer::Mult:
     case lexer::Div:
     case lexer::Mod:
@@ -364,8 +369,8 @@ namespace s1
       S1_ASSERT_NOT_REACHED (Parser::Expression ());
     }
     return semanticsHandler.CreateArithmeticExpression (op,
-                                                        ParseExpression (scope, *astExprBinary.left),
-                                                        ParseExpression (scope, *astExprBinary.right));
+                                                        ParseExpression (scope, astExprBinary.left.get()),
+                                                        ParseExpression (scope, astExprBinary.right.get()));
   }
   
   Parser::Expression Parser::ParseExprUnary (const Scope& scope, const parser::ast::ExprUnary& astExprUnary)
@@ -385,14 +390,14 @@ namespace s1
       op = SemanticsHandler::Neg;
       break;
     }
-    return semanticsHandler.CreateUnaryExpression (op, ParseExpression (scope, *astExprUnary.right));
+    return semanticsHandler.CreateUnaryExpression (op, ParseExpression (scope, astExprUnary.right.get()));
   }
   
   Parser::Expression Parser::ParseExprTernary (const Scope& scope, const parser::ast::ExprTernary& astExprTernary)
   {
-    return semanticsHandler.CreateTernaryExpression (ParseExpression (scope, *astExprTernary.cond),
-                                                     ParseExpression (scope, *astExprTernary.trueExpr),
-                                                     ParseExpression (scope, *astExprTernary.falseExpr));
+    return semanticsHandler.CreateTernaryExpression (ParseExpression (scope, astExprTernary.cond.get()),
+                                                     ParseExpression (scope, astExprTernary.trueExpr.get()),
+                                                     ParseExpression (scope, astExprTernary.falseExpr.get()));
   }
   
   Parser::Expression Parser::ParseExprComparison (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
@@ -422,8 +427,8 @@ namespace s1
       S1_ASSERT_NOT_REACHED (Parser::Expression ());
     }
     return semanticsHandler.CreateComparisonExpression (op,
-                                                        ParseExpression (scope, *astExprBinary.left),
-                                                        ParseExpression (scope, *astExprBinary.right));
+                                                        ParseExpression (scope, astExprBinary.left.get()),
+                                                        ParseExpression (scope, astExprBinary.right.get()));
   }
   
   Parser::Expression Parser::ParseExprLogic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
@@ -432,12 +437,12 @@ namespace s1
     {
     case lexer::LogicOr:
       return semanticsHandler.CreateLogicExpression (SemanticsHandler::Or,
-                                                     ParseExpression (scope, *astExprBinary.left),
-                                                     ParseExpression (scope, *astExprBinary.right));
+                                                     ParseExpression (scope, astExprBinary.left.get()),
+                                                     ParseExpression (scope, astExprBinary.right.get()));
     case lexer::LogicAnd:
       return semanticsHandler.CreateLogicExpression (SemanticsHandler::And,
-                                                     ParseExpression (scope, *astExprBinary.left),
-                                                     ParseExpression (scope, *astExprBinary.right));
+                                                     ParseExpression (scope, astExprBinary.left.get()),
+                                                     ParseExpression (scope, astExprBinary.right.get()));
     default:
       break;
     }
@@ -723,7 +728,7 @@ namespace s1
         // Handle default value
         if (paramDirection == SemanticsHandler::Scope::dirOut)
           throw Exception (Error::OutParameterWithDefault);
-        newParam.defaultValue = ParseExpression (scope, *param.defaultValue);
+        newParam.defaultValue = ParseExpression (scope, param.defaultValue.get());
       }
       if ((((paramDirection & SemanticsHandler::Scope::dirIn) == 0)
           || ((paramDirection & SemanticsHandler::Scope::dirOut) != 0))
@@ -747,7 +752,7 @@ namespace s1
       auto varIdentifier = astVar.identifier.GetString();
       Expression initExpr;
       if (astVar.initializer)
-        initExpr = ParseExpression (scope, *astVar.initializer);
+        initExpr = ParseExpression (scope, astVar.initializer.get());
       scope->AddVariable (type, varIdentifier, initExpr, astVarsDecl.isConst);
     }
   }

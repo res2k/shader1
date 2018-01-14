@@ -46,7 +46,7 @@ public:
   Parser::Expression ParseExpression (const Scope& scope)
   {
     auto astExpr = TestAstBuilder (inputLexer, diagnosticsHandler).ParseExpression ();
-    return s1::Parser::ParseExpression (scope, *astExpr);
+    return s1::Parser::ParseExpression (scope, astExpr.get());
   }
 
   Parser::Type ParseType (const Scope& scope)
