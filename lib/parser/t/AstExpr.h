@@ -464,6 +464,69 @@ public:
     AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->falseExpr), "c");
   }
 
+  void testTernaryError (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a ? b c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::ExprPtr expr;
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTernaryOperator));
+    const auto astTernaryExpr = dynamic_cast<const ast::ExprTernary*> (expr.get());
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->cond), "a");
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->trueExpr), "b");
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->falseExpr), "c");
+  }
+
+  void testTernaryError2 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a ? b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::ExprPtr expr;
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    const auto astTernaryExpr = dynamic_cast<const ast::ExprTernary*> (expr.get());
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->cond), "a");
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->trueExpr), "b");
+    TS_ASSERT(!astTernaryExpr->falseExpr);
+  }
+
+  void testTernaryError3 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a ? : c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::ExprPtr expr;
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    const auto astTernaryExpr = dynamic_cast<const ast::ExprTernary*> (expr.get());
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->cond), "a");
+    TS_ASSERT(!astTernaryExpr->trueExpr);
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astTernaryExpr->falseExpr), "c");
+  }
+
   void testParentheses1 (void)
   {
     using namespace s1::parser;
@@ -638,6 +701,31 @@ public:
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[1]), float, 3.0);
   }
 
+  void testFunctionCallError (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("x = Foo (4.0");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::ExprPtr expr;
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
+    const auto astBinaryExpr = dynamic_cast<const ast::ExprBinary*> (expr.get());
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "x");
+    TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Assign);
+    const auto astRightFuncCallExpr = dynamic_cast<const ast::ExprFunctionCall*> (astBinaryExpr->right.get());
+    const auto& funcIdent = boost::get<ast::Identifier> (astRightFuncCallExpr->identifierOrType);
+    TS_ASSERT_EQUALS(funcIdent.GetString(), "Foo");
+    TS_ASSERT_EQUALS(astRightFuncCallExpr->args.size(), 1u);
+    AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[0]), float, 4.0);
+  }
+
   void testTypeCtor (void)
   {
     using namespace s1::parser;
@@ -709,5 +797,26 @@ public:
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[0]), float, 1.0);
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[1]), float, 2.0);
     AST_TEST_EXPR_IS_NUMERIC(*(astRightFuncCallExpr->args[2]), float, 3.0);
+  }
+
+  void testExprInvalid1 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a+");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::ExprPtr expr;
+    TS_ASSERT_THROWS_NOTHING((expr = astBuilder.ParseExpression ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    const auto astBinaryExpr = dynamic_cast<const ast::ExprBinary*> (expr.get());
+    AST_TEST_EXPR_IS_IDENTIFIER(*(astBinaryExpr->left), "a");
+    TS_ASSERT_EQUALS(astBinaryExpr->op.typeOrID, s1::lexer::Plus);
+    TS_ASSERT(!astBinaryExpr->right);
   }
 };

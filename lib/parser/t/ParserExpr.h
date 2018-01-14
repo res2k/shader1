@@ -431,7 +431,79 @@ public:
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? (b ? 1 : 2) : c)");
   }
-  
+
+  void testTernaryError (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a ? b c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+                                    TestSemanticsHandler::Global));
+
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTernaryOperator));
+    TestSemanticsHandler::TestExpressionBase* testExpr =
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? b : c)");
+  }
+
+  void testTernaryError2 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a ? b");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+                                    TestSemanticsHandler::Global));
+
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    TestSemanticsHandler::TestExpressionBase* testExpr =
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? b : <INVALID-EXPR>)");
+  }
+
+  void testTernaryError3 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a ? : c");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+                                    TestSemanticsHandler::Global));
+
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    TestSemanticsHandler::TestExpressionBase* testExpr =
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? <INVALID-EXPR> : c)");
+  }
+
   void testParentheses1 (void)
   {
     std::string inStr ("(a)");
@@ -617,7 +689,35 @@ public:
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ((a + b), 3.0))");
   }
-  
+
+  void testFunctionCallError (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("x = Foo (4.0");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+                                    TestSemanticsHandler::Global));
+    s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
+                        TestSemanticsHandler::ExpressionPtr (), false);
+    scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
+
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
+    TestSemanticsHandler::TestExpressionBase* testExpr =
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo (4.0))");
+  }
+
   void testTypeCtor (void)
   {
     std::string inStr ("x = int ()");
@@ -679,5 +779,29 @@ public:
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = float[] (1.0, 2.0, 3.0))");
+  }
+
+  void testExprInvalid1 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("a+");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestSemanticsHandler semanticsHandler;
+    TestParser parser (lexer, semanticsHandler, errorHandler);
+    TestSemanticsHandler::ScopePtr scope (
+      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
+                                    TestSemanticsHandler::Global));
+
+    TestSemanticsHandler::ExpressionPtr expr;
+    TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
+    TS_ASSERT_EQUALS (errorHandler.parseError.code,
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    TestSemanticsHandler::TestExpressionBase* testExpr =
+      static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
+    TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + <INVALID-EXPR>)");
   }
 };

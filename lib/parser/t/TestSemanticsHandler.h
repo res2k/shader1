@@ -79,10 +79,30 @@ public:
   
   struct TestExpressionBase : public Expression
   {
-    virtual const std::string& GetExprString() = 0;
+    virtual const std::string& GetExprStringImpl() = 0;
     virtual TypePtr GetValueType() = 0;
+
+    static std::string GetExprString (ExpressionPtr expr);
+    std::string GetExprString ();
   };
   
+  static std::string GetExprString (TestExpressionBase* expr)
+  {
+    if (expr)
+    {
+      return expr->GetExprStringImpl ();
+    }
+    else
+    {
+      return "<INVALID-EXPR>";
+    }
+  }
+
+  static std::string GetExprString (ExpressionPtr expr)
+  {
+    return GetExprString (static_cast<TestExpressionBase*> (expr.get ()));
+  }
+
   struct TestExpressionConst : public TestExpressionBase
   {
     std::string str;
@@ -90,8 +110,8 @@ public:
     
     TestExpressionConst (const std::string& str,
 			 const TypePtr& valueType) : str (str), valueType (valueType) { }
-    
-    const std::string& GetExprString() { return str; }
+
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -106,7 +126,7 @@ public:
       identifier.toUTF8String (this->identifier);
     }
     
-    const std::string& GetExprString() { return identifier; }
+    const std::string& GetExprStringImpl() override { return identifier; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -118,17 +138,17 @@ public:
     TestExpressionOp (const char* op, ExpressionPtr left, ExpressionPtr right)
     {
       str = "(";
-      str.append (static_cast<TestExpressionBase*> (left.get())->GetExprString());
+      str.append (GetExprString (left));
       str.append (" ");
       str.append (op);
       str.append (" ");
-      str.append (static_cast<TestExpressionBase*> (right.get())->GetExprString());
+      str.append (GetExprString (right));
       str.append (")");
       
-      valueType = static_cast<TestExpressionBase*> (left.get())->GetValueType();
+      if (left) valueType = static_cast<TestExpressionBase*> (left.get())->GetValueType();
     }
     
-    const std::string& GetExprString() { return str; }
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -140,11 +160,11 @@ public:
     TestExpressionUnary (const char* op, ExpressionPtr right)
     {
       str = op;
-      str.append (static_cast<TestExpressionBase*> (right.get())->GetExprString());
-      valueType = static_cast<TestExpressionBase*> (right.get())->GetValueType();
+      str.append (GetExprString (right));
+      if (right) valueType = static_cast<TestExpressionBase*> (right.get())->GetValueType();
     }
     
-    const std::string& GetExprString() { return str; }
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -156,17 +176,17 @@ public:
     TestExpressionTernary (ExpressionPtr condition, ExpressionPtr ifExpr, ExpressionPtr thenExpr)
     {
       str = "(";
-      str.append (static_cast<TestExpressionBase*> (condition.get())->GetExprString());
+      str.append (GetExprString (condition));
       str.append (" ? ");
-      str.append (static_cast<TestExpressionBase*> (ifExpr.get())->GetExprString());
+      str.append (GetExprString (ifExpr));
       str.append (" : ");
-      str.append (static_cast<TestExpressionBase*> (thenExpr.get())->GetExprString());
+      str.append (GetExprString (thenExpr));
       str.append (")");
-      
-      valueType = static_cast<TestExpressionBase*> (ifExpr.get())->GetValueType();
+
+      if (ifExpr) valueType = static_cast<TestExpressionBase*> (ifExpr.get())->GetValueType();
     }
     
-    const std::string& GetExprString() { return str; }
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -181,7 +201,7 @@ public:
       std::string attrStr;
       attr.toUTF8String (attrStr);
       
-      str = static_cast<TestExpressionBase*> (base.get())->GetExprString();
+      str = GetExprString (base);
       str.append (".");
       str.append (attrStr);
       
@@ -192,7 +212,7 @@ public:
 	  boost::static_pointer_cast<TestType> (baseType), attrInfo));
     }
     
-    const std::string& GetExprString() { return str; }
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -203,12 +223,13 @@ public:
     
     TestExpressionArray (ExpressionPtr base, ExpressionPtr index)
     {
-      str = static_cast<TestExpressionBase*> (base.get())->GetExprString();
+      str = GetExprString(base);
       str.append ("[");
-      str.append (static_cast<TestExpressionBase*> (index.get())->GetExprString());
+      str.append (GetExprString (index));
       str.append ("]");
       
-      TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+      TypePtr baseType;
+      if (base) baseType = static_cast<TestExpressionBase*> (base.get ())->GetValueType ();
       if (baseType)
       {
 	TestType* testBaseType = static_cast<TestType*> (baseType.get());
@@ -217,7 +238,7 @@ public:
       }
     }
     
-    const std::string& GetExprString() { return str; }
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -236,8 +257,7 @@ public:
 	else
 	  first = false;
 	
-	str.append (
-	  boost::static_pointer_cast<TestExpressionBase> (*exprIt)->GetExprString());
+        str.append (GetExprString (*exprIt));
       }
     }
     
@@ -269,7 +289,7 @@ public:
       valueType = type;
     }
     
-    const std::string& GetExprString() { return str; }
+    const std::string& GetExprStringImpl() override { return str; }
     TypePtr GetValueType() { return valueType; }
   };
   
@@ -417,7 +437,7 @@ public:
     public:
       CommandExpression (TestExpressionBase* expr)
       {
-	this->commandStrings.push_back (expr->GetExprString() + ";");
+	this->commandStrings.push_back (GetExprString (expr) + ";");
       }
     };
 
@@ -430,7 +450,7 @@ public:
 	if (expr)
 	{
 	  returnStr.append (" ");
-	  returnStr.append (expr->GetExprString());
+	  returnStr.append (GetExprString (expr));
 	}
 	returnStr.append (";");
 	this->commandStrings.push_back (returnStr);
@@ -456,7 +476,7 @@ public:
 		 const TestBlock* elseBlock)
       {
 	std::string condStr ("if (");
-	condStr.append (branchCondition->GetExprString());
+	condStr.append (GetExprString (branchCondition));
 	condStr.append (")");
 	this->commandStrings.push_back (condStr);
 	this->commandStrings.push_back ("{");
@@ -479,7 +499,7 @@ public:
 		    const TestBlock* block)
       {
 	std::string condStr ("while (");
-	condStr.append (loopCondition->GetExprString());
+	condStr.append (GetExprString (loopCondition));
 	condStr.append (")");
 	this->commandStrings.push_back (condStr);
 	this->commandStrings.push_back ("{");
@@ -497,11 +517,11 @@ public:
 		  const TestBlock* block)
       {
 	std::string condStr ("for (");
-	condStr.append (initExpr->GetExprString());
+	condStr.append (GetExprString (initExpr));
 	condStr.append ("; ");
-	condStr.append (loopCond->GetExprString());
+	condStr.append (GetExprString (loopCond));
 	condStr.append ("; ");
-	condStr.append (tailExpr->GetExprString());
+	condStr.append (GetExprString (tailExpr));
 	condStr.append (")");
 	this->commandStrings.push_back (condStr);
 	this->commandStrings.push_back ("{");
@@ -587,5 +607,15 @@ public:
     return BlockPtr (new TestBlock (blockScope));
   }
 };
+
+inline std::string TestSemanticsHandler::TestExpressionBase::GetExprString (ExpressionPtr expr)
+{
+  return TestSemanticsHandler::GetExprString (expr);
+}
+
+inline std::string TestSemanticsHandler::TestExpressionBase::GetExprString()
+{
+  return TestSemanticsHandler::GetExprString (this);
+}
 
 #endif // __TESTSEMANTICSHANDLER_H__
