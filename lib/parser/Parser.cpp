@@ -129,7 +129,7 @@ namespace s1
     void operator() (const ast::BlockStatementExpr& statement) override
     {
       auto expr = parent.ParseExpression (scope, *statement.expr);
-      block->AddExpressionCommand (expr);
+      if (expr) block->AddExpressionCommand (expr);
     }
     void operator() (const ast::BlockStatementFor& statement) override
     {
@@ -211,7 +211,7 @@ namespace s1
     Parser& parent;
     const Scope& scope;
   public:
-    Parser::Expression parsedExpr;
+    boost::optional<Parser::Expression> parsedExpr;
 
     VisitorExprImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope) {}
 
@@ -250,7 +250,7 @@ namespace s1
     VisitorExprImpl visitor (*this, scope);
     astExpr.Visit (visitor);
     S1_ASSERT(visitor.parsedExpr, Expression ());
-    return std::move (visitor.parsedExpr);
+    return std::move (*visitor.parsedExpr);
   }
 
   Parser::Expression Parser::ParseExprValue (const Scope& scope, const ast::ExprValue& astExprValue)

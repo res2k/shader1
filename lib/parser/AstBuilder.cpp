@@ -530,12 +530,23 @@ namespace s1
             // '(' - nested expression
             NextToken();
             expr = ParseExpression ();
-            Expect (lexer::ParenR);
-            NextToken ();
+            Expect (lexer::ParenR, Error::ExpectedParenthesis);
           }
           else
           {
-            UnexpectedToken();
+            diagnosticsHandler.ParseError (Error::ExpectedExpression, currentToken);
+            /* Try to continue orderly parsing; consume token, unless it looks like something
+             * that could expression parsing to continue */
+            if (!IsBinaryOperationToken (currentToken.typeOrID)
+                && !IsUnaryOperationToken (currentToken.typeOrID)
+                && (currentToken.typeOrID != lexer::TernaryIf)
+                && (currentToken.typeOrID != lexer::TernaryElse)
+                && (currentToken.typeOrID != lexer::Member)
+                && (currentToken.typeOrID != lexer::BracketL)
+                && !IsSeparator (currentToken.typeOrID))
+            {
+              NextToken ();
+            }
           }
         }
         return ParseAttributeOrArrayAccess (std::move (expr));
@@ -572,15 +583,14 @@ namespace s1
           if (currentToken.typeOrID == lexer::Member)
           {
             NextToken ();
-            auto attr = CheckResult (ParseIdentifier ());
-            expr.reset (new ast::ExprAttribute (std::move (expr), std::move (attr)));
+            auto attr = ParseIdentifierAndReport ();
+            expr.reset (new ast::ExprAttribute (std::move (expr), std::move (attr.first)));
           }
           else if (currentToken.typeOrID == lexer::BracketL)
           {
             NextToken();
             auto indexExpr = ParseExpression ();
-            Expect (lexer::BracketR);
-            NextToken();
+            Expect (lexer::BracketR, Error::ExpectedBracket);
             expr.reset (new ast::ExprArrayElement (std::move (expr), std::move (indexExpr)));
           }
           else
@@ -654,10 +664,9 @@ namespace s1
       [&]()
       {
         auto expr (std::move (prefix));
-        NextToken();
+        Expect (lexer::TernaryIf, Error::ExpectedTernaryOperator);
         auto expr2 = ParseExpression ();
-        Expect (lexer::TernaryElse);
-        NextToken();
+        Expect (lexer::TernaryElse, Error::ExpectedTernaryOperator);
         auto expr3 = ParseExpression ();
         return ast::ExprPtr (new ast::ExprTernary (std::move (expr), std::move (expr2), std::move (expr3)));
       });
@@ -973,7 +982,12 @@ namespace s1
       if (currentToken.typeOrID == lexer::Separator)
         NextToken ();
       else if (currentToken.typeOrID != lexer::ParenR)
-        UnexpectedToken ();
+      {
+        // Some token was misplaced
+        diagnosticsHandler.ParseError (Error::ExpectedSeparatorOrParenthesis, currentToken);
+        break;
+      }
+      // else: break on next iteration
     }
     return params;
   }

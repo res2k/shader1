@@ -47,6 +47,21 @@ Diagnostic error definitions for the various components involved in compilation.
     <error id="ExpectedAssign">
       <descr>Expected '=', got {0}</descr>
     </error>
+    <error id="ExpectedParenthesis">
+      <descr>Expected {1}, got {0}</descr>
+    </error>
+    <error id="ExpectedBracket">
+      <descr>Expected {1}, got {0}</descr>
+    </error>
+    <error id="ExpectedTernaryOperator">
+      <descr>Expected {1}, got {0}</descr>
+    </error>
+    <error id="ExpectedSeparatorOrParenthesis">
+      <descr>Expected ',' or ')', got {0}</descr>
+    </error>
+    <error id="ExpectedExpression">
+      <descr>Expected expression, got {0}</descr>
+    </error>
     <error id="IdentifierAlreadyDeclared">
       <descr>Identifier already declared</descr>
     </error>

@@ -253,7 +253,7 @@ public:
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
     TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedAssign));
+                      static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto varsDecl = dynamic_cast<const ast::BlockStatementVarsDecl*> (block->statements[0].get());
