@@ -572,6 +572,8 @@ KEYWORDS
   
   uc::String Lexer::GetTokenStr (const Token& token)
   {
+    if (token.typeOrID == lexer::Invalid) return "<Invalid>";
+
     if ((token.typeOrID == lexer::Identifier)
         || (token.typeOrID == lexer::Numeric))
       return FormatDoubleQuote.to<uc::String> (token.tokenString);
