@@ -300,92 +300,109 @@ namespace s1
       [&]()
       {
         ast::Block::StatementsContainer statements;
-        while (true)
+        bool keepParsing = true;
+        while (keepParsing)
         {
           try
           {
-            int beyondType;
-            bool isType = IsWellKnownTypeOrArray (beyondType);
-            if (currentToken.typeOrID == lexer::kwConst)
+            switch (currentToken.typeOrID)
             {
-              /* constant declaration */
-              auto statement = CommonParseNode (
-                [&]()
-                {
-                  NextToken(); // skip 'const'
-                  auto decl = ParseVarsDecl (true);
-                  return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
-                });
-              statements.emplace_back (std::move (statement));
-              ExpectSemicolon ();
-            }
-            else if ((isType && (Peek (beyondType).typeOrID == lexer::Identifier))
-                || ((currentToken.typeOrID == lexer::Identifier) && (Peek ().typeOrID == lexer::Identifier)))
-            {
-              /* Variable declaration */
-              auto statement = CommonParseNode (
-                [&]()
-                {
-                  auto decl = ParseVarsDecl (false);
-                  return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
-                });
-              statements.emplace_back (std::move (statement));
-              ExpectSemicolon ();
-            }
-            else if (currentToken.typeOrID == lexer::kwTypedef)
-            {
-              /* Type definition */
-              auto statement = CommonParseNode (
-                [&]()
-                {
-                  auto astTypedef = ParseTypedef ();
-                  return astTypedef ? ast::BlockStatementPtr (new ast::BlockStatementTypedef (std::move (*astTypedef)))
-                                    : ast::BlockStatementPtr ();
-                });
-              if (statement) statements.emplace_back (std::move (statement));
-              ExpectSemicolon ();
-            }
-            else if (IsExpression ())
-            {
-              auto astExpr = ParseExpression ();
-              statements.emplace_back (new ast::BlockStatementExpr (std::move (astExpr)));
-              ExpectSemicolon ();
-            }
-            else if (currentToken.typeOrID == lexer::kwReturn)
-            {
-              auto astReturn = ParseStatementReturn ();
-              statements.emplace_back (std::move (astReturn));
-            }
-            else if (currentToken.typeOrID == lexer::kwIf)
-            {
-              /* 'if' */
-              auto astIf = ParseIf ();
-              statements.emplace_back (std::move (astIf));
-            }
-            else if (currentToken.typeOrID == lexer::kwWhile)
-            {
-              /* 'while' */
-              auto astWhile = ParseWhile ();
-              statements.emplace_back (std::move (astWhile));
-            }
-            else if (currentToken.typeOrID == lexer::kwFor)
-            {
-              /* 'for' */
-              auto astFor = ParseFor ();
-              statements.emplace_back (std::move (astFor));
-            }
-            else if (currentToken.typeOrID == lexer::BraceL)
-            {
-              /* nested block */
-              NextToken ();
-              auto astBlock = ParseBlock ();
-              statements.emplace_back (new ast::BlockStatementNestedBlock (std::move (astBlock)));
-              Expect (lexer::BraceR);
-              NextToken ();
-            }
-            else
+            case lexer::kwConst:
+              {
+                /* constant declaration */
+                auto statement = CommonParseNode (
+                  [&]()
+                  {
+                    NextToken(); // skip 'const'
+                    auto decl = ParseVarsDecl (true);
+                    return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
+                  });
+                statements.emplace_back (std::move (statement));
+                ExpectSemicolon ();
+              }
               break;
-            /* TODO: could improve behaviour in case unexpected tokens are encountered */
+            case lexer::kwTypedef:
+              {
+                /* Type definition */
+                auto statement = CommonParseNode (
+                  [&]()
+                  {
+                    auto astTypedef = ParseTypedef ();
+                    return astTypedef ? ast::BlockStatementPtr (new ast::BlockStatementTypedef (std::move (*astTypedef)))
+                                      : ast::BlockStatementPtr ();
+                  });
+                if (statement) statements.emplace_back (std::move (statement));
+                ExpectSemicolon ();
+              }
+              break;
+            case lexer::kwReturn:
+              {
+                auto astReturn = ParseStatementReturn ();
+                statements.emplace_back (std::move (astReturn));
+              }
+              break;
+            case lexer::kwIf:
+              {
+                /* 'if' */
+                auto astIf = ParseIf ();
+                statements.emplace_back (std::move (astIf));
+              }
+              break;
+            case lexer::kwWhile:
+              {
+                /* 'while' */
+                auto astWhile = ParseWhile ();
+                statements.emplace_back (std::move (astWhile));
+              }
+              break;
+            case lexer::kwFor:
+              {
+                /* 'for' */
+                auto astFor = ParseFor ();
+                statements.emplace_back (std::move (astFor));
+              }
+              break;
+            case lexer::BraceL:
+              {
+                /* nested block */
+                NextToken ();
+                auto astBlock = ParseBlock ();
+                statements.emplace_back (new ast::BlockStatementNestedBlock (std::move (astBlock)));
+                Expect (lexer::BraceR);
+                NextToken ();
+              }
+              break;
+            default:
+              {
+                int beyondType;
+                bool isType = IsWellKnownTypeOrArray (beyondType);
+                if ((isType && (Peek (beyondType).typeOrID == lexer::Identifier))
+                    || ((currentToken.typeOrID == lexer::Identifier) && (Peek ().typeOrID == lexer::Identifier)))
+                {
+                  /* Variable declaration */
+                  auto statement = CommonParseNode (
+                    [&]()
+                    {
+                      auto decl = ParseVarsDecl (false);
+                      return ast::BlockStatementPtr (new ast::BlockStatementVarsDecl (std::move (decl)));
+                    });
+                  statements.emplace_back (std::move (statement));
+                  ExpectSemicolon ();
+                }
+                else if (IsExpression ())
+                {
+                  auto astExpr = ParseExpression ();
+                  statements.emplace_back (new ast::BlockStatementExpr (std::move (astExpr)));
+                  ExpectSemicolon ();
+                }
+                else
+                {
+                  /* TODO: could improve behaviour in case unexpected tokens are encountered */
+                  keepParsing = false;
+                }
+              }
+              break;
+            }
           }
           catch (const Exception& e)
           {
