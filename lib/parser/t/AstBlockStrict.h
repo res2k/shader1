@@ -151,6 +151,29 @@ public:
     AST_TEST_EXPR_IS_NUMERIC(*(varsDeclInitExprBinary->right), int, 2);
   }
 
+  void testBlockVarDeclInvalid (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("int 0;");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    s1::parser::ast::BlockPtr block;
+    TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
+    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
+
+    TS_ASSERT_EQUALS(block->statements.size(), 2u);
+    const auto block0Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[0].get());
+    TS_ASSERT(!block0Expr->expr);
+    const auto block1Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[1].get());
+    AST_TEST_EXPR_IS_NUMERIC(*block1Expr->expr, int, 0);
+  }
+
   void testBlockVarDeclInitMulti (void)
   {
     using namespace s1::parser;
