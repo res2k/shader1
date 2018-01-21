@@ -142,6 +142,16 @@ namespace s1
     return std::make_pair (std::move (astIdent), boost::none);
   }
 
+  AstBuilder::ParseIdentifierResult AstBuilder::ParseIdentifierAndReport ()
+  {
+    auto parsedIdentifierResult = ParseIdentifier ();
+    if (parsedIdentifierResult.second)
+    {
+      diagnosticsHandler.ParseError (parsedIdentifierResult.second->error, parsedIdentifierResult.second->token);
+    }
+    return std::move (parsedIdentifierResult);
+  }
+
   template<typename T>
   const T& AstBuilder::CheckResult (const OUTCOME_V2_NAMESPACE::result<T, ParseError>& result)
   {

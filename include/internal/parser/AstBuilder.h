@@ -85,6 +85,8 @@ namespace s1
        * If an error is returned the identifier may not be valid.
        */
       ParseIdentifierResult ParseIdentifier ();
+      /// Parse identifier. Emits error if occured. Returned identifier may not actually be valid.
+      ParseIdentifierResult ParseIdentifierAndReport ();
 
       //@{
       /// Return value in an outcome result or throw Exception
