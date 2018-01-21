@@ -389,7 +389,7 @@ namespace s1
                   statements.emplace_back (std::move (statement));
                   ExpectSemicolon ();
                 }
-                else if (IsExpression ())
+                else if (isType || IsExpression ())
                 {
                   auto astExpr = ParseExpression ();
                   statements.emplace_back (new ast::BlockStatementExpr (std::move (astExpr)));
