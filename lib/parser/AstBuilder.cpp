@@ -1054,8 +1054,7 @@ namespace s1
       [&]()
       {
         NextToken();
-        Expect (lexer::ParenL);
-        NextToken();
+        Expect (lexer::ParenL, Error::ExpectedParenthesis);
         ast::ExprPtr initExpr;
         if (currentToken.typeOrID != lexer::Semicolon)
           initExpr = ParseExpression ();
@@ -1067,13 +1066,10 @@ namespace s1
         ast::ExprPtr loopFootExpr;
         if (currentToken.typeOrID != lexer::Semicolon)
           loopFootExpr = ParseExpression ();
-        Expect (lexer::ParenR);
-        NextToken();
-        Expect (lexer::BraceL);
-        NextToken();
+        Expect (lexer::ParenR, Error::ExpectedParenthesis);
+        Expect (lexer::BraceL, Error::ExpectedBrace);
         auto body = ParseBlock ();
-        Expect (lexer::BraceR);
-        NextToken();
+        Expect (lexer::BraceR, Error::ExpectedBrace);
         return ast::BlockStatementForPtr (new ast::BlockStatementFor (std::move (initExpr),
                                                                       std::move (loopTestExpr),
                                                                       std::move (loopFootExpr),
