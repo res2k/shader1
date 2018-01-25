@@ -1117,16 +1117,12 @@ namespace s1
       [&]()
       {
         NextToken();
-        Expect (lexer::ParenL);
-        NextToken();
+        Expect (lexer::ParenL, Error::ExpectedParenthesis);
         auto loopTestExpr = ParseExpression ();
-        Expect (lexer::ParenR);
-        NextToken();
-        Expect (lexer::BraceL);
-        NextToken();
+        Expect (lexer::ParenR, Error::ExpectedParenthesis);
+        Expect (lexer::BraceL, Error::ExpectedBrace);
         auto body = ParseBlock ();
-        Expect (lexer::BraceR);
-        NextToken();
+        Expect (lexer::BraceR, Error::ExpectedBrace);
         return ast::BlockStatementWhilePtr (new ast::BlockStatementWhile (std::move (loopTestExpr),
                                                                           std::move (body)));
       });
