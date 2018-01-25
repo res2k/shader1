@@ -1088,28 +1088,22 @@ namespace s1
       {
         // Skip 'if'
         NextToken();
-        Expect (lexer::ParenL);
-        NextToken();
+        Expect (lexer::ParenL, Error::ExpectedParenthesis);
         // Parse condition
         auto conditionExpr = ParseExpression ();
-        Expect (lexer::ParenR);
-        NextToken();
-        Expect (lexer::BraceL);
-        NextToken();
+        Expect (lexer::ParenR, Error::ExpectedParenthesis);
+        Expect (lexer::BraceL, Error::ExpectedBrace);
         // Parse 'if' block
         auto ifBlock = ParseBlock ();
-        Expect (lexer::BraceR);
-        NextToken();
+        Expect (lexer::BraceR, Error::ExpectedBrace);
         ast::BlockPtr elseBlock;
         if (currentToken.typeOrID == lexer::kwElse)
         {
           NextToken();
-          Expect (lexer::BraceL);
-          NextToken();
+          Expect (lexer::BraceL, Error::ExpectedBrace);
           // Parse 'else' block
           elseBlock = ParseBlock ();
-          Expect (lexer::BraceR);
-          NextToken();
+          Expect (lexer::BraceR, Error::ExpectedBrace);
         }
         return ast::BlockStatementIfPtr (new ast::BlockStatementIf (std::move (conditionExpr),
                                                                     std::move (ifBlock),
