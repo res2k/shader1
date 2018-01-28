@@ -26,9 +26,6 @@ Diagnostic error definitions for the various components involved in compilation.
 -->
 <diagnostics>
   <component name="parser">
-    <error id="SyntaxError">
-      <descr>Syntax error</descr>
-    </error>
     <error id="UnexpectedToken">
       <descr>Unexpected token: got {0}, expected {1}</descr>
     </error>

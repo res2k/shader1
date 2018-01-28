@@ -88,27 +88,12 @@ namespace s1
       /// Parse identifier. Emits error if occured. Returned identifier may not actually be valid.
       ParseIdentifierResult ParseIdentifierAndReport ();
 
-      //@{
-      /// Return value in an outcome result or throw Exception
-      template<typename T>
-      const T& CheckResult (const OUTCOME_V2_NAMESPACE::result<T, ParseError>& result);
-      template<typename T>
-      T CheckResult (OUTCOME_V2_NAMESPACE::result<T, ParseError>&& result);
-      template<typename T>
-      const T& CheckResult (const std::pair<T, boost::optional<ParseError>>& result);
-      template<typename T>
-      T CheckResult (std::pair<T, boost::optional<ParseError>>&& result);
-      //@}
       /**
        * Try to 'recover' from a parsing error by looking for tokens that fulfill any of
        * the \c CheckFunc functors.
        */
       template<typename... CheckFunc>
       bool TryRecover (CheckFunc... func);
-      /// Expect a certain token, throw an "unexpected token" error if some other is encountered
-      void Expect (Lexer::TokenType tokenType);
-      /// Throw an "unexpected token" error
-      void UnexpectedToken ();
       /// Expect a specific token. Report \c error if another token is encountered. Non-throwing
       bool Expect (Lexer::TokenType tokenType, Error error);
       /// Expect a semicolon token. Reports an error if another token is encountered.
