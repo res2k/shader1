@@ -61,12 +61,12 @@ namespace s1
               boost::optional<const uc::String&> info1 = boost::none,
               boost::optional<const uc::String&> info2 = boost::none);
 
+    boost::optional<uc::String> ConvertErrorInfo (const ErrorInfoType& info);
+
     /**\name diagnostics::Handler implementation
      * @{ */
     void LexerErrorImpl (unsigned int code, const lexer::TokenLocation& location) override;
-    void ParseErrorImpl (unsigned int code,
-                        const lexer::Token& encounteredToken,
-                        lexer::TokenType expectedToken) override;
+    void ParseErrorImpl (unsigned int code, ErrorInfoType info1, ErrorInfoType info2) override;
     void SemanticErrorImpl (unsigned int code) override;
     /** @} */
   };

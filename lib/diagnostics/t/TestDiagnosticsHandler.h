@@ -29,14 +29,14 @@ public:
     lexerError.location = location;
   }
   void SemanticErrorImpl (unsigned int code) override { semanticError.code = code; }
-  void ParseErrorImpl (unsigned int code,
-                       const s1::lexer::Token& encounteredToken,
-                       s1::lexer::TokenType expectedToken) override
+  void ParseErrorImpl (unsigned int code, ErrorInfoType info1, ErrorInfoType info2) override
   {
     ParseError parseError;
     parseError.code = code;
-    parseError.encounteredToken = encounteredToken;
-    parseError.expectedToken = expectedToken;
+    if (auto encounteredToken = boost::get<const s1::lexer::Token&> (&info1))
+      parseError.encounteredToken = *encounteredToken;
+    if (auto expectedToken = boost::get<const s1::lexer::TokenType&> (&info2))
+      parseError.expectedToken = *expectedToken;
     parseErrors.push_back (parseError);
   }
 

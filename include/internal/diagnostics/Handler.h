@@ -21,11 +21,14 @@
 #ifndef DIAGNOSTICS_HANDLER_H__
 #define DIAGNOSTICS_HANDLER_H__
 
+#include "base/nullopt.h"
 #include "lexer/Token.h"
 #include "lexer/TokenLocation.h"
 #include "lexer/TokenType.h"
 
 #include <type_traits>
+
+#include <boost/variant.hpp>
 
 namespace s1
 {
@@ -34,6 +37,10 @@ namespace s1
     struct Handler
     {
       virtual ~Handler() {}
+
+      typedef boost::variant<nullopt_t,
+                             const lexer::Token&,
+                             const lexer::TokenType&> ErrorInfoType;
 
       /// Lexer error
       template<typename T>
@@ -45,10 +52,10 @@ namespace s1
       /// Parse error
       template<typename T>
       typename std::enable_if<std::is_enum<T>::value>::type ParseError (T code,
-                                                                        const lexer::Token& encounteredToken,
-                                                                        lexer::TokenType expectedToken = lexer::Invalid)
+                                                                        ErrorInfoType info1 = nullopt,
+                                                                        ErrorInfoType info2 = nullopt)
       {
-        ParseErrorImpl (static_cast<unsigned int> (code), encounteredToken, expectedToken);
+        ParseErrorImpl (static_cast<unsigned int> (code), info1, info2);
       }
       /// Semantic errors: Usually detected during intermediate generation
       template<typename T>
@@ -59,8 +66,8 @@ namespace s1
     protected:
       virtual void LexerErrorImpl (unsigned int code, const lexer::TokenLocation& location) = 0;
       virtual void ParseErrorImpl (unsigned int code,
-                                   const lexer::Token& encounteredToken,
-                                   lexer::TokenType expectedToken) = 0;
+                                   ErrorInfoType info1,
+                                   ErrorInfoType info2) = 0;
       virtual void SemanticErrorImpl (unsigned int code) = 0;
     };
   } // namespace diagnostics

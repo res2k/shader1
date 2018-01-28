@@ -84,19 +84,53 @@ namespace s1
     entries.push_back (std::move (newEntry));
   }
 
+  boost::optional<uc::String> Compiler::ProgramDiagnostics::ConvertErrorInfo (const ErrorInfoType& info)
+  {
+    class InfoVisitor : public boost::static_visitor<boost::optional<uc::String>>
+    {
+    public:
+      boost::optional<uc::String> operator()(nullopt_t) const
+      {
+        return boost::none;
+      }
+
+      boost::optional<uc::String> operator()(const lexer::Token& value) const
+      {
+        return Lexer::GetTokenStr (value);
+      }
+
+      boost::optional<uc::String> operator()(const lexer::TokenType& value) const
+      {
+        return Lexer::GetTokenStr (value);
+      }
+    };
+    InfoVisitor visitor;
+
+    return info.apply_visitor (visitor);
+  }
+
   void Compiler::ProgramDiagnostics::LexerErrorImpl (unsigned int code, const lexer::TokenLocation& location)
   {
     // TODO: Actually use location
     Add (code);
   }
 
-  void Compiler::ProgramDiagnostics::ParseErrorImpl (unsigned int code,
-                                                     const lexer::Token& encounteredToken,
-                                                     lexer::TokenType expectedToken)
+  template<typename T>
+  static boost::optional<const T&> cref (const boost::optional<T>& x)
   {
-    uc::String encounteredTokenStr (Lexer::GetTokenStr (encounteredToken));
-    uc::String expectedTokenStr (Lexer::GetTokenStr (expectedToken));
-    Add (code, encounteredTokenStr, expectedTokenStr);
+    if (x)
+      return *x;
+    else
+      return boost::none;
+  }
+
+  void Compiler::ProgramDiagnostics::ParseErrorImpl (unsigned int code,
+                                                     ErrorInfoType info1,
+                                                     ErrorInfoType info2)
+  {
+    const auto info1str = ConvertErrorInfo (info1);
+    const auto info2str = ConvertErrorInfo (info2);
+    Add (code, cref (info1str), cref (info2str));
   }
 
   void Compiler::ProgramDiagnostics::SemanticErrorImpl (unsigned int code)
