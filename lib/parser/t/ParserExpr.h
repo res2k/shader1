@@ -48,7 +48,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a");
@@ -69,7 +69,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a.x");
@@ -90,7 +90,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + b).x");
@@ -111,7 +111,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a.x + b)");
@@ -132,7 +132,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + b.x)");
@@ -153,7 +153,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a - b) - c)");
@@ -174,7 +174,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + (b * c))");
@@ -195,7 +195,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a = (b = c))");
@@ -216,7 +216,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b) == (c * d))");
@@ -237,7 +237,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a = (b && c))");
@@ -258,7 +258,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a && b) || c)");
@@ -279,7 +279,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a || ((b && c) && d))");
@@ -300,7 +300,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(!a && b)");
@@ -321,7 +321,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b) > (c * d))");
@@ -342,7 +342,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a = (b ? c : d))");
@@ -363,7 +363,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a == b) ? c : d)");
@@ -384,7 +384,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + -b)");
@@ -405,7 +405,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? b : c)");
@@ -426,7 +426,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a ? (b ? 1 : 2) : c)");
@@ -449,7 +449,8 @@ public:
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedTernaryOperator));
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
@@ -473,7 +474,10 @@ public:
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 2u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTernaryOperator));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
@@ -497,7 +501,8 @@ public:
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
@@ -519,7 +524,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a");
@@ -540,7 +545,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a");
@@ -561,7 +566,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a * (b + c))");
@@ -582,7 +587,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a[1]");
@@ -603,7 +608,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "a[(b + c)]");
@@ -624,7 +629,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "((a + b)[1] + c)");
@@ -652,7 +657,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ())");
@@ -684,7 +689,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = Foo ((a + b), 3.0))");
@@ -711,7 +716,8 @@ public:
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
@@ -733,7 +739,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = int ())");
@@ -754,7 +760,7 @@ public:
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = int2 (1, 2))");
@@ -775,7 +781,7 @@ public:
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(x = float[] (1.0, 2.0, 3.0))");
@@ -798,8 +804,9 @@ public:
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (expr.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(a + <INVALID-EXPR>)");

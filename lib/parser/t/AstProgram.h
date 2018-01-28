@@ -46,7 +46,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
     const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
@@ -69,7 +69,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
     const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
@@ -110,7 +110,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
     const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
@@ -141,7 +141,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
     const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
@@ -173,7 +173,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
     const auto globalVarsDecl = dynamic_cast<const ast::ProgramStatementVarsDecl*> (program->statements[0].get());
@@ -212,7 +212,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
     const auto globalVarsDecl = dynamic_cast<const ast::ProgramStatementVarsDecl*> (program->statements[0].get());
@@ -251,7 +251,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
     {
@@ -291,7 +291,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 2u);
     {
@@ -340,7 +340,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
     const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
@@ -381,7 +381,7 @@ public:
 
     ast::ProgramPtr program;
     TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(program->statements.size(), 1u);
     const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;

@@ -42,7 +42,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwBool);
   }
 
@@ -59,7 +59,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwInt);
   }
 
@@ -76,7 +76,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN(*type, kwInt);
   }
 
@@ -93,7 +93,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwFloat);
   }
 
@@ -110,7 +110,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSampler1D);
   }
 
@@ -127,7 +127,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSampler2D);
   }
 
@@ -144,7 +144,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSampler3D);
   }
 
@@ -161,7 +161,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN(*type, kwSamplerCUBE);
   }
 
@@ -178,7 +178,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN_VEC(*type, kwBool, 3);
   }
 
@@ -195,7 +195,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN_VEC(*type, kwInt, 3);
   }
 
@@ -212,7 +212,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN_VEC(*type, kwInt, 3);
   }
   
@@ -229,7 +229,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN_VEC(*type, kwFloat, 3);
   }
 
@@ -246,7 +246,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN_MAT(*type, kwBool, 3, 2);
   }
 
@@ -263,7 +263,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN_MAT(*type, kwInt, 3, 2);
   }
 
@@ -280,7 +280,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_UNSIGNED_WELL_KNOWN_MAT(*type, kwInt, 3, 2);
   }
 
@@ -297,7 +297,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     AST_TEST_TYPE_IS_WELL_KNOWN_MAT(*type, kwFloat, 3, 2);
   }
 
@@ -314,7 +314,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     const auto typeArray = dynamic_cast<const ast::TypeArray*> (type.get());
     AST_TEST_TYPE_IS_WELL_KNOWN(*(typeArray->containedType), kwInt);
   }
@@ -332,7 +332,7 @@ public:
 
     ast::TypePtr type;
     TS_ASSERT_THROWS_NOTHING((type = astBuilder.ParseType ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     const auto typeArray = dynamic_cast<const ast::TypeArray*> (type.get());
     const auto typeArrayArray = dynamic_cast<const ast::TypeArray*> (typeArray->containedType.get());
     AST_TEST_TYPE_IS_WELL_KNOWN(*(typeArrayArray->containedType), kwInt);

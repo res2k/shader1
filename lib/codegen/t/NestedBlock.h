@@ -130,7 +130,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));

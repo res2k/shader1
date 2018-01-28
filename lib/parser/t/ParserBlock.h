@@ -49,7 +49,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -71,8 +71,9 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -94,7 +95,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -119,7 +120,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -148,7 +149,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -173,7 +174,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -198,7 +199,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -222,8 +223,9 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),

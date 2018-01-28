@@ -33,9 +33,11 @@ public:
                        const s1::lexer::Token& encounteredToken,
                        s1::lexer::TokenType expectedToken) override
   {
+    ParseError parseError;
     parseError.code = code;
     parseError.encounteredToken = encounteredToken;
     parseError.expectedToken = expectedToken;
+    parseErrors.push_back (parseError);
   }
 
   struct {
@@ -45,11 +47,13 @@ public:
   struct {
     unsigned int code = 0;
   } semanticError;
-  struct {
+  struct ParseError
+  {
     unsigned int code = 0;
     s1::lexer::Token encounteredToken;
     s1::lexer::TokenType expectedToken = s1::lexer::TokenType::Invalid;
-  } parseError;
+  };
+  std::vector<ParseError> parseErrors;
 };
 
 #endif // TESTDIAGNOSTICSHANDLER_H_

@@ -48,7 +48,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -83,7 +83,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -137,7 +137,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -191,7 +191,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -229,8 +229,11 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 2u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
     TestSemanticsHandler::TestBlock* testBlock =
       static_cast<TestSemanticsHandler::TestBlock*> (block.get());
     TS_ASSERT_EQUALS(testBlock->GetBlockString(),
@@ -252,7 +255,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -300,8 +303,9 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
@@ -341,7 +345,7 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     SemanticsHandler::NamePtr varRequested;
@@ -376,8 +380,11 @@ public:
     SemanticsHandler::BlockPtr block (
       semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
-    TS_ASSERT_EQUALS (errorHandler.parseError.code,
-                      static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 2u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedAssign));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     // Parsing will produce variable w/o initializer

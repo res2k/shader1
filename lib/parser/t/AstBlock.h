@@ -48,7 +48,7 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto& block0Expr = dynamic_cast<const ast::BlockStatementExpr*> (block->statements[0].get())->expr;
@@ -71,7 +71,8 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
@@ -95,7 +96,7 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto block0Branch = dynamic_cast<const ast::BlockStatementIf*> (block->statements[0].get());
@@ -124,7 +125,7 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto block0Branch = dynamic_cast<const ast::BlockStatementIf*> (block->statements[0].get());
@@ -158,7 +159,7 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto block0While = dynamic_cast<const ast::BlockStatementWhile*> (block->statements[0].get());
@@ -185,7 +186,7 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto block0For = dynamic_cast<const ast::BlockStatementFor*> (block->statements[0].get());
@@ -221,7 +222,7 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
 
     TS_ASSERT_EQUALS(block->statements.size(), 1u);
     const auto& block0Block = dynamic_cast<const ast::BlockStatementNestedBlock*> (block->statements[0].get())->block;
@@ -247,7 +248,8 @@ public:
 
     s1::parser::ast::BlockPtr block;
     TS_ASSERT_THROWS_NOTHING((block = astBuilder.ParseBlock ()));
-    TS_ASSERT_EQUALS(errorHandler.parseError.code,
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedSemicolon));
 
     TS_ASSERT_EQUALS(block->statements.size(), 3u);

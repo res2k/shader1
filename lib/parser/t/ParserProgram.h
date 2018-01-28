@@ -45,7 +45,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramSimple2 (void)
@@ -61,7 +61,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramLessSimple (void)
@@ -77,7 +77,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramLessSimple2 (void)
@@ -93,7 +93,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramGlobalVar (void)
@@ -109,7 +109,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
 
   void testProgramGlobalConst (void)
@@ -125,7 +125,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramFunctionCall (void)
@@ -141,7 +141,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramFunctionCall2 (void)
@@ -157,7 +157,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramFunctionCallCast (void)
@@ -173,7 +173,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
   void testProgramExprNoResult (void)
@@ -189,7 +189,7 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
     TS_ASSERT_THROWS_NOTHING(parser.ParseProgram ());
-    TS_ASSERT_EQUALS (errorHandler.parseError.code, 0);
+    TS_ASSERT(errorHandler.parseErrors.empty());
   }
   
 };
