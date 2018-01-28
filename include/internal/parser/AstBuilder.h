@@ -99,6 +99,12 @@ namespace s1
       template<typename T>
       T CheckResult (std::pair<T, boost::optional<ParseError>>&& result);
       //@}
+      /**
+       * Try to 'recover' from a parsing error by looking for tokens that fulfill any of
+       * the \c CheckFunc functors.
+       */
+      template<typename... CheckFunc>
+      bool TryRecover (CheckFunc... func);
       /// Expect a certain token, throw an "unexpected token" error if some other is encountered
       void Expect (Lexer::TokenType tokenType);
       /// Throw an "unexpected token" error

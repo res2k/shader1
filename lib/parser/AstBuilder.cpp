@@ -184,6 +184,39 @@ namespace s1
     return std::move (result.first);
   }
 
+  namespace
+  {
+    template<typename T, typename F>
+    static bool fold_or (T&& x, F&& f)
+    {
+      return f (std::forward<T> (x));
+    }
+
+    template<typename T, typename F1, typename... Fx>
+    static bool fold_or (T&& x, F1&& f1, Fx&&... fx)
+    {
+      return f1 (std::forward<T> (x)) || fold_or (std::forward<T> (x), std::forward<Fx> (fx)...);
+    }
+  } // anonymous namespace
+
+  template<typename... CheckFunc>
+  bool AstBuilder::TryRecover (CheckFunc... func)
+  {
+    if (fold_or (currentToken, func...)) return true;
+    const int maxPeek = 10; // Arbitrary value. No idea what's a good limit
+    for (int p = 0; p < maxPeek; p++)
+    {
+      const auto& token = Peek (p);
+      if (fold_or (token, func...))
+      {
+        // Found a matching token? Skip forward
+        while (p-- >= 0) NextToken ();
+        return true;
+      }
+    }
+    return false;
+  }
+
   void AstBuilder::Expect (Lexer::TokenType tokenType)
   {
     if (currentToken.typeOrID != tokenType)
