@@ -21,6 +21,8 @@
 #ifndef BASE_MULTIOPTIONAL_H_
 #define BASE_MULTIOPTIONAL_H_
 
+#include "nullopt.h"
+
 #include <bitset>
 
 #include <boost/mpl/at.hpp>
@@ -104,9 +106,6 @@ namespace s1
   } // multi_optional_detail
 
   typedef boost::bad_optional_access bad_optional_access;
-  typedef boost::none_t nullopt_t;
-
-  const nullopt_t nullopt = boost::none;
 
   /**
    * Class to store multiple optional values.
