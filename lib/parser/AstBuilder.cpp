@@ -940,6 +940,34 @@ namespace s1
     return ast::Typedef (std::move (astType), std::move (identifier.first));
   }
 
+  static bool IsTypeToken (Lexer::TokenType tokenID)
+  {
+    switch (tokenID)
+    {
+    case lexer::kwUnsigned:
+    case lexer::kwBool:
+    case lexer::kwInt:
+    case lexer::kwFloat:
+    case lexer::kwSampler1D:
+    case lexer::kwSampler2D:
+    case lexer::kwSampler3D:
+    case lexer::kwSamplerCUBE:
+      return true;
+      break;
+    default:
+      break;
+    }
+    return false;
+  }
+
+  static bool IsQualifierToken (const Lexer::TokenType tokenID)
+  {
+    return (tokenID == lexer::kwIn)
+        || (tokenID == lexer::kwOut)
+        || (tokenID == lexer::kwUniform)
+        || (tokenID == lexer::kwAttribute);
+  };
+
   ast::FunctionDeclPtr AstBuilder::ParseFunctionDecl ()
   {
     return CommonParseNode (
@@ -958,53 +986,74 @@ namespace s1
           returnType = std::move (astType);
         }
         // Parse function identifier
-        auto funcIdentifier = CheckResult (ParseIdentifier ());
+        auto funcIdentifier = ParseIdentifierAndReport ().first;
         // Parse formal parameters
-        Expect (lexer::ParenL);
-        NextToken ();
+        Expect (lexer::ParenL, Error::ExpectedParenthesis);
         ast::FunctionDecl::ParamsContainer params;
-        while (true)
+        if (currentToken.typeOrID == lexer::ParenR)
         {
-          if (currentToken.typeOrID == lexer::ParenR)
-          {
-            // End of list
-            NextToken ();
-            break;
-          }
-
+          // End of list
+          NextToken ();
+        }
+        else while (true)
+        {
           // TODO: In case of error, skip to next param
           ast::FunctionDecl::Param param;
-          while ((currentToken.typeOrID == lexer::kwIn)
-            || (currentToken.typeOrID == lexer::kwOut)
-            || (currentToken.typeOrID == lexer::kwUniform)
-            || (currentToken.typeOrID == lexer::kwAttribute))
+          while (IsQualifierToken (currentToken.typeOrID))
           {
             param.qualifiers.push_back (currentToken);
             NextToken ();
           }
+          auto astType = ParseType ();
+          if (astType)
           {
-            auto astType = ParseType ();
             param.type = std::move (astType);
+            param.identifier = ParseIdentifierAndReport ().first;
+            if (currentToken.typeOrID == lexer::Assign)
+            {
+              // Handle default value
+              NextToken ();
+              param.defaultValue = ParseExpression ();
+            }
+            params.emplace_back (std::move (param));
           }
-          param.identifier = CheckResult (ParseIdentifier ());
-          if (currentToken.typeOrID == lexer::Assign)
-          {
-            // Handle default value
-            NextToken ();
-            param.defaultValue = ParseExpression ();
-          }
-          params.emplace_back (std::move (param));
           if (currentToken.typeOrID == lexer::Separator)
+          {
             NextToken ();
+            continue;
+          }
           else if (currentToken.typeOrID != lexer::ParenR)
-            UnexpectedToken ();
+          {
+            // Some token was misplaced
+            diagnosticsHandler.ParseError (Error::ExpectedSeparatorOrParenthesis, currentToken);
+            // Try to pick up at next parameter
+            if (!TryRecover ([](const Lexer::Token& t) { return IsSeparator (t.typeOrID); },
+                             [](const Lexer::Token& t) { return IsTypeToken (t.typeOrID); },
+                             [](const Lexer::Token& t) { return IsQualifierToken (t.typeOrID); }))
+              break;
+            if (currentToken.typeOrID == lexer::Separator)
+            {
+              NextToken ();
+              continue;
+            }
+            else if ((currentToken.typeOrID != lexer::ParenR)
+              && !IsTypeToken (currentToken.typeOrID)
+              && !IsQualifierToken  (currentToken.typeOrID))
+            {
+              break;
+            }
+          }
+
+          if (currentToken.typeOrID == lexer::ParenR)
+          {
+            NextToken ();
+            break;
+          }
         }
         // Parse function body
-        Expect (lexer::BraceL);
-        NextToken();
+        Expect (lexer::BraceL, Error::ExpectedBrace);
         auto body = ParseBlock ();
-        Expect (lexer::BraceR);
-        NextToken();
+        Expect (lexer::BraceR, Error::ExpectedBrace);
         return ast::FunctionDeclPtr (new ast::FunctionDecl (std::move (returnType),
                                                             std::move (funcIdentifier),
                                                             std::move (params),
