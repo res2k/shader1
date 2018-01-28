@@ -401,8 +401,7 @@ namespace s1
                 NextToken ();
                 auto astBlock = ParseBlock ();
                 statements.emplace_back (new ast::BlockStatementNestedBlock (std::move (astBlock)));
-                Expect (lexer::BraceR);
-                NextToken ();
+                Expect (lexer::BraceR, Error::ExpectedBrace);
               }
               break;
             default:
