@@ -406,4 +406,384 @@ public:
     TS_ASSERT_EQUALS(assignExprBinary->op.typeOrID, s1::lexer::Plus);
     AST_TEST_EXPR_IS_IDENTIFIER(*(assignExprBinary->right), "y");
   }
+
+  void testProgramFunctionDeclInvalid1 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid2 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int 12) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 2u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid3 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int =) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 2u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid4 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int = 12) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT(param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid5 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int x =) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedExpression));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid6 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int x 12) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid7 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(x) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_ALIAS(*param.type, "x");
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid8 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int x float y) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 2u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT_EQUALS(param.identifier.GetString(), "x");
+      TS_ASSERT(!param.defaultValue);
+    }
+    {
+      const auto& param = functionDecl->params[1];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwFloat);
+      TS_ASSERT_EQUALS(param.identifier.GetString(), "y");
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid9 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int x, ) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTypeOrIdentifier));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT_EQUALS(param.identifier.GetString(), "x");
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid10 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int x,, ) {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 2u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTypeOrIdentifier));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedTypeOrIdentifier));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT_EQUALS(param.identifier.GetString(), "x");
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
+
+  void testProgramFunctionDeclInvalid11 (void)
+  {
+    using namespace s1::parser;
+
+    std::string inStr ("void main(int x {}");
+    s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
+    s1::uc::Stream ustream (in);
+    TestDiagnosticsHandler errorHandler;
+    s1::Lexer lexer (ustream, errorHandler);
+    TestAstBuilder astBuilder (lexer, errorHandler);
+
+    ast::ProgramPtr program;
+    TS_ASSERT_THROWS_NOTHING(program = astBuilder.ParseProgram ());
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
+                     static_cast<unsigned int> (s1::parser::Error::ExpectedSeparatorOrParenthesis));
+
+    TS_ASSERT_EQUALS(program->statements.size(), 1u);
+    const auto& functionDecl = dynamic_cast<const ast::ProgramStatementFunctionDecl*> (program->statements[0].get())->functionDecl;
+    TS_ASSERT(boost::get<ast::FunctionDecl::Void> (&functionDecl->resultType));
+    TS_ASSERT_EQUALS(functionDecl->identifier.GetString(), "main");
+    TS_ASSERT_EQUALS(functionDecl->params.size(), 1u);
+
+    {
+      const auto& param = functionDecl->params[0];
+      TS_ASSERT(param.qualifiers.empty());
+      AST_TEST_TYPE_IS_WELL_KNOWN(*param.type, kwInt);
+      TS_ASSERT_EQUALS(param.identifier.GetString(), "x");
+      TS_ASSERT(!param.defaultValue);
+    }
+
+    TS_ASSERT(functionDecl->body->statements.empty());
+  }
 };
