@@ -94,6 +94,11 @@ namespace s1
         return boost::none;
       }
 
+      boost::optional<uc::String> operator()(const uc::String& value) const
+      {
+        return value;
+      }
+
       boost::optional<uc::String> operator()(const lexer::Token& value) const
       {
         return Lexer::GetTokenStr (value);

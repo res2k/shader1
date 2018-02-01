@@ -39,6 +39,7 @@ namespace s1
       virtual ~Handler() {}
 
       typedef boost::variant<nullopt_t,
+                             const uc::String&,
                              const lexer::Token&,
                              const lexer::TokenType&> ErrorInfoType;
 
