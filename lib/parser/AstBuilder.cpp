@@ -219,17 +219,24 @@ namespace s1
       [&]()
       {
         ast::Program::StatementsContainer statements;
-        while (true)
+        try
         {
-          auto statement = ParseProgramStatement ();
-          if (statement)
-            statements.emplace_back (std::move (statement));
-          else
-            break;
+          while (true)
+          {
+            auto statement = ParseProgramStatement ();
+            if (statement)
+              statements.emplace_back (std::move (statement));
+            else
+              break;
+          }
+          if (currentToken.typeOrID != lexer::EndOfFile)
+          {
+            diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::EndOfFile);
+          }
         }
-        if (currentToken.typeOrID != lexer::EndOfFile)
+        catch (std::exception& e)
         {
-          diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::EndOfFile);
+          diagnosticsHandler.ParseError (Error::InternalError, uc::String::fromLocal8Bit (e.what ()));
         }
         return ast::ProgramPtr (new ast::Program (std::move (statements)));
       });

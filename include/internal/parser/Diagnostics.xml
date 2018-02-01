@@ -26,6 +26,9 @@ Diagnostic error definitions for the various components involved in compilation.
 -->
 <diagnostics>
   <component name="parser">
+    <error id="InternalError">
+      <descr>Internal error: {0}</descr>
+    </error>
     <error id="UnexpectedToken">
       <descr>Unexpected token: got {0}, expected {1}</descr>
     </error>
