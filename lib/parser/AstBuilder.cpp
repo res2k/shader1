@@ -221,66 +221,77 @@ namespace s1
         ast::Program::StatementsContainer statements;
         while (true)
         {
-          ast::ProgramStatementPtr statement;
-          int beyondType;
-          bool isType = IsWellKnownType (beyondType);
-          if (currentToken.typeOrID == lexer::kwConst)
-          {
-            /* constant declaration */
-            statement = CommonParseNode (
-              [&]()
-              {
-                NextToken ();
-                auto decl = ParseVarsDecl (true);
-                ExpectSemicolon ();
-                return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
-              });
-          }
-          else if (isType
-                  || (currentToken.typeOrID == lexer::kwVoid)
-                  || (Peek (beyondType).typeOrID == lexer::Identifier))
-          {
-            if ((currentToken.typeOrID == lexer::kwVoid)
-                || (Peek (beyondType+1).typeOrID == lexer::ParenL))
-            {
-              /* Function declaration */
-              auto decl = ParseFunctionDecl ();
-              statement.reset (new ast::ProgramStatementFunctionDecl (std::move (decl)));
-            }
-            else
-            {
-              /* Variable declaration */
-              statement = CommonParseNode (
-                [&]()
-                {
-                  auto decl = ParseVarsDecl (false);
-                  ExpectSemicolon ();
-                  return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
-                });
-            }
-          }
-          else if (currentToken.typeOrID == lexer::kwTypedef)
-          {
-            /* Type definition */
-            statement = CommonParseNode (
-              [&]()
-              {
-                auto typeDef = ParseTypedef ();
-                ExpectSemicolon ();
-                return typeDef ? ast::ProgramStatementPtr (new ast::ProgramStatementTypedef (std::move (*typeDef)))
-                               : ast::ProgramStatementPtr ();
-              });
-          }
+          auto statement = ParseProgramStatement ();
+          if (statement)
+            statements.emplace_back (std::move (statement));
           else
-            /* Unknown token - throw error below */
             break;
-          if (statement) statements.emplace_back (std::move (statement));
         }
         if (currentToken.typeOrID != lexer::EndOfFile)
         {
           diagnosticsHandler.ParseError (Error::UnexpectedToken, currentToken, lexer::EndOfFile);
         }
         return ast::ProgramPtr (new ast::Program (std::move (statements)));
+      });
+  }
+
+  ast::ProgramStatementPtr AstBuilder::ParseProgramStatement ()
+  {
+    return CommonParseNode (
+      [&]()
+      {
+        ast::ProgramStatementPtr statement;
+        int beyondType;
+        bool isType = IsWellKnownType (beyondType);
+        if (currentToken.typeOrID == lexer::kwConst)
+        {
+          /* constant declaration */
+          statement = CommonParseNode (
+            [&]()
+            {
+              NextToken ();
+              auto decl = ParseVarsDecl (true);
+              ExpectSemicolon ();
+              return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
+            });
+        }
+        else if (isType
+                || (currentToken.typeOrID == lexer::kwVoid)
+                || (Peek (beyondType).typeOrID == lexer::Identifier))
+        {
+          if ((currentToken.typeOrID == lexer::kwVoid)
+              || (Peek (beyondType+1).typeOrID == lexer::ParenL))
+          {
+            /* Function declaration */
+            auto decl = ParseFunctionDecl ();
+            statement.reset (new ast::ProgramStatementFunctionDecl (std::move (decl)));
+          }
+          else
+          {
+            /* Variable declaration */
+            statement = CommonParseNode (
+              [&]()
+              {
+                auto decl = ParseVarsDecl (false);
+                ExpectSemicolon ();
+                return ast::ProgramStatementPtr (new ast::ProgramStatementVarsDecl (std::move (decl)));
+              });
+          }
+        }
+        else if (currentToken.typeOrID == lexer::kwTypedef)
+        {
+          /* Type definition */
+          statement = CommonParseNode (
+            [&]()
+            {
+              auto typeDef = ParseTypedef ();
+              ExpectSemicolon ();
+              return typeDef ? ast::ProgramStatementPtr (new ast::ProgramStatementTypedef (std::move (*typeDef)))
+                              : ast::ProgramStatementPtr ();
+            });
+        }
+        // else: Unknown token - throw error in caller
+        return statement;
       });
   }
 

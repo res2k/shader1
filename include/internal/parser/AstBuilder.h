@@ -100,6 +100,7 @@ namespace s1
       bool ExpectSemicolon ();
 
       // Rough structure
+      ast::ProgramStatementPtr ParseProgramStatement ();
       ast::BlockPtr ParseBlock ();
       ast::BlockStatementReturnPtr ParseStatementReturn ();
 
