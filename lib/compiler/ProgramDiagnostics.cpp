@@ -106,7 +106,7 @@ namespace s1
 
       boost::optional<uc::String> operator()(const lexer::TokenType& value) const
       {
-        return Lexer::GetTokenStr (value);
+        return uc::String (Lexer::GetTokenStr (value));
       }
     };
     InfoVisitor visitor;
