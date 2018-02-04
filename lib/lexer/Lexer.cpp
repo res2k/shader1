@@ -505,6 +505,16 @@ KEYWORDS
     ++inputChars;
   }
 
+  uc::Char32 Lexer::PeekChar (int la) const
+  {
+    if (nextChar[la])
+      return nextChar[la].value ();
+    else if (nextChar[la].error () == uc::Stream::Error::EndOfInput)
+      return uc::InvalidChar32;
+    else
+      return uc::ReplacementChar;
+  }
+
   const char* Lexer::GetTokenStr (TokenType token)
   {
     switch (token)

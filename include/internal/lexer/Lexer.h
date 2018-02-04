@@ -94,8 +94,7 @@ namespace s1
     /// Next character in input stream. Set by NextChar().
     uc::Stream::FetchResult nextChar[LookAhead];
     /// Look ahead to a character
-    uc::Char32 PeekChar (int la = 0) const
-    { return nextChar[la] ? nextChar[la].value() : uc::InvalidChar32; }
+    uc::Char32 PeekChar (int la = 0) const;
   };
 } // namespace s1
 
