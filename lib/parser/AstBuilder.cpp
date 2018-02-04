@@ -149,7 +149,7 @@ namespace s1
     {
       diagnosticsHandler.ParseError (parsedIdentifierResult.second->error, parsedIdentifierResult.second->token);
     }
-    return std::move (parsedIdentifierResult);
+    return parsedIdentifierResult;
   }
 
   namespace
@@ -874,7 +874,7 @@ namespace s1
           diagnosticsHandler.ParseError (Error::LoneArrayBracket, currentToken);
           NextToken ();
         }
-        return std::move (type);
+        return type;
       });
   }
 
