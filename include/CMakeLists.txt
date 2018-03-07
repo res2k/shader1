@@ -35,8 +35,8 @@ if(CXXTEST_FOUND)
     if(api_test_sources_${std})
       list(APPEND api_test_sources ${api_test_sources_${std}})
     endif()
-    CXXTEST_ADD_TEST(test_Api_${std} test_Api_${std}.cpp
-                    ${api_test_sources})
+    S1_CXXTEST_ADD_TEST(test_Api_${std} test_Api_${std}.cpp
+                        ${api_test_sources})
     target_link_libraries(test_Api_${std} api_testlib s1)
     if(NOT ${std} STREQUAL "default")
       set_target_properties(test_Api_${std} PROPERTIES CXX_STANDARD ${std})

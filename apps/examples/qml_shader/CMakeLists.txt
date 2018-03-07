@@ -25,8 +25,8 @@ if(Qt5_FOUND)
 
   if(CXXTEST_FOUND)
     set(sum_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/sum_tree/t/sum_tree.h)
-    CXXTEST_ADD_TEST(test_sum_tree test_sum_tree.cpp
-                    ${sum_tree_test_sources})
+    S1_CXXTEST_ADD_TEST(test_sum_tree test_sum_tree.cpp
+                        ${sum_tree_test_sources})
     set_property(SOURCE test_sum_tree.cpp PROPERTY SKIP_AUTOGEN ON)
     target_include_directories(test_sum_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
     set_property(TARGET test_sum_tree PROPERTY CXX_STANDARD 11)
