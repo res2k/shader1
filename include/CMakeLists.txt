@@ -43,7 +43,7 @@ if(CXXTEST_FOUND)
     endif()
     set_property(TARGET test_Api_${std} PROPERTY EXCLUDE_FROM_ALL YES)
     # Make sure S1 lib is found
-    set_property(TARGET test_Api_${std} PROPERTY ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+    set_tests_properties(test_Api_${std} PROPERTIES ENVIRONMENT "PATH=$<TARGET_FILE_DIR:s1>;$ENV{PATH}")
     AutoBuildTest(test_Api_${std})
   endforeach()
 endif()
