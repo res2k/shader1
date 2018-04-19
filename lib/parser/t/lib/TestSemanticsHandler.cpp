@@ -27,15 +27,16 @@ typedef TestSemanticsHandler::NamePtr NamePtr;
 typedef TestSemanticsHandler::FunctionPtr FunctionPtr;
 typedef TestSemanticsHandler::BlockPtr BlockPtr;
 
-void TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::String& identifier)
+bool TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::String& identifier)
 {
   IdentifierMap::iterator ident = identifiers.find (identifier);
   if (ident != identifiers.end())
   {
-    throw parser::Exception (parser::Error::IdentifierAlreadyDeclared);
+    return false;
   }
   if (parent)
-    parent->CheckIdentifierUnique (identifier);
+    return parent->CheckIdentifierUnique (identifier);
+  return true;
 }
   
 TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
@@ -47,7 +48,10 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
 NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const s1::uc::String& identifier,
 						  ExpressionPtr initialValue, bool constant)
 {
-  CheckIdentifierUnique (identifier);
+  if (!CheckIdentifierUnique (identifier))
+  {
+    return NamePtr();
+  }
   NamePtr newName (new CommonName (identifier, type, initialValue, constant));
   identifiers[identifier] = newName;
   return newName;
@@ -55,7 +59,11 @@ NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const s1::uc
   
 NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, const s1::uc::String& identifier)
 {
-  CheckIdentifierUnique (identifier);
+  if (!CheckIdentifierUnique (identifier))
+  {
+    // TODO: Error handling
+    return NamePtr();
+  }
   NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
   identifiers[identifier] = newName;
   return newName;
@@ -65,7 +73,11 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
 							   const s1::uc::String& identifier,
 							   const FunctionFormalParameters& params)
 {
-  CheckIdentifierUnique (identifier);
+  if (!CheckIdentifierUnique (identifier))
+  {
+    // TODO: Error handling
+    return FunctionPtr();
+  }
   NamePtr newName (new CommonName (identifier, Name::Function, returnType));
   identifiers[identifier] = newName;
   ScopePtr funcScope;

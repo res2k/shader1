@@ -123,21 +123,20 @@ public:
     SemanticsHandler::ScopePtr scope (
       semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
                                     SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varAdded;
+    SemanticsHandler::NamePtr varAdded1, varAdded2;
     TS_ASSERT_THROWS_NOTHING(
-      varAdded =
+      varAdded1 =
         scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
                             s1::uc::String ("a"), 
                             SemanticsHandler::ExpressionPtr(), false)
     );
-    TS_ASSERT_THROWS_ASSERT(
-      varAdded =
+    TS_ASSERT_THROWS_NOTHING(
+      varAdded2 =
         scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
                             s1::uc::String ("a"), 
-                            SemanticsHandler::ExpressionPtr(), false),
-      const s1::parser::Exception& e,
-      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::Error::IdentifierAlreadyDeclared)
+                            SemanticsHandler::ExpressionPtr(), false)
     );
+    TS_ASSERT(!varAdded2);
   }  
   
   void testIdentifierAddVarHigher (void)

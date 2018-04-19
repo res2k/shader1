@@ -150,7 +150,7 @@ namespace s1
         typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
         IdentifierMap identifiers;
         
-        void CheckIdentifierUnique (const uc::String& identifier);
+        bool CheckIdentifierUnique (const uc::String& identifier);
         
         CommonSemanticsHandler* handler;
         boost::shared_ptr<CommonScope> parent;
