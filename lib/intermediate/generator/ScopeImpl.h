@@ -54,7 +54,7 @@ namespace s1
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
 
-      void CheckIdentifierUnique (const uc::String& identifier);
+      bool CheckIdentifierUnique (const uc::String& identifier);
       NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
