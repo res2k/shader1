@@ -444,7 +444,10 @@ namespace s1
                                                       const FunctionFormalParameters& params)
     {
       if (level >= Function)
-        throw Exception (Error::DeclarationNotAllowedInScope);
+      {
+        // TODO: Error handling
+        return FunctionPtr();
+      }
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
