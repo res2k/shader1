@@ -663,6 +663,7 @@ namespace s1
     ParseFuncParamFormal (scope, params, astFunctionDecl);
     // Add function to scope, get block
     Function func (scope->AddFunction (returnType, functionIdentifier, params));
+    if (!func) return; // Assume error was already reported
     Block inFunctionBlock = func->GetBody();;
     // Handle expressions in block
     ParseBlock (inFunctionBlock, *astFunctionDecl.body);
