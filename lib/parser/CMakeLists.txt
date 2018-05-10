@@ -4,7 +4,6 @@ set(parser_sources
     Parser.cpp
     ${S1_INC}/parser/AstBuilder.h
     ${S1_INC}/parser/CommonSemanticsHandler.h
-    ${S1_INC}/parser/Exception.h
     ${S1_INC}/parser/Parser.h
     ${S1_INC}/parser/SemanticsHandler.h
     )

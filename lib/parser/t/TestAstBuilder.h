@@ -19,7 +19,6 @@
 #define PARSER_T_TESTASTBUILDER_H_
 
 #include "parser/AstBuilder.h"
-#include "parser/Exception.h"
 
 #include "parser/ast/Block.h"
 #include "parser/ast/Program.h"

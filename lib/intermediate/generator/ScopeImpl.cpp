@@ -22,8 +22,8 @@
 #include "FunctionImpl.h"
 #include "ScopeImpl.h"
 
+#include "intermediate/Diagnostics.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 #include "ExpressionImpl.h"
 #include "NameImpl.h"
 
@@ -38,23 +38,25 @@ namespace s1
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
 
-    void IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const uc::String& identifier)
+    bool IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-        throw parser::Exception (parser::Error::IdentifierAlreadyDeclared);
+        return false;
       }
       if (parent)
-        parent->CheckIdentifierUnique (identifier);
+        return parent->CheckIdentifierUnique (identifier);
+      return true;
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::result_NamePtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if ((ident != identifiers.end()) && (ident->second->GetType() != Name::Function))
       {
-        throw parser::Exception (parser::Error::IdentifierAlreadyDeclared);
+        return OUTCOME_V2_NAMESPACE::failure (Error::IdentifierAlreadyDeclared);
       }
       if ((ident != identifiers.end()) && (ident->second)) return ident->second;
       if (parent)
@@ -77,7 +79,11 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
     {
       // TODO: Keep? Or allow params shadow global vars?
-      CheckIdentifierUnique (param.identifier);
+      if (!CheckIdentifierUnique (param.identifier))
+      {
+        handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
+        return;
+      }
       NamePtr newName (new NameImpl (shared_from_this(), param.identifier,
                                      boost::static_pointer_cast<TypeImpl> (param.type),
                                      param.defaultValue,
@@ -93,7 +99,11 @@ namespace s1
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const uc::String& identifier,
                                                                            ExpressionPtr initialValue, bool constant)
     {
-      CheckIdentifierUnique (identifier);
+      if (!CheckIdentifierUnique (identifier))
+      {
+        handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
+        return NamePtr();
+      }
       NamePtr newName (new NameImpl (shared_from_this(), identifier,
                                      boost::static_pointer_cast<TypeImpl> (type), initialValue, constant));
       identifiers[identifier] = newName;
@@ -104,7 +114,11 @@ namespace s1
 
     NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
-      CheckIdentifierUnique (identifier);
+      if (!CheckIdentifierUnique (identifier))
+      {
+        handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
+        return NamePtr();
+      }
       NamePtr newName (new NameImpl (shared_from_this(), identifier, Name::TypeAlias,
                                      boost::static_pointer_cast<TypeImpl> (aliasedType)));
       identifiers[identifier] = newName;
@@ -116,8 +130,17 @@ namespace s1
                                                                             const FunctionFormalParameters& params)
     {
       if (level >= Function)
-        throw parser::Exception (parser::Error::DeclarationNotAllowedInScope);
-      NamePtr funcName (CheckIdentifierIsFunction (identifier));
+      {
+        handler->ExpressionError (ExpressionContext(), Error::DeclarationNotAllowedInScope);
+        return FunctionPtr();
+      }
+      auto funcIdentResult = CheckIdentifierIsFunction (identifier);
+      if (!funcIdentResult)
+      {
+        handler->ExpressionError (ExpressionContext(), funcIdentResult.error());
+        return FunctionPtr();
+      }
+      NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
         NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(), identifier, Name::Function,
@@ -174,11 +197,12 @@ namespace s1
       return newFunction;
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
+    IntermediateGeneratorSemanticsHandler::Scope::result_NamePtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
     {
       NameImplPtr name (ResolveIdentifierInternal (identifier));
       if (!name)
-        throw parser::Exception (parser::Error::IdentifierUndeclared);
+        return parser::Error::IdentifierUndeclared;
       return name;
     }
 
@@ -198,11 +222,20 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
     {
       if (level >= Function)
-        throw parser::Exception (parser::Error::DeclarationNotAllowedInScope);
+      {
+        handler->ExpressionError (ExpressionContext(), Error::DeclarationNotAllowedInScope);
+        return;
+      }
 
       const uc::String& identifier = builtin->GetIdentifier();
       const FunctionFormalParameters& params = builtin->GetFormalParameters();
-      NamePtr funcName (CheckIdentifierIsFunction (identifier));
+      auto funcIdentResult = CheckIdentifierIsFunction (identifier);
+      if (!funcIdentResult)
+      {
+        handler->ExpressionError (ExpressionContext(), funcIdentResult.error());
+        return;
+      }
+      NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
         NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(),

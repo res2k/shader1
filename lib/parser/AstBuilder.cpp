@@ -51,7 +51,6 @@
 #include "parser/ast/TypeWellKnown.h"
 #include "parser/ast/VarsDecl.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 
 namespace s1
 {

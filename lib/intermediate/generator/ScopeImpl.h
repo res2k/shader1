@@ -20,6 +20,8 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
+#include <outcome/outcome.hpp>
+
 namespace s1
 {
   namespace intermediate
@@ -54,8 +56,9 @@ namespace s1
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
 
-      void CheckIdentifierUnique (const uc::String& identifier);
-      NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
+      bool CheckIdentifierUnique (const uc::String& identifier);
+      typedef OUTCOME_V2_NAMESPACE::result<NamePtr, Error> result_NamePtr;
+      result_NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
@@ -83,7 +86,7 @@ namespace s1
         const uc::String& identifier,
         const FunctionFormalParameters& params);
 
-      NamePtr ResolveIdentifier (const uc::String& identifier);
+      Scope::result_NamePtr ResolveIdentifier (const uc::String& identifier);
       NameImplPtr ResolveIdentifierInternal (const uc::String& identifier);
 
       TypePtr GetFunctionReturnType() const

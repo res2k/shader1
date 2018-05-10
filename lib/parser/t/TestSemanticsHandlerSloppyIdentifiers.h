@@ -31,7 +31,7 @@ public:
 		 ScopeLevel level)
      : TestScope (owner, parent, level) {}
     
-    NamePtr ResolveIdentifier (const s1::uc::String& identifier)
+    result_NamePtr ResolveIdentifier (const s1::uc::String& identifier)
     {
       return NamePtr (new CommonName (identifier, TypePtr (), ExpressionPtr (), false));
     }

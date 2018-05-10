@@ -188,7 +188,7 @@ namespace s1
       {
         return func ();
       }
-      catch (std::bad_alloc)
+      catch (std::bad_alloc&)
       {
         return S1_E_OUT_OF_MEMORY;
       }

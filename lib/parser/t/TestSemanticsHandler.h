@@ -33,7 +33,7 @@ public:
     typedef boost::unordered_map<s1::uc::String, NamePtr> IdentifierMap;
     IdentifierMap identifiers;
     
-    void CheckIdentifierUnique (const s1::uc::String& identifier);
+    bool CheckIdentifierUnique (const s1::uc::String& identifier);
     
     TestSemanticsHandler* handler;
     boost::shared_ptr<TestScope> parent;
@@ -64,7 +64,7 @@ public:
       const s1::uc::String& identifier,
       const FunctionFormalParameters& params);
   
-    NamePtr ResolveIdentifier (const s1::uc::String& identifier);
+    result_NamePtr ResolveIdentifier (const s1::uc::String& identifier);
   };
   
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)

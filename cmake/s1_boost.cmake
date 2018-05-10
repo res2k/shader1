@@ -14,9 +14,10 @@ macro(s1_find_boost VERSION)
   find_package(Boost ${VERSION} COMPONENTS ${_S1_BOOST_USED_LIBS})
 endmacro()
 
-# Dependendencies
+# Dependendencies on Boost libs
 set(BOOST_FILESYSTEM_BOOSTDEP system)
 set(BOOST_THREAD_BOOSTDEP system)
+# Set BOOST_xxx_DEPENDS for other dependencies
 
 # Sources for boost_iostreams
 set(iostreams_src "${BOOST_ROOT}/libs/iostreams/src")
@@ -30,9 +31,9 @@ function(s1_get_boost_link_libs VAR)
   set(link_libs)
   foreach(lib_name ${ARGN})
     string(TOUPPER "${lib_name}" lib_upper)
+    set(lib_deps)
     if(BOOST_${lib_upper}_BOOSTDEP)
       s1_get_boost_link_libs(lib_deps ${BOOST_${lib_upper}_BOOSTDEP})
-      list(APPEND link_libs ${lib_deps})
     endif()
     set(target_suffix "")
     if(MSVC)
@@ -71,7 +72,7 @@ function(s1_get_boost_link_libs VAR)
         target_compile_definitions(${private_target_name} INTERFACE "-DBOOST_${lib_upper}_STATIC_LINK=1")
       endif()
     endif()
-    list(APPEND link_libs ${private_target_name})
+    list(APPEND link_libs ${private_target_name} ${lib_deps})
   endforeach()
   list(REVERSE link_libs)
   list(REMOVE_DUPLICATES link_libs)

@@ -60,3 +60,4 @@ set(seqop_sources
     ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpWithResult.h
     )
 s1_add_library(intermediate_seqop SOURCES ${seqop_sources})
+add_dependencies(intermediate_seqop generate_Diagnostics_parser)

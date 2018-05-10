@@ -20,7 +20,6 @@
 #include "base/format/uc_String.h"
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 
 #include "base/format/Formatter.tpp"
 
@@ -393,15 +392,16 @@ namespace s1
       return TypePtr (new CommonType (baseType, columns, rows));
     }
   
-    void CommonSemanticsHandler::CommonScope::CheckIdentifierUnique (const uc::String& identifier)
+    bool CommonSemanticsHandler::CommonScope::CheckIdentifierUnique (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-        throw Exception (parser::Error::IdentifierAlreadyDeclared);
+        return false;
       }
       if (parent)
-        parent->CheckIdentifierUnique (identifier);
+        return parent->CheckIdentifierUnique (identifier);
+      return true;
     }
       
     CommonSemanticsHandler::CommonScope::CommonScope (CommonSemanticsHandler* handler,
@@ -414,7 +414,11 @@ namespace s1
     CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
                                                       ExpressionPtr initialValue, bool constant)
     {
-      CheckIdentifierUnique (identifier);
+      if (!CheckIdentifierUnique (identifier))
+      {
+        // TODO: Error handling
+        return NamePtr();
+      }
       NamePtr newName (new CommonName (identifier, type, initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
@@ -423,7 +427,11 @@ namespace s1
     CommonSemanticsHandler::NamePtr
     CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
-      CheckIdentifierUnique (identifier);
+      if (!CheckIdentifierUnique (identifier))
+      {
+        // TODO: Error handling
+        return NamePtr();
+      }
       NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
       identifiers[identifier] = newName;
       return newName;
@@ -435,8 +443,15 @@ namespace s1
                                                       const FunctionFormalParameters& params)
     {
       if (level >= Function)
-        throw Exception (Error::DeclarationNotAllowedInScope);
-      CheckIdentifierUnique (identifier);
+      {
+        // TODO: Error handling
+        return FunctionPtr();
+      }
+      if (!CheckIdentifierUnique (identifier))
+      {
+        // TODO: Error handling
+        return FunctionPtr();
+      }
       NamePtr newName (new CommonName (identifier, Name::Function, returnType));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
@@ -447,7 +462,7 @@ namespace s1
       return newFunction;
     }
 
-    CommonSemanticsHandler::NamePtr
+    CommonSemanticsHandler::CommonScope::result_NamePtr
     CommonSemanticsHandler::CommonScope::ResolveIdentifier (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
@@ -457,7 +472,7 @@ namespace s1
       }
       if (parent)
         return parent->ResolveIdentifier (identifier);
-      throw Exception (Error::IdentifierUndeclared);
+      return Error::IdentifierUndeclared;
     }
     
     CommonSemanticsHandler::ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,

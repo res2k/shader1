@@ -48,6 +48,13 @@ namespace s1
     /// Scope with builtin definitions
     parser::SemanticsHandler::ScopePtr builtinScope;
 
+    // Error handling
+    struct ErrorInfo;
+    void ParseError (const ErrorInfo& error);
+    void ParseError (parser::Error code,
+                     const Lexer::Token& encountered = lexer::Invalid,
+                     const Lexer::TokenType& expected = lexer::Invalid);
+
     // Rough structure
     class VisitorProgramStatementImpl;
     typedef parser::SemanticsHandler::BlockPtr Block;

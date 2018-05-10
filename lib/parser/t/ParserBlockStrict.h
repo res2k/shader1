@@ -21,7 +21,6 @@
 
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "TestSemanticsHandler.h"
@@ -55,7 +54,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("a"))
+        testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -91,7 +90,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("a"))
+          testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
       TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -108,7 +107,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("b"))
+          testScope->ResolveIdentifier (s1::uc::String ("b")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
       TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -145,7 +144,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("a"))
+          testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
       TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -162,7 +161,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("b"))
+          testScope->ResolveIdentifier (s1::uc::String ("b")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
       TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -198,7 +197,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("a"))
+        testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -263,7 +262,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("a"))
+          testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
       TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -283,7 +282,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("b"))
+          testScope->ResolveIdentifier (s1::uc::String ("b")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     }
@@ -313,7 +312,7 @@ public:
       SemanticsHandler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
-          testScope->ResolveIdentifier (s1::uc::String ("a"))
+          testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
       TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
       TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -352,7 +351,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("a"))
+        testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -392,7 +391,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("a"))
+        testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -426,7 +425,7 @@ public:
     SemanticsHandler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("MyInt"))
+        testScope->ResolveIdentifier (s1::uc::String ("MyInt")).value()
     );
     TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
@@ -458,7 +457,7 @@ public:
     SemanticsHandler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("MyInt"))
+        testScope->ResolveIdentifier (s1::uc::String ("MyInt")).value()
     );
     TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
@@ -490,7 +489,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("a"))
+        testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -524,7 +523,7 @@ public:
     SemanticsHandler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("MyInt"))
+        testScope->ResolveIdentifier (s1::uc::String ("MyInt")).value()
     );
     TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
@@ -557,14 +556,14 @@ public:
     SemanticsHandler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("float"))
+        testScope->ResolveIdentifier (s1::uc::String ("float")).value()
     );
     TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
 
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        testScope->ResolveIdentifier (s1::uc::String ("a"))
+        testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
