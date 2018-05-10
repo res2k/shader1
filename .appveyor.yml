@@ -36,7 +36,7 @@ install:
   - ninja --version
 
   # Install Boost headers
-  - C:\projects\shader1\build\appveyor-boost.cmd
+  - call C:\projects\shader1\build\appveyor-boost.cmd %BOOST_VERSION%
 
   # Install cxxtest
   - set CXXTEST_URL="https://github.com/CxxTest/cxxtest/releases/download/4.4/cxxtest-4.4.zip"

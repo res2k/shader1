@@ -1,3 +1,4 @@
+set BOOST_VERSION=%1
 if not exist C:\projects\deps\boost (
   set BOOST_URL="http://sourceforge.net/projects/boost/files/boost/%BOOST_VERSION%/boost_%BOOST_VERSION:.=_%.7z"
   appveyor DownloadFile %BOOST_URL% -FileName boost.7z
