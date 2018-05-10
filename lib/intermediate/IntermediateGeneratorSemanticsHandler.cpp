@@ -53,8 +53,8 @@
 #include "UnaryExpressionImpl.h"
 #include "VariableExpressionImpl.h"
 
+#include <boost/next_prior.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/utility.hpp>
 
 #include "base/format/Formatter.tpp"
 
