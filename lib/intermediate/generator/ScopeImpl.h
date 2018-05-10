@@ -86,7 +86,7 @@ namespace s1
         const uc::String& identifier,
         const FunctionFormalParameters& params);
 
-      NamePtr ResolveIdentifier (const uc::String& identifier);
+      Scope::result_NamePtr ResolveIdentifier (const uc::String& identifier);
       NameImplPtr ResolveIdentifierInternal (const uc::String& identifier);
 
       TypePtr GetFunctionReturnType() const

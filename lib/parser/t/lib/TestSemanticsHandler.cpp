@@ -87,8 +87,8 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
   FunctionPtr newFunction (new TestFunction (newBlock));
   return newFunction;
 }
-
-NamePtr TestSemanticsHandler::TestScope::ResolveIdentifier (const s1::uc::String& identifier)
+TestSemanticsHandler::TestScope::result_NamePtr
+TestSemanticsHandler::TestScope::ResolveIdentifier (const s1::uc::String& identifier)
 {
   IdentifierMap::iterator ident = identifiers.find (identifier);
   if (ident != identifiers.end())
@@ -97,6 +97,6 @@ NamePtr TestSemanticsHandler::TestScope::ResolveIdentifier (const s1::uc::String
   }
   if (parent)
     return parent->ResolveIdentifier (identifier);
-  throw parser::Exception (parser::Error::IdentifierUndeclared);
+  return parser::Error::IdentifierUndeclared;
 }
 

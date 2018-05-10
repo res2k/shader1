@@ -64,7 +64,7 @@ public:
       const s1::uc::String& identifier,
       const FunctionFormalParameters& params);
   
-    NamePtr ResolveIdentifier (const s1::uc::String& identifier);
+    result_NamePtr ResolveIdentifier (const s1::uc::String& identifier);
   };
   
   ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)

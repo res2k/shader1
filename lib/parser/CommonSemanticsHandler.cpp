@@ -463,7 +463,7 @@ namespace s1
       return newFunction;
     }
 
-    CommonSemanticsHandler::NamePtr
+    CommonSemanticsHandler::CommonScope::result_NamePtr
     CommonSemanticsHandler::CommonScope::ResolveIdentifier (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
@@ -473,7 +473,7 @@ namespace s1
       }
       if (parent)
         return parent->ResolveIdentifier (identifier);
-      throw Exception (Error::IdentifierUndeclared);
+      return Error::IdentifierUndeclared;
     }
     
     CommonSemanticsHandler::ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,

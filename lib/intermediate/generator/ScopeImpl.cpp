@@ -198,11 +198,12 @@ namespace s1
       return newFunction;
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
+    IntermediateGeneratorSemanticsHandler::Scope::result_NamePtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
     {
       NameImplPtr name (ResolveIdentifierInternal (identifier));
       if (!name)
-        throw parser::Exception (parser::Error::IdentifierUndeclared);
+        return parser::Error::IdentifierUndeclared;
       return name;
     }
 

@@ -288,7 +288,13 @@ namespace s1
     const auto& token = astExprValue.value;
     if (token.typeOrID == lexer::Identifier)
     {
-      auto idName = scope->ResolveIdentifier (token.tokenString);
+      auto idNameResult = scope->ResolveIdentifier (token.tokenString);
+      if (idNameResult.has_error())
+      {
+        ParseError (idNameResult.error());
+        return Expression();
+      }
+      const auto& idName = idNameResult.value();
       if (idName->GetType() != SemanticsHandler::Name::Variable)
       {
         // TODO: Report error?
@@ -336,7 +342,13 @@ namespace s1
     else
     {
       const auto& identifier = boost::get<ast::Identifier> (astExprFunctionCall.identifierOrType).GetString();
-      auto idName = scope->ResolveIdentifier (identifier);
+      auto idNameResult = scope->ResolveIdentifier (identifier);
+      if (idNameResult.has_error())
+      {
+        ParseError (idNameResult.error());
+        return Expression();
+      }
+      const auto& idName = idNameResult.value();
       return semanticsHandler.CreateFunctionCallExpression (idName, paramExprs);
     }
   }
@@ -492,7 +504,13 @@ namespace s1
     }
     void operator() (const ast::TypeIdentifier& type) override
     {
-      Name typeName = scope->ResolveIdentifier (type.value.GetString());
+      auto typeNameResult = scope->ResolveIdentifier (type.value.GetString());
+      if (typeNameResult.has_error())
+      {
+        parsedType = OUTCOME_V2_NAMESPACE::failure (ErrorInfo (typeNameResult.error()));
+        return;
+      }
+      const auto& typeName = typeNameResult.value();
       if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
       {
         parsedType = typeName->GetAliasedType();

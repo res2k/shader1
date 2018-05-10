@@ -47,7 +47,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        scope->ResolveIdentifier (s1::uc::String ("a"))
+        scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
@@ -69,7 +69,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        scope->ResolveIdentifier (s1::uc::String ("a"))
+        scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Function);
@@ -92,7 +92,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        scope->ResolveIdentifier (s1::uc::String ("a"))
+        scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::TypeAlias);
@@ -106,13 +106,12 @@ public:
     SemanticsHandler::ScopePtr scope (
       semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
                                     SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varRequested;
-    TS_ASSERT_THROWS_ASSERT(
+    SemanticsHandler::Scope::result_NamePtr varRequested = SemanticsHandler::NamePtr ();
+    TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        scope->ResolveIdentifier (s1::uc::String ("foo")),
-      const s1::parser::Exception& e,
-      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::Error::IdentifierUndeclared)
+        scope->ResolveIdentifier (s1::uc::String ("foo"))
     );
+    TS_ASSERT_EQUALS(varRequested.error(), s1::parser::Error::IdentifierUndeclared);
   }
   
   void testIdentifierDeclareMultiple (void)
@@ -160,7 +159,7 @@ public:
     SemanticsHandler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
-        scopeInner->ResolveIdentifier (s1::uc::String ("a"))
+        scopeInner->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
     TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);

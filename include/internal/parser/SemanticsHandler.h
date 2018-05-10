@@ -18,9 +18,13 @@
 #ifndef __PARSER_SEMANTICSHANDLER_H__
 #define __PARSER_SEMANTICSHANDLER_H__
 
+#include "parser/Diagnostics_fwd.h"
+
 #include <boost/shared_ptr.hpp>
 
 #include <vector>
+
+#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -297,9 +301,10 @@ namespace s1
         virtual FunctionPtr AddFunction (TypePtr returnType,
           const uc::String& identifier,
           const FunctionFormalParameters& params) = 0;
-          
+
+        typedef OUTCOME_V2_NAMESPACE::result<NamePtr, Error> result_NamePtr;
         /// Resolve an identifier to a name
-        virtual NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
+        virtual result_NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
       };
       typedef boost::shared_ptr<Scope> ScopePtr;
       

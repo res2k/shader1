@@ -317,14 +317,14 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    TS_ASSERT_THROWS_ASSERT(
-      parser.ParseProgram (),
-      const s1::parser::Exception& e,
-      TS_ASSERT_EQUALS(e.GetCode(), s1::parser::Error::IdentifierUndeclared)
+    TS_ASSERT_THROWS_NOTHING(
+      parser.ParseProgram ()
     );
-    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 1u);
+    TS_ASSERT_EQUALS(errorHandler.parseErrors.size (), 2u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
                      static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
+    TS_ASSERT_EQUALS(errorHandler.parseErrors[1].code,
+                     static_cast<unsigned int> (s1::parser::Error::IdentifierUndeclared));
   }
 
   void testProgramFunctionDeclInvalid8 (void)
