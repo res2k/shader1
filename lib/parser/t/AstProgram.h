@@ -24,6 +24,7 @@
 #include "parser/ast/Program.h"
 #include "parser/ast/ProgramStatementFunctionDecl.h"
 #include "parser/ast/ProgramStatementVarsDecl.h"
+#include "parser/Diagnostics.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"

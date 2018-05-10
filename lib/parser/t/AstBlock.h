@@ -26,6 +26,7 @@
 #include "parser/ast/BlockStatementIf.h"
 #include "parser/ast/BlockStatementNestedBlock.h"
 #include "parser/ast/BlockStatementWhile.h"
+#include "parser/Diagnostics.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"

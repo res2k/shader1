@@ -18,7 +18,7 @@
 #ifndef __PARSER_EXCEPTION_H__
 #define __PARSER_EXCEPTION_H__
 
-#include "parser/Diagnostics.h"
+#include "parser/Diagnostics_fwd.h"
 #include "lexer/Lexer.h"
 
 #include <exception>

@@ -23,7 +23,7 @@
 
 #include "diagnostics/Handler.h"
 #include "lexer/Lexer.h"
-#include "parser/Diagnostics.h"
+#include "parser/Diagnostics_fwd.h"
 
 namespace s1
 {

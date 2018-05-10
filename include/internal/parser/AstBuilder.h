@@ -23,7 +23,7 @@
 
 #include "ast/forwarddecl.h"
 #include "lexer/Lexer.h"
-#include "parser/Diagnostics.h"
+#include "parser/Diagnostics_fwd.h"
 
 #include <vector>
 

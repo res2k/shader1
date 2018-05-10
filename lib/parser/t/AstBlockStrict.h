@@ -25,6 +25,7 @@
 #include "parser/ast/Type.h"
 #include "parser/ast/Typedef.h"
 #include "parser/ast/VarsDecl.h"
+#include "parser/Diagnostics.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"

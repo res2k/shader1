@@ -27,6 +27,7 @@
 #include "parser/ast/ExprUnary.h"
 #include "parser/ast/Type.h"
 #include "parser/ast/TypeArray.h"
+#include "parser/Diagnostics.h"
 
 #include "AstMacros.h"
 #include "TestAstBuilder.h"
