@@ -17,6 +17,7 @@ foreach(comp ${DIAGNOSTICS_COMPS})
         -t ${DIAGNOSTICS_DEFS_TPL} > ${comp}/Diagnostics.h
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${comp}/Diagnostics.xml ${DIAGNOSTICS_DEFS_TPL})
   add_custom_command(OUTPUT ${comp}/Diagnostics_fwd.h
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${comp}
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/build/generate_codes_table.py
         -D namespace=${comp}
         -t ${DIAGNOSTICS_FWD_TPL} > ${comp}/Diagnostics_fwd.h
