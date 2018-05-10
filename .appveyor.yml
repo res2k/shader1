@@ -18,6 +18,9 @@ branches:
   except:
     - /pr\/.+/
 
+cache:
+  - C:\projects\deps\boost -> .appveyor.yml
+
 install:
   - git submodule update --init --recursive
 
@@ -33,10 +36,15 @@ install:
   - ninja --version
 
   # Install Boost headers
-  - set BOOST_URL="http://sourceforge.net/projects/boost/files/boost/%BOOST_VERSION%/boost_%BOOST_VERSION:.=_%.7z"
-  - appveyor DownloadFile %BOOST_URL% -FileName boost.7z
-  - 7z x boost.7z -oC:\projects\deps > nul
-    
+  - |
+    if not exists C:\projects\deps\boost (
+      set BOOST_URL="http://sourceforge.net/projects/boost/files/boost/%BOOST_VERSION%/boost_%BOOST_VERSION:.=_%.7z"
+      appveyor DownloadFile %BOOST_URL% -FileName boost.7z
+      7z x boost.7z -oC:\projects\deps > nul
+      ren C:\projects\deps\boost_%BOOST_VERSION:.=_% boost
+      del boost.7z
+    )
+
   # Install cxxtest
   - set CXXTEST_URL="https://github.com/CxxTest/cxxtest/releases/download/4.4/cxxtest-4.4.zip"
   - appveyor DownloadFile %CXXTEST_URL% -FileName cxxtest.zip
@@ -52,7 +60,7 @@ build_script:
   - "SET PATH=C:/Python36-x64;%PATH%"
   - mkdir appveyor-build
   - cd appveyor-build
-  - cmake .. -GNinja -DBOOST_ROOT=C:/projects/deps/boost_%BOOST_VERSION:.=_% -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
+  - cmake .. -GNinja -DBOOST_ROOT=C:/projects/deps/boost -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
   - cmake --build .
   - cmake --build . --target build_tests
   - "SET PATH=C:/projects/shader1/appveyor-build/Debug;%PATH%"
