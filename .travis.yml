@@ -15,7 +15,7 @@ addons:
 cache:
   ccache: true
   directories:
-    - ${TRAVIS_BUILD_DIR}/travis-deps/boost-1.65.1
+    - ${TRAVIS_BUILD_DIR}/travis-deps/boost-1.67.0
 
 matrix:
   include:
@@ -72,7 +72,7 @@ install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/travis-deps"
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
-  - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.65.1; fi
+  - if [[ "${BOOST_VERSION}" == "default" ]]; then BOOST_VERSION=1.67.0; fi
 
   - if [[ "${GCC_VERSION}" != "" ]]; then export CXX="g++-${GCC_VERSION}"; export CC="gcc-${GCC_VERSION}"; fi
   - if [[ "${CLANG_VERSION}" != "" ]]; then export CXX="clang++-${CLANG_VERSION}"; export CC="clang-${CLANG_VERSION}"; fi
