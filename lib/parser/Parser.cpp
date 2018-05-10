@@ -58,6 +58,19 @@
 namespace s1
 {
   using namespace parser;
+
+  struct Parser::ErrorInfo
+  {
+    Error code;
+    Lexer::Token encountered;
+    Lexer::TokenType expected;
+
+    ErrorInfo () : code (static_cast<Error> (0)), encountered (lexer::Invalid), expected (lexer::Invalid) {}
+    ErrorInfo (Error code,
+                const Lexer::Token& encountered = lexer::Invalid,
+                const Lexer::TokenType& expected = lexer::Invalid)
+      : code (code), encountered (encountered), expected (expected) {}
+  };
   
   Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler,
                   diagnostics::Handler& diagnosticsHandler)
@@ -76,8 +89,20 @@ namespace s1
     catch (const Exception& e)
     {
       /* emit error */
-      diagnosticsHandler.ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
+      ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
     }
+  }
+
+  void Parser::ParseError (const ErrorInfo& error)
+  {
+    diagnosticsHandler.ParseError (error.code, error.encountered, error.expected);
+  }
+
+  void Parser::ParseError (Error code,
+                           const Lexer::Token& encountered,
+                           const Lexer::TokenType& expected)
+  {
+    diagnosticsHandler.ParseError (code, encountered, expected);
   }
 
   class Parser::VisitorProgramStatementImpl : public ast::VisitorProgramStatement
@@ -455,9 +480,10 @@ namespace s1
     Parser& parent;
     const Scope& scope;
   public:
-    Parser::Type parsedType;
+    typedef OUTCOME_V2_NAMESPACE::result<Parser::Type, ErrorInfo> result_Type;
+    result_Type parsedType;
 
-    VisitorTypeImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope) {}
+    VisitorTypeImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope), parsedType (Parser::Type ()) {}
 
     void operator() (const ast::TypeArray& type) override
     {
@@ -473,7 +499,7 @@ namespace s1
       }
       else
       {
-        throw Exception (parser::Error::ExpectedTypeName, type.value.token);
+        parsedType = OUTCOME_V2_NAMESPACE::failure (ErrorInfo (Error::ExpectedTypeName, type.value.token));
       }
     }
     void operator() (const ast::TypeWellKnown& type) override
@@ -530,11 +556,18 @@ namespace s1
     {
       VisitorTypeImpl visitor (*this, scope);
       astType->Visit (visitor);
-      S1_ASSERT (visitor.parsedType, Type());
-      return std::move (visitor.parsedType);
+      if (visitor.parsedType.has_error())
+      {
+        ParseError (visitor.parsedType.error());
+      }
+      else
+      {
+        S1_ASSERT (visitor.parsedType.value(), Type());
+        return std::move (visitor.parsedType.value());
+      }
     }
-    else
-      return semanticsHandler.CreateType (SemanticsHandler::Invalid);
+
+    return semanticsHandler.CreateType (SemanticsHandler::Invalid);
   }
   
   Parser::Type Parser::ParseTypeBool (const Lexer::Token& /*token*/)
@@ -728,18 +761,19 @@ namespace s1
       {
         // Handle default value
         if (paramDirection == SemanticsHandler::Scope::dirOut)
-          throw Exception (Error::OutParameterWithDefault);
-        newParam.defaultValue = ParseExpression (scope, param.defaultValue.get());
+          ParseError (Error::OutParameterWithDefault);
+        else
+          newParam.defaultValue = ParseExpression (scope, param.defaultValue.get());
       }
       if ((((paramDirection & SemanticsHandler::Scope::dirIn) == 0)
           || ((paramDirection & SemanticsHandler::Scope::dirOut) != 0))
         && (numFreqQualifiers > 0))
       {
-        throw Exception (Error::QualifiersNotAllowed);
+        ParseError (Error::QualifiersNotAllowed);
       }
       else if (numFreqQualifiers > 1)
       {
-        throw Exception (Error::ConflictingQualifiersForInParam);
+        ParseError (Error::ConflictingQualifiersForInParam);
       }
       params.push_back (std::move (newParam));
     }
