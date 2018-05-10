@@ -24,7 +24,6 @@
 
 #include "intermediate/Diagnostics.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 #include "ExpressionImpl.h"
 #include "NameImpl.h"
 

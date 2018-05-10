@@ -21,7 +21,6 @@
 
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "TestSemanticsHandlerSloppyIdentifiers.h"

@@ -20,7 +20,6 @@
 
 #include "TestAstBuilder.h"
 
-#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "parser/ast/Block.h"

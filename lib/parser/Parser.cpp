@@ -53,7 +53,6 @@
 #include "parser/ast/VisitorType.h"
 #include "parser/AstBuilder.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 
 namespace s1
 {
@@ -82,15 +81,7 @@ namespace s1
 
   void Parser::Parse ()
   {
-    try
-    {
-      ParseProgram();
-    }
-    catch (const Exception& e)
-    {
-      /* emit error */
-      ParseError (e.GetCode(), e.GetEncounteredToken(), e.GetExpectedToken());
-    }
+    ParseProgram();
   }
 
   void Parser::ParseError (const ErrorInfo& error)

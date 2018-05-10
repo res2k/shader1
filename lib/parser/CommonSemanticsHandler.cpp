@@ -20,7 +20,6 @@
 #include "base/format/uc_String.h"
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 
 #include "base/format/Formatter.tpp"
 

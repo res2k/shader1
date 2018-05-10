@@ -30,8 +30,6 @@
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
 
-#include "parser/Exception.h"
-
 #include "BlockImpl.h"
 #include "FunctionCallGlobalVarAugment.h"
 #include "NameImpl.h"

@@ -20,7 +20,6 @@
 #include "base/common.h"
 
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 #include "parser/Parser.h"
 
 #include "TestSemanticsHandler.h"

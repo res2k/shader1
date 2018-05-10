@@ -19,7 +19,6 @@
 #include "../TestSemanticsHandler.h"
 
 #include "parser/Diagnostics.h"
-#include "parser/Exception.h"
 
 using namespace s1;
 
