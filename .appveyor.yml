@@ -47,7 +47,7 @@ build_script:
   - "SET PATH=C:/Python36-x64;%PATH%"
   - mkdir appveyor-build
   - cd appveyor-build
-  - cmake .. -GNinja -DBOOST_ROOT=C:\Libraries\boost_%BOOST_VERSION% -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
+  - cmake .. -GNinja -DBOOST_ROOT=C:/Libraries/boost_%BOOST_VERSION% -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
   - cmake --build .
   - cmake --build . --target build_tests
   - "SET PATH=C:/projects/shader1/appveyor-build/Debug;%PATH%"
