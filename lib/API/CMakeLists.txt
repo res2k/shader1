@@ -46,7 +46,7 @@ set(s1_sources
     ${S1_INC_PUBLIC}/ResultCode.h
     ${S1_INC_PUBLIC}/String.h
     ${S1_INC_PUBLIC}/StringArg.h
-    ${S1_INC_PUBLIC}/genObject/Object.h.template
+    ${CMAKE_SOURCE_DIR}/include/s1_genObject/Object.h.template
     )
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)
 include_directories(.)
