@@ -59,5 +59,6 @@ set(seqop_sources
     ${S1_INC}/intermediate/SequenceOp/SequenceOpWhile.h
     ${S1_INC}/intermediate/SequenceOp/SequenceOpWithResult.h
     )
-s1_add_library(intermediate_seqop SOURCES ${seqop_sources})
-add_dependencies(intermediate_seqop generate_Diagnostics_parser)
+s1_add_library(intermediate_seqop
+               SOURCES ${seqop_sources}
+               LINK headers_internal)
