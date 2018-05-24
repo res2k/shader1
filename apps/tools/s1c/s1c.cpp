@@ -51,6 +51,11 @@
 using namespace s1;
 namespace bpo = boost::program_options;
 
+/* Work around differing identifiers on MSVC */
+#if defined(_MSC_VER) && (_MSC_VER < 1800)
+  #define snprintf    _snprintf
+#endif
+
 enum
 {
   // Optimization level compiler picks by default
