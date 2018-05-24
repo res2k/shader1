@@ -1,6 +1,33 @@
 add_subdirectory(s1)
 
 if(NOT S1_PREBUILT)
+  if(UNIX)
+    # Collect Boost.Preprocessor includes, concatenate to one big header, replacing BOOST_PP with _S1BOOSTPP
+    add_custom_command(OUTPUT preprocessor.h
+                      COMMAND ${CMAKE_SOURCE_DIR}/build/generate_preprocessor_h.sh ${CMAKE_CURRENT_SOURCE_DIR}/s1_genObject/Object.h.template -I${CMAKE_CURRENT_SOURCE_DIR} -I${Boost_INCLUDE_DIR}
+                                | sed -e 's/BOOST_PP/_S1BOOSTPP/g' -e 's/BOOST_PREPROCESSOR/_S1BOOSTPP/g' > s1/preprocessor.h
+                      DEPENDS s1_genObject/Object.h.template)
+
+    # Generate Object.h from Object.h.template:
+    #  Replace BOOST_PP with _S1BOOSTPP
+    #  Replace #includes with header generated in first step
+    add_custom_command(OUTPUT Object.h
+                      COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/s1_genObject/Object.h.template | grep -v "^#include" | sed -e "s-//#include-#include-" | sed -e 's/BOOST_PP/_S1BOOSTPP/g' > Object.h
+                      DEPENDS s1_genObject/Object.h.template s1/preprocessor.h)
+
+    add_custom_target(generate_Object DEPENDS Object.h)
+  else()
+    # Use pregenerated headers
+    add_custom_command(OUTPUT preprocessor.h
+                      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/s1_pregenerated/preprocessor.h preprocessor.h
+                      DEPENDS s1_pregenerated/preprocessor.h)
+    add_custom_command(OUTPUT Object.h
+                      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/s1_pregenerated/Object.h Object.h
+                      DEPENDS s1_pregenerated/Object.h)
+    add_custom_target(generate_Object DEPENDS preprocessor.h Object.h
+                      COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_Object")
+  endif()
+
   add_library(headers_public INTERFACE)
   target_include_directories(headers_public INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
   add_custom_target(headers_public_deps)
