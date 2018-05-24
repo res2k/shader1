@@ -1540,7 +1540,8 @@ PREDEFINED             = __cplusplus                            \
                          S1TYPE_TYPEINFO_NAME(N,B)=N            \
                          S1_ARG_DEFAULT(X)==(X)                 \
                          S1_RETURN_MOVE_REF_TYPE(X)=Ptr<X>      \
-                         S1_HAVE_RVALUES
+                         S1_HAVE_RVALUES                        \
+                         S1_INLINE=inline
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.
