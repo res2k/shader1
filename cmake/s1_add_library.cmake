@@ -38,7 +38,7 @@ endfunction()
 FUNCTION(s1_add_library TARGET)
   CMAKE_PARSE_ARGUMENTS(S1_LIB
     "STATIC;SHARED"
-    "JOIN_PDB"
+    ""
     "SOURCES;DEPENDS;LINK"
     ${ARGN})
   IF(S1_LIB_UNPARSED_ARGS)
