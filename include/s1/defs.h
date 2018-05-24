@@ -47,10 +47,20 @@
    * Macro for default arguments in API methods
    */
 #  define S1_ARG_DEFAULT(val)   = val
+  /**\def S1_INLINE
+   * \internal
+   * Used for 'inline' in public headers
+   */
+#  define S1_INLINE				inline
 #else
 #  define S1_EXTERN_C           extern
 #  define S1_NOTHROW
 #  define S1_ARG_DEFAULT(val)
+#  if defined(_MSC_VER)
+#    define S1_INLINE				__inline
+#  else
+#    define S1_INLINE				inline
+#  endif
 #endif
 
 #ifdef __GNUC__

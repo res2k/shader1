@@ -70,7 +70,7 @@ typedef struct s1_StringArg_s
 /**\internal
  * Common logic to construct an s1_StringArg.
  */
-static inline s1_StringArg _s1_stringarg (uintptr_t type, const void* str, size_t len)
+static S1_INLINE s1_StringArg _s1_stringarg (uintptr_t type, const void* str, size_t len)
 {
   s1_StringArg arg = { (uintptr_t)str, type };
   if (str)
@@ -101,7 +101,7 @@ static inline s1_StringArg _s1_stringarg (uintptr_t type, const void* str, size_
  * \param str %String to pass.
  * \param len Length of the string. Use <tt>(size_t)-1</tt> to determine length automatically
  */
-static inline s1_StringArg s1_u8_n (const char* str, size_t len)
+static S1_INLINE s1_StringArg s1_u8_n (const char* str, size_t len)
 {
   return _s1_stringarg (_S1_SA_TS_TYPE_UTF8, str, len);
 }
@@ -110,7 +110,7 @@ static inline s1_StringArg s1_u8_n (const char* str, size_t len)
  * Pass a string argument for an UTF-8 string.
  * \param str %String to pass.
  */
-static inline s1_StringArg s1_u8 (const char* str)
+static S1_INLINE s1_StringArg s1_u8 (const char* str)
 {
   return s1_u8_n (str, (size_t)-1);
 }
@@ -120,7 +120,7 @@ static inline s1_StringArg s1_u8 (const char* str)
  * \param str %String to pass.
  * \param len Length of the string. Use <tt>(size_t)-1</tt> to determine length automatically
  */
-static inline s1_StringArg s1_u16_n (const s1_char16* str, size_t len)
+static S1_INLINE s1_StringArg s1_u16_n (const s1_char16* str, size_t len)
 {
   return _s1_stringarg (_S1_SA_TS_TYPE_UTF16, str, len);
 }
@@ -129,7 +129,7 @@ static inline s1_StringArg s1_u16_n (const s1_char16* str, size_t len)
  * Pass a string argument for an UTF-16 string.
  * \param str %String to pass.
  */
-static inline s1_StringArg s1_u16 (const s1_char16* str)
+static S1_INLINE s1_StringArg s1_u16 (const s1_char16* str)
 {
   return s1_u16_n (str, (size_t)-1);
 }
@@ -139,7 +139,7 @@ static inline s1_StringArg s1_u16 (const s1_char16* str)
  * \param str %String to pass.
  * \param len Length of the string. Use <tt>(size_t)-1</tt> to determine length automatically
  */
-static inline s1_StringArg s1_u32_n (const s1_char32* str, size_t len)
+static S1_INLINE s1_StringArg s1_u32_n (const s1_char32* str, size_t len)
 {
   return _s1_stringarg (_S1_SA_TS_TYPE_UTF32, str, len);
 }
@@ -148,7 +148,7 @@ static inline s1_StringArg s1_u32_n (const s1_char32* str, size_t len)
  * Pass a string argument for an UTF-32 string.
  * \param str %String to pass.
  */
-static inline s1_StringArg s1_u32 (const s1_char32* str)
+static S1_INLINE s1_StringArg s1_u32 (const s1_char32* str)
 {
   return s1_u32_n (str, (size_t)-1);
 }
@@ -158,7 +158,7 @@ static inline s1_StringArg s1_u32 (const s1_char32* str)
  * \param str %String to pass.
  * \param len Length of the string. Use <tt>(size_t)-1</tt> to determine length automatically
  */
-static inline s1_StringArg s1_wcs_n (const wchar_t* str, size_t len)
+static S1_INLINE s1_StringArg s1_wcs_n (const wchar_t* str, size_t len)
 {
   return _s1_stringarg (_S1_SA_TS_TYPE_WCS, str, len);
 }
@@ -167,7 +167,7 @@ static inline s1_StringArg s1_wcs_n (const wchar_t* str, size_t len)
  * Pass a string argument for an wide character string.
  * \param str %String to pass.
  */
-static inline s1_StringArg s1_wcs (const wchar_t* str)
+static S1_INLINE s1_StringArg s1_wcs (const wchar_t* str)
 {
   return s1_wcs_n (str, (size_t)-1);
 }
@@ -178,7 +178,7 @@ S1TYPE_DECLARE_FWD(String);
  * Pass a string argument for an s1_String object.
  * \param str %String to pass.
  */
-static inline s1_StringArg s1_strobj (s1_String* str)
+static S1_INLINE s1_StringArg s1_strobj (s1_String* str)
 {
   /* Special syntax: UINTPTR_MAX size&type and non-null pointer
    * indicate s1_String.
