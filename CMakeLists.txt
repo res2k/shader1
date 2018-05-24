@@ -324,13 +324,13 @@ if(NOT S1_PREBUILT)
   set(S1_INC "${CMAKE_SOURCE_DIR}/include/internal")
   set(S1_INC_PUBLIC "${CMAKE_SOURCE_DIR}/include/s1")
   add_subdirectory(lib)
+
+  add_subdirectory(doc)
 else()
   include("${S1_PREBUILT}/libs1.cmake")
   include_directories("${S1_PREBUILT}/include")
 endif()
 add_subdirectory(apps)
-
-add_subdirectory(doc)
 
 if(NOT S1_PREBUILT)
   export(TARGETS s1 FILE libs1.cmake)
