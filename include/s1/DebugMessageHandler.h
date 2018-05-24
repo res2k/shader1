@@ -121,7 +121,7 @@ enum s1_DebugMessageHandlerVariant
 };
 
 /// Obtain preferred message handler for current platform.
-static inline enum s1_DebugMessageHandlerVariant s1_get_preferred_debug_message_handler ()
+static S1_INLINE enum s1_DebugMessageHandlerVariant s1_get_preferred_debug_message_handler ()
 {
 #if defined(_WIN32)
   return S1_DMH_WIDE_STRING;

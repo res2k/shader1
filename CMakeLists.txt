@@ -300,18 +300,6 @@ if(NOT S1_BUILD_SHARED)
   set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
 endif()
 
-# S1_PREBUILT: Points to a build tree with an already built libs1, which is then
-# used to build s1.
-# Useful if the current compiler can't build libs1 itself (due to required
-# C++ features not being supported) but s1c should be built nevertheless (e.g.
-# to check include files compatibility)
-if(NOT S1_PREBUILT)
-  include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/internal)
-  include_directories(include/internal)
-  include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
-endif()
-include_directories(include)
-
 # Make outcome available
 add_subdirectory(
   "${CMAKE_CURRENT_SOURCE_DIR}/outcome"  # path to outcome source
@@ -319,20 +307,24 @@ add_subdirectory(
   EXCLUDE_FROM_ALL                             # please only lazy build outcome on demand
 )
 
+# S1_PREBUILT: Points to a build tree with an already built libs1, which is then
+# used to build s1.
+# Useful if the current compiler can't build libs1 itself (due to required
+# C++ features not being supported) but s1c should be built nevertheless (e.g.
+# to check include files compatibility)
 if(NOT S1_PREBUILT)
   add_subdirectory(include)
   set(S1_INC "${CMAKE_SOURCE_DIR}/include/internal")
-  set(S1_INC_PUBLIC "${CMAKE_SOURCE_DIR}/include/s1")
   add_subdirectory(lib)
+
+  add_subdirectory(doc)
 else()
   include("${S1_PREBUILT}/libs1.cmake")
   include_directories("${S1_PREBUILT}/include")
 endif()
 add_subdirectory(apps)
 
-add_subdirectory(doc)
-
 if(NOT S1_PREBUILT)
-  export(TARGETS s1 FILE libs1.cmake)
+  export(TARGETS s1 headers_public FILE libs1.cmake)
   export(TARGETS s1c FILE s1c.cmake)
 endif()

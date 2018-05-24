@@ -1,6 +1,7 @@
 # Supply a version script to hide all symbols but our own
 CxxCompilerFlagString (CXX_LINK_HIDE_OTHER_SYMBOLS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/ld-symbols.map")
 
+set(S1_INC_PUBLIC "${CMAKE_SOURCE_DIR}/include/s1")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${S1_INC_PUBLIC}/ResultCode_components.txt)
 file(STRINGS ${S1_INC_PUBLIC}/ResultCode_components.txt RESULTCODE_COMPONENTS)
 foreach(comp ${RESULTCODE_COMPONENTS})
@@ -59,7 +60,8 @@ else()
                  SOURCES ${s1_sources}
                  LINK base compiler)
 endif()
-target_link_libraries(s1 ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(s1 PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(s1 INTERFACE headers_public)
 set(_ARCH "")
 if(CMAKE_GENERATOR_PLATFORM)
   set(_ARCH "${CMAKE_GENERATOR_PLATFORM}")
@@ -87,6 +89,6 @@ if(CXXTEST_FOUND)
   endif()
   s1_add_cxxtest(test_ApiImpl
                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/StringWrapper.h
-                 DEPENDS ${_S1_TEST_DEP})
+                 DEPENDS ${_S1_TEST_DEP} headers_internal)
   target_compile_features(test_ApiImpl PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 endif()

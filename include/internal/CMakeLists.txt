@@ -3,6 +3,7 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS Diagnostics_compo
 file(STRINGS Diagnostics_components.txt DIAGNOSTICS_COMPS)
 
 add_custom_target(generate_Diagnostics)
+add_custom_target(generate_Diagnostics_fwd)
 
 set(DIAGNOSTICS_DEFS_TPL ${CMAKE_CURRENT_SOURCE_DIR}/diagnostics/Diagnostics_defs.h.tpl)
 set(DIAGNOSTICS_FWD_TPL ${CMAKE_CURRENT_SOURCE_DIR}/diagnostics/Diagnostics_fwd.h.tpl)
@@ -22,8 +23,11 @@ foreach(comp ${DIAGNOSTICS_COMPS})
         -D namespace=${comp}
         -t ${DIAGNOSTICS_FWD_TPL} > ${comp}/Diagnostics_fwd.h
     DEPENDS ${DIAGNOSTICS_FWD_TPL})
-  add_custom_target(generate_Diagnostics_${comp} DEPENDS ${comp}/Diagnostics.h ${comp}/Diagnostics_fwd.h
+  add_custom_target(generate_Diagnostics_${comp} DEPENDS ${comp}/Diagnostics.h
     COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_Diagnostics_${comp}")
-  add_dependencies(generate_Diagnostics generate_Diagnostics_${comp})
+  add_custom_target(generate_Diagnostics_${comp}_fwd DEPENDS ${comp}/Diagnostics_fwd.h
+    COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_Diagnostics_${comp}_fwd")
+  add_dependencies(generate_Diagnostics generate_Diagnostics_${comp} generate_Diagnostics_${comp}_fwd)
+  add_dependencies(generate_Diagnostics_fwd generate_Diagnostics_${comp}_fwd)
   list(APPEND DIAGNOSTICS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${comp}/Diagnostics.xml)
 endforeach()

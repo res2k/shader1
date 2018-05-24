@@ -28,36 +28,37 @@ set(seqop_sources
     SequenceOpVectorNormalize.cpp
     SequenceOpWhile.cpp
     SequenceOpWithResult.cpp
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOp.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpArith.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpAssign.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpBinary.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpBlock.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpBranch.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpBuiltinCall.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpCast.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpChangeArrayElement.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpCompare.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpConst.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpExtractArrayElement.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpExtractVectorComponent.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpFunctionCall.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpGetArrayLength.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpLogic.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpMakeArray.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpMakeMatrix.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpMakeVector.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpReturn.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpSampleTexture.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpUnary.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpUnaryOp.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpVectorCross.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpVectorDot.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpVectorLength.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpVectorNormalize.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpWhile.h
-    ${CMAKE_SOURCE_DIR}/include/internal/intermediate/SequenceOp/SequenceOpWithResult.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOp.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpArith.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpAssign.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpBinary.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpBlock.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpBranch.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpBuiltinCall.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpCast.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpChangeArrayElement.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpCompare.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpConst.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpExtractArrayElement.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpExtractVectorComponent.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpFunctionCall.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpGetArrayLength.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpLogic.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpMakeArray.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpMakeMatrix.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpMakeVector.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpReturn.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpSampleTexture.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpUnary.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpUnaryOp.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpVectorCross.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpVectorDot.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpVectorLength.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpVectorNormalize.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpWhile.h
+    ${S1_INC}/intermediate/SequenceOp/SequenceOpWithResult.h
     )
-s1_add_library(intermediate_seqop SOURCES ${seqop_sources})
-add_dependencies(intermediate_seqop generate_Diagnostics_parser)
+s1_add_library(intermediate_seqop
+               SOURCES ${seqop_sources}
+               LINK headers_internal)

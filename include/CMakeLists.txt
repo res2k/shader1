@@ -1,6 +1,14 @@
 add_subdirectory(s1)
 
-if(CXXTEST_FOUND)
+if(NOT S1_PREBUILT)
+  add_library(headers_public INTERFACE)
+  target_include_directories(headers_public INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+  add_custom_target(headers_public_deps)
+  add_dependencies(headers_public_deps generate_Object generate_ResultCode)
+  add_dependencies(headers_public headers_public_deps)
+endif()
+
+if(CXXTEST_FOUND AND NOT S1_PREBUILT)
   if(CMAKE_GENERATOR MATCHES "Visual Studio")
     # Disable some warnings
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355")
@@ -9,11 +17,11 @@ if(CXXTEST_FOUND)
 
   file(GLOB api_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
   add_library(api_testlib STATIC ${api_testlib_sources})
-  add_dependencies(api_testlib generate_Object)
   set_property(TARGET api_testlib PROPERTY COMPILE_DEFINITIONS S1_BUILD)
   set_property(TARGET api_testlib PROPERTY EXCLUDE_FROM_ALL YES)
   target_compile_features(api_testlib PUBLIC $<TARGET_PROPERTY:outcome::hl,INTERFACE_COMPILE_FEATURES>)
   target_include_directories(api_testlib PRIVATE ${CMAKE_SOURCE_DIR}/outcome/include)
+  target_link_libraries(api_testlib headers_internal)
 
   set(api_test_sources
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiByteStream.h
@@ -48,4 +56,13 @@ if(CXXTEST_FOUND)
   endforeach()
 endif()
 
-add_subdirectory(internal)
+if(NOT S1_PREBUILT)
+  add_subdirectory(internal)
+
+  add_library(headers_internal INTERFACE)
+  target_include_directories(headers_internal INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/internal" "${CMAKE_CURRENT_SOURCE_DIR}/internal")
+  target_link_libraries(headers_internal INTERFACE headers_public)
+  add_custom_target(headers_internal_deps)
+  add_dependencies(headers_internal_deps headers_public generate_Diagnostics_fwd)
+  add_dependencies(headers_internal headers_internal_deps)
+endif()
