@@ -319,16 +319,24 @@ if(NOT S1_PREBUILT)
 
   add_subdirectory(doc)
 else()
-  include("${S1_PREBUILT}/libs1.cmake")
-  include_directories("${S1_PREBUILT}/include")
+  find_package(s1 CONFIG HINTS "${S1_PREBUILT}")
 endif()
 add_subdirectory(apps)
 
 if(NOT S1_PREBUILT)
-  export(TARGETS s1 headers_public FILE libs1.cmake)
+  # Export targets so pointing S1_PREBUILT at build tree works as well
+  export(TARGETS headers_public FILE headers_public.cmake)
+  export(TARGETS s1 FILE libs1.cmake)
   export(TARGETS s1c FILE s1c.cmake)
 
-  install(EXPORT s1 FILE libs1.cmake DESTINATION lib/cmake)
-  install(EXPORT headers_public DESTINATION lib/cmake)
-  install(EXPORT s1c FILE s1c.cmake DESTINATION lib/cmake)
+  install(EXPORT s1 FILE libs1.cmake DESTINATION lib/cmake/s1)
+  install(EXPORT headers_public DESTINATION lib/cmake/s1)
+  install(EXPORT s1c FILE s1c.cmake DESTINATION lib/cmake/s1)
+
+  include(CMakePackageConfigHelpers)
+  configure_package_config_file(s1-config.cmake.in
+                                ${CMAKE_CURRENT_BINARY_DIR}/s1-config.cmake
+                                INSTALL_DESTINATION lib/cmake/s1)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/s1-config.cmake
+          DESTINATION lib/cmake/s1)
 endif()
