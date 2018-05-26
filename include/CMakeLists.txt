@@ -33,16 +33,16 @@ if(NOT S1_PREBUILT)
             "${CMAKE_CURRENT_BINARY_DIR}/s1/s1config.h"
           DESTINATION include/s1)
 
-  add_library(headers_public INTERFACE)
-  target_include_directories(headers_public INTERFACE
+  add_library(s1_headers INTERFACE)
+  target_include_directories(s1_headers INTERFACE
                              "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
                              "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
                              $<INSTALL_INTERFACE:include>)
-  add_custom_target(headers_public_deps)
-  add_dependencies(headers_public_deps generate_Object generate_ResultCode)
-  add_dependencies(headers_public headers_public_deps)
+  add_custom_target(s1_headers_deps)
+  add_dependencies(s1_headers_deps generate_Object generate_ResultCode)
+  add_dependencies(s1_headers s1_headers_deps)
 
-  install(TARGETS headers_public EXPORT headers_public)
+  install(TARGETS s1_headers EXPORT s1_headers)
 endif()
 
 if(CXXTEST_FOUND AND NOT S1_PREBUILT)
@@ -98,9 +98,9 @@ if(NOT S1_PREBUILT)
 
   add_library(headers_internal INTERFACE)
   target_include_directories(headers_internal INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/internal" "${CMAKE_CURRENT_SOURCE_DIR}/internal")
-  target_link_libraries(headers_internal INTERFACE headers_public)
+  target_link_libraries(headers_internal INTERFACE s1_headers)
   add_custom_target(headers_internal_deps)
-  add_dependencies(headers_internal_deps headers_public generate_Diagnostics_fwd)
+  add_dependencies(headers_internal_deps s1_headers generate_Diagnostics_fwd)
   add_dependencies(headers_internal headers_internal_deps)
 
   install(DIRECTORY s1/ DESTINATION include/s1
