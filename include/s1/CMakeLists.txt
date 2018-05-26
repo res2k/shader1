@@ -13,6 +13,9 @@ foreach(comp ${RESULTCODE_COMPONENTS})
                     COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_ResultCode_${comp}")
   add_dependencies(generate_ResultCode generate_ResultCode_${comp})
   list(APPEND RESULTCODE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ResultCode_${comp}.xml)
+
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ResultCode_defs_${comp}.h"
+          DESTINATION include/s1)
 endforeach(comp)
 
 add_custom_command(OUTPUT ResultCode_defs.h
@@ -24,3 +27,5 @@ add_custom_command(OUTPUT ResultCode_defs.h
 add_custom_target(generate_ResultCode_defs DEPENDS ResultCode_defs.h
                   COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_ResultCode_defs")
 add_dependencies(generate_ResultCode generate_ResultCode_defs)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ResultCode_defs.h"
+        DESTINATION include/s1)

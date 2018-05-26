@@ -21,3 +21,10 @@ if(S1_REQUIRED_CXX_FEATURES)
 else()
   set_target_properties(s1c PROPERTIES CXX_STANDARD 11)
 endif()
+
+install(TARGETS s1c
+        EXPORT s1c
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+install(FILES $<TARGET_PDB_FILE:s1c> DESTINATION bin OPTIONAL)

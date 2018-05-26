@@ -327,4 +327,8 @@ add_subdirectory(apps)
 if(NOT S1_PREBUILT)
   export(TARGETS s1 headers_public FILE libs1.cmake)
   export(TARGETS s1c FILE s1c.cmake)
+
+  install(EXPORT s1 FILE libs1.cmake DESTINATION lib/cmake)
+  install(EXPORT headers_public DESTINATION lib/cmake)
+  install(EXPORT s1c FILE s1c.cmake DESTINATION lib/cmake)
 endif()

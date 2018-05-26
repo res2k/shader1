@@ -24,4 +24,7 @@ if(DOXYGEN_FOUND)
   )
   add_dependencies(doc_pubapi merge_headers)
   add_dependencies(docs doc_pubapi)
+
+  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+          DESTINATION doc/shader1 OPTIONAL)
 endif()

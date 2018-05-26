@@ -28,11 +28,21 @@ if(NOT S1_PREBUILT)
                       COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/generate_Object")
   endif()
 
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/s1/Object.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/s1/preprocessor.h"
+            "${CMAKE_CURRENT_BINARY_DIR}/s1/s1config.h"
+          DESTINATION include/s1)
+
   add_library(headers_public INTERFACE)
-  target_include_directories(headers_public INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
+  target_include_directories(headers_public INTERFACE
+                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+                             $<INSTALL_INTERFACE:include>)
   add_custom_target(headers_public_deps)
   add_dependencies(headers_public_deps generate_Object generate_ResultCode)
   add_dependencies(headers_public headers_public_deps)
+
+  install(TARGETS headers_public EXPORT headers_public)
 endif()
 
 if(CXXTEST_FOUND AND NOT S1_PREBUILT)
@@ -92,4 +102,7 @@ if(NOT S1_PREBUILT)
   add_custom_target(headers_internal_deps)
   add_dependencies(headers_internal_deps headers_public generate_Diagnostics_fwd)
   add_dependencies(headers_internal headers_internal_deps)
+
+  install(DIRECTORY s1/ DESTINATION include/s1
+          FILES_MATCHING PATTERN "*.h")
 endif()

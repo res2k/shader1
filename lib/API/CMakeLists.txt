@@ -92,3 +92,10 @@ if(CXXTEST_FOUND)
                  DEPENDS ${_S1_TEST_DEP} headers_internal)
   target_compile_features(test_ApiImpl PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 endif()
+
+install(TARGETS s1
+        EXPORT s1
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+install(FILES $<TARGET_PDB_FILE:s1> DESTINATION bin OPTIONAL)
