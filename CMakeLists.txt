@@ -300,19 +300,19 @@ if(NOT S1_BUILD_SHARED)
   set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
 endif()
 
-# Make outcome available
-add_subdirectory(
-  "${CMAKE_CURRENT_SOURCE_DIR}/outcome"  # path to outcome source
-  "${CMAKE_CURRENT_BINARY_DIR}/outcome"  # your choice of where to put binaries
-  EXCLUDE_FROM_ALL                             # please only lazy build outcome on demand
-)
-
 # S1_PREBUILT: Points to a build tree with an already built libs1, which is then
 # used to build s1.
 # Useful if the current compiler can't build libs1 itself (due to required
 # C++ features not being supported) but s1c should be built nevertheless (e.g.
 # to check include files compatibility)
 if(NOT S1_PREBUILT)
+  # Make outcome available
+  add_subdirectory(
+    "${CMAKE_CURRENT_SOURCE_DIR}/outcome"  # path to outcome source
+    "${CMAKE_CURRENT_BINARY_DIR}/outcome"  # your choice of where to put binaries
+    EXCLUDE_FROM_ALL                             # please only lazy build outcome on demand
+  )
+
   add_subdirectory(include)
   set(S1_INC "${CMAKE_SOURCE_DIR}/include/internal")
   add_subdirectory(lib)
