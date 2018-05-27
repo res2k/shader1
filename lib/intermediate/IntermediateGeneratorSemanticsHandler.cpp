@@ -64,17 +64,17 @@ namespace s1
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
-    typedef IntermediateGeneratorSemanticsHandler::TypePtr TypePtr;
+    typedef semantics::TypePtr TypePtr;
     typedef IntermediateGeneratorSemanticsHandler::ExpressionPtr ExpressionPtr;
 
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
-      invalidType = boost::shared_ptr<TypeImpl> (new TypeImpl (Invalid));
-      voidType = boost::shared_ptr<TypeImpl> (new TypeImpl (Void));
-      boolType = boost::shared_ptr<TypeImpl> (new TypeImpl (Bool));
-      intType = boost::shared_ptr<TypeImpl> (new TypeImpl (Int));
-      uintType = boost::shared_ptr<TypeImpl> (new TypeImpl (UInt));
-      floatType = boost::shared_ptr<TypeImpl> (new TypeImpl (Float));
+      invalidType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Invalid));
+      voidType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Void));
+      boolType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Bool));
+      intType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Int));
+      uintType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::UInt));
+      floatType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Float));
     }
 
     IntermediateGeneratorSemanticsHandler::~IntermediateGeneratorSemanticsHandler ()
@@ -89,18 +89,18 @@ namespace s1
 
     DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
 
-    static inline std::string GetBaseTypeString (semantics::Handler::BaseType base, unsigned int rows, unsigned int cols)
+    static inline std::string GetBaseTypeString (semantics::BaseType base, unsigned int rows, unsigned int cols)
     {
       char typeStr[3] = { 0, 0, 0 };
       // 1st char: base type
       switch (base)
       {
-      case semantics::Handler::Invalid: typeStr[0] = 'X'; break;
-      case semantics::Handler::Void:    typeStr[0] = 'V'; break;
-      case semantics::Handler::Bool:    typeStr[0] = 'B'; break;
-      case semantics::Handler::Int:     typeStr[0] = 'I'; break;
-      case semantics::Handler::UInt:    typeStr[0] = 'U'; break;
-      case semantics::Handler::Float:   typeStr[0] = 'F'; break;
+      case semantics::BaseType::Invalid: typeStr[0] = 'X'; break;
+      case semantics::BaseType::Void:    typeStr[0] = 'V'; break;
+      case semantics::BaseType::Bool:    typeStr[0] = 'B'; break;
+      case semantics::BaseType::Int:     typeStr[0] = 'I'; break;
+      case semantics::BaseType::UInt:    typeStr[0] = 'U'; break;
+      case semantics::BaseType::Float:   typeStr[0] = 'F'; break;
       }
       if ((rows == 0) && (cols == 0)) return typeStr;
       // 2nd char: encode dimensions
@@ -123,10 +123,10 @@ namespace s1
         {
           switch (type->sampler)
           {
-            case _1D: return "S1";
-            case _2D: return "S2";
-            case _3D: return "S3";
-            case CUBE: return "SC";
+            case semantics::SamplerType::_1D: return "S1";
+            case semantics::SamplerType::_2D: return "S2";
+            case semantics::SamplerType::_3D: return "S3";
+            case semantics::SamplerType::CUBE: return "SC";
           }
         }
         break;
@@ -314,13 +314,13 @@ namespace s1
           SequenceOpPtr seqOp;
           switch (typeDestination->base)
           {
-            case Int:
+            case semantics::BaseType::Int:
               seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::Int, castSource));
               break;
-            case UInt:
+            case semantics::BaseType::UInt:
               seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::UInt, castSource));
               break;
-            case Float:
+            case semantics::BaseType::Float:
               seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::Float, castSource));
               break;
             default:
@@ -362,22 +362,22 @@ namespace s1
           SequenceOpPtr seqOp;
           switch (destBaseType->base)
           {
-            case Bool:
+            case semantics::BaseType::Bool:
               seqOp = new SequenceOpMakeVector (castDestination,
                                                 intermediate::BasicType::Bool,
                                                 srcVec);
               break;
-            case Int:
+            case semantics::BaseType::Int:
               seqOp = new SequenceOpMakeVector (castDestination,
                                                 intermediate::BasicType::Int,
                                                 srcVec);
               break;
-            case UInt:
+            case semantics::BaseType::UInt:
               seqOp = new SequenceOpMakeVector (castDestination,
                                                 intermediate::BasicType::UInt,
                                                 srcVec);
               break;
-            case Float:
+            case semantics::BaseType::Float:
               seqOp = new SequenceOpMakeVector (castDestination,
                                                 intermediate::BasicType::Float,
                                                 srcVec);
@@ -533,41 +533,41 @@ namespace s1
       return newProg;
     }
 
-    TypePtr IntermediateGeneratorSemanticsHandler::CreateType (BaseType type)
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateType (semantics::BaseType type)
     {
       switch (type)
       {
-      case Invalid: return invalidType;
-      case Void: return voidType;
-      case Bool: return boolType;
-      case Int: return intType;
-      case UInt: return uintType;
-      case Float: return floatType;
+      case semantics::BaseType::Invalid: return invalidType;
+      case semantics::BaseType::Void: return voidType;
+      case semantics::BaseType::Bool: return boolType;
+      case semantics::BaseType::Int: return intType;
+      case semantics::BaseType::UInt: return uintType;
+      case semantics::BaseType::Float: return floatType;
       }
       S1_ASSERT_NOT_REACHED (TypePtr());
     }
 
-    TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (SamplerType dim)
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (semantics::SamplerType dim)
     {
-      return TypePtr (new TypeImpl (dim));
+      return semantics::TypePtr (new TypeImpl (dim));
     }
 
-    TypePtr IntermediateGeneratorSemanticsHandler::CreateArrayType (TypePtr baseType)
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateArrayType (semantics::TypePtr baseType)
     {
-      return TypePtr (new TypeImpl (baseType));
+      return semantics::TypePtr (new TypeImpl (baseType));
     }
 
-    TypePtr IntermediateGeneratorSemanticsHandler::CreateVectorType (TypePtr baseType,
-                                                      unsigned int components)
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateVectorType (semantics::TypePtr baseType,
+                                                                                unsigned int components)
     {
-      return TypePtr (new TypeImpl (baseType, components));
+      return semantics::TypePtr (new TypeImpl (baseType, components));
     }
 
-    TypePtr IntermediateGeneratorSemanticsHandler::CreateMatrixType (TypePtr baseType,
-                                                      unsigned int columns,
-                                                      unsigned int rows)
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateMatrixType (semantics::TypePtr baseType,
+                                                                                unsigned int columns,
+                                                                                unsigned int rows)
     {
-      return TypePtr (new TypeImpl (baseType, columns, rows));
+      return semantics::TypePtr (new TypeImpl (baseType, columns, rows));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstBoolExpression (bool value)

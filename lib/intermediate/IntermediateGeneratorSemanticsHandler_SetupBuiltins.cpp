@@ -38,7 +38,7 @@ namespace s1
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::Scope::FunctionFormalParameters
-    IntermediateGeneratorSemanticsHandler::MakeFormalParameters1 (const TypePtr& type)
+    IntermediateGeneratorSemanticsHandler::MakeFormalParameters1 (const semantics::TypePtr& type)
     {
       IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameters params;
 
@@ -52,13 +52,14 @@ namespace s1
     }
 
     IntermediateGeneratorSemanticsHandler::Scope::FunctionFormalParameters
-    IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const TypePtr& type)
+    IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const semantics::TypePtr& type)
     {
       return MakeFormalParameters2 (type, type);
     }
 
     IntermediateGeneratorSemanticsHandler::Scope::FunctionFormalParameters
-    IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const TypePtr& typeA, const TypePtr& typeB)
+    IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const semantics::TypePtr& typeA,
+                                                                  const semantics::TypePtr& typeB)
     {
       IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameters params;
 
@@ -79,9 +80,9 @@ namespace s1
     {
       // TODO: Check if less functions can be used; e.g. instead of all the overloads for vector types, let casts do the work
 
-      TypePtr vecTypeInt[5];
-      TypePtr vecTypeUInt[5];
-      TypePtr vecTypeFloat[5];
+      semantics::TypePtr vecTypeInt[5];
+      semantics::TypePtr vecTypeUInt[5];
+      semantics::TypePtr vecTypeFloat[5];
       for (unsigned int c = 1; c < 5; c++)
       {
         vecTypeInt[c] = CreateVectorType (intType, c);
@@ -89,9 +90,9 @@ namespace s1
         vecTypeFloat[c] = CreateVectorType (floatType, c);
       }
 
-      TypePtr matTypeInt[5][5];
-      TypePtr matTypeUInt[5][5];
-      TypePtr matTypeFloat[5][5];
+      semantics::TypePtr matTypeInt[5][5];
+      semantics::TypePtr matTypeUInt[5][5];
+      semantics::TypePtr matTypeFloat[5][5];
       for (unsigned int c = 1; c < 5; c++)
       {
         for (unsigned int r = 1; r < 5; r++)
@@ -290,60 +291,60 @@ namespace s1
       scope->AddBuiltinFunction (new Builtin (tex1D_factory,
                                               vecTypeFloat[4],
                                               id_tex1D,
-                                              MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeInt[1])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_1D), vecTypeInt[1])));
       scope->AddBuiltinFunction (new Builtin (tex1D_factory,
                                               vecTypeFloat[4],
                                               id_tex1D,
-                                              MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeUInt[1])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_1D), vecTypeUInt[1])));
       scope->AddBuiltinFunction (new Builtin (tex1D_factory,
                                               vecTypeFloat[4],
                                               id_tex1D,
-                                              MakeFormalParameters2 (CreateSamplerType (_1D), vecTypeFloat[1])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_1D), vecTypeFloat[1])));
 
       uc::String id_tex2D ("tex2D");
       auto tex2D_factory = sample_texture_factory (SequenceVisitor::tex2D);
       scope->AddBuiltinFunction (new Builtin (tex2D_factory,
                                               vecTypeFloat[4],
                                               id_tex2D,
-                                              MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeInt[2])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_2D), vecTypeInt[2])));
       scope->AddBuiltinFunction (new Builtin (tex2D_factory,
                                               vecTypeFloat[4],
                                               id_tex2D,
-                                              MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeUInt[2])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_2D), vecTypeUInt[2])));
       scope->AddBuiltinFunction (new Builtin (tex2D_factory,
                                               vecTypeFloat[4],
                                               id_tex2D,
-                                              MakeFormalParameters2 (CreateSamplerType (_2D), vecTypeFloat[2])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_2D), vecTypeFloat[2])));
 
       uc::String id_tex3D ("tex3D");
       auto tex3D_factory = sample_texture_factory (SequenceVisitor::tex3D);
       scope->AddBuiltinFunction (new Builtin (tex3D_factory,
                                               vecTypeFloat[4],
                                               id_tex3D,
-                                              MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeInt[3])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_3D), vecTypeInt[3])));
       scope->AddBuiltinFunction (new Builtin (tex3D_factory,
                                               vecTypeFloat[4],
                                               id_tex3D,
-                                              MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeUInt[3])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_3D), vecTypeUInt[3])));
       scope->AddBuiltinFunction (new Builtin (tex3D_factory,
                                               vecTypeFloat[4],
                                               id_tex3D,
-                                              MakeFormalParameters2 (CreateSamplerType (_3D), vecTypeFloat[3])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_3D), vecTypeFloat[3])));
 
       uc::String id_texCUBE ("texCUBE");
       auto texCUBE_factory = sample_texture_factory (SequenceVisitor::texCUBE);
       scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
                                               vecTypeFloat[4],
                                               id_texCUBE,
-                                              MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeInt[3])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::CUBE), vecTypeInt[3])));
       scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
                                               vecTypeFloat[4],
                                               id_texCUBE,
-                                              MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeUInt[3])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::CUBE), vecTypeUInt[3])));
       scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
                                               vecTypeFloat[4],
                                               id_texCUBE,
-                                              MakeFormalParameters2 (CreateSamplerType (CUBE), vecTypeFloat[3])));
+                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::CUBE), vecTypeFloat[3])));
 
       uc::String id_min ("min");
       auto min_factory = default_builtin_factory (intermediate::min);

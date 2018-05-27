@@ -171,7 +171,7 @@ namespace s1
       // Extract value from string
       switch (numberType)
       {
-      case Int:
+      case semantics::BaseType::Int:
         {
           // Parse number
           auto n = ParseInteger<int> (valueStr);
@@ -180,7 +180,7 @@ namespace s1
           seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
-      case UInt:
+      case semantics::BaseType::UInt:
         {
           // Parse number
           auto n = ParseInteger<unsigned int> (valueStr);
@@ -189,7 +189,7 @@ namespace s1
           seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
-      case Float:
+      case semantics::BaseType::Float:
         {
           // Parse number
           auto n = ParseFloat (valueStr);
@@ -198,9 +198,9 @@ namespace s1
           seqOp = SequenceOpPtr (new SequenceOpConst (destination, n.value()));
         }
         break;
-      case Invalid:
-      case Void:
-      case Bool:
+      case semantics::BaseType::Invalid:
+      case semantics::BaseType::Void:
+      case semantics::BaseType::Bool:
         break;
       }
       assert (seqOp);

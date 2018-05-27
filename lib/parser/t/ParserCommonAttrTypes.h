@@ -52,13 +52,13 @@ public:
     TestTypePtr typeArray;
     TS_ASSERT_THROWS_NOTHING ((typeArray = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateArrayType (
-	semanticsHandler.CreateType (CommonSemanticsHandler::Int)))));
+	semanticsHandler.CreateType (s1::semantics::BaseType::Int)))));
       
     TestSemanticsHandler::Attribute attrLength =
       TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("length"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
       semanticsHandler.GetAttributeType (typeArray, attrLength));
-    TS_ASSERT_EQUALS(typeAttr->base, TestSemanticsHandler::UInt);
+    TS_ASSERT_EQUALS(typeAttr->base, s1::semantics::BaseType::UInt);
   }
   
   void testAttrTypeVector (void)
@@ -73,14 +73,14 @@ public:
     TestTypePtr typeInt4;
     TS_ASSERT_THROWS_NOTHING ((typeInt4 = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateVectorType (
-	semanticsHandler.CreateType (CommonSemanticsHandler::Int), 4))));
+	semanticsHandler.CreateType (s1::semantics::BaseType::Int), 4))));
 
     {
       TestSemanticsHandler::Attribute attrX =
 	TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("x"));
       TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
 	semanticsHandler.GetAttributeType (typeInt4, attrX));
-      TS_ASSERT_EQUALS(typeAttr->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeAttr->base, s1::semantics::BaseType::Int);
     }
     {
       TestSemanticsHandler::Attribute attrXY =
@@ -91,7 +91,7 @@ public:
       TS_ASSERT_EQUALS(typeAttr->vectorDim, 2);
       TestTypePtr typeBase = boost::static_pointer_cast<TestType> (
 	typeAttr->avmBase);
-      TS_ASSERT_EQUALS(typeBase->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeBase->base, s1::semantics::BaseType::Int);
     }
     {
       TestSemanticsHandler::Attribute attrGA =
@@ -102,7 +102,7 @@ public:
       TS_ASSERT_EQUALS(typeAttr->vectorDim, 2);
       TestTypePtr typeBase = boost::static_pointer_cast<TestType> (
 	typeAttr->avmBase);
-      TS_ASSERT_EQUALS(typeBase->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeBase->base, s1::semantics::BaseType::Int);
     }
     {
       TestSemanticsHandler::Attribute attrXB =
@@ -132,7 +132,7 @@ public:
     TestTypePtr typeInt4x3;
     TS_ASSERT_THROWS_NOTHING ((typeInt4x3 = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateMatrixType (
-	semanticsHandler.CreateType (CommonSemanticsHandler::Int), 4, 3))));
+	semanticsHandler.CreateType (s1::semantics::BaseType::Int), 4, 3))));
 
     {
       TestSemanticsHandler::Attribute attrCol =
@@ -146,7 +146,7 @@ public:
       TS_ASSERT_EQUALS(typeArrayBase->vectorDim, 3);
       TestTypePtr typeBase = boost::static_pointer_cast<TestType> (
 	typeArrayBase->avmBase);
-      TS_ASSERT_EQUALS(typeBase->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeBase->base, s1::semantics::BaseType::Int);
     }
     {
       TestSemanticsHandler::Attribute attrRow =
@@ -160,7 +160,7 @@ public:
       TS_ASSERT_EQUALS(typeArrayBase->vectorDim, 4);
       TestTypePtr typeBase = boost::static_pointer_cast<TestType> (
 	typeArrayBase->avmBase);
-      TS_ASSERT_EQUALS(typeBase->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeBase->base, s1::semantics::BaseType::Int);
     }
     {
       TestSemanticsHandler::Attribute attrTransp =
@@ -172,7 +172,7 @@ public:
       TS_ASSERT_EQUALS(typeAttr->matrixRows, 4);
       TestTypePtr typeBase = boost::static_pointer_cast<TestType> (
 	typeAttr->avmBase);
-      TS_ASSERT_EQUALS(typeBase->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeBase->base, s1::semantics::BaseType::Int);
     }
     {
       TestSemanticsHandler::Attribute attrInv =
@@ -195,7 +195,7 @@ public:
     TestTypePtr typeInt3x3;
     TS_ASSERT_THROWS_NOTHING ((typeInt3x3 = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateMatrixType (
-	semanticsHandler.CreateType (CommonSemanticsHandler::Int), 3, 3))));
+	semanticsHandler.CreateType (s1::semantics::BaseType::Int), 3, 3))));
 
     {
       TestSemanticsHandler::Attribute attrInv =
@@ -207,7 +207,7 @@ public:
       TS_ASSERT_EQUALS(typeAttr->matrixRows, 3);
       TestTypePtr typeBase = boost::static_pointer_cast<TestType> (
 	typeAttr->avmBase);
-      TS_ASSERT_EQUALS(typeBase->base, TestSemanticsHandler::Int);
+      TS_ASSERT_EQUALS(typeBase->base, s1::semantics::BaseType::Int);
     }
   }
 };

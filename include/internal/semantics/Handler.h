@@ -20,6 +20,8 @@
 
 #include "parser/Diagnostics_fwd.h"
 
+#include "forwarddecl.h"
+
 #include <boost/shared_ptr.hpp>
 
 #include <vector>
@@ -51,35 +53,6 @@ namespace s1
       
       /**\name Types
        * @{ */
-      /// Base types
-      enum BaseType { Invalid, Void, Bool, Int, UInt, Float };
-      /// Sampler dimensions
-      enum SamplerType { _1D, _2D, _3D, CUBE };
-      
-      struct Type;
-      typedef boost::shared_ptr<Type> TypePtr;
-      /// Representation of a type
-      struct Type
-      {
-        enum Class
-        {
-          Base, Sampler, Array, Vector, Matrix
-        };
-        
-        virtual ~Type() {}
-        
-        virtual Class GetTypeClass() const = 0;
-        virtual BaseType GetBaseType() const = 0;
-        virtual SamplerType GetSamplerType() const = 0;
-        
-        virtual TypePtr GetArrayVectorMatrixBaseType() const = 0;
-        
-        virtual unsigned int GetVectorTypeComponents() const = 0;
-        
-        virtual unsigned int GetMatrixTypeCols() const = 0;
-        virtual unsigned int GetMatrixTypeRows() const = 0;
-      };
-      
       /// Create a base type
       virtual TypePtr CreateType (BaseType type) = 0;
       /// Create a sampler type

@@ -43,7 +43,7 @@ namespace s1
       struct FunctionTransferValues
       {
         uc::String identifier;
-        semantics::Handler::TypePtr valueType;
+        semantics::TypePtr valueType;
         // Probably sensible: std::vector<size_t> usedArgs;
       };
       struct SplitFunctionInfo

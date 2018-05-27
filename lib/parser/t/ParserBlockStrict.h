@@ -65,7 +65,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
   void testBlockVarDeclMulti (void)
@@ -101,7 +101,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
     }
     {
       s1::semantics::Handler::NamePtr varRequested;
@@ -118,7 +118,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
     }
   }
 
@@ -155,7 +155,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
     }
     {
       s1::semantics::Handler::NamePtr varRequested;
@@ -172,7 +172,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
     }
   }
 
@@ -211,7 +211,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
     void testBlockVarDeclInvalid (void)
@@ -276,7 +276,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
     }
     {
       s1::semantics::Handler::NamePtr varRequested;
@@ -326,7 +326,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
     }
   }
 
@@ -362,7 +362,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
   void testBlockConstDeclIncomplete (void)
@@ -402,7 +402,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
   void testBlockTypedef (void)
@@ -434,7 +434,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
   void testBlockTypedefIndirect (void)
@@ -466,7 +466,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
   void testBlockVarTypedefDecl (void)
@@ -500,7 +500,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
 
   void testBlockTypedefInvalid1 (void)
@@ -532,7 +532,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Invalid);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Invalid);
   }
 
   void testBlockTypedefInvalid2 (void)
@@ -574,7 +574,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Float);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Float);
   }
 
   void testBlockTypedefInvalid3 (void)

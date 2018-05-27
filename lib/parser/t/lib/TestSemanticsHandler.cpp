@@ -44,7 +44,7 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : handler (handler), parent (parent), level (level)
 {}
 
-NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const s1::uc::String& identifier,
+NamePtr TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type, const s1::uc::String& identifier,
 						  ExpressionPtr initialValue, bool constant)
 {
   if (!CheckIdentifierUnique (identifier))
@@ -56,7 +56,7 @@ NamePtr TestSemanticsHandler::TestScope::AddVariable (TypePtr type, const s1::uc
   return newName;
 }
   
-NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, const s1::uc::String& identifier)
+NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr aliasedType, const s1::uc::String& identifier)
 {
   if (!CheckIdentifierUnique (identifier))
   {
@@ -68,7 +68,7 @@ NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (TypePtr aliasedType, cons
   return newName;
 }
   
-FunctionPtr TestSemanticsHandler::TestScope::AddFunction (TypePtr returnType,
+FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr returnType,
 							   const s1::uc::String& identifier,
 							   const FunctionFormalParameters& params)
 {

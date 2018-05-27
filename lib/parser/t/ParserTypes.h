@@ -51,13 +51,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Bool);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Bool);
   }
   
   void testTypeInt (void)
@@ -70,13 +70,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Int);
   }
   
   void testTypeUInt (void)
@@ -89,13 +89,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::UInt);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::UInt);
   }
   
   void testTypeFloat (void)
@@ -108,13 +108,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Float);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::BaseType::Float);
   }
   
   void testTypeSampler1D (void)
@@ -127,13 +127,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::_1D);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::SamplerType::_1D);
   }
   
   void testTypeSampler2D (void)
@@ -146,13 +146,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::_2D);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::SamplerType::_2D);
   }
   
   void testTypeSampler3D (void)
@@ -165,13 +165,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::_3D);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::SamplerType::_3D);
   }
   
   void testTypeSamplerCUBE (void)
@@ -184,13 +184,13 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::CUBE);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::SamplerType::CUBE);
   }
   
   void testTypeVectorBool (void)
@@ -203,7 +203,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -213,7 +213,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::Bool);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::BaseType::Bool);
   }
   
   void testTypeVectorInt (void)
@@ -226,7 +226,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -236,7 +236,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::BaseType::Int);
   }
   
   void testTypeVectorUInt (void)
@@ -249,7 +249,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -259,7 +259,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::UInt);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::BaseType::UInt);
   }
   
   void testTypeVectorFloat (void)
@@ -272,7 +272,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -282,7 +282,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::Float);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::BaseType::Float);
   }
   
   void testTypeMatrixBool (void)
@@ -295,7 +295,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -306,7 +306,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::Bool);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::BaseType::Bool);
   }
   
   void testTypeMatrixInt (void)
@@ -319,7 +319,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -330,7 +330,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::BaseType::Int);
   }
   
   void testTypeMatrixUInt (void)
@@ -343,7 +343,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -354,7 +354,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::UInt);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::BaseType::UInt);
   }
   
   void testTypeMatrixFloat (void)
@@ -367,7 +367,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -378,7 +378,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::Float);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::BaseType::Float);
   }
   
   void testTypeArray (void)
@@ -391,7 +391,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -400,7 +400,7 @@ public:
     TestSemanticsHandler::TestType* arrType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (arrType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (arrType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (arrType->base, s1::semantics::BaseType::Int);
   }
   
   void testTypeArrayArray (void)
@@ -413,7 +413,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
     
-    TestSemanticsHandler::TypePtr type;
+    s1::semantics::TypePtr type;
     TS_ASSERT_THROWS_NOTHING ((type = parser.ParseType ()));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestType* testType = 
@@ -425,6 +425,6 @@ public:
     TestSemanticsHandler::TestType* arrType = 
       static_cast<TestSemanticsHandler::TestType*> (arrArrType->avmBase.get());
     TS_ASSERT_EQUALS (arrType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (arrType->base, s1::semantics::Handler::Int);
+    TS_ASSERT_EQUALS (arrType->base, s1::semantics::BaseType::Int);
   }
 };

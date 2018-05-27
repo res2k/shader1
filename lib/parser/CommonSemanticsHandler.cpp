@@ -33,15 +33,15 @@ namespace s1
       switch (typeClass)
       {
       case Base:
-        if ((base == Void) || (to.base == Void))
+        if ((base == semantics::BaseType::Void) || (to.base == semantics::BaseType::Void))
           // Void is not even compatible to itself
           return false;
-        if (((base == Int) || (base == UInt))
-            && ((to.base == Int) || (to.base == UInt)))
+        if (((base == semantics::BaseType::Int) || (base == semantics::BaseType::UInt))
+            && ((to.base == semantics::BaseType::Int) || (to.base == semantics::BaseType::UInt)))
           // int and unsigned int are assumed assignable without precision loss
           return true;
-        if (((base == Int) || (base == UInt))
-            && (to.base == Float))
+        if (((base == semantics::BaseType::Int) || (base == semantics::BaseType::UInt))
+            && (to.base == semantics::BaseType::Float))
           // assignment from int or unsigned int to float is assumed assignable without precision loss
           return true;
         // Otherwise, types must be equal
@@ -77,8 +77,8 @@ namespace s1
       switch (typeClass)
       {
       case Base:
-        if ((base == Float)
-            && ((to.base == Int) || (to.base == UInt)))
+        if ((base == semantics::BaseType::Float)
+            && ((to.base == semantics::BaseType::Int) || (to.base == semantics::BaseType::UInt)))
           // assignment from float to int or unsigned int possible with precision loss
           return true;
       default:
@@ -119,15 +119,15 @@ namespace s1
       {
       case Base:
         // Void is not even of equal precision to itself...
-        if ((base == Void) || (other.base == Void))
+        if ((base == semantics::BaseType::Void) || (other.base == semantics::BaseType::Void))
           return false;
         // Treat 'int' as higher precision as 'unsigned int' (b/c 'int' has a sign)
-        if ((base == Int)
-            && ((other.base == Int) || (other.base == UInt)))
+        if ((base == semantics::BaseType::Int)
+            && ((other.base == semantics::BaseType::Int) || (other.base == semantics::BaseType::UInt)))
           return true;
         // Float is considered higher precision than int or unsigned int (has fractions)
-        if ((base == Float)
-            && ((other.base == Int) || (other.base == UInt)))
+        if ((base == semantics::BaseType::Float)
+            && ((other.base == semantics::BaseType::Int) || (other.base == semantics::BaseType::UInt)))
           // assignment from int or unsigned int to float is assumed assignable without precision loss
           return true;
         // Otherwise, types must be equal
@@ -166,12 +166,12 @@ namespace s1
         {
           switch (base)
           {
-            case Invalid: return uc::String ("INVALID");
-            case Void: return uc::String ("void");
-            case Bool: return uc::String ("bool");
-            case Int: return uc::String ("int");
-            case UInt: return uc::String ("unsigned int");
-            case Float: return uc::String ("float");
+            case semantics::BaseType::Invalid: return uc::String ("INVALID");
+            case semantics::BaseType::Void: return uc::String ("void");
+            case semantics::BaseType::Bool: return uc::String ("bool");
+            case semantics::BaseType::Int: return uc::String ("int");
+            case semantics::BaseType::UInt: return uc::String ("unsigned int");
+            case semantics::BaseType::Float: return uc::String ("float");
           }
         }
         break;
@@ -179,10 +179,10 @@ namespace s1
         {
           switch (sampler)
           {
-            case _1D: return uc::String ("sampler1D");
-            case _2D: return uc::String ("sampler2D");
-            case _3D: return uc::String ("sampler3D");
-            case CUBE: return uc::String ("samplerCUBE");
+            case semantics::SamplerType::_1D: return uc::String ("sampler1D");
+            case semantics::SamplerType::_2D: return uc::String ("sampler2D");
+            case semantics::SamplerType::_3D: return uc::String ("sampler3D");
+            case semantics::SamplerType::CUBE: return uc::String ("samplerCUBE");
           }
         }
         break;
@@ -219,22 +219,22 @@ namespace s1
       return boost::shared_ptr<CommonSemanticsHandler::CommonType> ();
     }
       
-    CommonSemanticsHandler::BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
+    semantics::BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
     {
       if (numericStr.startsWith ("0x") || numericStr.startsWith ("0X"))
       {
         // Hex number: always unsigned int
-        return UInt;
+        return semantics::BaseType::UInt;
       }
       if ((numericStr.indexOf ('.') != uc::String::npos)
         || (numericStr.indexOf ('e') != uc::String::npos)
         || (numericStr.indexOf ('E') != uc::String::npos))
       {
         // Contains '.', 'e' or 'E': must be float number
-        return Float;
+        return semantics::BaseType::Float;
       }
       // Can only be an integer
-      return numericStr.startsWith ("-") ? Int : UInt;
+      return numericStr.startsWith ("-") ? semantics::BaseType::Int : semantics::BaseType::UInt;
     }
     
     CommonSemanticsHandler::Attribute CommonSemanticsHandler::IdentifyAttribute (const uc::String& attributeStr)
@@ -316,16 +316,16 @@ namespace s1
                         attr[0], attr[1], attr[2], attr[3]);
     }
     
-    CommonSemanticsHandler::TypePtr
+    semantics::TypePtr
     CommonSemanticsHandler::GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
                                               const Attribute& attr)
     {
-      TypePtr attrType;
+      semantics::TypePtr attrType;
       switch (attr.attrClass)
       {
       case Attribute::arrayLength:
         if (expressionType->typeClass == CommonType::Array)
-          attrType = CreateType (UInt); // Type is fix
+          attrType = CreateType (semantics::BaseType::UInt); // Type is fix
         break;
       case Attribute::matrixCol:
         if (expressionType->typeClass == CommonType::Matrix)
@@ -362,14 +362,14 @@ namespace s1
       return attrType;
     }
     
-    typedef CommonSemanticsHandler::TypePtr TypePtr;
+    typedef semantics::TypePtr TypePtr;
     
-    TypePtr CommonSemanticsHandler::CreateType (BaseType type)
+    TypePtr CommonSemanticsHandler::CreateType (semantics::BaseType type)
     {
       return TypePtr (new CommonType (type));
     }
     
-    TypePtr CommonSemanticsHandler::CreateSamplerType (SamplerType dim)
+    TypePtr CommonSemanticsHandler::CreateSamplerType (semantics::SamplerType dim)
     {
       return TypePtr (new CommonType (dim));
     }

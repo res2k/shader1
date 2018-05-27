@@ -19,6 +19,7 @@
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
 #include "semantics/Handler.h"
+#include "semantics/Type.h"
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/unordered_map.hpp>
@@ -34,29 +35,29 @@ namespace s1
     class CommonSemanticsHandler : public semantics::Handler
     {
     protected:
-      struct CommonType : public Type
+      struct CommonType : public semantics::Type
       {
         Class typeClass;
-        BaseType base;
-        SamplerType sampler;
-        TypePtr avmBase;
+        semantics::BaseType base;
+        semantics::SamplerType sampler;
+        semantics::TypePtr avmBase;
         unsigned int vectorDim;
         unsigned int matrixCols;
         unsigned int matrixRows;
         
-        CommonType (BaseType base) : typeClass (Base), base (base) {}
-        CommonType (SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
-        CommonType (TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
-        CommonType (TypePtr vBase, unsigned int d)
+        CommonType (semantics::BaseType base) : typeClass (Base), base (base) {}
+        CommonType (semantics::SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
+        CommonType (semantics::TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
+        CommonType (semantics::TypePtr vBase, unsigned int d)
          : typeClass (Vector), avmBase (vBase), vectorDim (d) {}
-        CommonType (TypePtr mBase, unsigned int c, unsigned int r)
+        CommonType (semantics::TypePtr mBase, unsigned int c, unsigned int r)
          : typeClass (Matrix), avmBase (mBase), matrixCols (c), matrixRows (r) {}
         
         Class GetTypeClass() const { return typeClass; }
-        BaseType GetBaseType() const { return base; }
-        SamplerType GetSamplerType() const { return sampler; }
+        semantics::BaseType GetBaseType() const { return base; }
+        semantics::SamplerType GetSamplerType() const { return sampler; }
         
-        TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
+        semantics::TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
         
         unsigned int GetVectorTypeComponents() const { return vectorDim; }
         
@@ -76,7 +77,7 @@ namespace s1
        * @{ */
       static boost::shared_ptr<CommonType> GetHigherPrecisionType (
         const boost::shared_ptr<CommonType>& t1, const boost::shared_ptr<CommonType>& t2);
-      static BaseType DetectNumericType (const uc::String& numericStr);
+      static semantics::BaseType DetectNumericType (const uc::String& numericStr);
       /**@}*/
       
       /**\name Attribute utilities
@@ -108,8 +109,8 @@ namespace s1
         {}
       };
       static Attribute IdentifyAttribute (const uc::String& attributeStr);
-      TypePtr GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
-                                const Attribute& attr);
+      semantics::TypePtr GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
+                                           const Attribute& attr);
       /** @} */
       
       struct CommonName : public Name
@@ -121,25 +122,25 @@ namespace s1
          * Functions: type of return value
          * Type aliases: aliased type
          */
-        TypePtr valueType;
+        semantics::TypePtr valueType;
         // Variables/Constants: value
         ExpressionPtr varValue;
         // Distinguish between variable/constant
         bool varConstant;
         
-        CommonName (const uc::String& identifier, NameType type, TypePtr typeOfName)
+        CommonName (const uc::String& identifier, NameType type, semantics::TypePtr typeOfName)
          : identifier (identifier), type (type), valueType (typeOfName) {}
-        CommonName (const uc::String& identifier, TypePtr typeOfName,
+        CommonName (const uc::String& identifier, semantics::TypePtr typeOfName,
                     ExpressionPtr value, bool constant)
          : identifier (identifier), type (Variable), valueType (typeOfName),
            varValue (value), varConstant (constant) {}
         
         NameType GetType() { return type; }
-        TypePtr GetAliasedType()
-        { return type == TypeAlias ? valueType : TypePtr (); }
+        semantics::TypePtr GetAliasedType()
+        { return type == TypeAlias ? valueType : semantics::TypePtr (); }
         const uc::String& GetIdentifier () { return identifier; }
         bool IsConstantVariable () { return (type == Variable) && varConstant; }
-        TypePtr GetValueType () { return valueType; }
+        semantics::TypePtr GetValueType () { return valueType; }
       };
 
       class CommonScope : public Scope,
@@ -169,15 +170,15 @@ namespace s1
                      const boost::shared_ptr<CommonScope>& parent, ScopeLevel level);
         ScopeLevel GetLevel() const { return level; }
         
-        NamePtr AddVariable (TypePtr type,
+        NamePtr AddVariable (semantics::TypePtr type,
           const uc::String& identifier,
           ExpressionPtr initialValue,
           bool constant);
           
-        NamePtr AddTypeAlias (TypePtr aliasedType,
+        NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
           const uc::String& identifier);
           
-        FunctionPtr AddFunction (TypePtr returnType,
+        FunctionPtr AddFunction (semantics::TypePtr returnType,
           const uc::String& identifier,
           const FunctionFormalParameters& params);
       
@@ -185,14 +186,14 @@ namespace s1
       };
       
     public:  
-      TypePtr CreateType (BaseType type);
-      TypePtr CreateSamplerType (SamplerType dim);
-      TypePtr CreateArrayType (TypePtr baseType);
-      TypePtr CreateVectorType (TypePtr baseType,
-                                unsigned int components);
-      TypePtr CreateMatrixType (TypePtr baseType,
-                                unsigned int columns,
-                                unsigned int rows);
+      semantics::TypePtr CreateType (semantics::BaseType type);
+      semantics::TypePtr CreateSamplerType (semantics::SamplerType dim);
+      semantics::TypePtr CreateArrayType (semantics::TypePtr baseType);
+      semantics::TypePtr CreateVectorType (semantics::TypePtr baseType,
+                                           unsigned int components);
+      semantics::TypePtr CreateMatrixType (semantics::TypePtr baseType,
+                                           unsigned int columns,
+                                           unsigned int rows);
       
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel);
     };

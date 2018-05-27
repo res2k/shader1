@@ -298,14 +298,14 @@ namespace s1
         // Check if the destination register type matches the source register type
         bool typeMatch (false);
         if (source->GetOriginalType ()->GetTypeClass ()
-            == semantics::Handler::Type::Base)
+            == semantics::Type::Base)
         {
           switch (source->GetOriginalType ()->GetBaseType ())
           {
-          case semantics::Handler::Bool:    typeMatch = (destType == intermediate::BasicType::Bool);  break;
-          case semantics::Handler::Int:     typeMatch = (destType == intermediate::BasicType::Int);   break;
-          case semantics::Handler::UInt:    typeMatch = (destType == intermediate::BasicType::UInt);  break;
-          case semantics::Handler::Float:   typeMatch = (destType == intermediate::BasicType::Float); break;
+          case semantics::BaseType::Bool:    typeMatch = (destType == intermediate::BasicType::Bool);  break;
+          case semantics::BaseType::Int:     typeMatch = (destType == intermediate::BasicType::Int);   break;
+          case semantics::BaseType::UInt:    typeMatch = (destType == intermediate::BasicType::UInt);  break;
+          case semantics::BaseType::Float:   typeMatch = (destType == intermediate::BasicType::Float); break;
           default: break;
           }
         }
@@ -941,7 +941,7 @@ namespace s1
       DECLARE_STATIC_FORMATTER(FormatDeclarationInit, "{0} {1}{2} = {3};");
 
       void SequenceCodeGenerator::EmitDeclaration (
-        const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,
+        const semantics::TypePtr& type,
         const std::string& name, const std::string& initializer)
       {
         auto typeStrings = traits.TypeString (type, nullptr);

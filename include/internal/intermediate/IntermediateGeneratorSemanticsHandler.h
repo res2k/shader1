@@ -91,16 +91,17 @@ namespace s1
       ScopeImplPtr globalScope;
 
       // Helper functions for SetupBuiltins
-      Scope::FunctionFormalParameters MakeFormalParameters1 (const TypePtr& type);
-      Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& type);
-      Scope::FunctionFormalParameters MakeFormalParameters2 (const TypePtr& typeA, const TypePtr& typeB);
+      Scope::FunctionFormalParameters MakeFormalParameters1 (const semantics::TypePtr& type);
+      Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& type);
+      Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& typeA,
+                                                             const semantics::TypePtr& typeB);
       void SetupBuiltins (const ScopeImplPtr& scope);
 
       /// Create a sequence containing global vars initialization
       SequencePtr CreateGlobalVarInitializationSeq (NameImplSet& exportedNames);
 
       ProgramFunctionPtr SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
-                                                  const TypePtr& returnType,
+                                                  const semantics::TypePtr& returnType,
                                                   const Scope::FunctionFormalParameters& params);
 
       /// Whether the intermediate program was marked "completed"
@@ -109,7 +110,7 @@ namespace s1
       /**\name Type utilities
        * @{ */
       static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
-      static std::string GetTypeString (const TypePtr& type);
+      static std::string GetTypeString (const semantics::TypePtr& type);
       /**@}*/
 
       /**\name Attribute utilities
@@ -167,7 +168,8 @@ namespace s1
        * Allocate a new register.
        * If name is empty generates a dummy name.
        */
-      static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const TypePtr& type,
+      static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder,
+                                           const semantics::TypePtr& type,
                                            RegisterClassification classify,
                                            const uc::String& name = uc::String ());
       /// Create a new generation of a register
@@ -187,14 +189,14 @@ namespace s1
 
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */
-      TypePtr CreateType (BaseType type);
-      TypePtr CreateSamplerType (SamplerType dim);
-      TypePtr CreateArrayType (TypePtr baseType);
-      TypePtr CreateVectorType (TypePtr baseType,
-                                unsigned int components);
-      TypePtr CreateMatrixType (TypePtr baseType,
-                                unsigned int columns,
-                                unsigned int rows);
+      semantics::TypePtr CreateType (semantics::BaseType type);
+      semantics::TypePtr CreateSamplerType (semantics::SamplerType dim);
+      semantics::TypePtr CreateArrayType (semantics::TypePtr baseType);
+      semantics::TypePtr CreateVectorType (semantics::TypePtr baseType,
+                                           unsigned int components);
+      semantics::TypePtr CreateMatrixType (semantics::TypePtr baseType,
+                                           unsigned int columns,
+                                           unsigned int rows);
 
       ExpressionPtr CreateConstBoolExpression (bool value);
       ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr);
@@ -224,13 +226,13 @@ namespace s1
       ExpressionPtr CreateFunctionCallExpression (NamePtr functionName,
                                                   const ExpressionVector& params);
 
-      ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
+      ExpressionPtr CreateTypeConstructorExpression (semantics::TypePtr type,
                                                      const ExpressionVector& params);
 
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel,
-                            const TypePtr& returnType);
+                            const semantics::TypePtr& returnType);
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
-      { return CreateScope (parentScope, scopeLevel, TypePtr ()); }
+      { return CreateScope (parentScope, scopeLevel, semantics::TypePtr ()); }
 
       BlockPtr CreateBlock (ScopePtr parentScope);
       /** @} */

@@ -241,7 +241,7 @@ namespace s1
                                     std::string& name,
                                     const std::string& initializer,
                                     unsigned int flags = 0);
-        void EmitDeclaration (const intermediate::IntermediateGeneratorSemanticsHandler::TypePtr& type,
+        void EmitDeclaration (const semantics::TypePtr& type,
                               const std::string& name,
                               const std::string& initializer);
 

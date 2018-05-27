@@ -119,10 +119,10 @@ namespace s1
               BasicType vecType;
               switch (valueCompType->base)
               {
-              case Bool: 	vecType = intermediate::BasicType::Bool; break;
-              case Int: 	vecType = intermediate::BasicType::Int; break;
-              case UInt: 	vecType = intermediate::BasicType::UInt; break;
-              case Float: vecType = intermediate::BasicType::Float; break;
+              case semantics::BaseType::Bool: 	vecType = intermediate::BasicType::Bool; break;
+              case semantics::BaseType::Int: 	vecType = intermediate::BasicType::Int; break;
+              case semantics::BaseType::UInt: 	vecType = intermediate::BasicType::UInt; break;
+              case semantics::BaseType::Float: vecType = intermediate::BasicType::Float; break;
               default:	return RegisterPtr();
               }
               SequenceOpPtr seqOp (new SequenceOpMakeVector (targetReg, vecType, compRegs));
@@ -213,10 +213,10 @@ namespace s1
       BasicType vecType;
       switch (originalValueCompType->base)
       {
-      case Bool: 	vecType = intermediate::BasicType::Bool; break;
-      case Int: 	vecType = intermediate::BasicType::Int; break;
-      case UInt: 	vecType = intermediate::BasicType::UInt; break;
-      case Float: 	vecType = intermediate::BasicType::Float; break;
+      case semantics::BaseType::Bool: 	vecType = intermediate::BasicType::Bool; break;
+      case semantics::BaseType::Int: 	vecType = intermediate::BasicType::Int; break;
+      case semantics::BaseType::UInt: 	vecType = intermediate::BasicType::UInt; break;
+      case semantics::BaseType::Float: 	vecType = intermediate::BasicType::Float; break;
       default:		return;
       }
       SequenceOpPtr seqOp (new SequenceOpMakeVector (actualTarget, vecType, compRegs));

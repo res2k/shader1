@@ -65,8 +65,8 @@ namespace s1
         if (!(param.dir & semantics::Handler::Scope::dirOut)) continue;
         
         // Look for float4 output
-        if (param.type->GetTypeClass() != semantics::Handler::Type::Vector) continue;
-        if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != semantics::Handler::Float) continue;
+        if (param.type->GetTypeClass() != semantics::Type::Vector) continue;
+        if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != semantics::BaseType::Float) continue;
         if (param.type->GetVectorTypeComponents() != 4) continue;
         
         // Parameter qualifies
@@ -102,9 +102,9 @@ namespace s1
     return opt;
   }
 
-  static semantics::Handler::TypePtr GetBaseType (const semantics::Handler::TypePtr& type)
+  static semantics::TypePtr GetBaseType (const semantics::TypePtr& type)
   {
-    if (type->GetTypeClass () == semantics::Handler::Type::Array)
+    if (type->GetTypeClass () == semantics::Type::Array)
       return GetBaseType (type->GetArrayVectorMatrixBaseType ());
     else
       return type;
@@ -118,7 +118,7 @@ namespace s1
       // Auto: assume 'uniform', so simply fall through
     case semantics::Handler::Scope::freqUniform:
       {
-        if (GetBaseType (param.type)->GetTypeClass() == semantics::Handler::Type::Sampler)
+        if (GetBaseType (param.type)->GetTypeClass() == semantics::Type::Sampler)
           // Logically, samples are uniform. Internally, they're fragment (at least as long vertex textures aren't supported).
           return splitter::freqFragment;
         else
@@ -126,7 +126,7 @@ namespace s1
       }
     case semantics::Handler::Scope::freqAttribute:
       {
-        if (GetBaseType (param.type)->GetTypeClass() == semantics::Handler::Type::Sampler)
+        if (GetBaseType (param.type)->GetTypeClass() == semantics::Type::Sampler)
         {
           // TODO: We should probably emit a warning here...
           return splitter::freqFragment;

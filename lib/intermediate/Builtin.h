@@ -35,7 +35,7 @@ namespace s1
         SeqOpFactoryFunc;
 
       Builtin (SeqOpFactoryFunc factoryFunc,
-               const TypePtr& returnType,
+               const semantics::TypePtr& returnType,
                const uc::String& identifier,
                const ScopeImpl::FunctionFormalParameters& formalParameters)
        : factoryFunc (factoryFunc), returnType (returnType), identifier (identifier),
@@ -43,13 +43,13 @@ namespace s1
       {}
 
       SeqOpFactoryFunc GetSeqOpFactory () const { return factoryFunc; }
-      const TypePtr& GetReturnType () const { return returnType; }
+      const semantics::TypePtr& GetReturnType () const { return returnType; }
       const uc::String& GetIdentifier() const { return identifier; }
       const ScopeImpl::FunctionFormalParameters& GetFormalParameters() const
       { return formalParameters; }
     protected:
       SeqOpFactoryFunc factoryFunc;
-      TypePtr returnType;
+      semantics::TypePtr returnType;
       uc::String identifier;
       ScopeImpl::FunctionFormalParameters formalParameters;
     };

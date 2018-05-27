@@ -652,9 +652,9 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
+    scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
+    scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -680,13 +680,13 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("a"),
+    scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("a"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("b"),
+    scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("b"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
+    scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
 			TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
+    scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
     
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -711,9 +711,9 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
-    scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
+    scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
                         TestSemanticsHandler::ExpressionPtr (), false);
-    scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
+    scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
 
     TestSemanticsHandler::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));

@@ -67,7 +67,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                  const boost::shared_ptr<ScopeImpl>& parent,
                                                                  ScopeLevel level,
-                                                                 const TypePtr& funcReturnType)
+                                                                 const semantics::TypePtr& funcReturnType)
      : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
     {}
 
@@ -96,7 +96,7 @@ namespace s1
         outputParams.push_back (param.identifier);
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (TypePtr type, const uc::String& identifier,
+    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (semantics::TypePtr type, const uc::String& identifier,
                                                                            ExpressionPtr initialValue, bool constant)
     {
       if (!CheckIdentifierUnique (identifier))
@@ -112,7 +112,7 @@ namespace s1
       return newName;
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
+    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (semantics::TypePtr aliasedType, const uc::String& identifier)
     {
       if (!CheckIdentifierUnique (identifier))
       {
@@ -125,9 +125,9 @@ namespace s1
       return newName;
     }
 
-    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (TypePtr returnType,
-                                                                            const uc::String& identifier,
-                                                                            const FunctionFormalParameters& params)
+    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (semantics::TypePtr returnType,
+                                                                               const uc::String& identifier,
+                                                                               const FunctionFormalParameters& params)
     {
       if (level >= Function)
       {

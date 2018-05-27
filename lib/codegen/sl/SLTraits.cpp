@@ -174,22 +174,22 @@ namespace s1
         return IdentifierToASCII (identifier, preferVerbatim);
       }
 
-      intermediate::BasicType Traits::ConvertBasicType (semantics::Handler::BaseType type)
+      intermediate::BasicType Traits::ConvertBasicType (semantics::BaseType type)
       {
         switch (type)
         {
-        case semantics::Handler::Invalid:
+        case semantics::BaseType::Invalid:
           return intermediate::BasicType::Invalid;
-        case semantics::Handler::Void:
+        case semantics::BaseType::Void:
           S1_ASSERT_NOT_REACHED (intermediate::BasicType::Int);
           break;
-        case semantics::Handler::Bool:
+        case semantics::BaseType::Bool:
           return intermediate::BasicType::Bool;
-        case semantics::Handler::Int:
+        case semantics::BaseType::Int:
           return intermediate::BasicType::Int;
-        case semantics::Handler::UInt:
+        case semantics::BaseType::UInt:
           return intermediate::BasicType::UInt;
-        case semantics::Handler::Float:
+        case semantics::BaseType::Float:
           return intermediate::BasicType::Float;
         }
 

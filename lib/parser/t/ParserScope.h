@@ -39,7 +39,7 @@ public:
     s1::semantics::Handler::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
-        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
+        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
                             s1::semantics::Handler::ExpressionPtr(), false)
     );
@@ -62,7 +62,7 @@ public:
                                     s1::semantics::Handler::Global));
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
     TS_ASSERT_THROWS_NOTHING(
-      scope->AddFunction (semanticsHandler.CreateType (s1::semantics::Handler::Int),
+      scope->AddFunction (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                           s1::uc::String ("a"), params)
     );
     s1::semantics::Handler::NamePtr varRequested;
@@ -85,7 +85,7 @@ public:
     s1::semantics::Handler::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
-        scope->AddTypeAlias (semanticsHandler.CreateType (s1::semantics::Handler::Int),
+        scope->AddTypeAlias (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                              s1::uc::String ("a"))
     );
     s1::semantics::Handler::NamePtr varRequested;
@@ -124,13 +124,13 @@ public:
     s1::semantics::Handler::NamePtr varAdded1, varAdded2;
     TS_ASSERT_THROWS_NOTHING(
       varAdded1 =
-        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
+        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
                             s1::semantics::Handler::ExpressionPtr(), false)
     );
     TS_ASSERT_THROWS_NOTHING(
       varAdded2 =
-        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
+        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
                             s1::semantics::Handler::ExpressionPtr(), false)
     );
@@ -148,7 +148,7 @@ public:
     s1::semantics::Handler::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
-        scopeOuter->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
+        scopeOuter->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                                  s1::uc::String ("a"), 
                                  s1::semantics::Handler::ExpressionPtr(), false)
     );

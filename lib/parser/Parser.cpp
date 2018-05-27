@@ -576,12 +576,12 @@ namespace s1
       }
     }
 
-    return semanticsHandler.CreateType (semantics::Handler::Invalid);
+    return semanticsHandler.CreateType (semantics::BaseType::Invalid);
   }
   
   Parser::Type Parser::ParseTypeBool (const Lexer::Token& /*token*/)
   {
-    return semanticsHandler.CreateType (semantics::Handler::Bool);
+    return semanticsHandler.CreateType (semantics::BaseType::Bool);
   }
   
   Parser::Type Parser::ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token)
@@ -592,11 +592,11 @@ namespace s1
     case lexer::kwInt:
       /* int */
       type = semanticsHandler.CreateType (
-        isUnsigned ? semantics::Handler::UInt : semantics::Handler::Int);
+        isUnsigned ? semantics::BaseType::UInt : semantics::BaseType::Int);
       break;
     case lexer::kwFloat:
       /* float */
-      type = semanticsHandler.CreateType (semantics::Handler::Float);
+      type = semanticsHandler.CreateType (semantics::BaseType::Float);
       // TODO: Err if unsigned
       break;
     default:
@@ -611,16 +611,16 @@ namespace s1
     switch (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
-      baseType = semanticsHandler.CreateType (semantics::Handler::Bool);
+      baseType = semanticsHandler.CreateType (semantics::BaseType::Bool);
       break;
     case lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-        isUnsigned ? semantics::Handler::UInt : semantics::Handler::Int);
+        isUnsigned ? semantics::BaseType::UInt : semantics::BaseType::Int);
       break;
     case lexer::kwFloat:
       /* float */
-      baseType = semanticsHandler.CreateType (semantics::Handler::Float);
+      baseType = semanticsHandler.CreateType (semantics::BaseType::Float);
       break;
     default:
       S1_ASSERT_NOT_REACHED(Type());
@@ -635,16 +635,16 @@ namespace s1
     switch (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
-      baseType = semanticsHandler.CreateType (semantics::Handler::Bool);
+      baseType = semanticsHandler.CreateType (semantics::BaseType::Bool);
       break;
     case lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-        isUnsigned ? semantics::Handler::UInt : semantics::Handler::Int);
+        isUnsigned ? semantics::BaseType::UInt : semantics::BaseType::Int);
       break;
     case lexer::kwFloat:
       /* float */
-      baseType = semanticsHandler.CreateType (semantics::Handler::Float);
+      baseType = semanticsHandler.CreateType (semantics::BaseType::Float);
       break;
     default:
       S1_ASSERT_NOT_REACHED(Type());
@@ -660,19 +660,19 @@ namespace s1
     {
     case lexer::kwSampler1D:
       /* 1D sampler */
-      type = semanticsHandler.CreateSamplerType (semantics::Handler::_1D);
+      type = semanticsHandler.CreateSamplerType (semantics::SamplerType::_1D);
       break;
     case lexer::kwSampler2D:
       /* 2D sampler */
-      type = semanticsHandler.CreateSamplerType (semantics::Handler::_2D);
+      type = semanticsHandler.CreateSamplerType (semantics::SamplerType::_2D);
       break;
     case lexer::kwSampler3D:
       /* 3D sampler */
-      type = semanticsHandler.CreateSamplerType (semantics::Handler::_3D);
+      type = semanticsHandler.CreateSamplerType (semantics::SamplerType::_3D);
       break;
     case lexer::kwSamplerCUBE:
       /* CUBE sampler */
-      type = semanticsHandler.CreateSamplerType (semantics::Handler::CUBE);
+      type = semanticsHandler.CreateSamplerType (semantics::SamplerType::CUBE);
       break;
     default:
       S1_ASSERT_NOT_REACHED(Type());
@@ -692,7 +692,7 @@ namespace s1
     Type returnType;
     if (auto voidResult = boost::get<ast::FunctionDecl::Void> (&astFunctionDecl.resultType))
     {
-      returnType = semanticsHandler.CreateType (semantics::Handler::Void);
+      returnType = semanticsHandler.CreateType (semantics::BaseType::Void);
     }
     else
     {

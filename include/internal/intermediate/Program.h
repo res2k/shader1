@@ -43,9 +43,9 @@ namespace s1
       ProgramFunctionPtr GetFunction (size_t n) const;
       ProgramFunctionPtr GetEntryFunction () const;
       
-      void AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
+      void AddTransferValue (const semantics::TypePtr& type,
                              const uc::String& name);
-      typedef std::pair<IntermediateGeneratorSemanticsHandler::TypePtr, uc::String> TransferValuePair;
+      typedef std::pair<semantics::TypePtr, uc::String> TransferValuePair;
       typedef std::vector<TransferValuePair> TransferValues;
       const TransferValues& GetTransferValues () const { return transferValues; }
       

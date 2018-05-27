@@ -34,7 +34,7 @@ namespace s1
       {
         uc::String originalIdentifier;
         uc::String identifier;
-        TypePtr returnType;
+        semantics::TypePtr returnType;
         FunctionFormalParameters params;
         /// Function body (for user-defined functions)
         BlockPtr block;
@@ -63,7 +63,7 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
       ScopeLevel level;
-      TypePtr funcReturnType;
+      semantics::TypePtr funcReturnType;
 
       FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
 
@@ -71,29 +71,29 @@ namespace s1
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                  const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
-                 const TypePtr& funcReturnType);
+                 const semantics::TypePtr& funcReturnType);
       ScopeLevel GetLevel() const { return level; }
 
-      NamePtr AddVariable (TypePtr type,
+      NamePtr AddVariable (semantics::TypePtr type,
         const uc::String& identifier,
         ExpressionPtr initialValue,
         bool constant);
 
-      NamePtr AddTypeAlias (TypePtr aliasedType,
+      NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
         const uc::String& identifier);
 
-      FunctionPtr AddFunction (TypePtr returnType,
+      FunctionPtr AddFunction (semantics::TypePtr returnType,
         const uc::String& identifier,
         const FunctionFormalParameters& params);
 
       Scope::result_NamePtr ResolveIdentifier (const uc::String& identifier);
       NameImplPtr ResolveIdentifierInternal (const uc::String& identifier);
 
-      TypePtr GetFunctionReturnType() const
+      semantics::TypePtr GetFunctionReturnType() const
       {
         if (funcReturnType) return funcReturnType;
         if (parent) return parent->GetFunctionReturnType();
-        return TypePtr ();
+        return semantics::TypePtr ();
       }
       const std::vector<uc::String>& GetFunctionOutputParams () const
       {

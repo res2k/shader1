@@ -27,7 +27,7 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::NumericExpressionImpl : public ExpressionImpl
     {
       uc::String valueStr;
-      semantics::Handler::BaseType numberType;
+      semantics::BaseType numberType;
     public:
       NumericExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                              ExpressionContext&& context,

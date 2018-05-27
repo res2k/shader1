@@ -52,15 +52,15 @@ public:
 	       const boost::shared_ptr<TestScope>& parent, ScopeLevel level);
     ScopeLevel GetLevel() const { return level; }
     
-    NamePtr AddVariable (TypePtr type,
+    NamePtr AddVariable (s1::semantics::TypePtr type,
       const s1::uc::String& identifier,
       ExpressionPtr initialValue,
       bool constant);
       
-    NamePtr AddTypeAlias (TypePtr aliasedType,
+    NamePtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
       const s1::uc::String& identifier);
       
-    FunctionPtr AddFunction (TypePtr returnType,
+    FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,
       const FunctionFormalParameters& params);
   
@@ -80,7 +80,7 @@ public:
   struct TestExpressionBase : public Expression
   {
     virtual const std::string& GetExprStringImpl() = 0;
-    virtual TypePtr GetValueType() = 0;
+    virtual s1::semantics::TypePtr GetValueType() = 0;
 
     static std::string GetExprString (ExpressionPtr expr);
     std::string GetExprString ();
@@ -106,34 +106,34 @@ public:
   struct TestExpressionConst : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionConst (const std::string& str,
-			 const TypePtr& valueType) : str (str), valueType (valueType) { }
+			 const s1::semantics::TypePtr& valueType) : str (str), valueType (valueType) { }
 
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionVar : public TestExpressionBase
   {
     std::string identifier;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionVar (const s1::uc::String& identifier,
-		       const TypePtr& valueType) : valueType (valueType)
+		       const s1::semantics::TypePtr& valueType) : valueType (valueType)
     {
       identifier.toUTF8String (this->identifier);
     }
     
     const std::string& GetExprStringImpl() override { return identifier; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionOp : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionOp (const char* op, ExpressionPtr left, ExpressionPtr right)
     {
@@ -149,13 +149,13 @@ public:
     }
     
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionUnary : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionUnary (const char* op, ExpressionPtr right)
     {
@@ -165,13 +165,13 @@ public:
     }
     
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionTernary : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionTernary (ExpressionPtr condition, ExpressionPtr ifExpr, ExpressionPtr thenExpr)
     {
@@ -187,13 +187,13 @@ public:
     }
     
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionAttr : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionAttr (ExpressionPtr base, const s1::uc::String& attr,
 			TestSemanticsHandler& handler)
@@ -206,20 +206,20 @@ public:
       str.append (attrStr);
       
       Attribute attrInfo = IdentifyAttribute (attr);
-      TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
+      s1::semantics::TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
       if (baseType)
 	valueType = boost::static_pointer_cast<CommonType> (handler.GetAttributeType (
 	  boost::static_pointer_cast<TestType> (baseType), attrInfo));
     }
     
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionArray : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     TestExpressionArray (ExpressionPtr base, ExpressionPtr index)
     {
@@ -228,7 +228,7 @@ public:
       str.append (GetExprString (index));
       str.append ("]");
       
-      TypePtr baseType;
+      s1::semantics::TypePtr baseType;
       if (base) baseType = static_cast<TestExpressionBase*> (base.get ())->GetValueType ();
       if (baseType)
       {
@@ -239,13 +239,13 @@ public:
     }
     
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   struct TestExpressionFunction : public TestExpressionBase
   {
     std::string str;
-    TypePtr valueType;
+    s1::semantics::TypePtr valueType;
     
     void ParamsToStr (const ExpressionVector& params)
     {
@@ -290,13 +290,13 @@ public:
     }
     
     const std::string& GetExprStringImpl() override { return str; }
-    TypePtr GetValueType() { return valueType; }
+    s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
   ExpressionPtr CreateConstBoolExpression (bool value)
   {
     return ExpressionPtr (new TestExpressionConst (value ? "true" : "false",
-						   CreateType (Bool)));
+						   CreateType (s1::semantics::BaseType::Bool)));
   }
   
   ExpressionPtr CreateConstNumericExpression (const s1::uc::String& valueStr)
@@ -409,7 +409,7 @@ public:
       boost::static_pointer_cast<TestName> (funcName), params));
   }
   
-  ExpressionPtr CreateTypeConstructorExpression (TypePtr type,
+  ExpressionPtr CreateTypeConstructorExpression (s1::semantics::TypePtr type,
 						 const ExpressionVector& params)
   {
     return ExpressionPtr (new TestExpressionFunction (

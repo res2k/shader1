@@ -54,7 +54,7 @@ public:
     // Create a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("a"),
                                                                                   TestSemanticsHandler::ExpressionPtr (),
                                                                                   false);

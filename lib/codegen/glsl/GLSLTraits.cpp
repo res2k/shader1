@@ -22,6 +22,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 #include "base/uc/boost_convert.h"
+#include "semantics/Type.h"
 
 #include <boost/convert.hpp>
 #include "base/boost_convert_spirit.hpp"
@@ -107,7 +108,7 @@ namespace s1
           return FormatTypeMatrix.to<uc::String> (rowCount, colCount);
       }
 
-      std::pair<uc::String, uc::String> Traits::TypeString (const semantics::Handler::TypePtr& type,
+      std::pair<uc::String, uc::String> Traits::TypeString (const semantics::TypePtr& type,
                                                             const size_t* arraySize) const
       {
         uc::String sizeStr;
@@ -124,48 +125,48 @@ namespace s1
         uc::String identifierSuffix;
         switch (type->GetTypeClass ())
         {
-        case semantics::Handler::Type::Base:
+        case semantics::Type::Base:
           {
             switch (type->GetBaseType ())
             {
-            case semantics::Handler::Invalid:
+            case semantics::BaseType::Invalid:
               typeStr = typeStrInvalid;
               break;
-            case semantics::Handler::Void:	typeStr = "void"; break;
-            case semantics::Handler::Bool:	typeStr = typeStrBool; break;
-            case semantics::Handler::Int:
-            case semantics::Handler::UInt:
+            case semantics::BaseType::Void:	typeStr = "void"; break;
+            case semantics::BaseType::Bool:	typeStr = typeStrBool; break;
+            case semantics::BaseType::Int:
+            case semantics::BaseType::UInt:
               typeStr = typeStrInt;
               break;
-            case semantics::Handler::Float:	typeStr = typeStrFloat; break;
+            case semantics::BaseType::Float:	typeStr = typeStrFloat; break;
             }
           }
           break;
-        case semantics::Handler::Type::Sampler:
+        case semantics::Type::Sampler:
           {
             switch (type->GetSamplerType ())
             {
-            case semantics::Handler::_1D:	  typeStr = "sampler1D"; break;
-            case semantics::Handler::_2D:	  typeStr = "sampler2D"; break;
-            case semantics::Handler::_3D:	  typeStr = "sampler3D"; break;
-            case semantics::Handler::CUBE:  typeStr = "samplerCube"; break;
+            case semantics::SamplerType::_1D:	  typeStr = "sampler1D"; break;
+            case semantics::SamplerType::_2D:	  typeStr = "sampler2D"; break;
+            case semantics::SamplerType::_3D:	  typeStr = "sampler3D"; break;
+            case semantics::SamplerType::CUBE:  typeStr = "samplerCube"; break;
             }
           }
           break;
-        case semantics::Handler::Type::Array:
+        case semantics::Type::Array:
           {
             auto innerTypeStrs = TypeString (type->GetArrayVectorMatrixBaseType (), nullptr);
             return std::make_pair (std::move (innerTypeStrs.first),
                                    FormatSuffix.to<uc::String> (innerTypeStrs.second, sizeStr));
           }
           break;
-        case semantics::Handler::Type::Vector:
+        case semantics::Type::Vector:
           {
             typeStr = FormatVector (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
                                     type->GetVectorTypeComponents());
           }
           break;
-        case semantics::Handler::Type::Matrix:
+        case semantics::Type::Matrix:
           {
             typeStr = FormatMatrix (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
                                     type->GetMatrixTypeRows (), type->GetMatrixTypeCols ());

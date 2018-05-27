@@ -42,7 +42,7 @@ namespace s1
       typedef boost::container::deque<SequenceOpPtr> OpsVector;
       OpsVector ops;
     public:
-      typedef semantics::Handler::TypePtr TypePtr;
+      typedef semantics::TypePtr TypePtr;
       
       class Register
         : public boost::intrusive_ref_counter<Register,

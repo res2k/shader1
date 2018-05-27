@@ -26,11 +26,11 @@ namespace s1
   {
     struct IntermediateGeneratorSemanticsHandler::TypeImpl : public CommonType
     {
-      TypeImpl (BaseType base) : CommonType (base) {}
-      TypeImpl (SamplerType sampler) : CommonType (sampler) {}
-      TypeImpl (TypePtr aBase) : CommonType (aBase) {}
-      TypeImpl (TypePtr vBase, unsigned int d) : CommonType (vBase, d) {}
-      TypeImpl (TypePtr mBase, unsigned int c, unsigned int r)
+      TypeImpl (semantics::BaseType base) : CommonType (base) {}
+      TypeImpl (semantics::SamplerType sampler) : CommonType (sampler) {}
+      TypeImpl (semantics::TypePtr aBase) : CommonType (aBase) {}
+      TypeImpl (semantics::TypePtr vBase, unsigned int d) : CommonType (vBase, d) {}
+      TypeImpl (semantics::TypePtr mBase, unsigned int c, unsigned int r)
         : CommonType (mBase, c, r) {}
     };
   } // namespace intermediate

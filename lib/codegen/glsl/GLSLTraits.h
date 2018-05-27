@@ -44,7 +44,7 @@ namespace s1
         uc::String FormatVector (intermediate::BasicType type, unsigned int componentCount) const override;
         uc::String FormatMatrix (intermediate::BasicType type, unsigned int rowCount,
                                  unsigned int colCount) const override;
-        std::pair<uc::String, uc::String> TypeString (const semantics::Handler::TypePtr& type,
+        std::pair<uc::String, uc::String> TypeString (const semantics::TypePtr& type,
                                                       const size_t* arraySize) const override;
       };
     } // namespace glsl

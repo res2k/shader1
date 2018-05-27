@@ -64,7 +64,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -93,7 +93,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -123,7 +123,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -152,7 +152,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -181,7 +181,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -211,7 +211,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr intType = semanticsHandler.CreateType (TestSemanticsHandler::Int);
+    s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -241,7 +241,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -270,7 +270,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -299,7 +299,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -330,7 +330,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -361,7 +361,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -384,7 +384,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -407,7 +407,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -430,7 +430,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr uintType = semanticsHandler.CreateType (TestSemanticsHandler::UInt);
+    s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -453,7 +453,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -479,7 +479,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -508,7 +508,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -545,7 +545,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -582,7 +582,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -619,7 +619,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
@@ -658,7 +658,7 @@ public:
     TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
-    TestSemanticsHandler::TypePtr floatType = semanticsHandler.CreateType (TestSemanticsHandler::Float);
+    s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);

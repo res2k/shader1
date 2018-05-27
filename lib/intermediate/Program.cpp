@@ -53,7 +53,7 @@ namespace s1
       return ProgramFunctionPtr ();
     }
 
-    void Program::AddTransferValue (const IntermediateGeneratorSemanticsHandler::TypePtr& type,
+    void Program::AddTransferValue (const semantics::TypePtr& type,
 				    const uc::String& name)
     {
       transferValues.emplace_back (type, name);
