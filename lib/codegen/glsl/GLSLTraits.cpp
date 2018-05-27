@@ -107,7 +107,7 @@ namespace s1
           return FormatTypeMatrix.to<uc::String> (rowCount, colCount);
       }
 
-      std::pair<uc::String, uc::String> Traits::TypeString (const parser::SemanticsHandler::TypePtr& type,
+      std::pair<uc::String, uc::String> Traits::TypeString (const semantics::Handler::TypePtr& type,
                                                             const size_t* arraySize) const
       {
         uc::String sizeStr;
@@ -124,48 +124,48 @@ namespace s1
         uc::String identifierSuffix;
         switch (type->GetTypeClass ())
         {
-        case parser::SemanticsHandler::Type::Base:
+        case semantics::Handler::Type::Base:
           {
             switch (type->GetBaseType ())
             {
-            case parser::SemanticsHandler::Invalid:
+            case semantics::Handler::Invalid:
               typeStr = typeStrInvalid;
               break;
-            case parser::SemanticsHandler::Void:	typeStr = "void"; break;
-            case parser::SemanticsHandler::Bool:	typeStr = typeStrBool; break;
-            case parser::SemanticsHandler::Int:
-            case parser::SemanticsHandler::UInt:
+            case semantics::Handler::Void:	typeStr = "void"; break;
+            case semantics::Handler::Bool:	typeStr = typeStrBool; break;
+            case semantics::Handler::Int:
+            case semantics::Handler::UInt:
               typeStr = typeStrInt;
               break;
-            case parser::SemanticsHandler::Float:	typeStr = typeStrFloat; break;
+            case semantics::Handler::Float:	typeStr = typeStrFloat; break;
             }
           }
           break;
-        case parser::SemanticsHandler::Type::Sampler:
+        case semantics::Handler::Type::Sampler:
           {
             switch (type->GetSamplerType ())
             {
-            case parser::SemanticsHandler::_1D:	  typeStr = "sampler1D"; break;
-            case parser::SemanticsHandler::_2D:	  typeStr = "sampler2D"; break;
-            case parser::SemanticsHandler::_3D:	  typeStr = "sampler3D"; break;
-            case parser::SemanticsHandler::CUBE:  typeStr = "samplerCube"; break;
+            case semantics::Handler::_1D:	  typeStr = "sampler1D"; break;
+            case semantics::Handler::_2D:	  typeStr = "sampler2D"; break;
+            case semantics::Handler::_3D:	  typeStr = "sampler3D"; break;
+            case semantics::Handler::CUBE:  typeStr = "samplerCube"; break;
             }
           }
           break;
-        case parser::SemanticsHandler::Type::Array:
+        case semantics::Handler::Type::Array:
           {
             auto innerTypeStrs = TypeString (type->GetArrayVectorMatrixBaseType (), nullptr);
             return std::make_pair (std::move (innerTypeStrs.first),
                                    FormatSuffix.to<uc::String> (innerTypeStrs.second, sizeStr));
           }
           break;
-        case parser::SemanticsHandler::Type::Vector:
+        case semantics::Handler::Type::Vector:
           {
             typeStr = FormatVector (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
                                     type->GetVectorTypeComponents());
           }
           break;
-        case parser::SemanticsHandler::Type::Matrix:
+        case semantics::Handler::Type::Matrix:
           {
             typeStr = FormatMatrix (ConvertBasicType (type->GetArrayVectorMatrixBaseType ()->GetBaseType()),
                                     type->GetMatrixTypeRows (), type->GetMatrixTypeCols ());

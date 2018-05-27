@@ -19,11 +19,11 @@
 #define __PARSER_PARSER_H__
 
 #include "ast/forwarddecl.h"
-#include "SemanticsHandler.h"
 
 #include "diagnostics/Handler.h"
 #include "lexer/Lexer.h"
 #include "parser/Diagnostics_fwd.h"
+#include "semantics/Handler.h"
 
 namespace s1
 {
@@ -37,16 +37,16 @@ namespace s1
      * \param semanticsHandler Handler for semantics
      * \param diagnosticsHandler Handler for errors
      */
-    Parser (Lexer& inputLexer, parser::SemanticsHandler& semanticsHandler,
+    Parser (Lexer& inputLexer, semantics::Handler& semanticsHandler,
             diagnostics::Handler& diagnosticsHandler);
     
     void Parse ();
   protected:
     Lexer& inputLexer;
-    parser::SemanticsHandler& semanticsHandler;
+    semantics::Handler& semanticsHandler;
     diagnostics::Handler& diagnosticsHandler;
     /// Scope with builtin definitions
-    parser::SemanticsHandler::ScopePtr builtinScope;
+    semantics::Handler::ScopePtr builtinScope;
 
     // Error handling
     struct ErrorInfo;
@@ -57,16 +57,16 @@ namespace s1
 
     // Rough structure
     class VisitorProgramStatementImpl;
-    typedef parser::SemanticsHandler::BlockPtr Block;
-    typedef parser::SemanticsHandler::ScopePtr Scope;
+    typedef semantics::Handler::BlockPtr Block;
+    typedef semantics::Handler::ScopePtr Scope;
     void ParseProgram ();
     void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);
     class VisitorBlockStatementImpl;
     void ParseBlock (Block block, const parser::ast::Block& astBlock);
 
     class VisitorExprImpl;
-    typedef parser::SemanticsHandler::ExpressionPtr Expression;
-    typedef parser::SemanticsHandler::NamePtr Name;
+    typedef semantics::Handler::ExpressionPtr Expression;
+    typedef semantics::Handler::NamePtr Name;
     Expression ParseExpression (const Scope& scope, const parser::ast::Expr* astExpr);
     Expression ParseExprValue (const Scope& scope, const parser::ast::ExprValue& astExprValue);
     Expression ParseExprArrayElement (const Scope& scope, const parser::ast::ExprArrayElement& astExprArrayElement);
@@ -81,7 +81,7 @@ namespace s1
 
     // Types
     class VisitorTypeImpl;
-    typedef parser::SemanticsHandler::TypePtr Type;
+    typedef semantics::Handler::TypePtr Type;
     Type ParseType (parser::ast::Type* astType, const Scope& scope);
     Type ParseTypeBool (const Lexer::Token& token);
     Type ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token);
@@ -91,10 +91,10 @@ namespace s1
     void ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef);
 
     // Functions
-    typedef parser::SemanticsHandler::FunctionPtr Function;
+    typedef semantics::Handler::FunctionPtr Function;
     void ParseFuncDeclare (const Scope& scope, const parser::ast::FunctionDecl& astFunctionDecl);
     void ParseFuncParamFormal (const Scope& scope,
-                               parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
+                               semantics::Handler::Scope::FunctionFormalParameters& params,
                                const parser::ast::FunctionDecl& astFunctionDecl);
     
     // Variables

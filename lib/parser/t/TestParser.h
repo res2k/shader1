@@ -29,7 +29,7 @@
 class TestParser : public s1::Parser
 {
 public:
-  TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
+  TestParser (s1::Lexer& inputLexer, s1::semantics::Handler& semanticsHandler,
               s1::diagnostics::Handler& diagnosticsHandler)
     : Parser (inputLexer, semanticsHandler, diagnosticsHandler) {}
 

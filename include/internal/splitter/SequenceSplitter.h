@@ -243,7 +243,7 @@ namespace s1
       uc::String GetTransferIdent (const uc::String& origName = uc::String());
 
       /// Allocate register in all output sequences
-      RegisterPtr AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
+      RegisterPtr AllocateRegister (const semantics::Handler::TypePtr& originalType,
                                     const uc::String& name);
     private:
       typedef std::unordered_map<RegisterPtr, unsigned int> AvailabilityMap;

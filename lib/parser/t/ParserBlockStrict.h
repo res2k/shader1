@@ -45,27 +45,27 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, false);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
   void testBlockVarDeclMulti (void)
@@ -80,45 +80,45 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
     }
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("b")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
     }
   }
 
@@ -134,45 +134,45 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
     }
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("b")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
     }
   }
 
@@ -188,22 +188,22 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_DIFFERS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
@@ -211,7 +211,7 @@ public:
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
     void testBlockVarDeclInvalid (void)
@@ -226,8 +226,8 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 2u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -252,23 +252,23 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_DIFFERS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
       TestSemanticsHandler::TestExpressionBase* testExpr =
         static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
       TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
@@ -276,15 +276,15 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
     }
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("b")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
     }
   }
 
@@ -300,8 +300,8 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -309,16 +309,16 @@ public:
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     {
-      SemanticsHandler::NamePtr varRequested;
+      s1::semantics::Handler::NamePtr varRequested;
       TS_ASSERT_THROWS_NOTHING(
         varRequested =
           testScope->ResolveIdentifier (s1::uc::String ("a")).value()
       );
-      TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-      TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+      TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+      TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_DIFFERS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+      TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
       TestSemanticsHandler::TestExpressionBase* testExpr =
         static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
       TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
@@ -326,7 +326,7 @@ public:
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
       TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-      TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+      TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
     }
   }
 
@@ -342,27 +342,27 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_DIFFERS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, true);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
   void testBlockConstDeclIncomplete (void)
@@ -377,8 +377,8 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 2u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -388,21 +388,21 @@ public:
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
     // Parsing will produce variable w/o initializer
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, true);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
   void testBlockTypedef (void)
@@ -417,24 +417,24 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr typeRequested;
+    s1::semantics::Handler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
         testScope->ResolveIdentifier (s1::uc::String ("MyInt")).value()
     );
-    TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
+    TS_ASSERT_DIFFERS (typeRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (typeRequested->GetType(), s1::semantics::Handler::Name::TypeAlias);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
   void testBlockTypedefIndirect (void)
@@ -449,24 +449,24 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr typeRequested;
+    s1::semantics::Handler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
         testScope->ResolveIdentifier (s1::uc::String ("MyInt")).value()
     );
-    TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
+    TS_ASSERT_DIFFERS (typeRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (typeRequested->GetType(), s1::semantics::Handler::Name::TypeAlias);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
   void testBlockVarTypedefDecl (void)
@@ -481,26 +481,26 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, false);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
 
   void testBlockTypedefInvalid1 (void)
@@ -515,24 +515,24 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
-    SemanticsHandler::NamePtr typeRequested;
+    s1::semantics::Handler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
         testScope->ResolveIdentifier (s1::uc::String ("MyInt")).value()
     );
-    TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (typeRequested->GetType(), SemanticsHandler::Name::TypeAlias);
+    TS_ASSERT_DIFFERS (typeRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (typeRequested->GetType(), s1::semantics::Handler::Name::TypeAlias);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Invalid);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Invalid);
   }
 
   void testBlockTypedefInvalid2 (void)
@@ -547,34 +547,34 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TestSemanticsHandler::TestScope* testScope =
       static_cast<TestSemanticsHandler::TestScope*> (block->GetInnerScope().get());
 
-    SemanticsHandler::NamePtr typeRequested;
+    s1::semantics::Handler::NamePtr typeRequested;
     TS_ASSERT_THROWS_NOTHING(
       typeRequested =
         testScope->ResolveIdentifier (s1::uc::String ("float")).value()
     );
-    TS_ASSERT_DIFFERS (typeRequested, SemanticsHandler::NamePtr ());
+    TS_ASSERT_DIFFERS (typeRequested, s1::semantics::Handler::NamePtr ());
 
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         testScope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, SemanticsHandler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, false);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Float);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Float);
   }
 
   void testBlockTypedefInvalid3 (void)
@@ -589,8 +589,8 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    SemanticsHandler::BlockPtr block (
-      semanticsHandler.CreateBlock (SemanticsHandler::ScopePtr()));
+    s1::semantics::Handler::BlockPtr block (
+      semanticsHandler.CreateBlock (s1::semantics::Handler::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
   }
 };

@@ -5,7 +5,6 @@ set(parser_sources
     ${S1_INC}/parser/AstBuilder.h
     ${S1_INC}/parser/CommonSemanticsHandler.h
     ${S1_INC}/parser/Parser.h
-    ${S1_INC}/parser/SemanticsHandler.h
     )
 set(parser_sources_ast_h
     ${S1_INC}/parser/ast/Block.h

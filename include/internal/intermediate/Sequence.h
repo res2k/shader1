@@ -19,7 +19,7 @@
 #define __INTERMEDIATE_SEQUENCE_H__
 
 #include "forwarddecl.h"
-#include "parser/SemanticsHandler.h"
+#include "semantics/Handler.h"
 
 #include "base/std_hash.h"
 
@@ -42,7 +42,7 @@ namespace s1
       typedef boost::container::deque<SequenceOpPtr> OpsVector;
       OpsVector ops;
     public:
-      typedef parser::SemanticsHandler::TypePtr TypePtr;
+      typedef semantics::Handler::TypePtr TypePtr;
       
       class Register
         : public boost::intrusive_ref_counter<Register,

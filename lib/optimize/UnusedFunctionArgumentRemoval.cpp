@@ -242,7 +242,7 @@ namespace s1
       for (const auto& param : params)
       {
         bool paramUsed = false;
-        if ((param.dir & parser::SemanticsHandler::Scope::dirIn) != 0)
+        if ((param.dir & semantics::Handler::Scope::dirIn) != 0)
         {
           bool used = false;
           auto inputIt = inputToRegs.find (param.identifier);
@@ -253,7 +253,7 @@ namespace s1
           paramUsage.input.push_back (used);
           paramUsed |= used;
         }
-        if ((param.dir & parser::SemanticsHandler::Scope::dirOut) != 0)
+        if ((param.dir & semantics::Handler::Scope::dirOut) != 0)
         {
           bool used = false;
           auto outputIt = outputToRegs.find (param.identifier);

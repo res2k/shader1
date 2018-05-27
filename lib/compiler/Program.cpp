@@ -59,14 +59,14 @@ namespace s1
       intermediate::ProgramFunctionPtr func = intermediateProg->GetFunction (i);
       if (!func->IsEntryFunction()) continue;
       
-      const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = func->GetParams();
-      for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : funcParams)
+      const semantics::Handler::Scope::FunctionFormalParameters& funcParams = func->GetParams();
+      for(const semantics::Handler::Scope::FunctionFormalParameter& param : funcParams)
       {
-        if (!(param.dir & parser::SemanticsHandler::Scope::dirOut)) continue;
+        if (!(param.dir & semantics::Handler::Scope::dirOut)) continue;
         
         // Look for float4 output
-        if (param.type->GetTypeClass() != parser::SemanticsHandler::Type::Vector) continue;
-        if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != parser::SemanticsHandler::Float) continue;
+        if (param.type->GetTypeClass() != semantics::Handler::Type::Vector) continue;
+        if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != semantics::Handler::Float) continue;
         if (param.type->GetVectorTypeComponents() != 4) continue;
         
         // Parameter qualifies
@@ -102,31 +102,31 @@ namespace s1
     return opt;
   }
 
-  static parser::SemanticsHandler::TypePtr GetBaseType (const parser::SemanticsHandler::TypePtr& type)
+  static semantics::Handler::TypePtr GetBaseType (const semantics::Handler::TypePtr& type)
   {
-    if (type->GetTypeClass () == parser::SemanticsHandler::Type::Array)
+    if (type->GetTypeClass () == semantics::Handler::Type::Array)
       return GetBaseType (type->GetArrayVectorMatrixBaseType ());
     else
       return type;
   }
 
-  static splitter::Frequency GetDefaultFreq (const parser::SemanticsHandler::Scope::FunctionFormalParameter param)
+  static splitter::Frequency GetDefaultFreq (const semantics::Handler::Scope::FunctionFormalParameter param)
   {
     switch (param.freqQualifier)
     {
-    case parser::SemanticsHandler::Scope::freqAuto:
+    case semantics::Handler::Scope::freqAuto:
       // Auto: assume 'uniform', so simply fall through
-    case parser::SemanticsHandler::Scope::freqUniform:
+    case semantics::Handler::Scope::freqUniform:
       {
-        if (GetBaseType (param.type)->GetTypeClass() == parser::SemanticsHandler::Type::Sampler)
+        if (GetBaseType (param.type)->GetTypeClass() == semantics::Handler::Type::Sampler)
           // Logically, samples are uniform. Internally, they're fragment (at least as long vertex textures aren't supported).
           return splitter::freqFragment;
         else
           return splitter::freqUniform;
       }
-    case parser::SemanticsHandler::Scope::freqAttribute:
+    case semantics::Handler::Scope::freqAttribute:
       {
-        if (GetBaseType (param.type)->GetTypeClass() == parser::SemanticsHandler::Type::Sampler)
+        if (GetBaseType (param.type)->GetTypeClass() == semantics::Handler::Type::Sampler)
         {
           // TODO: We should probably emit a warning here...
           return splitter::freqFragment;
@@ -177,7 +177,7 @@ namespace s1
       S1_ASSERT (entryFunc, Backend::ProgramPtr ());
       for (const auto& entryParam : entryFunc->GetParams ())
       {
-        if ((entryParam.dir & parser::SemanticsHandler::Scope::dirOut) != 0) continue;
+        if ((entryParam.dir & semantics::Handler::Scope::dirOut) != 0) continue;
         defaultInputParamFreqs[entryParam.identifier] = 1 << GetDefaultFreq (entryParam);
       }
     }

@@ -67,10 +67,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -106,10 +106,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -147,10 +147,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -186,10 +186,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -238,10 +238,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -285,10 +285,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -350,10 +350,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -417,10 +417,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -481,10 +481,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -524,10 +524,10 @@ public:
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     // global scope is required so BlockImpl can create some unique var names
-    SemanticsHandler::ScopePtr globalScope (semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
+    s1::semantics::Handler::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                             TestSemanticsHandler::Global,
                                             semanticsHandler.GetVoidType()));
-    SemanticsHandler::BlockPtr block (
+    s1::semantics::Handler::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());

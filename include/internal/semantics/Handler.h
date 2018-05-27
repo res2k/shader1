@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,8 +15,8 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __PARSER_SEMANTICSHANDLER_H__
-#define __PARSER_SEMANTICSHANDLER_H__
+#ifndef SEMANTICS_HANDLER_H_
+#define SEMANTICS_HANDLER_H_
 
 #include "parser/Diagnostics_fwd.h"
 
@@ -28,7 +28,7 @@
 
 namespace s1
 {
-  namespace parser
+  namespace semantics
   {
     /**
      * Semantics handler.
@@ -42,9 +42,9 @@ namespace s1
      * In structure of objects is, in essence, tree-like (although the exact
      * organization is up the implementation).
      */
-    struct SemanticsHandler
+    struct Handler
     {
-      virtual ~SemanticsHandler() {}
+      virtual ~Handler() {}
       
       struct Block;
       typedef boost::shared_ptr<Block> BlockPtr;
@@ -302,7 +302,7 @@ namespace s1
           const uc::String& identifier,
           const FunctionFormalParameters& params) = 0;
 
-        typedef OUTCOME_V2_NAMESPACE::result<NamePtr, Error> result_NamePtr;
+        typedef OUTCOME_V2_NAMESPACE::result<NamePtr, parser::Error> result_NamePtr;
         /// Resolve an identifier to a name
         virtual result_NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
       };
@@ -335,7 +335,7 @@ namespace s1
       
       virtual BlockPtr CreateBlock (ScopePtr parentScope) = 0;
     };
-  } // namespace parser
+  } // namespace semantics
 } // namespace s1
 
-#endif // __PARSER_SEMANTICSHANDLER_H__
+#endif // SEMANTICS_HANDLER_H_

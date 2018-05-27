@@ -73,7 +73,7 @@ namespace s1
         const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
 
         ExpressionPtr paramExpr;
-        assert (param.paramType == SemanticsHandler::Scope::ptUser);
+        assert (param.paramType == semantics::Handler::Scope::ptUser);
         if (actual < params.size())
           paramExpr = params[actual++];
         else

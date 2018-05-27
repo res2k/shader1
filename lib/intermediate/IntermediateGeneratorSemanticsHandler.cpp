@@ -89,18 +89,18 @@ namespace s1
 
     DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
 
-    static inline std::string GetBaseTypeString (parser::SemanticsHandler::BaseType base, unsigned int rows, unsigned int cols)
+    static inline std::string GetBaseTypeString (semantics::Handler::BaseType base, unsigned int rows, unsigned int cols)
     {
       char typeStr[3] = { 0, 0, 0 };
       // 1st char: base type
       switch (base)
       {
-      case parser::SemanticsHandler::Invalid: typeStr[0] = 'X'; break;
-      case parser::SemanticsHandler::Void:    typeStr[0] = 'V'; break;
-      case parser::SemanticsHandler::Bool:    typeStr[0] = 'B'; break;
-      case parser::SemanticsHandler::Int:     typeStr[0] = 'I'; break;
-      case parser::SemanticsHandler::UInt:    typeStr[0] = 'U'; break;
-      case parser::SemanticsHandler::Float:   typeStr[0] = 'F'; break;
+      case semantics::Handler::Invalid: typeStr[0] = 'X'; break;
+      case semantics::Handler::Void:    typeStr[0] = 'V'; break;
+      case semantics::Handler::Bool:    typeStr[0] = 'B'; break;
+      case semantics::Handler::Int:     typeStr[0] = 'I'; break;
+      case semantics::Handler::UInt:    typeStr[0] = 'U'; break;
+      case semantics::Handler::Float:   typeStr[0] = 'F'; break;
       }
       if ((rows == 0) && (cols == 0)) return typeStr;
       // 2nd char: encode dimensions
@@ -456,14 +456,14 @@ namespace s1
 
           boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
 
-          parser::SemanticsHandler::Scope::FunctionFormalParameters params ((*funcIt)->params);
+          semantics::Handler::Scope::FunctionFormalParameters params ((*funcIt)->params);
           TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
           if (!voidType->IsEqual (*retTypeImpl))
           {
-            parser::SemanticsHandler::Scope::FunctionFormalParameter retParam;
+            semantics::Handler::Scope::FunctionFormalParameter retParam;
             retParam.type = (*funcIt)->returnType;
             retParam.identifier = BlockImpl::varReturnValueName;
-            retParam.dir = parser::SemanticsHandler::Scope::dirOut;
+            retParam.dir = semantics::Handler::Scope::dirOut;
             params.insert (params.begin(), retParam);
           }
 
@@ -473,7 +473,7 @@ namespace s1
             size_t inputInsertPos = 0;
             while (inputInsertPos < params.size())
             {
-              if (params[inputInsertPos].dir != parser::SemanticsHandler::Scope::dirIn) break;
+              if (params[inputInsertPos].dir != semantics::Handler::Scope::dirIn) break;
               inputInsertPos++;
             }
             // Augment parameters list with global vars
@@ -481,22 +481,22 @@ namespace s1
             {
               NameImplPtr global (boost::static_pointer_cast<NameImpl> (globalName));
               {
-                parser::SemanticsHandler::Scope::FunctionFormalParameter inParam;
-                inParam.paramType = parser::SemanticsHandler::Scope::ptAutoGlobal;
+                semantics::Handler::Scope::FunctionFormalParameter inParam;
+                inParam.paramType = semantics::Handler::Scope::ptAutoGlobal;
                 inParam.type = global->valueType;
                 inParam.identifier = global->identifier;
-                inParam.dir = parser::SemanticsHandler::Scope::dirIn;
+                inParam.dir = semantics::Handler::Scope::dirIn;
                 params.insert (boost::next (params.begin(), inputInsertPos), inParam);
                 inputInsertPos++;
               }
               if (!global->varConstant)
               {
                 // TODO: Better handling of constants (no need to pass them as params)
-                parser::SemanticsHandler::Scope::FunctionFormalParameter outParam;
-                outParam.paramType = parser::SemanticsHandler::Scope::ptAutoGlobal;
+                semantics::Handler::Scope::FunctionFormalParameter outParam;
+                outParam.paramType = semantics::Handler::Scope::ptAutoGlobal;
                 outParam.type = global->valueType;
                 outParam.identifier = global->identifier;
-                outParam.dir = parser::SemanticsHandler::Scope::dirOut;
+                outParam.dir = semantics::Handler::Scope::dirOut;
                 params.insert (params.end(), outParam);
               }
             }
@@ -688,7 +688,7 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateFunctionCallExpression (NamePtr functionName,
                                                                                        const ExpressionVector& params)
     {
-      assert (functionName->GetType() == SemanticsHandler::Name::Function);
+      assert (functionName->GetType() == semantics::Handler::Name::Function);
       for (const auto& param : params)
       {
         if (!param) return ExpressionPtr(); // Assume error already handled
@@ -726,7 +726,7 @@ namespace s1
                                                             funcReturnType));
       switch (scopeLevel)
       {
-      case SemanticsHandler::Builtin:
+      case semantics::Handler::Builtin:
         builtinScope = newScope;
         SetupBuiltins (builtinScope);
         break;

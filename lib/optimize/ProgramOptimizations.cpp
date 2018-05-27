@@ -56,9 +56,9 @@ namespace s1
           intermediate::RegisterSet usedRegs;
           const intermediate::Sequence::RegisterExpMappings seqExports (func->GetBody ()->GetExports ());
           // Collect function outputs, mark them as 'used' for DCE
-          for (const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : func->GetParams ())
+          for (const semantics::Handler::Scope::FunctionFormalParameter& param : func->GetParams ())
           {
-            if ((param.dir & parser::SemanticsHandler::Scope::dirOut) != 0)
+            if ((param.dir & semantics::Handler::Scope::dirOut) != 0)
             {
               const intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (param.identifier);
               if (exp == seqExports.end ()) continue;

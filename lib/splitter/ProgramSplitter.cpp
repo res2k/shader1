@@ -109,11 +109,11 @@ namespace s1
         {
           /* Fake output parameter frequencies to 'fragment'
              (so the recursive call will have something) */
-          const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
+          const semantics::Handler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
           const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
-          for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam : funcParams)
+          for(const semantics::Handler::Scope::FunctionFormalParameter& funcParam : funcParams)
           {
-            if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
+            if ((int (funcParam.dir) & semantics::Handler::Scope::dirOut) == 0) continue;
             
             #if 0
             intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (funcParam.identifier);
@@ -136,7 +136,7 @@ namespace s1
           for (size_t i = 0, f = 0; i < inputParamFreqFlags.size (); f++)
           {
             S1_ASSERT(f < funcParams.size (), result);
-            if (funcParams[f].dir & parser::SemanticsHandler::Scope::dirIn)
+            if (funcParams[f].dir & semantics::Handler::Scope::dirIn)
             {
               seqSplit.SetInputFreqFlags (funcParams[f].identifier,
                                           (inputParamFreqFlags[i] & freqFlagU) | freqFlagF);
@@ -147,7 +147,7 @@ namespace s1
           seqSplit.PerformSplit();
           
           // Generate 'split' functions
-          parser::SemanticsHandler::Scope::FunctionFormalParameters extraParamsF;
+          semantics::Handler::Scope::FunctionFormalParameters extraParamsF;
           AddFreqFunction (funcFName, progFunc, extraParamsF, seqSplit.GetOutputFragmentSequence()->GetSequence(), freqFragment);
 
           result.forceInputPropagation = true;
@@ -155,11 +155,11 @@ namespace s1
         else
         {
           // Connect the parameter frequencies to actual inputs
-          const parser::SemanticsHandler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
+          const semantics::Handler::Scope::FunctionFormalParameters& funcParams = progFunc->GetParams();
           for (size_t i = 0, f = 0; i < inputParamFreqFlags.size (); f++)
           {
             S1_ASSERT(f < funcParams.size (), result);
-            if (funcParams[f].dir & parser::SemanticsHandler::Scope::dirIn)
+            if (funcParams[f].dir & semantics::Handler::Scope::dirIn)
             {
               seqSplit.SetInputFreqFlags (funcParams[f].identifier, inputParamFreqFlags[i]);
               i++;
@@ -169,7 +169,7 @@ namespace s1
           seqSplit.PerformSplit();
           
           // Turn values 'transferred' by the function into extra output/input paramerts
-          parser::SemanticsHandler::Scope::FunctionFormalParameters extraParams[freqNum];
+          semantics::Handler::Scope::FunctionFormalParameters extraParams[freqNum];
           const std::vector<intermediate::RegisterPtr>& transfers = seqSplit.GetTransferRegs (freqVertex);
           std::unordered_set<uc::String> seenTransferIdents;
           for (const intermediate::RegisterPtr& reg : transfers)
@@ -185,9 +185,9 @@ namespace s1
             
             // Synthesize new parameters
             {
-              parser::SemanticsHandler::Scope::FunctionFormalParameter paramV;
-              paramV.paramType = parser::SemanticsHandler::Scope::ptAutoTransfer;
-              paramV.dir = parser::SemanticsHandler::Scope::dirOut;
+              semantics::Handler::Scope::FunctionFormalParameter paramV;
+              paramV.paramType = semantics::Handler::Scope::ptAutoTransfer;
+              paramV.dir = semantics::Handler::Scope::dirOut;
               paramV.identifier = transferIdent;
               paramV.type = reg->GetOriginalType();
               extraParams[freqVertex].push_back (paramV);
@@ -195,9 +195,9 @@ namespace s1
               seqSplit.GetOutputVertexSequence()->SetExport (transferIdent, reg);
             }
             {
-              parser::SemanticsHandler::Scope::FunctionFormalParameter paramF;
-              paramF.paramType = parser::SemanticsHandler::Scope::ptAutoTransfer;
-              paramF.dir = parser::SemanticsHandler::Scope::dirIn;
+              semantics::Handler::Scope::FunctionFormalParameter paramF;
+              paramF.paramType = semantics::Handler::Scope::ptAutoTransfer;
+              paramF.dir = semantics::Handler::Scope::dirIn;
               paramF.identifier = transferIdent;
               paramF.type = reg->GetOriginalType();
               extraParams[freqFragment].push_back (paramF);
@@ -215,9 +215,9 @@ namespace s1
           
           // Extract output parameters, to return output value frequencies
           const intermediate::Sequence::RegisterExpMappings& seqExports = progFunc->GetBody()->GetExports();
-          for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& funcParam : funcParams)
+          for(const semantics::Handler::Scope::FunctionFormalParameter& funcParam : funcParams)
           {
-            if ((int (funcParam.dir) & parser::SemanticsHandler::Scope::dirOut) == 0) continue;
+            if ((int (funcParam.dir) & semantics::Handler::Scope::dirOut) == 0) continue;
             
             intermediate::Sequence::RegisterExpMappings::const_iterator exp = seqExports.find (funcParam.identifier);
             if (exp == seqExports.end())
@@ -265,11 +265,11 @@ namespace s1
     
     void ProgramSplitter::AddFreqFunction (const uc::String& funcName,
                                            const intermediate::ProgramFunctionPtr& originalFunc,
-                                           const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
+                                           const semantics::Handler::Scope::FunctionFormalParameters& extraParams,
                                            const intermediate::SequencePtr& sequence,
                                            int freq)
     {
-      parser::SemanticsHandler::Scope::FunctionFormalParameters params (originalFunc->GetParams());
+      semantics::Handler::Scope::FunctionFormalParameters params (originalFunc->GetParams());
       params.insert (params.end(), extraParams.begin(), extraParams.end());
       
       intermediate::ProgramFunctionPtr newFunc (boost::make_shared<intermediate::ProgramFunction> (originalFunc->GetOriginalIdentifier(),
@@ -332,13 +332,13 @@ namespace s1
         splitter::SequenceSplitter splitter (*this);
         splitter.SetInputSequence (func->GetBody());
         
-        parser::SemanticsHandler::Scope::FunctionFormalParameters vParams;
-        parser::SemanticsHandler::Scope::FunctionFormalParameters fParams;
+        semantics::Handler::Scope::FunctionFormalParameters vParams;
+        semantics::Handler::Scope::FunctionFormalParameters fParams;
         typedef std::pair<uc::String, int> ParamFreqPair;
         std::vector<ParamFreqPair> allFrequencies;
-        for(const parser::SemanticsHandler::Scope::FunctionFormalParameter& param : func->GetParams())
+        for(const semantics::Handler::Scope::FunctionFormalParameter& param : func->GetParams())
         {
-          if (param.dir & parser::SemanticsHandler::Scope::dirIn)
+          if (param.dir & semantics::Handler::Scope::dirIn)
           {
             // Input parameter
             ParamMap::const_iterator paramFlag = paramFlags.find (param.identifier);

@@ -23,7 +23,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 
 #include "base/uc/String.h"
 #include "intermediate/BasicType.h"
-#include "parser/SemanticsHandler.h"
+#include "semantics/Handler.h"
 
 namespace s1
 {
@@ -58,11 +58,11 @@ namespace s1
          * \returns A string pair. The first string is the type string, the second string
          *   is any suffix (for arrays).
          */
-        virtual std::pair<uc::String, uc::String> TypeString (const parser::SemanticsHandler::TypePtr& type,
+        virtual std::pair<uc::String, uc::String> TypeString (const semantics::Handler::TypePtr& type,
                                                               const size_t* arraySize) const = 0;
       protected:
         /// Helper function: obtain intermediate basic type from semantics basic type
-        static intermediate::BasicType ConvertBasicType (parser::SemanticsHandler::BaseType type);
+        static intermediate::BasicType ConvertBasicType (semantics::Handler::BaseType type);
       };
     } // namespace sl
   } // namespace codegen

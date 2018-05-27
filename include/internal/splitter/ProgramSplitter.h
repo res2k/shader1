@@ -19,7 +19,7 @@
 #define __SPLITTER_PROGRAMSPLITTER_H__
 
 #include "intermediate/forwarddecl.h"
-#include "parser/SemanticsHandler.h"
+#include "semantics/Handler.h"
 
 #include "Frequency.h"
 
@@ -43,7 +43,7 @@ namespace s1
       struct FunctionTransferValues
       {
         uc::String identifier;
-        parser::SemanticsHandler::TypePtr valueType;
+        semantics::Handler::TypePtr valueType;
         // Probably sensible: std::vector<size_t> usedArgs;
       };
       struct SplitFunctionInfo
@@ -83,7 +83,7 @@ namespace s1
       
       void AddFreqFunction (const uc::String& funcName,
                             const intermediate::ProgramFunctionPtr& originalFunc,
-                            const parser::SemanticsHandler::Scope::FunctionFormalParameters& extraParams,
+                            const semantics::Handler::Scope::FunctionFormalParameters& extraParams,
                             const intermediate::SequencePtr& sequence,
                             int freq);
                             

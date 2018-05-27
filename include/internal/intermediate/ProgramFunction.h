@@ -19,7 +19,7 @@
 #define __INTERMEDIATE_PROGRAMFUNCTION_H__
 
 #include "intermediate/Sequence.h"
-#include "parser/SemanticsHandler.h"
+#include "semantics/Handler.h"
 
 #include "forwarddecl.h"
 
@@ -31,13 +31,13 @@ namespace s1
     {
       uc::String originalIdentifier;
       uc::String identifier;
-      parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+      semantics::Handler::Scope::FunctionFormalParameters params;
       SequencePtr body;
       bool isEntryFunction;
     public:
       ProgramFunction (const uc::String& originalIdentifier,
 		       const uc::String& identifier,
-		       const parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
+		       const semantics::Handler::Scope::FunctionFormalParameters& params,
 		       const SequencePtr& body,
 		       bool isEntryFunction);
 
@@ -45,7 +45,7 @@ namespace s1
       { return originalIdentifier; }
       const uc::String& GetIdentifier() const
       { return identifier; }
-      const parser::SemanticsHandler::Scope::FunctionFormalParameters& GetParams() const
+      const semantics::Handler::Scope::FunctionFormalParameters& GetParams() const
       { return params; }
       SequencePtr GetBody() const
       { return body; }

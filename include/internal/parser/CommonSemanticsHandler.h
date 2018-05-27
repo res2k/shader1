@@ -18,7 +18,7 @@
 #ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
-#include "SemanticsHandler.h"
+#include "semantics/Handler.h"
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/unordered_map.hpp>
@@ -31,7 +31,7 @@ namespace s1
      * Common implementation of semantics handler behaviour that is the same across
      * most semantics handlers (such as name or scope handling).
      */
-    class CommonSemanticsHandler : public SemanticsHandler
+    class CommonSemanticsHandler : public semantics::Handler
     {
     protected:
       struct CommonType : public Type

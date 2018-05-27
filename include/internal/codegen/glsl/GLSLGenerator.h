@@ -19,7 +19,6 @@
 #define __CODEGEN_GLSLGENERATOR_H__
 
 #include "intermediate/Program.h"
-#include "parser/SemanticsHandler.h"
 
 #include "../common/StringsArray.h"
 

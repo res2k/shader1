@@ -33,23 +33,23 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    SemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-                                    SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varAdded;
+    s1::semantics::Handler::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
+                                    s1::semantics::Handler::Global));
+    s1::semantics::Handler::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
-        scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
+        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
                             s1::uc::String ("a"), 
-                            SemanticsHandler::ExpressionPtr(), false)
+                            s1::semantics::Handler::ExpressionPtr(), false)
     );
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
   }  
   
   void testIdentifierAddFunc (void)
@@ -57,21 +57,21 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    SemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-                                    SemanticsHandler::Global));
-    SemanticsHandler::Scope::FunctionFormalParameters params;
+    s1::semantics::Handler::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
+                                    s1::semantics::Handler::Global));
+    s1::semantics::Handler::Scope::FunctionFormalParameters params;
     TS_ASSERT_THROWS_NOTHING(
-      scope->AddFunction (semanticsHandler.CreateType (SemanticsHandler::Int),
+      scope->AddFunction (semanticsHandler.CreateType (s1::semantics::Handler::Int),
                           s1::uc::String ("a"), params)
     );
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, SemanticsHandler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Function);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Function);
   }  
   
   void testIdentifierAddType (void)
@@ -79,22 +79,22 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    SemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-                                    SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varAdded;
+    s1::semantics::Handler::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
+                                    s1::semantics::Handler::Global));
+    s1::semantics::Handler::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
-        scope->AddTypeAlias (semanticsHandler.CreateType (SemanticsHandler::Int),
+        scope->AddTypeAlias (semanticsHandler.CreateType (s1::semantics::Handler::Int),
                              s1::uc::String ("a"))
     );
-    SemanticsHandler::NamePtr varRequested;
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::TypeAlias);
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::TypeAlias);
   }  
   
   void testIdentifierUnknown (void)
@@ -102,10 +102,10 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    SemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-                                    SemanticsHandler::Global));
-    SemanticsHandler::Scope::result_NamePtr varRequested = SemanticsHandler::NamePtr ();
+    s1::semantics::Handler::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
+                                    s1::semantics::Handler::Global));
+    s1::semantics::Handler::Scope::result_NamePtr varRequested = s1::semantics::Handler::NamePtr ();
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("foo"))
@@ -118,21 +118,21 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    SemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-                                    SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varAdded1, varAdded2;
+    s1::semantics::Handler::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
+                                    s1::semantics::Handler::Global));
+    s1::semantics::Handler::NamePtr varAdded1, varAdded2;
     TS_ASSERT_THROWS_NOTHING(
       varAdded1 =
-        scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
+        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
                             s1::uc::String ("a"), 
-                            SemanticsHandler::ExpressionPtr(), false)
+                            s1::semantics::Handler::ExpressionPtr(), false)
     );
     TS_ASSERT_THROWS_NOTHING(
       varAdded2 =
-        scope->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
+        scope->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
                             s1::uc::String ("a"), 
-                            SemanticsHandler::ExpressionPtr(), false)
+                            s1::semantics::Handler::ExpressionPtr(), false)
     );
     TS_ASSERT(!varAdded2);
   }  
@@ -142,26 +142,26 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    SemanticsHandler::ScopePtr scopeOuter (
-      semanticsHandler.CreateScope (SemanticsHandler::ScopePtr(),
-                                    SemanticsHandler::Global));
-    SemanticsHandler::NamePtr varAdded;
+    s1::semantics::Handler::ScopePtr scopeOuter (
+      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
+                                    s1::semantics::Handler::Global));
+    s1::semantics::Handler::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
-        scopeOuter->AddVariable (semanticsHandler.CreateType (SemanticsHandler::Int),
+        scopeOuter->AddVariable (semanticsHandler.CreateType (s1::semantics::Handler::Int),
                                  s1::uc::String ("a"), 
-                                 SemanticsHandler::ExpressionPtr(), false)
+                                 s1::semantics::Handler::ExpressionPtr(), false)
     );
-    SemanticsHandler::ScopePtr scopeInner (
+    s1::semantics::Handler::ScopePtr scopeInner (
       semanticsHandler.CreateScope (scopeOuter,
-                                    SemanticsHandler::Function));
-    SemanticsHandler::NamePtr varRequested;
+                                    s1::semantics::Handler::Function));
+    s1::semantics::Handler::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scopeInner->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
-    TS_ASSERT_EQUALS (varRequested->GetType(), SemanticsHandler::Name::Variable);
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
   }  
   
 };

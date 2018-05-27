@@ -545,7 +545,7 @@ namespace s1
       handler->ExpressionError (static_cast<const ExpressionImpl&> (expr).GetExpressionContext(), code);
     }
     
-    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (s1::parser::SemanticsHandler::BlockPtr block,
+    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (semantics::Handler::BlockPtr block,
                                                                                       const ExpressionContext& errorContext,
                                                                                       const NameImplSet& loopNames)
     {

@@ -58,7 +58,7 @@ namespace s1
           typeSuffix = typeStrings.second;
         }
 
-        if (param.dir & parser::SemanticsHandler::Scope::dirIn)
+        if (param.dir & semantics::Handler::Scope::dirIn)
         {
           // TODO: Emit global vars
           uc::String paramIdent;
@@ -75,7 +75,7 @@ namespace s1
           result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
-        if (param.dir & parser::SemanticsHandler::Scope::dirOut)
+        if (param.dir & semantics::Handler::Scope::dirOut)
         {
           uc::String paramIdent;
           if (param.paramType >= Scope::ptAutoGlobal)

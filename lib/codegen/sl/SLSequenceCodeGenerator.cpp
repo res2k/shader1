@@ -298,14 +298,14 @@ namespace s1
         // Check if the destination register type matches the source register type
         bool typeMatch (false);
         if (source->GetOriginalType ()->GetTypeClass ()
-            == parser::SemanticsHandler::Type::Base)
+            == semantics::Handler::Type::Base)
         {
           switch (source->GetOriginalType ()->GetBaseType ())
           {
-          case parser::SemanticsHandler::Bool:    typeMatch = (destType == intermediate::BasicType::Bool);  break;
-          case parser::SemanticsHandler::Int:     typeMatch = (destType == intermediate::BasicType::Int);   break;
-          case parser::SemanticsHandler::UInt:    typeMatch = (destType == intermediate::BasicType::UInt);  break;
-          case parser::SemanticsHandler::Float:   typeMatch = (destType == intermediate::BasicType::Float); break;
+          case semantics::Handler::Bool:    typeMatch = (destType == intermediate::BasicType::Bool);  break;
+          case semantics::Handler::Int:     typeMatch = (destType == intermediate::BasicType::Int);   break;
+          case semantics::Handler::UInt:    typeMatch = (destType == intermediate::BasicType::UInt);  break;
+          case semantics::Handler::Float:   typeMatch = (destType == intermediate::BasicType::Float); break;
           default: break;
           }
         }

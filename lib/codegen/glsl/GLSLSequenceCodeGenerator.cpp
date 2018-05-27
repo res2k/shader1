@@ -88,8 +88,8 @@ namespace s1
       {
         // Component-wise multiplication is done via a builtin function in GLSL
         if ((op == ArithmeticOp::Mul)
-            && (source1->GetOriginalType ()->GetTypeClass () == parser::SemanticsHandler::Type::Matrix)
-            && (source2->GetOriginalType ()->GetTypeClass () == parser::SemanticsHandler::Type::Matrix))
+            && (source1->GetOriginalType ()->GetTypeClass () == semantics::Handler::Type::Matrix)
+            && (source2->GetOriginalType ()->GetTypeClass () == semantics::Handler::Type::Matrix))
         {
           AnnotatingSequenceCodeGenerator::Visitor::OpArith (destination, op, source1, source2);
           EmitFunctionCall (destination, "matrixCompMult", source1, source2);
@@ -105,7 +105,7 @@ namespace s1
                                                                  const RegisterPtr& source2)
       {
         // Component-wise comparison between vectors is done via a builtin function in GLSL
-        if (source1->GetOriginalType ()->GetTypeClass () == parser::SemanticsHandler::Type::Vector)
+        if (source1->GetOriginalType ()->GetTypeClass () == semantics::Handler::Type::Vector)
         {
           AnnotatingSequenceCodeGenerator::Visitor::OpCompare (destination, op, source1, source2);
           const char* funcName = nullptr;

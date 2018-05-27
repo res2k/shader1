@@ -305,16 +305,16 @@ namespace s1
       SequenceOpPtr newOp;
       switch (srcType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         newOp = new intermediate::SequenceOpConst (dest, val.i);
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         newOp = new intermediate::SequenceOpConst (dest, val.ui);
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         newOp = new intermediate::SequenceOpConst (dest, val.f);
         break;
-      case parser::SemanticsHandler::Bool:
+      case semantics::Handler::Bool:
         newOp = new intermediate::SequenceOpConst (dest, val.b);
         break;
       default:
@@ -382,13 +382,13 @@ namespace s1
     {
       switch (srcType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         target = TargetType (sourceVal->comp[0].i);
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         target = TargetType (sourceVal->comp[0].ui);
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         target = TargetType (sourceVal->comp[0].f);
         break;
       default:
@@ -406,7 +406,7 @@ namespace s1
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
 
         intermediate::Sequence::TypePtr srcType (source->GetOriginalType());
-        assert (srcType->GetTypeClass() == parser::SemanticsHandler::Type::Base);
+        assert (srcType->GetTypeClass() == semantics::Handler::Type::Base);
 
         switch (destType)
         {
@@ -592,11 +592,11 @@ namespace s1
         unsigned int rows1, cols1;
         switch (source1->GetOriginalType ()->GetTypeClass ())
         {
-        case parser::SemanticsHandler::Type::Matrix:
+        case semantics::Handler::Type::Matrix:
           rows1 = source1->GetOriginalType ()->GetMatrixTypeRows ();
           cols1 = source1->GetOriginalType ()->GetMatrixTypeCols ();
           break;
-        case parser::SemanticsHandler::Type::Vector:
+        case semantics::Handler::Type::Vector:
           rows1 = 1;
           cols1 = source1->GetOriginalType ()->GetVectorTypeComponents ();
           break;
@@ -606,11 +606,11 @@ namespace s1
         unsigned int rows2, cols2;
         switch (source2->GetOriginalType ()->GetTypeClass ())
         {
-        case parser::SemanticsHandler::Type::Matrix:
+        case semantics::Handler::Type::Matrix:
           rows2 = source2->GetOriginalType ()->GetMatrixTypeRows ();
           cols2 = source2->GetOriginalType ()->GetMatrixTypeCols ();
           break;
-        case parser::SemanticsHandler::Type::Vector:
+        case semantics::Handler::Type::Vector:
           rows2 = source2->GetOriginalType ()->GetVectorTypeComponents ();
           cols2 = 1;
           break;
@@ -757,21 +757,21 @@ namespace s1
         ConstantValPtr srcVal (srcConst->second);
 
         intermediate::Sequence::TypePtr compType (source->GetOriginalType()->GetArrayVectorMatrixBaseType());
-        assert (compType->GetTypeClass() == parser::SemanticsHandler::Type::Base);
+        assert (compType->GetTypeClass() == semantics::Handler::Type::Base);
 
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
         switch (compType->GetBaseType())
         {
-        case parser::SemanticsHandler::Int:
+        case semantics::Handler::Int:
           newVal->comp[0].i = srcVal->comp[comp].i;
           break;
-        case parser::SemanticsHandler::UInt:
+        case semantics::Handler::UInt:
           newVal->comp[0].ui = srcVal->comp[comp].ui;
           break;
-        case parser::SemanticsHandler::Float:
+        case semantics::Handler::Float:
           newVal->comp[0].f = srcVal->comp[comp].f;
           break;
-        case parser::SemanticsHandler::Bool:
+        case semantics::Handler::Bool:
           newVal->comp[0].b = srcVal->comp[comp].b;
           break;
         default:
@@ -794,15 +794,15 @@ namespace s1
     {
       switch (srcType->GetTypeClass())
       {
-      case parser::SemanticsHandler::Type::Base:
+      case semantics::Handler::Type::Base:
         nComps = 1;
         baseType = srcType;
         break;
-      case parser::SemanticsHandler::Type::Vector:
+      case semantics::Handler::Type::Vector:
         nComps = srcType->GetVectorTypeComponents();
         baseType = srcType->GetArrayVectorMatrixBaseType();
         break;
-      case parser::SemanticsHandler::Type::Matrix:
+      case semantics::Handler::Type::Matrix:
         nComps = srcType->GetMatrixTypeCols() * srcType->GetMatrixTypeRows();
         baseType = srcType->GetArrayVectorMatrixBaseType();
         break;
@@ -821,20 +821,20 @@ namespace s1
       intermediate::BasicType basicType;
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int: 	basicType = intermediate::BasicType::Int; break;
-      case parser::SemanticsHandler::UInt: 	basicType = intermediate::BasicType::UInt; break;
-      case parser::SemanticsHandler::Float: 	basicType = intermediate::BasicType::Float; break;
-      case parser::SemanticsHandler::Bool: 	basicType = intermediate::BasicType::Bool; break;
+      case semantics::Handler::Int: 	basicType = intermediate::BasicType::Int; break;
+      case semantics::Handler::UInt: 	basicType = intermediate::BasicType::UInt; break;
+      case semantics::Handler::Float: 	basicType = intermediate::BasicType::Float; break;
+      case semantics::Handler::Bool: 	basicType = intermediate::BasicType::Bool; break;
       default: S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
 
       SequenceOpPtr newOp;
       switch (destType->GetTypeClass())
       {
-      case parser::SemanticsHandler::Type::Base:
+      case semantics::Handler::Type::Base:
         newOp = MakeConstOp (destination, destType, newVal->comp[0]);
         break;
-      case parser::SemanticsHandler::Type::Vector:
+      case semantics::Handler::Type::Vector:
         {
           std::vector<RegisterPtr> vecRegs;
           for (size_t c = 0; c < nComps; c++)
@@ -846,7 +846,7 @@ namespace s1
           newOp = new intermediate::SequenceOpMakeVector (destination, basicType, vecRegs);
         }
         break;
-      case parser::SemanticsHandler::Type::Matrix:
+      case semantics::Handler::Type::Matrix:
         {
           std::vector<RegisterPtr> matRegs;
           for (size_t c = 0; c < nComps; c++)
@@ -878,16 +878,16 @@ namespace s1
     {
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         result = static_cast<T> (func(src1Val.i, src2Val.i));
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         result = static_cast<T> (func(src1Val.ui, src2Val.ui));
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         result = static_cast<T> (func (src1Val.f, src2Val.f));
         break;
-      case parser::SemanticsHandler::Bool:
+      case semantics::Handler::Bool:
         result = static_cast<T> (func(src1Val.b, src2Val.b));
         break;
       default:
@@ -921,19 +921,19 @@ namespace s1
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
         switch (baseTypeDst->GetBaseType())
         {
-        case parser::SemanticsHandler::Int:
+        case semantics::Handler::Int:
           for (size_t c = 0; c < nComps; c++)
             Functor2Call (newVal->comp[c].i, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
-        case parser::SemanticsHandler::UInt:
+        case semantics::Handler::UInt:
           for (size_t c = 0; c < nComps; c++)
             Functor2Call (newVal->comp[c].ui, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
-        case parser::SemanticsHandler::Float:
+        case semantics::Handler::Float:
           for (size_t c = 0; c < nComps; c++)
             Functor2Call (newVal->comp[c].f, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
-        case parser::SemanticsHandler::Bool:
+        case semantics::Handler::Bool:
           for (size_t c = 0; c < nComps; c++)
             Functor2Call (newVal->comp[c].b, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
@@ -1059,19 +1059,19 @@ namespace s1
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
         switch (baseType->GetBaseType())
         {
-        case parser::SemanticsHandler::Int:
+        case semantics::Handler::Int:
           for (size_t c = 0; c < nComps; c++)
             newVal->comp[c].i = func (srcVal->comp[c].i);
           break;
-        case parser::SemanticsHandler::UInt:
+        case semantics::Handler::UInt:
           for (size_t c = 0; c < nComps; c++)
             newVal->comp[c].ui = func (srcVal->comp[c].ui);
           break;
-        case parser::SemanticsHandler::Float:
+        case semantics::Handler::Float:
           for (size_t c = 0; c < nComps; c++)
             newVal->comp[c].f = func (srcVal->comp[c].f);
           break;
-        case parser::SemanticsHandler::Bool:
+        case semantics::Handler::Bool:
           for (size_t c = 0; c < nComps; c++)
             newVal->comp[c].b = func (srcVal->comp[c].b);
           break;
@@ -1322,7 +1322,7 @@ namespace s1
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         {
           int sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1332,7 +1332,7 @@ namespace s1
           newVal->comp[0].i = sum;
         }
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         {
           unsigned int sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1342,7 +1342,7 @@ namespace s1
           newVal->comp[0].ui = sum;
         }
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1375,7 +1375,7 @@ namespace s1
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         {
           for (size_t c = 0; c < 3; c++)
           {
@@ -1385,7 +1385,7 @@ namespace s1
           }
         }
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         {
           for (size_t c = 0; c < 3; c++)
           {
@@ -1395,7 +1395,7 @@ namespace s1
           }
         }
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         {
           for (size_t c = 0; c < 3; c++)
           {
@@ -1429,7 +1429,7 @@ namespace s1
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1439,7 +1439,7 @@ namespace s1
             newVal->comp[c].f = source->comp[c].i * invnorm;
         }
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1449,7 +1449,7 @@ namespace s1
             newVal->comp[c].f = source->comp[c].ui * invnorm;
         }
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1484,7 +1484,7 @@ namespace s1
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1493,7 +1493,7 @@ namespace s1
           newVal->comp[0].f = len;
         }
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1502,7 +1502,7 @@ namespace s1
           newVal->comp[0].f = len;
         }
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         {
           float sum (0);
           for (size_t c = 0; c < nComps; c++)
@@ -1538,7 +1538,7 @@ namespace s1
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int:
+      case semantics::Handler::Int:
         {
           for (unsigned int r = 0; r < src1Rows; r++)
           {
@@ -1557,7 +1557,7 @@ namespace s1
           }
         }
         break;
-      case parser::SemanticsHandler::UInt:
+      case semantics::Handler::UInt:
         {
           for (unsigned int r = 0; r < src1Rows; r++)
           {
@@ -1576,7 +1576,7 @@ namespace s1
           }
         }
         break;
-      case parser::SemanticsHandler::Float:
+      case semantics::Handler::Float:
         {
           for (unsigned int r = 0; r < src1Rows; r++)
           {

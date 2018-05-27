@@ -94,10 +94,10 @@ namespace s1
         const auto& paramFreqs = func->GetParameterFrequencies ();
         for (const auto& param : params)
         {
-          if (param.dir & parser::SemanticsHandler::Scope::dirIn)
+          if (param.dir & semantics::Handler::Scope::dirIn)
           {
             // TODO: Emit global vars
-            if (param.paramType < parser::SemanticsHandler::Scope::ptAutoGlobal)
+            if (param.paramType < semantics::Handler::Scope::ptAutoGlobal)
             {
               boost::optional<size_t> arraySize;
               {

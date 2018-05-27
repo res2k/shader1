@@ -1450,7 +1450,7 @@ namespace s1
     }
 
     s1::intermediate::RegisterPtr
-    SequenceSplitter::AllocateRegister (const s1::parser::SemanticsHandler::TypePtr& originalType,
+    SequenceSplitter::AllocateRegister (const semantics::Handler::TypePtr& originalType,
                                         const uc::String& name)
     {
       // Generate registers for all output sequences are the same across all frequency program. (Makes life easier.)

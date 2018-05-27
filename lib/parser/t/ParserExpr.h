@@ -651,7 +651,7 @@ public:
     TestSemanticsHandler::ScopePtr scope (
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
-    s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    s1::semantics::Handler::Scope::FunctionFormalParameters params;
     scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
 			TestSemanticsHandler::ExpressionPtr (), false);
     scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);
@@ -679,7 +679,7 @@ public:
     TestSemanticsHandler::ScopePtr scope (
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
-    s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    s1::semantics::Handler::Scope::FunctionFormalParameters params;
     scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("a"),
 			TestSemanticsHandler::ExpressionPtr (), false);
     scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("b"),
@@ -710,7 +710,7 @@ public:
     TestSemanticsHandler::ScopePtr scope (
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
-    s1::parser::SemanticsHandler::Scope::FunctionFormalParameters params;
+    s1::semantics::Handler::Scope::FunctionFormalParameters params;
     scope->AddVariable (TestSemanticsHandler::TypePtr (), s1::uc::String ("x"),
                         TestSemanticsHandler::ExpressionPtr (), false);
     scope->AddFunction (TestSemanticsHandler::TypePtr (), s1::uc::String ("Foo"), params);

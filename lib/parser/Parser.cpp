@@ -71,12 +71,12 @@ namespace s1
       : code (code), encountered (encountered), expected (expected) {}
   };
   
-  Parser::Parser (Lexer& inputLexer, SemanticsHandler& semanticsHandler,
+  Parser::Parser (Lexer& inputLexer, semantics::Handler& semanticsHandler,
                   diagnostics::Handler& diagnosticsHandler)
    : inputLexer (inputLexer), semanticsHandler (semanticsHandler),
      diagnosticsHandler (diagnosticsHandler)
   {
-    builtinScope = semanticsHandler.CreateScope (Scope (), SemanticsHandler::Builtin);
+    builtinScope = semanticsHandler.CreateScope (Scope (), semantics::Handler::Builtin);
   }
 
   void Parser::Parse ()
@@ -119,7 +119,7 @@ namespace s1
 
   void Parser::ParseProgram ()
   {
-    Scope globalScope (semanticsHandler.CreateScope (builtinScope, SemanticsHandler::Global));
+    Scope globalScope (semanticsHandler.CreateScope (builtinScope, semantics::Handler::Global));
     auto astProgram = AstBuilder (inputLexer, diagnosticsHandler).ParseProgram ();
     ParseProgramStatements (globalScope, *astProgram);
   }
@@ -286,7 +286,7 @@ namespace s1
         return Expression();
       }
       const auto& idName = idNameResult.value();
-      if (idName->GetType() != SemanticsHandler::Name::Variable)
+      if (idName->GetType() != semantics::Handler::Name::Variable)
       {
         // TODO: Report error?
       }
@@ -320,7 +320,7 @@ namespace s1
 
   Parser::Expression Parser::ParseExprFunctionCall (const Scope& scope, const ast::ExprFunctionCall& astExprFunctionCall)
   {
-    SemanticsHandler::ExpressionVector paramExprs;
+    semantics::Handler::ExpressionVector paramExprs;
     paramExprs.reserve (astExprFunctionCall.args.size());
     for (const auto& paramAstExpr : astExprFunctionCall.args)
     {
@@ -375,23 +375,23 @@ namespace s1
 
   Parser::Expression Parser::ParseExprArithmetic (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
   {
-    SemanticsHandler::ArithmeticOp op;
+    semantics::Handler::ArithmeticOp op;
     switch (astExprBinary.op.typeOrID)
     {
     case lexer::Mult:
-      op = SemanticsHandler::Mul;
+      op = semantics::Handler::Mul;
       break;
     case lexer::Div:
-      op = SemanticsHandler::Div;
+      op = semantics::Handler::Div;
       break;
     case lexer::Mod:
-      op = SemanticsHandler::Mod;
+      op = semantics::Handler::Mod;
       break;
     case lexer::Plus:
-      op = SemanticsHandler::Add;
+      op = semantics::Handler::Add;
       break;
     case lexer::Minus:
-      op = SemanticsHandler::Sub;
+      op = semantics::Handler::Sub;
       break;
     default:
       S1_ASSERT_NOT_REACHED (Parser::Expression ());
@@ -403,19 +403,19 @@ namespace s1
   
   Parser::Expression Parser::ParseExprUnary (const Scope& scope, const parser::ast::ExprUnary& astExprUnary)
   {
-    SemanticsHandler::UnaryOp op;
+    semantics::Handler::UnaryOp op;
     switch (astExprUnary.op.typeOrID)
     {
     default:
       S1_ASSERT_NOT_REACHED (Parser::Expression ());
     case lexer::BitwiseInvert:
-      op = SemanticsHandler::Inv;
+      op = semantics::Handler::Inv;
       break;
     case lexer::LogicInvert:
-      op = SemanticsHandler::Not;
+      op = semantics::Handler::Not;
       break;
     case lexer::Minus:
-      op = SemanticsHandler::Neg;
+      op = semantics::Handler::Neg;
       break;
     }
     return semanticsHandler.CreateUnaryExpression (op, ParseExpression (scope, astExprUnary.right.get()));
@@ -430,26 +430,26 @@ namespace s1
   
   Parser::Expression Parser::ParseExprComparison (const Scope& scope, const parser::ast::ExprBinary& astExprBinary)
   {
-    SemanticsHandler::CompareOp op;
+    semantics::Handler::CompareOp op;
     switch (astExprBinary.op.typeOrID)
     {
     case lexer::Equals:
-      op = SemanticsHandler::Equals;
+      op = semantics::Handler::Equals;
       break;
     case lexer::NotEquals:
-      op = SemanticsHandler::NotEquals;
+      op = semantics::Handler::NotEquals;
       break;
     case lexer::Larger:
-      op = SemanticsHandler::Larger;
+      op = semantics::Handler::Larger;
       break;
     case lexer::LargerEqual:
-      op = SemanticsHandler::LargerEqual;
+      op = semantics::Handler::LargerEqual;
       break;
     case lexer::Smaller:
-      op = SemanticsHandler::Smaller;
+      op = semantics::Handler::Smaller;
       break;
     case lexer::SmallerEqual:
-      op = SemanticsHandler::SmallerEqual;
+      op = semantics::Handler::SmallerEqual;
       break;
     default:
       S1_ASSERT_NOT_REACHED (Parser::Expression ());
@@ -464,11 +464,11 @@ namespace s1
     switch (astExprBinary.op.typeOrID)
     {
     case lexer::LogicOr:
-      return semanticsHandler.CreateLogicExpression (SemanticsHandler::Or,
+      return semanticsHandler.CreateLogicExpression (semantics::Handler::Or,
                                                      ParseExpression (scope, astExprBinary.left.get()),
                                                      ParseExpression (scope, astExprBinary.right.get()));
     case lexer::LogicAnd:
-      return semanticsHandler.CreateLogicExpression (SemanticsHandler::And,
+      return semanticsHandler.CreateLogicExpression (semantics::Handler::And,
                                                      ParseExpression (scope, astExprBinary.left.get()),
                                                      ParseExpression (scope, astExprBinary.right.get()));
     default:
@@ -502,7 +502,7 @@ namespace s1
         return;
       }
       const auto& typeName = typeNameResult.value();
-      if (typeName->GetType() == SemanticsHandler::Name::TypeAlias)
+      if (typeName->GetType() == semantics::Handler::Name::TypeAlias)
       {
         parsedType = typeName->GetAliasedType();
       }
@@ -576,12 +576,12 @@ namespace s1
       }
     }
 
-    return semanticsHandler.CreateType (SemanticsHandler::Invalid);
+    return semanticsHandler.CreateType (semantics::Handler::Invalid);
   }
   
   Parser::Type Parser::ParseTypeBool (const Lexer::Token& /*token*/)
   {
-    return semanticsHandler.CreateType (SemanticsHandler::Bool);
+    return semanticsHandler.CreateType (semantics::Handler::Bool);
   }
   
   Parser::Type Parser::ParseTypeNumeric (bool isUnsigned, const Lexer::Token& token)
@@ -592,11 +592,11 @@ namespace s1
     case lexer::kwInt:
       /* int */
       type = semanticsHandler.CreateType (
-        isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
+        isUnsigned ? semantics::Handler::UInt : semantics::Handler::Int);
       break;
     case lexer::kwFloat:
       /* float */
-      type = semanticsHandler.CreateType (SemanticsHandler::Float);
+      type = semanticsHandler.CreateType (semantics::Handler::Float);
       // TODO: Err if unsigned
       break;
     default:
@@ -611,16 +611,16 @@ namespace s1
     switch (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
-      baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
+      baseType = semanticsHandler.CreateType (semantics::Handler::Bool);
       break;
     case lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-        isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
+        isUnsigned ? semantics::Handler::UInt : semantics::Handler::Int);
       break;
     case lexer::kwFloat:
       /* float */
-      baseType = semanticsHandler.CreateType (SemanticsHandler::Float);
+      baseType = semanticsHandler.CreateType (semantics::Handler::Float);
       break;
     default:
       S1_ASSERT_NOT_REACHED(Type());
@@ -635,16 +635,16 @@ namespace s1
     switch (static_cast<lexer::TokenType> (token.typeOrID & ~lexer::TypeFlagMask))
     {
     case lexer::kwBool:
-      baseType = semanticsHandler.CreateType (SemanticsHandler::Bool);
+      baseType = semanticsHandler.CreateType (semantics::Handler::Bool);
       break;
     case lexer::kwInt:
       /* int */
       baseType = semanticsHandler.CreateType (
-        isUnsigned ? SemanticsHandler::UInt : SemanticsHandler::Int);
+        isUnsigned ? semantics::Handler::UInt : semantics::Handler::Int);
       break;
     case lexer::kwFloat:
       /* float */
-      baseType = semanticsHandler.CreateType (SemanticsHandler::Float);
+      baseType = semanticsHandler.CreateType (semantics::Handler::Float);
       break;
     default:
       S1_ASSERT_NOT_REACHED(Type());
@@ -660,19 +660,19 @@ namespace s1
     {
     case lexer::kwSampler1D:
       /* 1D sampler */
-      type = semanticsHandler.CreateSamplerType (SemanticsHandler::_1D);
+      type = semanticsHandler.CreateSamplerType (semantics::Handler::_1D);
       break;
     case lexer::kwSampler2D:
       /* 2D sampler */
-      type = semanticsHandler.CreateSamplerType (SemanticsHandler::_2D);
+      type = semanticsHandler.CreateSamplerType (semantics::Handler::_2D);
       break;
     case lexer::kwSampler3D:
       /* 3D sampler */
-      type = semanticsHandler.CreateSamplerType (SemanticsHandler::_3D);
+      type = semanticsHandler.CreateSamplerType (semantics::Handler::_3D);
       break;
     case lexer::kwSamplerCUBE:
       /* CUBE sampler */
-      type = semanticsHandler.CreateSamplerType (SemanticsHandler::CUBE);
+      type = semanticsHandler.CreateSamplerType (semantics::Handler::CUBE);
       break;
     default:
       S1_ASSERT_NOT_REACHED(Type());
@@ -692,7 +692,7 @@ namespace s1
     Type returnType;
     if (auto voidResult = boost::get<ast::FunctionDecl::Void> (&astFunctionDecl.resultType))
     {
-      returnType = semanticsHandler.CreateType (SemanticsHandler::Void);
+      returnType = semanticsHandler.CreateType (semantics::Handler::Void);
     }
     else
     {
@@ -701,7 +701,7 @@ namespace s1
     }
     uc::String functionIdentifier = astFunctionDecl.identifier.GetString();
     // Parse formal parameters
-    SemanticsHandler::Scope::FunctionFormalParameters params;
+    semantics::Handler::Scope::FunctionFormalParameters params;
     ParseFuncParamFormal (scope, params, astFunctionDecl);
     // Add function to scope, get block
     Function func (scope->AddFunction (returnType, functionIdentifier, params));
@@ -713,45 +713,45 @@ namespace s1
   }
 
   void Parser::ParseFuncParamFormal (const Scope& scope,
-                                     parser::SemanticsHandler::Scope::FunctionFormalParameters& params,
+                                     semantics::Handler::Scope::FunctionFormalParameters& params,
                                      const parser::ast::FunctionDecl& astFunctionDecl)
   {
     params.reserve (astFunctionDecl.params.size());
     for (const auto& param : astFunctionDecl.params)
     {
       int paramDirection = 0;
-      SemanticsHandler::Scope::FormalParameterFrequency freqQualifier = SemanticsHandler::Scope::freqAuto;
+      semantics::Handler::Scope::FormalParameterFrequency freqQualifier = semantics::Handler::Scope::freqAuto;
       int numFreqQualifiers = 0;
       for (const auto& qualifierToken : param.qualifiers)
       {
         if (qualifierToken.typeOrID == lexer::kwIn)
         {
           // 'in' parameter
-          if ((paramDirection & SemanticsHandler::Scope::dirIn) != 0)
+          if ((paramDirection & semantics::Handler::Scope::dirIn) != 0)
           {
             // TODO: Warn about redundancy
           }
-          paramDirection |= SemanticsHandler::Scope::dirIn;
+          paramDirection |= semantics::Handler::Scope::dirIn;
         }
         else if (qualifierToken.typeOrID == lexer::kwOut)
         {
           // 'out' parameter
-          if ((paramDirection & SemanticsHandler::Scope::dirOut) != 0)
+          if ((paramDirection & semantics::Handler::Scope::dirOut) != 0)
           {
             // TODO: Warn about redundancy
           }
-          paramDirection |= SemanticsHandler::Scope::dirOut;
+          paramDirection |= semantics::Handler::Scope::dirOut;
         }
         else if (qualifierToken.typeOrID == lexer::kwUniform)
         {
           // 'uniform' qualifier
-          freqQualifier = SemanticsHandler::Scope::freqUniform;
+          freqQualifier = semantics::Handler::Scope::freqUniform;
           numFreqQualifiers++;
         }
         else if (qualifierToken.typeOrID == lexer::kwAttribute)
         {
           // 'attribute' qualifier
-          freqQualifier = SemanticsHandler::Scope::freqAttribute;
+          freqQualifier = semantics::Handler::Scope::freqAttribute;
           numFreqQualifiers++;
         }
         else
@@ -760,22 +760,22 @@ namespace s1
         }
       }
       // If no explicit direction is given, use 'in'
-      if (paramDirection == 0) paramDirection = SemanticsHandler::Scope::dirIn;
-      SemanticsHandler::Scope::FunctionFormalParameter newParam;
-      newParam.dir = (SemanticsHandler::Scope::FormalParameterDirection)paramDirection;
+      if (paramDirection == 0) paramDirection = semantics::Handler::Scope::dirIn;
+      semantics::Handler::Scope::FunctionFormalParameter newParam;
+      newParam.dir = (semantics::Handler::Scope::FormalParameterDirection)paramDirection;
       newParam.freqQualifier = freqQualifier;
       newParam.type = ParseType (param.type.get(), scope);
       newParam.identifier = param.identifier.GetString();
       if (param.defaultValue)
       {
         // Handle default value
-        if (paramDirection == SemanticsHandler::Scope::dirOut)
+        if (paramDirection == semantics::Handler::Scope::dirOut)
           ParseError (Error::OutParameterWithDefault);
         else
           newParam.defaultValue = ParseExpression (scope, param.defaultValue.get());
       }
-      if ((((paramDirection & SemanticsHandler::Scope::dirIn) == 0)
-          || ((paramDirection & SemanticsHandler::Scope::dirOut) != 0))
+      if ((((paramDirection & semantics::Handler::Scope::dirIn) == 0)
+          || ((paramDirection & semantics::Handler::Scope::dirOut) != 0))
         && (numFreqQualifiers > 0))
       {
         ParseError (Error::QualifiersNotAllowed);

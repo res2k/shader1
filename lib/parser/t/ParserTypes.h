@@ -33,7 +33,7 @@ class ParserTypesTestSuite : public CxxTest::TestSuite
   class TestParser : public ::TestParser
   {
   public:
-    TestParser (s1::Lexer& inputLexer, s1::parser::SemanticsHandler& semanticsHandler,
+    TestParser (s1::Lexer& inputLexer, s1::semantics::Handler& semanticsHandler,
                 s1::diagnostics::Handler& diagnosticsHandler)
      : ::TestParser (inputLexer, semanticsHandler, diagnosticsHandler) {}
     
@@ -57,7 +57,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Bool);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Bool);
   }
   
   void testTypeInt (void)
@@ -76,7 +76,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Int);
   }
   
   void testTypeUInt (void)
@@ -95,7 +95,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::UInt);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::UInt);
   }
   
   void testTypeFloat (void)
@@ -114,7 +114,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (testType->base, s1::parser::SemanticsHandler::Float);
+    TS_ASSERT_EQUALS (testType->base, s1::semantics::Handler::Float);
   }
   
   void testTypeSampler1D (void)
@@ -133,7 +133,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::parser::SemanticsHandler::_1D);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::_1D);
   }
   
   void testTypeSampler2D (void)
@@ -152,7 +152,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::parser::SemanticsHandler::_2D);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::_2D);
   }
   
   void testTypeSampler3D (void)
@@ -171,7 +171,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::parser::SemanticsHandler::_3D);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::_3D);
   }
   
   void testTypeSamplerCUBE (void)
@@ -190,7 +190,7 @@ public:
     TestSemanticsHandler::TestType* testType = 
       static_cast<TestSemanticsHandler::TestType*> (type.get());
     TS_ASSERT_EQUALS (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-    TS_ASSERT_EQUALS (testType->sampler, s1::parser::SemanticsHandler::CUBE);
+    TS_ASSERT_EQUALS (testType->sampler, s1::semantics::Handler::CUBE);
   }
   
   void testTypeVectorBool (void)
@@ -213,7 +213,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::Bool);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::Bool);
   }
   
   void testTypeVectorInt (void)
@@ -236,7 +236,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::Int);
   }
   
   void testTypeVectorUInt (void)
@@ -259,7 +259,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::UInt);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::UInt);
   }
   
   void testTypeVectorFloat (void)
@@ -282,7 +282,7 @@ public:
     TestSemanticsHandler::TestType* vecType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (vecType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (vecType->base, s1::parser::SemanticsHandler::Float);
+    TS_ASSERT_EQUALS (vecType->base, s1::semantics::Handler::Float);
   }
   
   void testTypeMatrixBool (void)
@@ -306,7 +306,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::Bool);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::Bool);
   }
   
   void testTypeMatrixInt (void)
@@ -330,7 +330,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::Int);
   }
   
   void testTypeMatrixUInt (void)
@@ -354,7 +354,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::UInt);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::UInt);
   }
   
   void testTypeMatrixFloat (void)
@@ -378,7 +378,7 @@ public:
     TestSemanticsHandler::TestType* matType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (matType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (matType->base, s1::parser::SemanticsHandler::Float);
+    TS_ASSERT_EQUALS (matType->base, s1::semantics::Handler::Float);
   }
   
   void testTypeArray (void)
@@ -400,7 +400,7 @@ public:
     TestSemanticsHandler::TestType* arrType = 
       static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
     TS_ASSERT_EQUALS (arrType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (arrType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (arrType->base, s1::semantics::Handler::Int);
   }
   
   void testTypeArrayArray (void)
@@ -425,6 +425,6 @@ public:
     TestSemanticsHandler::TestType* arrType = 
       static_cast<TestSemanticsHandler::TestType*> (arrArrType->avmBase.get());
     TS_ASSERT_EQUALS (arrType->typeClass, TestSemanticsHandler::TestType::Base);
-    TS_ASSERT_EQUALS (arrType->base, s1::parser::SemanticsHandler::Int);
+    TS_ASSERT_EQUALS (arrType->base, s1::semantics::Handler::Int);
   }
 };
