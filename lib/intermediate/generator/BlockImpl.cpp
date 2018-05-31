@@ -538,7 +538,7 @@ namespace s1
       }
     }
 
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const Expression& expr, Error code)
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::ExpressionError (const semantics::Expression& expr, Error code)
     {
       handler->ExpressionError (static_cast<const ExpressionImpl&> (expr).GetExpressionContext(), code);
     }

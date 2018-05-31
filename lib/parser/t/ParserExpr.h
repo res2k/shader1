@@ -47,7 +47,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -68,7 +68,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -89,7 +89,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -110,7 +110,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -131,7 +131,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -152,7 +152,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -173,7 +173,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -194,7 +194,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -215,7 +215,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -236,7 +236,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -257,7 +257,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -278,7 +278,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -299,7 +299,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -320,7 +320,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -341,7 +341,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -362,7 +362,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -383,7 +383,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -404,7 +404,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -425,7 +425,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -448,7 +448,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
 
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -473,7 +473,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
 
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 2u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -500,7 +500,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
 
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -523,7 +523,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -544,7 +544,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -565,7 +565,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -586,7 +586,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -607,7 +607,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -628,7 +628,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global));
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -653,10 +653,10 @@ public:
 				    TestSemanticsHandler::Global)); 
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
-			TestSemanticsHandler::ExpressionPtr (), false);
+			s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -681,14 +681,14 @@ public:
 				    TestSemanticsHandler::Global)); 
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("a"),
-			TestSemanticsHandler::ExpressionPtr (), false);
+			s1::semantics::ExpressionPtr (), false);
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("b"),
-			TestSemanticsHandler::ExpressionPtr (), false);
+			s1::semantics::ExpressionPtr (), false);
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
-			TestSemanticsHandler::ExpressionPtr (), false);
+			s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -712,10 +712,10 @@ public:
                                     TestSemanticsHandler::Global));
     s1::semantics::Handler::Scope::FunctionFormalParameters params;
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
-                        TestSemanticsHandler::ExpressionPtr (), false);
+                        s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
 
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -738,7 +738,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -759,7 +759,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
 				    TestSemanticsHandler::Global)); 
     
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr = 
@@ -780,7 +780,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
 
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestExpressionBase* testExpr =
@@ -803,7 +803,7 @@ public:
       semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
                                     TestSemanticsHandler::Global));
 
-    TestSemanticsHandler::ExpressionPtr expr;
+    s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,

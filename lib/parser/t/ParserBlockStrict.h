@@ -60,7 +60,7 @@ public:
     TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, false);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -96,7 +96,7 @@ public:
       TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -113,7 +113,7 @@ public:
       TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -150,7 +150,7 @@ public:
       TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -167,7 +167,7 @@ public:
       TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+      TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
       TS_ASSERT_EQUALS (testName->varConstant, false);
       TestSemanticsHandler::TestType* testType =
         static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -203,7 +203,7 @@ public:
     TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+    TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::ExpressionPtr ());
     TestSemanticsHandler::TestExpressionBase* testExpr =
       static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
     TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
@@ -268,7 +268,7 @@ public:
       TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+      TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::ExpressionPtr ());
       TestSemanticsHandler::TestExpressionBase* testExpr =
         static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
       TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
@@ -318,7 +318,7 @@ public:
       TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
       TestSemanticsHandler::TestName* testName =
         static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-      TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+      TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::ExpressionPtr ());
       TestSemanticsHandler::TestExpressionBase* testExpr =
         static_cast<TestSemanticsHandler::TestExpressionBase*> (testName->varValue.get());
       TS_ASSERT_EQUALS (testExpr->GetExprString(), "(1 + 2)");
@@ -357,7 +357,7 @@ public:
     TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+    TS_ASSERT_DIFFERS (testName->varValue, s1::semantics::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, true);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -397,7 +397,7 @@ public:
     TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, true);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -495,7 +495,7 @@ public:
     TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, false);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());
@@ -569,7 +569,7 @@ public:
     TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
     TestSemanticsHandler::TestName* testName =
       static_cast<TestSemanticsHandler::TestName*> (varRequested.get());
-    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::Handler::ExpressionPtr ());
+    TS_ASSERT_EQUALS (testName->varValue, s1::semantics::ExpressionPtr ());
     TS_ASSERT_EQUALS (testName->varConstant, false);
     TestSemanticsHandler::TestType* testType =
       static_cast<TestSemanticsHandler::TestType*> (testName->valueType.get());

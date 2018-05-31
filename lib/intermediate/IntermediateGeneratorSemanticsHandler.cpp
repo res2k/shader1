@@ -65,7 +65,7 @@ namespace s1
     typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef semantics::TypePtr TypePtr;
-    typedef IntermediateGeneratorSemanticsHandler::ExpressionPtr ExpressionPtr;
+    typedef semantics::ExpressionPtr ExpressionPtr;
 
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {

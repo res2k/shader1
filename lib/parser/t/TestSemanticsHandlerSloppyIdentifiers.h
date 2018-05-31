@@ -33,7 +33,8 @@ public:
     
     result_NamePtr ResolveIdentifier (const s1::uc::String& identifier)
     {
-      return s1::semantics::NamePtr (new CommonName (identifier, s1::semantics::TypePtr (), ExpressionPtr (), false));
+      return s1::semantics::NamePtr (new CommonName (identifier, s1::semantics::TypePtr (),
+                                                     s1::semantics::ExpressionPtr (), false));
     }
   };
   

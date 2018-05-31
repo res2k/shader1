@@ -41,7 +41,7 @@ public:
       varAdded =
         scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
-                            s1::semantics::Handler::ExpressionPtr(), false)
+                            s1::semantics::ExpressionPtr(), false)
     );
     s1::semantics::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
@@ -126,13 +126,13 @@ public:
       varAdded1 =
         scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
-                            s1::semantics::Handler::ExpressionPtr(), false)
+                            s1::semantics::ExpressionPtr(), false)
     );
     TS_ASSERT_THROWS_NOTHING(
       varAdded2 =
         scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
-                            s1::semantics::Handler::ExpressionPtr(), false)
+                            s1::semantics::ExpressionPtr(), false)
     );
     TS_ASSERT(!varAdded2);
   }  
@@ -150,7 +150,7 @@ public:
       varAdded =
         scopeOuter->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                                  s1::uc::String ("a"), 
-                                 s1::semantics::Handler::ExpressionPtr(), false)
+                                 s1::semantics::ExpressionPtr(), false)
     );
     s1::semantics::Handler::ScopePtr scopeInner (
       semanticsHandler.CreateScope (scopeOuter,

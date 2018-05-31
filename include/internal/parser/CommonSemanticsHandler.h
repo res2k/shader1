@@ -125,14 +125,14 @@ namespace s1
          */
         semantics::TypePtr valueType;
         // Variables/Constants: value
-        ExpressionPtr varValue;
+        semantics::ExpressionPtr varValue;
         // Distinguish between variable/constant
         bool varConstant;
         
         CommonName (const uc::String& identifier, NameType type, semantics::TypePtr typeOfName)
          : identifier (identifier), type (type), valueType (typeOfName) {}
         CommonName (const uc::String& identifier, semantics::TypePtr typeOfName,
-                    ExpressionPtr value, bool constant)
+                    semantics::ExpressionPtr value, bool constant)
          : identifier (identifier), type (Variable), valueType (typeOfName),
            varValue (value), varConstant (constant) {}
         
@@ -173,7 +173,7 @@ namespace s1
         
         semantics::NamePtr AddVariable (semantics::TypePtr type,
           const uc::String& identifier,
-          ExpressionPtr initialValue,
+          semantics::ExpressionPtr initialValue,
           bool constant);
           
         semantics::NamePtr AddTypeAlias (semantics::TypePtr aliasedType,

@@ -412,7 +412,7 @@ namespace s1
 
     semantics::NamePtr
     CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
-                                                      ExpressionPtr initialValue, bool constant)
+                                                      semantics::ExpressionPtr initialValue, bool constant)
     {
       if (!CheckIdentifierUnique (identifier))
       {

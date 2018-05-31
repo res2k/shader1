@@ -19,12 +19,13 @@
 #define __INTERMEDIATE_EXPRESSIONIMPL_H__
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "semantics/Expression.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::ExpressionImpl : public Expression
+    class IntermediateGeneratorSemanticsHandler::ExpressionImpl : public semantics::Expression
     {
     protected:
       IntermediateGeneratorSemanticsHandler* handler;

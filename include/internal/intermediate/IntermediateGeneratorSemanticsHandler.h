@@ -40,6 +40,8 @@ namespace s1
     protected:
       friend class ProgramFunction;
 
+      typedef semantics::ExpressionPtr ExpressionPtr;
+
       struct TypeImpl;
       struct NameImpl;
       class FunctionImpl;

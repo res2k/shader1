@@ -19,6 +19,7 @@
 #define __TESTSEMANTICSHANDLER_H__
 
 #include "parser/CommonSemanticsHandler.h"
+#include "semantics/Expression.h"
 
 #include <vector>
 
@@ -54,7 +55,7 @@ public:
     
     s1::semantics::NamePtr AddVariable (s1::semantics::TypePtr type,
       const s1::uc::String& identifier,
-      ExpressionPtr initialValue,
+      s1::semantics::ExpressionPtr initialValue,
       bool constant);
       
     s1::semantics::NamePtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
@@ -77,12 +78,12 @@ public:
   typedef CommonType TestType;
   typedef CommonName TestName;
   
-  struct TestExpressionBase : public Expression
+  struct TestExpressionBase : public s1::semantics::Expression
   {
     virtual const std::string& GetExprStringImpl() = 0;
     virtual s1::semantics::TypePtr GetValueType() = 0;
 
-    static std::string GetExprString (ExpressionPtr expr);
+    static std::string GetExprString (s1::semantics::ExpressionPtr expr);
     std::string GetExprString ();
   };
   
@@ -98,7 +99,7 @@ public:
     }
   }
 
-  static std::string GetExprString (ExpressionPtr expr)
+  static std::string GetExprString (s1::semantics::ExpressionPtr expr)
   {
     return GetExprString (static_cast<TestExpressionBase*> (expr.get ()));
   }
@@ -135,7 +136,7 @@ public:
     std::string str;
     s1::semantics::TypePtr valueType;
     
-    TestExpressionOp (const char* op, ExpressionPtr left, ExpressionPtr right)
+    TestExpressionOp (const char* op, s1::semantics::ExpressionPtr left, s1::semantics::ExpressionPtr right)
     {
       str = "(";
       str.append (GetExprString (left));
@@ -157,7 +158,7 @@ public:
     std::string str;
     s1::semantics::TypePtr valueType;
     
-    TestExpressionUnary (const char* op, ExpressionPtr right)
+    TestExpressionUnary (const char* op, s1::semantics::ExpressionPtr right)
     {
       str = op;
       str.append (GetExprString (right));
@@ -173,7 +174,7 @@ public:
     std::string str;
     s1::semantics::TypePtr valueType;
     
-    TestExpressionTernary (ExpressionPtr condition, ExpressionPtr ifExpr, ExpressionPtr thenExpr)
+    TestExpressionTernary (s1::semantics::ExpressionPtr condition, s1::semantics::ExpressionPtr ifExpr, s1::semantics::ExpressionPtr thenExpr)
     {
       str = "(";
       str.append (GetExprString (condition));
@@ -195,7 +196,7 @@ public:
     std::string str;
     s1::semantics::TypePtr valueType;
     
-    TestExpressionAttr (ExpressionPtr base, const s1::uc::String& attr,
+    TestExpressionAttr (s1::semantics::ExpressionPtr base, const s1::uc::String& attr,
 			TestSemanticsHandler& handler)
     {
       std::string attrStr;
@@ -221,7 +222,7 @@ public:
     std::string str;
     s1::semantics::TypePtr valueType;
     
-    TestExpressionArray (ExpressionPtr base, ExpressionPtr index)
+    TestExpressionArray (s1::semantics::ExpressionPtr base, s1::semantics::ExpressionPtr index)
     {
       str = GetExprString(base);
       str.append ("[");
@@ -293,49 +294,49 @@ public:
     s1::semantics::TypePtr GetValueType() { return valueType; }
   };
   
-  ExpressionPtr CreateConstBoolExpression (bool value)
+  s1::semantics::ExpressionPtr CreateConstBoolExpression (bool value)
   {
-    return ExpressionPtr (new TestExpressionConst (value ? "true" : "false",
+    return s1::semantics::ExpressionPtr (new TestExpressionConst (value ? "true" : "false",
 						   CreateType (s1::semantics::BaseType::Bool)));
   }
   
-  ExpressionPtr CreateConstNumericExpression (const s1::uc::String& valueStr)
+  s1::semantics::ExpressionPtr CreateConstNumericExpression (const s1::uc::String& valueStr)
   {
     std::string str;
     valueStr.toUTF8String (str);
-    return ExpressionPtr (new TestExpressionConst (str,
+    return s1::semantics::ExpressionPtr (new TestExpressionConst (str,
       CreateType (DetectNumericType (valueStr))));
   }
   
-  ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)
+  s1::semantics::ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)
   {
-    return ExpressionPtr (new TestExpressionVar (
+    return s1::semantics::ExpressionPtr (new TestExpressionVar (
       static_cast<CommonName*> (name.get())->identifier,
       static_cast<CommonName*> (name.get())->valueType));
   }
   
-  ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
-				       const s1::uc::String& attr)
+  s1::semantics::ExpressionPtr CreateAttributeAccess (s1::semantics::ExpressionPtr expr,
+                                                      const s1::uc::String& attr)
   {
-    return ExpressionPtr (new TestExpressionAttr (expr, attr, *this));
+    return s1::semantics::ExpressionPtr (new TestExpressionAttr (expr, attr, *this));
   }
       
-  ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
-					  ExpressionPtr elementExpr)
+  s1::semantics::ExpressionPtr CreateArrayElementAccess (s1::semantics::ExpressionPtr arrayExpr,
+                                                         s1::semantics::ExpressionPtr elementExpr)
   {
-    return ExpressionPtr (new TestExpressionArray (arrayExpr, elementExpr));
+    return s1::semantics::ExpressionPtr (new TestExpressionArray (arrayExpr, elementExpr));
   }
   
-  ExpressionPtr CreateAssignExpression (ExpressionPtr target,
-				        ExpressionPtr value)
+  s1::semantics::ExpressionPtr CreateAssignExpression (s1::semantics::ExpressionPtr target,
+                                                       s1::semantics::ExpressionPtr value)
   {
-    return ExpressionPtr (new TestExpressionOp ("=",
+    return s1::semantics::ExpressionPtr (new TestExpressionOp ("=",
       target, value));
   }
-						
-  ExpressionPtr CreateArithmeticExpression (ArithmeticOp op,
-					    ExpressionPtr operand1,
-					    ExpressionPtr operand2)
+
+  s1::semantics::ExpressionPtr CreateArithmeticExpression (ArithmeticOp op,
+                                                           s1::semantics::ExpressionPtr operand1,
+                                                           s1::semantics::ExpressionPtr operand2)
   {
     const char* opStr = 0;
     switch (op)
@@ -346,12 +347,12 @@ public:
     case Div:	opStr = "/"; break;
     case Mod:	opStr = "%"; break;
     }
-    return ExpressionPtr (new TestExpressionOp (opStr,
+    return s1::semantics::ExpressionPtr (new TestExpressionOp (opStr,
       operand1, operand2));
   }
   
-  ExpressionPtr CreateUnaryExpression (UnaryOp op,
-				       ExpressionPtr operand)
+  s1::semantics::ExpressionPtr CreateUnaryExpression (UnaryOp op,
+                                                      s1::semantics::ExpressionPtr operand)
   {
     const char* opStr = 0;
     switch (op)
@@ -360,19 +361,19 @@ public:
     case Inv:	opStr = "~"; break;
     case Not:	opStr = "!"; break;
     }
-    return ExpressionPtr (new TestExpressionUnary (opStr, operand));
+    return s1::semantics::ExpressionPtr (new TestExpressionUnary (opStr, operand));
   }
-						
-  ExpressionPtr CreateTernaryExpression (ExpressionPtr condition,
-					 ExpressionPtr ifExpr,
-					 ExpressionPtr thenExpr)
+
+  s1::semantics::ExpressionPtr CreateTernaryExpression (s1::semantics::ExpressionPtr condition,
+                                                        s1::semantics::ExpressionPtr ifExpr,
+                                                        s1::semantics::ExpressionPtr thenExpr)
   {
-    return ExpressionPtr (new TestExpressionTernary (condition, ifExpr, thenExpr));
+    return s1::semantics::ExpressionPtr (new TestExpressionTernary (condition, ifExpr, thenExpr));
   }
-						  
-  ExpressionPtr CreateComparisonExpression (CompareOp op,
-					    ExpressionPtr operand1,
-					    ExpressionPtr operand2)
+
+  s1::semantics::ExpressionPtr CreateComparisonExpression (CompareOp op,
+                                                           s1::semantics::ExpressionPtr operand1,
+                                                           s1::semantics::ExpressionPtr operand2)
   {
     const char* opStr = 0;
     switch (op)
@@ -384,13 +385,13 @@ public:
     case Larger:	opStr = ">"; break;
     case LargerEqual:	opStr = ">="; break;
     }
-    return ExpressionPtr (new TestExpressionOp (opStr,
+    return s1::semantics::ExpressionPtr (new TestExpressionOp (opStr,
       operand1, operand2));
   }
 
-  ExpressionPtr CreateLogicExpression (LogicOp op,
-				       ExpressionPtr operand1,
-				       ExpressionPtr operand2)
+  s1::semantics::ExpressionPtr CreateLogicExpression (LogicOp op,
+                                                      s1::semantics::ExpressionPtr operand1,
+                                                      s1::semantics::ExpressionPtr operand2)
   {
     const char* opStr = 0;
     switch (op)
@@ -398,21 +399,21 @@ public:
     case And:	opStr = "&&"; break;
     case Or:	opStr = "||"; break;
     }
-    return ExpressionPtr (new TestExpressionOp (opStr,
+    return s1::semantics::ExpressionPtr (new TestExpressionOp (opStr,
       operand1, operand2));
   }
   
-  ExpressionPtr CreateFunctionCallExpression (s1::semantics::NamePtr funcName,
-					      const ExpressionVector& params)
+  s1::semantics::ExpressionPtr CreateFunctionCallExpression (s1::semantics::NamePtr funcName,
+                                                             const ExpressionVector& params)
   {
-    return ExpressionPtr (new TestExpressionFunction (
+    return s1::semantics::ExpressionPtr (new TestExpressionFunction (
       boost::static_pointer_cast<TestName> (funcName), params));
   }
   
-  ExpressionPtr CreateTypeConstructorExpression (s1::semantics::TypePtr type,
-						 const ExpressionVector& params)
+  s1::semantics::ExpressionPtr CreateTypeConstructorExpression (s1::semantics::TypePtr type,
+                                                                const ExpressionVector& params)
   {
-    return ExpressionPtr (new TestExpressionFunction (
+    return s1::semantics::ExpressionPtr (new TestExpressionFunction (
       boost::static_pointer_cast<TestType> (type), params));
   }
     
@@ -556,36 +557,38 @@ public:
     
     ScopePtr GetInnerScope() { return blockScope; }
     
-    void AddExpressionCommand (ExpressionPtr expr)
+    void AddExpressionCommand (s1::semantics::ExpressionPtr expr)
     {
       CommandExpression cmd (static_cast<TestExpressionBase*> (expr.get()));
       AddCommands (cmd);
     }
-    
-    void AddReturnCommand (ExpressionPtr returnValue)
+
+    void AddReturnCommand (s1::semantics::ExpressionPtr returnValue)
     {
       CommandReturn cmd (static_cast<TestExpressionBase*> (returnValue.get()));
       AddCommands (cmd);
     }
-    
-    void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
-		       BlockPtr elseBlock)
+
+    void AddBranching (s1::semantics::ExpressionPtr branchCondition, BlockPtr ifBlock,
+                       BlockPtr elseBlock)
     {
       CommandIf cmd (static_cast<TestExpressionBase*> (branchCondition.get()),
 		     static_cast<TestBlock*> (ifBlock.get()),
 		     static_cast<TestBlock*> (elseBlock.get()));
       AddCommands (cmd);
     }
-    
-    void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock)
+
+    void AddWhileLoop (s1::semantics::ExpressionPtr loopCond, BlockPtr loopBlock)
     {
       CommandWhile cmd (static_cast<TestExpressionBase*> (loopCond.get()),
 			static_cast<TestBlock*> (loopBlock.get()));
       AddCommands (cmd);
     }
-    
-    void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
-		     BlockPtr loopBlock)
+
+    void AddForLoop (s1::semantics::ExpressionPtr initExpr,
+                     s1::semantics::ExpressionPtr loopCond,
+                     s1::semantics::ExpressionPtr tailExpr,
+                     BlockPtr loopBlock)
     {
       CommandFor cmd (static_cast<TestExpressionBase*> (initExpr.get()),
 		      static_cast<TestExpressionBase*> (loopCond.get()),
@@ -593,7 +596,7 @@ public:
 		      static_cast<TestBlock*> (loopBlock.get()));
       AddCommands (cmd);
     }
-			      
+
     void AddNestedBlock (BlockPtr block)
     {
       CommandBlock cmd (static_cast<TestBlock*> (block.get()));
@@ -608,7 +611,7 @@ public:
   }
 };
 
-inline std::string TestSemanticsHandler::TestExpressionBase::GetExprString (ExpressionPtr expr)
+inline std::string TestSemanticsHandler::TestExpressionBase::GetExprString (s1::semantics::ExpressionPtr expr)
 {
   return TestSemanticsHandler::GetExprString (expr);
 }

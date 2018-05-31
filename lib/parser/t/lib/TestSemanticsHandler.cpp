@@ -44,8 +44,10 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : handler (handler), parent (parent), level (level)
 {}
 
-NamePtr TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type, const s1::uc::String& identifier,
-						  ExpressionPtr initialValue, bool constant)
+NamePtr TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type,
+                                                      const s1::uc::String& identifier,
+                                                      s1::semantics::ExpressionPtr initialValue,
+                                                      bool constant)
 {
   if (!CheckIdentifierUnique (identifier))
   {

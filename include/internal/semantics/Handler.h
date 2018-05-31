@@ -70,12 +70,6 @@ namespace s1
 
       /**\name Expressions
        * @{ */
-      struct Expression
-      {
-        virtual ~Expression() {}
-      };
-      typedef boost::shared_ptr<Expression> ExpressionPtr;
-      
       /// Create an expression for a constant bool value
       virtual ExpressionPtr CreateConstBoolExpression (bool value) = 0;
       /// Create an expression for a numeric value
