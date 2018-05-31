@@ -437,7 +437,7 @@ namespace s1
       return newName;
     }
       
-    CommonSemanticsHandler::FunctionPtr
+    semantics::FunctionPtr
     CommonSemanticsHandler::CommonScope::AddFunction (TypePtr returnType,
                                                       const uc::String& identifier,
                                                       const FunctionFormalParameters& params)
@@ -445,12 +445,12 @@ namespace s1
       if (level >= Function)
       {
         // TODO: Error handling
-        return FunctionPtr();
+        return semantics::FunctionPtr();
       }
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return FunctionPtr();
+        return semantics::FunctionPtr();
       }
       semantics::NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
       identifiers[identifier] = newName;
@@ -458,7 +458,7 @@ namespace s1
       funcScope = handler->CreateScope (shared_from_this(), Function);
       BlockPtr newBlock (handler->CreateBlock (funcScope));
       funcScope = ScopePtr();
-      FunctionPtr newFunction (new CommonFunction (newBlock));
+      semantics::FunctionPtr newFunction (new CommonFunction (newBlock));
       return newFunction;
     }
 

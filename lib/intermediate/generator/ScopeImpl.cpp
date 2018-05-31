@@ -36,7 +36,7 @@ namespace s1
   {
     typedef semantics::NamePtr NamePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
-    typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
+    typedef semantics::FunctionPtr FunctionPtr;
 
     bool IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const uc::String& identifier)
     {

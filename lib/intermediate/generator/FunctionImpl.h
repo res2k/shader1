@@ -19,6 +19,7 @@
 #define __INTERMEDIATE_FUNCTIONIMPL_H__
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "semantics/Function.h"
 
 #include "ScopeImpl.h"
 
@@ -26,7 +27,7 @@ namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::FunctionImpl : public Function
+    class IntermediateGeneratorSemanticsHandler::FunctionImpl : public semantics::Function
     {
       ScopeImpl::FunctionInfoPtr funcInfo;
       BlockPtr block;

@@ -65,7 +65,7 @@ namespace s1
       ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
-      FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
+      semantics::FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
 
       void AddParameter (const FunctionFormalParameter& param);
     public:
@@ -82,7 +82,7 @@ namespace s1
       semantics::NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
         const uc::String& identifier);
 
-      FunctionPtr AddFunction (semantics::TypePtr returnType,
+      semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
         const uc::String& identifier,
         const FunctionFormalParameters& params);
 

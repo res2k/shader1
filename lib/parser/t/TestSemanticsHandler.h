@@ -40,7 +40,7 @@ public:
     boost::shared_ptr<TestScope> parent;
     ScopeLevel level;
 
-    class TestFunction : public Function
+    class TestFunction : public s1::semantics::Function
     {
       BlockPtr block;
     public:
@@ -61,7 +61,7 @@ public:
     s1::semantics::NamePtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
       const s1::uc::String& identifier);
       
-    FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
+    s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,
       const FunctionFormalParameters& params);
   

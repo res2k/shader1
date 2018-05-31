@@ -18,6 +18,7 @@
 #ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
+#include "semantics/Function.h"
 #include "semantics/Handler.h"
 #include "semantics/Name.h"
 #include "semantics/Type.h"
@@ -158,7 +159,7 @@ namespace s1
         boost::shared_ptr<CommonScope> parent;
         ScopeLevel level;
 
-        class CommonFunction : public Function
+        class CommonFunction : public semantics::Function
         {
           BlockPtr block;
         public:
@@ -179,7 +180,7 @@ namespace s1
         semantics::NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
           const uc::String& identifier);
           
-        FunctionPtr AddFunction (semantics::TypePtr returnType,
+        semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
           const uc::String& identifier,
           const FunctionFormalParameters& params);
       

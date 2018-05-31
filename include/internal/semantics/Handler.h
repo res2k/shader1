@@ -125,20 +125,6 @@ namespace s1
                                                           const ExpressionVector& params) = 0;
       /** @} */
 
-      /**\name Functions
-       * @{ */
-      struct Function
-      {
-        virtual ~Function() {}
-
-        /// Get function block to add commands to.
-        virtual BlockPtr GetBody() = 0;
-        /// Finish function. Call after body was filled.
-        virtual void Finish() = 0;
-      };
-      typedef boost::shared_ptr<Function> FunctionPtr;
-      /** @} */
-      
       /**\name Scope
        * @{ */
       

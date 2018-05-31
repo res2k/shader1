@@ -37,6 +37,9 @@ namespace s1
 
     struct Expression;
     typedef boost::shared_ptr<Expression> ExpressionPtr;
+
+    struct Function;
+    typedef boost::shared_ptr<Function> FunctionPtr;
   } // namespace semantics
 } // namespace s1
 
