@@ -38,7 +38,7 @@ class ParserTypesTestSuite : public CxxTest::TestSuite
      : ::TestParser (inputLexer, semanticsHandler, diagnosticsHandler) {}
     
     using s1::Parser::Type;
-    Type ParseType() { return ::TestParser::ParseType (TestSemanticsHandler::ScopePtr()); }
+    Type ParseType() { return ::TestParser::ParseType (s1::semantics::ScopePtr()); }
   };
 public:
   void testTypeBool (void)

@@ -62,7 +62,7 @@ namespace s1
   {
     typedef semantics::NamePtr NamePtr;
     typedef semantics::FunctionPtr FunctionPtr;
-    typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
+    typedef semantics::ScopePtr ScopePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef semantics::TypePtr TypePtr;
     typedef semantics::ExpressionPtr ExpressionPtr;
@@ -202,7 +202,7 @@ namespace s1
 
     ProgramFunctionPtr IntermediateGeneratorSemanticsHandler::SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
                                                                                        const TypePtr& returnType,
-                                                                                       const Scope::FunctionFormalParameters& params)
+                                                                                       const semantics::Scope::FunctionFormalParameters& params)
     {
       std::vector<NamePtr> globalVars (globalScope->GetAllVars ());
       SequencePtr entryFuncSeq;
@@ -215,13 +215,13 @@ namespace s1
         for (const auto& param : params)
         {
           RegisterPtr paramReg;
-          if ((param.dir & Scope::dirIn) != 0)
+          if ((param.dir & semantics::Scope::dirIn) != 0)
           {
             paramReg = AllocateRegister (*entrySeqBuilder, param.type, Imported, param.identifier);
             entrySeqBuilder->SetImport (paramReg, param.identifier);
             inParams.push_back (paramReg);
           }
-          if ((param.dir & Scope::dirOut) != 0)
+          if ((param.dir & semantics::Scope::dirOut) != 0)
           {
             if (paramReg)
               paramReg = AllocateRegister (*entrySeqBuilder, paramReg);
@@ -456,14 +456,14 @@ namespace s1
 
           boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
 
-          semantics::Handler::Scope::FunctionFormalParameters params ((*funcIt)->params);
+          semantics::Scope::FunctionFormalParameters params ((*funcIt)->params);
           TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
           if (!voidType->IsEqual (*retTypeImpl))
           {
-            semantics::Handler::Scope::FunctionFormalParameter retParam;
+            semantics::Scope::FunctionFormalParameter retParam;
             retParam.type = (*funcIt)->returnType;
             retParam.identifier = BlockImpl::varReturnValueName;
-            retParam.dir = semantics::Handler::Scope::dirOut;
+            retParam.dir = semantics::Scope::dirOut;
             params.insert (params.begin(), retParam);
           }
 
@@ -473,7 +473,7 @@ namespace s1
             size_t inputInsertPos = 0;
             while (inputInsertPos < params.size())
             {
-              if (params[inputInsertPos].dir != semantics::Handler::Scope::dirIn) break;
+              if (params[inputInsertPos].dir != semantics::Scope::dirIn) break;
               inputInsertPos++;
             }
             // Augment parameters list with global vars
@@ -481,22 +481,22 @@ namespace s1
             {
               NameImplPtr global (boost::static_pointer_cast<NameImpl> (globalName));
               {
-                semantics::Handler::Scope::FunctionFormalParameter inParam;
-                inParam.paramType = semantics::Handler::Scope::ptAutoGlobal;
+                semantics::Scope::FunctionFormalParameter inParam;
+                inParam.paramType = semantics::Scope::ptAutoGlobal;
                 inParam.type = global->valueType;
                 inParam.identifier = global->identifier;
-                inParam.dir = semantics::Handler::Scope::dirIn;
+                inParam.dir = semantics::Scope::dirIn;
                 params.insert (boost::next (params.begin(), inputInsertPos), inParam);
                 inputInsertPos++;
               }
               if (!global->varConstant)
               {
                 // TODO: Better handling of constants (no need to pass them as params)
-                semantics::Handler::Scope::FunctionFormalParameter outParam;
-                outParam.paramType = semantics::Handler::Scope::ptAutoGlobal;
+                semantics::Scope::FunctionFormalParameter outParam;
+                outParam.paramType = semantics::Scope::ptAutoGlobal;
                 outParam.type = global->valueType;
                 outParam.identifier = global->identifier;
-                outParam.dir = semantics::Handler::Scope::dirOut;
+                outParam.dir = semantics::Scope::dirOut;
                 params.insert (params.end(), outParam);
               }
             }
@@ -717,7 +717,7 @@ namespace s1
     }
 
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
-                                                                 ScopeLevel scopeLevel,
+                                                                 semantics::ScopeLevel scopeLevel,
                                                                  const TypePtr& funcReturnType)
     {
       ScopeImplPtr newScope (boost::make_shared<ScopeImpl> (this,
@@ -726,11 +726,11 @@ namespace s1
                                                             funcReturnType));
       switch (scopeLevel)
       {
-      case semantics::Handler::Builtin:
+      case semantics::ScopeLevel::Builtin:
         builtinScope = newScope;
         SetupBuiltins (builtinScope);
         break;
-      case Global:
+      case semantics::ScopeLevel::Global:
         globalScope = newScope;
         break;
       default:
@@ -741,7 +741,7 @@ namespace s1
 
     BlockPtr IntermediateGeneratorSemanticsHandler::CreateBlock (ScopePtr parentScope)
     {
-      ScopePtr blockScope = CreateScope (parentScope, Function);
+      ScopePtr blockScope = CreateScope (parentScope, semantics::ScopeLevel::Function);
       return BlockPtr (new BlockImpl (this, blockScope));
     }
 

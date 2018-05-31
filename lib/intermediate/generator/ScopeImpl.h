@@ -26,7 +26,7 @@ namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::ScopeImpl : public Scope,
+    class IntermediateGeneratorSemanticsHandler::ScopeImpl : public semantics::Scope,
       public boost::enable_shared_from_this<ScopeImpl>
     {
     public:
@@ -62,7 +62,7 @@ namespace s1
 
       IntermediateGeneratorSemanticsHandler* handler;
       boost::shared_ptr<ScopeImpl> parent;
-      ScopeLevel level;
+      semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
       semantics::FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
@@ -70,9 +70,9 @@ namespace s1
       void AddParameter (const FunctionFormalParameter& param);
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
-                 const boost::shared_ptr<ScopeImpl>& parent, ScopeLevel level,
+                 const boost::shared_ptr<ScopeImpl>& parent, semantics::ScopeLevel level,
                  const semantics::TypePtr& funcReturnType);
-      ScopeLevel GetLevel() const { return level; }
+      semantics::ScopeLevel GetLevel() const { return level; }
 
       semantics::NamePtr AddVariable (semantics::TypePtr type,
         const uc::String& identifier,
@@ -97,7 +97,7 @@ namespace s1
       }
       const std::vector<uc::String>& GetFunctionOutputParams () const
       {
-        if (!parent || (parent->level < Function))
+        if (!parent || (parent->level < semantics::ScopeLevel::Function))
           return outputParams;
         else
           return parent->outputParams;

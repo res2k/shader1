@@ -406,7 +406,7 @@ namespace s1
       
     CommonSemanticsHandler::CommonScope::CommonScope (CommonSemanticsHandler* handler,
                                                       const boost::shared_ptr<CommonScope>& parent,
-                                                      ScopeLevel level)
+                                                      semantics::ScopeLevel level)
      : handler (handler), parent (parent), level (level)
     {}
 
@@ -442,7 +442,7 @@ namespace s1
                                                       const uc::String& identifier,
                                                       const FunctionFormalParameters& params)
     {
-      if (level >= Function)
+      if (level >= semantics::ScopeLevel::Function)
       {
         // TODO: Error handling
         return semantics::FunctionPtr();
@@ -454,10 +454,10 @@ namespace s1
       }
       semantics::NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
       identifiers[identifier] = newName;
-      ScopePtr funcScope;
-      funcScope = handler->CreateScope (shared_from_this(), Function);
+      semantics::ScopePtr funcScope;
+      funcScope = handler->CreateScope (shared_from_this(), semantics::ScopeLevel::Function);
       BlockPtr newBlock (handler->CreateBlock (funcScope));
-      funcScope = ScopePtr();
+      funcScope = semantics::ScopePtr();
       semantics::FunctionPtr newFunction (new CommonFunction (newBlock));
       return newFunction;
     }
@@ -475,10 +475,10 @@ namespace s1
       return Error::IdentifierUndeclared;
     }
     
-    CommonSemanticsHandler::ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,
-                                                                          ScopeLevel scopeLevel)
+    semantics::ScopePtr CommonSemanticsHandler::CreateScope (semantics::ScopePtr parentScope,
+                                                             semantics::ScopeLevel scopeLevel)
     {
-      return ScopePtr (new CommonScope (this,
+      return semantics::ScopePtr (new CommonScope (this,
         boost::static_pointer_cast<CommonScope> (parentScope),
         scopeLevel));
     }

@@ -59,10 +59,10 @@ namespace s1
       intermediate::ProgramFunctionPtr func = intermediateProg->GetFunction (i);
       if (!func->IsEntryFunction()) continue;
       
-      const semantics::Handler::Scope::FunctionFormalParameters& funcParams = func->GetParams();
-      for(const semantics::Handler::Scope::FunctionFormalParameter& param : funcParams)
+      const semantics::Scope::FunctionFormalParameters& funcParams = func->GetParams();
+      for(const semantics::Scope::FunctionFormalParameter& param : funcParams)
       {
-        if (!(param.dir & semantics::Handler::Scope::dirOut)) continue;
+        if (!(param.dir & semantics::Scope::dirOut)) continue;
         
         // Look for float4 output
         if (param.type->GetTypeClass() != semantics::Type::Vector) continue;
@@ -110,13 +110,13 @@ namespace s1
       return type;
   }
 
-  static splitter::Frequency GetDefaultFreq (const semantics::Handler::Scope::FunctionFormalParameter param)
+  static splitter::Frequency GetDefaultFreq (const semantics::Scope::FunctionFormalParameter param)
   {
     switch (param.freqQualifier)
     {
-    case semantics::Handler::Scope::freqAuto:
+    case semantics::Scope::freqAuto:
       // Auto: assume 'uniform', so simply fall through
-    case semantics::Handler::Scope::freqUniform:
+    case semantics::Scope::freqUniform:
       {
         if (GetBaseType (param.type)->GetTypeClass() == semantics::Type::Sampler)
           // Logically, samples are uniform. Internally, they're fragment (at least as long vertex textures aren't supported).
@@ -124,7 +124,7 @@ namespace s1
         else
           return splitter::freqUniform;
       }
-    case semantics::Handler::Scope::freqAttribute:
+    case semantics::Scope::freqAttribute:
       {
         if (GetBaseType (param.type)->GetTypeClass() == semantics::Type::Sampler)
         {
@@ -177,7 +177,7 @@ namespace s1
       S1_ASSERT (entryFunc, Backend::ProgramPtr ());
       for (const auto& entryParam : entryFunc->GetParams ())
       {
-        if ((entryParam.dir & semantics::Handler::Scope::dirOut) != 0) continue;
+        if ((entryParam.dir & semantics::Scope::dirOut) != 0) continue;
         defaultInputParamFreqs[entryParam.identifier] = 1 << GetDefaultFreq (entryParam);
       }
     }

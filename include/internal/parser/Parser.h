@@ -24,6 +24,7 @@
 #include "lexer/Lexer.h"
 #include "parser/Diagnostics_fwd.h"
 #include "semantics/Handler.h"
+#include "semantics/Scope.h"
 
 namespace s1
 {
@@ -46,7 +47,7 @@ namespace s1
     semantics::Handler& semanticsHandler;
     diagnostics::Handler& diagnosticsHandler;
     /// Scope with builtin definitions
-    semantics::Handler::ScopePtr builtinScope;
+    semantics::ScopePtr builtinScope;
 
     // Error handling
     struct ErrorInfo;
@@ -58,7 +59,7 @@ namespace s1
     // Rough structure
     class VisitorProgramStatementImpl;
     typedef semantics::Handler::BlockPtr Block;
-    typedef semantics::Handler::ScopePtr Scope;
+    typedef semantics::ScopePtr Scope;
     void ParseProgram ();
     void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);
     class VisitorBlockStatementImpl;
@@ -93,7 +94,7 @@ namespace s1
     typedef semantics::FunctionPtr Function;
     void ParseFuncDeclare (const Scope& scope, const parser::ast::FunctionDecl& astFunctionDecl);
     void ParseFuncParamFormal (const Scope& scope,
-                               semantics::Handler::Scope::FunctionFormalParameters& params,
+                               semantics::Scope::FunctionFormalParameters& params,
                                const parser::ast::FunctionDecl& astFunctionDecl);
     
     // Variables

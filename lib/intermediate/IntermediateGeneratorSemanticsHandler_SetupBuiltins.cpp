@@ -37,7 +37,7 @@ namespace s1
 {
   namespace intermediate
   {
-    IntermediateGeneratorSemanticsHandler::Scope::FunctionFormalParameters
+    semantics::Scope::FunctionFormalParameters
     IntermediateGeneratorSemanticsHandler::MakeFormalParameters1 (const semantics::TypePtr& type)
     {
       IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameters params;
@@ -51,13 +51,13 @@ namespace s1
       return params;
     }
 
-    IntermediateGeneratorSemanticsHandler::Scope::FunctionFormalParameters
+    semantics::Scope::FunctionFormalParameters
     IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const semantics::TypePtr& type)
     {
       return MakeFormalParameters2 (type, type);
     }
 
-    IntermediateGeneratorSemanticsHandler::Scope::FunctionFormalParameters
+    semantics::Scope::FunctionFormalParameters
     IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const semantics::TypePtr& typeA,
                                                                   const semantics::TypePtr& typeB)
     {

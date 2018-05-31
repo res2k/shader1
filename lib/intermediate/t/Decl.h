@@ -49,8 +49,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Create a block
     TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     // Add some variables

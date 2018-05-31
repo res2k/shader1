@@ -66,7 +66,7 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                  const boost::shared_ptr<ScopeImpl>& parent,
-                                                                 ScopeLevel level,
+                                                                 semantics::ScopeLevel level,
                                                                  const semantics::TypePtr& funcReturnType)
      : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
     {}
@@ -129,7 +129,7 @@ namespace s1
                                                                                const uc::String& identifier,
                                                                                const FunctionFormalParameters& params)
     {
-      if (level >= Function)
+      if (level >= semantics::ScopeLevel::Function)
       {
         handler->ExpressionError (ExpressionContext(), Error::DeclarationNotAllowedInScope);
         return FunctionPtr();
@@ -148,8 +148,8 @@ namespace s1
         identifiers[identifier] = newName;
       }
 
-      ScopePtr funcScope;
-      funcScope = handler->CreateScope (shared_from_this(), Function, returnType);
+      semantics::ScopePtr funcScope;
+      funcScope = handler->CreateScope (shared_from_this(), semantics::ScopeLevel::Function, returnType);
       boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (funcScope));
       for (FunctionFormalParameters::const_iterator param (params.begin());
            param != params.end();
@@ -158,7 +158,7 @@ namespace s1
         funcScopeImpl->AddParameter (*param);
       }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
-      funcScope = ScopePtr();
+      funcScope = semantics::ScopePtr();
 
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
@@ -197,7 +197,7 @@ namespace s1
       return newFunction;
     }
 
-    IntermediateGeneratorSemanticsHandler::Scope::result_NamePtr
+    semantics::Scope::result_NamePtr
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
     {
       NameImplPtr name (ResolveIdentifierInternal (identifier));
@@ -221,7 +221,7 @@ namespace s1
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
     {
-      if (level >= Function)
+      if (level >= semantics::ScopeLevel::Function)
       {
         handler->ExpressionError (ExpressionContext(), Error::DeclarationNotAllowedInScope);
         return;

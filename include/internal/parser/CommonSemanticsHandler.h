@@ -21,6 +21,7 @@
 #include "semantics/Function.h"
 #include "semantics/Handler.h"
 #include "semantics/Name.h"
+#include "semantics/Scope.h"
 #include "semantics/Type.h"
 
 #include <boost/enable_shared_from_this.hpp>
@@ -145,7 +146,7 @@ namespace s1
         semantics::TypePtr GetValueType () { return valueType; }
       };
 
-      class CommonScope : public Scope,
+      class CommonScope : public semantics::Scope,
                           public boost::enable_shared_from_this<CommonScope>
       {
         friend class CommonSemanticsHandler;
@@ -157,7 +158,7 @@ namespace s1
         
         CommonSemanticsHandler* handler;
         boost::shared_ptr<CommonScope> parent;
-        ScopeLevel level;
+        semantics::ScopeLevel level;
 
         class CommonFunction : public semantics::Function
         {
@@ -169,8 +170,8 @@ namespace s1
         };
       public:
         CommonScope (CommonSemanticsHandler* handler,
-                     const boost::shared_ptr<CommonScope>& parent, ScopeLevel level);
-        ScopeLevel GetLevel() const { return level; }
+                     const boost::shared_ptr<CommonScope>& parent, semantics::ScopeLevel level);
+        semantics::ScopeLevel GetLevel() const { return level; }
         
         semantics::NamePtr AddVariable (semantics::TypePtr type,
           const uc::String& identifier,
@@ -197,7 +198,7 @@ namespace s1
                                            unsigned int columns,
                                            unsigned int rows);
       
-      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel);
+      semantics::ScopePtr CreateScope (semantics::ScopePtr parentScope, semantics::ScopeLevel scopeLevel);
     };
     
   } // namespace parser

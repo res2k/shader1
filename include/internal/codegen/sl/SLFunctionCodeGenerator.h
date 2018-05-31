@@ -39,7 +39,7 @@ namespace s1
         const Traits& traits;
         const Options& options;
 
-        typedef semantics::Handler::Scope Scope;
+        typedef semantics::Scope Scope;
         typedef Scope::FunctionFormalParameters FunctionFormalParameters;
 
         typedef boost::unordered_map<uc::String, uc::String> FunctionParamsToIdentifier;

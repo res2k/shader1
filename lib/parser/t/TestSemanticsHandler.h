@@ -26,7 +26,7 @@
 class TestSemanticsHandler : public s1::parser::CommonSemanticsHandler
 {
 public:
-  class TestScope : public Scope,
+  class TestScope : public s1::semantics::Scope,
 		    public boost::enable_shared_from_this<TestScope>
   {
     friend class TestSemanticsHandler;
@@ -38,7 +38,7 @@ public:
     
     TestSemanticsHandler* handler;
     boost::shared_ptr<TestScope> parent;
-    ScopeLevel level;
+    s1::semantics::ScopeLevel level;
 
     class TestFunction : public s1::semantics::Function
     {
@@ -50,8 +50,8 @@ public:
     };
   public:
     TestScope (TestSemanticsHandler* handler,
-	       const boost::shared_ptr<TestScope>& parent, ScopeLevel level);
-    ScopeLevel GetLevel() const { return level; }
+	       const boost::shared_ptr<TestScope>& parent, s1::semantics::ScopeLevel level);
+    s1::semantics::ScopeLevel GetLevel() const { return level; }
     
     s1::semantics::NamePtr AddVariable (s1::semantics::TypePtr type,
       const s1::uc::String& identifier,
@@ -68,9 +68,9 @@ public:
     result_NamePtr ResolveIdentifier (const s1::uc::String& identifier);
   };
   
-  ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
+  s1::semantics::ScopePtr CreateScope (s1::semantics::ScopePtr parentScope, s1::semantics::ScopeLevel scopeLevel)
   {
-    return ScopePtr (new TestScope (this,
+    return s1::semantics::ScopePtr (new TestScope (this,
       boost::static_pointer_cast<TestScope> (parentScope),
       scopeLevel));
   }
@@ -540,9 +540,9 @@ public:
       }
     }
     
-    ScopePtr blockScope;
+    s1::semantics::ScopePtr blockScope;
   public:
-    TestBlock (ScopePtr blockScope) : blockScope (blockScope) {}
+    TestBlock (s1::semantics::ScopePtr blockScope) : blockScope (blockScope) {}
     
     std::string GetBlockString()
     {
@@ -555,7 +555,7 @@ public:
       return s;
     }
     
-    ScopePtr GetInnerScope() { return blockScope; }
+    s1::semantics::ScopePtr GetInnerScope() { return blockScope; }
     
     void AddExpressionCommand (s1::semantics::ExpressionPtr expr)
     {
@@ -604,9 +604,9 @@ public:
     }
   };
   
-  BlockPtr CreateBlock (ScopePtr parentScope)
+  BlockPtr CreateBlock (s1::semantics::ScopePtr parentScope)
   {
-    ScopePtr blockScope = CreateScope (parentScope, Function);
+    s1::semantics::ScopePtr blockScope = CreateScope (parentScope, s1::semantics::ScopeLevel::Function);
     return BlockPtr (new TestBlock (blockScope));
   }
 };

@@ -40,6 +40,23 @@ namespace s1
 
     struct Function;
     typedef boost::shared_ptr<Function> FunctionPtr;
+
+    /**
+     * Levels of scope.
+     * Not all declarations are allowed in all levels.
+     */
+    enum struct ScopeLevel
+    { 
+      /// Builtin functions (and possibly variables+types)
+      Builtin,
+      /// Global functions, variables and types
+      Global,
+      /// Function-local variables and types
+      Function
+    };
+
+    struct Scope;
+    typedef boost::shared_ptr<Scope> ScopePtr;
   } // namespace semantics
 } // namespace s1
 

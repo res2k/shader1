@@ -93,10 +93,10 @@ namespace s1
       ScopeImplPtr globalScope;
 
       // Helper functions for SetupBuiltins
-      Scope::FunctionFormalParameters MakeFormalParameters1 (const semantics::TypePtr& type);
-      Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& type);
-      Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& typeA,
-                                                             const semantics::TypePtr& typeB);
+      semantics::Scope::FunctionFormalParameters MakeFormalParameters1 (const semantics::TypePtr& type);
+      semantics::Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& type);
+      semantics::Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& typeA,
+                                                                        const semantics::TypePtr& typeB);
       void SetupBuiltins (const ScopeImplPtr& scope);
 
       /// Create a sequence containing global vars initialization
@@ -104,7 +104,7 @@ namespace s1
 
       ProgramFunctionPtr SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
                                                   const semantics::TypePtr& returnType,
-                                                  const Scope::FunctionFormalParameters& params);
+                                                  const semantics::Scope::FunctionFormalParameters& params);
 
       /// Whether the intermediate program was marked "completed"
       bool completed;
@@ -231,12 +231,12 @@ namespace s1
       ExpressionPtr CreateTypeConstructorExpression (semantics::TypePtr type,
                                                      const ExpressionVector& params);
 
-      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel,
-                            const semantics::TypePtr& returnType);
-      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
+      semantics::ScopePtr CreateScope (semantics::ScopePtr parentScope, semantics::ScopeLevel scopeLevel,
+                                       const semantics::TypePtr& returnType);
+      semantics::ScopePtr CreateScope (semantics::ScopePtr parentScope, semantics::ScopeLevel scopeLevel)
       { return CreateScope (parentScope, scopeLevel, semantics::TypePtr ()); }
 
-      BlockPtr CreateBlock (ScopePtr parentScope);
+      BlockPtr CreateBlock (semantics::ScopePtr parentScope);
       /** @} */
     };
 

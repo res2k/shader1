@@ -31,7 +31,7 @@ namespace s1
     {
     protected:
       IntermediateGeneratorSemanticsHandler* handler;
-      ScopePtr innerScope;
+      semantics::ScopePtr innerScope;
       
       SequenceBuilderPtr sequenceBuilder;
       
@@ -69,11 +69,11 @@ namespace s1
     public:
       static const char varReturnValueName[];
       
-      BlockImpl (IntermediateGeneratorSemanticsHandler* handler, ScopePtr innerScope);
+      BlockImpl (IntermediateGeneratorSemanticsHandler* handler, semantics::ScopePtr innerScope);
       
       /**\name SemanticsHandler::Block implementation
        * @{ */
-      ScopePtr GetInnerScope() { return innerScope; }
+      semantics::ScopePtr GetInnerScope() { return innerScope; }
       
       void AddExpressionCommand (ExpressionPtr expr);
       void AddReturnCommand (ExpressionPtr returnValue);

@@ -78,7 +78,7 @@ namespace s1
    : inputLexer (inputLexer), semanticsHandler (semanticsHandler),
      diagnosticsHandler (diagnosticsHandler)
   {
-    builtinScope = semanticsHandler.CreateScope (Scope (), semantics::Handler::Builtin);
+    builtinScope = semanticsHandler.CreateScope (Scope (), semantics::ScopeLevel::Builtin);
   }
 
   void Parser::Parse ()
@@ -121,7 +121,7 @@ namespace s1
 
   void Parser::ParseProgram ()
   {
-    Scope globalScope (semanticsHandler.CreateScope (builtinScope, semantics::Handler::Global));
+    Scope globalScope (semanticsHandler.CreateScope (builtinScope, semantics::ScopeLevel::Global));
     auto astProgram = AstBuilder (inputLexer, diagnosticsHandler).ParseProgram ();
     ParseProgramStatements (globalScope, *astProgram);
   }
@@ -703,7 +703,7 @@ namespace s1
     }
     uc::String functionIdentifier = astFunctionDecl.identifier.GetString();
     // Parse formal parameters
-    semantics::Handler::Scope::FunctionFormalParameters params;
+    semantics::Scope::FunctionFormalParameters params;
     ParseFuncParamFormal (scope, params, astFunctionDecl);
     // Add function to scope, get block
     Function func (scope->AddFunction (returnType, functionIdentifier, params));
@@ -715,45 +715,45 @@ namespace s1
   }
 
   void Parser::ParseFuncParamFormal (const Scope& scope,
-                                     semantics::Handler::Scope::FunctionFormalParameters& params,
+                                     semantics::Scope::FunctionFormalParameters& params,
                                      const parser::ast::FunctionDecl& astFunctionDecl)
   {
     params.reserve (astFunctionDecl.params.size());
     for (const auto& param : astFunctionDecl.params)
     {
       int paramDirection = 0;
-      semantics::Handler::Scope::FormalParameterFrequency freqQualifier = semantics::Handler::Scope::freqAuto;
+      semantics::Scope::FormalParameterFrequency freqQualifier = semantics::Scope::freqAuto;
       int numFreqQualifiers = 0;
       for (const auto& qualifierToken : param.qualifiers)
       {
         if (qualifierToken.typeOrID == lexer::kwIn)
         {
           // 'in' parameter
-          if ((paramDirection & semantics::Handler::Scope::dirIn) != 0)
+          if ((paramDirection & semantics::Scope::dirIn) != 0)
           {
             // TODO: Warn about redundancy
           }
-          paramDirection |= semantics::Handler::Scope::dirIn;
+          paramDirection |= semantics::Scope::dirIn;
         }
         else if (qualifierToken.typeOrID == lexer::kwOut)
         {
           // 'out' parameter
-          if ((paramDirection & semantics::Handler::Scope::dirOut) != 0)
+          if ((paramDirection & semantics::Scope::dirOut) != 0)
           {
             // TODO: Warn about redundancy
           }
-          paramDirection |= semantics::Handler::Scope::dirOut;
+          paramDirection |= semantics::Scope::dirOut;
         }
         else if (qualifierToken.typeOrID == lexer::kwUniform)
         {
           // 'uniform' qualifier
-          freqQualifier = semantics::Handler::Scope::freqUniform;
+          freqQualifier = semantics::Scope::freqUniform;
           numFreqQualifiers++;
         }
         else if (qualifierToken.typeOrID == lexer::kwAttribute)
         {
           // 'attribute' qualifier
-          freqQualifier = semantics::Handler::Scope::freqAttribute;
+          freqQualifier = semantics::Scope::freqAttribute;
           numFreqQualifiers++;
         }
         else
@@ -762,22 +762,22 @@ namespace s1
         }
       }
       // If no explicit direction is given, use 'in'
-      if (paramDirection == 0) paramDirection = semantics::Handler::Scope::dirIn;
-      semantics::Handler::Scope::FunctionFormalParameter newParam;
-      newParam.dir = (semantics::Handler::Scope::FormalParameterDirection)paramDirection;
+      if (paramDirection == 0) paramDirection = semantics::Scope::dirIn;
+      semantics::Scope::FunctionFormalParameter newParam;
+      newParam.dir = (semantics::Scope::FormalParameterDirection)paramDirection;
       newParam.freqQualifier = freqQualifier;
       newParam.type = ParseType (param.type.get(), scope);
       newParam.identifier = param.identifier.GetString();
       if (param.defaultValue)
       {
         // Handle default value
-        if (paramDirection == semantics::Handler::Scope::dirOut)
+        if (paramDirection == semantics::Scope::dirOut)
           ParseError (Error::OutParameterWithDefault);
         else
           newParam.defaultValue = ParseExpression (scope, param.defaultValue.get());
       }
-      if ((((paramDirection & semantics::Handler::Scope::dirIn) == 0)
-          || ((paramDirection & semantics::Handler::Scope::dirOut) != 0))
+      if ((((paramDirection & semantics::Scope::dirIn) == 0)
+          || ((paramDirection & semantics::Scope::dirOut) != 0))
         && (numFreqQualifiers > 0))
       {
         ParseError (Error::QualifiersNotAllowed);

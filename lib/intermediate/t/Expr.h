@@ -61,8 +61,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -90,8 +90,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
@@ -120,8 +120,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
@@ -149,8 +149,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
@@ -178,8 +178,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
@@ -208,8 +208,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
     s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
@@ -238,8 +238,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
@@ -267,8 +267,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
@@ -296,8 +296,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -327,8 +327,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -358,8 +358,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -381,8 +381,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
@@ -404,8 +404,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
@@ -427,8 +427,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
     s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
@@ -450,8 +450,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -476,8 +476,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -505,8 +505,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -542,8 +542,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -579,8 +579,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -616,8 +616,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
@@ -655,8 +655,8 @@ public:
     TestSemanticsHandler semanticsHandler;
 
     // Create a scope
-    TestSemanticsHandler::ScopePtr testScope = semanticsHandler.CreateScope (
-      TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
+    s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
+      s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),

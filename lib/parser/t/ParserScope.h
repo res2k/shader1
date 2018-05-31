@@ -33,9 +33,9 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    s1::semantics::Handler::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
-                                    s1::semantics::Handler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
     s1::semantics::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
@@ -57,10 +57,10 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    s1::semantics::Handler::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
-                                    s1::semantics::Handler::Global));
-    s1::semantics::Handler::Scope::FunctionFormalParameters params;
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
+    s1::semantics::Scope::FunctionFormalParameters params;
     TS_ASSERT_THROWS_NOTHING(
       scope->AddFunction (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                           s1::uc::String ("a"), params)
@@ -79,9 +79,9 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    s1::semantics::Handler::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
-                                    s1::semantics::Handler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
     s1::semantics::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
@@ -102,10 +102,10 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    s1::semantics::Handler::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
-                                    s1::semantics::Handler::Global));
-    s1::semantics::Handler::Scope::result_NamePtr varRequested = s1::semantics::NamePtr ();
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
+    s1::semantics::Scope::result_NamePtr varRequested = s1::semantics::NamePtr ();
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("foo"))
@@ -118,9 +118,9 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    s1::semantics::Handler::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
-                                    s1::semantics::Handler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
     s1::semantics::NamePtr varAdded1, varAdded2;
     TS_ASSERT_THROWS_NOTHING(
       varAdded1 =
@@ -142,9 +142,9 @@ public:
     using namespace s1::parser;
     
     TestSemanticsHandler semanticsHandler;
-    s1::semantics::Handler::ScopePtr scopeOuter (
-      semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
-                                    s1::semantics::Handler::Global));
+    s1::semantics::ScopePtr scopeOuter (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
     s1::semantics::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
@@ -152,9 +152,9 @@ public:
                                  s1::uc::String ("a"), 
                                  s1::semantics::ExpressionPtr(), false)
     );
-    s1::semantics::Handler::ScopePtr scopeInner (
+    s1::semantics::ScopePtr scopeInner (
       semanticsHandler.CreateScope (scopeOuter,
-                                    s1::semantics::Handler::Function));
+                                    s1::semantics::ScopeLevel::Function));
     s1::semantics::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =

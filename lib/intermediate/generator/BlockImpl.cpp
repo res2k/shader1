@@ -48,7 +48,7 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatRetvalName, "$retval{0}");
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
-                                                                 ScopePtr innerScope)
+                                                                 semantics::ScopePtr innerScope)
      : handler (handler), innerScope (innerScope),
        sequenceBuilder (boost::make_shared<SequenceBuilder> ())
     {
@@ -623,7 +623,7 @@ namespace s1
     {
       bool isFromOutside = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
       bool doImport = isFromOutside
-                      && ((innerScope->GetLevel() != Function) || !name->isOutputParam)
+                      && ((innerScope->GetLevel() != semantics::ScopeLevel::Function) || !name->isOutputParam)
                       && !writeable;
       bool doExport = isFromOutside
                       && writeable;

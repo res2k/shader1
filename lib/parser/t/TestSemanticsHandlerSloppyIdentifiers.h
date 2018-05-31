@@ -28,7 +28,7 @@ public:
   public:
     SloppyScope (TestSemanticsHandlerSloppyIdentifiers* owner,
 		 const boost::shared_ptr<SloppyScope>& parent,
-		 ScopeLevel level)
+		 s1::semantics::ScopeLevel level)
      : TestScope (owner, parent, level) {}
     
     result_NamePtr ResolveIdentifier (const s1::uc::String& identifier)
@@ -38,9 +38,9 @@ public:
     }
   };
   
-  ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel)
+  s1::semantics::ScopePtr CreateScope (s1::semantics::ScopePtr parentScope, s1::semantics::ScopeLevel scopeLevel)
   {
-    return ScopePtr (new SloppyScope (this,
+    return s1::semantics::ScopePtr (new SloppyScope (this,
       boost::static_pointer_cast<SloppyScope> (parentScope),
       scopeLevel));
   }

@@ -43,9 +43,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -64,9 +64,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -85,9 +85,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -106,9 +106,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -127,9 +127,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -148,9 +148,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -169,9 +169,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -190,9 +190,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -211,9 +211,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -232,9 +232,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -253,9 +253,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -274,9 +274,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -295,9 +295,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -316,9 +316,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -337,9 +337,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -358,9 +358,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -379,9 +379,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -400,9 +400,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -421,9 +421,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -444,9 +444,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-                                    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -469,9 +469,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-                                    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -496,9 +496,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-                                    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -519,9 +519,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -540,9 +540,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -561,9 +561,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -582,9 +582,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -603,9 +603,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -624,9 +624,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -648,10 +648,10 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global)); 
-    s1::semantics::Handler::Scope::FunctionFormalParameters params;
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global)); 
+    s1::semantics::Scope::FunctionFormalParameters params;
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
 			s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
@@ -676,10 +676,10 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global)); 
-    s1::semantics::Handler::Scope::FunctionFormalParameters params;
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global)); 
+    s1::semantics::Scope::FunctionFormalParameters params;
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("a"),
 			s1::semantics::ExpressionPtr (), false);
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("b"),
@@ -707,10 +707,10 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-                                    TestSemanticsHandler::Global));
-    s1::semantics::Handler::Scope::FunctionFormalParameters params;
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
+    s1::semantics::Scope::FunctionFormalParameters params;
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
                         s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
@@ -734,9 +734,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global)); 
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global)); 
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -755,9 +755,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-				    TestSemanticsHandler::Global)); 
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+				    s1::semantics::ScopeLevel::Global)); 
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -776,9 +776,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-                                    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -799,9 +799,9 @@ public:
     s1::Lexer lexer (ustream, errorHandler);
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    TestSemanticsHandler::ScopePtr scope (
-      semanticsHandler.CreateScope (TestSemanticsHandler::ScopePtr(),
-                                    TestSemanticsHandler::Global));
+    s1::semantics::ScopePtr scope (
+      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));

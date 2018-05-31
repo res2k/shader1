@@ -71,7 +71,7 @@ namespace s1
           typeSuffix = typeStrings.second;
         }
 
-        if (param.dir & semantics::Handler::Scope::dirIn)
+        if (param.dir & semantics::Scope::dirIn)
         {
           uc::String paramIdent;
           if (!userInputVerbatim || (param.paramType >= Scope::ptAutoGlobal))
@@ -87,7 +87,7 @@ namespace s1
           result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
-        if (param.dir & semantics::Handler::Scope::dirOut)
+        if (param.dir & semantics::Scope::dirOut)
         {
           uc::String paramIdent;
           if (!userInputVerbatim || (param.paramType >= Scope::ptAutoGlobal))
@@ -122,7 +122,7 @@ namespace s1
                                                        const intermediate::ProgramPtr& prog,
                                                        int frequency)
       {
-        typedef semantics::Handler::Scope Scope;
+        typedef semantics::Scope Scope;
         typedef Scope::FunctionFormalParameters FunctionFormalParameters;
 
         const intermediate::Program::TransferValues& transferValues = prog->GetTransferValues ();

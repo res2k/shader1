@@ -20,6 +20,7 @@
 
 #include "intermediate/forwarddecl.h"
 #include "semantics/Handler.h"
+#include "semantics/Scope.h"
 
 #include "Frequency.h"
 
@@ -83,7 +84,7 @@ namespace s1
       
       void AddFreqFunction (const uc::String& funcName,
                             const intermediate::ProgramFunctionPtr& originalFunc,
-                            const semantics::Handler::Scope::FunctionFormalParameters& extraParams,
+                            const semantics::Scope::FunctionFormalParameters& extraParams,
                             const intermediate::SequencePtr& sequence,
                             int freq);
                             

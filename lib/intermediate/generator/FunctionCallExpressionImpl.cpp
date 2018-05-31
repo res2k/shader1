@@ -49,7 +49,7 @@ namespace s1
       overloadSelected = true;
 
       boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
-      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (ScopePtr (nameImpl->ownerScope)));
+      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (semantics::ScopePtr (nameImpl->ownerScope)));
 
       // Collect overload candidates
       ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName, params));
@@ -73,7 +73,7 @@ namespace s1
         const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
 
         ExpressionPtr paramExpr;
-        assert (param.paramType == semantics::Handler::Scope::ptUser);
+        assert (param.paramType == semantics::Scope::ptUser);
         if (actual < params.size())
           paramExpr = params[actual++];
         else
