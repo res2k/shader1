@@ -53,6 +53,7 @@
 #include "parser/ast/VisitorType.h"
 #include "parser/AstBuilder.h"
 #include "parser/Diagnostics.h"
+#include "semantics/Name.h"
 
 namespace s1
 {
@@ -286,7 +287,7 @@ namespace s1
         return Expression();
       }
       const auto& idName = idNameResult.value();
-      if (idName->GetType() != semantics::Handler::Name::Variable)
+      if (idName->GetType() != semantics::Name::Variable)
       {
         // TODO: Report error?
       }
@@ -502,7 +503,7 @@ namespace s1
         return;
       }
       const auto& typeName = typeNameResult.value();
-      if (typeName->GetType() == semantics::Handler::Name::TypeAlias)
+      if (typeName->GetType() == semantics::Name::TypeAlias)
       {
         parsedType = typeName->GetAliasedType();
       }

@@ -65,7 +65,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -94,7 +94,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -124,7 +124,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -153,7 +153,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -182,7 +182,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -212,7 +212,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (intType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -242,7 +242,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -271,7 +271,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -300,7 +300,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -331,7 +331,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -362,7 +362,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -385,7 +385,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -408,7 +408,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -431,7 +431,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -454,7 +454,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -480,7 +480,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -509,10 +509,10 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
-    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
+    s1::semantics::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = 1"
@@ -546,13 +546,13 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
-    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
+    s1::semantics::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
-    TestSemanticsHandler::NamePtr varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
+    s1::semantics::NamePtr varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "c = a + b"
@@ -583,7 +583,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "c = a + b"
@@ -620,7 +620,7 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "c = a + b"
@@ -659,10 +659,10 @@ public:
       TestSemanticsHandler::ScopePtr (), TestSemanticsHandler::Global);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-    TestSemanticsHandler::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+    s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
-    TestSemanticsHandler::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
+    s1::semantics::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
                                                                  TestSemanticsHandler::ExpressionPtr (),
                                                                  false);
     // Create a simple expression "a = a + b"

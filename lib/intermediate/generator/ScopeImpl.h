@@ -46,18 +46,18 @@ namespace s1
     private:
       friend class IntermediateGeneratorSemanticsHandler;
 
-      typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
+      typedef std::unordered_map<uc::String, semantics::NamePtr> IdentifierMap;
       IdentifierMap identifiers;
-      std::vector<NamePtr> newVars;
+      std::vector<semantics::NamePtr> newVars;
       std::vector<uc::String> outputParams;
-      std::vector<NamePtr> varsInDeclOrder;
+      std::vector<semantics::NamePtr> varsInDeclOrder;
 
       typedef std::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
 
       bool CheckIdentifierUnique (const uc::String& identifier);
-      typedef OUTCOME_V2_NAMESPACE::result<NamePtr, Error> result_NamePtr;
+      typedef OUTCOME_V2_NAMESPACE::result<semantics::NamePtr, Error> result_NamePtr;
       result_NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
@@ -74,12 +74,12 @@ namespace s1
                  const semantics::TypePtr& funcReturnType);
       ScopeLevel GetLevel() const { return level; }
 
-      NamePtr AddVariable (semantics::TypePtr type,
+      semantics::NamePtr AddVariable (semantics::TypePtr type,
         const uc::String& identifier,
         ExpressionPtr initialValue,
         bool constant);
 
-      NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
+      semantics::NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
         const uc::String& identifier);
 
       FunctionPtr AddFunction (semantics::TypePtr returnType,
@@ -106,10 +106,10 @@ namespace s1
 
       void AddBuiltinFunction (const BuiltinPtr& builtin);
       FunctionInfoVector GetFunctions () const;
-      FunctionInfoVector CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const;
+      FunctionInfoVector CollectOverloadCandidates (const semantics::NamePtr& functionName, const ExpressionVector& params) const;
 
-      std::vector<NamePtr> FlushNewVars ();
-      const std::vector<NamePtr>& GetAllVars ();
+      std::vector<semantics::NamePtr> FlushNewVars ();
+      const std::vector<semantics::NamePtr>& GetAllVars ();
     };
   } // namespace intermediate
 } // namespace s1

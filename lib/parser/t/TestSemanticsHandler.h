@@ -30,7 +30,7 @@ public:
   {
     friend class TestSemanticsHandler;
     
-    typedef boost::unordered_map<s1::uc::String, NamePtr> IdentifierMap;
+    typedef boost::unordered_map<s1::uc::String, s1::semantics::NamePtr> IdentifierMap;
     IdentifierMap identifiers;
     
     bool CheckIdentifierUnique (const s1::uc::String& identifier);
@@ -52,12 +52,12 @@ public:
 	       const boost::shared_ptr<TestScope>& parent, ScopeLevel level);
     ScopeLevel GetLevel() const { return level; }
     
-    NamePtr AddVariable (s1::semantics::TypePtr type,
+    s1::semantics::NamePtr AddVariable (s1::semantics::TypePtr type,
       const s1::uc::String& identifier,
       ExpressionPtr initialValue,
       bool constant);
       
-    NamePtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
+    s1::semantics::NamePtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
       const s1::uc::String& identifier);
       
     FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
@@ -307,7 +307,7 @@ public:
       CreateType (DetectNumericType (valueStr))));
   }
   
-  ExpressionPtr CreateVariableExpression (NamePtr name)
+  ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)
   {
     return ExpressionPtr (new TestExpressionVar (
       static_cast<CommonName*> (name.get())->identifier,
@@ -402,7 +402,7 @@ public:
       operand1, operand2));
   }
   
-  ExpressionPtr CreateFunctionCallExpression (NamePtr funcName,
+  ExpressionPtr CreateFunctionCallExpression (s1::semantics::NamePtr funcName,
 					      const ExpressionVector& params)
   {
     return ExpressionPtr (new TestExpressionFunction (

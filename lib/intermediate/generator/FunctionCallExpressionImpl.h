@@ -27,7 +27,7 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl : public ExpressionImpl
     {
-      NamePtr functionName;
+      semantics::NamePtr functionName;
       ExpressionVector params;
 
       bool overloadSelected;
@@ -52,7 +52,7 @@ namespace s1
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                   ExpressionContext&& context,
-                                  const NamePtr& functionName,
+                                  const semantics::NamePtr& functionName,
                                   const ExpressionVector& params);
 
       boost::shared_ptr<TypeImpl> GetValueType ();

@@ -67,35 +67,7 @@ namespace s1
                                         unsigned int columns,
                                         unsigned int rows) = 0;
       /** @} */
-      
-      /**\name Names
-       * A name refers to a variable, an attribute of it or an element.
-       * @{ */
-      struct Name
-      {
-        virtual ~Name() {}
-        
-        /// Type of name (function or variable/parameter)
-        enum NameType { Function, Variable, TypeAlias };
-        
-        /// Get type of name
-        virtual NameType GetType() = 0;
-        
-        /// Get aliased type
-        virtual TypePtr GetAliasedType() = 0;
 
-        /// Get name identifier
-        virtual const uc::String& GetIdentifier () = 0;
-
-        /// Return whether a variable name is a constant
-        virtual bool IsConstantVariable () = 0;
-
-        /// Return type of variable value
-        virtual TypePtr GetValueType () = 0;
-      };
-      typedef boost::shared_ptr<Name> NamePtr;
-      /** @} */
-      
       /**\name Expressions
        * @{ */
       struct Expression

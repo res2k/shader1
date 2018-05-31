@@ -200,7 +200,7 @@ namespace s1
 
       ExpressionPtr CreateConstBoolExpression (bool value);
       ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr);
-      ExpressionPtr CreateVariableExpression (NamePtr name);
+      ExpressionPtr CreateVariableExpression (semantics::NamePtr name);
       ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
                                            const uc::String& attr);
       ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,
@@ -223,7 +223,7 @@ namespace s1
                                            ExpressionPtr operand1,
                                            ExpressionPtr operand2);
 
-      ExpressionPtr CreateFunctionCallExpression (NamePtr functionName,
+      ExpressionPtr CreateFunctionCallExpression (semantics::NamePtr functionName,
                                                   const ExpressionVector& params);
 
       ExpressionPtr CreateTypeConstructorExpression (semantics::TypePtr type,

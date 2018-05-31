@@ -410,29 +410,29 @@ namespace s1
      : handler (handler), parent (parent), level (level)
     {}
 
-    CommonSemanticsHandler::NamePtr
+    semantics::NamePtr
     CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
                                                       ExpressionPtr initialValue, bool constant)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return NamePtr();
+        return semantics::NamePtr();
       }
-      NamePtr newName (new CommonName (identifier, type, initialValue, constant));
+      semantics::NamePtr newName (new CommonName (identifier, type, initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
     }
       
-    CommonSemanticsHandler::NamePtr
+    semantics::NamePtr
     CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return NamePtr();
+        return semantics::NamePtr();
       }
-      NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
+      semantics::NamePtr newName (new CommonName (identifier, semantics::Name::TypeAlias, aliasedType));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -452,7 +452,7 @@ namespace s1
         // TODO: Error handling
         return FunctionPtr();
       }
-      NamePtr newName (new CommonName (identifier, Name::Function, returnType));
+      semantics::NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
       funcScope = handler->CreateScope (shared_from_this(), Function);

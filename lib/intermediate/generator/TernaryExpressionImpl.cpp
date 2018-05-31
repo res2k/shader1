@@ -83,7 +83,7 @@ namespace s1
          To get that effect, synthesize a branching op. */
       
       // Get Name object for the ternary op result
-      NamePtr destName (block.GetTernaryResultName (GetValueType()));
+      semantics::NamePtr destName (block.GetTernaryResultName (GetValueType()));
 
       BlockPtr ifBlock (handler->CreateBlock (block.GetInnerScope()));
       // Synthesize assignment for 'true' case

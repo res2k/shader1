@@ -60,7 +60,7 @@ namespace s1
 {
   namespace intermediate
   {
-    typedef IntermediateGeneratorSemanticsHandler::NamePtr NamePtr;
+    typedef semantics::NamePtr NamePtr;
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
     typedef IntermediateGeneratorSemanticsHandler::ScopePtr ScopePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
@@ -585,7 +585,7 @@ namespace s1
       boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
       switch (nameImpl->GetType())
       {
-      case Name::Variable:
+      case semantics::Name::Variable:
         {
           return ExpressionPtr (new VariableExpressionImpl (this, ExpressionContext(), nameImpl));
         }
@@ -688,7 +688,7 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateFunctionCallExpression (NamePtr functionName,
                                                                                        const ExpressionVector& params)
     {
-      assert (functionName->GetType() == semantics::Handler::Name::Function);
+      assert (functionName->GetType() == semantics::Name::Function);
       for (const auto& param : params)
       {
         if (!param) return ExpressionPtr(); // Assume error already handled

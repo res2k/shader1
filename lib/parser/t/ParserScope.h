@@ -36,20 +36,20 @@ public:
     s1::semantics::Handler::ScopePtr scope (
       semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                     s1::semantics::Handler::Global));
-    s1::semantics::Handler::NamePtr varAdded;
+    s1::semantics::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
         scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                             s1::uc::String ("a"), 
                             s1::semantics::Handler::ExpressionPtr(), false)
     );
-    s1::semantics::Handler::NamePtr varRequested;
+    s1::semantics::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
-    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
   }  
   
   void testIdentifierAddFunc (void)
@@ -65,13 +65,13 @@ public:
       scope->AddFunction (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                           s1::uc::String ("a"), params)
     );
-    s1::semantics::Handler::NamePtr varRequested;
+    s1::semantics::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
-    TS_ASSERT_DIFFERS (varRequested, s1::semantics::Handler::NamePtr ());
-    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Function);
+    TS_ASSERT_DIFFERS (varRequested, s1::semantics::NamePtr ());
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Function);
   }  
   
   void testIdentifierAddType (void)
@@ -82,19 +82,19 @@ public:
     s1::semantics::Handler::ScopePtr scope (
       semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                     s1::semantics::Handler::Global));
-    s1::semantics::Handler::NamePtr varAdded;
+    s1::semantics::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
         scope->AddTypeAlias (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
                              s1::uc::String ("a"))
     );
-    s1::semantics::Handler::NamePtr varRequested;
+    s1::semantics::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
-    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::TypeAlias);
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::TypeAlias);
   }  
   
   void testIdentifierUnknown (void)
@@ -105,7 +105,7 @@ public:
     s1::semantics::Handler::ScopePtr scope (
       semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                     s1::semantics::Handler::Global));
-    s1::semantics::Handler::Scope::result_NamePtr varRequested = s1::semantics::Handler::NamePtr ();
+    s1::semantics::Handler::Scope::result_NamePtr varRequested = s1::semantics::NamePtr ();
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scope->ResolveIdentifier (s1::uc::String ("foo"))
@@ -121,7 +121,7 @@ public:
     s1::semantics::Handler::ScopePtr scope (
       semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                     s1::semantics::Handler::Global));
-    s1::semantics::Handler::NamePtr varAdded1, varAdded2;
+    s1::semantics::NamePtr varAdded1, varAdded2;
     TS_ASSERT_THROWS_NOTHING(
       varAdded1 =
         scope->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
@@ -145,7 +145,7 @@ public:
     s1::semantics::Handler::ScopePtr scopeOuter (
       semanticsHandler.CreateScope (s1::semantics::Handler::ScopePtr(),
                                     s1::semantics::Handler::Global));
-    s1::semantics::Handler::NamePtr varAdded;
+    s1::semantics::NamePtr varAdded;
     TS_ASSERT_THROWS_NOTHING(
       varAdded =
         scopeOuter->AddVariable (semanticsHandler.CreateType (s1::semantics::BaseType::Int),
@@ -155,13 +155,13 @@ public:
     s1::semantics::Handler::ScopePtr scopeInner (
       semanticsHandler.CreateScope (scopeOuter,
                                     s1::semantics::Handler::Function));
-    s1::semantics::Handler::NamePtr varRequested;
+    s1::semantics::NamePtr varRequested;
     TS_ASSERT_THROWS_NOTHING(
       varRequested =
         scopeInner->ResolveIdentifier (s1::uc::String ("a")).value()
     );
     TS_ASSERT_EQUALS (varAdded, varRequested);
-    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Handler::Name::Variable);
+    TS_ASSERT_EQUALS (varRequested->GetType(), s1::semantics::Name::Variable);
   }  
   
 };

@@ -518,10 +518,8 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::BlockImpl::FlushVariableInitializers()
     {
       // Get new variables ...
-      std::vector<NamePtr> newVars (boost::static_pointer_cast<ScopeImpl>(innerScope)->FlushNewVars());
-      for (std::vector<NamePtr>::const_iterator varIt = newVars.begin();
-           varIt != newVars.end();
-           ++varIt)
+      auto newVars (boost::static_pointer_cast<ScopeImpl>(innerScope)->FlushNewVars());
+      for (auto varIt = newVars.cbegin(); varIt != newVars.cend(); ++varIt)
       {
         boost::shared_ptr<NameImpl> name (boost::static_pointer_cast<NameImpl> (*varIt));
         // ... check if it has initialization value ...

@@ -31,6 +31,9 @@ namespace s1
 
     struct Type;
     typedef boost::shared_ptr<Type> TypePtr;
+
+    struct Name;
+    typedef boost::shared_ptr<Name> NamePtr;
   } // namespace semantics
 } // namespace s1
 

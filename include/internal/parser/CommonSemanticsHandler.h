@@ -19,6 +19,7 @@
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
 #include "semantics/Handler.h"
+#include "semantics/Name.h"
 #include "semantics/Type.h"
 
 #include <boost/enable_shared_from_this.hpp>
@@ -113,7 +114,7 @@ namespace s1
                                            const Attribute& attr);
       /** @} */
       
-      struct CommonName : public Name
+      struct CommonName : public semantics::Name
       {
         uc::String identifier;
         NameType type;
@@ -148,7 +149,7 @@ namespace s1
       {
         friend class CommonSemanticsHandler;
         
-        typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
+        typedef boost::unordered_map<uc::String, semantics::NamePtr> IdentifierMap;
         IdentifierMap identifiers;
         
         bool CheckIdentifierUnique (const uc::String& identifier);
@@ -170,12 +171,12 @@ namespace s1
                      const boost::shared_ptr<CommonScope>& parent, ScopeLevel level);
         ScopeLevel GetLevel() const { return level; }
         
-        NamePtr AddVariable (semantics::TypePtr type,
+        semantics::NamePtr AddVariable (semantics::TypePtr type,
           const uc::String& identifier,
           ExpressionPtr initialValue,
           bool constant);
           
-        NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
+        semantics::NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
           const uc::String& identifier);
           
         FunctionPtr AddFunction (semantics::TypePtr returnType,

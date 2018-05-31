@@ -66,7 +66,6 @@ namespace s1
 
     class VisitorExprImpl;
     typedef semantics::Handler::ExpressionPtr Expression;
-    typedef semantics::Handler::NamePtr Name;
     Expression ParseExpression (const Scope& scope, const parser::ast::Expr* astExpr);
     Expression ParseExprValue (const Scope& scope, const parser::ast::ExprValue& astExprValue);
     Expression ParseExprArrayElement (const Scope& scope, const parser::ast::ExprArrayElement& astExprArrayElement);

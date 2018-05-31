@@ -34,7 +34,7 @@ namespace s1
 {
   namespace intermediate
   {
-    typedef IntermediateGeneratorSemanticsHandler::NamePtr NamePtr;
+    typedef semantics::NamePtr NamePtr;
     typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
     typedef IntermediateGeneratorSemanticsHandler::FunctionPtr FunctionPtr;
 
@@ -54,7 +54,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
-      if ((ident != identifiers.end()) && (ident->second->GetType() != Name::Function))
+      if ((ident != identifiers.end()) && (ident->second->GetType() != semantics::Name::Function))
       {
         return OUTCOME_V2_NAMESPACE::failure (Error::IdentifierAlreadyDeclared);
       }
@@ -119,7 +119,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName (new NameImpl (shared_from_this(), identifier, Name::TypeAlias,
+      NamePtr newName (new NameImpl (shared_from_this(), identifier, semantics::Name::TypeAlias,
                                      boost::static_pointer_cast<TypeImpl> (aliasedType)));
       identifiers[identifier] = newName;
       return newName;
@@ -143,7 +143,7 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(), identifier, Name::Function,
+        NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(), identifier, semantics::Name::Function,
                                       boost::shared_ptr<TypeImpl> ()));
         identifiers[identifier] = newName;
       }
@@ -238,9 +238,9 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(),
-                                                       identifier, Name::Function,
-                                                       TypeImplPtr ()));
+        auto newName (boost::make_shared<NameImpl> (shared_from_this(),
+                                                    identifier, semantics::Name::Function,
+                                                    TypeImplPtr ()));
         identifiers[identifier] = newName;
       }
 

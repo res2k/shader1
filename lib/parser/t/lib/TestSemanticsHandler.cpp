@@ -22,7 +22,7 @@
 
 using namespace s1;
 
-typedef TestSemanticsHandler::NamePtr NamePtr;
+typedef semantics::NamePtr NamePtr;
 typedef TestSemanticsHandler::FunctionPtr FunctionPtr;
 typedef TestSemanticsHandler::BlockPtr BlockPtr;
 
@@ -63,7 +63,7 @@ NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr al
     // TODO: Error handling
     return NamePtr();
   }
-  NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
+  NamePtr newName (new CommonName (identifier, semantics::Name::TypeAlias, aliasedType));
   identifiers[identifier] = newName;
   return newName;
 }
@@ -77,7 +77,7 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
     // TODO: Error handling
     return FunctionPtr();
   }
-  NamePtr newName (new CommonName (identifier, Name::Function, returnType));
+  NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
   identifiers[identifier] = newName;
   ScopePtr funcScope;
   funcScope = handler->CreateScope (shared_from_this(), Function);

@@ -28,10 +28,10 @@ CXXTEST_ENUM_TRAITS (TestSemanticsHandler::TestType::Class,
 		     CXXTEST_ENUM_MEMBER (TestSemanticsHandler::TestType::Matrix)
 );
 
-CXXTEST_ENUM_TRAITS (s1::semantics::Handler::Name::NameType,
-		     CXXTEST_ENUM_MEMBER (s1::semantics::Handler::Name::Variable)
-		     CXXTEST_ENUM_MEMBER (s1::semantics::Handler::Name::Function)
-		     CXXTEST_ENUM_MEMBER (s1::semantics::Handler::Name::TypeAlias)
+CXXTEST_ENUM_TRAITS (s1::semantics::Name::NameType,
+                     CXXTEST_ENUM_MEMBER (s1::semantics::Name::Variable)
+                     CXXTEST_ENUM_MEMBER (s1::semantics::Name::Function)
+                     CXXTEST_ENUM_MEMBER (s1::semantics::Name::TypeAlias)
 );
 
 #endif // __PARSERTESTTRAITS_H__

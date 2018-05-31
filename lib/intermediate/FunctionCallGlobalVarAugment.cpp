@@ -35,7 +35,7 @@ namespace s1
     FunctionCallGlobalVarAugment::FunctionCallGlobalVarAugment (
       const SequenceBuilderPtr& newSequenceBuilder,
       const SequencePtr& oldSeq,
-      const std::vector<IntermediateGeneratorSemanticsHandler::NamePtr>& globals,
+      const std::vector<semantics::NamePtr>& globals,
       int level)
       : CloningSequenceVisitor (newSequenceBuilder), level (level), globals (globals)
     {
@@ -44,9 +44,9 @@ namespace s1
       importsMap.insert (oldSeq->GetImports ().begin(), oldSeq->GetImports().end());
       const Sequence::RegisterExpMappings& exportsMap = oldSeq->GetExports ();
       newSequenceBuilder->AddExports (exportsMap);
-      for (IntermediateGeneratorSemanticsHandler::NamePtr global : globals)
+      for (auto global : globals)
       {
-        if (global->GetType () != IntermediateGeneratorSemanticsHandler::Name::Variable) continue;
+        if (global->GetType () != semantics::Name::Variable) continue;
         uc::String globalIdent = global->GetIdentifier ();
 
         // Look for import of global
