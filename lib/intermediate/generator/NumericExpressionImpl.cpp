@@ -26,7 +26,7 @@
 #include "TypeImpl.h"
 
 #include <boost/convert.hpp>
-#include <boost/convert/spirit.hpp>
+#include "base/boost_convert_spirit.hpp"
 #include <outcome/outcome.hpp>
 
 #include <limits>

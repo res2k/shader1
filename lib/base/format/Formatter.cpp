@@ -22,7 +22,7 @@
 #include "base/math_error_handler.h"
 
 #include <boost/convert.hpp>
-#include <boost/convert/spirit.hpp>
+#include "base/boost_convert_spirit.hpp"
 #include <boost/convert/strtol.hpp>
 
 namespace s1
