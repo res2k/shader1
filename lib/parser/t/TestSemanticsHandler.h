@@ -19,6 +19,7 @@
 #define __TESTSEMANTICSHANDLER_H__
 
 #include "parser/CommonSemanticsHandler.h"
+#include "semantics/Block.h"
 #include "semantics/Expression.h"
 
 #include <vector>
@@ -42,10 +43,10 @@ public:
 
     class TestFunction : public s1::semantics::Function
     {
-      BlockPtr block;
+      s1::semantics::BlockPtr block;
     public:
-      TestFunction (const BlockPtr& block) : block (block) {}
-      BlockPtr GetBody() { return block; }
+      TestFunction (const s1::semantics::BlockPtr& block) : block (block) {}
+      s1::semantics::BlockPtr GetBody() { return block; }
       void Finish() {}
     };
   public:
@@ -417,7 +418,7 @@ public:
       boost::static_pointer_cast<TestType> (type), params));
   }
     
-  class TestBlock : public Block
+  class TestBlock : public s1::semantics::Block
   {
     typedef std::vector<std::string> StrVector;
     StrVector blockCommands;
@@ -569,8 +570,8 @@ public:
       AddCommands (cmd);
     }
 
-    void AddBranching (s1::semantics::ExpressionPtr branchCondition, BlockPtr ifBlock,
-                       BlockPtr elseBlock)
+    void AddBranching (s1::semantics::ExpressionPtr branchCondition, s1::semantics::BlockPtr ifBlock,
+                       s1::semantics::BlockPtr elseBlock)
     {
       CommandIf cmd (static_cast<TestExpressionBase*> (branchCondition.get()),
 		     static_cast<TestBlock*> (ifBlock.get()),
@@ -578,7 +579,7 @@ public:
       AddCommands (cmd);
     }
 
-    void AddWhileLoop (s1::semantics::ExpressionPtr loopCond, BlockPtr loopBlock)
+    void AddWhileLoop (s1::semantics::ExpressionPtr loopCond, s1::semantics::BlockPtr loopBlock)
     {
       CommandWhile cmd (static_cast<TestExpressionBase*> (loopCond.get()),
 			static_cast<TestBlock*> (loopBlock.get()));
@@ -588,7 +589,7 @@ public:
     void AddForLoop (s1::semantics::ExpressionPtr initExpr,
                      s1::semantics::ExpressionPtr loopCond,
                      s1::semantics::ExpressionPtr tailExpr,
-                     BlockPtr loopBlock)
+                     s1::semantics::BlockPtr loopBlock)
     {
       CommandFor cmd (static_cast<TestExpressionBase*> (initExpr.get()),
 		      static_cast<TestExpressionBase*> (loopCond.get()),
@@ -597,17 +598,17 @@ public:
       AddCommands (cmd);
     }
 
-    void AddNestedBlock (BlockPtr block)
+    void AddNestedBlock (s1::semantics::BlockPtr block)
     {
       CommandBlock cmd (static_cast<TestBlock*> (block.get()));
       AddCommands (cmd);
     }
   };
   
-  BlockPtr CreateBlock (s1::semantics::ScopePtr parentScope)
+  s1::semantics::BlockPtr CreateBlock (s1::semantics::ScopePtr parentScope)
   {
     s1::semantics::ScopePtr blockScope = CreateScope (parentScope, s1::semantics::ScopeLevel::Function);
-    return BlockPtr (new TestBlock (blockScope));
+    return s1::semantics::BlockPtr (new TestBlock (blockScope));
   }
 };
 

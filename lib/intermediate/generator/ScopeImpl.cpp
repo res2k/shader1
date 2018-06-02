@@ -35,7 +35,7 @@ namespace s1
   namespace intermediate
   {
     typedef semantics::NamePtr NamePtr;
-    typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
+    typedef semantics::BlockPtr BlockPtr;
     typedef semantics::FunctionPtr FunctionPtr;
 
     bool IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const uc::String& identifier)

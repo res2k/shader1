@@ -73,7 +73,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -102,7 +102,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -132,7 +132,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("-1"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -161,7 +161,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -190,7 +190,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0xa"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -220,7 +220,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0XA"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -250,7 +250,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0xa"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -279,7 +279,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0XA"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -308,7 +308,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -339,7 +339,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0x1"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -370,7 +370,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String (""));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
                      static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
@@ -393,7 +393,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0xg"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
                      static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
@@ -416,7 +416,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("-0x1"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
                      static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
@@ -439,7 +439,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("foo"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
                      static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
@@ -465,7 +465,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String (overflowing_num.c_str()));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
                      static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
@@ -491,7 +491,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String (underflowing_num.c_str()));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     TS_ASSERT_EQUALS(semanticsHandler.diagnostics.semanticError.code,
                      static_cast<unsigned int> (s1::intermediate::Error::NumberParseError));
@@ -522,7 +522,7 @@ public:
     s1::semantics::ExpressionPtr assignExpr1 = semanticsHandler.CreateAssignExpression (exprA, expr1);
     s1::semantics::ExpressionPtr assignExpr2 = semanticsHandler.CreateAssignExpression (exprB, exprA);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr1);
     testBlock->AddExpressionCommand (assignExpr2);
 
@@ -563,7 +563,7 @@ public:
     s1::semantics::ExpressionPtr exprC = semanticsHandler.CreateVariableExpression (varC);
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprC, addExpr);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -594,7 +594,7 @@ public:
     s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, addExpr);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -631,7 +631,7 @@ public:
     s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, addExpr);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
@@ -673,7 +673,7 @@ public:
     s1::semantics::ExpressionPtr exprA2 = semanticsHandler.CreateVariableExpression (varA);
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA2, addExpr);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =

@@ -58,7 +58,7 @@ namespace s1
 
     // Rough structure
     class VisitorProgramStatementImpl;
-    typedef semantics::Handler::BlockPtr Block;
+    typedef semantics::BlockPtr Block;
     typedef semantics::ScopePtr Scope;
     void ParseProgram ();
     void ParseProgramStatements (const Scope& scope, const parser::ast::Program& astProgram);

@@ -52,7 +52,7 @@ public:
     s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
       s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
     // Create a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     // Add some variables
     s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
     s1::semantics::NamePtr varA = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("a"),

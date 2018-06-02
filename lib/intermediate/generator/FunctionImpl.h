@@ -30,12 +30,12 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::FunctionImpl : public semantics::Function
     {
       ScopeImpl::FunctionInfoPtr funcInfo;
-      BlockPtr block;
+      semantics::BlockPtr block;
     public:
       FunctionImpl (ScopeImpl::FunctionInfoPtr funcInfo,
-                    const BlockPtr& block)
+                    const semantics::BlockPtr& block)
         : funcInfo (funcInfo), block (block) {}
-      BlockPtr GetBody() { return block; }
+      semantics::BlockPtr GetBody() { return block; }
       void Finish();
     };
   } // namespace intermediate

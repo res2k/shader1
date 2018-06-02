@@ -120,7 +120,7 @@ public:
     s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     // Create a simple expression "b = a"
     s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB);
@@ -174,7 +174,7 @@ public:
     s1::semantics::ExpressionPtr exprC = semanticsHandler.CreateVariableExpression (varC);
     s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprC, addExpr);
     // Add to a block
-    TestSemanticsHandler::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
+    s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =

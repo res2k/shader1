@@ -47,10 +47,7 @@ namespace s1
     struct Handler
     {
       virtual ~Handler() {}
-      
-      struct Block;
-      typedef boost::shared_ptr<Block> BlockPtr;
-      
+
       /**\name Types
        * @{ */
       /// Create a base type
@@ -132,23 +129,7 @@ namespace s1
        * \param scopeLevel Level of scope.
        */
       virtual ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel) = 0;
-      
-      struct Block
-      {
-        virtual ~Block() {}
 
-        virtual ScopePtr GetInnerScope() = 0;
-        
-        virtual void AddExpressionCommand (ExpressionPtr expr) = 0;
-        virtual void AddReturnCommand (ExpressionPtr returnValue) = 0;
-        virtual void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
-                                   BlockPtr elseBlock) = 0;
-        virtual void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock) = 0;
-        virtual void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
-                                 BlockPtr loopBlock) = 0;
-        virtual void AddNestedBlock (BlockPtr block) = 0;
-      };
-      
       virtual BlockPtr CreateBlock (ScopePtr parentScope) = 0;
     };
   } // namespace semantics

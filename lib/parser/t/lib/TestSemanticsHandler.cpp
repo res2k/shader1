@@ -24,7 +24,7 @@ using namespace s1;
 
 typedef semantics::NamePtr NamePtr;
 typedef semantics::FunctionPtr FunctionPtr;
-typedef TestSemanticsHandler::BlockPtr BlockPtr;
+typedef semantics::BlockPtr BlockPtr;
 
 bool TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::String& identifier)
 {

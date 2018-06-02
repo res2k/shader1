@@ -162,10 +162,10 @@ namespace s1
 
         class CommonFunction : public semantics::Function
         {
-          BlockPtr block;
+          semantics::BlockPtr block;
         public:
-          CommonFunction (const BlockPtr& block) : block (block) {}
-          BlockPtr GetBody() { return block; }
+          CommonFunction (const semantics::BlockPtr& block) : block (block) {}
+          semantics::BlockPtr GetBody() { return block; }
           void Finish() {}
         };
       public:

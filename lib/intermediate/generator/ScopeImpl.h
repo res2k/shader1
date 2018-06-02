@@ -37,7 +37,7 @@ namespace s1
         semantics::TypePtr returnType;
         FunctionFormalParameters params;
         /// Function body (for user-defined functions)
-        BlockPtr block;
+        semantics::BlockPtr block;
         /// Builtin function information
         BuiltinPtr builtin;
       };
@@ -65,7 +65,8 @@ namespace s1
       semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
-      semantics::FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo, const BlockPtr& block);
+      semantics::FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo,
+                                             const semantics::BlockPtr& block);
 
       void AddParameter (const FunctionFormalParameter& param);
     public:

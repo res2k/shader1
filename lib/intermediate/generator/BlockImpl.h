@@ -20,6 +20,7 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
+#include "semantics/Block.h"
 
 #include <outcome/outcome.hpp>
 
@@ -27,7 +28,7 @@ namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::BlockImpl : public Block
+    class IntermediateGeneratorSemanticsHandler::BlockImpl : public semantics::Block
     {
     protected:
       IntermediateGeneratorSemanticsHandler* handler;
@@ -63,7 +64,7 @@ namespace s1
       NameRegMap nameRegisters;
       NameImplSet exportedNames;
       
-      SequenceOpPtr CreateBlockSeqOp (BlockPtr block,
+      SequenceOpPtr CreateBlockSeqOp (semantics::BlockPtr block,
                                       const ExpressionContext& errorContext,
                                       const NameImplSet& loopNames = NameImplSet());
     public:
@@ -77,12 +78,12 @@ namespace s1
       
       void AddExpressionCommand (ExpressionPtr expr);
       void AddReturnCommand (ExpressionPtr returnValue);
-      void AddBranching (ExpressionPtr branchCondition, BlockPtr ifBlock,
-                         BlockPtr elseBlock);
-      void AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock);
+      void AddBranching (ExpressionPtr branchCondition, semantics::BlockPtr ifBlock,
+                         semantics::BlockPtr elseBlock);
+      void AddWhileLoop (ExpressionPtr loopCond, semantics::BlockPtr loopBlock);
       void AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond, ExpressionPtr tailExpr,
-                       BlockPtr loopBlock);
-      void AddNestedBlock (BlockPtr block);
+                       semantics::BlockPtr loopBlock);
+      void AddNestedBlock (semantics::BlockPtr block);
       /** @} */
       
       const SequencePtr& GetSequence();

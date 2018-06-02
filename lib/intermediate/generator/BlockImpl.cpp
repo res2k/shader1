@@ -139,8 +139,8 @@ namespace s1
     }
 
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddBranching (ExpressionPtr branchCondition,
-                                                                         BlockPtr ifBlock,
-                                                                         BlockPtr elseBlock)
+                                                                         semantics::BlockPtr ifBlock,
+                                                                         semantics::BlockPtr elseBlock)
     {
       FlushVariableInitializers();
       ExpressionImpl* impl = static_cast<ExpressionImpl*> (branchCondition.get());
@@ -289,7 +289,8 @@ namespace s1
       sequenceBuilder->AddOp (seqOp);
     }
 
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddWhileLoop (ExpressionPtr loopCond, BlockPtr loopBlock)
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddWhileLoop (ExpressionPtr loopCond,
+                                                                         semantics::BlockPtr loopBlock)
     {
       FlushVariableInitializers();
       
@@ -382,7 +383,7 @@ namespace s1
     }
 
     void IntermediateGeneratorSemanticsHandler::BlockImpl::AddForLoop (ExpressionPtr initExpr, ExpressionPtr loopCond,
-                                                                       ExpressionPtr tailExpr, BlockPtr loopBlock)
+                                                                       ExpressionPtr tailExpr, semantics::BlockPtr loopBlock)
     {
       FlushVariableInitializers();
       
@@ -497,7 +498,7 @@ namespace s1
       sequenceBuilder->AddOp (seqOp);
     }
     
-    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (BlockPtr block)
+    void IntermediateGeneratorSemanticsHandler::BlockImpl::AddNestedBlock (semantics::BlockPtr block)
     {
       FlushVariableInitializers();
       SequenceOpPtr seqOp (CreateBlockSeqOp (block, ExpressionContext ()));
@@ -543,7 +544,7 @@ namespace s1
       handler->ExpressionError (static_cast<const ExpressionImpl&> (expr).GetExpressionContext(), code);
     }
     
-    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (semantics::Handler::BlockPtr block,
+    SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (semantics::BlockPtr block,
                                                                                       const ExpressionContext& errorContext,
                                                                                       const NameImplSet& loopNames)
     {

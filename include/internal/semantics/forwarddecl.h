@@ -57,6 +57,9 @@ namespace s1
 
     struct Scope;
     typedef boost::shared_ptr<Scope> ScopePtr;
+
+    struct Block;
+    typedef boost::shared_ptr<Block> BlockPtr;
   } // namespace semantics
 } // namespace s1
 

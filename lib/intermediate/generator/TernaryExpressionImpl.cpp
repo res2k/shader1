@@ -85,14 +85,14 @@ namespace s1
       // Get Name object for the ternary op result
       semantics::NamePtr destName (block.GetTernaryResultName (GetValueType()));
 
-      BlockPtr ifBlock (handler->CreateBlock (block.GetInnerScope()));
+      auto ifBlock = handler->CreateBlock (block.GetInnerScope());
       // Synthesize assignment for 'true' case
       {
         ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
         ExpressionPtr ifAssignExpr (handler->CreateAssignExpression (destNameExpr, ifExpr));
         ifBlock->AddExpressionCommand (ifAssignExpr);
       }
-      BlockPtr elseBlock (handler->CreateBlock (block.GetInnerScope()));
+      auto elseBlock = handler->CreateBlock (block.GetInnerScope());
       // Synthesize assignment for 'false' case
       {
         ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));

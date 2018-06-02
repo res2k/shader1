@@ -46,7 +46,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -68,7 +68,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
@@ -92,7 +92,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -117,7 +117,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -146,7 +146,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -171,7 +171,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -196,7 +196,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -220,7 +220,7 @@ public:
     TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);

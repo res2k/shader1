@@ -456,7 +456,7 @@ namespace s1
       identifiers[identifier] = newName;
       semantics::ScopePtr funcScope;
       funcScope = handler->CreateScope (shared_from_this(), semantics::ScopeLevel::Function);
-      BlockPtr newBlock (handler->CreateBlock (funcScope));
+      auto newBlock = handler->CreateBlock (funcScope);
       funcScope = semantics::ScopePtr();
       semantics::FunctionPtr newFunction (new CommonFunction (newBlock));
       return newFunction;

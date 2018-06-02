@@ -63,7 +63,7 @@ namespace s1
     typedef semantics::NamePtr NamePtr;
     typedef semantics::FunctionPtr FunctionPtr;
     typedef semantics::ScopePtr ScopePtr;
-    typedef IntermediateGeneratorSemanticsHandler::BlockPtr BlockPtr;
+    typedef semantics::BlockPtr BlockPtr;
     typedef semantics::TypePtr TypePtr;
     typedef semantics::ExpressionPtr ExpressionPtr;
 

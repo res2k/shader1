@@ -236,7 +236,7 @@ namespace s1
       semantics::ScopePtr CreateScope (semantics::ScopePtr parentScope, semantics::ScopeLevel scopeLevel)
       { return CreateScope (parentScope, scopeLevel, semantics::TypePtr ()); }
 
-      BlockPtr CreateBlock (semantics::ScopePtr parentScope);
+      semantics::BlockPtr CreateBlock (semantics::ScopePtr parentScope);
       /** @} */
     };
 

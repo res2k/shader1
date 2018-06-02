@@ -70,7 +70,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -109,7 +109,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -150,7 +150,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -189,7 +189,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -241,7 +241,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -288,7 +288,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -353,7 +353,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -420,7 +420,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -484,7 +484,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -527,7 +527,7 @@ public:
     s1::semantics::ScopePtr globalScope (semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                             s1::semantics::ScopeLevel::Global,
                                             semanticsHandler.GetVoidType()));
-    s1::semantics::Handler::BlockPtr block (
+    s1::semantics::BlockPtr block (
       semanticsHandler.CreateBlock (globalScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());

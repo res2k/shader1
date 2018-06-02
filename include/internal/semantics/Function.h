@@ -20,8 +20,6 @@
 
 #include "forwarddecl.h"
 
-#include "Handler.h"
-
 namespace s1
 {
   namespace semantics
@@ -32,7 +30,7 @@ namespace s1
       virtual ~Function() {}
 
       /// Get function block to add commands to.
-      virtual Handler::BlockPtr GetBody() = 0;
+      virtual BlockPtr GetBody() = 0;
       /// Finish function. Call after body was filled.
       virtual void Finish() = 0;
     };

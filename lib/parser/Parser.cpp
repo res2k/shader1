@@ -53,6 +53,7 @@
 #include "parser/ast/VisitorType.h"
 #include "parser/AstBuilder.h"
 #include "parser/Diagnostics.h"
+#include "semantics/Block.h"
 #include "semantics/Function.h"
 #include "semantics/Name.h"
 
