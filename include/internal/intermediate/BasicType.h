@@ -22,7 +22,7 @@ namespace s1
 {
   namespace intermediate
   {
-    enum BasicType
+    enum struct BasicType
     {
       Invalid, Bool, Int, UInt, Float
     };

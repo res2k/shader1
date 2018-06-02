@@ -37,13 +37,13 @@ namespace s1
       };
     public:
       SequenceOpConst (RegisterPtr destination, bool val)
-       : SequenceOpWithResult (destination), type (Bool), boolVal (val) {}
+       : SequenceOpWithResult (destination), type (BasicType::Bool), boolVal (val) {}
       SequenceOpConst (RegisterPtr destination, int val)
-       : SequenceOpWithResult (destination), type (Int), intVal (val) {}
+       : SequenceOpWithResult (destination), type (BasicType::Int), intVal (val) {}
       SequenceOpConst (RegisterPtr destination, unsigned int val)
-       : SequenceOpWithResult (destination), type (UInt), uintVal (val) {}
+       : SequenceOpWithResult (destination), type (BasicType::UInt), uintVal (val) {}
       SequenceOpConst (RegisterPtr destination, float val)
-       : SequenceOpWithResult (destination), type (Float), floatVal (val) {}
+       : SequenceOpWithResult (destination), type (BasicType::Float), floatVal (val) {}
 
       RegisterSet GetReadRegisters () const { return RegisterSet(); }
       

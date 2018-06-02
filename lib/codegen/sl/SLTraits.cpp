@@ -179,22 +179,22 @@ namespace s1
         switch (type)
         {
         case s1::parser::SemanticsHandler::Invalid:
-          return intermediate::Invalid;
+          return intermediate::BasicType::Invalid;
         case s1::parser::SemanticsHandler::Void:
-          S1_ASSERT_NOT_REACHED (intermediate::Int);
+          S1_ASSERT_NOT_REACHED (intermediate::BasicType::Int);
           break;
         case s1::parser::SemanticsHandler::Bool:
-          return intermediate::Bool;
+          return intermediate::BasicType::Bool;
         case s1::parser::SemanticsHandler::Int:
-          return intermediate::Int;
+          return intermediate::BasicType::Int;
         case s1::parser::SemanticsHandler::UInt:
-          return intermediate::UInt;
+          return intermediate::BasicType::UInt;
         case s1::parser::SemanticsHandler::Float:
-          return intermediate::Float;
+          return intermediate::BasicType::Float;
         }
 
         // Something...
-        return intermediate::Int;
+        return intermediate::BasicType::Int;
       }
     } // namespace sl
   } // namespace codegen

@@ -315,13 +315,13 @@ namespace s1
           switch (typeDestination->base)
           {
             case Int:
-              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::Int, castSource));
+              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::Int, castSource));
               break;
             case UInt:
-              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::UInt, castSource));
+              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::UInt, castSource));
               break;
             case Float:
-              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::Float, castSource));
+              seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::Float, castSource));
               break;
             default:
               // Void, Bool can't be casted
@@ -364,22 +364,22 @@ namespace s1
           {
             case Bool:
               seqOp = new SequenceOpMakeVector (castDestination,
-                                                intermediate::Bool,
+                                                intermediate::BasicType::Bool,
                                                 srcVec);
               break;
             case Int:
               seqOp = new SequenceOpMakeVector (castDestination,
-                                                intermediate::Int,
+                                                intermediate::BasicType::Int,
                                                 srcVec);
               break;
             case UInt:
               seqOp = new SequenceOpMakeVector (castDestination,
-                                                intermediate::UInt,
+                                                intermediate::BasicType::UInt,
                                                 srcVec);
               break;
             case Float:
               seqOp = new SequenceOpMakeVector (castDestination,
-                                                intermediate::Float,
+                                                intermediate::BasicType::Float,
                                                 srcVec);
               break;
             default:

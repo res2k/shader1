@@ -410,13 +410,13 @@ namespace s1
 
         switch (destType)
         {
-        case intermediate::Int:
+        case intermediate::BasicType::Int:
           DoCast (newVal->comp[0].i, srcType, srcConst->second);
           break;
-        case intermediate::UInt:
+        case intermediate::BasicType::UInt:
           DoCast (newVal->comp[0].ui, srcType, srcConst->second);
           break;
-        case intermediate::Float:
+        case intermediate::BasicType::Float:
           DoCast (newVal->comp[0].f, srcType, srcConst->second);
           break;
         default:
@@ -821,10 +821,10 @@ namespace s1
       intermediate::BasicType basicType;
       switch (baseType->GetBaseType())
       {
-      case parser::SemanticsHandler::Int: 	basicType = intermediate::Int; break;
-      case parser::SemanticsHandler::UInt: 	basicType = intermediate::UInt; break;
-      case parser::SemanticsHandler::Float: 	basicType = intermediate::Float; break;
-      case parser::SemanticsHandler::Bool: 	basicType = intermediate::Bool; break;
+      case parser::SemanticsHandler::Int: 	basicType = intermediate::BasicType::Int; break;
+      case parser::SemanticsHandler::UInt: 	basicType = intermediate::BasicType::UInt; break;
+      case parser::SemanticsHandler::Float: 	basicType = intermediate::BasicType::Float; break;
+      case parser::SemanticsHandler::Bool: 	basicType = intermediate::BasicType::Bool; break;
       default: S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
       }
 

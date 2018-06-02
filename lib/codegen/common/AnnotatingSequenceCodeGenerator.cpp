@@ -63,13 +63,13 @@ namespace s1
         {
           switch (value)
           {
-          case s1::intermediate::Bool:
+          case s1::intermediate::BasicType::Bool:
             return "Bool";
-          case s1::intermediate::Int:
+          case s1::intermediate::BasicType::Int:
             return "Int";
-          case s1::intermediate::UInt:
+          case s1::intermediate::BasicType::UInt:
             return "UInt";
-          case s1::intermediate::Float:
+          case s1::intermediate::BasicType::Float:
             return "Float";
           default:
             break;

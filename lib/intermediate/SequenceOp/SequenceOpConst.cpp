@@ -27,19 +27,19 @@ namespace s1
     {
       switch (type)
       {
-      case Invalid:
+      case BasicType::Invalid:
         // Do nothing
         break;
-      case Bool:
+      case BasicType::Bool:
         visitor.OpConstBool (destination, boolVal);
         break;
-      case Int:
+      case BasicType::Int:
         visitor.OpConstInt (destination, intVal);
         break;
-      case UInt:
+      case BasicType::UInt:
         visitor.OpConstUInt (destination, uintVal);
         break;
-      case Float:
+      case BasicType::Float:
         visitor.OpConstFloat (destination, floatVal);
         break;
       }

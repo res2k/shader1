@@ -211,10 +211,10 @@ namespace s1
           BasicType vecType;
           switch (targetBaseType->base)
           {
-          case Bool: 	vecType = intermediate::Bool; break;
-          case Int: 	vecType = intermediate::Int; break;
-          case UInt: 	vecType = intermediate::UInt; break;
-          case Float: 	vecType = intermediate::Float; break;
+          case Bool: 	vecType = intermediate::BasicType::Bool; break;
+          case Int: 	vecType = intermediate::BasicType::Int; break;
+          case UInt: 	vecType = intermediate::BasicType::UInt; break;
+          case Float: 	vecType = intermediate::BasicType::Float; break;
           default:	return RegisterPtr();
           }
           

@@ -302,10 +302,10 @@ namespace s1
         {
           switch (source->GetOriginalType ()->GetBaseType ())
           {
-          case parser::SemanticsHandler::Bool:    typeMatch = (destType == intermediate::Bool);  break;
-          case parser::SemanticsHandler::Int:     typeMatch = (destType == intermediate::Int);   break;
-          case parser::SemanticsHandler::UInt:    typeMatch = (destType == intermediate::UInt);  break;
-          case parser::SemanticsHandler::Float:   typeMatch = (destType == intermediate::Float); break;
+          case parser::SemanticsHandler::Bool:    typeMatch = (destType == intermediate::BasicType::Bool);  break;
+          case parser::SemanticsHandler::Int:     typeMatch = (destType == intermediate::BasicType::Int);   break;
+          case parser::SemanticsHandler::UInt:    typeMatch = (destType == intermediate::BasicType::UInt);  break;
+          case parser::SemanticsHandler::Float:   typeMatch = (destType == intermediate::BasicType::Float); break;
           default: break;
           }
         }

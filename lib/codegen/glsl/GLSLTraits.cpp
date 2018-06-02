@@ -51,18 +51,18 @@ namespace s1
 
         switch (type)
         {
-        case intermediate::Invalid:
+        case intermediate::BasicType::Invalid:
           prefix = "INVALID"; // produce invalid code
           break;
-        case intermediate::Bool:
+        case intermediate::BasicType::Bool:
           prefix = "b";
           break;
-        case intermediate::UInt:
+        case intermediate::BasicType::UInt:
           // TODO: unsigned integer - added some time between GLSL 1.10 and 4.50
-        case intermediate::Int:
+        case intermediate::BasicType::Int:
           prefix = "i";
           break;
-        case intermediate::Float:
+        case intermediate::BasicType::Float:
           // default prefix
           break;
         }
@@ -73,15 +73,15 @@ namespace s1
       {
         switch (type)
         {
-        case intermediate::Invalid:
+        case intermediate::BasicType::Invalid:
           return typeStrInvalid;
-        case intermediate::Bool:
+        case intermediate::BasicType::Bool:
           return typeStrBool;
-        case intermediate::Float:
+        case intermediate::BasicType::Float:
           return typeStrFloat;
-        case intermediate::UInt:
+        case intermediate::BasicType::UInt:
           // TODO: unsigned integer - added some time between GLSL 1.10 and 4.50
-        case intermediate::Int:
+        case intermediate::BasicType::Int:
           return typeStrInt;
         }
 

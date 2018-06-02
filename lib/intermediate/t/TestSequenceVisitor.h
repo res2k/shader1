@@ -185,19 +185,19 @@ public:
     SequenceEntry entry;
     switch (destType)
     {
-    case s1::intermediate::Invalid:
+    case s1::intermediate::BasicType::Invalid:
       entry.op = opCastToInvalid;
       break;
-    case s1::intermediate::Bool:
+    case s1::intermediate::BasicType::Bool:
       entry.op = opCastToBool;
       break;
-    case s1::intermediate::Int:
+    case s1::intermediate::BasicType::Int:
       entry.op = opCastToInt;
       break;
-    case s1::intermediate::UInt:
+    case s1::intermediate::BasicType::UInt:
       entry.op = opCastToUInt;
       break;
-    case s1::intermediate::Float:
+    case s1::intermediate::BasicType::Float:
       entry.op = opCastToFloat;
       break;
     }
@@ -214,19 +214,19 @@ public:
     SequenceEntry entry;
     switch (compType)
     {
-    case s1::intermediate::Invalid:
+    case s1::intermediate::BasicType::Invalid:
       entry.op = opMakeVectorInvalid;
       break;
-    case s1::intermediate::Bool:
+    case s1::intermediate::BasicType::Bool:
       entry.op = opMakeVectorBool;
       break;
-    case s1::intermediate::Int:
+    case s1::intermediate::BasicType::Int:
       entry.op = opMakeVectorInt;
       break;
-    case s1::intermediate::UInt:
+    case s1::intermediate::BasicType::UInt:
       entry.op = opMakeVectorUInt;
       break;
-    case s1::intermediate::Float:
+    case s1::intermediate::BasicType::Float:
       entry.op = opMakeVectorFloat;
       break;
     }
@@ -284,19 +284,19 @@ public:
     SequenceEntry entry;
     switch (compType)
     {
-    case s1::intermediate::Invalid:
+    case s1::intermediate::BasicType::Invalid:
       entry.op = opMakeMatrixInvalid;
       break;
-    case s1::intermediate::Bool:
+    case s1::intermediate::BasicType::Bool:
       entry.op = opMakeMatrixBool;
       break;
-    case s1::intermediate::Int:
+    case s1::intermediate::BasicType::Int:
       entry.op = opMakeMatrixInt;
       break;
-    case s1::intermediate::UInt:
+    case s1::intermediate::BasicType::UInt:
       entry.op = opMakeMatrixUInt;
       break;
-    case s1::intermediate::Float:
+    case s1::intermediate::BasicType::Float:
       entry.op = opMakeMatrixFloat;
       break;
     }
