@@ -75,6 +75,7 @@ public:
     // Add to a block
     s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
+    testBlock->Finish();
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
@@ -104,6 +105,7 @@ public:
     // Add to a block
     s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
     testBlock->AddExpressionCommand (assignExpr);
+    testBlock->Finish();
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());

@@ -153,10 +153,7 @@ namespace s1
       
       boost::shared_ptr<BlockImpl> ifBlockImpl (boost::static_pointer_cast<BlockImpl> (ifBlock));
       boost::shared_ptr<BlockImpl> elseBlockImpl (boost::static_pointer_cast<BlockImpl> (elseBlock));
-      
-      ifBlockImpl->FinishBlock();
-      elseBlockImpl->FinishBlock();
-      
+
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
       // Collect registers read by the blocks
@@ -319,7 +316,6 @@ namespace s1
       }
       
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (loopBlock));
-      blockImpl->FinishBlock();
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
       NameImplSet loopVars;
@@ -423,7 +419,6 @@ namespace s1
       ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
       
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (loopBlock));
-      blockImpl->FinishBlock();
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       
       NameImplSet loopVars;
@@ -549,7 +544,6 @@ namespace s1
                                                                                       const NameImplSet& loopNames)
     {
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (block));
-      blockImpl->FinishBlock();
       
       boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
       

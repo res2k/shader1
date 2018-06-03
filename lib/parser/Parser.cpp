@@ -223,6 +223,7 @@ namespace s1
     {
       statement->Visit (visitor);
     }
+    block->Finish();
   }
 
   class Parser::VisitorExprImpl : public ast::VisitorExpr
@@ -712,7 +713,6 @@ namespace s1
     Block inFunctionBlock = func->GetBody();;
     // Handle expressions in block
     ParseBlock (inFunctionBlock, *astFunctionDecl.body);
-    func->Finish ();
   }
 
   void Parser::ParseFuncParamFormal (const Scope& scope,

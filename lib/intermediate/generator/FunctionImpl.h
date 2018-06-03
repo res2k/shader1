@@ -36,7 +36,6 @@ namespace s1
                     const semantics::BlockPtr& block)
         : funcInfo (funcInfo), block (block) {}
       semantics::BlockPtr GetBody() { return block; }
-      void Finish();
     };
   } // namespace intermediate
 } // namespace s1

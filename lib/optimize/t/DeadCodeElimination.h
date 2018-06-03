@@ -360,7 +360,7 @@ public:
 
     boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
       boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
-    testBlockImpl->FinishBlock();
+    testBlockImpl->Finish();
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     s1::intermediate::RegisterSet usedRegs;

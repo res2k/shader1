@@ -29,6 +29,9 @@ namespace s1
     {
       virtual ~Block() {}
 
+      /// Finish function. Call after block was filled.
+      virtual void Finish() = 0;
+
       virtual ScopePtr GetInnerScope() = 0;
       
       virtual void AddExpressionCommand (ExpressionPtr expr) = 0;

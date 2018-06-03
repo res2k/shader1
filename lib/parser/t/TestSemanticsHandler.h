@@ -422,6 +422,8 @@ public:
   {
     typedef std::vector<std::string> StrVector;
     StrVector blockCommands;
+
+    void Finish() override {}
     
     struct Command
     {

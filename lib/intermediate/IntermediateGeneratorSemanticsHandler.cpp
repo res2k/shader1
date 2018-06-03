@@ -194,7 +194,7 @@ namespace s1
       }
 
       boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (globalsInitBlock));
-      blockImpl->FinishBlock();
+      blockImpl->Finish();
 
       exportedNames = blockImpl->GetExportedNames();
       return blockImpl->GetSequence();
@@ -409,20 +409,6 @@ namespace s1
     void IntermediateGeneratorSemanticsHandler::CompleteProgram ()
     {
       S1_ASSERT(!completed, S1_ASSERT_RET_VOID);
-
-      if (globalScope)
-      {
-        ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions());
-        for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
-             funcIt != functions.end();
-             ++funcIt)
-        {
-          if ((*funcIt)->builtin) continue;
-
-          boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
-          blockImpl->FinishBlock();
-        }
-      }
 
       completed = true;
     }

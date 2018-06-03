@@ -66,7 +66,7 @@ public:
 
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    testBlockImpl->FinishBlock(); // Needed for initializer emission
+    testBlockImpl->Finish(); // Needed for initializer emission
 
     TestSequenceVisitor visitor;
     testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);

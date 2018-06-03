@@ -74,6 +74,8 @@ namespace s1
       
       /**\name SemanticsHandler::Block implementation
        * @{ */
+      void Finish() override { FlushVariableInitializers(); }
+
       semantics::ScopePtr GetInnerScope() { return innerScope; }
       
       void AddExpressionCommand (ExpressionPtr expr);
@@ -89,7 +91,6 @@ namespace s1
       const SequencePtr& GetSequence();
       const SequenceBuilderPtr& GetSequenceBuilder();
       
-      void FinishBlock() { FlushVariableInitializers(); }
       NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
 
       typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;

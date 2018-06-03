@@ -31,8 +31,6 @@ namespace s1
 
       /// Get function block to add commands to.
       virtual BlockPtr GetBody() = 0;
-      /// Finish function. Call after body was filled.
-      virtual void Finish() = 0;
     };
   } // namespace semantics
 } // namespace s1

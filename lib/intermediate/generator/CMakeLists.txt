@@ -29,7 +29,6 @@ file(GLOB generator_sources
      ComparisonExpressionImpl.cpp
      ExpressionImpl.cpp
      FunctionCallExpressionImpl.cpp
-     FunctionImpl.cpp
      LogicExpressionImpl.cpp
      NumericExpressionImpl.cpp
      ScopeImpl.cpp
