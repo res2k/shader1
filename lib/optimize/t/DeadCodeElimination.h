@@ -23,7 +23,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
-#include "TypeImpl.h"
 
 #include "optimize/DeadCodeElimination.h"
 #include "t/TestSequenceVisitor.h"

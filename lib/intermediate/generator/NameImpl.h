@@ -20,8 +20,6 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 
-#include "TypeImpl.h"
-
 namespace s1
 {
   namespace intermediate

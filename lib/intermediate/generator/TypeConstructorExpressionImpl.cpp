@@ -27,7 +27,6 @@
 
 #include "BlockImpl.h"
 #include "TypeConstructorExpressionImpl.h"
-#include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
 

@@ -19,7 +19,6 @@
 
 #include "BlockImpl.h"
 #include "ExpressionImpl.h"
-#include "TypeImpl.h"
 
 namespace s1
 {

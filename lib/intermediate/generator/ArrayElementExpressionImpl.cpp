@@ -25,7 +25,6 @@
 #include "intermediate/SequenceOp/SequenceOpExtractArrayElement.h"
 
 #include "BlockImpl.h"
-#include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
 

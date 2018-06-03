@@ -35,7 +35,6 @@
 #include "NameImpl.h"
 #include "PrependGlobalsInit.h"
 #include "ScopeImpl.h"
-#include "TypeImpl.h"
 
 #include "ArithmeticExpressionImpl.h"
 #include "ArrayElementExpressionImpl.h"

@@ -22,7 +22,6 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
-#include "TypeImpl.h"
 
 #include "optimize/Inliner.h"
 #include "t/TestSequenceVisitor.h"

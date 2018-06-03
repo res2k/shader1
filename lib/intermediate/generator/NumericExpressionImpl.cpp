@@ -23,7 +23,6 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
-#include "TypeImpl.h"
 
 #include <boost/convert.hpp>
 #include "base/boost_convert_spirit.hpp"

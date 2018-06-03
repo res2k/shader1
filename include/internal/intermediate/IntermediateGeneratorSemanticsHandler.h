@@ -42,7 +42,7 @@ namespace s1
 
       typedef semantics::ExpressionPtr ExpressionPtr;
 
-      struct TypeImpl;
+      typedef CommonType TypeImpl;
       struct NameImpl;
       class FunctionImpl;
       class ScopeImpl;

@@ -20,7 +20,6 @@
 #include "BinaryExpressionImpl.h"
 
 #include "BlockImpl.h"
-#include "TypeImpl.h"
 
 namespace s1
 {

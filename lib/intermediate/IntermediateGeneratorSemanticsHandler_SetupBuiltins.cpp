@@ -29,7 +29,6 @@
 
 #include "Builtin.h"
 #include "ScopeImpl.h"
-#include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
 

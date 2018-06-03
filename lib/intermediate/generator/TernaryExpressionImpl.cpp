@@ -22,7 +22,6 @@
 #include "BlockImpl.h"
 #include "intermediate/Diagnostics.h"
 #include "NameImpl.h"
-#include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
 

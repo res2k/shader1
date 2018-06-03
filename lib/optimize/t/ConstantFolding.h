@@ -27,7 +27,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
-#include "TypeImpl.h"
 
 #include "optimize/ConstantFolding.h"
 #include "t/TestSequenceVisitor.h"

@@ -23,7 +23,6 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpArith.h"
-#include "TypeImpl.h"
 
 #include <boost/make_shared.hpp>
 
