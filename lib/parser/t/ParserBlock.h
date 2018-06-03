@@ -23,7 +23,7 @@
 #include "parser/Diagnostics.h"
 #include "parser/Parser.h"
 
-#include "TestSemanticsHandlerSloppyIdentifiers.h"
+#include "TestSemanticsHandler.h"
 
 #include "ParserTestTraits.h"
 #include "TestParser.h"
@@ -32,22 +32,27 @@
 
 class ParserBlockTestSuite : public CxxTest::TestSuite
 {
-  typedef TestSemanticsHandlerSloppyIdentifiers TestSemanticsHandler;
 public:
   void testBlockExpr (void)
   {
     using namespace s1::parser;
+
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
 
     std::string inStr ("a = b;");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
@@ -60,16 +65,22 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a = b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,
@@ -84,16 +95,24 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto boolType = semanticsHandler.CreateType (s1::semantics::BaseType::Bool);
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (boolType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("if (a) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
@@ -109,16 +128,25 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto boolType = semanticsHandler.CreateType (s1::semantics::BaseType::Bool);
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (boolType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "e", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("if (a) { c = d; } else { c = e; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
@@ -138,16 +166,24 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto boolType = semanticsHandler.CreateType (s1::semantics::BaseType::Bool);
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (boolType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("while (a) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
@@ -163,16 +199,24 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("for (a; b; b = b+1) { c = d; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
@@ -188,16 +232,22 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("{ a = b; }");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     TestSemanticsHandler::TestBlock* testBlock =
@@ -212,16 +262,25 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                                    s1::semantics::ScopeLevel::Global);
+    blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "error", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a = b error; c=d;");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
 
     s1::semantics::BlockPtr block (
-      semanticsHandler.CreateBlock (s1::semantics::ScopePtr()));
+      semanticsHandler.CreateBlock (blockScope));
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT_EQUALS(errorHandler.parseErrors.size(), 1u);
     TS_ASSERT_EQUALS(errorHandler.parseErrors[0].code,

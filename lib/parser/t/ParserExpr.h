@@ -23,7 +23,7 @@
 #include "parser/Diagnostics.h"
 #include "parser/Parser.h"
 
-#include "TestSemanticsHandlerSloppyIdentifiers.h"
+#include "TestSemanticsHandler.h"
 
 #include "ParserTestTraits.h"
 #include "TestParser.h"
@@ -32,21 +32,22 @@
 
 class ParserExprTestSuite : public CxxTest::TestSuite 
 {
-  typedef TestSemanticsHandlerSloppyIdentifiers TestSemanticsHandler;
 public:
   void testIdentifier (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -57,17 +58,20 @@ public:
   
   void testIdentifierAttr (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto intVecType = semanticsHandler.CreateVectorType (intType, 4);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intVecType, "a", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a.x");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -78,16 +82,20 @@ public:
   
   void testIdentifierAttr2 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto intVecType = semanticsHandler.CreateVectorType (intType, 4);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intVecType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intVecType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("(a+b).x");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
     
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -99,17 +107,21 @@ public:
   
   void testIdentifierAttr3 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto intVecType = semanticsHandler.CreateVectorType (intType, 4);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intVecType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a.x+b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -120,17 +132,21 @@ public:
   
   void testIdentifierAttr4 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto intVecType = semanticsHandler.CreateVectorType (intType, 4);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intVecType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a+b.x");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -141,17 +157,21 @@ public:
   
   void testEvaluationOrder (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a-b-c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -162,17 +182,21 @@ public:
   
   void testPrecedence1 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a+b*c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -183,17 +207,21 @@ public:
   
   void testPrecedence2 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a=b=c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -204,17 +232,22 @@ public:
   
   void testPrecedence3 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a+b==c*d");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -225,17 +258,21 @@ public:
   
   void testPrecedence4 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a=b&&c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -246,17 +283,21 @@ public:
   
   void testPrecedence5 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a&&b||c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -267,17 +308,22 @@ public:
   
   void testPrecedence6 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a||b&&c&&d");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -288,17 +334,20 @@ public:
   
   void testPrecedence7 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("!a&&b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -309,17 +358,22 @@ public:
   
   void testPrecedence8 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a+b>c*d");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -330,17 +384,22 @@ public:
   
   void testPrecedence9 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a=b?c:d");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -351,17 +410,22 @@ public:
   
   void testPrecedence10 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a==b?c:d");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -372,17 +436,20 @@ public:
   
   void testUnary1 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a+-b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -393,17 +460,21 @@ public:
   
   void testTernary1 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a?b:c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -414,17 +485,21 @@ public:
   
   void testTernary2 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a?b?1:2:c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -437,16 +512,20 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a ? b c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -462,16 +541,19 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a ? b");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -489,16 +571,19 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a ? : c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -512,17 +597,19 @@ public:
 
   void testParentheses1 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("(a)");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -533,17 +620,19 @@ public:
   
   void testParentheses2 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("((((a))))");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -554,17 +643,21 @@ public:
   
   void testParentheses3 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a*(b+c)");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -575,17 +668,19 @@ public:
   
   void testIdentifierArray1 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a[1]");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -596,17 +691,21 @@ public:
   
   void testIdentifierArray2 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a[b+c]");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -617,17 +716,21 @@ public:
   
   void testIdentifierArray3 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+    scope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("(a+b)[1]+c");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global));
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -638,9 +741,6 @@ public:
   
   void testFunctionCall (void)
   {
-    // Need a 'strict' semantics handler for this test
-    typedef ::TestSemanticsHandler TestSemanticsHandler;
-  
     std::string inStr ("x = Foo ()");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -655,7 +755,7 @@ public:
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
 			s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -666,9 +766,6 @@ public:
   
   void testFunctionCall2 (void)
   {
-    // Need a 'strict' semantics handler for this test
-    typedef ::TestSemanticsHandler TestSemanticsHandler;
-  
     std::string inStr ("x = Foo (a + b, 3.0)");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
@@ -687,7 +784,7 @@ public:
     scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
 			s1::semantics::ExpressionPtr (), false);
     scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -727,17 +824,19 @@ public:
 
   void testTypeCtor (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "x", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("x = int ()");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global)); 
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -748,17 +847,19 @@ public:
   
   void testTypeCtor2 (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "x", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("x = int2 (1, 2)");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-				    s1::semantics::ScopeLevel::Global)); 
-    
+
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
     TS_ASSERT(errorHandler.parseErrors.empty());
@@ -769,16 +870,18 @@ public:
 
   void testArrayCtor (void)
   {
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "x", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("x = float[] (1.0, 2.0, 3.0)");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
@@ -792,16 +895,18 @@ public:
   {
     using namespace s1::parser;
 
+    TestSemanticsHandler semanticsHandler;
+    auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
+    auto scope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
+                                               s1::semantics::ScopeLevel::Global);
+    scope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
+
     std::string inStr ("a+");
     s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
     s1::uc::Stream ustream (in);
     TestDiagnosticsHandler errorHandler;
     s1::Lexer lexer (ustream, errorHandler);
-    TestSemanticsHandler semanticsHandler;
     TestParser parser (lexer, semanticsHandler, errorHandler);
-    s1::semantics::ScopePtr scope (
-      semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
-                                    s1::semantics::ScopeLevel::Global));
 
     s1::semantics::ExpressionPtr expr;
     TS_ASSERT_THROWS_NOTHING ((expr = parser.ParseExpression (scope)));
