@@ -12,7 +12,7 @@ configuration:
   - Debug
 
 environment:
-  BOOST_VERSION: 1_66_0
+  BOOST_VERSION: 1_67_0
 
 branches:
   except:
