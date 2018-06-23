@@ -280,22 +280,9 @@ endfunction()
 
 # All C++ features we require
 set(ALL_REQUIRED_CXX_FEATURES
-    cxx_alignas
-    cxx_auto_type
-    cxx_enum_forward_declarations
-    cxx_nullptr
-    cxx_override
-    cxx_range_for
-    cxx_reference_qualified_functions
-    cxx_rvalue_references
-    cxx_static_assert
-    cxx_strong_enums
-    cxx_variadic_templates)
-# Actually we also require cxx_nonstatic_member_init ... but CMake doesn't grant
-# it to MSVC 2013 since it's only partially supported there. However, it's still
-# sufficient for us.
+    cxx_std_14)
 if(NOT S1_BUILD_SHARED)
-  # For static builds, require C++11 features globally (to avoid conflicts
+  # For static builds, require C++ features globally (to avoid conflicts
   # between lib and apps due to differing build flags)
   set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
 endif()

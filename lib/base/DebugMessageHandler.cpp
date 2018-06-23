@@ -209,7 +209,7 @@ namespace s1
   {
     GlobalDebugMessageHandler globalHandler;
 
-    static S1_THREAD_LOCAL DebugMessageHandler* threadHandler = nullptr;
+    static thread_local DebugMessageHandler* threadHandler = nullptr;
 
     DebugMessageHandler*& GetThreadHandler()
     {

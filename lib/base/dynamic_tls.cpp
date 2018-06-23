@@ -509,7 +509,7 @@ namespace s1
         pointer_tree::discard (values);
       }
     };
-    static S1_THREAD_LOCAL PerThreadDataPtr threadData;
+    static thread_local PerThreadDataPtr threadData;
 
     static PerThreadData& GetThreadData()
     {
