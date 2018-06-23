@@ -44,6 +44,7 @@ namespace s1
       StringsArrayPtr strings;
     public:
       BasicSequenceCodeGenerator (const intermediate::Sequence& seq);
+      virtual ~BasicSequenceCodeGenerator() {}
 
       virtual StringsArrayPtr Generate () = 0;
     };
