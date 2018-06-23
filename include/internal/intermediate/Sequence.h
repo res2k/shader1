@@ -20,6 +20,7 @@
 
 #include "forwarddecl.h"
 #include "semantics/Handler.h"
+#include "semantics/Type.h"
 
 #include "base/std_hash.h"
 

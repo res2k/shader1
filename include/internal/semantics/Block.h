@@ -18,14 +18,14 @@
 #ifndef SEMANTICS_BLOCK_H_
 #define SEMANTICS_BLOCK_H_
 
-#include "forwarddecl.h"
+#include "Base.h"
 
 namespace s1
 {
   namespace semantics
   {
     /// A block of expression, branching or nesting commands.
-    struct Block
+    struct Block : public Base
     {
       virtual ~Block() {}
 

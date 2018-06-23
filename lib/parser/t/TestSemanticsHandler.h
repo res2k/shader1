@@ -18,6 +18,7 @@
 #ifndef __TESTSEMANTICSHANDLER_H__
 #define __TESTSEMANTICSHANDLER_H__
 
+#include "base/intrusive_ptr.h"
 #include "parser/CommonSemanticsHandler.h"
 #include "semantics/Block.h"
 #include "semantics/Expression.h"
@@ -27,8 +28,7 @@
 class TestSemanticsHandler : public s1::parser::CommonSemanticsHandler
 {
 public:
-  class TestScope : public s1::semantics::Scope,
-		    public boost::enable_shared_from_this<TestScope>
+  class TestScope : public s1::semantics::Scope
   {
     friend class TestSemanticsHandler;
     
@@ -38,7 +38,7 @@ public:
     bool CheckIdentifierUnique (const s1::uc::String& identifier);
     
     TestSemanticsHandler* handler;
-    boost::shared_ptr<TestScope> parent;
+    boost::intrusive_ptr<TestScope> parent;
     s1::semantics::ScopeLevel level;
 
     class TestFunction : public s1::semantics::Function
@@ -51,7 +51,7 @@ public:
     };
   public:
     TestScope (TestSemanticsHandler* handler,
-	       const boost::shared_ptr<TestScope>& parent, s1::semantics::ScopeLevel level);
+	             TestScope* parent, s1::semantics::ScopeLevel level);
     s1::semantics::ScopeLevel GetLevel() const { return level; }
     
     s1::semantics::NamePtr AddVariable (s1::semantics::TypePtr type,
@@ -72,7 +72,7 @@ public:
   s1::semantics::ScopePtr CreateScope (s1::semantics::ScopePtr parentScope, s1::semantics::ScopeLevel scopeLevel)
   {
     return s1::semantics::ScopePtr (new TestScope (this,
-      boost::static_pointer_cast<TestScope> (parentScope),
+      s1::get_static_ptr<TestScope> (parentScope),
       scopeLevel));
   }
   
@@ -210,8 +210,7 @@ public:
       Attribute attrInfo = IdentifyAttribute (attr);
       s1::semantics::TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
       if (baseType)
-	valueType = boost::static_pointer_cast<CommonType> (handler.GetAttributeType (
-	  boost::static_pointer_cast<TestType> (baseType), attrInfo));
+        valueType = handler.GetAttributeType (s1::get_static_ptr<TestType> (baseType), attrInfo);
     }
     
     const std::string& GetExprStringImpl() override { return str; }
@@ -263,11 +262,10 @@ public:
       }
     }
     
-    TestExpressionFunction (const boost::shared_ptr<TestName>& name,
-			    const ExpressionVector& params)
+    TestExpressionFunction (TestName* name, const ExpressionVector& params)
     {
       {
-	name->identifier.toUTF8String (str);
+        name->identifier.toUTF8String (str);
       }
       
       str.append (" (");
@@ -277,11 +275,10 @@ public:
       valueType = name->valueType;
     }
     
-    TestExpressionFunction (const boost::shared_ptr<TestType>& type,
-			    const ExpressionVector& params)
+    TestExpressionFunction (TestType* type, const ExpressionVector& params)
     {
       {
-	type->ToString().toUTF8String (str);
+        type->ToString().toUTF8String (str);
       }
       
       str.append (" (");
@@ -408,14 +405,14 @@ public:
                                                              const ExpressionVector& params)
   {
     return s1::semantics::ExpressionPtr (new TestExpressionFunction (
-      boost::static_pointer_cast<TestName> (funcName), params));
+      s1::get_static_ptr<TestName> (funcName), params));
   }
   
   s1::semantics::ExpressionPtr CreateTypeConstructorExpression (s1::semantics::TypePtr type,
                                                                 const ExpressionVector& params)
   {
     return s1::semantics::ExpressionPtr (new TestExpressionFunction (
-      boost::static_pointer_cast<TestType> (type), params));
+      s1::get_static_ptr<TestType> (type), params));
   }
     
   class TestBlock : public s1::semantics::Block

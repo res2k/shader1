@@ -17,6 +17,7 @@
 
 #include <cxxtest/TestSuite.h>
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
@@ -133,8 +134,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
     
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
     
     SequencePtr sequence (testBlockImpl->sequenceBuilder->GetSequence());
     TestImportedNameResolver nameRes;

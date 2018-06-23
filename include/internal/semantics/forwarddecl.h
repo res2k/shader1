@@ -18,7 +18,7 @@
 #ifndef SEMANTICS_FORWARDDECL_H_
 #define SEMANTICS_FORWARDDECL_H_
 
-#include <boost/shared_ptr.hpp>
+#include <boost/smart_ptr/intrusive_ptr.hpp>
 
 namespace s1
 {
@@ -30,16 +30,16 @@ namespace s1
     enum struct SamplerType { _1D, _2D, _3D, CUBE };
 
     struct Type;
-    typedef boost::shared_ptr<Type> TypePtr;
+    typedef boost::intrusive_ptr<Type> TypePtr;
 
     struct Name;
-    typedef boost::shared_ptr<Name> NamePtr;
+    typedef boost::intrusive_ptr<Name> NamePtr;
 
     struct Expression;
-    typedef boost::shared_ptr<Expression> ExpressionPtr;
+    typedef boost::intrusive_ptr<Expression> ExpressionPtr;
 
     struct Function;
-    typedef boost::shared_ptr<Function> FunctionPtr;
+    typedef boost::intrusive_ptr<Function> FunctionPtr;
 
     /**
      * Levels of scope.
@@ -56,10 +56,10 @@ namespace s1
     };
 
     struct Scope;
-    typedef boost::shared_ptr<Scope> ScopePtr;
+    typedef boost::intrusive_ptr<Scope> ScopePtr;
 
     struct Block;
-    typedef boost::shared_ptr<Block> BlockPtr;
+    typedef boost::intrusive_ptr<Block> BlockPtr;
   } // namespace semantics
 } // namespace s1
 

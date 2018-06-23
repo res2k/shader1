@@ -39,8 +39,8 @@ bool TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::Strin
 }
   
 TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
-						const boost::shared_ptr<TestScope>& parent,
-						s1::semantics::ScopeLevel level)
+                                            TestScope* parent,
+                                            s1::semantics::ScopeLevel level)
   : handler (handler), parent (parent), level (level)
 {}
 
@@ -82,7 +82,7 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
   NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
   identifiers[identifier] = newName;
   s1::semantics::ScopePtr funcScope;
-  funcScope = handler->CreateScope (shared_from_this(), s1::semantics::ScopeLevel::Function);
+  funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);
   BlockPtr newBlock (handler->CreateBlock (funcScope));
   funcScope = s1::semantics::ScopePtr();
   FunctionPtr newFunction (new TestFunction (newBlock));

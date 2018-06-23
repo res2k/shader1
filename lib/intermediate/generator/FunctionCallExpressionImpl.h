@@ -39,11 +39,11 @@ namespace s1
       typedef std::vector<std::pair<RegisterPtr, RegisterPtr> > FetchedRegs;
       struct PostActionInfo
       {
-        boost::shared_ptr<ExpressionImpl> expr;
+        boost::intrusive_ptr<ExpressionImpl> expr;
         RegisterPtr reg;
         bool lValue;
 
-        PostActionInfo (const boost::shared_ptr<ExpressionImpl>& expr, RegisterPtr reg, bool lValue)
+        PostActionInfo (ExpressionImpl* expr, RegisterPtr reg, bool lValue)
          : expr (expr), reg (reg), lValue (lValue) {}
       };
       typedef std::vector<PostActionInfo> PostActions;
@@ -52,10 +52,10 @@ namespace s1
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                   ExpressionContext&& context,
-                                  const semantics::NamePtr& functionName,
+                                  semantics::Name* functionName,
                                   const ExpressionVector& params);
 
-      boost::shared_ptr<TypeImpl> GetValueType ();
+      boost::intrusive_ptr<TypeImpl> GetValueType ();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

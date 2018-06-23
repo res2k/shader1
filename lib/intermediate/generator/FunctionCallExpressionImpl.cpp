@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "FunctionCallExpressionImpl.h"
 
@@ -28,8 +29,6 @@
 #include "NameImpl.h"
 #include "ScopeImpl.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -37,7 +36,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FunctionCallExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      const semantics::NamePtr& functionName,
+      semantics::Name* functionName,
       const ExpressionVector& params)
        : ExpressionImpl (handler, std::move (context)), functionName (functionName), params (params), overloadSelected (false)
     {
@@ -48,11 +47,11 @@ namespace s1
       if (overloadSelected) return (bool)overload;
       overloadSelected = true;
 
-      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
-      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (semantics::ScopePtr (nameImpl->ownerScope)));
+      auto nameImpl = get_static_ptr<NameImpl> (functionName);
+      auto funcScopeImpl = get_static_ptr<ScopeImpl> (nameImpl->ownerScope);
 
       // Collect overload candidates
-      ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName, params));
+      ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName.get(), params));
 
       if (candidates.size() == 0)
       {
@@ -92,7 +91,7 @@ namespace s1
       for (size_t i = 0; i < actualParams.size(); i++)
       {
         RegisterPtr reg1, reg2;
-        boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
+        auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
         if (overload->params[i].dir & ScopeImpl::dirIn)
         {
           reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
@@ -111,7 +110,7 @@ namespace s1
       return result;
     }
 
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetValueType ()
     {
       if (!SelectOverload ()) return TypeImplPtr(); // Assume error already handled
@@ -141,12 +140,12 @@ namespace s1
         const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
         if (param.dir & ScopeImpl::dirIn)
         {
-          boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
-          boost::shared_ptr<TypeImpl> paramExprType (paramExprImpl->GetValueType());
+          auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
+          auto paramExprType = paramExprImpl->GetValueType();
           if (!paramExprType) { paramsOkay = false; continue; } // Assume error already handled
           RegisterPtr inReg (fetchedRegs[i].first);
           assert (inReg);
-          boost::shared_ptr<TypeImpl> formalParamType (boost::static_pointer_cast<TypeImpl> (param.type));
+          auto formalParamType = get_static_ptr<TypeImpl> (param.type);
           if (!paramExprType->IsEqual (*formalParamType))
           {
             RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequenceBuilder()), formalParamType, Intermediate));
@@ -163,7 +162,7 @@ namespace s1
         }
         if (param.dir & ScopeImpl::dirOut)
         {
-          boost::shared_ptr<ExpressionImpl> paramExprImpl (boost::static_pointer_cast<ExpressionImpl> (actualParams[i]));
+          auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
           RegisterPtr outReg (fetchedRegs[i].second);
           if (!outReg)
           {
@@ -178,7 +177,7 @@ namespace s1
       if (!paramsOkay) return RegisterPtr();
 
       RegisterPtr destination;
-      boost::shared_ptr<TypeImpl> retType (GetValueType());
+      auto retType (GetValueType());
       if (!retType) return RegisterPtr(); // Assume error already handled
       if (!retType->IsEqual (*(handler->GetVoidType())))
         destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);

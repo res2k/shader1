@@ -22,6 +22,8 @@
 #include "intermediate/Sequence.h"
 #include "semantics/Block.h"
 
+#include "NameImpl.h"
+
 #include <outcome/outcome.hpp>
 
 namespace s1
@@ -70,7 +72,7 @@ namespace s1
     public:
       static const char varReturnValueName[];
       
-      BlockImpl (IntermediateGeneratorSemanticsHandler* handler, semantics::ScopePtr innerScope);
+      BlockImpl (IntermediateGeneratorSemanticsHandler* handler, semantics::Scope* innerScope);
       
       /**\name SemanticsHandler::Block implementation
        * @{ */
@@ -91,12 +93,12 @@ namespace s1
       const SequencePtr& GetSequence();
       const SequenceBuilderPtr& GetSequenceBuilder();
       
-      NameImplPtr GetTernaryResultName (const TypeImplPtr& resultType);
+      NameImplPtr GetTernaryResultName (TypeImpl* resultType);
 
       typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;
-      result_RegisterPtr GetRegisterForName (const NameImplPtr& name, bool writeable);
+      result_RegisterPtr GetRegisterForName (NameImpl* name, bool writeable);
       typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
-      result_void OverrideNameRegister (const NameImplPtr& name, const RegisterPtr& reg);
+      result_void OverrideNameRegister (NameImpl* name, const RegisterPtr& reg);
       
       const NameImplSet& GetExportedNames() const { return exportedNames; }
     };

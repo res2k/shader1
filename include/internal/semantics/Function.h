@@ -18,14 +18,14 @@
 #ifndef SEMANTICS_FUNCTION_H_
 #define SEMANTICS_FUNCTION_H_
 
-#include "forwarddecl.h"
+#include "Base.h"
 
 namespace s1
 {
   namespace semantics
   {
     /// Function
-    struct Function
+    struct Function : public Base
     {
       virtual ~Function() {}
 

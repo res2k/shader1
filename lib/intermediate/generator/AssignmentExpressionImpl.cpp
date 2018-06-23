@@ -31,8 +31,8 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::AssignmentExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      const boost::shared_ptr<ExpressionImpl>& target,
-      const boost::shared_ptr<ExpressionImpl>& value)
+      ExpressionImpl* target,
+      ExpressionImpl* value)
        : ExpressionImpl (handler, std::move (context)), target (target), value (value)
     {
     }
@@ -48,11 +48,11 @@ namespace s1
       return set;
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::GetValueType()
     {
-      boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
-      boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
+      auto targetType = target->GetValueType();
+      auto valueType = value->GetValueType();
 
       if (!valueType->CompatibleLossy (*(targetType.get())))
       {
@@ -75,8 +75,8 @@ namespace s1
       if (asLvalue) return RegisterPtr ();
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-      boost::shared_ptr<TypeImpl> targetType = target->GetValueType();
-      boost::shared_ptr<TypeImpl> valueType = value->GetValueType();
+      auto targetType = target->GetValueType();
+      auto valueType = value->GetValueType();
       if (!targetType || !valueType) return RegisterPtr(); // Assume error already handled
 
       RegisterPtr exprDestinationReg;
@@ -109,7 +109,7 @@ namespace s1
         if (targetName && !valueName)
         {
           // See if we can 'force' the target register for the name's register
-          if (block.OverrideNameRegister (targetName, exprDestinationReg))
+          if (block.OverrideNameRegister (targetName.get(), exprDestinationReg))
           {
             value->AddToSequencePostAction (block, exprDestinationReg, false);
             return exprDestinationReg;

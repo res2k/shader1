@@ -26,18 +26,18 @@ namespace s1
   {
     struct IntermediateGeneratorSemanticsHandler::NameImpl : public CommonName
     {
-      boost::weak_ptr<ScopeImpl> ownerScope;
+      ScopeImpl* ownerScope;
 
       // Output parameter
       bool isOutputParam = false;
 
-      NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
+      NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier, NameType type,
-                const boost::shared_ptr<TypeImpl>& typeOfName)
+                TypeImpl* typeOfName)
         : CommonName (identifier, type, typeOfName), ownerScope (ownerScope) {}
-      NameImpl (const boost::weak_ptr<ScopeImpl>& ownerScope,
+      NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier,
-                const boost::shared_ptr<TypeImpl>& typeOfName,
+                TypeImpl* typeOfName,
                 ExpressionPtr value, bool constant, bool isOutputParam = false)
         : CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope),
           isOutputParam (isOutputParam) {}

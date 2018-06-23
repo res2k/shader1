@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2018 Frank Richter
+    Copyright (c) 2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,21 +15,25 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef SEMANTICS_EXPRESSION_H_
-#define SEMANTICS_EXPRESSION_H_
+#ifndef SEMANTICS_BASE_H_
+#define SEMANTICS_BASE_H_
 
-#include "Base.h"
+#include "forwarddecl.h"
+
+#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace s1
 {
   namespace semantics
   {
-    /// Abstract expression
-    struct Expression : public Base
+    /// Base class for various \c semantics classes
+    class Base :
+      public boost::intrusive_ref_counter<Base, boost::thread_unsafe_counter>
     {
-      virtual ~Expression() {}
+    public:
+      virtual ~Base() {}
     };
   } // namespace semantics
 } // namespace s1
 
-#endif // SEMANTICS_EXPRESSION_H_
+#endif // SEMANTICS_BASE_H_

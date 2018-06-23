@@ -26,8 +26,7 @@ namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::ScopeImpl : public semantics::Scope,
-      public boost::enable_shared_from_this<ScopeImpl>
+    class IntermediateGeneratorSemanticsHandler::ScopeImpl : public semantics::Scope
     {
     public:
       struct FunctionInfo
@@ -61,7 +60,7 @@ namespace s1
       result_NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
-      boost::shared_ptr<ScopeImpl> parent;
+      boost::intrusive_ptr<ScopeImpl> parent;
       semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
@@ -71,8 +70,8 @@ namespace s1
       void AddParameter (const FunctionFormalParameter& param);
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
-                 const boost::shared_ptr<ScopeImpl>& parent, semantics::ScopeLevel level,
-                 const semantics::TypePtr& funcReturnType);
+                 ScopeImpl* parent, semantics::ScopeLevel level,
+                 semantics::Type* funcReturnType);
       semantics::ScopeLevel GetLevel() const { return level; }
 
       semantics::NamePtr AddVariable (semantics::TypePtr type,
@@ -103,11 +102,11 @@ namespace s1
         else
           return parent->outputParams;
       }
-      int DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope);
+      int DistanceToScope (ScopeImpl* scope);
 
       void AddBuiltinFunction (const BuiltinPtr& builtin);
       FunctionInfoVector GetFunctions () const;
-      FunctionInfoVector CollectOverloadCandidates (const semantics::NamePtr& functionName, const ExpressionVector& params) const;
+      FunctionInfoVector CollectOverloadCandidates (semantics::Name* functionName, const ExpressionVector& params) const;
 
       std::vector<semantics::NamePtr> FlushNewVars ();
       const std::vector<semantics::NamePtr>& GetAllVars ();

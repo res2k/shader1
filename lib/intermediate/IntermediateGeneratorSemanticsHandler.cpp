@@ -20,6 +20,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/std_string.h"
 #include "base/format/uc_String.h"
+#include "base/intrusive_ptr.h"
 #include "diagnostics/Handler.h"
 #include "intermediate/Diagnostics.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
@@ -68,12 +69,12 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
-      invalidType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Invalid));
-      voidType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Void));
-      boolType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Bool));
-      intType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Int));
-      uintType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::UInt));
-      floatType = boost::shared_ptr<TypeImpl> (new TypeImpl (semantics::BaseType::Float));
+      invalidType = new TypeImpl (semantics::BaseType::Invalid);
+      voidType = new TypeImpl (semantics::BaseType::Void);
+      boolType = new TypeImpl (semantics::BaseType::Bool);
+      intType = new TypeImpl (semantics::BaseType::Int);
+      uintType = new TypeImpl (semantics::BaseType::UInt);
+      floatType = new TypeImpl (semantics::BaseType::Float);
     }
 
     IntermediateGeneratorSemanticsHandler::~IntermediateGeneratorSemanticsHandler ()
@@ -109,7 +110,7 @@ namespace s1
       return typeStr;
     }
 
-    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypeImplPtr& type)
+    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (TypeImpl* type)
     {
       switch (type->typeClass)
       {
@@ -132,18 +133,18 @@ namespace s1
       case TypeImpl::Array:
         {
           std::string s;
-          FormatTSArray (s, GetTypeString (boost::static_pointer_cast<TypeImpl> (type->avmBase)));
+          FormatTSArray (s, GetTypeString (get_static_ptr<TypeImpl> (type->avmBase)));
           return s;
         }
       case TypeImpl::Vector:
         {
-          auto compType = boost::static_pointer_cast<TypeImpl> (type->avmBase);
+          auto compType = get_static_ptr<TypeImpl> (type->avmBase);
           S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
           return GetBaseTypeString (compType->base, type->vectorDim, 0);
         }
       case TypeImpl::Matrix:
         {
-          auto compType = boost::static_pointer_cast<TypeImpl> (type->avmBase);
+          auto compType = get_static_ptr<TypeImpl> (type->avmBase);
           S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
           return GetBaseTypeString (compType->base, type->matrixRows, type->matrixCols);
         }
@@ -152,20 +153,19 @@ namespace s1
       return std::string ();
     }
 
-    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (const TypePtr& type)
+    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (semantics::Type* type)
     {
-      return GetTypeString (boost::static_pointer_cast<TypeImpl> (type));
+      return GetTypeString (get_static_ptr<TypeImpl> (type));
     }
 
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-      const boost::shared_ptr<TypeImpl>& t1, const boost::shared_ptr<TypeImpl>& t2)
+    IntermediateGeneratorSemanticsHandler::TypeImpl*
+    IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (TypeImpl* t1, TypeImpl* t2)
     {
-      return boost::static_pointer_cast<TypeImpl> (CommonSemanticsHandler::GetHigherPrecisionType (t1, t2));
+      return get_static_ptr<TypeImpl> (CommonSemanticsHandler::GetHigherPrecisionType (t1, t2));
     }
 
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
-    IntermediateGeneratorSemanticsHandler::GetAttributeType (const TypeImplPtr& expressionType,
+    IntermediateGeneratorSemanticsHandler::GetAttributeType (TypeImpl* expressionType,
                                                              const Attribute& attr)
     {
       return boost::static_pointer_cast<TypeImpl> (CommonSemanticsHandler::GetAttributeType (expressionType, attr));
@@ -182,7 +182,7 @@ namespace s1
       const std::vector<NamePtr>& globalVars (globalScope->GetAllVars());
       for (auto global : globalVars)
       {
-        boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (global));
+        auto nameImpl = get_static_ptr<NameImpl> (global);
         if (nameImpl->varValue)
         {
           // Synthesize an expression to assign the global with the default value
@@ -192,7 +192,7 @@ namespace s1
         }
       }
 
-      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (globalsInitBlock));
+      auto blockImpl = get_static_ptr<BlockImpl> (globalsInitBlock);
       blockImpl->Finish();
 
       exportedNames = blockImpl->GetExportedNames();
@@ -439,7 +439,7 @@ namespace s1
             }
           }
 
-          boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> ((*funcIt)->block));
+          auto blockImpl = get_static_ptr<BlockImpl> ((*funcIt)->block);
 
           semantics::Scope::FunctionFormalParameters params ((*funcIt)->params);
           TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
@@ -567,7 +567,7 @@ namespace s1
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (NamePtr name)
     {
-      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (name));
+      auto nameImpl = get_static_ptr<NameImpl> (name);
       switch (nameImpl->GetType())
       {
       case semantics::Name::Variable:
@@ -592,24 +592,24 @@ namespace s1
         ExpressionError (ExpressionContext(), Error::InvalidAttribute);
         return ExpressionPtr();
       }
-      return boost::make_shared<AttributeExpressionImpl> (this, ExpressionContext(), expr, attrInfo);
+      return new AttributeExpressionImpl (this, ExpressionContext(), expr.get(), attrInfo);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArrayElementAccess (ExpressionPtr arrayExpr,
                                                                                    ExpressionPtr elementIndexExpr)
     {
       if (!arrayExpr || !elementIndexExpr) return ExpressionPtr(); // Assume error already handled
-      return boost::make_shared<ArrayElementExpressionImpl> (this, ExpressionContext(), arrayExpr, elementIndexExpr);
+      return new ArrayElementExpressionImpl (this, ExpressionContext(), arrayExpr, elementIndexExpr);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAssignExpression (ExpressionPtr target,
                                           ExpressionPtr value)
     {
       if (!target || !value) return ExpressionPtr(); // Assume error already handled
-      return ExpressionPtr (new AssignmentExpressionImpl (this,
-                                                          ExpressionContext(),
-                                                          boost::static_pointer_cast<ExpressionImpl> (target),
-                                                          boost::static_pointer_cast<ExpressionImpl> (value)));
+      return new AssignmentExpressionImpl (this,
+                                           ExpressionContext(),
+                                           get_static_ptr<ExpressionImpl> (target),
+                                           get_static_ptr<ExpressionImpl> (value));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateArithmeticExpression (ArithmeticOp op,
@@ -617,19 +617,19 @@ namespace s1
                                                                                      ExpressionPtr operand2)
     {
       if (!operand1 || !operand2) return ExpressionPtr(); // Assume error already handled
-      return ExpressionPtr (new ArithmeticExpressionImpl (this,
-                                                          ExpressionContext(),
-                                                          op,
-                                                          boost::static_pointer_cast<ExpressionImpl> (operand1),
-                                                          boost::static_pointer_cast<ExpressionImpl> (operand2)));
+      return new ArithmeticExpressionImpl (this,
+                                           ExpressionContext(),
+                                           op,
+                                           get_static_ptr<ExpressionImpl> (operand1),
+                                           get_static_ptr<ExpressionImpl> (operand2));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateUnaryExpression (UnaryOp op,
                                                                                 ExpressionPtr operand)
     {
       if (!operand) return ExpressionPtr(); // Assume error already handled
-      return boost::make_shared<UnaryExpressionImpl> (this, ExpressionContext(), op,
-                                                      boost::static_pointer_cast<ExpressionImpl> (operand));
+      return new UnaryExpressionImpl (this, ExpressionContext(), op,
+                                      get_static_ptr<ExpressionImpl> (operand));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTernaryExpression (ExpressionPtr condition,
@@ -637,11 +637,11 @@ namespace s1
                                                                                   ExpressionPtr thenExpr)
     {
       if (!condition || !ifExpr || !thenExpr) return ExpressionPtr(); // Assume error already handled
-      return boost::make_shared<TernaryExpressionImpl> (this,
-                                                        ExpressionContext(),
-                                                        boost::static_pointer_cast<ExpressionImpl> (condition),
-                                                        boost::static_pointer_cast<ExpressionImpl> (ifExpr),
-                                                        boost::static_pointer_cast<ExpressionImpl> (thenExpr));
+      return new TernaryExpressionImpl (this,
+                                        ExpressionContext(),
+                                        get_static_ptr<ExpressionImpl> (condition),
+                                        get_static_ptr<ExpressionImpl> (ifExpr),
+                                        get_static_ptr<ExpressionImpl> (thenExpr));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateComparisonExpression (CompareOp op,
@@ -649,12 +649,11 @@ namespace s1
                                                                                      ExpressionPtr operand2)
     {
       if (!operand1 || !operand2) return ExpressionPtr(); // Assume error already handled
-      return ExpressionPtr (
-        boost::make_shared<ComparisonExpressionImpl> (this,
-                                                      ExpressionContext(),
-                                                      op,
-                                                      boost::static_pointer_cast<ExpressionImpl> (operand1),
-                                                      boost::static_pointer_cast<ExpressionImpl> (operand2)));
+      return new ComparisonExpressionImpl (this,
+                                           ExpressionContext(),
+                                           op,
+                                           get_static_ptr<ExpressionImpl> (operand1),
+                                           get_static_ptr<ExpressionImpl> (operand2));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateLogicExpression (LogicOp op,
@@ -662,12 +661,11 @@ namespace s1
                                                                                 ExpressionPtr operand2)
     {
       if (!operand1 || !operand2) return ExpressionPtr(); // Assume error already handled
-      return ExpressionPtr (
-        boost::make_shared<LogicExpressionImpl> (this,
-                                                 ExpressionContext(),
-                                                 op,
-                                                 boost::static_pointer_cast<ExpressionImpl> (operand1),
-                                                 boost::static_pointer_cast<ExpressionImpl> (operand2)));
+      return new LogicExpressionImpl (this,
+                                      ExpressionContext(),
+                                      op,
+                                      get_static_ptr<ExpressionImpl> (operand1),
+                                      get_static_ptr<ExpressionImpl> (operand2));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateFunctionCallExpression (NamePtr functionName,
@@ -679,11 +677,10 @@ namespace s1
         if (!param) return ExpressionPtr(); // Assume error already handled
       }
 
-      return ExpressionPtr (
-        boost::make_shared<FunctionCallExpressionImpl> (this,
-                                                        ExpressionContext(),
-                                                        functionName,
-                                                        params));
+      return new FunctionCallExpressionImpl (this,
+                                             ExpressionContext(),
+                                             functionName.get(),
+                                             params);
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateTypeConstructorExpression (TypePtr type,
@@ -694,21 +691,20 @@ namespace s1
         if (!param) return ExpressionPtr(); // Assume error already handled
       }
 
-      return ExpressionPtr (
-        boost::make_shared<TypeConstructorExpressionImpl> (this,
-                                                           ExpressionContext(),
-                                                           boost::static_pointer_cast<TypeImpl> (type),
-                                                           params));
+      return new TypeConstructorExpressionImpl (this,
+                                                ExpressionContext(),
+                                                get_static_ptr<TypeImpl> (type),
+                                                params);
     }
 
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,
                                                                  semantics::ScopeLevel scopeLevel,
                                                                  const TypePtr& funcReturnType)
     {
-      ScopeImplPtr newScope (boost::make_shared<ScopeImpl> (this,
-                                                            boost::static_pointer_cast<ScopeImpl> (parentScope),
-                                                            scopeLevel,
-                                                            funcReturnType));
+      auto newScope = make_intrusive<ScopeImpl> (this,
+                                                 get_static_ptr<ScopeImpl> (parentScope),
+                                                 scopeLevel,
+                                                 funcReturnType.get());
       switch (scopeLevel)
       {
       case semantics::ScopeLevel::Builtin:
@@ -727,7 +723,7 @@ namespace s1
     BlockPtr IntermediateGeneratorSemanticsHandler::CreateBlock (ScopePtr parentScope)
     {
       ScopePtr blockScope = CreateScope (parentScope, semantics::ScopeLevel::Function);
-      return BlockPtr (new BlockImpl (this, blockScope));
+      return BlockPtr (new BlockImpl (this, blockScope.get()));
     }
 
   } // namespace intermediate

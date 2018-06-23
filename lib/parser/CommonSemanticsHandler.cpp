@@ -18,6 +18,7 @@
 #include "base/common.h"
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
+#include "base/intrusive_ptr.h"
 #include "parser/CommonSemanticsHandler.h"
 #include "parser/Diagnostics.h"
 
@@ -208,15 +209,14 @@ namespace s1
       S1_ASSERT_NOT_REACHED (uc::String());
     }
     
-    boost::shared_ptr<CommonSemanticsHandler::CommonType>
-    CommonSemanticsHandler::GetHigherPrecisionType (
-      const boost::shared_ptr<CommonType>& t1, const boost::shared_ptr<CommonType>& t2)
+    CommonSemanticsHandler::CommonType*
+    CommonSemanticsHandler::GetHigherPrecisionType (CommonType* t1, CommonType* t2)
     {
       if (t1->IsPrecisionHigherEqual (*t2))
         return t1;
       else if (t2->IsPrecisionHigherEqual (*t1))
         return t2;
-      return boost::shared_ptr<CommonSemanticsHandler::CommonType> ();
+      return nullptr;
     }
       
     semantics::BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
@@ -317,8 +317,7 @@ namespace s1
     }
     
     semantics::TypePtr
-    CommonSemanticsHandler::GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
-                                              const Attribute& attr)
+    CommonSemanticsHandler::GetAttributeType (CommonType* expressionType, const Attribute& attr)
     {
       semantics::TypePtr attrType;
       switch (attr.attrClass)
@@ -405,7 +404,7 @@ namespace s1
     }
       
     CommonSemanticsHandler::CommonScope::CommonScope (CommonSemanticsHandler* handler,
-                                                      const boost::shared_ptr<CommonScope>& parent,
+                                                      CommonScope* parent,
                                                       semantics::ScopeLevel level)
      : handler (handler), parent (parent), level (level)
     {}
@@ -455,7 +454,7 @@ namespace s1
       semantics::NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
       identifiers[identifier] = newName;
       semantics::ScopePtr funcScope;
-      funcScope = handler->CreateScope (shared_from_this(), semantics::ScopeLevel::Function);
+      funcScope = handler->CreateScope (this, semantics::ScopeLevel::Function);
       auto newBlock = handler->CreateBlock (funcScope);
       funcScope = semantics::ScopePtr();
       semantics::FunctionPtr newFunction (new CommonFunction (newBlock));
@@ -479,7 +478,7 @@ namespace s1
                                                              semantics::ScopeLevel scopeLevel)
     {
       return semantics::ScopePtr (new CommonScope (this,
-        boost::static_pointer_cast<CommonScope> (parentScope),
+        get_static_ptr<CommonScope> (parentScope),
         scopeLevel));
     }
     

@@ -32,7 +32,7 @@ namespace s1
                           ExpressionContext&& context,
                           bool value);
       
-      boost::shared_ptr<TypeImpl> GetValueType();
+      boost::intrusive_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

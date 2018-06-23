@@ -31,7 +31,7 @@ namespace s1
     public:
       AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                ExpressionContext&& context,
-                               const ExpressionPtr& baseExpr,
+                               Expression* baseExpr,
                                const IntermediateGeneratorSemanticsHandler::Attribute& attr);
       
       TypeImplPtr GetValueType ();

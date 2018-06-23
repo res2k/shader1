@@ -44,7 +44,7 @@ namespace s1
       
       virtual NameImplSet QueryWrittenNames (bool asLvalue);
       
-      virtual boost::shared_ptr<TypeImpl> GetValueType() = 0;
+      virtual boost::intrusive_ptr<TypeImpl> GetValueType() = 0;
       virtual RegisterPtr AddToSequence (BlockImpl& block,
                                          RegisterClassification targetClassify,
                                          bool asLvalue = false) = 0;

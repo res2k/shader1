@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "ArrayElementExpressionImpl.h"
 
@@ -25,8 +26,6 @@
 #include "intermediate/SequenceOp/SequenceOpExtractArrayElement.h"
 
 #include "BlockImpl.h"
-
-#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -42,7 +41,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::GetValueType ()
     {
-      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
+      auto exprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
       TypeImplPtr exprType (exprImpl->GetValueType());
       if (!exprType) return TypeImplPtr(); // Assume error already handled
       if (exprType->typeClass != TypeImpl::Array)
@@ -50,7 +49,7 @@ namespace s1
         ExpressionError (Error::NotAnArray);
         return TypeImplPtr();
       }
-      return boost::static_pointer_cast<TypeImpl> (exprType->avmBase);
+      return get_static_ptr<TypeImpl> (exprType->avmBase);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,
@@ -59,8 +58,8 @@ namespace s1
     {
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
 
-      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
-      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));
+      auto arrayExprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
+      auto indexExprImpl = get_static_ptr<ExpressionImpl> (indexExpr);
       
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
@@ -113,8 +112,8 @@ namespace s1
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      boost::shared_ptr<ExpressionImpl> arrayExprImpl (boost::static_pointer_cast<ExpressionImpl> (arrayExpr));
-      boost::shared_ptr<ExpressionImpl> indexExprImpl (boost::static_pointer_cast<ExpressionImpl> (indexExpr));
+      auto arrayExprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
+      auto indexExprImpl = get_static_ptr<ExpressionImpl> (indexExpr);
       TypeImplPtr indexType (indexExprImpl->GetValueType());
       if (!indexType) return; // Assume error already handled
       

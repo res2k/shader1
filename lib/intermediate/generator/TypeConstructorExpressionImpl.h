@@ -35,7 +35,7 @@ namespace s1
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                      ExpressionContext&& context,
-                                     const TypeImplPtr& type,
+                                     TypeImpl* type,
                                      const ExpressionVector& params);
       
       TypeImplPtr GetValueType () { return type; }

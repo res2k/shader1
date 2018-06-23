@@ -23,8 +23,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpCompare.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -33,13 +31,13 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
       CompareOp op,
-      const boost::shared_ptr<ExpressionImpl>& operand1,
-      const boost::shared_ptr<ExpressionImpl>& operand2)
+      ExpressionImpl* operand1,
+      ExpressionImpl* operand2)
        : BinaryExpressionImpl (handler, std::move (context), operand1, operand2), op (op)
     {
     }
 
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::GetValueType()
     {
       // Comparison has always a bool result
@@ -53,11 +51,11 @@ namespace s1
       if (asLvalue) return RegisterPtr();
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-      boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
-      boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      auto type1 = operand1->GetValueType();
+      auto type2 = operand2->GetValueType();
       if (!type1 || !type2) return RegisterPtr(); // Assume error already handled
 
-      boost::shared_ptr<TypeImpl> comparisonType = handler->GetHigherPrecisionType (type1, type2);
+      auto comparisonType = handler->GetHigherPrecisionType (type1.get(), type2.get());
         
       // Set up registers for operand values
       auto operandRegs = GetSourceRegisters (block, comparisonType);

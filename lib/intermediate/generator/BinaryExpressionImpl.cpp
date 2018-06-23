@@ -28,8 +28,8 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::BinaryExpressionImpl::BinaryExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      const boost::shared_ptr<ExpressionImpl>& operand1,
-      const boost::shared_ptr<ExpressionImpl>& operand2)
+      ExpressionImpl* operand1,
+      ExpressionImpl* operand2)
        : ExpressionImpl (handler, std::move (context)), operand1 (operand1), operand2 (operand2)
     {
     }
@@ -54,8 +54,8 @@ namespace s1
                                                                                      const TypeImplPtr& asType)
     {
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-      boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
-      boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      auto type1 = operand1->GetValueType();
+      auto type2 = operand2->GetValueType();
       if (!type1 || !type2) return boost::none; // Assume error already handled
 
       // Set up registers for operand values

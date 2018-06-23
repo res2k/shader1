@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "LogicExpressionImpl.h"
 
@@ -23,8 +24,6 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpLogic.h"
-
-#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -34,17 +33,17 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
       LogicOp op,
-      const boost::shared_ptr<ExpressionImpl>& operand1,
-      const boost::shared_ptr<ExpressionImpl>& operand2)
+      ExpressionImpl* operand1,
+      ExpressionImpl* operand2)
        : BinaryExpressionImpl (handler, std::move (context), operand1, operand2), op (op)
     {
     }
 
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::LogicExpressionImpl::GetValueType()
     {
-      boost::shared_ptr<TypeImpl> type1 = operand1->GetValueType();
-      boost::shared_ptr<TypeImpl> type2 = operand2->GetValueType();
+      auto type1 = operand1->GetValueType();
+      auto type2 = operand2->GetValueType();
       if (!type1 || !type2) return TypeImplPtr(); // Assume error already handled
       
       // Operands have to be bools

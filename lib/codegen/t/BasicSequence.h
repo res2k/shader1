@@ -17,6 +17,7 @@
 
 #include <cxxtest/TestSuite.h>
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
@@ -130,9 +131,8 @@ public:
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarB =
-      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varB);
-      
+    auto testVarB = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varB);
+
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());
@@ -179,13 +179,10 @@ public:
     
     TestSemanticsHandler::TestBlockImpl* testBlockImpl =
       static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarA =
-      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varA);
-    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarB =
-      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varB);
-    boost::shared_ptr<TestSemanticsHandler::TestNameImpl> testVarC =
-      boost::static_pointer_cast<TestSemanticsHandler::TestNameImpl> (varC);
-      
+    auto testVarA = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varA);
+    auto testVarB = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varB);
+    auto testVarC = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varC);
+
     TestImportedNameResolver nameRes;
     TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
     StringsArrayPtr generateResult (seqGen.Generate ());

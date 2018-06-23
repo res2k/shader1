@@ -30,13 +30,13 @@ namespace s1
     public:
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                               ExpressionContext&& context,
-                              const NameImplPtr& name);
+                              NameImpl* name);
                               
       NameImplPtr GetExpressionName() { return name; }
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
-      boost::shared_ptr<TypeImpl> GetValueType();
+      boost::intrusive_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

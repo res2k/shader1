@@ -24,8 +24,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -34,7 +32,7 @@ namespace s1
                            IntermediateGeneratorSemanticsHandler* handler,
                            ExpressionContext&& context,
                            UnaryOp op,
-                           const boost::shared_ptr<ExpressionImpl>& operand)
+                           ExpressionImpl* operand)
        : ExpressionImpl (handler, std::move (context)), op (op), operand (operand)
     {
     }
@@ -45,12 +43,12 @@ namespace s1
       return operand->QueryWrittenNames (asLvalue);
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::GetValueType()
     {
-      boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
+      auto operandType = operand->GetValueType();
       if (!operandType) return TypeImplPtr(); // Assume error already handled
-      boost::shared_ptr<TypeImpl> valueType;
+      TypeImplPtr valueType;
       
       switch (op)
       {
@@ -88,9 +86,9 @@ namespace s1
       if (asLvalue) return RegisterPtr();
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
-      boost::shared_ptr<TypeImpl> valueType = GetValueType ();
+      auto valueType = GetValueType ();
       if (!valueType) return RegisterPtr(); // Assume error already handled
-      boost::shared_ptr<TypeImpl> operandType = operand->GetValueType();
+      auto operandType = operand->GetValueType();
       if (!operandType) return RegisterPtr(); // Assume error already handled
 
       // Set up register for operand value

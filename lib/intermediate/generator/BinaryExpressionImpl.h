@@ -29,8 +29,8 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::BinaryExpressionImpl : public ExpressionImpl
     {
     protected:
-      boost::shared_ptr<ExpressionImpl> operand1;
-      boost::shared_ptr<ExpressionImpl> operand2;
+      boost::intrusive_ptr<ExpressionImpl> operand1;
+      boost::intrusive_ptr<ExpressionImpl> operand2;
 
       struct OperandReg
       {
@@ -49,8 +49,8 @@ namespace s1
     public:
       BinaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                             ExpressionContext&& context,
-                            const boost::shared_ptr<ExpressionImpl>& operand1,
-                            const boost::shared_ptr<ExpressionImpl>& operand2);
+                            ExpressionImpl* operand1,
+                            ExpressionImpl* operand2);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
     };

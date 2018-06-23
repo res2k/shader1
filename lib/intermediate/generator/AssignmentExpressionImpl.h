@@ -26,17 +26,17 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl : public ExpressionImpl
     {
-      boost::shared_ptr<ExpressionImpl> target;
-      boost::shared_ptr<ExpressionImpl> value;
+      boost::intrusive_ptr<ExpressionImpl> target;
+      boost::intrusive_ptr<ExpressionImpl> value;
     public:
       AssignmentExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                 ExpressionContext&& context,
-                                const boost::shared_ptr<ExpressionImpl>& target,
-                                const boost::shared_ptr<ExpressionImpl>& value);
+                                ExpressionImpl* target,
+                                ExpressionImpl* value);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
-      boost::shared_ptr<TypeImpl> GetValueType();
+      boost::intrusive_ptr<TypeImpl> GetValueType();
       
       void AddToSequence (BlockImpl& block);
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

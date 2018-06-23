@@ -16,14 +16,13 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "TernaryExpressionImpl.h"
 
 #include "BlockImpl.h"
 #include "intermediate/Diagnostics.h"
 #include "NameImpl.h"
-
-#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -32,9 +31,9 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::TernaryExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      const boost::shared_ptr<ExpressionImpl>& condition,
-      const boost::shared_ptr<ExpressionImpl>& ifExpr,
-      const boost::shared_ptr<ExpressionImpl>& elseExpr)
+      ExpressionImpl* condition,
+      ExpressionImpl* ifExpr,
+      ExpressionImpl* elseExpr)
        : ExpressionImpl (handler, std::move (context)), condition (condition), ifExpr (ifExpr), elseExpr (elseExpr)
     {
     }
@@ -54,12 +53,12 @@ namespace s1
       return set;
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::GetValueType()
     {
       // Determine type in which to perform computation
-      boost::shared_ptr<TypeImpl> valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-        ifExpr->GetValueType(), elseExpr->GetValueType());
+      auto valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+        ifExpr->GetValueType().get(), elseExpr->GetValueType().get());
         
       if (!valueType)
       {
@@ -82,7 +81,7 @@ namespace s1
          To get that effect, synthesize a branching op. */
       
       // Get Name object for the ternary op result
-      semantics::NamePtr destName (block.GetTernaryResultName (GetValueType()));
+      semantics::NamePtr destName (block.GetTernaryResultName (GetValueType().get()));
 
       auto ifBlock = handler->CreateBlock (block.GetInnerScope());
       // Synthesize assignment for 'true' case
@@ -103,7 +102,7 @@ namespace s1
       // Assign ternary result to destination
       {
         ExpressionPtr destNameExpr (handler->CreateVariableExpression (destName));
-        boost::shared_ptr<ExpressionImpl> destNameExprImpl (boost::static_pointer_cast<ExpressionImpl> (destNameExpr));
+        auto destNameExprImpl = get_static_ptr<ExpressionImpl> (destNameExpr);
         return destNameExprImpl->AddToSequence (block, Intermediate);
       }
     }

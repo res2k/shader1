@@ -19,6 +19,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/make_shared.hpp>
 
+#include "base/intrusive_ptr.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
@@ -74,8 +75,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
 
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
@@ -117,8 +117,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
 
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
@@ -164,8 +163,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
 
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
@@ -225,8 +223,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
 
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
@@ -288,8 +285,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
 
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());
@@ -349,8 +345,7 @@ public:
     TS_ASSERT_THROWS_NOTHING(parser.ParseBlock (block));
     TS_ASSERT(errorHandler.parseErrors.empty());
 
-    boost::shared_ptr<TestSemanticsHandler::TestBlockImpl> testBlockImpl (
-      boost::static_pointer_cast<TestSemanticsHandler::TestBlockImpl> (block));
+    auto testBlockImpl = s1::get_static_ptr<TestSemanticsHandler::TestBlockImpl> (block);
 
     s1::intermediate::SequenceBuilderPtr newSeqBuilder (boost::make_shared<s1::intermediate::SequenceBuilder> ());
     bool blocksInlined = s1::optimize::Inliner::InlineAllBlocks (newSeqBuilder, testBlockImpl->GetSequence());

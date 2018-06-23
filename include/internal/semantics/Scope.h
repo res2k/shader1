@@ -18,7 +18,9 @@
 #ifndef SEMANTICS_SCOPE_H_
 #define SEMANTICS_SCOPE_H_
 
-#include "forwarddecl.h"
+#include "Base.h"
+#include "Expression.h"
+#include "Type.h"
 
 #include "base/uc/String.h"
 
@@ -29,7 +31,7 @@ namespace s1
     /**
      * Scope object, managing visibility of identifiers.
      */
-    struct Scope
+    struct Scope : public Base
     {
       virtual ~Scope() {}
 

@@ -27,16 +27,16 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl : public ExpressionImpl
     {
       UnaryOp op;
-      boost::shared_ptr<ExpressionImpl> operand;
+      boost::intrusive_ptr<ExpressionImpl> operand;
     public:
       UnaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                            ExpressionContext&& context,
                            UnaryOp op,
-                           const boost::shared_ptr<ExpressionImpl>& operand);
+                           ExpressionImpl* operand);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
-      boost::shared_ptr<TypeImpl> GetValueType();
+      boost::intrusive_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

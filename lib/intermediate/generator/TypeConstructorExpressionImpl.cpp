@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
@@ -28,8 +29,6 @@
 #include "BlockImpl.h"
 #include "TypeConstructorExpressionImpl.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -37,7 +36,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::TypeConstructorExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      const TypeImplPtr& type,
+      TypeImpl* type,
       const ExpressionVector& params)
      : ExpressionImpl (handler, std::move (context)), type (type), params (params)
     {
@@ -50,14 +49,12 @@ namespace s1
       bool successful = true;
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
+      auto targetBaseType = get_static_ptr<TypeImpl> (type->avmBase);
           
-      for (ExpressionVector::const_iterator expr (params.begin());
-           expr != params.end();
-           ++expr)
+      for (const auto& expr : params)
       {
-        boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
-        TypeImplPtr exprType (exprImpl->GetValueType());
+        auto exprImpl = get_static_ptr<ExpressionImpl> (expr);
+        auto exprType (exprImpl->GetValueType());
         if (!exprType) { successful = false; continue; } // Assume error already handled
         RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
         if (!srcExprReg) { successful = false; continue; } // Assume error already handled
@@ -89,7 +86,7 @@ namespace s1
         case TypeImpl::Vector:
           {
             // extract components
-            TypeImplPtr exprCompType (boost::static_pointer_cast<TypeImpl> (exprType->avmBase));
+            auto exprCompType = get_static_ptr<TypeImpl> (exprType->avmBase);
             for (unsigned int c = 0; c < exprType->vectorDim; c++)
             {
               RegisterPtr compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
@@ -145,7 +142,7 @@ namespace s1
           
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           ExpressionPtr srcExpr (params[0]);
-          boost::shared_ptr<ExpressionImpl> srcExprImpl (boost::static_pointer_cast<ExpressionImpl> (srcExpr));
+          auto srcExprImpl = get_static_ptr<ExpressionImpl> (srcExpr);
           RegisterPtr srcReg (srcExprImpl->AddToSequence (block, Intermediate, false));
           if (!srcReg) return RegisterPtr(); // Assume error already handled
           TypeImplPtr srcType (srcExprImpl->GetValueType());
@@ -246,11 +243,9 @@ namespace s1
           TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
 
           bool sourcesOk = true;
-          for (ExpressionVector::const_iterator expr (params.begin());
-              expr != params.end();
-              ++expr)
+          for (const auto& expr : params)
           {
-            boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (*expr));
+            auto exprImpl = get_static_ptr<ExpressionImpl> (expr);
             TypeImplPtr exprType (exprImpl->GetValueType());
             if (!exprType) { sourcesOk = false; continue; } // Assume error already handled
             RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));

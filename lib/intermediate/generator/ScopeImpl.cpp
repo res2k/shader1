@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "BlockImpl.h"
 #include "Builtin.h"
@@ -65,9 +66,9 @@ namespace s1
     }
 
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
-                                                                 const boost::shared_ptr<ScopeImpl>& parent,
+                                                                 ScopeImpl* parent,
                                                                  semantics::ScopeLevel level,
-                                                                 const semantics::TypePtr& funcReturnType)
+                                                                 semantics::Type* funcReturnType)
      : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
     {}
 
@@ -84,11 +85,11 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return;
       }
-      NamePtr newName (new NameImpl (shared_from_this(), param.identifier,
-                                     boost::static_pointer_cast<TypeImpl> (param.type),
-                                     param.defaultValue,
-                                     param.dir == dirIn,
-                                     param.dir == dirOut));
+      NamePtr newName = new NameImpl (this, param.identifier,
+                                      get_static_ptr<TypeImpl> (param.type),
+                                      param.defaultValue,
+                                      param.dir == dirIn,
+                                      param.dir == dirOut);
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
 
@@ -104,8 +105,8 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName (new NameImpl (shared_from_this(), identifier,
-                                     boost::static_pointer_cast<TypeImpl> (type), initialValue, constant));
+      NamePtr newName = new NameImpl (this, identifier,
+                                      get_static_ptr<TypeImpl> (type), initialValue, constant);
       identifiers[identifier] = newName;
       newVars.push_back (newName);
       varsInDeclOrder.push_back (newName);
@@ -119,8 +120,8 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName (new NameImpl (shared_from_this(), identifier, semantics::Name::TypeAlias,
-                                     boost::static_pointer_cast<TypeImpl> (aliasedType)));
+      NamePtr newName = new NameImpl (this, identifier, semantics::Name::TypeAlias,
+                                      get_static_ptr<TypeImpl> (aliasedType));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -143,19 +144,16 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        NamePtr newName (boost::make_shared<NameImpl> (shared_from_this(), identifier, semantics::Name::Function,
-                                      boost::shared_ptr<TypeImpl> ()));
+        NamePtr newName = new NameImpl (this, identifier, semantics::Name::Function, nullptr);
         identifiers[identifier] = newName;
       }
 
       semantics::ScopePtr funcScope;
-      funcScope = handler->CreateScope (shared_from_this(), semantics::ScopeLevel::Function, returnType);
-      boost::shared_ptr<ScopeImpl> funcScopeImpl (boost::static_pointer_cast<ScopeImpl> (funcScope));
-      for (FunctionFormalParameters::const_iterator param (params.begin());
-           param != params.end();
-           ++param)
+      funcScope = handler->CreateScope (this, semantics::ScopeLevel::Function, returnType);
+      auto funcScopeImpl = get_static_ptr<ScopeImpl> (funcScope);
+      for (const auto& param : params)
       {
-        funcScopeImpl->AddParameter (*param);
+        funcScopeImpl->AddParameter (param);
       }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
       funcScope = semantics::ScopePtr();
@@ -181,7 +179,7 @@ namespace s1
           decorationString.append (dirStr);
           lastDir = param->dir;
         }
-        TypeImplPtr typeImpl (boost::static_pointer_cast<TypeImpl> (param->type));
+        auto typeImpl = get_static_ptr<TypeImpl> (param->type);
         decorationString.append (handler->GetTypeString (typeImpl));
         identifierDecorated.append (decorationString.c_str());
       }
@@ -238,9 +236,7 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        auto newName (boost::make_shared<NameImpl> (shared_from_this(),
-                                                    identifier, semantics::Name::Function,
-                                                    TypeImplPtr ()));
+        NamePtr newName = new NameImpl (this,identifier, semantics::Name::Function, nullptr);
         identifiers[identifier] = newName;
       }
 
@@ -250,11 +246,9 @@ namespace s1
       // Decorate identifier with type info (so each overload gets a unique name)
       uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
-      for (FunctionFormalParameters::const_iterator param (params.begin());
-           param != params.end();
-           ++param)
+      for (const auto& param : params)
       {
-        identifierDecorated.append (handler->GetTypeString (boost::static_pointer_cast<TypeImpl> (param->type)).c_str());
+        identifierDecorated.append (handler->GetTypeString (get_static_ptr<TypeImpl> (param.type)).c_str());
       }
       funcInfo->identifier = identifierDecorated;
       funcInfo->returnType = builtin->GetReturnType();
@@ -272,9 +266,9 @@ namespace s1
     }
 
     IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (const NamePtr& functionName, const ExpressionVector& params) const
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (semantics::Name* functionName, const ExpressionVector& params) const
     {
-      boost::shared_ptr<NameImpl> nameImpl (boost::static_pointer_cast<NameImpl> (functionName));
+      auto nameImpl = get_static_ptr<NameImpl> (functionName);
 
       FunctionInfoVector vec;
       FunctionsMap::const_iterator funcIt = functions.find (nameImpl->identifier);
@@ -294,9 +288,9 @@ namespace s1
             // Only consider user-specified parameters for matching
             if ((*vecIt)->params[formal].paramType != ptUser) continue;
 
-            boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[actual]));
-            TypeImplPtr paramType (exprImpl->GetValueType ());
-            TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[formal].type));
+            auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
+            auto paramType = exprImpl->GetValueType ();
+            auto formalParamType = get_static_ptr<TypeImpl> ((*vecIt)->params[formal].type);
             // No exact type match? Skip
             if (!paramType->IsEqual (*formalParamType))
             {
@@ -339,9 +333,9 @@ namespace s1
               // Only consider user-specified parameters for matching
               if ((*vecIt)->params[formal].paramType != ptUser) continue;
 
-              boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (params[actual]));
-              TypeImplPtr paramType (exprImpl->GetValueType ());
-              TypeImplPtr formalParamType (boost::static_pointer_cast<TypeImpl> ((*vecIt)->params[formal].type));
+              auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
+              auto paramType = exprImpl->GetValueType ();
+              auto formalParamType = get_static_ptr<TypeImpl> ((*vecIt)->params[formal].type);
               bool match;
               if ((*vecIt)->params[formal].dir & dirOut)
                 // Output parameters must _always_ match exactly
@@ -391,11 +385,11 @@ namespace s1
       return varsInDeclOrder;
     }
 
-    int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (const boost::shared_ptr<ScopeImpl>& scope)
+    int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (ScopeImpl* scope)
     {
       if (!scope) return INT_MAX;
 
-      boost::shared_ptr<ScopeImpl> parentScope (this->parent);
+      auto parentScope = this->parent;
       int n = 0;
       while (parentScope)
       {

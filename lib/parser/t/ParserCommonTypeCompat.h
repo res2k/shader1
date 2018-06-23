@@ -42,7 +42,7 @@ public:
   {
     using namespace s1::parser;
     typedef TestSemanticsHandler::TestType TestType;
-    typedef boost::shared_ptr<TestType> TestTypePtr;
+    typedef boost::intrusive_ptr<TestType> TestTypePtr;
     
     TestSemanticsHandler semanticsHandler;
     
@@ -185,7 +185,7 @@ public:
   {
     using namespace s1::parser;
     typedef TestSemanticsHandler::TestType TestType;
-    typedef boost::shared_ptr<TestType> TestTypePtr;
+    typedef boost::intrusive_ptr<TestType> TestTypePtr;
     
     TestSemanticsHandler semanticsHandler;
     
@@ -205,28 +205,18 @@ public:
     TS_ASSERT_THROWS_NOTHING ((typeFloat = boost::static_pointer_cast<TestType> (
       semanticsHandler.CreateType (s1::semantics::BaseType::Float))));
     
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeBool),
-		      TestTypePtr ());
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeInt),
-		      TestTypePtr ());
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeUInt),
-		      TestTypePtr ());
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid, typeFloat),
-		      TestTypePtr ());
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeBool.get()), nullptr);
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeInt.get()), nullptr);
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeUInt.get()), nullptr);
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeFloat.get()), nullptr);
       
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool, typeInt),
-		      TestTypePtr ());
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool, typeUInt),
-		      TestTypePtr ());
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool, typeFloat),
-		      TestTypePtr ());
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool.get(), typeInt.get()), nullptr);
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool.get(), typeUInt.get()), nullptr);
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeBool.get(), typeFloat.get()), nullptr);
       
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeInt, typeUInt),
-		      typeInt);
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeInt, typeFloat),
-		      typeFloat);
-      
-    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeUInt, typeFloat),
-		      typeFloat);
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeInt.get(), typeUInt.get()), typeInt.get());
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeInt.get(), typeFloat.get()), typeFloat.get());
+
+    TS_ASSERT_EQUALS (TestSemanticsHandler::GetHigherPrecisionType (typeUInt.get(), typeFloat.get()), typeFloat.get());
   }
 };

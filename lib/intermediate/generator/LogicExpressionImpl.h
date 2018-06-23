@@ -32,10 +32,10 @@ namespace s1
       LogicExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                            ExpressionContext&& context,
                            LogicOp op,
-                           const boost::shared_ptr<ExpressionImpl>& operand1,
-                           const boost::shared_ptr<ExpressionImpl>& operand2);
+                           ExpressionImpl* operand1,
+                           ExpressionImpl* operand2);
 
-      boost::shared_ptr<TypeImpl> GetValueType();
+      boost::intrusive_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

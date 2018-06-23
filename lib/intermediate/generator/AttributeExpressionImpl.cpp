@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "AttributeExpressionImpl.h"
 
@@ -27,15 +28,13 @@
 
 #include "BlockImpl.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
   {
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                                              ExpressionContext&& context,
-                                                                                             const ExpressionPtr& baseExpr,
+                                                                                             Expression* baseExpr,
                                                                                              const IntermediateGeneratorSemanticsHandler::Attribute& attr)
      : ExpressionImpl (handler, std::move (context)), baseExpr (baseExpr), attr (attr)
     {}
@@ -43,10 +42,10 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::GetValueType ()
     {
-      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
+      auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
       auto exprValueType = exprImpl->GetValueType();
       if (!exprValueType) return TypeImplPtr(); // Assume error already handled
-      return handler->GetAttributeType (exprValueType, attr);
+      return handler->GetAttributeType (exprValueType.get(), attr);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequence (BlockImpl& block,
@@ -65,7 +64,7 @@ namespace s1
           if (asLvalue) return RegisterPtr ();
           
           RegisterPtr targetReg (handler->AllocateRegister (seq, GetValueType(), Intermediate));
-          boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
+          auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
           RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
           if (!exprValueReg) return RegisterPtr(); // Assume error already handled
           
@@ -96,7 +95,7 @@ namespace s1
           }
           else
           {
-            boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
+            auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
             RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
             if (!exprValueReg) return RegisterPtr(); // Assume error already handled
             
@@ -106,7 +105,7 @@ namespace s1
             {
               // multi-component swizzle
               targetReg = handler->AllocateRegister (seq, valueType, classify);
-              TypeImplPtr valueCompType (boost::static_pointer_cast<TypeImpl> (valueType->avmBase));
+              auto valueCompType = get_static_ptr<TypeImpl> (valueType->avmBase);
               std::vector<RegisterPtr> compRegs;
               for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
               {
@@ -153,7 +152,7 @@ namespace s1
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       // Generate assignment from register to actual target
-      boost::shared_ptr<ExpressionImpl> exprImpl (boost::static_pointer_cast<ExpressionImpl> (baseExpr));
+      auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
       
       RegisterPtr originalTarget (exprImpl->AddToSequence (block, Intermediate, false));
       if (!originalTarget) return; // Assume error already handled

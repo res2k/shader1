@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "BlockImpl.h"
 
@@ -48,27 +49,27 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatRetvalName, "$retval{0}");
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
-                                                                 semantics::ScopePtr innerScope)
+                                                                 semantics::Scope* innerScope)
      : handler (handler), innerScope (innerScope),
        sequenceBuilder (boost::make_shared<SequenceBuilder> ())
     {
       uc::String newCondName;
       FormatCondName (newCondName,
-                      boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
-      varCondition = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
-                                                                                    newCondName,
-                                                                                    ExpressionPtr(), false));
-      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
-      TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> (blockScopeImpl->GetFunctionReturnType()));
+                      get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope.get()));
+      varCondition = get_static_ptr<NameImpl> (innerScope->AddVariable (handler->GetBoolType(),
+                                                                        newCondName,
+                                                                        ExpressionPtr(), false));
+      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
+      auto retTypeImpl = get_static_ptr<TypeImpl> (blockScopeImpl->GetFunctionReturnType());
       if (retTypeImpl // @@@ retTypeImpl == 0 happens in tests; but also in real life?
         && !handler->voidType->IsEqual (*retTypeImpl))
       {
         uc::String newRetValName;
         FormatRetvalName (newRetValName,
-                          boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope));
-        varReturnValue = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (retTypeImpl,
-                                                                                        newRetValName,
-                                                                                        ExpressionPtr(), false));
+                          get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope.get()));
+        varReturnValue = get_static_ptr<NameImpl> (innerScope->AddVariable (retTypeImpl,
+                                                                            newRetValName,
+                                                                            ExpressionPtr(), false));
       }
     }
      
@@ -110,7 +111,7 @@ namespace s1
         ExpressionPtr retValVarExpr (handler->CreateVariableExpression (varReturnValue));
         ExpressionPtr retValAssign (handler->CreateAssignExpression (retValVarExpr, returnValue));
         AddExpressionCommand (retValAssign);
-        auto retValReg = GetRegisterForName (varReturnValue, false);
+        auto retValReg = GetRegisterForName (varReturnValue.get(), false);
         if (!retValReg)
         {
           ExpressionError (*returnValue, retValReg.error ());
@@ -127,7 +128,7 @@ namespace s1
       }
       
       // Need to collect regs for all output params
-      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       const std::vector<uc::String>& outputParams = blockScopeImpl->GetFunctionOutputParams();
       for(const uc::String& identifier : outputParams)
       {
@@ -151,10 +152,10 @@ namespace s1
         elseBlock = handler->CreateBlock (GetInnerScope());
       }
       
-      boost::shared_ptr<BlockImpl> ifBlockImpl (boost::static_pointer_cast<BlockImpl> (ifBlock));
-      boost::shared_ptr<BlockImpl> elseBlockImpl (boost::static_pointer_cast<BlockImpl> (elseBlock));
+      auto ifBlockImpl = get_static_ptr<BlockImpl> (ifBlock);
+      auto elseBlockImpl = get_static_ptr<BlockImpl> (elseBlock);
 
-      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       
       // Collect registers read by the blocks
       std::vector<RegisterPtr> readRegistersIf;
@@ -165,10 +166,10 @@ namespace s1
              ++import)
         {
           if (!import->second.isImported) continue;
-          if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+          if ((get_static_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
-            auto reg = GetRegisterForName (import->first, false);
+            auto reg = GetRegisterForName (import->first.get(), false);
             if (!reg)
             {
               ExpressionError (*branchCondition, reg.error ());
@@ -182,10 +183,10 @@ namespace s1
              ++import)
         {
           if (!import->second.isImported) continue;
-          if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+          if ((get_static_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
-            auto reg = GetRegisterForName (import->first, false);
+            auto reg = GetRegisterForName (import->first.get(), false);
             if (!reg)
             {
               ExpressionError (*branchCondition, reg.error ());
@@ -238,7 +239,7 @@ namespace s1
              exportedName != ifBlockImpl->exportedNames.end();
              exportedName++)
         {
-          auto reg = GetRegisterForName (*exportedName, true);
+          auto reg = GetRegisterForName (exportedName->get(), true);
           if (!reg)
           {
             ExpressionError (*branchCondition, reg.error ());
@@ -263,7 +264,7 @@ namespace s1
           }
           else
           {
-            auto newReg = GetRegisterForName (*exportedName, true);
+            auto newReg = GetRegisterForName (exportedName->get(), true);
             if (!newReg)
             {
               ExpressionError (*branchCondition, newReg.error ());
@@ -315,8 +316,8 @@ namespace s1
         AddExpressionCommand (condAssign);
       }
       
-      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (loopBlock));
-      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      auto blockImpl = get_static_ptr<BlockImpl> (loopBlock);
+      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       
       NameImplSet loopVars;
       // Condition var is implicitly read (condition check) and written (end of body)
@@ -343,13 +344,13 @@ namespace s1
            loopVar != loopVars.end();
            ++loopVar)
       {
-        auto regIn = GetRegisterForName (*loopVar, false);
+        auto regIn = GetRegisterForName (loopVar->get(), false);
         if (!regIn)
         {
           ExpressionError (*loopCond, regIn.error ());
           continue;
         }
-        auto regOut = GetRegisterForName (*loopVar, true);
+        auto regOut = GetRegisterForName (loopVar->get(), true);
         if (!regOut)
         {
           ExpressionError (*loopCond, regOut.error ());
@@ -360,13 +361,13 @@ namespace s1
       
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
-      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::static_pointer_cast<BlockImpl> (loopBlock))));
+      auto newBlock = make_intrusive<BlockImpl> (*(get_static_ptr<BlockImpl> (loopBlock)));
       {
         ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
         ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
         newBlock->AddExpressionCommand (condAssign);
       }
-      auto condReg = GetRegisterForName (varCondition, false);
+      auto condReg = GetRegisterForName (varCondition.get(), false);
       if (!condReg)
       {
         ExpressionError (*loopCond, condReg.error ());
@@ -418,8 +419,8 @@ namespace s1
       
       ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
       
-      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (loopBlock));
-      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      auto blockImpl = get_static_ptr<BlockImpl> (loopBlock);
+      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       
       NameImplSet loopVars;
       // Condition var is implicitly read (condition check) and written (end of body)
@@ -451,13 +452,13 @@ namespace s1
            loopVar != loopVars.end();
            ++loopVar)
       {
-        auto regIn = GetRegisterForName (*loopVar, false);
+        auto regIn = GetRegisterForName (loopVar->get(), false);
         if (!regIn)
         {
           ExpressionError (*loopCond, regIn.error ());
           continue;
         }
-        auto regOut = GetRegisterForName (*loopVar, true);
+        auto regOut = GetRegisterForName (loopVar->get(), true);
         if (!regOut)
         {
           ExpressionError (*loopCond, regOut.error ());
@@ -466,7 +467,7 @@ namespace s1
         loopedRegs.emplace_back (regIn.value(), regOut.value());
       }
       
-      boost::shared_ptr<BlockImpl> newBlock (boost::make_shared<BlockImpl> (*(boost::static_pointer_cast<BlockImpl> (loopBlock))));
+      auto newBlock = make_intrusive<BlockImpl> (*(get_static_ptr<BlockImpl> (loopBlock)));
       // Add "tail" expression to end of block
       if (tailImpl) tailImpl->AddToSequence (*newBlock);
       
@@ -481,7 +482,7 @@ namespace s1
           condAssign = handler->CreateConstBoolExpression (true);
         newBlock->AddExpressionCommand (condAssign);
       }
-      auto condReg = GetRegisterForName (varCondition, false);
+      auto condReg = GetRegisterForName (varCondition.get(), false);
       if (!condReg)
       {
         ExpressionError (*loopCond, condReg.error ());
@@ -517,17 +518,17 @@ namespace s1
       auto newVars (boost::static_pointer_cast<ScopeImpl>(innerScope)->FlushNewVars());
       for (auto varIt = newVars.cbegin(); varIt != newVars.cend(); ++varIt)
       {
-        boost::shared_ptr<NameImpl> name (boost::static_pointer_cast<NameImpl> (*varIt));
+        auto name = get_static_ptr<NameImpl> (*varIt);
         // ... check if it has initialization value ...
         if (name->varValue)
         {
           auto valueExpr = static_cast<ExpressionImpl*> (name->varValue.get ());
           const auto& context = valueExpr->GetExpressionContext ();
           // ... if so, synthesize assignment
-          boost::shared_ptr<ExpressionImpl> exprTarget (boost::make_shared<VariableExpressionImpl> (handler, ExpressionContext (context), name));
-          ExpressionPtr expr (boost::make_shared<AssignmentExpressionImpl> (handler, ExpressionContext (context),
-                                                                            exprTarget,
-                                                                            boost::static_pointer_cast<ExpressionImpl> (name->varValue)));
+          auto exprTarget = make_intrusive<VariableExpressionImpl> (handler, ExpressionContext (context), name);
+          ExpressionPtr expr = new AssignmentExpressionImpl (handler, ExpressionContext (context),
+                                                             exprTarget.get(),
+                                                             get_static_ptr<ExpressionImpl> (name->varValue));
           // Note recursion is okay as FlushNewVars() will return an empty array
           AddExpressionCommand (expr);
         }
@@ -543,9 +544,9 @@ namespace s1
                                                                                       const ExpressionContext& errorContext,
                                                                                       const NameImplSet& loopNames)
     {
-      boost::shared_ptr<BlockImpl> blockImpl (boost::static_pointer_cast<BlockImpl> (block));
+      auto blockImpl = get_static_ptr<BlockImpl> (block);
       
-      boost::shared_ptr<ScopeImpl> blockScopeImpl (boost::static_pointer_cast<ScopeImpl> (innerScope));
+      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       
       // Call GetRegisterForName for all imports as a constness check
       {
@@ -554,10 +555,10 @@ namespace s1
              ++import)
         {
           if (!import->second.isImported) continue;
-          if ((boost::shared_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+          if ((get_static_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
-            auto reg = GetRegisterForName (import->first, false);
+            auto reg = GetRegisterForName (import->first.get(), false);
             if (!reg)
               handler->ExpressionError (errorContext, reg.error());
           }
@@ -579,7 +580,7 @@ namespace s1
           /* "Loop names" are treated somewhat special as the caller will have taken care of
              allocating writeable regs for these names. */
           bool isLoopName = loopNames.find (*exportedName) != loopNames.end();
-          auto reg = GetRegisterForName (*exportedName, !isLoopName);
+          auto reg = GetRegisterForName (exportedName->get(), !isLoopName);
           if (!reg)
             handler->ExpressionError (errorContext, reg.error());
         }
@@ -593,7 +594,7 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatTernaryResult, "$tr{0}{1}");
 
     IntermediateGeneratorSemanticsHandler::NameImplPtr
-    IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (const TypeImplPtr& resultType)
+    IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (TypeImpl* resultType)
     {
       std::string typeStr (handler->GetTypeString (resultType));
       TernaryResultVarsMap::const_iterator var (varsTernaryResult.find (typeStr));
@@ -601,11 +602,11 @@ namespace s1
       
       uc::String newVarName;
       FormatTernaryResult (newVarName,
-                           boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope),
+                           get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope.get()),
                            typeStr.c_str());
-      NameImplPtr newVar (boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
-                                                                                         newVarName,
-                                                                                         ExpressionPtr(), false)));
+      auto newVar = boost::static_pointer_cast<NameImpl> (innerScope->AddVariable (resultType,
+                                                                                   newVarName,
+                                                                                   ExpressionPtr(), false));
       varsTernaryResult[typeStr] = newVar;
       return newVar;
     }
@@ -613,10 +614,10 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatImportedReg, "{0}_B{1}");
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::result_RegisterPtr
-    IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (const NameImplPtr& name,
-                                                                                      bool writeable)
+    IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (NameImpl* name,
+                                                                          bool writeable)
     {
-      bool isFromOutside = (boost::shared_ptr<ScopeImpl> (name->ownerScope) != innerScope);
+      bool isFromOutside = (get_static_ptr<ScopeImpl> (name->ownerScope) != innerScope);
       bool doImport = isFromOutside
                       && ((innerScope->GetLevel() != semantics::ScopeLevel::Function) || !name->isOutputParam)
                       && !writeable;
@@ -640,8 +641,8 @@ namespace s1
           uc::String importName;
           /* Add a suffix derived from the "distance" of this block's scope to the scope
             that defines 'name' in order to make local register name unique */
-          int d = boost::static_pointer_cast<ScopeImpl> (innerScope)->DistanceToScope (
-            boost::shared_ptr<ScopeImpl> (name->ownerScope));
+          int d = get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (
+            get_static_ptr<ScopeImpl> (name->ownerScope));
           if (d >= 0)
           {
             FormatImportedReg (importName, name->identifier, d);
@@ -678,7 +679,7 @@ namespace s1
     }
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::result_void
-    IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (const NameImplPtr& name,
+    IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (NameImpl* name,
                                                                             const RegisterPtr& newRegPtr)
     {
       auto origRegPtr = GetRegisterForName (name, true);

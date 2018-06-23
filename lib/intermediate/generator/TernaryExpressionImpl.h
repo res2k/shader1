@@ -26,19 +26,19 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl : public ExpressionImpl
     {
-      boost::shared_ptr<ExpressionImpl> condition;
-      boost::shared_ptr<ExpressionImpl> ifExpr;
-      boost::shared_ptr<ExpressionImpl> elseExpr;
+      boost::intrusive_ptr<ExpressionImpl> condition;
+      boost::intrusive_ptr<ExpressionImpl> ifExpr;
+      boost::intrusive_ptr<ExpressionImpl> elseExpr;
     public:
       TernaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                              ExpressionContext&& context,
-                             const boost::shared_ptr<ExpressionImpl>& condition,
-                             const boost::shared_ptr<ExpressionImpl>& ifExpr,
-                             const boost::shared_ptr<ExpressionImpl>& elseExpr);
+                             ExpressionImpl* condition,
+                             ExpressionImpl* ifExpr,
+                             ExpressionImpl* elseExpr);
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
-      boost::shared_ptr<TypeImpl> GetValueType();
+      boost::intrusive_ptr<TypeImpl> GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

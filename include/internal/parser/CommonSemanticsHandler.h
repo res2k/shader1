@@ -18,13 +18,13 @@
 #ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
 #define __PARSER_COMMONSEMANTICSHANDLER_H__
 
+#include "semantics/Block.h"
 #include "semantics/Function.h"
 #include "semantics/Handler.h"
 #include "semantics/Name.h"
 #include "semantics/Scope.h"
 #include "semantics/Type.h"
 
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/unordered_map.hpp>
 
 namespace s1
@@ -78,8 +78,7 @@ namespace s1
       
       /**\name Type utilities
        * @{ */
-      static boost::shared_ptr<CommonType> GetHigherPrecisionType (
-        const boost::shared_ptr<CommonType>& t1, const boost::shared_ptr<CommonType>& t2);
+      static CommonType* GetHigherPrecisionType (CommonType* t1, CommonType* t2);
       static semantics::BaseType DetectNumericType (const uc::String& numericStr);
       /**@}*/
       
@@ -112,8 +111,7 @@ namespace s1
         {}
       };
       static Attribute IdentifyAttribute (const uc::String& attributeStr);
-      semantics::TypePtr GetAttributeType (const boost::shared_ptr<CommonType>& expressionType,
-                                           const Attribute& attr);
+      semantics::TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
       /** @} */
       
       struct CommonName : public semantics::Name
@@ -146,8 +144,7 @@ namespace s1
         semantics::TypePtr GetValueType () { return valueType; }
       };
 
-      class CommonScope : public semantics::Scope,
-                          public boost::enable_shared_from_this<CommonScope>
+      class CommonScope : public semantics::Scope
       {
         friend class CommonSemanticsHandler;
         
@@ -157,7 +154,7 @@ namespace s1
         bool CheckIdentifierUnique (const uc::String& identifier);
         
         CommonSemanticsHandler* handler;
-        boost::shared_ptr<CommonScope> parent;
+        boost::intrusive_ptr<CommonScope> parent;
         semantics::ScopeLevel level;
 
         class CommonFunction : public semantics::Function
@@ -169,8 +166,7 @@ namespace s1
           void Finish() {}
         };
       public:
-        CommonScope (CommonSemanticsHandler* handler,
-                     const boost::shared_ptr<CommonScope>& parent, semantics::ScopeLevel level);
+        CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, semantics::ScopeLevel level);
         semantics::ScopeLevel GetLevel() const { return level; }
         
         semantics::NamePtr AddVariable (semantics::TypePtr type,

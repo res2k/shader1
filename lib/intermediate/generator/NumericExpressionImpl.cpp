@@ -44,10 +44,10 @@ namespace s1
     {
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::GetValueType()
     {
-      boost::shared_ptr<TypeImpl> valueType =
+      auto valueType =
         boost::static_pointer_cast<TypeImpl> (handler->CreateType (numberType));
         
       return valueType;

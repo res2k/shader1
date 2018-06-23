@@ -24,8 +24,6 @@
 #include "NameImpl.h"
 #include "ScopeImpl.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -33,7 +31,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::VariableExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      const boost::shared_ptr<NameImpl>& name)
+      NameImpl* name)
        : ExpressionImpl (handler, std::move (context)), name (name)
     {
     }
@@ -46,7 +44,7 @@ namespace s1
       return set;
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetValueType()
     {
       return name->GetValueTypeImpl ();
@@ -56,7 +54,7 @@ namespace s1
                                                                                               RegisterClassification classify,
                                                                                               bool asLvalue)
     {
-      auto blockReg = block.GetRegisterForName (this->name, asLvalue);
+      auto blockReg = block.GetRegisterForName (this->name.get(), asLvalue);
       if (!blockReg)
       {
         ExpressionError (blockReg.error ());

@@ -23,8 +23,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpConst.h"
 
-#include <boost/make_shared.hpp>
-
 namespace s1
 {
   namespace intermediate
@@ -37,7 +35,7 @@ namespace s1
     {
     }
       
-    boost::shared_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
+    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
     IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::GetValueType()
     {
       return handler->GetBoolType();

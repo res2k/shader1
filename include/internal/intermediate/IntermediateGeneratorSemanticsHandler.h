@@ -72,13 +72,13 @@ namespace s1
       class UnaryExpressionImpl;
       class VariableExpressionImpl;
 
-      typedef boost::shared_ptr<NameImpl> NameImplPtr;
+      typedef boost::intrusive_ptr<NameImpl> NameImplPtr;
       typedef std::unordered_set<NameImplPtr> NameImplSet;
 
       /// Diagnostics handler
       diagnostics::Handler* diagnosticsHandler = nullptr;
 
-      typedef boost::shared_ptr<TypeImpl> TypeImplPtr;
+      typedef boost::intrusive_ptr<TypeImpl> TypeImplPtr;
       TypeImplPtr invalidType;
       TypeImplPtr voidType;
       TypeImplPtr boolType;
@@ -86,9 +86,9 @@ namespace s1
       TypeImplPtr uintType;
       TypeImplPtr floatType;
 
-      static std::string GetTypeString (const TypeImplPtr& type);
+      static std::string GetTypeString (TypeImpl* type);
 
-      typedef boost::shared_ptr<ScopeImpl> ScopeImplPtr;
+      typedef boost::intrusive_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
       ScopeImplPtr globalScope;
 
@@ -111,8 +111,8 @@ namespace s1
     public:
       /**\name Type utilities
        * @{ */
-      static TypeImplPtr GetHigherPrecisionType (const TypeImplPtr& t1, const TypeImplPtr& t2);
-      static std::string GetTypeString (const semantics::TypePtr& type);
+      static TypeImpl* GetHigherPrecisionType (TypeImpl* t1, TypeImpl* t2);
+      static std::string GetTypeString (semantics::Type* type);
       /**@}*/
 
       /**\name Attribute utilities
@@ -128,7 +128,7 @@ namespace s1
         unsigned char GetSwizzleComp (unsigned char num) const
         { return (swizzleComps >> (num*2)) & 3; }
       };
-      TypeImplPtr GetAttributeType (const TypeImplPtr& expressionType,
+      TypeImplPtr GetAttributeType (TypeImpl* expressionType,
                                     const Attribute& attr);
       /** @} */
 

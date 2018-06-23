@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 
 #include "ArithmeticExpressionImpl.h"
 
@@ -23,8 +24,6 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpArith.h"
-
-#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -34,8 +33,8 @@ namespace s1
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
       ArithmeticOp op,
-      const boost::shared_ptr<ExpressionImpl>& operand1,
-      const boost::shared_ptr<ExpressionImpl>& operand2)
+      ExpressionImpl* operand1,
+      ExpressionImpl* operand2)
        : BinaryExpressionImpl (handler, std::move (context), operand1, operand2), op (op)
     {
     }
@@ -84,19 +83,19 @@ namespace s1
       if ((vectorDim1 != 0) && (vectorDim2 == 0))
       {
         valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-          type1,
-          boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
+          type1.get(),
+          get_static_ptr<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
       }
       else if ((vectorDim2 != 0) && (vectorDim1 == 0))
       {
         valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-          boost::static_pointer_cast<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
-          type2);
+          get_static_ptr<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
+          type2.get());
       }
       else // (((vectorDim1 != 0) && (vectorDim2 != 0)) || ((vectorDim1 == 0) && (vectorDim2 == 0)))
       {
         valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-          operand1->GetValueType(), operand2->GetValueType());
+          operand1->GetValueType().get(), operand2->GetValueType().get());
       }
         
       if (!valueType)
@@ -114,7 +113,7 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
 
-      boost::shared_ptr<TypeImpl> valueType = GetValueType ();
+      auto valueType = GetValueType ();
       if (!valueType) return RegisterPtr(); // Assume error already handled
 
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));

@@ -18,14 +18,14 @@
 #ifndef SEMANTICS_TYPE_H_
 #define SEMANTICS_TYPE_H_
 
-#include "forwarddecl.h"
+#include "Base.h"
 
 namespace s1
 {
   namespace semantics
   {
     /// Representation of a type
-    struct Type
+    struct Type : public Base
     {
       enum Class
       {

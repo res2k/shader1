@@ -18,7 +18,7 @@
 #ifndef SEMANTICS_NAME_H_
 #define SEMANTICS_NAME_H_
 
-#include "forwarddecl.h"
+#include "Base.h"
 
 namespace s1
 {
@@ -27,7 +27,7 @@ namespace s1
     /**
      * A name refers to a variable, an attribute of it or an element.
      */
-    struct Name
+    struct Name : public Base
     {
       virtual ~Name() {}
       
