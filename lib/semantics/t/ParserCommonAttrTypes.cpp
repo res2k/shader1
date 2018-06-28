@@ -36,9 +36,8 @@ namespace
   {
   public:
     typedef ::TestSemanticsHandler Superclass;
-    typedef Superclass::Attribute Attribute;
+    typedef s1::semantics::Attribute Attribute;
 
-    using Superclass::IdentifyAttribute;
     using Superclass::GetAttributeType;
   };
 } // anonymous namespace
@@ -58,7 +57,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeArray)
       semanticsHandler.CreateType (s1::semantics::BaseType::Int)))));
 
   TestSemanticsHandler::Attribute attrLength =
-    TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("length"));
+    TestSemanticsHandler::Attribute::Identify (s1::uc::String ("length"));
   TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeArray.get(), attrLength));
   BOOST_CHECK_EQUAL(typeAttr->base, s1::semantics::BaseType::UInt);
@@ -80,14 +79,14 @@ BOOST_AUTO_TEST_CASE(AttrTypeVector)
 
   {
     TestSemanticsHandler::Attribute attrX =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("x"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("x"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4.get(), attrX));
     BOOST_CHECK_EQUAL(typeAttr->base, s1::semantics::BaseType::Int);
   }
   {
     TestSemanticsHandler::Attribute attrXY =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("xy"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("xy"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4.get(), attrXY));
     BOOST_CHECK_EQUAL(typeAttr->typeClass, TestType::Vector);
@@ -97,7 +96,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeVector)
   }
   {
     TestSemanticsHandler::Attribute attrGA =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("ga"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("ga"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4.get(), attrGA));
     BOOST_CHECK_EQUAL(typeAttr->typeClass, TestType::Vector);
@@ -107,14 +106,14 @@ BOOST_AUTO_TEST_CASE(AttrTypeVector)
   }
   {
     TestSemanticsHandler::Attribute attrXB =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("xb"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("xb"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4.get(), attrXB));
     BOOST_CHECK_EQUAL(typeAttr, TestTypePtr ());
   }
   {
     TestSemanticsHandler::Attribute attrRZ =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("rz"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("rz"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4.get(), attrRZ));
     BOOST_CHECK_EQUAL(typeAttr, TestTypePtr ());
@@ -137,7 +136,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix)
 
   {
     TestSemanticsHandler::Attribute attrCol =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("col"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("col"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4x3.get(), attrCol));
     BOOST_CHECK_EQUAL(typeAttr->typeClass, TestType::Array);
@@ -149,7 +148,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix)
   }
   {
     TestSemanticsHandler::Attribute attrRow =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("row"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("row"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4x3.get(), attrRow));
     BOOST_CHECK_EQUAL(typeAttr->typeClass, TestType::Array);
@@ -161,7 +160,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix)
   }
   {
     TestSemanticsHandler::Attribute attrTransp =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("transpose"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("transpose"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4x3.get(), attrTransp));
     BOOST_CHECK_EQUAL(typeAttr->typeClass, TestType::Matrix);
@@ -172,7 +171,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix)
   }
   {
     TestSemanticsHandler::Attribute attrInv =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("invert"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("invert"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt4x3.get(), attrInv));
     BOOST_CHECK_EQUAL(typeAttr, TestTypePtr ());
@@ -195,7 +194,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix2)
 
   {
     TestSemanticsHandler::Attribute attrInv =
-      TestSemanticsHandler::IdentifyAttribute (s1::uc::String ("invert"));
+      TestSemanticsHandler::Attribute::Identify (s1::uc::String ("invert"));
     TestTypePtr typeAttr = boost::static_pointer_cast<TestType> (
     semanticsHandler.GetAttributeType (typeInt3x3.get(), attrInv));
     BOOST_CHECK_EQUAL(typeAttr->typeClass, TestType::Matrix);

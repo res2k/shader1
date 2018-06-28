@@ -32,6 +32,8 @@ namespace s1
     struct Type;
     typedef boost::intrusive_ptr<Type> TypePtr;
 
+    struct Attribute;
+
     struct Name;
     typedef boost::intrusive_ptr<Name> NamePtr;
 

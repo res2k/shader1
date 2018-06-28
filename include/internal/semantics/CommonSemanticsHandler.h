@@ -45,33 +45,6 @@ namespace s1
       
       /**\name Attribute utilities
        * @{ */
-      struct Attribute
-      {
-        enum AttrClass
-        {
-          Unknown,
-          
-          arrayLength,
-          
-          matrixRow,
-          matrixCol,
-          matrixTranspose,
-          matrixInvert,
-          
-          vectorSwizzle
-        };
-        AttrClass attrClass;
-        unsigned char swizzleCompNum;
-        unsigned char swizzleComps;
-        
-        Attribute (AttrClass ac) : attrClass (ac), swizzleCompNum (0), swizzleComps (0) {}
-        Attribute (unsigned char swizNum, unsigned char comp1 = 0, unsigned char comp2 = 0,
-                   unsigned char comp3 = 0, unsigned char comp4 = 0)
-         : attrClass (vectorSwizzle), swizzleCompNum (swizNum),
-           swizzleComps ((comp1 & 3) | ((comp2 & 3) << 2) | ((comp3 & 3) << 4) | ((comp4 & 3) << 6))
-        {}
-      };
-      static Attribute IdentifyAttribute (const uc::String& attributeStr);
       TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
       /** @} */
       

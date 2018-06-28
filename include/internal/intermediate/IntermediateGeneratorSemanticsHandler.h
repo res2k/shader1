@@ -21,6 +21,7 @@
 #include "base/uc/String.h"
 
 #include "diagnostics/forwarddecl.h"
+#include "semantics/Attribute.h"
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
 
@@ -118,19 +119,19 @@ namespace s1
 
       /**\name Attribute utilities
        * @{ */
-      struct Attribute : public CommonSemanticsHandler::Attribute
+      struct Attribute : public semantics::Attribute
       {
-        using CommonSemanticsHandler::Attribute::Attribute;
-        Attribute (const CommonSemanticsHandler::Attribute& other)
-          : CommonSemanticsHandler::Attribute (other) {}
-        Attribute (CommonSemanticsHandler::Attribute&& other)
-          : CommonSemanticsHandler::Attribute (std::move (other)) {}
+        using semantics::Attribute::Attribute;
+        Attribute (const semantics::Attribute& other)
+          : semantics::Attribute (other) {}
+        Attribute (semantics::Attribute&& other)
+          : semantics::Attribute (std::move (other)) {}
 
         unsigned char GetSwizzleComp (unsigned char num) const
         { return (swizzleComps >> (num*2)) & 3; }
       };
       TypeImplPtr GetAttributeType (TypeImpl* expressionType,
-                                    const Attribute& attr);
+                                    const semantics::Attribute& attr);
       /** @} */
 
       IntermediateGeneratorSemanticsHandler ();

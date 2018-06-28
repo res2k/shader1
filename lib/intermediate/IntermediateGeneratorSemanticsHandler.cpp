@@ -166,7 +166,7 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::GetAttributeType (TypeImpl* expressionType,
-                                                             const Attribute& attr)
+                                                             const semantics::Attribute& attr)
     {
       return boost::static_pointer_cast<TypeImpl> (CommonSemanticsHandler::GetAttributeType (expressionType, attr));
     }
@@ -586,7 +586,7 @@ namespace s1
                                                                                 const uc::String& attr)
     {
       if (!expr) return ExpressionPtr(); // Assume error already handled
-      Attribute attrInfo (IdentifyAttribute (attr));
+      Attribute attrInfo (Attribute::Identify (attr));
       if (attrInfo.attrClass == Attribute::Unknown)
       {
         ExpressionError (ExpressionContext(), Error::InvalidAttribute);

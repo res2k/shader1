@@ -19,6 +19,7 @@
 #define __TESTSEMANTICSHANDLER_H__
 
 #include "base/intrusive_ptr.h"
+#include "semantics/Attribute.h"
 #include "semantics/Block.h"
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
@@ -208,7 +209,7 @@ public:
       str.append (".");
       str.append (attrStr);
       
-      Attribute attrInfo = IdentifyAttribute (attr);
+      s1::semantics::Attribute attrInfo = s1::semantics::Attribute::Identify (attr);
       s1::semantics::TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
       if (baseType)
         valueType = handler.GetAttributeType (s1::get_static_ptr<TestType> (baseType), attrInfo);

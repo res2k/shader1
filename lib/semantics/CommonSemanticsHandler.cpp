@@ -20,6 +20,7 @@
 #include "base/format/uc_String.h"
 #include "base/intrusive_ptr.h"
 #include "parser/Diagnostics.h"
+#include "semantics/Attribute.h"
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
 
@@ -57,115 +58,36 @@ namespace s1
       return numericStr.startsWith ("-") ? BaseType::Int : BaseType::UInt;
     }
     
-    CommonSemanticsHandler::Attribute CommonSemanticsHandler::IdentifyAttribute (const uc::String& attributeStr)
-    {
-      if (attributeStr.length() == 0)
-        // Empty attribute? Bogus.
-        return Attribute (Attribute::Unknown);
-      
-      if (attributeStr == uc::String ("length"))
-        return Attribute (Attribute::arrayLength);
-      else if (attributeStr == uc::String ("row"))
-        return Attribute (Attribute::matrixRow);
-      else if (attributeStr == uc::String ("col"))
-        return Attribute (Attribute::matrixCol);
-      else if (attributeStr == uc::String ("transpose"))
-        return Attribute (Attribute::matrixTranspose);
-      else if (attributeStr == uc::String ("invert"))
-        return Attribute (Attribute::matrixInvert);
-      
-      // Attribute is swizzle
-      if (attributeStr.length() > 4)
-        // Attribute too long for a swizzle
-        return Attribute (Attribute::Unknown);
-      unsigned char attr[4];
-      auto attributeStrBuf = attributeStr.data ();
-      switch (attributeStrBuf[0])
-      {
-      case 'x':
-      case 'y':
-      case 'z':
-      case 'w':
-        {
-          // XYZW style swizzle
-          for (uc::String::size_type i = 0; i < attributeStr.length(); i++)
-          {
-            unsigned char comp;
-            switch (attributeStrBuf[i])
-            {
-            case 'x': comp = 0; break;
-            case 'y': comp = 1; break;
-            case 'z': comp = 2; break;
-            case 'w': comp = 3; break;
-            default:
-              // Unknown component
-              return Attribute (Attribute::Unknown);
-            }
-            attr[i] = comp;
-          }
-        }
-        break;
-      case 'r':
-      case 'g':
-      case 'b':
-      case 'a':
-        {
-          // RGBA style swizzle
-          for (uc::String::size_type i = 0; i < attributeStr.length(); i++)
-          {
-            unsigned char comp;
-            switch (attributeStrBuf[i])
-            {
-            case 'r': comp = 0; break;
-            case 'g': comp = 1; break;
-            case 'b': comp = 2; break;
-            case 'a': comp = 3; break;
-            default:
-              // Unknown component
-              return Attribute (Attribute::Unknown);
-            }
-            attr[i] = comp;
-          }
-        }
-        break;
-      default:
-        // Unknown component
-        return Attribute (Attribute::Unknown);
-      }
-      return Attribute (static_cast<unsigned char> (attributeStr.length()),
-                        attr[0], attr[1], attr[2], attr[3]);
-    }
-    
     TypePtr
     CommonSemanticsHandler::GetAttributeType (CommonType* expressionType, const Attribute& attr)
     {
       TypePtr attrType;
       switch (attr.attrClass)
       {
-      case Attribute::arrayLength:
+      case semantics::Attribute::arrayLength:
         if (expressionType->typeClass == CommonType::Array)
           attrType = CreateType (BaseType::UInt); // Type is fix
         break;
-      case Attribute::matrixCol:
+      case semantics::Attribute::matrixCol:
         if (expressionType->typeClass == CommonType::Matrix)
           attrType = CreateArrayType (
             CreateVectorType (expressionType->avmBase, expressionType->matrixRows));
         break;
-      case Attribute::matrixRow:
+      case semantics::Attribute::matrixRow:
         if (expressionType->typeClass == CommonType::Matrix)
           attrType = CreateArrayType (
             CreateVectorType (expressionType->avmBase, expressionType->matrixCols));
         break;
-      case Attribute::matrixTranspose:
+      case semantics::Attribute::matrixTranspose:
         if (expressionType->typeClass == CommonType::Matrix)
           attrType = CreateMatrixType (expressionType->avmBase, expressionType->matrixRows, expressionType->matrixCols);
         break;
-      case Attribute::matrixInvert:
+      case semantics::Attribute::matrixInvert:
         if ((expressionType->typeClass == CommonType::Matrix)
             && (expressionType->matrixRows == expressionType->matrixCols))
           attrType = expressionType;
         break;
-      case Attribute::vectorSwizzle:
+      case semantics::Attribute::vectorSwizzle:
         if (expressionType->typeClass == CommonType::Vector)
         {
           if (attr.swizzleCompNum == 1)
@@ -175,7 +97,7 @@ namespace s1
             attrType = CreateVectorType (expressionType->avmBase, attr.swizzleCompNum);
         }
         break;
-      case Attribute::Unknown:
+      case semantics::Attribute::Unknown:
         break;
       }
       return attrType;
