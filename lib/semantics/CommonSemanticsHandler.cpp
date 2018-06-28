@@ -19,13 +19,10 @@
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 #include "base/intrusive_ptr.h"
-#include "parser/Diagnostics.h"
 #include "semantics/Attribute.h"
-#include "semantics/CommonName.h"
+#include "semantics/CommonScope.h"
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
-
-#include "base/format/Formatter.tpp"
 
 namespace s1
 {
@@ -134,89 +131,6 @@ namespace s1
       return TypePtr (new CommonType (baseType, columns, rows));
     }
   
-    bool CommonSemanticsHandler::CommonScope::CheckIdentifierUnique (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        return false;
-      }
-      if (parent)
-        return parent->CheckIdentifierUnique (identifier);
-      return true;
-    }
-      
-    CommonSemanticsHandler::CommonScope::CommonScope (CommonSemanticsHandler* handler,
-                                                      CommonScope* parent,
-                                                      ScopeLevel level)
-     : handler (handler), parent (parent), level (level)
-    {}
-
-    NamePtr
-    CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
-                                                      ExpressionPtr initialValue, bool constant)
-    {
-      if (!CheckIdentifierUnique (identifier))
-      {
-        // TODO: Error handling
-        return NamePtr();
-      }
-      NamePtr newName (new CommonName (identifier, type, initialValue, constant));
-      identifiers[identifier] = newName;
-      return newName;
-    }
-      
-    NamePtr
-    CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
-    {
-      if (!CheckIdentifierUnique (identifier))
-      {
-        // TODO: Error handling
-        return NamePtr();
-      }
-      NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
-      identifiers[identifier] = newName;
-      return newName;
-    }
-      
-    FunctionPtr
-    CommonSemanticsHandler::CommonScope::AddFunction (TypePtr returnType,
-                                                      const uc::String& identifier,
-                                                      const FunctionFormalParameters& params)
-    {
-      if (level >= ScopeLevel::Function)
-      {
-        // TODO: Error handling
-        return FunctionPtr();
-      }
-      if (!CheckIdentifierUnique (identifier))
-      {
-        // TODO: Error handling
-        return FunctionPtr();
-      }
-      NamePtr newName (new CommonName (identifier, Name::Function, returnType));
-      identifiers[identifier] = newName;
-      ScopePtr funcScope;
-      funcScope = handler->CreateScope (this, ScopeLevel::Function);
-      auto newBlock = handler->CreateBlock (funcScope);
-      funcScope = ScopePtr();
-      FunctionPtr newFunction (new CommonFunction (newBlock));
-      return newFunction;
-    }
-
-    CommonSemanticsHandler::CommonScope::result_NamePtr
-    CommonSemanticsHandler::CommonScope::ResolveIdentifier (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        return ident->second;
-      }
-      if (parent)
-        return parent->ResolveIdentifier (identifier);
-      return parser::Error::IdentifierUndeclared;
-    }
-    
     ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,
                                                              ScopeLevel scopeLevel)
     {

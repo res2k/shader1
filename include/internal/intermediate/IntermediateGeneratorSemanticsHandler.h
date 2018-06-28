@@ -24,6 +24,7 @@
 #include "semantics/Attribute.h"
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
+#include "semantics/Scope.h"
 
 #include "forwarddecl.h"
 #include "Sequence.h"

@@ -25,6 +25,8 @@
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
 #include "semantics/Expression.h"
+#include "semantics/Function.h"
+#include "semantics/Scope.h"
 
 #include <vector>
 

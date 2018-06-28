@@ -18,10 +18,7 @@
 #ifndef SEMANTICS_COMMONSEMANTICSHANDLER_H_
 #define SEMANTICS_COMMONSEMANTICSHANDLER_H_
 
-#include "Block.h"
-#include "Function.h"
 #include "Handler.h"
-#include "Scope.h"
 
 #include <boost/unordered_map.hpp>
 
@@ -47,46 +44,6 @@ namespace s1
       TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
       /** @} */
 
-      class CommonScope : public Scope
-      {
-        friend class CommonSemanticsHandler;
-        
-        typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
-        IdentifierMap identifiers;
-        
-        bool CheckIdentifierUnique (const uc::String& identifier);
-        
-        CommonSemanticsHandler* handler;
-        boost::intrusive_ptr<CommonScope> parent;
-        ScopeLevel level;
-
-        class CommonFunction : public Function
-        {
-          BlockPtr block;
-        public:
-          CommonFunction (const BlockPtr& block) : block (block) {}
-          BlockPtr GetBody() { return block; }
-          void Finish() {}
-        };
-      public:
-        CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, ScopeLevel level);
-        ScopeLevel GetLevel() const { return level; }
-        
-        NamePtr AddVariable (TypePtr type,
-          const uc::String& identifier,
-          ExpressionPtr initialValue,
-          bool constant);
-          
-        NamePtr AddTypeAlias (TypePtr aliasedType,
-          const uc::String& identifier);
-          
-        FunctionPtr AddFunction (TypePtr returnType,
-          const uc::String& identifier,
-          const FunctionFormalParameters& params);
-      
-        result_NamePtr ResolveIdentifier (const uc::String& identifier);
-      };
-      
     public:  
       TypePtr CreateType (BaseType type);
       TypePtr CreateSamplerType (SamplerType dim);

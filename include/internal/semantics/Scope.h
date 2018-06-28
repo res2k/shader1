@@ -23,6 +23,11 @@
 #include "Type.h"
 
 #include "base/uc/String.h"
+#include "parser/Diagnostics_fwd.h"
+
+#include <vector>
+
+#include <outcome/outcome.hpp>
 
 namespace s1
 {
