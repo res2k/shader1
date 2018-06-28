@@ -29,7 +29,7 @@ namespace s1
       TypeImplPtr type;
       ExpressionVector params;
       
-      typedef std::vector<std::pair<boost::shared_ptr<ExpressionImpl>, RegisterPtr> > PostActionList;
+      typedef std::vector<std::pair<boost::intrusive_ptr<ExpressionImpl>, RegisterPtr> > PostActionList;
       bool ExtractBaseExpressionRegs (BlockImpl& block, std::vector<RegisterPtr>& reg,
                                       PostActionList& postActions);
     public:
