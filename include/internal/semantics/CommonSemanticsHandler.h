@@ -21,7 +21,6 @@
 #include "Block.h"
 #include "Function.h"
 #include "Handler.h"
-#include "Name.h"
 #include "Scope.h"
 
 #include <boost/unordered_map.hpp>
@@ -47,36 +46,6 @@ namespace s1
        * @{ */
       TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
       /** @} */
-      
-      struct CommonName : public Name
-      {
-        uc::String identifier;
-        NameType type;
-        
-        /* Variables/Constants: type of variable/constant
-         * Functions: type of return value
-         * Type aliases: aliased type
-         */
-        TypePtr valueType;
-        // Variables/Constants: value
-        ExpressionPtr varValue;
-        // Distinguish between variable/constant
-        bool varConstant;
-        
-        CommonName (const uc::String& identifier, NameType type, TypePtr typeOfName)
-         : identifier (identifier), type (type), valueType (typeOfName) {}
-        CommonName (const uc::String& identifier, TypePtr typeOfName,
-                    ExpressionPtr value, bool constant)
-         : identifier (identifier), type (Variable), valueType (typeOfName),
-           varValue (value), varConstant (constant) {}
-        
-        NameType GetType() { return type; }
-        TypePtr GetAliasedType()
-        { return type == TypeAlias ? valueType : TypePtr (); }
-        const uc::String& GetIdentifier () { return identifier; }
-        bool IsConstantVariable () { return (type == Variable) && varConstant; }
-        TypePtr GetValueType () { return valueType; }
-      };
 
       class CommonScope : public Scope
       {

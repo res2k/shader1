@@ -53,7 +53,7 @@ NamePtr TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr typ
   {
     return NamePtr();
   }
-  NamePtr newName (new CommonName (identifier, type, initialValue, constant));
+  NamePtr newName (new s1::semantics::CommonName (identifier, type, initialValue, constant));
   identifiers[identifier] = newName;
   return newName;
 }
@@ -65,7 +65,7 @@ NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr al
     // TODO: Error handling
     return NamePtr();
   }
-  NamePtr newName (new CommonName (identifier, semantics::Name::TypeAlias, aliasedType));
+  NamePtr newName (new s1::semantics::CommonName (identifier, semantics::Name::TypeAlias, aliasedType));
   identifiers[identifier] = newName;
   return newName;
 }
@@ -79,7 +79,7 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
     // TODO: Error handling
     return FunctionPtr();
   }
-  NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
+  NamePtr newName (new s1::semantics::CommonName (identifier, semantics::Name::Function, returnType));
   identifiers[identifier] = newName;
   s1::semantics::ScopePtr funcScope;
   funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);

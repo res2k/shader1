@@ -19,12 +19,13 @@
 #define __INTERMEDIATE_NAMEIMPL_H__
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "semantics/CommonName.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    struct IntermediateGeneratorSemanticsHandler::NameImpl : public CommonName
+    struct IntermediateGeneratorSemanticsHandler::NameImpl : public semantics::CommonName
     {
       ScopeImpl* ownerScope;
 

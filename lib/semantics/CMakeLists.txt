@@ -3,6 +3,7 @@ set(semantics_sources
     CommonSemanticsHandler.cpp
     CommonType.cpp
     ${S1_INC}/semantics/Attribute.h
+    ${S1_INC}/semantics/CommonName.h
     ${S1_INC}/semantics/CommonSemanticsHandler.h
     ${S1_INC}/semantics/CommonType.h
     )

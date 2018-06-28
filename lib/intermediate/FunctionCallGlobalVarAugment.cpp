@@ -23,6 +23,7 @@
 #include "intermediate/SequenceOp/SequenceOp.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
+#include "semantics/Name.h"
 
 #include "base/format/Formatter.tpp"
 

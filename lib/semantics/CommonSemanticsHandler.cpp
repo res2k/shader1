@@ -21,6 +21,7 @@
 #include "base/intrusive_ptr.h"
 #include "parser/Diagnostics.h"
 #include "semantics/Attribute.h"
+#include "semantics/CommonName.h"
 #include "semantics/CommonSemanticsHandler.h"
 #include "semantics/CommonType.h"
 
