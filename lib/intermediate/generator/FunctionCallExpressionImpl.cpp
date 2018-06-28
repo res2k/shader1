@@ -162,7 +162,6 @@ namespace s1
         }
         if (param.dir & ScopeImpl::dirOut)
         {
-          auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
           RegisterPtr outReg (fetchedRegs[i].second);
           if (!outReg)
           {

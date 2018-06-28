@@ -317,7 +317,6 @@ namespace s1
       }
       
       auto blockImpl = get_static_ptr<BlockImpl> (loopBlock);
-      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       
       NameImplSet loopVars;
       // Condition var is implicitly read (condition check) and written (end of body)
@@ -420,7 +419,6 @@ namespace s1
       ExpressionImpl* tailImpl = static_cast<ExpressionImpl*> (tailExpr.get());
       
       auto blockImpl = get_static_ptr<BlockImpl> (loopBlock);
-      auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       
       NameImplSet loopVars;
       // Condition var is implicitly read (condition check) and written (end of body)
