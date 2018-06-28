@@ -22,7 +22,7 @@
 #include "semantics/Attribute.h"
 #include "semantics/Block.h"
 #include "semantics/CommonName.h"
-#include "semantics/CommonSemanticsHandler.h"
+#include "semantics/CommonHandler.h"
 #include "semantics/CommonType.h"
 #include "semantics/Expression.h"
 #include "semantics/Function.h"
@@ -30,7 +30,7 @@
 
 #include <vector>
 
-class TestSemanticsHandler : public s1::semantics::CommonSemanticsHandler
+class TestSemanticsHandler : public s1::semantics::CommonHandler
 {
 public:
   class TestScope : public s1::semantics::Scope

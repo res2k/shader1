@@ -161,14 +161,14 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeImpl*
     IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (TypeImpl* t1, TypeImpl* t2)
     {
-      return get_static_ptr<TypeImpl> (CommonSemanticsHandler::GetHigherPrecisionType (t1, t2));
+      return get_static_ptr<TypeImpl> (CommonHandler::GetHigherPrecisionType (t1, t2));
     }
 
     IntermediateGeneratorSemanticsHandler::TypeImplPtr
     IntermediateGeneratorSemanticsHandler::GetAttributeType (TypeImpl* expressionType,
                                                              const semantics::Attribute& attr)
     {
-      return boost::static_pointer_cast<TypeImpl> (CommonSemanticsHandler::GetAttributeType (expressionType, attr));
+      return boost::static_pointer_cast<TypeImpl> (CommonHandler::GetAttributeType (expressionType, attr));
     }
 
     DECLARE_STATIC_FORMATTER(FormatRegPrefixName, "{0}{1}");

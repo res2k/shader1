@@ -21,7 +21,7 @@
 #include "base/intrusive_ptr.h"
 #include "semantics/Attribute.h"
 #include "semantics/CommonScope.h"
-#include "semantics/CommonSemanticsHandler.h"
+#include "semantics/CommonHandler.h"
 #include "semantics/CommonType.h"
 
 namespace s1
@@ -29,7 +29,7 @@ namespace s1
   namespace semantics
   {
     CommonType*
-    CommonSemanticsHandler::GetHigherPrecisionType (CommonType* t1, CommonType* t2)
+    CommonHandler::GetHigherPrecisionType (CommonType* t1, CommonType* t2)
     {
       if (t1->IsPrecisionHigherEqual (*t2))
         return t1;
@@ -38,7 +38,7 @@ namespace s1
       return nullptr;
     }
       
-    BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
+    BaseType CommonHandler::DetectNumericType (const uc::String& numericStr)
     {
       if (numericStr.startsWith ("0x") || numericStr.startsWith ("0X"))
       {
@@ -57,7 +57,7 @@ namespace s1
     }
     
     TypePtr
-    CommonSemanticsHandler::GetAttributeType (CommonType* expressionType, const Attribute& attr)
+    CommonHandler::GetAttributeType (CommonType* expressionType, const Attribute& attr)
     {
       TypePtr attrType;
       switch (attr.attrClass)
@@ -103,35 +103,35 @@ namespace s1
     
     typedef TypePtr TypePtr;
     
-    TypePtr CommonSemanticsHandler::CreateType (BaseType type)
+    TypePtr CommonHandler::CreateType (BaseType type)
     {
       return TypePtr (new CommonType (type));
     }
     
-    TypePtr CommonSemanticsHandler::CreateSamplerType (SamplerType dim)
+    TypePtr CommonHandler::CreateSamplerType (SamplerType dim)
     {
       return TypePtr (new CommonType (dim));
     }
     
-    TypePtr CommonSemanticsHandler::CreateArrayType (TypePtr baseType)
+    TypePtr CommonHandler::CreateArrayType (TypePtr baseType)
     {
       return TypePtr (new CommonType (baseType));
     }
     
-    TypePtr CommonSemanticsHandler::CreateVectorType (TypePtr baseType,
+    TypePtr CommonHandler::CreateVectorType (TypePtr baseType,
                                                       unsigned int components)
     {
       return TypePtr (new CommonType (baseType, components));
     }
     
-    TypePtr CommonSemanticsHandler::CreateMatrixType (TypePtr baseType,
+    TypePtr CommonHandler::CreateMatrixType (TypePtr baseType,
                                                       unsigned int columns,
                                                       unsigned int rows)
     {
       return TypePtr (new CommonType (baseType, columns, rows));
     }
   
-    ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,
+    ScopePtr CommonHandler::CreateScope (ScopePtr parentScope,
                                                              ScopeLevel scopeLevel)
     {
       return ScopePtr (new CommonScope (this,

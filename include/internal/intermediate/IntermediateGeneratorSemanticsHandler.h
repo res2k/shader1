@@ -22,7 +22,7 @@
 
 #include "diagnostics/forwarddecl.h"
 #include "semantics/Attribute.h"
-#include "semantics/CommonSemanticsHandler.h"
+#include "semantics/CommonHandler.h"
 #include "semantics/CommonType.h"
 #include "semantics/Scope.h"
 
@@ -38,7 +38,7 @@ namespace s1
     enum struct Error : unsigned int;
 
     class IntermediateGeneratorSemanticsHandler :
-      public semantics::CommonSemanticsHandler
+      public semantics::CommonHandler
     {
     protected:
       friend class ProgramFunction;

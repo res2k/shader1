@@ -15,8 +15,8 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef SEMANTICS_COMMONSEMANTICSHANDLER_H_
-#define SEMANTICS_COMMONSEMANTICSHANDLER_H_
+#ifndef SEMANTICS_COMMONHANDLER_H_
+#define SEMANTICS_COMMONHANDLER_H_
 
 #include "Handler.h"
 
@@ -30,7 +30,7 @@ namespace s1
      * Common implementation of semantics handler behaviour that is the same across
      * most semantics handlers (such as name or scope handling).
      */
-    class CommonSemanticsHandler : public Handler
+    class CommonHandler : public Handler
     {
     protected:
       /**\name Type utilities
@@ -60,4 +60,4 @@ namespace s1
   } // namespace semantics
 } // namespace s1
     
-#endif // SEMANTICS_COMMONSEMANTICSHANDLER_H_
+#endif // SEMANTICS_CommonHandler_H_

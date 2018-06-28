@@ -30,14 +30,14 @@ namespace s1
   {
     class CommonScope : public Scope
     {
-      friend class CommonSemanticsHandler;
+      friend class CommonHandler;
       
       typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
       
       bool CheckIdentifierUnique (const uc::String& identifier);
       
-      CommonSemanticsHandler* handler;
+      CommonHandler* handler;
       boost::intrusive_ptr<CommonScope> parent;
       ScopeLevel level;
 
@@ -50,7 +50,7 @@ namespace s1
         void Finish() {}
       };
     public:
-      CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, ScopeLevel level);
+      CommonScope (CommonHandler* handler, CommonScope* parent, ScopeLevel level);
       ScopeLevel GetLevel() const { return level; }
       
       NamePtr AddVariable (TypePtr type,

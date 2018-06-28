@@ -19,7 +19,7 @@
 #include "base/intrusive_ptr.h"
 #include "parser/Diagnostics.h"
 #include "semantics/CommonName.h"
-#include "semantics/CommonSemanticsHandler.h"
+#include "semantics/CommonHandler.h"
 
 #include "semantics/CommonScope.h"
 
@@ -39,7 +39,7 @@ namespace s1
       return true;
     }
 
-    CommonScope::CommonScope (CommonSemanticsHandler* handler,
+    CommonScope::CommonScope (CommonHandler* handler,
                                                       CommonScope* parent,
                                                       ScopeLevel level)
      : handler (handler), parent (parent), level (level)
