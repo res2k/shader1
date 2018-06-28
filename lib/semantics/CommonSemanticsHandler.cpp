@@ -19,14 +19,14 @@
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 #include "base/intrusive_ptr.h"
-#include "parser/CommonSemanticsHandler.h"
 #include "parser/Diagnostics.h"
+#include "semantics/CommonSemanticsHandler.h"
 
 #include "base/format/Formatter.tpp"
 
 namespace s1
 {
-  namespace parser
+  namespace semantics
   {
     bool CommonSemanticsHandler::CommonType::CompatibleLossless (const CommonType& to) const
     {
@@ -34,15 +34,15 @@ namespace s1
       switch (typeClass)
       {
       case Base:
-        if ((base == semantics::BaseType::Void) || (to.base == semantics::BaseType::Void))
+        if ((base == BaseType::Void) || (to.base == BaseType::Void))
           // Void is not even compatible to itself
           return false;
-        if (((base == semantics::BaseType::Int) || (base == semantics::BaseType::UInt))
-            && ((to.base == semantics::BaseType::Int) || (to.base == semantics::BaseType::UInt)))
+        if (((base == BaseType::Int) || (base == BaseType::UInt))
+            && ((to.base == BaseType::Int) || (to.base == BaseType::UInt)))
           // int and unsigned int are assumed assignable without precision loss
           return true;
-        if (((base == semantics::BaseType::Int) || (base == semantics::BaseType::UInt))
-            && (to.base == semantics::BaseType::Float))
+        if (((base == BaseType::Int) || (base == BaseType::UInt))
+            && (to.base == BaseType::Float))
           // assignment from int or unsigned int to float is assumed assignable without precision loss
           return true;
         // Otherwise, types must be equal
@@ -78,8 +78,8 @@ namespace s1
       switch (typeClass)
       {
       case Base:
-        if ((base == semantics::BaseType::Float)
-            && ((to.base == semantics::BaseType::Int) || (to.base == semantics::BaseType::UInt)))
+        if ((base == BaseType::Float)
+            && ((to.base == BaseType::Int) || (to.base == BaseType::UInt)))
           // assignment from float to int or unsigned int possible with precision loss
           return true;
       default:
@@ -120,15 +120,15 @@ namespace s1
       {
       case Base:
         // Void is not even of equal precision to itself...
-        if ((base == semantics::BaseType::Void) || (other.base == semantics::BaseType::Void))
+        if ((base == BaseType::Void) || (other.base == BaseType::Void))
           return false;
         // Treat 'int' as higher precision as 'unsigned int' (b/c 'int' has a sign)
-        if ((base == semantics::BaseType::Int)
-            && ((other.base == semantics::BaseType::Int) || (other.base == semantics::BaseType::UInt)))
+        if ((base == BaseType::Int)
+            && ((other.base == BaseType::Int) || (other.base == BaseType::UInt)))
           return true;
         // Float is considered higher precision than int or unsigned int (has fractions)
-        if ((base == semantics::BaseType::Float)
-            && ((other.base == semantics::BaseType::Int) || (other.base == semantics::BaseType::UInt)))
+        if ((base == BaseType::Float)
+            && ((other.base == BaseType::Int) || (other.base == BaseType::UInt)))
           // assignment from int or unsigned int to float is assumed assignable without precision loss
           return true;
         // Otherwise, types must be equal
@@ -167,12 +167,12 @@ namespace s1
         {
           switch (base)
           {
-            case semantics::BaseType::Invalid: return uc::String ("INVALID");
-            case semantics::BaseType::Void: return uc::String ("void");
-            case semantics::BaseType::Bool: return uc::String ("bool");
-            case semantics::BaseType::Int: return uc::String ("int");
-            case semantics::BaseType::UInt: return uc::String ("unsigned int");
-            case semantics::BaseType::Float: return uc::String ("float");
+            case BaseType::Invalid: return uc::String ("INVALID");
+            case BaseType::Void: return uc::String ("void");
+            case BaseType::Bool: return uc::String ("bool");
+            case BaseType::Int: return uc::String ("int");
+            case BaseType::UInt: return uc::String ("unsigned int");
+            case BaseType::Float: return uc::String ("float");
           }
         }
         break;
@@ -180,10 +180,10 @@ namespace s1
         {
           switch (sampler)
           {
-            case semantics::SamplerType::_1D: return uc::String ("sampler1D");
-            case semantics::SamplerType::_2D: return uc::String ("sampler2D");
-            case semantics::SamplerType::_3D: return uc::String ("sampler3D");
-            case semantics::SamplerType::CUBE: return uc::String ("samplerCUBE");
+            case SamplerType::_1D: return uc::String ("sampler1D");
+            case SamplerType::_2D: return uc::String ("sampler2D");
+            case SamplerType::_3D: return uc::String ("sampler3D");
+            case SamplerType::CUBE: return uc::String ("samplerCUBE");
           }
         }
         break;
@@ -219,22 +219,22 @@ namespace s1
       return nullptr;
     }
       
-    semantics::BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
+    BaseType CommonSemanticsHandler::DetectNumericType (const uc::String& numericStr)
     {
       if (numericStr.startsWith ("0x") || numericStr.startsWith ("0X"))
       {
         // Hex number: always unsigned int
-        return semantics::BaseType::UInt;
+        return BaseType::UInt;
       }
       if ((numericStr.indexOf ('.') != uc::String::npos)
         || (numericStr.indexOf ('e') != uc::String::npos)
         || (numericStr.indexOf ('E') != uc::String::npos))
       {
         // Contains '.', 'e' or 'E': must be float number
-        return semantics::BaseType::Float;
+        return BaseType::Float;
       }
       // Can only be an integer
-      return numericStr.startsWith ("-") ? semantics::BaseType::Int : semantics::BaseType::UInt;
+      return numericStr.startsWith ("-") ? BaseType::Int : BaseType::UInt;
     }
     
     CommonSemanticsHandler::Attribute CommonSemanticsHandler::IdentifyAttribute (const uc::String& attributeStr)
@@ -316,15 +316,15 @@ namespace s1
                         attr[0], attr[1], attr[2], attr[3]);
     }
     
-    semantics::TypePtr
+    TypePtr
     CommonSemanticsHandler::GetAttributeType (CommonType* expressionType, const Attribute& attr)
     {
-      semantics::TypePtr attrType;
+      TypePtr attrType;
       switch (attr.attrClass)
       {
       case Attribute::arrayLength:
         if (expressionType->typeClass == CommonType::Array)
-          attrType = CreateType (semantics::BaseType::UInt); // Type is fix
+          attrType = CreateType (BaseType::UInt); // Type is fix
         break;
       case Attribute::matrixCol:
         if (expressionType->typeClass == CommonType::Matrix)
@@ -361,14 +361,14 @@ namespace s1
       return attrType;
     }
     
-    typedef semantics::TypePtr TypePtr;
+    typedef TypePtr TypePtr;
     
-    TypePtr CommonSemanticsHandler::CreateType (semantics::BaseType type)
+    TypePtr CommonSemanticsHandler::CreateType (BaseType type)
     {
       return TypePtr (new CommonType (type));
     }
     
-    TypePtr CommonSemanticsHandler::CreateSamplerType (semantics::SamplerType dim)
+    TypePtr CommonSemanticsHandler::CreateSamplerType (SamplerType dim)
     {
       return TypePtr (new CommonType (dim));
     }
@@ -405,59 +405,59 @@ namespace s1
       
     CommonSemanticsHandler::CommonScope::CommonScope (CommonSemanticsHandler* handler,
                                                       CommonScope* parent,
-                                                      semantics::ScopeLevel level)
+                                                      ScopeLevel level)
      : handler (handler), parent (parent), level (level)
     {}
 
-    semantics::NamePtr
+    NamePtr
     CommonSemanticsHandler::CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
-                                                      semantics::ExpressionPtr initialValue, bool constant)
+                                                      ExpressionPtr initialValue, bool constant)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return semantics::NamePtr();
+        return NamePtr();
       }
-      semantics::NamePtr newName (new CommonName (identifier, type, initialValue, constant));
+      NamePtr newName (new CommonName (identifier, type, initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
     }
       
-    semantics::NamePtr
+    NamePtr
     CommonSemanticsHandler::CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return semantics::NamePtr();
+        return NamePtr();
       }
-      semantics::NamePtr newName (new CommonName (identifier, semantics::Name::TypeAlias, aliasedType));
+      NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
       identifiers[identifier] = newName;
       return newName;
     }
       
-    semantics::FunctionPtr
+    FunctionPtr
     CommonSemanticsHandler::CommonScope::AddFunction (TypePtr returnType,
                                                       const uc::String& identifier,
                                                       const FunctionFormalParameters& params)
     {
-      if (level >= semantics::ScopeLevel::Function)
+      if (level >= ScopeLevel::Function)
       {
         // TODO: Error handling
-        return semantics::FunctionPtr();
+        return FunctionPtr();
       }
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return semantics::FunctionPtr();
+        return FunctionPtr();
       }
-      semantics::NamePtr newName (new CommonName (identifier, semantics::Name::Function, returnType));
+      NamePtr newName (new CommonName (identifier, Name::Function, returnType));
       identifiers[identifier] = newName;
-      semantics::ScopePtr funcScope;
-      funcScope = handler->CreateScope (this, semantics::ScopeLevel::Function);
+      ScopePtr funcScope;
+      funcScope = handler->CreateScope (this, ScopeLevel::Function);
       auto newBlock = handler->CreateBlock (funcScope);
-      funcScope = semantics::ScopePtr();
-      semantics::FunctionPtr newFunction (new CommonFunction (newBlock));
+      funcScope = ScopePtr();
+      FunctionPtr newFunction (new CommonFunction (newBlock));
       return newFunction;
     }
 
@@ -471,16 +471,16 @@ namespace s1
       }
       if (parent)
         return parent->ResolveIdentifier (identifier);
-      return Error::IdentifierUndeclared;
+      return parser::Error::IdentifierUndeclared;
     }
     
-    semantics::ScopePtr CommonSemanticsHandler::CreateScope (semantics::ScopePtr parentScope,
-                                                             semantics::ScopeLevel scopeLevel)
+    ScopePtr CommonSemanticsHandler::CreateScope (ScopePtr parentScope,
+                                                             ScopeLevel scopeLevel)
     {
-      return semantics::ScopePtr (new CommonScope (this,
+      return ScopePtr (new CommonScope (this,
         get_static_ptr<CommonScope> (parentScope),
         scopeLevel));
     }
     
-  } // namespace parser
+  } // namespace semantics
 } // namespace s1

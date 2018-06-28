@@ -21,7 +21,7 @@
 #include "base/uc/String.h"
 
 #include "diagnostics/forwarddecl.h"
-#include "parser/CommonSemanticsHandler.h"
+#include "semantics/CommonSemanticsHandler.h"
 
 #include "forwarddecl.h"
 #include "Sequence.h"
@@ -35,7 +35,7 @@ namespace s1
     enum struct Error : unsigned int;
 
     class IntermediateGeneratorSemanticsHandler :
-      public s1::parser::CommonSemanticsHandler
+      public semantics::CommonSemanticsHandler
     {
     protected:
       friend class ProgramFunction;

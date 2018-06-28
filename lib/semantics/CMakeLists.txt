@@ -1,3 +1,16 @@
+set(semantics_sources
+    CommonSemanticsHandler.cpp
+    ${S1_INC}/semantics/CommonSemanticsHandler.h
+    )
+s1_add_library_internal(semantics
+                        TARGET_LINK ${S1_TARGET_LINK}
+                        SOURCES ${semantics_sources}
+                        LINK base)
+add_dependencies(semantics generate_Diagnostics_parser)
+IF(S1LIB_PDB)
+  target_compile_options(semantics PRIVATE ${S1LIB_PDB})
+ENDIF()
+
 file(GLOB semantics_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
 s1_add_library_external(semantics_testlib STATIC SOURCES ${semantics_testlib_sources} LINK s1_headers_internal)
 set_property(TARGET semantics_testlib PROPERTY EXCLUDE_FROM_ALL YES)
@@ -15,4 +28,4 @@ s1_add_boost_test(test_Semantics
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/print_semantics_SamplerType.h
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/TestParser.h
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/TestSemanticsHandler.h
-                  DEPENDS semantics_testlib parser)
+                  DEPENDS semantics_testlib semantics parser)

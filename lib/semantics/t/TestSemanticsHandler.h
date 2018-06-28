@@ -19,13 +19,13 @@
 #define __TESTSEMANTICSHANDLER_H__
 
 #include "base/intrusive_ptr.h"
-#include "parser/CommonSemanticsHandler.h"
 #include "semantics/Block.h"
+#include "semantics/CommonSemanticsHandler.h"
 #include "semantics/Expression.h"
 
 #include <vector>
 
-class TestSemanticsHandler : public s1::parser::CommonSemanticsHandler
+class TestSemanticsHandler : public s1::semantics::CommonSemanticsHandler
 {
 public:
   class TestScope : public s1::semantics::Scope

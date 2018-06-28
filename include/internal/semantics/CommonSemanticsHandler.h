@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,52 +15,52 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef __PARSER_COMMONSEMANTICSHANDLER_H__
-#define __PARSER_COMMONSEMANTICSHANDLER_H__
+#ifndef SEMANTICS_COMMONSEMANTICSHANDLER_H_
+#define SEMANTICS_COMMONSEMANTICSHANDLER_H_
 
-#include "semantics/Block.h"
-#include "semantics/Function.h"
-#include "semantics/Handler.h"
-#include "semantics/Name.h"
-#include "semantics/Scope.h"
-#include "semantics/Type.h"
+#include "Block.h"
+#include "Function.h"
+#include "Handler.h"
+#include "Name.h"
+#include "Scope.h"
+#include "Type.h"
 
 #include <boost/unordered_map.hpp>
 
 namespace s1
 {
-  namespace parser
+  namespace semantics
   {
     /**
      * Common implementation of semantics handler behaviour that is the same across
      * most semantics handlers (such as name or scope handling).
      */
-    class CommonSemanticsHandler : public semantics::Handler
+    class CommonSemanticsHandler : public Handler
     {
     protected:
-      struct CommonType : public semantics::Type
+      struct CommonType : public Type
       {
         Class typeClass;
-        semantics::BaseType base;
-        semantics::SamplerType sampler;
-        semantics::TypePtr avmBase;
+        BaseType base;
+        SamplerType sampler;
+        TypePtr avmBase;
         unsigned int vectorDim;
         unsigned int matrixCols;
         unsigned int matrixRows;
         
-        CommonType (semantics::BaseType base) : typeClass (Base), base (base) {}
-        CommonType (semantics::SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
-        CommonType (semantics::TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
-        CommonType (semantics::TypePtr vBase, unsigned int d)
+        CommonType (BaseType base) : typeClass (Base), base (base) {}
+        CommonType (SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
+        CommonType (TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
+        CommonType (TypePtr vBase, unsigned int d)
          : typeClass (Vector), avmBase (vBase), vectorDim (d) {}
-        CommonType (semantics::TypePtr mBase, unsigned int c, unsigned int r)
+        CommonType (TypePtr mBase, unsigned int c, unsigned int r)
          : typeClass (Matrix), avmBase (mBase), matrixCols (c), matrixRows (r) {}
         
         Class GetTypeClass() const { return typeClass; }
-        semantics::BaseType GetBaseType() const { return base; }
-        semantics::SamplerType GetSamplerType() const { return sampler; }
+        BaseType GetBaseType() const { return base; }
+        SamplerType GetSamplerType() const { return sampler; }
         
-        semantics::TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
+        TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
         
         unsigned int GetVectorTypeComponents() const { return vectorDim; }
         
@@ -69,7 +69,7 @@ namespace s1
         
         /// Returns whether this type is losslessly assignable to \a to.
         bool CompatibleLossless (const CommonType& to) const;
-        bool CompatibleLossy (const s1::parser::CommonSemanticsHandler::CommonType& to) const;
+        bool CompatibleLossy (const CommonType& to) const;
         bool IsEqual (const CommonType& other) const;
         bool IsPrecisionHigherEqual (const CommonType& other) const;
         
@@ -79,7 +79,7 @@ namespace s1
       /**\name Type utilities
        * @{ */
       static CommonType* GetHigherPrecisionType (CommonType* t1, CommonType* t2);
-      static semantics::BaseType DetectNumericType (const uc::String& numericStr);
+      static BaseType DetectNumericType (const uc::String& numericStr);
       /**@}*/
       
       /**\name Attribute utilities
@@ -111,10 +111,10 @@ namespace s1
         {}
       };
       static Attribute IdentifyAttribute (const uc::String& attributeStr);
-      semantics::TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
+      TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
       /** @} */
       
-      struct CommonName : public semantics::Name
+      struct CommonName : public Name
       {
         uc::String identifier;
         NameType type;
@@ -123,61 +123,61 @@ namespace s1
          * Functions: type of return value
          * Type aliases: aliased type
          */
-        semantics::TypePtr valueType;
+        TypePtr valueType;
         // Variables/Constants: value
-        semantics::ExpressionPtr varValue;
+        ExpressionPtr varValue;
         // Distinguish between variable/constant
         bool varConstant;
         
-        CommonName (const uc::String& identifier, NameType type, semantics::TypePtr typeOfName)
+        CommonName (const uc::String& identifier, NameType type, TypePtr typeOfName)
          : identifier (identifier), type (type), valueType (typeOfName) {}
-        CommonName (const uc::String& identifier, semantics::TypePtr typeOfName,
-                    semantics::ExpressionPtr value, bool constant)
+        CommonName (const uc::String& identifier, TypePtr typeOfName,
+                    ExpressionPtr value, bool constant)
          : identifier (identifier), type (Variable), valueType (typeOfName),
            varValue (value), varConstant (constant) {}
         
         NameType GetType() { return type; }
-        semantics::TypePtr GetAliasedType()
-        { return type == TypeAlias ? valueType : semantics::TypePtr (); }
+        TypePtr GetAliasedType()
+        { return type == TypeAlias ? valueType : TypePtr (); }
         const uc::String& GetIdentifier () { return identifier; }
         bool IsConstantVariable () { return (type == Variable) && varConstant; }
-        semantics::TypePtr GetValueType () { return valueType; }
+        TypePtr GetValueType () { return valueType; }
       };
 
-      class CommonScope : public semantics::Scope
+      class CommonScope : public Scope
       {
         friend class CommonSemanticsHandler;
         
-        typedef boost::unordered_map<uc::String, semantics::NamePtr> IdentifierMap;
+        typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
         IdentifierMap identifiers;
         
         bool CheckIdentifierUnique (const uc::String& identifier);
         
         CommonSemanticsHandler* handler;
         boost::intrusive_ptr<CommonScope> parent;
-        semantics::ScopeLevel level;
+        ScopeLevel level;
 
-        class CommonFunction : public semantics::Function
+        class CommonFunction : public Function
         {
-          semantics::BlockPtr block;
+          BlockPtr block;
         public:
-          CommonFunction (const semantics::BlockPtr& block) : block (block) {}
-          semantics::BlockPtr GetBody() { return block; }
+          CommonFunction (const BlockPtr& block) : block (block) {}
+          BlockPtr GetBody() { return block; }
           void Finish() {}
         };
       public:
-        CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, semantics::ScopeLevel level);
-        semantics::ScopeLevel GetLevel() const { return level; }
+        CommonScope (CommonSemanticsHandler* handler, CommonScope* parent, ScopeLevel level);
+        ScopeLevel GetLevel() const { return level; }
         
-        semantics::NamePtr AddVariable (semantics::TypePtr type,
+        NamePtr AddVariable (TypePtr type,
           const uc::String& identifier,
-          semantics::ExpressionPtr initialValue,
+          ExpressionPtr initialValue,
           bool constant);
           
-        semantics::NamePtr AddTypeAlias (semantics::TypePtr aliasedType,
+        NamePtr AddTypeAlias (TypePtr aliasedType,
           const uc::String& identifier);
           
-        semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
+        FunctionPtr AddFunction (TypePtr returnType,
           const uc::String& identifier,
           const FunctionFormalParameters& params);
       
@@ -185,19 +185,19 @@ namespace s1
       };
       
     public:  
-      semantics::TypePtr CreateType (semantics::BaseType type);
-      semantics::TypePtr CreateSamplerType (semantics::SamplerType dim);
-      semantics::TypePtr CreateArrayType (semantics::TypePtr baseType);
-      semantics::TypePtr CreateVectorType (semantics::TypePtr baseType,
+      TypePtr CreateType (BaseType type);
+      TypePtr CreateSamplerType (SamplerType dim);
+      TypePtr CreateArrayType (TypePtr baseType);
+      TypePtr CreateVectorType (TypePtr baseType,
                                            unsigned int components);
-      semantics::TypePtr CreateMatrixType (semantics::TypePtr baseType,
+      TypePtr CreateMatrixType (TypePtr baseType,
                                            unsigned int columns,
                                            unsigned int rows);
       
-      semantics::ScopePtr CreateScope (semantics::ScopePtr parentScope, semantics::ScopeLevel scopeLevel);
+      ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel);
     };
     
-  } // namespace parser
+  } // namespace semantics
 } // namespace s1
     
-#endif // __PARSER_COMMONSEMANTICSHANDLER_H__
+#endif // SEMANTICS_COMMONSEMANTICSHANDLER_H_

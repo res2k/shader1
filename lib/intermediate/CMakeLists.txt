@@ -34,7 +34,7 @@ s1_add_library_internal(intermediate
                         TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${intermediate_sources}
                         DEPENDS generate_Diagnostics_intermediate
-                        LINK intermediate_generator intermediate_seqop parser)
+                        LINK intermediate_generator intermediate_seqop semantics parser)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(intermediate_generator PRIVATE ${S1LIB_PDB_CXX_FLAGS})
   target_compile_options(intermediate_seqop PRIVATE ${S1LIB_PDB_CXX_FLAGS})
