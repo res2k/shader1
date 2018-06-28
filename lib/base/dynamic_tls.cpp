@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -112,7 +112,7 @@ namespace s1
         {
           Block* b = reinterpret_cast<Block*> (malloc (sizeof (Block)));
           if (!b) throw std::bad_alloc ();
-          memset (b, 0, sizeof (Block));
+          memset ((void*)b, 0, sizeof (Block));
           return b;
         }
 
@@ -287,8 +287,8 @@ namespace s1
         {
           const auto prevBlocksPtr = GetBlocksPtr();
           block_type* newBlocksPtr = nullptr;
-          bool prevInline = prevBlockCount <= (sizeof (block_type*) / sizeof (block_type));
-          bool newInline = newBlockCount <= (sizeof (block_type*) / sizeof (block_type));
+          bool prevInline = prevBlockCount <= maxInlineData;
+          bool newInline = newBlockCount <= maxInlineData;
           if (newInline)
           {
             // Store new data inline
@@ -381,6 +381,7 @@ namespace s1
 
     protected:
       static const size_t blockBits = CHAR_BIT * sizeof (block_type);
+      static const size_t maxInlineData = sizeof (void*) / sizeof (block_type);
 
       static size_t blockCount (size_t bitCount)
       { return (bitCount / blockBits) + ((bitCount % blockBits) != 0 ? 1 : 0); }
@@ -393,7 +394,7 @@ namespace s1
         auto block_count = blockCount (bitCount);
         if (block_count == 0)
           return nullptr;
-        else if (block_count <= (sizeof (block_type*) / sizeof (block_type)))
+        else if (block_count <= maxInlineData)
           return reinterpret_cast<block_type*> (&blocksData);
         else
           return blocksData;
@@ -404,7 +405,7 @@ namespace s1
         auto block_count = blockCount (bitCount);
         if (block_count == 0)
           return nullptr;
-        else if (block_count <= (sizeof (block_type*) / sizeof (block_type)))
+        else if (block_count <= maxInlineData)
           return reinterpret_cast<const block_type*> (&blocksData);
         else
           return blocksData;
