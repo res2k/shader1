@@ -1,6 +1,8 @@
 set(semantics_sources
     CommonSemanticsHandler.cpp
+    CommonType.cpp
     ${S1_INC}/semantics/CommonSemanticsHandler.h
+    ${S1_INC}/semantics/CommonType.h
     )
 s1_add_library_internal(semantics
                         TARGET_LINK ${S1_TARGET_LINK}

@@ -22,6 +22,7 @@
 
 #include "diagnostics/forwarddecl.h"
 #include "semantics/CommonSemanticsHandler.h"
+#include "semantics/CommonType.h"
 
 #include "forwarddecl.h"
 #include "Sequence.h"
@@ -42,7 +43,7 @@ namespace s1
 
       typedef semantics::ExpressionPtr ExpressionPtr;
 
-      typedef CommonType TypeImpl;
+      typedef semantics::CommonType TypeImpl;
       struct NameImpl;
       class FunctionImpl;
       class ScopeImpl;

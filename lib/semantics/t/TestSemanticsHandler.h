@@ -21,6 +21,7 @@
 #include "base/intrusive_ptr.h"
 #include "semantics/Block.h"
 #include "semantics/CommonSemanticsHandler.h"
+#include "semantics/CommonType.h"
 #include "semantics/Expression.h"
 
 #include <vector>
@@ -76,7 +77,7 @@ public:
       scopeLevel));
   }
   
-  typedef CommonType TestType;
+  typedef s1::semantics::CommonType TestType;
   typedef CommonName TestName;
   
   struct TestExpressionBase : public s1::semantics::Expression

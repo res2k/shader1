@@ -60,6 +60,8 @@ namespace s1
 
     struct Block;
     typedef boost::intrusive_ptr<Block> BlockPtr;
+
+    struct CommonType;
   } // namespace semantics
 } // namespace s1
 
