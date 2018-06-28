@@ -22,8 +22,9 @@
 #include "parser/Diagnostics.h"
 #include "parser/Parser.h"
 
-#include "print_parser_Error.h"
 #include "TestSemanticsHandler.h"
+
+#include "../../parser/t/print_parser_Error.h"
 
 BOOST_AUTO_TEST_SUITE(ParserScope)
 

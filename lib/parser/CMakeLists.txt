@@ -50,28 +50,14 @@ IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(parser PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
-file(GLOB parser_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
-s1_add_library_internal(parser_testlib TARGET_LINK SHARED SOURCES ${parser_testlib_sources} LINK s1_headers_internal)
-set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
-
 s1_add_boost_test(test_Parser
                   SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlock.cpp
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlockStrict.cpp
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/AstExpr.cpp
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/AstProgram.cpp
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/AstTypes.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlock.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlockStrict.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonAttrTypes.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonTypeCompat.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserExpr.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserProgram.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserScope.cpp
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserTypes.cpp
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/AstMacros.h
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/print_parser_Error.h
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/TestAstBuilder.h
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/TestParser.h
-                          ${CMAKE_CURRENT_SOURCE_DIR}/t/TestSemanticsHandler.h
-                  DEPENDS parser_testlib parser)
+                  DEPENDS parser)
 

@@ -18,7 +18,7 @@
 #ifndef PARSER_T_TESTPARSER_H_
 #define PARSER_T_TESTPARSER_H_
 
-#include "TestAstBuilder.h"
+#include "../../parser/t/TestAstBuilder.h"
 
 #include "parser/Parser.h"
 

@@ -36,7 +36,7 @@
 #include "StringSubstitute.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
-#include "../../parser/t/TestParser.h"
+#include "../../semantics/t/TestParser.h"
 
 using namespace s1::intermediate;
 using namespace s1::codegen;

@@ -34,7 +34,7 @@
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 #include "../../intermediate/t/print_TestSequenceVisitor_Operation.h"
 #include "../../intermediate/t/TestSequenceVisitor.h"
-#include "../../parser/t/TestParser.h"
+#include "../../semantics/t/TestParser.h"
 
 using namespace s1::intermediate;
 using namespace s1::optimize;
