@@ -83,11 +83,11 @@ s1_ResultCode s1_create_library (s1_Library** out)
     *out = new_lib->DowncastEvil<s1_Library> ();
     return S1_SUCCESS;
   }
-  catch (std::bad_alloc)
+  catch (std::bad_alloc&)
   {
     return S1_E_OUT_OF_MEMORY;
   }
-  catch (std::exception)
+  catch (std::exception&)
   {
     return S1_E_FAILURE;
   }

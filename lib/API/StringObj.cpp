@@ -64,7 +64,7 @@ namespace s1
         size_t invalidPos = result.invalidPos ? result.invalidPos - str : (size_t)~0;
         return std::make_tuple (TranslateStringConversionError (result.error), strObj, invalidPos);
       }
-      catch (uc::StringOverflowException)
+      catch (uc::StringOverflowException&)
       {
         return std::make_tuple (S1_E_STRING_TOO_LONG, nullptr, (size_t)~0);
       }
