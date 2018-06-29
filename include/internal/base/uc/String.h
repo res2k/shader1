@@ -175,7 +175,19 @@ namespace s1
       bool startsWith (const String& s) const;
       /// Check if string starts with the given ASCII string.
       bool startsWith (const char* s, size_t len = (size_t)~0) const;
-      size_type indexOf (Char32 ch) const;
+      size_type indexOf (Char32 ch) const
+      {
+        if (ch != SanitizeChar16 (ch)) return npos;
+
+        if (ch <= MaxChar16)
+        {
+          return indexOf16 (static_cast<Char16> (ch));
+        }
+        else
+        {
+          return indexOf32 (ch);
+        }
+      }
 
       enum NormalizationMode
       {
@@ -216,6 +228,9 @@ namespace s1
       /** @} */
     private:
       friend class CharacterIterator;
+
+      size_type indexOf16 (Char16 ch) const;
+      size_type indexOf32 (Char32 ch) const;
 
       /* Hack to allow string to be readable in debugger.
        * (At least VS versions prior to 2015.

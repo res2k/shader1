@@ -731,37 +731,34 @@ namespace s1
       return boost::algorithm::starts_with (*this, boost::make_iterator_range (s, s+len));
     }
     
-    String::size_type String::indexOf (Char32 ch) const
+    String::size_type String::indexOf16 (Char16 ch) const
     {
-      if (ch != SanitizeChar16(ch)) return npos;
-
       const Char* start = data();
-      if (ch <= MaxChar16)
-      {
-        const Char* p = Char_traits::find (start, length(), static_cast<Char16> (ch));
-        return p ? static_cast<size_type> (p - start) : npos;
-      }
-      else
-      {
-        if (length() < 2) return npos;
+      const Char* p = Char_traits::find (start, length(), ch);
+      return p ? static_cast<size_type> (p - start) : npos;
+    }
 
-        Char surr[2];
-        {
-          UTF16Encoder enc;
-          Char* dst = surr;
-          UTF16Encoder::EncodeResult result = enc (ch, dst, dst+2);
-          (void)result;
-          assert (result == UTF16Encoder::erSuccess);
-        }
-        const Char* end = start + length();
-        const Char* p = start + 1;
-        while (p && (p < end))
-        {
-          p = Char_traits::find (p, end - p, surr[1]);
-          if (p && (*(p - 1) == surr[0])) return static_cast<size_type> (p - start - 1);
-        }
-        return npos;
+    String::size_type String::indexOf32 (Char32 ch) const
+    {
+      if (length() < 2) return npos;
+
+      Char surr[2];
+      {
+        UTF16Encoder enc;
+        Char* dst = surr;
+        UTF16Encoder::EncodeResult result = enc (ch, dst, dst+2);
+        (void)result;
+        assert (result == UTF16Encoder::erSuccess);
       }
+      const Char* start = data();
+      const Char* end = start + length();
+      const Char* p = start + 1;
+      while (p && (p < end))
+      {
+        p = Char_traits::find (p, end - p, surr[1]);
+        if (p && (*(p - 1) == surr[0])) return static_cast<size_type> (p - start - 1);
+      }
+      return npos;
     }
 
     void String::FreeBuffer()
