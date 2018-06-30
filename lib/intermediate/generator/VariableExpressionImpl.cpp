@@ -44,10 +44,9 @@ namespace s1
       return set;
     }
       
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::GetValueType()
     {
-      return name->GetValueTypeImpl ();
+      return name->GetValueType ();
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::AddToSequence (BlockImpl& block,

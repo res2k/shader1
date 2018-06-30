@@ -43,12 +43,11 @@ namespace s1
       return operand->QueryWrittenNames (asLvalue);
     }
       
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::GetValueType()
     {
       auto operandType = operand->GetValueType();
-      if (!operandType) return TypeImplPtr(); // Assume error already handled
-      TypeImplPtr valueType;
+      if (!operandType) return nullptr; // Assume error already handled
+      semantics::TypePtr valueType;
       
       switch (op)
       {
@@ -73,7 +72,7 @@ namespace s1
       if (!valueType)
       {
         ExpressionError (Error::OperandTypesInvalid);
-        return TypeImplPtr();
+        return nullptr;
       }
       
       return valueType;
@@ -99,8 +98,8 @@ namespace s1
       {
         // Insert cast op
         RegisterPtr newReg (handler->AllocateRegister (seq, valueType, Intermediate));
-        auto srcCast = handler->GenerateCast (seq, newReg, valueType,
-                                              reg, operandType);
+        auto srcCast = handler->GenerateCast (seq, newReg, valueType.get(),
+                                              reg, operandType.get());
         if (srcCast.has_error ())
         {
           ExpressionError (srcCast.error ());

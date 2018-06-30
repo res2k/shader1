@@ -34,7 +34,7 @@ namespace s1
                                   const ExpressionPtr& arrayExpr,
                                   const ExpressionPtr& indexExpr);
       
-      TypeImplPtr GetValueType ();
+      semantics::TypePtr GetValueType ();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
       void AddToSequencePostAction (BlockImpl& block, const RegisterPtr& target,

@@ -39,26 +39,25 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::TypeImplPtr
-    IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::ArithmeticExpressionImpl::GetValueType()
     {
-      TypeImplPtr type1 = operand1->GetValueType();
-      TypeImplPtr type2 = operand2->GetValueType();
-      if (!type1 || !type2) return TypeImplPtr(); // Assume error already handled
+      auto type1 = operand1->GetValueType();
+      auto type2 = operand2->GetValueType();
+      if (!type1 || !type2) return nullptr; // Assume error already handled
       
-      TypeImplPtr baseType1, baseType2;
+      semantics::TypePtr baseType1, baseType2;
       unsigned int vectorDim1 = 0, vectorDim2 = 0;
       
-      if (type1->typeClass == TypeImpl::Vector)
+      if (type1->typeClass == semantics::Type::Vector)
       {
-        baseType1 = boost::static_pointer_cast<TypeImpl> (type1->avmBase);
+        baseType1 = type1->avmBase;
         vectorDim1 = type1->vectorDim;
       }
       else
         baseType1 = type1;
-      if (type2->typeClass == TypeImpl::Vector)
+      if (type2->typeClass == semantics::Type::Vector)
       {
-        baseType2 = boost::static_pointer_cast<TypeImpl> (type2->avmBase);
+        baseType2 = type2->avmBase;
         vectorDim2 = type2->vectorDim;
       }
       else
@@ -68,28 +67,28 @@ namespace s1
         || !baseType2->CompatibleLossy (*(handler->GetFloatType().get())))
       {
         ExpressionError (Error::OperandTypesInvalid);
-        return TypeImplPtr();
+        return nullptr;
       }
       
       if ((vectorDim1 != 0) && (vectorDim2 != 0) && (vectorDim1 != vectorDim2))
       {
         ExpressionError (Error::OperandTypesIncompatible);
-        return TypeImplPtr();
+        return nullptr;
       }
       
       // Determine type in which to perform computation
-      TypeImplPtr valueType;
+      semantics::TypePtr valueType;
       
       if ((vectorDim1 != 0) && (vectorDim2 == 0))
       {
         valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
           type1.get(),
-          get_static_ptr<TypeImpl> (handler->CreateVectorType (type2, vectorDim1)));
+          handler->CreateVectorType (type2, vectorDim1).get());
       }
       else if ((vectorDim2 != 0) && (vectorDim1 == 0))
       {
         valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
-          get_static_ptr<TypeImpl> (handler->CreateVectorType (type1, vectorDim2)),
+          handler->CreateVectorType (type1, vectorDim2).get(),
           type2.get());
       }
       else // (((vectorDim1 != 0) && (vectorDim2 != 0)) || ((vectorDim1 == 0) && (vectorDim2 == 0)))
@@ -101,7 +100,7 @@ namespace s1
       if (!valueType)
       {
         ExpressionError (Error::OperandTypesIncompatible);
-        return TypeImplPtr();
+        return nullptr;
       }
       
       return valueType;
@@ -119,7 +118,7 @@ namespace s1
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
       // Set up registers for operand values
-      auto operandRegs = GetSourceRegisters (block, valueType);
+      auto operandRegs = GetSourceRegisters (block, valueType.get());
       if (!operandRegs) return RegisterPtr(); // Assume error already handled
       auto reg1 = std::get<0> (*operandRegs).reg;
       auto reg2 = std::get<1> (*operandRegs).reg;

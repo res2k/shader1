@@ -39,12 +39,11 @@ namespace s1
      : ExpressionImpl (handler, std::move (context)), baseExpr (baseExpr), attr (attr)
     {}
     
-    IntermediateGeneratorSemanticsHandler::TypeImplPtr
-    IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::GetValueType ()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::GetValueType ()
     {
       auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
       auto exprValueType = exprImpl->GetValueType();
-      if (!exprValueType) return TypeImplPtr(); // Assume error already handled
+      if (!exprValueType) return nullptr; // Assume error already handled
       return handler->GetAttributeType (exprValueType.get(), attr);
     }
     
@@ -99,13 +98,13 @@ namespace s1
             RegisterPtr exprValueReg (exprImpl->AddToSequence (block, Intermediate, false));
             if (!exprValueReg) return RegisterPtr(); // Assume error already handled
             
-            TypeImplPtr valueType (GetValueType());
+            auto valueType = GetValueType();
             RegisterPtr targetReg;
             if (attr.swizzleCompNum > 1)
             {
               // multi-component swizzle
               targetReg = handler->AllocateRegister (seq, valueType, classify);
-              auto valueCompType = get_static_ptr<TypeImpl> (valueType->avmBase);
+              auto valueCompType = valueType->avmBase.get();
               std::vector<RegisterPtr> compRegs;
               for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
               {
@@ -165,10 +164,10 @@ namespace s1
         return;
       }
       
-      TypeImplPtr originalValueType (exprImpl->GetValueType());
+      auto originalValueType = exprImpl->GetValueType();
       if (!originalValueType) return; // Assume error already handled
-      TypeImplPtr originalValueCompType (boost::static_pointer_cast<TypeImpl> (originalValueType->avmBase));
-      TypeImplPtr valueType (GetValueType());
+      auto originalValueCompType = originalValueType->avmBase.get();
+      auto valueType = GetValueType();
       
       unsigned int compDefined = 0;
       std::vector<RegisterPtr> compRegs;
@@ -183,7 +182,7 @@ namespace s1
           return;
         }
 
-        if (valueType->typeClass == TypeImpl::Vector)
+        if (valueType->typeClass == semantics::Type::Vector)
         {
           RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
           SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, target, c));

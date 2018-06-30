@@ -69,12 +69,12 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
-      invalidType = new TypeImpl (semantics::BaseType::Invalid);
-      voidType = new TypeImpl (semantics::BaseType::Void);
-      boolType = new TypeImpl (semantics::BaseType::Bool);
-      intType = new TypeImpl (semantics::BaseType::Int);
-      uintType = new TypeImpl (semantics::BaseType::UInt);
-      floatType = new TypeImpl (semantics::BaseType::Float);
+      invalidType = new semantics::Type (semantics::BaseType::Invalid);
+      voidType = new semantics::Type (semantics::BaseType::Void);
+      boolType = new semantics::Type (semantics::BaseType::Bool);
+      intType = new semantics::Type (semantics::BaseType::Int);
+      uintType = new semantics::Type (semantics::BaseType::UInt);
+      floatType = new semantics::Type (semantics::BaseType::Float);
     }
 
     IntermediateGeneratorSemanticsHandler::~IntermediateGeneratorSemanticsHandler ()
@@ -114,12 +114,12 @@ namespace s1
     {
       switch (type->typeClass)
       {
-        case TypeImpl::Base:
+        case semantics::Type::Base:
         {
           return GetBaseTypeString (type->base, 0, 0);
         }
         break;
-      case TypeImpl::Sampler:
+      case semantics::Type::Sampler:
         {
           switch (type->sampler)
           {
@@ -130,22 +130,22 @@ namespace s1
           }
         }
         break;
-      case TypeImpl::Array:
+      case semantics::Type::Array:
         {
           std::string s;
-          FormatTSArray (s, GetTypeString (get_static_ptr<TypeImpl> (type->avmBase)));
+          FormatTSArray (s, GetTypeString (type->avmBase.get()));
           return s;
         }
-      case TypeImpl::Vector:
+      case semantics::Type::Vector:
         {
-          auto compType = get_static_ptr<TypeImpl> (type->avmBase);
-          S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
+          auto compType = type->avmBase;
+          S1_ASSERT (compType->typeClass == semantics::Type::Base, std::string());
           return GetBaseTypeString (compType->base, type->vectorDim, 0);
         }
-      case TypeImpl::Matrix:
+      case semantics::Type::Matrix:
         {
-          auto compType = get_static_ptr<TypeImpl> (type->avmBase);
-          S1_ASSERT (compType->typeClass == TypeImpl::Base, std::string());
+          auto compType = type->avmBase;
+          S1_ASSERT (compType->typeClass == semantics::Type::Base, std::string());
           return GetBaseTypeString (compType->base, type->matrixRows, type->matrixCols);
         }
       }
@@ -284,13 +284,13 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::result_void
     IntermediateGeneratorSemanticsHandler::GenerateCast (SequenceBuilder& seqBuilder,
                                                          const RegisterPtr& castDestination,
-                                                         const TypeImplPtr& typeDestination,
+                                                         semantics::Type* typeDestination,
                                                          const RegisterPtr& castSource,
-                                                         const TypeImplPtr& typeSource)
+                                                         semantics::Type* typeSource)
     {
       switch (typeDestination->typeClass)
       {
-        case TypeImpl::Base:
+        case semantics::Type::Base:
         {
           SequenceOpPtr seqOp;
           switch (typeDestination->base)
@@ -315,24 +315,24 @@ namespace s1
           }
           break;
         }
-      case TypeImpl::Sampler:
+      case semantics::Type::Sampler:
         // Cannot cast samplers
         break;
-      case TypeImpl::Array:
+      case semantics::Type::Array:
         // TODO: Cast individual elements, if lengths match
         break;
-      case TypeImpl::Vector:
+      case semantics::Type::Vector:
         // Special case: allow casting from a base type to a vector, replicate value across all components
-        if (typeSource->typeClass == TypeImpl::Base)
+        if (typeSource->typeClass == semantics::Type::Base)
         {
           std::vector<RegisterPtr> srcVec;
-          TypeImplPtr destBaseType (boost::static_pointer_cast<TypeImpl> (typeDestination->avmBase));
+          semantics::TypePtr destBaseType = typeDestination->avmBase;
           RegisterPtr srcReg;
           if (!destBaseType->IsEqual (*(typeSource)))
           {
             // Generate cast
             RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
-            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
+            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType.get(), castSource, typeSource);
             if (innerCastResult.has_error()) return innerCastResult.error();
             srcReg = srcVecReg;
           }
@@ -377,7 +377,7 @@ namespace s1
         assert (typeDestination->vectorDim == typeSource->vectorDim);
         // TODO: Cast individual components
         break;
-      case TypeImpl::Matrix:
+      case semantics::Type::Matrix:
         assert (typeDestination->matrixCols == typeSource->matrixCols);
         assert (typeDestination->matrixRows == typeSource->matrixRows);
         // TODO: Cast individual components
@@ -424,8 +424,8 @@ namespace s1
           auto blockImpl = get_static_ptr<BlockImpl> ((*funcIt)->block);
 
           semantics::Scope::FunctionFormalParameters params ((*funcIt)->params);
-          TypeImplPtr retTypeImpl (boost::static_pointer_cast<TypeImpl> ((*funcIt)->returnType));
-          if (!voidType->IsEqual (*retTypeImpl))
+          semantics::TypePtr retType = (*funcIt)->returnType;
+          if (!voidType->IsEqual (*retType))
           {
             semantics::Scope::FunctionFormalParameter retParam;
             retParam.type = (*funcIt)->returnType;
@@ -516,25 +516,25 @@ namespace s1
 
     semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (semantics::SamplerType dim)
     {
-      return semantics::TypePtr (new TypeImpl (dim));
+      return semantics::TypePtr (new semantics::Type (dim));
     }
 
     semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateArrayType (semantics::TypePtr baseType)
     {
-      return semantics::TypePtr (new TypeImpl (baseType));
+      return semantics::TypePtr (new semantics::Type (baseType));
     }
 
     semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateVectorType (semantics::TypePtr baseType,
                                                                                 unsigned int components)
     {
-      return semantics::TypePtr (new TypeImpl (baseType, components));
+      return semantics::TypePtr (new semantics::Type (baseType, components));
     }
 
     semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateMatrixType (semantics::TypePtr baseType,
                                                                                 unsigned int columns,
                                                                                 unsigned int rows)
     {
-      return semantics::TypePtr (new TypeImpl (baseType, columns, rows));
+      return semantics::TypePtr (new semantics::Type (baseType, columns, rows));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstBoolExpression (bool value)
@@ -673,10 +673,7 @@ namespace s1
         if (!param) return ExpressionPtr(); // Assume error already handled
       }
 
-      return new TypeConstructorExpressionImpl (this,
-                                                ExpressionContext(),
-                                                get_static_ptr<TypeImpl> (type),
-                                                params);
+      return new TypeConstructorExpressionImpl (this, ExpressionContext(), type.get(), params);
     }
 
     ScopePtr IntermediateGeneratorSemanticsHandler::CreateScope (ScopePtr parentScope,

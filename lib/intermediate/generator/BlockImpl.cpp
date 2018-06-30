@@ -60,7 +60,7 @@ namespace s1
                                                                         newCondName,
                                                                         ExpressionPtr(), false));
       auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
-      auto retTypeImpl = get_static_ptr<TypeImpl> (blockScopeImpl->GetFunctionReturnType());
+      auto retTypeImpl = blockScopeImpl->GetFunctionReturnType();
       if (retTypeImpl // @@@ retTypeImpl == 0 happens in tests; but also in real life?
         && !handler->voidType->IsEqual (*retTypeImpl))
       {
@@ -592,7 +592,7 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatTernaryResult, "$tr{0}{1}");
 
     IntermediateGeneratorSemanticsHandler::NameImplPtr
-    IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (TypeImpl* resultType)
+    IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (semantics::Type* resultType)
     {
       std::string typeStr (handler->GetTypeString (resultType));
       TernaryResultVarsMap::const_iterator var (varsTernaryResult.find (typeStr));

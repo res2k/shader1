@@ -45,7 +45,7 @@ namespace s1
        * casted to requested type, if necessary.
        */
       boost::optional<RegisterPtrTuple> GetSourceRegisters (BlockImpl& block,
-                                                            const TypeImplPtr& asType);
+                                                            semantics::Type* asType);
     public:
       BinaryExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                             ExpressionContext&& context,

@@ -36,7 +36,7 @@ namespace s1
       
       NameImplSet QueryWrittenNames (bool asLvalue);
       
-      boost::intrusive_ptr<TypeImpl> GetValueType();
+      semantics::TypePtr GetValueType();
       
       void AddToSequence (BlockImpl& block);
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

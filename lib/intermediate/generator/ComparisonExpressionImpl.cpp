@@ -37,8 +37,7 @@ namespace s1
     {
     }
 
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::ComparisonExpressionImpl::GetValueType()
     {
       // Comparison has always a bool result
       return handler->GetBoolType();
@@ -63,7 +62,7 @@ namespace s1
       auto reg1 = std::get<0> (*operandRegs).reg;
       auto reg2 = std::get<1> (*operandRegs).reg;
 
-      RegisterPtr destination (handler->AllocateRegister (seq, GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (seq, GetValueType().get(), classify));
       
       // Create actual sequence operation
       SequenceOpPtr seqOp;

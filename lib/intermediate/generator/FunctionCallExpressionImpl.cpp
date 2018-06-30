@@ -110,12 +110,11 @@ namespace s1
       return result;
     }
 
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetValueType ()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetValueType ()
     {
-      if (!SelectOverload ()) return TypeImplPtr(); // Assume error already handled
+      if (!SelectOverload ()) return nullptr; // Assume error already handled
 
-      return boost::static_pointer_cast<TypeImpl> (overload->returnType);
+      return overload->returnType;
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
@@ -145,11 +144,11 @@ namespace s1
           if (!paramExprType) { paramsOkay = false; continue; } // Assume error already handled
           RegisterPtr inReg (fetchedRegs[i].first);
           assert (inReg);
-          auto formalParamType = get_static_ptr<TypeImpl> (param.type);
+          auto formalParamType = param.type.get();
           if (!paramExprType->IsEqual (*formalParamType))
           {
             RegisterPtr targetReg (handler->AllocateRegister (*(block.GetSequenceBuilder()), formalParamType, Intermediate));
-            auto paramCast = handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType);
+            auto paramCast = handler->GenerateCast (*(block.GetSequenceBuilder()), targetReg, formalParamType, inReg, paramExprType.get());
             if (paramCast.has_error ())
             {
               ExpressionError (paramCast.error ());

@@ -38,18 +38,17 @@ namespace s1
      : ExpressionImpl (handler, std::move (context)), arrayExpr (arrayExpr), indexExpr (indexExpr)
     {}
     
-    IntermediateGeneratorSemanticsHandler::TypeImplPtr
-    IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::GetValueType ()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::GetValueType ()
     {
       auto exprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
-      TypeImplPtr exprType (exprImpl->GetValueType());
-      if (!exprType) return TypeImplPtr(); // Assume error already handled
-      if (exprType->typeClass != TypeImpl::Array)
+      auto exprType = exprImpl->GetValueType();
+      if (!exprType) return nullptr; // Assume error already handled
+      if (exprType->typeClass != semantics::Type::Array)
       {
         ExpressionError (Error::NotAnArray);
-        return TypeImplPtr();
+        return nullptr;
       }
-      return get_static_ptr<TypeImpl> (exprType->avmBase);
+      return exprType->avmBase;
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,
@@ -61,7 +60,7 @@ namespace s1
       auto arrayExprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
       auto indexExprImpl = get_static_ptr<ExpressionImpl> (indexExpr);
       
-      TypeImplPtr indexType (indexExprImpl->GetValueType());
+      auto indexType = indexExprImpl->GetValueType();
       if (!indexType->CompatibleLossless (*(handler->GetUintType())))
       {
         ExpressionError (Error::IndexNotAnInteger);
@@ -84,7 +83,7 @@ namespace s1
         if (!indexType->IsEqual (*(handler->GetUintType())))
         {
           RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
-          auto indexCast = handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+          auto indexCast = handler->GenerateCast (seq, newIndexReg, handler->GetUintType().get(), indexReg, indexType.get());
           if (indexCast.has_error())
           {
             ExpressionError (indexCast.error());
@@ -114,7 +113,7 @@ namespace s1
       
       auto arrayExprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
       auto indexExprImpl = get_static_ptr<ExpressionImpl> (indexExpr);
-      TypeImplPtr indexType (indexExprImpl->GetValueType());
+      auto indexType = indexExprImpl->GetValueType();
       if (!indexType) return; // Assume error already handled
       
       RegisterPtr arrayRegSrc (arrayExprImpl->AddToSequence (block, Intermediate, false));
@@ -131,7 +130,7 @@ namespace s1
       if (!indexType->IsEqual (*(handler->GetUintType())))
       {
         RegisterPtr newIndexReg (handler->AllocateRegister (seq, handler->GetUintType(), Index));
-        auto indexCast = handler->GenerateCast (seq, newIndexReg, handler->GetUintType(), indexReg, indexType);
+        auto indexCast = handler->GenerateCast (seq, newIndexReg, handler->GetUintType().get(), indexReg, indexType.get());
         if (indexCast.has_error())
         {
           ExpressionError (indexCast.error());

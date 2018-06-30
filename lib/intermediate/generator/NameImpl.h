@@ -34,16 +34,14 @@ namespace s1
 
       NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier, NameType type,
-                TypeImpl* typeOfName)
+                semantics::Type* typeOfName)
         : CommonName (identifier, type, typeOfName), ownerScope (ownerScope) {}
       NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier,
-                TypeImpl* typeOfName,
+                semantics::Type* typeOfName,
                 ExpressionPtr value, bool constant, bool isOutputParam = false)
         : CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope),
           isOutputParam (isOutputParam) {}
-
-      TypeImplPtr GetValueTypeImpl () const { return boost::static_pointer_cast<TypeImpl> (valueType); }
     };
   } // namespace intermediate
 } // namespace s1

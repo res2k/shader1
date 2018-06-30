@@ -51,7 +51,7 @@ namespace s1
 
     boost::optional<IntermediateGeneratorSemanticsHandler::BinaryExpressionImpl::RegisterPtrTuple>
     IntermediateGeneratorSemanticsHandler::BinaryExpressionImpl::GetSourceRegisters (BlockImpl& block,
-                                                                                     const TypeImplPtr& asType)
+                                                                                     semantics::Type* asType)
     {
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       auto type1 = operand1->GetValueType();
@@ -68,7 +68,7 @@ namespace s1
         // Insert cast op
         RegisterPtr newReg1 (handler->AllocateRegister (seq, asType, Intermediate));
         auto r1cast = handler->GenerateCast (seq, newReg1, asType,
-                                             r1.reg, type1);
+                                             r1.reg, type1.get());
         if (r1cast.has_error ())
         {
           ExpressionError (r1cast.error ());
@@ -81,7 +81,7 @@ namespace s1
         // Insert cast op
         RegisterPtr newReg2 (handler->AllocateRegister (seq, asType, Intermediate));
         auto r2cast = handler->GenerateCast (seq, newReg2, asType,
-                                             r2.reg, type2);
+                                             r2.reg, type2.get());
         if (r2cast.has_error ())
         {
           ExpressionError (r2cast.error ());

@@ -45,7 +45,6 @@ namespace s1
 
       typedef semantics::ExpressionPtr ExpressionPtr;
 
-      typedef semantics::Type TypeImpl;
       struct NameImpl;
       class FunctionImpl;
       class ScopeImpl;
@@ -81,13 +80,12 @@ namespace s1
       /// Diagnostics handler
       diagnostics::Handler* diagnosticsHandler = nullptr;
 
-      typedef boost::intrusive_ptr<TypeImpl> TypeImplPtr;
-      TypeImplPtr invalidType;
-      TypeImplPtr voidType;
-      TypeImplPtr boolType;
-      TypeImplPtr intType;
-      TypeImplPtr uintType;
-      TypeImplPtr floatType;
+      semantics::TypePtr invalidType;
+      semantics::TypePtr voidType;
+      semantics::TypePtr boolType;
+      semantics::TypePtr intType;
+      semantics::TypePtr uintType;
+      semantics::TypePtr floatType;
 
       typedef boost::intrusive_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
@@ -146,11 +144,11 @@ namespace s1
 
       /**\name Basic types
        * @{ */
-      TypeImplPtr GetVoidType() const { return voidType; }
-      TypeImplPtr GetBoolType() const { return boolType; }
-      TypeImplPtr GetIntType() const { return intType; }
-      TypeImplPtr GetUintType() const { return uintType; }
-      TypeImplPtr GetFloatType() const { return floatType; }
+      semantics::TypePtr GetVoidType() const { return voidType; }
+      semantics::TypePtr GetBoolType() const { return boolType; }
+      semantics::TypePtr GetIntType() const { return intType; }
+      semantics::TypePtr GetUintType() const { return uintType; }
+      semantics::TypePtr GetFloatType() const { return floatType; }
       /** @} */
 
       /**\name Register handling
@@ -179,9 +177,9 @@ namespace s1
       typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
       result_void GenerateCast (SequenceBuilder& seqBuilder,
                                 const RegisterPtr& castDestination,
-                                const TypeImplPtr& typeDestination,
+                                semantics::Type* typeDestination,
                                 const RegisterPtr& castSource,
-                                const TypeImplPtr& typeSource);
+                                semantics::Type* typeSource);
 
       /// Mark the program as “completed”. Required before GetProgram() is called
       void CompleteProgram ();

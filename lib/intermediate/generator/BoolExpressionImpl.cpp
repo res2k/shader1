@@ -35,8 +35,7 @@ namespace s1
     {
     }
       
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::BoolExpressionImpl::GetValueType()
     {
       return handler->GetBoolType();
     }
@@ -47,7 +46,7 @@ namespace s1
     {
       if (asLvalue) return RegisterPtr();
       
-      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType(), classify));
+      RegisterPtr destination (handler->AllocateRegister (*(block.GetSequenceBuilder()), GetValueType().get(), classify));
       SequenceOpPtr seqOp (new SequenceOpConst (destination, value));
       assert (seqOp);
       block.GetSequenceBuilder()->AddOp (seqOp);

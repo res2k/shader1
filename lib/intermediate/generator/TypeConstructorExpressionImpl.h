@@ -26,7 +26,7 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl : public ExpressionImpl
     {
-      TypeImplPtr type;
+      semantics::TypePtr type;
       ExpressionVector params;
       
       typedef std::vector<std::pair<boost::intrusive_ptr<ExpressionImpl>, RegisterPtr> > PostActionList;
@@ -35,10 +35,10 @@ namespace s1
     public:
       TypeConstructorExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                      ExpressionContext&& context,
-                                     TypeImpl* type,
+                                     semantics::Type* type,
                                      const ExpressionVector& params);
       
-      TypeImplPtr GetValueType () { return type; }
+      semantics::TypePtr GetValueType () { return type; }
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

@@ -44,13 +44,9 @@ namespace s1
     {
     }
       
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::NumericExpressionImpl::GetValueType()
     {
-      auto valueType =
-        boost::static_pointer_cast<TypeImpl> (handler->CreateType (numberType));
-        
-      return valueType;
+      return handler->CreateType (numberType);
     }
 
     template<typename T, T Base, bool Negative>

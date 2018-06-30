@@ -53,8 +53,7 @@ namespace s1
       return set;
     }
       
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::GetValueType()
     {
       // Determine type in which to perform computation
       auto valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
@@ -63,7 +62,7 @@ namespace s1
       if (!valueType)
       {
         ExpressionError (Error::TernaryExpressionTypesIncompatible);
-        return TypeImplPtr();
+        return nullptr;
       }
       
       return valueType;

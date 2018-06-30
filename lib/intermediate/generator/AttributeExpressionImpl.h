@@ -34,7 +34,7 @@ namespace s1
                                Expression* baseExpr,
                                const IntermediateGeneratorSemanticsHandler::Attribute& attr);
       
-      TypeImplPtr GetValueType ();
+      semantics::TypePtr GetValueType ();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
       void AddToSequencePostAction (BlockImpl& block,

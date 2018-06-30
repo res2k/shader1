@@ -48,8 +48,7 @@ namespace s1
       return set;
     }
       
-    boost::intrusive_ptr<IntermediateGeneratorSemanticsHandler::TypeImpl>
-    IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::GetValueType()
+    semantics::TypePtr IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::GetValueType()
     {
       auto targetType = target->GetValueType();
       auto valueType = value->GetValueType();
@@ -57,7 +56,7 @@ namespace s1
       if (!valueType->CompatibleLossy (*(targetType.get())))
       {
         ExpressionError (Error::AssignmentTypesIncompatible);
-        return TypeImplPtr();
+        return nullptr;
       }
       
       return targetType;
@@ -91,8 +90,8 @@ namespace s1
         RegisterPtr targetReg (target->AddToSequence (block, Intermediate, true));
         if (!targetReg) return RegisterPtr(); // Assume error already handled
         // Generate cast to targetReg
-        auto targetCast = handler->GenerateCast (seq, targetReg, targetType,
-                                                 exprDestinationReg, valueType);
+        auto targetCast = handler->GenerateCast (seq, targetReg, targetType.get(),
+                                                 exprDestinationReg, valueType.get());
         if (targetCast.has_error())
         {
           ExpressionError (targetCast.error ());

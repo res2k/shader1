@@ -55,7 +55,7 @@ namespace s1
                                   semantics::Name* functionName,
                                   const ExpressionVector& params);
 
-      boost::intrusive_ptr<TypeImpl> GetValueType ();
+      semantics::TypePtr GetValueType ();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

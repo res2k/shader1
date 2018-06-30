@@ -35,7 +35,7 @@ namespace s1
                                 ExpressionImpl* operand1,
                                 ExpressionImpl* operand2);
 
-      boost::intrusive_ptr<TypeImpl> GetValueType();
+      semantics::TypePtr GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };

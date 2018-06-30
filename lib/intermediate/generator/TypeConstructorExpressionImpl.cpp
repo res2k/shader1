@@ -36,7 +36,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::TypeConstructorExpressionImpl::TypeConstructorExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      TypeImpl* type,
+      semantics::Type* type,
       const ExpressionVector& params)
      : ExpressionImpl (handler, std::move (context)), type (type), params (params)
     {
@@ -49,12 +49,12 @@ namespace s1
       bool successful = true;
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      auto targetBaseType = get_static_ptr<TypeImpl> (type->avmBase);
+      auto targetBaseType = type->avmBase.get();
           
       for (const auto& expr : params)
       {
         auto exprImpl = get_static_ptr<ExpressionImpl> (expr);
-        auto exprType (exprImpl->GetValueType());
+        auto exprType = exprImpl->GetValueType();
         if (!exprType) { successful = false; continue; } // Assume error already handled
         RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
         if (!srcExprReg) { successful = false; continue; } // Assume error already handled
@@ -72,7 +72,7 @@ namespace s1
             else
             {
               RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType.get());
               if (srcCast.has_error ())
               {
                 ExpressionError (srcCast.error ());
@@ -83,10 +83,10 @@ namespace s1
             }
           }
           break;
-        case TypeImpl::Vector:
+        case semantics::Type::Vector:
           {
             // extract components
-            auto exprCompType = get_static_ptr<TypeImpl> (exprType->avmBase);
+            auto exprCompType = exprType->avmBase.get();
             for (unsigned int c = 0; c < exprType->vectorDim; c++)
             {
               RegisterPtr compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
@@ -127,7 +127,7 @@ namespace s1
       
       switch (type->typeClass)
       {
-      case TypeImpl::Base:
+      case semantics::Type::Base:
         {
           if (params.size() > 1)
           {
@@ -145,7 +145,7 @@ namespace s1
           auto srcExprImpl = get_static_ptr<ExpressionImpl> (srcExpr);
           RegisterPtr srcReg (srcExprImpl->AddToSequence (block, Intermediate, false));
           if (!srcReg) return RegisterPtr(); // Assume error already handled
-          TypeImplPtr srcType (srcExprImpl->GetValueType());
+          auto srcType = srcExprImpl->GetValueType();
           if (!srcType) return RegisterPtr(); // Assume error already handled
           if (type->IsEqual (*srcType))
           {
@@ -156,7 +156,7 @@ namespace s1
           else
           {
             // otherwise, generate cast
-            auto targetCast = handler->GenerateCast (seq, targetReg, type, srcReg, srcType);
+            auto targetCast = handler->GenerateCast (seq, targetReg, type.get(), srcReg, srcType.get());
             if (targetCast.has_error ())
             {
               ExpressionError (targetCast.error ());
@@ -167,8 +167,8 @@ namespace s1
           return targetReg;
         }
         break;
-      case TypeImpl::Matrix:
-      case TypeImpl::Vector:
+      case semantics::Type::Matrix:
+      case semantics::Type::Vector:
         {
           // Extract operands of base type from params (extract vector comps etc.)
           std::vector<RegisterPtr> srcRegs;
@@ -176,12 +176,12 @@ namespace s1
           if (!ExtractBaseExpressionRegs (block, srcRegs, postActions)) return RegisterPtr(); // Assume error already handled
           
           unsigned int desiredDim;
-          if (type->typeClass == TypeImpl::Vector)
+          if (type->typeClass == semantics::Type::Vector)
             desiredDim = type->vectorDim;
           else
             desiredDim = type->matrixCols * type->matrixRows;
           
-          if ((type->typeClass == TypeImpl::Vector) && (srcRegs.size() == 1))
+          if ((type->typeClass == semantics::Type::Vector) && (srcRegs.size() == 1))
           {
             // Replicate input
             for (unsigned int i = 1; i < desiredDim; i++)
@@ -201,7 +201,7 @@ namespace s1
             }
           }
           
-          TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
+          auto targetBaseType = type->avmBase.get();
           
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           BasicType vecType;
@@ -215,7 +215,7 @@ namespace s1
           }
           
           SequenceOpPtr seqOp;
-          if (type->typeClass == TypeImpl::Vector)
+          if (type->typeClass == semantics::Type::Vector)
             seqOp = new SequenceOpMakeVector (targetReg, vecType, srcRegs);
           else
             seqOp = new SequenceOpMakeMatrix (targetReg, vecType, 
@@ -232,21 +232,21 @@ namespace s1
           return targetReg;
         }
         break;
-      case TypeImpl::Sampler:
+      case semantics::Type::Sampler:
         // ...
         return RegisterPtr();
-      case TypeImpl::Array:
+      case semantics::Type::Array:
         {
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           std::vector<RegisterPtr> srcRegs;
           
-          TypeImplPtr targetBaseType (boost::static_pointer_cast<TypeImpl> (type->avmBase));
+          auto targetBaseType = type->avmBase.get();
 
           bool sourcesOk = true;
           for (const auto& expr : params)
           {
             auto exprImpl = get_static_ptr<ExpressionImpl> (expr);
-            TypeImplPtr exprType (exprImpl->GetValueType());
+            auto exprType = exprImpl->GetValueType();
             if (!exprType) { sourcesOk = false; continue; } // Assume error already handled
             RegisterPtr srcExprReg (exprImpl->AddToSequence (block, Intermediate, false));
             if (!srcExprReg) { sourcesOk = false; continue; } ; // Assume error already handled
@@ -259,7 +259,7 @@ namespace s1
             else
             {
               RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType);
+              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType.get());
               if (srcCast.has_error ())
               {
                 ExpressionError (srcCast.error ());

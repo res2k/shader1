@@ -86,7 +86,7 @@ namespace s1
         return;
       }
       NamePtr newName = new NameImpl (this, param.identifier,
-                                      get_static_ptr<TypeImpl> (param.type),
+                                      param.type.get(),
                                       param.defaultValue,
                                       param.dir == dirIn,
                                       param.dir == dirOut);
@@ -105,8 +105,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName = new NameImpl (this, identifier,
-                                      get_static_ptr<TypeImpl> (type), initialValue, constant);
+      NamePtr newName = new NameImpl (this, identifier, type.get(), initialValue, constant);
       identifiers[identifier] = newName;
       newVars.push_back (newName);
       varsInDeclOrder.push_back (newName);
@@ -120,8 +119,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName = new NameImpl (this, identifier, semantics::Name::TypeAlias,
-                                      get_static_ptr<TypeImpl> (aliasedType));
+      NamePtr newName = new NameImpl (this, identifier, semantics::Name::TypeAlias, aliasedType.get());
       identifiers[identifier] = newName;
       return newName;
     }
@@ -179,7 +177,7 @@ namespace s1
           decorationString.append (dirStr);
           lastDir = param->dir;
         }
-        auto typeImpl = get_static_ptr<TypeImpl> (param->type);
+        auto typeImpl = param->type.get();
         decorationString.append (handler->GetTypeString (typeImpl));
         identifierDecorated.append (decorationString.c_str());
       }
@@ -248,7 +246,7 @@ namespace s1
       identifierDecorated.append ("$");
       for (const auto& param : params)
       {
-        identifierDecorated.append (handler->GetTypeString (get_static_ptr<TypeImpl> (param.type)).c_str());
+        identifierDecorated.append (handler->GetTypeString (param.type.get()).c_str());
       }
       funcInfo->identifier = identifierDecorated;
       funcInfo->returnType = builtin->GetReturnType();
@@ -290,7 +288,7 @@ namespace s1
 
             auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
             auto paramType = exprImpl->GetValueType ();
-            auto formalParamType = get_static_ptr<TypeImpl> ((*vecIt)->params[formal].type);
+            auto formalParamType = (*vecIt)->params[formal].type.get();
             // No exact type match? Skip
             if (!paramType->IsEqual (*formalParamType))
             {
@@ -335,7 +333,7 @@ namespace s1
 
               auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
               auto paramType = exprImpl->GetValueType ();
-              auto formalParamType = get_static_ptr<TypeImpl> ((*vecIt)->params[formal].type);
+              auto formalParamType = (*vecIt)->params[formal].type.get();
               bool match;
               if ((*vecIt)->params[formal].dir & dirOut)
                 // Output parameters must _always_ match exactly

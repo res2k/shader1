@@ -93,7 +93,7 @@ namespace s1
       const SequencePtr& GetSequence();
       const SequenceBuilderPtr& GetSequenceBuilder();
       
-      NameImplPtr GetTernaryResultName (TypeImpl* resultType);
+      NameImplPtr GetTernaryResultName (semantics::Type* resultType);
 
       typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;
       result_RegisterPtr GetRegisterForName (NameImpl* name, bool writeable);

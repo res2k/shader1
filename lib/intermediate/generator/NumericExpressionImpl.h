@@ -33,7 +33,7 @@ namespace s1
                              ExpressionContext&& context,
                              const uc::String& valueStr);
       
-      boost::intrusive_ptr<TypeImpl> GetValueType();
+      semantics::TypePtr GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,
                                  bool asLvalue = false);
     };
