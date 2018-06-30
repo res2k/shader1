@@ -62,36 +62,36 @@ namespace s1
       switch (attr.attrClass)
       {
       case semantics::Attribute::arrayLength:
-        if (expressionType->typeClass == Type::Array)
+        if (expressionType->GetTypeClass() == Type::Array)
           attrType = CreateType (BaseType::UInt); // Type is fix
         break;
       case semantics::Attribute::matrixCol:
-        if (expressionType->typeClass == Type::Matrix)
+        if (expressionType->GetTypeClass() == Type::Matrix)
           attrType = CreateArrayType (
-            CreateVectorType (expressionType->avmBase, expressionType->matrixRows));
+            CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows()));
         break;
       case semantics::Attribute::matrixRow:
-        if (expressionType->typeClass == Type::Matrix)
+        if (expressionType->GetTypeClass() == Type::Matrix)
           attrType = CreateArrayType (
-            CreateVectorType (expressionType->avmBase, expressionType->matrixCols));
+            CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeCols()));
         break;
       case semantics::Attribute::matrixTranspose:
-        if (expressionType->typeClass == Type::Matrix)
-          attrType = CreateMatrixType (expressionType->avmBase, expressionType->matrixRows, expressionType->matrixCols);
+        if (expressionType->GetTypeClass() == Type::Matrix)
+          attrType = CreateMatrixType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows(), expressionType->GetMatrixTypeCols());
         break;
       case semantics::Attribute::matrixInvert:
-        if ((expressionType->typeClass == Type::Matrix)
-            && (expressionType->matrixRows == expressionType->matrixCols))
+        if ((expressionType->GetTypeClass() == Type::Matrix)
+            && (expressionType->GetMatrixTypeRows() == expressionType->GetMatrixTypeCols()))
           attrType = expressionType;
         break;
       case semantics::Attribute::vectorSwizzle:
-        if (expressionType->typeClass == Type::Vector)
+        if (expressionType->GetTypeClass() == Type::Vector)
         {
           if (attr.swizzleCompNum == 1)
             // 1-component swizzles return the base type, not a 1-component vector
-            attrType = expressionType->avmBase;
+            attrType = expressionType->GetAVMBase();
           else
-            attrType = CreateVectorType (expressionType->avmBase, attr.swizzleCompNum);
+            attrType = CreateVectorType (expressionType->GetAVMBase(), attr.swizzleCompNum);
         }
         break;
       case semantics::Attribute::Unknown:

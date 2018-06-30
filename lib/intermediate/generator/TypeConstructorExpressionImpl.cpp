@@ -49,7 +49,7 @@ namespace s1
       bool successful = true;
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      auto targetBaseType = type->avmBase.get();
+      auto targetBaseType = type->GetAVMBase();
           
       for (const auto& expr : params)
       {
@@ -60,7 +60,7 @@ namespace s1
         if (!srcExprReg) { successful = false; continue; } // Assume error already handled
         postActions.emplace_back (exprImpl, srcExprReg);
         
-        switch (exprType->typeClass)
+        switch (exprType->GetTypeClass())
         {
         default:
           {
@@ -86,8 +86,8 @@ namespace s1
         case semantics::Type::Vector:
           {
             // extract components
-            auto exprCompType = exprType->avmBase.get();
-            for (unsigned int c = 0; c < exprType->vectorDim; c++)
+            auto exprCompType = exprType->GetAVMBase();
+            for (unsigned int c = 0; c < exprType->GetVectorTypeComponents(); c++)
             {
               RegisterPtr compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
               SequenceOpPtr extractOp (new SequenceOpExtractVectorComponent (compReg, srcExprReg, c));
@@ -125,7 +125,7 @@ namespace s1
       
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      switch (type->typeClass)
+      switch (type->GetTypeClass())
       {
       case semantics::Type::Base:
         {
@@ -176,12 +176,12 @@ namespace s1
           if (!ExtractBaseExpressionRegs (block, srcRegs, postActions)) return RegisterPtr(); // Assume error already handled
           
           unsigned int desiredDim;
-          if (type->typeClass == semantics::Type::Vector)
-            desiredDim = type->vectorDim;
+          if (type->GetTypeClass() == semantics::Type::Vector)
+            desiredDim = type->GetVectorTypeComponents();
           else
-            desiredDim = type->matrixCols * type->matrixRows;
+            desiredDim = type->GetMatrixTypeCols() * type->GetMatrixTypeRows();
           
-          if ((type->typeClass == semantics::Type::Vector) && (srcRegs.size() == 1))
+          if ((type->GetTypeClass() == semantics::Type::Vector) && (srcRegs.size() == 1))
           {
             // Replicate input
             for (unsigned int i = 1; i < desiredDim; i++)
@@ -201,11 +201,11 @@ namespace s1
             }
           }
           
-          auto targetBaseType = type->avmBase.get();
+          auto targetBaseType = type->GetAVMBase();
           
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           BasicType vecType;
-          switch (targetBaseType->base)
+          switch (targetBaseType->GetBaseType())
           {
           case semantics::BaseType::Bool: 	vecType = intermediate::BasicType::Bool; break;
           case semantics::BaseType::Int: 	vecType = intermediate::BasicType::Int; break;
@@ -215,11 +215,13 @@ namespace s1
           }
           
           SequenceOpPtr seqOp;
-          if (type->typeClass == semantics::Type::Vector)
+          if (type->GetTypeClass() == semantics::Type::Vector)
             seqOp = new SequenceOpMakeVector (targetReg, vecType, srcRegs);
           else
             seqOp = new SequenceOpMakeMatrix (targetReg, vecType, 
-                                              type->matrixRows, type->matrixCols, srcRegs);
+                                              type->GetMatrixTypeRows(),
+                                              type->GetMatrixTypeCols(),
+                                              srcRegs);
           seq.AddOp (seqOp);
           
           for (PostActionList::const_iterator postAction (postActions.begin());
@@ -240,7 +242,7 @@ namespace s1
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           std::vector<RegisterPtr> srcRegs;
           
-          auto targetBaseType = type->avmBase.get();
+          auto targetBaseType = type->GetAVMBase();
 
           bool sourcesOk = true;
           for (const auto& expr : params)

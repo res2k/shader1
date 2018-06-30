@@ -62,8 +62,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDecl)
   BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
   BOOST_CHECK_EQUAL (testName->varConstant, false);
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(BlockVarDeclMulti)
@@ -97,8 +97,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclMulti)
     BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
     BOOST_CHECK_EQUAL (testName->varConstant, false);
     auto testType = testName->valueType;
-    BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-    BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+    BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::NamePtr varRequested;
@@ -113,8 +113,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclMulti)
     BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
     BOOST_CHECK_EQUAL (testName->varConstant, false);
     auto testType = testName->valueType;
-    BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-    BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+    BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
   }
 }
 
@@ -149,8 +149,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclMulti2)
     BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
     BOOST_CHECK_EQUAL (testName->varConstant, false);
     auto testType = testName->valueType;
-    BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-    BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+    BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::NamePtr varRequested;
@@ -165,8 +165,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclMulti2)
     BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
     BOOST_CHECK_EQUAL (testName->varConstant, false);
     auto testType = testName->valueType;
-    BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-    BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+    BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
   }
 }
 
@@ -203,8 +203,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclInit)
   BOOST_CHECK_EQUAL (testExpr->GetExprString(), "(1 + 2)");
   BOOST_CHECK_EQUAL (testName->varConstant, false);
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
   BOOST_AUTO_TEST_CASE(BlockVarDeclInvalid)
@@ -267,8 +267,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclInitMulti)
     BOOST_CHECK_EQUAL (testExpr->GetExprString(), "(1 + 2)");
     BOOST_CHECK_EQUAL (testName->varConstant, false);
     auto testType = testName->valueType;
-    BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-    BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+    BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::NamePtr varRequested;
@@ -316,8 +316,8 @@ BOOST_AUTO_TEST_CASE(BlockVarDeclInitMultiError)
     BOOST_CHECK_EQUAL (testExpr->GetExprString(), "(1 + 2)");
     BOOST_CHECK_EQUAL (testName->varConstant, false);
     auto testType = testName->valueType;
-    BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-    BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+    BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
   }
 }
 
@@ -351,8 +351,8 @@ BOOST_AUTO_TEST_CASE(BlockConstDecl)
   BOOST_CHECK_NE (testName->varValue, s1::semantics::ExpressionPtr ());
   BOOST_CHECK_EQUAL (testName->varConstant, true);
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(BlockConstDeclIncomplete)
@@ -390,8 +390,8 @@ BOOST_AUTO_TEST_CASE(BlockConstDeclIncomplete)
   BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
   BOOST_CHECK_EQUAL (testName->varConstant, true);
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(BlockTypedef)
@@ -421,8 +421,8 @@ BOOST_AUTO_TEST_CASE(BlockTypedef)
   TestSemanticsHandler::TestName* testName =
     static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(BlockTypedefIndirect)
@@ -452,8 +452,8 @@ BOOST_AUTO_TEST_CASE(BlockTypedefIndirect)
   TestSemanticsHandler::TestName* testName =
     static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(BlockVarTypedefDecl)
@@ -485,8 +485,8 @@ BOOST_AUTO_TEST_CASE(BlockVarTypedefDecl)
   BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
   BOOST_CHECK_EQUAL (testName->varConstant, false);
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(BlockTypedefInvalid1)
@@ -516,8 +516,8 @@ BOOST_AUTO_TEST_CASE(BlockTypedefInvalid1)
   TestSemanticsHandler::TestName* testName =
     static_cast<TestSemanticsHandler::TestName*> (typeRequested.get());
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Invalid);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Invalid);
 }
 
 BOOST_AUTO_TEST_CASE(BlockTypedefInvalid2)
@@ -557,8 +557,8 @@ BOOST_AUTO_TEST_CASE(BlockTypedefInvalid2)
   BOOST_CHECK_EQUAL (testName->varValue, s1::semantics::ExpressionPtr ());
   BOOST_CHECK_EQUAL (testName->varConstant, false);
   auto testType = testName->valueType;
-  BOOST_CHECK_EQUAL (testType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (testType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (testType->GetBaseType(), s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(BlockTypedefInvalid3)

@@ -757,7 +757,7 @@ namespace s1
       {
         ConstantValPtr srcVal (srcConst->second);
 
-        intermediate::Sequence::TypePtr compType (source->GetOriginalType()->GetArrayVectorMatrixBaseType());
+        intermediate::Sequence::TypePtr compType (source->GetOriginalType()->GetAVMBase());
         assert (compType->GetTypeClass() == semantics::Type::Base);
 
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
@@ -801,11 +801,11 @@ namespace s1
         break;
       case semantics::Type::Vector:
         nComps = srcType->GetVectorTypeComponents();
-        baseType = srcType->GetArrayVectorMatrixBaseType();
+        baseType = srcType->GetAVMBase();
         break;
       case semantics::Type::Matrix:
         nComps = srcType->GetMatrixTypeCols() * srcType->GetMatrixTypeRows();
-        baseType = srcType->GetArrayVectorMatrixBaseType();
+        baseType = srcType->GetAVMBase();
         break;
       default:
         nComps = 0;

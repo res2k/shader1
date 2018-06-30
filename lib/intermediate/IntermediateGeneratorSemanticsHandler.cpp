@@ -112,16 +112,16 @@ namespace s1
 
     std::string IntermediateGeneratorSemanticsHandler::GetTypeString (semantics::Type* type)
     {
-      switch (type->typeClass)
+      switch (type->GetTypeClass())
       {
         case semantics::Type::Base:
         {
-          return GetBaseTypeString (type->base, 0, 0);
+          return GetBaseTypeString (type->GetBaseType(), 0, 0);
         }
         break;
       case semantics::Type::Sampler:
         {
-          switch (type->sampler)
+          switch (type->GetSamplerType())
           {
             case semantics::SamplerType::_1D: return "S1";
             case semantics::SamplerType::_2D: return "S2";
@@ -133,20 +133,20 @@ namespace s1
       case semantics::Type::Array:
         {
           std::string s;
-          FormatTSArray (s, GetTypeString (type->avmBase.get()));
+          FormatTSArray (s, GetTypeString (type->GetAVMBase()));
           return s;
         }
       case semantics::Type::Vector:
         {
-          auto compType = type->avmBase;
-          S1_ASSERT (compType->typeClass == semantics::Type::Base, std::string());
-          return GetBaseTypeString (compType->base, type->vectorDim, 0);
+          auto compType = type->GetAVMBase();
+          S1_ASSERT (compType->GetTypeClass() == semantics::Type::Base, std::string());
+          return GetBaseTypeString (compType->GetBaseType(), type->GetVectorTypeComponents(), 0);
         }
       case semantics::Type::Matrix:
         {
-          auto compType = type->avmBase;
-          S1_ASSERT (compType->typeClass == semantics::Type::Base, std::string());
-          return GetBaseTypeString (compType->base, type->matrixRows, type->matrixCols);
+          auto compType = type->GetAVMBase();
+          S1_ASSERT (compType->GetTypeClass() == semantics::Type::Base, std::string());
+          return GetBaseTypeString (compType->GetBaseType(), type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
         }
       }
       S1_ASSERT (false, std::string());
@@ -288,12 +288,12 @@ namespace s1
                                                          const RegisterPtr& castSource,
                                                          semantics::Type* typeSource)
     {
-      switch (typeDestination->typeClass)
+      switch (typeDestination->GetTypeClass())
       {
         case semantics::Type::Base:
         {
           SequenceOpPtr seqOp;
-          switch (typeDestination->base)
+          switch (typeDestination->GetBaseType())
           {
             case semantics::BaseType::Int:
               seqOp = SequenceOpPtr (new SequenceOpCast (castDestination, intermediate::BasicType::Int, castSource));
@@ -323,25 +323,25 @@ namespace s1
         break;
       case semantics::Type::Vector:
         // Special case: allow casting from a base type to a vector, replicate value across all components
-        if (typeSource->typeClass == semantics::Type::Base)
+        if (typeSource->GetTypeClass() == semantics::Type::Base)
         {
           std::vector<RegisterPtr> srcVec;
-          semantics::TypePtr destBaseType = typeDestination->avmBase;
+          auto destBaseType = typeDestination->GetAVMBase();
           RegisterPtr srcReg;
           if (!destBaseType->IsEqual (*(typeSource)))
           {
             // Generate cast
             RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
-            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType.get(), castSource, typeSource);
+            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
             if (innerCastResult.has_error()) return innerCastResult.error();
             srcReg = srcVecReg;
           }
           else
             srcReg = castSource;
-          srcVec.insert (srcVec.begin(), typeDestination->vectorDim, srcReg);
+          srcVec.insert (srcVec.begin(), typeDestination->GetVectorTypeComponents(), srcReg);
           // Generate "make vector" op
           SequenceOpPtr seqOp;
-          switch (destBaseType->base)
+          switch (destBaseType->GetBaseType())
           {
             case semantics::BaseType::Bool:
               seqOp = new SequenceOpMakeVector (castDestination,
@@ -374,12 +374,12 @@ namespace s1
           }
           break;
         }
-        assert (typeDestination->vectorDim == typeSource->vectorDim);
+        assert (typeDestination->GetVectorTypeComponents() == typeSource->GetVectorTypeComponents());
         // TODO: Cast individual components
         break;
       case semantics::Type::Matrix:
-        assert (typeDestination->matrixCols == typeSource->matrixCols);
-        assert (typeDestination->matrixRows == typeSource->matrixRows);
+        assert (typeDestination->GetMatrixTypeCols() == typeSource->GetMatrixTypeCols());
+        assert (typeDestination->GetMatrixTypeRows() == typeSource->GetMatrixTypeRows());
         // TODO: Cast individual components
         break;
       }

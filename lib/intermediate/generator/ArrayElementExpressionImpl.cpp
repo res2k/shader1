@@ -43,12 +43,12 @@ namespace s1
       auto exprImpl = get_static_ptr<ExpressionImpl> (arrayExpr);
       auto exprType = exprImpl->GetValueType();
       if (!exprType) return nullptr; // Assume error already handled
-      if (exprType->typeClass != semantics::Type::Array)
+      if (exprType->GetTypeClass() != semantics::Type::Array)
       {
         ExpressionError (Error::NotAnArray);
         return nullptr;
       }
-      return exprType->avmBase;
+      return exprType->GetAVMBase();
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,

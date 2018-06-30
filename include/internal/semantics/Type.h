@@ -25,13 +25,14 @@ namespace s1
   namespace semantics
   {
     /// Representation of a type
-    struct Type : public Base
+    class Type : public Base
     {
+    public:
       enum Class
       {
         Base, Sampler, Array, Vector, Matrix
       };
-
+    protected:
       Class typeClass;
       BaseType base;
       SamplerType sampler;
@@ -39,7 +40,7 @@ namespace s1
       unsigned int vectorDim;
       unsigned int matrixCols;
       unsigned int matrixRows;
-
+    public:
       Type (BaseType base) : typeClass (Base), base (base) {}
       Type (SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
       Type (TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
@@ -52,7 +53,7 @@ namespace s1
       BaseType GetBaseType() const { return base; }
       SamplerType GetSamplerType() const { return sampler; }
 
-      TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
+      Type* GetAVMBase() const { return avmBase.get(); }
 
       unsigned int GetVectorTypeComponents() const { return vectorDim; }
 

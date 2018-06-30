@@ -104,7 +104,7 @@ namespace s1
             {
               // multi-component swizzle
               targetReg = handler->AllocateRegister (seq, valueType, classify);
-              auto valueCompType = valueType->avmBase.get();
+              auto valueCompType = valueType->GetAVMBase();
               std::vector<RegisterPtr> compRegs;
               for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
               {
@@ -114,7 +114,7 @@ namespace s1
                 compRegs.push_back (compReg);
               }
               BasicType vecType;
-              switch (valueCompType->base)
+              switch (valueCompType->GetBaseType())
               {
               case semantics::BaseType::Bool: 	vecType = intermediate::BasicType::Bool; break;
               case semantics::BaseType::Int: 	vecType = intermediate::BasicType::Int; break;
@@ -166,12 +166,12 @@ namespace s1
       
       auto originalValueType = exprImpl->GetValueType();
       if (!originalValueType) return; // Assume error already handled
-      auto originalValueCompType = originalValueType->avmBase.get();
+      auto originalValueCompType = originalValueType->GetAVMBase();
       auto valueType = GetValueType();
       
       unsigned int compDefined = 0;
       std::vector<RegisterPtr> compRegs;
-      compRegs.insert (compRegs.begin(), originalValueType->vectorDim, RegisterPtr ());
+      compRegs.insert (compRegs.begin(), originalValueType->GetVectorTypeComponents(), RegisterPtr ());
       
       for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
       {
@@ -182,7 +182,7 @@ namespace s1
           return;
         }
 
-        if (valueType->typeClass == semantics::Type::Vector)
+        if (valueType->GetTypeClass() == semantics::Type::Vector)
         {
           RegisterPtr compReg (handler->AllocateRegister (seq, originalValueCompType, Intermediate));
           SequenceOpPtr seqOp (new SequenceOpExtractVectorComponent (compReg, target, c));
@@ -197,7 +197,7 @@ namespace s1
         compDefined |= 1 << comp;
       }
       
-      for (unsigned int c = 0; c < originalValueType->vectorDim; c++)
+      for (unsigned int c = 0; c < originalValueType->GetVectorTypeComponents(); c++)
       {
         if (!(compDefined & (1 << c)))
         {
@@ -208,7 +208,7 @@ namespace s1
         }
       }
       BasicType vecType;
-      switch (originalValueCompType->base)
+      switch (originalValueCompType->GetBaseType())
       {
       case semantics::BaseType::Bool: 	vecType = intermediate::BasicType::Bool; break;
       case semantics::BaseType::Int: 	vecType = intermediate::BasicType::Int; break;

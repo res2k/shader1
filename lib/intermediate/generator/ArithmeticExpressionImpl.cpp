@@ -48,17 +48,17 @@ namespace s1
       semantics::TypePtr baseType1, baseType2;
       unsigned int vectorDim1 = 0, vectorDim2 = 0;
       
-      if (type1->typeClass == semantics::Type::Vector)
+      if (type1->GetTypeClass() == semantics::Type::Vector)
       {
-        baseType1 = type1->avmBase;
-        vectorDim1 = type1->vectorDim;
+        baseType1 = type1->GetAVMBase();
+        vectorDim1 = type1->GetVectorTypeComponents();
       }
       else
         baseType1 = type1;
-      if (type2->typeClass == semantics::Type::Vector)
+      if (type2->GetTypeClass() == semantics::Type::Vector)
       {
-        baseType2 = type2->avmBase;
-        vectorDim2 = type2->vectorDim;
+        baseType2 = type2->GetAVMBase();
+        vectorDim2 = type2->GetVectorTypeComponents();
       }
       else
         baseType2 = type2;

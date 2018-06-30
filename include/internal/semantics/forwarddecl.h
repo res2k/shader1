@@ -29,7 +29,7 @@ namespace s1
     /// Sampler dimensions
     enum struct SamplerType { _1D, _2D, _3D, CUBE };
 
-    struct Type;
+    class Type;
     typedef boost::intrusive_ptr<Type> TypePtr;
 
     struct Attribute;

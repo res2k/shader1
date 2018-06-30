@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE(TypeBool)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::Bool);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->GetBaseType(), s1::semantics::BaseType::Bool);
 }
 
 BOOST_AUTO_TEST_CASE(TypeInt)
@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE(TypeInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeUInt)
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(TypeUInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::UInt);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->GetBaseType(), s1::semantics::BaseType::UInt);
 }
 
 BOOST_AUTO_TEST_CASE(TypeFloat)
@@ -110,8 +110,8 @@ BOOST_AUTO_TEST_CASE(TypeFloat)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->GetBaseType(), s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSampler1D)
@@ -127,8 +127,8 @@ BOOST_AUTO_TEST_CASE(TypeSampler1D)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
-  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::_1D);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->GetSamplerType(), s1::semantics::SamplerType::_1D);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSampler2D)
@@ -144,8 +144,8 @@ BOOST_AUTO_TEST_CASE(TypeSampler2D)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
-  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::_2D);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->GetSamplerType(), s1::semantics::SamplerType::_2D);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSampler3D)
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(TypeSampler3D)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
-  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::_3D);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->GetSamplerType(), s1::semantics::SamplerType::_3D);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSamplerCUBE)
@@ -178,8 +178,8 @@ BOOST_AUTO_TEST_CASE(TypeSamplerCUBE)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
-  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::CUBE);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->GetSamplerType(), s1::semantics::SamplerType::CUBE);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorBool)
@@ -195,11 +195,11 @@ BOOST_AUTO_TEST_CASE(TypeVectorBool)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
-  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
-  auto vecType = type->avmBase;
-  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::Bool);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
+  auto vecType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::Bool);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorInt)
@@ -215,11 +215,11 @@ BOOST_AUTO_TEST_CASE(TypeVectorInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
-  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
-  auto vecType = type->avmBase;
-  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
+  auto vecType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorUInt)
@@ -235,11 +235,11 @@ BOOST_AUTO_TEST_CASE(TypeVectorUInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
-  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
-  auto vecType = type->avmBase;
-  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::UInt);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
+  auto vecType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::UInt);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorFloat)
@@ -255,11 +255,11 @@ BOOST_AUTO_TEST_CASE(TypeVectorFloat)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
-  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
-  auto vecType = type->avmBase;
-  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
+  auto vecType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixBool)
@@ -275,12 +275,12 @@ BOOST_AUTO_TEST_CASE(TypeMatrixBool)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
-  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
-  auto matType = type->avmBase;
-  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::Bool);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
+  auto matType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::Bool);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixInt)
@@ -296,12 +296,12 @@ BOOST_AUTO_TEST_CASE(TypeMatrixInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
-  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
-  auto matType = type->avmBase;
-  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
+  auto matType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixUInt)
@@ -317,12 +317,12 @@ BOOST_AUTO_TEST_CASE(TypeMatrixUInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
-  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
-  auto matType = type->avmBase;
-  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::UInt);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
+  auto matType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::UInt);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixFloat)
@@ -338,12 +338,12 @@ BOOST_AUTO_TEST_CASE(TypeMatrixFloat)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
-  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
-  auto matType = type->avmBase;
-  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
+  BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
+  auto matType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(TypeArray)
@@ -359,10 +359,10 @@ BOOST_AUTO_TEST_CASE(TypeArray)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Array);
-  auto arrType = type->avmBase;
-  BOOST_CHECK_EQUAL (arrType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (arrType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Array);
+  auto arrType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (arrType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (arrType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeArrayArray)
@@ -378,12 +378,12 @@ BOOST_AUTO_TEST_CASE(TypeArrayArray)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Array);
-  auto arrArrType = type->avmBase;
-  BOOST_CHECK_EQUAL (arrArrType->typeClass, s1::semantics::Type::Array);
-  auto arrType = arrArrType->avmBase;
-  BOOST_CHECK_EQUAL (arrType->typeClass, s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (arrType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Array);
+  auto arrArrType = type->GetAVMBase();
+  BOOST_CHECK_EQUAL (arrArrType->GetTypeClass(), s1::semantics::Type::Array);
+  auto arrType = arrArrType->GetAVMBase();
+  BOOST_CHECK_EQUAL (arrType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (arrType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

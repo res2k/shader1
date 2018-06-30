@@ -66,7 +66,7 @@ namespace s1
         
         // Look for float4 output
         if (param.type->GetTypeClass() != semantics::Type::Vector) continue;
-        if (param.type->GetArrayVectorMatrixBaseType()->GetBaseType() != semantics::BaseType::Float) continue;
+        if (param.type->GetAVMBase()->GetBaseType() != semantics::BaseType::Float) continue;
         if (param.type->GetVectorTypeComponents() != 4) continue;
         
         // Parameter qualifies
@@ -105,7 +105,7 @@ namespace s1
   static semantics::TypePtr GetBaseType (const semantics::TypePtr& type)
   {
     if (type->GetTypeClass () == semantics::Type::Array)
-      return GetBaseType (type->GetArrayVectorMatrixBaseType ());
+      return GetBaseType (type->GetAVMBase ());
     else
       return type;
   }

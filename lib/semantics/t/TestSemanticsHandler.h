@@ -237,9 +237,8 @@ public:
       if (base) baseType = static_cast<TestExpressionBase*> (base.get ())->GetValueType ();
       if (baseType)
       {
-	s1::semantics::Type* testBaseType = static_cast<s1::semantics::Type*> (baseType.get());
-	if (testBaseType->typeClass == s1::semantics::Type::Array)
-	  valueType = testBaseType->avmBase;
+        if (baseType->GetTypeClass() == s1::semantics::Type::Array)
+          valueType = baseType->GetAVMBase();
       }
     }
     
