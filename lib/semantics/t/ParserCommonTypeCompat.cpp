@@ -44,26 +44,19 @@ namespace
 BOOST_AUTO_TEST_CASE(CompatBase)
 {
   using namespace s1::parser;
-  typedef TestSemanticsHandler::TestType TestType;
-  typedef boost::intrusive_ptr<TestType> TestTypePtr;
 
   TestSemanticsHandler semanticsHandler;
 
-  TestTypePtr typeVoid;
-  BOOST_CHECK_NO_THROW ((typeVoid = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Void))));
-  TestTypePtr typeBool;
-  BOOST_CHECK_NO_THROW ((typeBool = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Bool))));
-  TestTypePtr typeInt;
-  BOOST_CHECK_NO_THROW ((typeInt = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Int))));
-  TestTypePtr typeUInt;
-  BOOST_CHECK_NO_THROW ((typeUInt = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::UInt))));
-  TestTypePtr typeFloat;
-  BOOST_CHECK_NO_THROW ((typeFloat = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Float))));
+  s1::semantics::TypePtr typeVoid;
+  BOOST_CHECK_NO_THROW ((typeVoid = semanticsHandler.CreateType (s1::semantics::BaseType::Void)));
+  s1::semantics::TypePtr typeBool;
+  BOOST_CHECK_NO_THROW ((typeBool = semanticsHandler.CreateType (s1::semantics::BaseType::Bool)));
+  s1::semantics::TypePtr typeInt;
+  BOOST_CHECK_NO_THROW ((typeInt = semanticsHandler.CreateType (s1::semantics::BaseType::Int)));
+  s1::semantics::TypePtr typeUInt;
+  BOOST_CHECK_NO_THROW ((typeUInt = semanticsHandler.CreateType (s1::semantics::BaseType::UInt)));
+  s1::semantics::TypePtr typeFloat;
+  BOOST_CHECK_NO_THROW ((typeFloat = semanticsHandler.CreateType (s1::semantics::BaseType::Float)));
 
   // Void - not even compatible to itself
   {
@@ -187,26 +180,19 @@ BOOST_AUTO_TEST_CASE(CompatBase)
 BOOST_AUTO_TEST_CASE(HigherPrecision)
 {
   using namespace s1::parser;
-  typedef TestSemanticsHandler::TestType TestType;
-  typedef boost::intrusive_ptr<TestType> TestTypePtr;
 
   TestSemanticsHandler semanticsHandler;
 
-  TestTypePtr typeVoid;
-  BOOST_CHECK_NO_THROW ((typeVoid = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Void))));
-  TestTypePtr typeBool;
-  BOOST_CHECK_NO_THROW ((typeBool = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Bool))));
-  TestTypePtr typeInt;
-  BOOST_CHECK_NO_THROW ((typeInt = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Int))));
-  TestTypePtr typeUInt;
-  BOOST_CHECK_NO_THROW ((typeUInt = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::UInt))));
-  TestTypePtr typeFloat;
-  BOOST_CHECK_NO_THROW ((typeFloat = boost::static_pointer_cast<TestType> (
-    semanticsHandler.CreateType (s1::semantics::BaseType::Float))));
+  s1::semantics::TypePtr typeVoid;
+  BOOST_CHECK_NO_THROW ((typeVoid = semanticsHandler.CreateType (s1::semantics::BaseType::Void)));
+  s1::semantics::TypePtr typeBool;
+  BOOST_CHECK_NO_THROW ((typeBool = semanticsHandler.CreateType (s1::semantics::BaseType::Bool)));
+  s1::semantics::TypePtr typeInt;
+  BOOST_CHECK_NO_THROW ((typeInt = semanticsHandler.CreateType (s1::semantics::BaseType::Int)));
+  s1::semantics::TypePtr typeUInt;
+  BOOST_CHECK_NO_THROW ((typeUInt = semanticsHandler.CreateType (s1::semantics::BaseType::UInt)));
+  s1::semantics::TypePtr typeFloat;
+  BOOST_CHECK_NO_THROW ((typeFloat = semanticsHandler.CreateType (s1::semantics::BaseType::Float)));
 
   BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeBool.get()), nullptr);
   BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeInt.get()), nullptr);

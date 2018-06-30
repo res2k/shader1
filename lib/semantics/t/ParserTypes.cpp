@@ -59,10 +59,8 @@ BOOST_AUTO_TEST_CASE(TypeBool)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Bool);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::Bool);
 }
 
 BOOST_AUTO_TEST_CASE(TypeInt)
@@ -78,10 +76,8 @@ BOOST_AUTO_TEST_CASE(TypeInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeUInt)
@@ -97,10 +93,8 @@ BOOST_AUTO_TEST_CASE(TypeUInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::UInt);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::UInt);
 }
 
 BOOST_AUTO_TEST_CASE(TypeFloat)
@@ -116,10 +110,8 @@ BOOST_AUTO_TEST_CASE(TypeFloat)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Base);
-  BOOST_CHECK_EQUAL (testType->base, s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (type->base, s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSampler1D)
@@ -135,10 +127,8 @@ BOOST_AUTO_TEST_CASE(TypeSampler1D)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-  BOOST_CHECK_EQUAL (testType->sampler, s1::semantics::SamplerType::_1D);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::_1D);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSampler2D)
@@ -154,10 +144,8 @@ BOOST_AUTO_TEST_CASE(TypeSampler2D)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-  BOOST_CHECK_EQUAL (testType->sampler, s1::semantics::SamplerType::_2D);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::_2D);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSampler3D)
@@ -173,10 +161,8 @@ BOOST_AUTO_TEST_CASE(TypeSampler3D)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-  BOOST_CHECK_EQUAL (testType->sampler, s1::semantics::SamplerType::_3D);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::_3D);
 }
 
 BOOST_AUTO_TEST_CASE(TypeSamplerCUBE)
@@ -192,10 +178,8 @@ BOOST_AUTO_TEST_CASE(TypeSamplerCUBE)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Sampler);
-  BOOST_CHECK_EQUAL (testType->sampler, s1::semantics::SamplerType::CUBE);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Sampler);
+  BOOST_CHECK_EQUAL (type->sampler, s1::semantics::SamplerType::CUBE);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorBool)
@@ -211,13 +195,10 @@ BOOST_AUTO_TEST_CASE(TypeVectorBool)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
-  TestSemanticsHandler::TestType* vecType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
+  auto vecType = type->avmBase;
+  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::Bool);
 }
 
@@ -234,13 +215,10 @@ BOOST_AUTO_TEST_CASE(TypeVectorInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
-  TestSemanticsHandler::TestType* vecType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
+  auto vecType = type->avmBase;
+  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::Int);
 }
 
@@ -257,13 +235,10 @@ BOOST_AUTO_TEST_CASE(TypeVectorUInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
-  TestSemanticsHandler::TestType* vecType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
+  auto vecType = type->avmBase;
+  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::UInt);
 }
 
@@ -280,13 +255,10 @@ BOOST_AUTO_TEST_CASE(TypeVectorFloat)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
-  TestSemanticsHandler::TestType* vecType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Vector);
+  BOOST_CHECK_EQUAL (type->vectorDim, 3u);
+  auto vecType = type->avmBase;
+  BOOST_CHECK_EQUAL (vecType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (vecType->base, s1::semantics::BaseType::Float);
 }
 
@@ -303,14 +275,11 @@ BOOST_AUTO_TEST_CASE(TypeMatrixBool)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
-  TestSemanticsHandler::TestType* matType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
+  auto matType = type->avmBase;
+  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::Bool);
 }
 
@@ -327,14 +296,11 @@ BOOST_AUTO_TEST_CASE(TypeMatrixInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
-  TestSemanticsHandler::TestType* matType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
+  auto matType = type->avmBase;
+  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::Int);
 }
 
@@ -351,14 +317,11 @@ BOOST_AUTO_TEST_CASE(TypeMatrixUInt)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
-  TestSemanticsHandler::TestType* matType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
+  auto matType = type->avmBase;
+  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::UInt);
 }
 
@@ -375,14 +338,11 @@ BOOST_AUTO_TEST_CASE(TypeMatrixFloat)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
-  TestSemanticsHandler::TestType* matType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Matrix);
+  BOOST_CHECK_EQUAL (type->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (type->matrixRows, 2u);
+  auto matType = type->avmBase;
+  BOOST_CHECK_EQUAL (matType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (matType->base, s1::semantics::BaseType::Float);
 }
 
@@ -399,12 +359,9 @@ BOOST_AUTO_TEST_CASE(TypeArray)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Array);
-  TestSemanticsHandler::TestType* arrType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (arrType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Array);
+  auto arrType = type->avmBase;
+  BOOST_CHECK_EQUAL (arrType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (arrType->base, s1::semantics::BaseType::Int);
 }
 
@@ -421,15 +378,11 @@ BOOST_AUTO_TEST_CASE(TypeArrayArray)
   s1::semantics::TypePtr type;
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
-  TestSemanticsHandler::TestType* testType = 
-    static_cast<TestSemanticsHandler::TestType*> (type.get());
-  BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Array);
-  TestSemanticsHandler::TestType* arrArrType = 
-    static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
-  BOOST_CHECK_EQUAL (arrArrType->typeClass, TestSemanticsHandler::TestType::Array);
-  TestSemanticsHandler::TestType* arrType = 
-    static_cast<TestSemanticsHandler::TestType*> (arrArrType->avmBase.get());
-  BOOST_CHECK_EQUAL (arrType->typeClass, TestSemanticsHandler::TestType::Base);
+  BOOST_CHECK_EQUAL (type->typeClass, s1::semantics::Type::Array);
+  auto arrArrType = type->avmBase;
+  BOOST_CHECK_EQUAL (arrArrType->typeClass, s1::semantics::Type::Array);
+  auto arrType = arrArrType->avmBase;
+  BOOST_CHECK_EQUAL (arrType->typeClass, s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (arrType->base, s1::semantics::BaseType::Int);
 }
 

@@ -81,7 +81,6 @@ public:
       scopeLevel));
   }
   
-  typedef s1::semantics::Type TestType;
   typedef s1::semantics::CommonName TestName;
   
   struct TestExpressionBase : public s1::semantics::Expression
@@ -215,7 +214,7 @@ public:
       s1::semantics::Attribute attrInfo = s1::semantics::Attribute::Identify (attr);
       s1::semantics::TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
       if (baseType)
-        valueType = handler.GetAttributeType (s1::get_static_ptr<TestType> (baseType), attrInfo);
+        valueType = handler.GetAttributeType (s1::get_static_ptr<s1::semantics::Type> (baseType), attrInfo);
     }
     
     const std::string& GetExprStringImpl() override { return str; }
@@ -238,8 +237,8 @@ public:
       if (base) baseType = static_cast<TestExpressionBase*> (base.get ())->GetValueType ();
       if (baseType)
       {
-	TestType* testBaseType = static_cast<TestType*> (baseType.get());
-	if (testBaseType->typeClass == TestType::Array)
+	s1::semantics::Type* testBaseType = static_cast<s1::semantics::Type*> (baseType.get());
+	if (testBaseType->typeClass == s1::semantics::Type::Array)
 	  valueType = testBaseType->avmBase;
       }
     }
@@ -280,7 +279,7 @@ public:
       valueType = name->valueType;
     }
     
-    TestExpressionFunction (TestType* type, const ExpressionVector& params)
+    TestExpressionFunction (s1::semantics::Type* type, const ExpressionVector& params)
     {
       {
         type->ToString().toUTF8String (str);
@@ -416,8 +415,7 @@ public:
   s1::semantics::ExpressionPtr CreateTypeConstructorExpression (s1::semantics::TypePtr type,
                                                                 const ExpressionVector& params)
   {
-    return s1::semantics::ExpressionPtr (new TestExpressionFunction (
-      s1::get_static_ptr<TestType> (type), params));
+    return s1::semantics::ExpressionPtr (new TestExpressionFunction (type.get(), params));
   }
     
   class TestBlock : public s1::semantics::Block
