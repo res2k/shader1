@@ -35,13 +35,13 @@ namespace s1
     protected:
       /**\name Type utilities
        * @{ */
-      static CommonType* GetHigherPrecisionType (CommonType* t1, CommonType* t2);
+      static Type* GetHigherPrecisionType (Type* t1, Type* t2);
       static BaseType DetectNumericType (const uc::String& numericStr);
       /**@}*/
       
       /**\name Attribute utilities
        * @{ */
-      TypePtr GetAttributeType (CommonType* expressionType, const Attribute& attr);
+      TypePtr GetAttributeType (Type* expressionType, const Attribute& attr);
       /** @} */
 
     public:  

@@ -22,14 +22,13 @@
 #include "semantics/Attribute.h"
 #include "semantics/CommonScope.h"
 #include "semantics/CommonHandler.h"
-#include "semantics/CommonType.h"
+#include "semantics/Type.h"
 
 namespace s1
 {
   namespace semantics
   {
-    CommonType*
-    CommonHandler::GetHigherPrecisionType (CommonType* t1, CommonType* t2)
+    Type* CommonHandler::GetHigherPrecisionType (Type* t1, Type* t2)
     {
       if (t1->IsPrecisionHigherEqual (*t2))
         return t1;
@@ -57,36 +56,36 @@ namespace s1
     }
     
     TypePtr
-    CommonHandler::GetAttributeType (CommonType* expressionType, const Attribute& attr)
+    CommonHandler::GetAttributeType (Type* expressionType, const Attribute& attr)
     {
       TypePtr attrType;
       switch (attr.attrClass)
       {
       case semantics::Attribute::arrayLength:
-        if (expressionType->typeClass == CommonType::Array)
+        if (expressionType->typeClass == Type::Array)
           attrType = CreateType (BaseType::UInt); // Type is fix
         break;
       case semantics::Attribute::matrixCol:
-        if (expressionType->typeClass == CommonType::Matrix)
+        if (expressionType->typeClass == Type::Matrix)
           attrType = CreateArrayType (
             CreateVectorType (expressionType->avmBase, expressionType->matrixRows));
         break;
       case semantics::Attribute::matrixRow:
-        if (expressionType->typeClass == CommonType::Matrix)
+        if (expressionType->typeClass == Type::Matrix)
           attrType = CreateArrayType (
             CreateVectorType (expressionType->avmBase, expressionType->matrixCols));
         break;
       case semantics::Attribute::matrixTranspose:
-        if (expressionType->typeClass == CommonType::Matrix)
+        if (expressionType->typeClass == Type::Matrix)
           attrType = CreateMatrixType (expressionType->avmBase, expressionType->matrixRows, expressionType->matrixCols);
         break;
       case semantics::Attribute::matrixInvert:
-        if ((expressionType->typeClass == CommonType::Matrix)
+        if ((expressionType->typeClass == Type::Matrix)
             && (expressionType->matrixRows == expressionType->matrixCols))
           attrType = expressionType;
         break;
       case semantics::Attribute::vectorSwizzle:
-        if (expressionType->typeClass == CommonType::Vector)
+        if (expressionType->typeClass == Type::Vector)
         {
           if (attr.swizzleCompNum == 1)
             // 1-component swizzles return the base type, not a 1-component vector
@@ -105,30 +104,30 @@ namespace s1
     
     TypePtr CommonHandler::CreateType (BaseType type)
     {
-      return TypePtr (new CommonType (type));
+      return TypePtr (new Type (type));
     }
     
     TypePtr CommonHandler::CreateSamplerType (SamplerType dim)
     {
-      return TypePtr (new CommonType (dim));
+      return TypePtr (new Type (dim));
     }
     
     TypePtr CommonHandler::CreateArrayType (TypePtr baseType)
     {
-      return TypePtr (new CommonType (baseType));
+      return TypePtr (new Type (baseType));
     }
     
     TypePtr CommonHandler::CreateVectorType (TypePtr baseType,
                                                       unsigned int components)
     {
-      return TypePtr (new CommonType (baseType, components));
+      return TypePtr (new Type (baseType, components));
     }
     
     TypePtr CommonHandler::CreateMatrixType (TypePtr baseType,
                                                       unsigned int columns,
                                                       unsigned int rows)
     {
-      return TypePtr (new CommonType (baseType, columns, rows));
+      return TypePtr (new Type (baseType, columns, rows));
     }
   
     ScopePtr CommonHandler::CreateScope (ScopePtr parentScope,

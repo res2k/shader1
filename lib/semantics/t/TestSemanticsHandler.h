@@ -23,10 +23,10 @@
 #include "semantics/Block.h"
 #include "semantics/CommonName.h"
 #include "semantics/CommonHandler.h"
-#include "semantics/CommonType.h"
 #include "semantics/Expression.h"
 #include "semantics/Function.h"
 #include "semantics/Scope.h"
+#include "semantics/Type.h"
 
 #include <vector>
 
@@ -81,7 +81,7 @@ public:
       scopeLevel));
   }
   
-  typedef s1::semantics::CommonType TestType;
+  typedef s1::semantics::Type TestType;
   typedef s1::semantics::CommonName TestName;
   
   struct TestExpressionBase : public s1::semantics::Expression

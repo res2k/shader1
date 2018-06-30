@@ -23,8 +23,8 @@
 #include "diagnostics/forwarddecl.h"
 #include "semantics/Attribute.h"
 #include "semantics/CommonHandler.h"
-#include "semantics/CommonType.h"
 #include "semantics/Scope.h"
+#include "semantics/Type.h"
 
 #include "forwarddecl.h"
 #include "Sequence.h"
@@ -45,7 +45,7 @@ namespace s1
 
       typedef semantics::ExpressionPtr ExpressionPtr;
 
-      typedef semantics::CommonType TypeImpl;
+      typedef semantics::Type TypeImpl;
       struct NameImpl;
       class FunctionImpl;
       class ScopeImpl;
@@ -89,8 +89,6 @@ namespace s1
       TypeImplPtr uintType;
       TypeImplPtr floatType;
 
-      static std::string GetTypeString (TypeImpl* type);
-
       typedef boost::intrusive_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
       ScopeImplPtr globalScope;
@@ -114,7 +112,6 @@ namespace s1
     public:
       /**\name Type utilities
        * @{ */
-      static TypeImpl* GetHigherPrecisionType (TypeImpl* t1, TypeImpl* t2);
       static std::string GetTypeString (semantics::Type* type);
       /**@}*/
 
@@ -131,8 +128,6 @@ namespace s1
         unsigned char GetSwizzleComp (unsigned char num) const
         { return (swizzleComps >> (num*2)) & 3; }
       };
-      TypeImplPtr GetAttributeType (TypeImpl* expressionType,
-                                    const semantics::Attribute& attr);
       /** @} */
 
       IntermediateGeneratorSemanticsHandler ();

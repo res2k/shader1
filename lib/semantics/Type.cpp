@@ -19,7 +19,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 #include "base/intrusive_ptr.h"
-#include "semantics/CommonType.h"
+#include "semantics/Type.h"
 
 #include "base/format/Formatter.tpp"
 
@@ -27,7 +27,7 @@ namespace s1
 {
   namespace semantics
   {
-    bool CommonType::CompatibleLossless (const CommonType& to) const
+    bool Type::CompatibleLossless (const Type& to) const
     {
       if (typeClass != to.typeClass) return false;
       switch (typeClass)
@@ -51,24 +51,24 @@ namespace s1
         return sampler == to.sampler;
       case Array:
         // Array assignments are compatible when the contained members are
-        return static_cast<CommonType*> (avmBase.get())->CompatibleLossless (
-          *(static_cast<CommonType*> (to.avmBase.get())));
+        return static_cast<Type*> (avmBase.get())->CompatibleLossless (
+          *(static_cast<Type*> (to.avmBase.get())));
       case Vector:
         // Vectors: base types must be compatible and both types have the same number of components
-        return static_cast<CommonType*> (avmBase.get())->CompatibleLossless (
-          *(static_cast<CommonType*> (to.avmBase.get())))
+        return static_cast<Type*> (avmBase.get())->CompatibleLossless (
+          *(static_cast<Type*> (to.avmBase.get())))
           && (vectorDim == to.vectorDim);
       case Matrix:
         // Matrices: base types must be compatible and both types have the same number of rows/cols
-        return static_cast<CommonType*> (avmBase.get())->CompatibleLossless (
-          *(static_cast<CommonType*> (to.avmBase.get())))
+        return static_cast<Type*> (avmBase.get())->CompatibleLossless (
+          *(static_cast<Type*> (to.avmBase.get())))
           && (matrixCols == to.matrixCols)
           && (matrixRows == to.matrixRows);
       }
       S1_ASSERT_NOT_REACHED (false);
     }
 
-    bool CommonType::CompatibleLossy (const CommonType& to) const
+    bool Type::CompatibleLossy (const Type& to) const
     {
       // Lossless compatibility implies lossy compatibility ;)
       if (CompatibleLossless (to)) return true;
@@ -87,7 +87,7 @@ namespace s1
       return false;
     }
 
-    bool CommonType::IsEqual (const CommonType& other) const
+    bool Type::IsEqual (const Type& other) const
     {
       if (typeClass != other.typeClass) return false;
       switch (typeClass)
@@ -97,22 +97,22 @@ namespace s1
       case Sampler:
         return sampler == other.sampler;
       case Array:
-        return static_cast<CommonType*> (avmBase.get())->IsEqual (
-          *(static_cast<CommonType*> (other.avmBase.get())));
+        return static_cast<Type*> (avmBase.get())->IsEqual (
+          *(static_cast<Type*> (other.avmBase.get())));
       case Vector:
-        return static_cast<CommonType*> (avmBase.get())->IsEqual (
-          *(static_cast<CommonType*> (other.avmBase.get())))
+        return static_cast<Type*> (avmBase.get())->IsEqual (
+          *(static_cast<Type*> (other.avmBase.get())))
           && (vectorDim == other.vectorDim);
       case Matrix:
-        return static_cast<CommonType*> (avmBase.get())->IsEqual (
-          *(static_cast<CommonType*> (other.avmBase.get())))
+        return static_cast<Type*> (avmBase.get())->IsEqual (
+          *(static_cast<Type*> (other.avmBase.get())))
           && (matrixCols == other.matrixCols)
           && (matrixRows == other.matrixRows);
       }
       S1_ASSERT_NOT_REACHED (false);
     }
 
-    bool CommonType::IsPrecisionHigherEqual (const CommonType& other) const
+    bool Type::IsPrecisionHigherEqual (const Type& other) const
     {
       if (typeClass != other.typeClass) return false;
       switch (typeClass)
@@ -137,17 +137,17 @@ namespace s1
         return sampler == other.sampler;
       case Array:
         // Array type is higher/equal prec when the contained members are
-        return static_cast<CommonType*> (avmBase.get())->IsPrecisionHigherEqual (
-          *(static_cast<CommonType*> (other.avmBase.get())));
+        return static_cast<Type*> (avmBase.get())->IsPrecisionHigherEqual (
+          *(static_cast<Type*> (other.avmBase.get())));
       case Vector:
         // Vectors: base type is higher/equal prec if both types have the same number of components
-        return static_cast<CommonType*> (avmBase.get())->IsPrecisionHigherEqual (
-          *(static_cast<CommonType*> (other.avmBase.get())))
+        return static_cast<Type*> (avmBase.get())->IsPrecisionHigherEqual (
+          *(static_cast<Type*> (other.avmBase.get())))
           && (vectorDim == other.vectorDim);
       case Matrix:
         // Matrices: base type is higher/equal prec if both types have the same number of rows/cols
-        return static_cast<CommonType*> (avmBase.get())->IsPrecisionHigherEqual (
-          *(static_cast<CommonType*> (other.avmBase.get())))
+        return static_cast<Type*> (avmBase.get())->IsPrecisionHigherEqual (
+          *(static_cast<Type*> (other.avmBase.get())))
           && (matrixCols == other.matrixCols)
           && (matrixRows == other.matrixRows);
       }
@@ -158,7 +158,7 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatVector, "{0}{1}");
     DECLARE_STATIC_FORMATTER(FormatMatrix, "{0}{1}x{2}");
 
-    uc::String CommonType::ToString() const
+    uc::String Type::ToString() const
     {
       switch (typeClass)
       {
@@ -189,19 +189,19 @@ namespace s1
       case Array:
         {
           uc::String s;
-          FormatArray (s, static_cast<CommonType*> (avmBase.get())->ToString());
+          FormatArray (s, static_cast<Type*> (avmBase.get())->ToString());
           return s;
         }
       case Vector:
         {
           uc::String s;
-          FormatVector (s, static_cast<CommonType*> (avmBase.get())->ToString(), vectorDim);
+          FormatVector (s, static_cast<Type*> (avmBase.get())->ToString(), vectorDim);
           return s;
         }
       case Matrix:
         {
           uc::String s;
-          FormatMatrix (s, static_cast<CommonType*> (avmBase.get())->ToString(), matrixCols, matrixRows);
+          FormatMatrix (s, static_cast<Type*> (avmBase.get())->ToString(), matrixCols, matrixRows);
           return s;
         }
       }

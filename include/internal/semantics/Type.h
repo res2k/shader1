@@ -32,18 +32,40 @@ namespace s1
         Base, Sampler, Array, Vector, Matrix
       };
 
-      virtual ~Type() {}
-      
-      virtual Class GetTypeClass() const = 0;
-      virtual BaseType GetBaseType() const = 0;
-      virtual SamplerType GetSamplerType() const = 0;
-      
-      virtual TypePtr GetArrayVectorMatrixBaseType() const = 0;
-      
-      virtual unsigned int GetVectorTypeComponents() const = 0;
-      
-      virtual unsigned int GetMatrixTypeCols() const = 0;
-      virtual unsigned int GetMatrixTypeRows() const = 0;
+      Class typeClass;
+      BaseType base;
+      SamplerType sampler;
+      TypePtr avmBase;
+      unsigned int vectorDim;
+      unsigned int matrixCols;
+      unsigned int matrixRows;
+
+      Type (BaseType base) : typeClass (Base), base (base) {}
+      Type (SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
+      Type (TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
+      Type (TypePtr vBase, unsigned int d)
+        : typeClass (Vector), avmBase (vBase), vectorDim (d) {}
+      Type (TypePtr mBase, unsigned int c, unsigned int r)
+        : typeClass (Matrix), avmBase (mBase), matrixCols (c), matrixRows (r) {}
+
+      Class GetTypeClass() const { return typeClass; }
+      BaseType GetBaseType() const { return base; }
+      SamplerType GetSamplerType() const { return sampler; }
+
+      TypePtr GetArrayVectorMatrixBaseType() const { return avmBase; }
+
+      unsigned int GetVectorTypeComponents() const { return vectorDim; }
+
+      unsigned int GetMatrixTypeCols() const { return matrixCols; }
+      unsigned int GetMatrixTypeRows() const { return matrixRows; }
+
+      /// Returns whether this type is losslessly assignable to \a to.
+      bool CompatibleLossless (const Type& to) const;
+      bool CompatibleLossy (const Type& to) const;
+      bool IsEqual (const Type& other) const;
+      bool IsPrecisionHigherEqual (const Type& other) const;
+
+      uc::String ToString() const;
     };
   } // namespace semantics
 } // namespace s1

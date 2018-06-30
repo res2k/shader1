@@ -110,7 +110,7 @@ namespace s1
       return typeStr;
     }
 
-    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (TypeImpl* type)
+    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (semantics::Type* type)
     {
       switch (type->typeClass)
       {
@@ -151,24 +151,6 @@ namespace s1
       }
       S1_ASSERT (false, std::string());
       return std::string ();
-    }
-
-    std::string IntermediateGeneratorSemanticsHandler::GetTypeString (semantics::Type* type)
-    {
-      return GetTypeString (get_static_ptr<TypeImpl> (type));
-    }
-
-    IntermediateGeneratorSemanticsHandler::TypeImpl*
-    IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (TypeImpl* t1, TypeImpl* t2)
-    {
-      return get_static_ptr<TypeImpl> (CommonHandler::GetHigherPrecisionType (t1, t2));
-    }
-
-    IntermediateGeneratorSemanticsHandler::TypeImplPtr
-    IntermediateGeneratorSemanticsHandler::GetAttributeType (TypeImpl* expressionType,
-                                                             const semantics::Attribute& attr)
-    {
-      return boost::static_pointer_cast<TypeImpl> (CommonHandler::GetAttributeType (expressionType, attr));
     }
 
     DECLARE_STATIC_FORMATTER(FormatRegPrefixName, "{0}{1}");
