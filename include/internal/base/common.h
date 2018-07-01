@@ -47,6 +47,18 @@ static const size_t charsToFormatInt = S1_APPROX_DIGITS(unsigned int) + 1;
   #define _DEBUG
 #endif
 
+#ifdef __GNUC__
+#  define S1_NOINLINE        __attribute__((noinline))
+#elif defined(_MSC_VER)
+#  define S1_NOINLINE        __declspec(noinline)
+#else
+  /**\def S1_NOINLINE
+   * \internal
+   * Avoid inlinining of a function
+   */
+#  define S1_NOINLINE
+#endif
+
 namespace s1
 {
   namespace detail
@@ -61,7 +73,8 @@ namespace s1
   #endif
 
     /// Print assertion using current debug message handler
-    void PrintAssert (const assert_char* filename, int line, const assert_char* condition, const assert_char* message = nullptr);
+    // NOINLINE to avoid LTO inlining it
+    void S1_NOINLINE PrintAssert (const assert_char* filename, int line, const assert_char* condition, const assert_char* message = nullptr);
   } // namespace detail
 } // namespace s1
 
