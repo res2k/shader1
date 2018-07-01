@@ -306,7 +306,7 @@ public:
     std::string str;
     valueStr.toUTF8String (str);
     return s1::semantics::ExpressionPtr (new TestExpressionConst (str,
-      CreateType (DetectNumericType (valueStr))));
+      CreateType (s1::semantics::Type::DetectNumericType (valueStr))));
   }
   
   s1::semantics::ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)

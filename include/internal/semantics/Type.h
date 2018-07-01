@@ -116,6 +116,12 @@ namespace s1
       bool IsPrecisionHigherEqual (const Type& other) const;
 
       uc::String ToString() const;
+
+      /**\name Type utilities
+       * @{ */
+      static Type* GetHigherPrecisionType (Type* t1, Type* t2);
+      static BaseType DetectNumericType (const uc::String& numericStr);
+      /** @} */
     };
   } // namespace semantics
 } // namespace s1

@@ -81,19 +81,19 @@ namespace s1
       
       if ((vectorDim1 != 0) && (vectorDim2 == 0))
       {
-        valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+        valueType = semantics::Type::GetHigherPrecisionType (
           type1.get(),
           handler->CreateVectorType (type2, vectorDim1).get());
       }
       else if ((vectorDim2 != 0) && (vectorDim1 == 0))
       {
-        valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+        valueType = semantics::Type::GetHigherPrecisionType (
           handler->CreateVectorType (type1, vectorDim2).get(),
           type2.get());
       }
       else // (((vectorDim1 != 0) && (vectorDim2 != 0)) || ((vectorDim1 == 0) && (vectorDim2 == 0)))
       {
-        valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+        valueType = semantics::Type::GetHigherPrecisionType (
           operand1->GetValueType().get(), operand2->GetValueType().get());
       }
         

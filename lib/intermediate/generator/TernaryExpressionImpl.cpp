@@ -56,7 +56,7 @@ namespace s1
     semantics::TypePtr IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::GetValueType()
     {
       // Determine type in which to perform computation
-      auto valueType = IntermediateGeneratorSemanticsHandler::GetHigherPrecisionType (
+      auto valueType = semantics::Type::GetHigherPrecisionType (
         ifExpr->GetValueType().get(), elseExpr->GetValueType().get());
         
       if (!valueType)

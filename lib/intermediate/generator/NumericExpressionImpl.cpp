@@ -40,7 +40,7 @@ namespace s1
       ExpressionContext&& context,
       const uc::String& valueStr)
        : ExpressionImpl (handler, std::move (context)), valueStr (valueStr),
-         numberType (IntermediateGeneratorSemanticsHandler::DetectNumericType (valueStr))
+         numberType (semantics::Type::DetectNumericType (valueStr))
     {
     }
       

@@ -54,7 +54,7 @@ namespace s1
       auto type2 = operand2->GetValueType();
       if (!type1 || !type2) return RegisterPtr(); // Assume error already handled
 
-      auto comparisonType = handler->GetHigherPrecisionType (type1.get(), type2.get());
+      auto comparisonType = semantics::Type::GetHigherPrecisionType (type1.get(), type2.get());
         
       // Set up registers for operand values
       auto operandRegs = GetSourceRegisters (block, comparisonType);

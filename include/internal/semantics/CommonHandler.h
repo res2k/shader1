@@ -33,12 +33,6 @@ namespace s1
     class CommonHandler : public Handler
     {
     protected:
-      /**\name Type utilities
-       * @{ */
-      static Type* GetHigherPrecisionType (Type* t1, Type* t2);
-      static BaseType DetectNumericType (const uc::String& numericStr);
-      /**@}*/
-      
       /**\name Attribute utilities
        * @{ */
       TypePtr GetAttributeType (Type* expressionType, const Attribute& attr);

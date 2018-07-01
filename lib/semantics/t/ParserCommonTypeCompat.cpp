@@ -29,18 +29,6 @@
 
 BOOST_AUTO_TEST_SUITE(ParserCommonTypeCompat)
 
-namespace
-{
-  class TestSemanticsHandler : public ::TestSemanticsHandler
-  {
-  public:
-    typedef ::TestSemanticsHandler SuperClass;
-
-    using SuperClass::GetHigherPrecisionType;
-  };
-}
-// anonymous namespace
-
 BOOST_AUTO_TEST_CASE(CompatBase)
 {
   using namespace s1::parser;
@@ -194,19 +182,19 @@ BOOST_AUTO_TEST_CASE(HigherPrecision)
   s1::semantics::TypePtr typeFloat;
   BOOST_CHECK_NO_THROW ((typeFloat = semanticsHandler.CreateType (s1::semantics::BaseType::Float)));
 
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeBool.get()), nullptr);
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeInt.get()), nullptr);
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeUInt.get()), nullptr);
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeVoid.get(), typeFloat.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeVoid.get(), typeBool.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeVoid.get(), typeInt.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeVoid.get(), typeUInt.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeVoid.get(), typeFloat.get()), nullptr);
 
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeBool.get(), typeInt.get()), nullptr);
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeBool.get(), typeUInt.get()), nullptr);
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeBool.get(), typeFloat.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeBool.get(), typeInt.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeBool.get(), typeUInt.get()), nullptr);
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeBool.get(), typeFloat.get()), nullptr);
 
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeInt.get(), typeUInt.get()), typeInt.get());
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeInt.get(), typeFloat.get()), typeFloat.get());
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeInt.get(), typeUInt.get()), typeInt.get());
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeInt.get(), typeFloat.get()), typeFloat.get());
 
-  BOOST_CHECK_EQUAL (TestSemanticsHandler::GetHigherPrecisionType (typeUInt.get(), typeFloat.get()), typeFloat.get());
+  BOOST_CHECK_EQUAL (s1::semantics::Type::GetHigherPrecisionType (typeUInt.get(), typeFloat.get()), typeFloat.get());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -28,33 +28,6 @@ namespace s1
 {
   namespace semantics
   {
-    Type* CommonHandler::GetHigherPrecisionType (Type* t1, Type* t2)
-    {
-      if (t1->IsPrecisionHigherEqual (*t2))
-        return t1;
-      else if (t2->IsPrecisionHigherEqual (*t1))
-        return t2;
-      return nullptr;
-    }
-      
-    BaseType CommonHandler::DetectNumericType (const uc::String& numericStr)
-    {
-      if (numericStr.startsWith ("0x") || numericStr.startsWith ("0X"))
-      {
-        // Hex number: always unsigned int
-        return BaseType::UInt;
-      }
-      if ((numericStr.indexOf ('.') != uc::String::npos)
-        || (numericStr.indexOf ('e') != uc::String::npos)
-        || (numericStr.indexOf ('E') != uc::String::npos))
-      {
-        // Contains '.', 'e' or 'E': must be float number
-        return BaseType::Float;
-      }
-      // Can only be an integer
-      return numericStr.startsWith ("-") ? BaseType::Int : BaseType::UInt;
-    }
-    
     TypePtr
     CommonHandler::GetAttributeType (Type* expressionType, const Attribute& attr)
     {
