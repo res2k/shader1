@@ -35,7 +35,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                                              ExpressionContext&& context,
                                                                                              Expression* baseExpr,
-                                                                                             const IntermediateGeneratorSemanticsHandler::Attribute& attr)
+                                                                                             const semantics::Attribute& attr)
      : ExpressionImpl (handler, std::move (context)), baseExpr (baseExpr), attr (attr)
     {}
     
@@ -44,7 +44,7 @@ namespace s1
       auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
       auto exprValueType = exprImpl->GetValueType();
       if (!exprValueType) return nullptr; // Assume error already handled
-      return Attribute::GetType (handler, exprValueType.get(), attr);
+      return semantics::Attribute::GetType (handler, exprValueType.get(), attr);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequence (BlockImpl& block,
@@ -56,9 +56,9 @@ namespace s1
       switch (attr.attrClass)
       {
       default:
-      case IntermediateGeneratorSemanticsHandler::Attribute::Unknown:
+      case semantics::Attribute::Unknown:
         S1_ASSERT_NOT_REACHED (RegisterPtr ());
-      case IntermediateGeneratorSemanticsHandler::Attribute::arrayLength:
+      case semantics::Attribute::arrayLength:
         {
           if (asLvalue) return RegisterPtr ();
           
@@ -75,17 +75,17 @@ namespace s1
           return targetReg;
         }
         break;
-      case IntermediateGeneratorSemanticsHandler::Attribute::matrixRow:
-      case IntermediateGeneratorSemanticsHandler::Attribute::matrixCol:
-      case IntermediateGeneratorSemanticsHandler::Attribute::matrixTranspose:
-      case IntermediateGeneratorSemanticsHandler::Attribute::matrixInvert:
+      case semantics::Attribute::matrixRow:
+      case semantics::Attribute::matrixCol:
+      case semantics::Attribute::matrixTranspose:
+      case semantics::Attribute::matrixInvert:
         {
           if (asLvalue) return RegisterPtr ();
           
           return RegisterPtr ();
         }
         break;
-      case IntermediateGeneratorSemanticsHandler::Attribute::vectorSwizzle:
+      case semantics::Attribute::vectorSwizzle:
         {
           if (asLvalue)
           {

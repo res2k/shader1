@@ -27,12 +27,12 @@ namespace s1
     class IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl : public ExpressionImpl
     {
       ExpressionPtr baseExpr;
-      IntermediateGeneratorSemanticsHandler::Attribute attr;
+      semantics::Attribute attr;
     public:
       AttributeExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                ExpressionContext&& context,
                                Expression* baseExpr,
-                               const IntermediateGeneratorSemanticsHandler::Attribute& attr);
+                               const semantics::Attribute& attr);
       
       semantics::TypePtr GetValueType ();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

@@ -568,8 +568,8 @@ namespace s1
                                                                                 const uc::String& attr)
     {
       if (!expr) return ExpressionPtr(); // Assume error already handled
-      Attribute attrInfo (Attribute::Identify (attr));
-      if (attrInfo.attrClass == Attribute::Unknown)
+      semantics::Attribute attrInfo (semantics::Attribute::Identify (attr));
+      if (attrInfo.attrClass == semantics::Attribute::Unknown)
       {
         ExpressionError (ExpressionContext(), Error::InvalidAttribute);
         return ExpressionPtr();

@@ -113,18 +113,6 @@ namespace s1
       static std::string GetTypeString (semantics::Type* type);
       /**@}*/
 
-      /**\name Attribute utilities
-       * @{ */
-      struct Attribute : public semantics::Attribute
-      {
-        using semantics::Attribute::Attribute;
-        Attribute (const semantics::Attribute& other)
-          : semantics::Attribute (other) {}
-        Attribute (semantics::Attribute&& other)
-          : semantics::Attribute (std::move (other)) {}
-      };
-      /** @} */
-
       IntermediateGeneratorSemanticsHandler ();
       ~IntermediateGeneratorSemanticsHandler ();
 
