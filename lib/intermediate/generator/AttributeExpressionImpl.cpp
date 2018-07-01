@@ -44,7 +44,7 @@ namespace s1
       auto exprImpl = get_static_ptr<ExpressionImpl> (baseExpr);
       auto exprValueType = exprImpl->GetValueType();
       if (!exprValueType) return nullptr; // Assume error already handled
-      return handler->GetAttributeType (exprValueType.get(), attr);
+      return Attribute::GetType (handler, exprValueType.get(), attr);
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::AttributeExpressionImpl::AddToSequence (BlockImpl& block,

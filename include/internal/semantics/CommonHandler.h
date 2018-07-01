@@ -32,12 +32,6 @@ namespace s1
      */
     class CommonHandler : public Handler
     {
-    protected:
-      /**\name Attribute utilities
-       * @{ */
-      TypePtr GetAttributeType (Type* expressionType, const Attribute& attr);
-      /** @} */
-
     public:  
       TypePtr CreateType (BaseType type);
       TypePtr CreateSamplerType (SamplerType dim);

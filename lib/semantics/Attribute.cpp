@@ -17,6 +17,8 @@
 
 #include "base/common.h"
 #include "semantics/Attribute.h"
+#include "semantics/Handler.h"
+#include "semantics/Type.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -101,6 +103,50 @@ namespace s1
       }
       return Attribute (static_cast<unsigned char> (attributeStr.length()),
                         attr[0], attr[1], attr[2], attr[3]);
+    }
+
+    TypePtr Attribute::GetType (Handler* handler, Type* expressionType, const Attribute& attr)
+    {
+      TypePtr attrType;
+      switch (attr.attrClass)
+      {
+      case Attribute::arrayLength:
+        if (expressionType->GetTypeClass() == Type::Array)
+          attrType = handler->CreateType (BaseType::UInt); // Type is fix
+        break;
+      case Attribute::matrixCol:
+        if (expressionType->GetTypeClass() == Type::Matrix)
+          attrType = handler->CreateArrayType (
+            handler->CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows()));
+        break;
+      case Attribute::matrixRow:
+        if (expressionType->GetTypeClass() == Type::Matrix)
+          attrType = handler->CreateArrayType (
+            handler->CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeCols()));
+        break;
+      case Attribute::matrixTranspose:
+        if (expressionType->GetTypeClass() == Type::Matrix)
+          attrType = handler->CreateMatrixType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows(), expressionType->GetMatrixTypeCols());
+        break;
+      case Attribute::matrixInvert:
+        if ((expressionType->GetTypeClass() == Type::Matrix)
+            && (expressionType->GetMatrixTypeRows() == expressionType->GetMatrixTypeCols()))
+          attrType = expressionType;
+        break;
+      case Attribute::vectorSwizzle:
+        if (expressionType->GetTypeClass() == Type::Vector)
+        {
+          if (attr.swizzleCompNum == 1)
+            // 1-component swizzles return the base type, not a 1-component vector
+            attrType = expressionType->GetAVMBase();
+          else
+            attrType = handler->CreateVectorType (expressionType->GetAVMBase(), attr.swizzleCompNum);
+        }
+        break;
+      case Attribute::Unknown:
+        break;
+      }
+      return attrType;
     }
   } // namespace semantics
 } // namespace s1

@@ -28,51 +28,6 @@ namespace s1
 {
   namespace semantics
   {
-    TypePtr
-    CommonHandler::GetAttributeType (Type* expressionType, const Attribute& attr)
-    {
-      TypePtr attrType;
-      switch (attr.attrClass)
-      {
-      case semantics::Attribute::arrayLength:
-        if (expressionType->GetTypeClass() == Type::Array)
-          attrType = CreateType (BaseType::UInt); // Type is fix
-        break;
-      case semantics::Attribute::matrixCol:
-        if (expressionType->GetTypeClass() == Type::Matrix)
-          attrType = CreateArrayType (
-            CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows()));
-        break;
-      case semantics::Attribute::matrixRow:
-        if (expressionType->GetTypeClass() == Type::Matrix)
-          attrType = CreateArrayType (
-            CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeCols()));
-        break;
-      case semantics::Attribute::matrixTranspose:
-        if (expressionType->GetTypeClass() == Type::Matrix)
-          attrType = CreateMatrixType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows(), expressionType->GetMatrixTypeCols());
-        break;
-      case semantics::Attribute::matrixInvert:
-        if ((expressionType->GetTypeClass() == Type::Matrix)
-            && (expressionType->GetMatrixTypeRows() == expressionType->GetMatrixTypeCols()))
-          attrType = expressionType;
-        break;
-      case semantics::Attribute::vectorSwizzle:
-        if (expressionType->GetTypeClass() == Type::Vector)
-        {
-          if (attr.swizzleCompNum == 1)
-            // 1-component swizzles return the base type, not a 1-component vector
-            attrType = expressionType->GetAVMBase();
-          else
-            attrType = CreateVectorType (expressionType->GetAVMBase(), attr.swizzleCompNum);
-        }
-        break;
-      case semantics::Attribute::Unknown:
-        break;
-      }
-      return attrType;
-    }
-    
     typedef TypePtr TypePtr;
     
     TypePtr CommonHandler::CreateType (BaseType type)

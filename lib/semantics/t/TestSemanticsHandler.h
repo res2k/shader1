@@ -214,7 +214,7 @@ public:
       s1::semantics::Attribute attrInfo = s1::semantics::Attribute::Identify (attr);
       s1::semantics::TypePtr baseType = static_cast<TestExpressionBase*> (base.get())->GetValueType();
       if (baseType)
-        valueType = handler.GetAttributeType (s1::get_static_ptr<s1::semantics::Type> (baseType), attrInfo);
+        valueType = s1::semantics::Attribute::GetType (&handler, baseType.get(), attrInfo);
     }
     
     const std::string& GetExprStringImpl() override { return str; }

@@ -62,6 +62,8 @@ namespace s1
 
     struct Block;
     typedef boost::intrusive_ptr<Block> BlockPtr;
+
+    struct Handler;
   } // namespace semantics
 } // namespace s1
 

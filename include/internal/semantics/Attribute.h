@@ -18,6 +18,8 @@
 #ifndef SEMANTICS_ATTRIBUTE_H_
 #define SEMANTICS_ATTRIBUTE_H_
 
+#include "forwarddecl.h"
+
 namespace s1
 {
   namespace semantics
@@ -49,6 +51,11 @@ namespace s1
       {}
 
       static Attribute Identify (const uc::String& attributeStr);
+
+      /**\name Attribute utilities
+       * @{ */
+      static TypePtr GetType (Handler* handler, Type* expressionType, const Attribute& attr);
+      /** @} */
     };
   } // namespace semantics
 } // namespace s1
