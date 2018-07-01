@@ -16,6 +16,7 @@
 */
 
 #include "base/common.h"
+#include "base/intrusive_ptr.h"
 #include "optimize/ConstantFolding.h"
 
 #include "CommonSequenceVisitor.h"
@@ -94,11 +95,11 @@ namespace s1
       unsigned int foldRegNum;
       RegisterPtr NewConstReg (const intermediate::Sequence::TypePtr& type);
       static SequenceOpPtr MakeConstOp (const RegisterPtr& dest,
-                                        const intermediate::Sequence::TypePtr& srcType,
+                                        semantics::BaseType srcType,
                                         const ConstantBase& val);
       template<typename TargetType>
       static void DoCast (TargetType& target,
-                          const intermediate::Sequence::TypePtr& srcType,
+                          semantics::BaseType srcType,
                           const ConstantValPtr& sourceVal);
 
       void ExtractTypeCompsAndBase (const intermediate::Sequence::TypePtr& srcType,
@@ -108,12 +109,12 @@ namespace s1
                            const ConstantValPtr& newVal,
                            const intermediate::Sequence::TypePtr& destType,
                            unsigned int nComps,
-                           const intermediate::Sequence::TypePtr& baseType);
+                           const semantics::BaseType baseType);
       template<typename T, typename Functor>
       void Functor2Call (T& result, Functor& func,
                          const ConstantBase& src1Val,
                          const ConstantBase& src2Val,
-                         const intermediate::Sequence::TypePtr& baseType);
+                         semantics::BaseType baseType);
       template<typename Functor>
       bool HandleBinaryOp (Functor& func,
                            const RegisterPtr& destination,
@@ -300,11 +301,11 @@ namespace s1
 
     intermediate::SequenceOpPtr
     ConstantFolding::FoldingVisitor::MakeConstOp (const RegisterPtr& dest,
-                                                  const intermediate::Sequence::TypePtr& srcType,
+                                                  semantics::BaseType srcType,
                                                   const ConstantBase& val)
     {
       SequenceOpPtr newOp;
-      switch (srcType->GetBaseType())
+      switch (srcType)
       {
       case semantics::BaseType::Int:
         newOp = new intermediate::SequenceOpConst (dest, val.i);
@@ -378,10 +379,10 @@ namespace s1
 
     template<typename TargetType>
     void ConstantFolding::FoldingVisitor::DoCast (TargetType& target,
-                                                  const intermediate::Sequence::TypePtr& srcType,
+                                                  semantics::BaseType srcType,
                                                   const ConstantValPtr& sourceVal)
     {
-      switch (srcType->GetBaseType())
+      switch (srcType)
       {
       case semantics::BaseType::Int:
         target = TargetType (sourceVal->comp[0].i);
@@ -412,20 +413,20 @@ namespace s1
         switch (destType)
         {
         case intermediate::BasicType::Int:
-          DoCast (newVal->comp[0].i, srcType, srcConst->second);
+          DoCast (newVal->comp[0].i, srcType->GetBaseType(), srcConst->second);
           break;
         case intermediate::BasicType::UInt:
-          DoCast (newVal->comp[0].ui, srcType, srcConst->second);
+          DoCast (newVal->comp[0].ui, srcType->GetBaseType(), srcConst->second);
           break;
         case intermediate::BasicType::Float:
-          DoCast (newVal->comp[0].f, srcType, srcConst->second);
+          DoCast (newVal->comp[0].f, srcType->GetBaseType(), srcConst->second);
           break;
         default:
           S1_ASSERT_NOT_REACHED (S1_ASSERT_RET_VOID);
         }
         constRegs[destination] = newVal;
 
-        SequenceOpPtr newOp (MakeConstOp (destination, destination->GetOriginalType(), newVal->comp[0]));
+        SequenceOpPtr newOp (MakeConstOp (destination, destination->GetOriginalType()->GetBaseType(), newVal->comp[0]));
         AddOpToSequence (newOp);
         seqChanged = true;
       }
@@ -780,7 +781,7 @@ namespace s1
         }
         constRegs[destination] = newVal;
 
-        SequenceOpPtr newOp (MakeConstOp (destination, compType, newVal->comp[0]));
+        SequenceOpPtr newOp (MakeConstOp (destination, compType->GetBaseType(), newVal->comp[0]));
         AddOpToSequence (newOp);
         seqChanged = true;
         return;
@@ -817,10 +818,10 @@ namespace s1
                                                           const ConstantValPtr& newVal,
                                                           const intermediate::Sequence::TypePtr& destType,
                                                           unsigned int nComps,
-                                                          const intermediate::Sequence::TypePtr& baseType)
+                                                          semantics::BaseType baseType)
     {
       intermediate::BasicType basicType;
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int: 	basicType = intermediate::BasicType::Int; break;
       case semantics::BaseType::UInt: 	basicType = intermediate::BasicType::UInt; break;
@@ -833,14 +834,14 @@ namespace s1
       switch (destType->GetTypeClass())
       {
       case semantics::Type::Base:
-        newOp = MakeConstOp (destination, destType, newVal->comp[0]);
+        newOp = MakeConstOp (destination, destType->GetBaseType(), newVal->comp[0]);
         break;
       case semantics::Type::Vector:
         {
           std::vector<RegisterPtr> vecRegs;
           for (size_t c = 0; c < nComps; c++)
           {
-            RegisterPtr newReg (NewConstReg (baseType));
+            RegisterPtr newReg (NewConstReg (make_intrusive<semantics::Type> (baseType)));
             AddOpToSequence (MakeConstOp (newReg, baseType, newVal->comp[c]));
             vecRegs.push_back (newReg);
           }
@@ -852,7 +853,7 @@ namespace s1
           std::vector<RegisterPtr> matRegs;
           for (size_t c = 0; c < nComps; c++)
           {
-            RegisterPtr newReg (NewConstReg (baseType));
+            RegisterPtr newReg (NewConstReg (make_intrusive<semantics::Type> (baseType)));
             AddOpToSequence (MakeConstOp (newReg, baseType, newVal->comp[c]));
             matRegs.push_back (newReg);
           }
@@ -875,9 +876,9 @@ namespace s1
     void ConstantFolding::FoldingVisitor::Functor2Call (T& result, Functor& func,
                                                         const ConstantBase& src1Val,
                                                         const ConstantBase& src2Val,
-                                                        const intermediate::Sequence::TypePtr& baseType)
+                                                        semantics::BaseType baseType)
     {
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int:
         result = static_cast<T> (func(src1Val.i, src2Val.i));
@@ -924,26 +925,26 @@ namespace s1
         {
         case semantics::BaseType::Int:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].i, func, src1Val->comp[c], src2Val->comp[c], baseType);
+            Functor2Call (newVal->comp[c].i, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
           break;
         case semantics::BaseType::UInt:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].ui, func, src1Val->comp[c], src2Val->comp[c], baseType);
+            Functor2Call (newVal->comp[c].ui, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
           break;
         case semantics::BaseType::Float:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].f, func, src1Val->comp[c], src2Val->comp[c], baseType);
+            Functor2Call (newVal->comp[c].f, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
           break;
         case semantics::BaseType::Bool:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].b, func, src1Val->comp[c], src2Val->comp[c], baseType);
+            Functor2Call (newVal->comp[c].b, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
           break;
         default:
           S1_ASSERT_NOT_REACHED (false);
         }
         constRegs[destination] = newVal;
 
-        AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst);
+        AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst->GetBaseType());
         return true;
       }
       return false;
@@ -1081,7 +1082,7 @@ namespace s1
         }
         constRegs[destination] = newVal;
 
-        AddConstantOps (destination, newVal, srcType, nComps, baseType);
+        AddConstantOps (destination, newVal, srcType, nComps, baseType->GetBaseType());
         return true;
       }
       return false;
@@ -1358,7 +1359,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddOpToSequence (MakeConstOp (destination, baseType, newVal->comp[0]));
+      AddOpToSequence (MakeConstOp (destination, baseType->GetBaseType(), newVal->comp[0]));
       seqChanged = true;
       return true;
     }
@@ -1411,7 +1412,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddConstantOps (destination, newVal, srcType, nComps, baseType);
+      AddConstantOps (destination, newVal, srcType, nComps, baseType->GetBaseType());
       seqChanged = true;
       return true;
     }
@@ -1466,7 +1467,7 @@ namespace s1
       constRegs[destination] = newVal;
 
       AddConstantOps (destination, newVal,
-                      destination->GetOriginalType(), nComps, baseTypeDst);
+                      destination->GetOriginalType(), nComps, baseTypeDst->GetBaseType());
       seqChanged = true;
       return true;
     }
@@ -1517,7 +1518,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddOpToSequence (MakeConstOp (destination, destination->GetOriginalType(), newVal->comp[0]));
+      AddOpToSequence (MakeConstOp (destination, destination->GetOriginalType()->GetBaseType(), newVal->comp[0]));
       seqChanged = true;
       return true;
     }
@@ -1601,7 +1602,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst);
+      AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst->GetBaseType());
       seqChanged = true;
       return true;
     }
