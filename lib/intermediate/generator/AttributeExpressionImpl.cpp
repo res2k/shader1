@@ -104,7 +104,7 @@ namespace s1
             {
               // multi-component swizzle
               targetReg = handler->AllocateRegister (seq, valueType, classify);
-              auto valueCompType = valueType->GetAVMBase();
+              auto valueCompType = handler->CreateType (valueType->GetVMBase());
               std::vector<RegisterPtr> compRegs;
               for (unsigned int c = 0; c < attr.swizzleCompNum; c++)
               {
@@ -166,7 +166,7 @@ namespace s1
       
       auto originalValueType = exprImpl->GetValueType();
       if (!originalValueType) return; // Assume error already handled
-      auto originalValueCompType = originalValueType->GetAVMBase();
+      auto originalValueCompType = handler->CreateType (originalValueType->GetVMBase());
       auto valueType = GetValueType();
       
       unsigned int compDefined = 0;

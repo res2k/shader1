@@ -197,9 +197,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorBool)
   BOOST_CHECK(errorHandler.parseErrors.empty());
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
   BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
-  auto vecType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::Bool);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::Bool);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorInt)
@@ -217,9 +215,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorInt)
   BOOST_CHECK(errorHandler.parseErrors.empty());
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
   BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
-  auto vecType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorUInt)
@@ -237,9 +233,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorUInt)
   BOOST_CHECK(errorHandler.parseErrors.empty());
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
   BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
-  auto vecType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::UInt);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::UInt);
 }
 
 BOOST_AUTO_TEST_CASE(TypeVectorFloat)
@@ -257,9 +251,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorFloat)
   BOOST_CHECK(errorHandler.parseErrors.empty());
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Vector);
   BOOST_CHECK_EQUAL (type->GetVectorTypeComponents(), 3u);
-  auto vecType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (vecType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (vecType->GetBaseType(), s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixBool)
@@ -278,9 +270,7 @@ BOOST_AUTO_TEST_CASE(TypeMatrixBool)
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
-  auto matType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::Bool);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::Bool);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixInt)
@@ -299,9 +289,7 @@ BOOST_AUTO_TEST_CASE(TypeMatrixInt)
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
-  auto matType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::Int);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixUInt)
@@ -320,9 +308,7 @@ BOOST_AUTO_TEST_CASE(TypeMatrixUInt)
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
-  auto matType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::UInt);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::UInt);
 }
 
 BOOST_AUTO_TEST_CASE(TypeMatrixFloat)
@@ -341,9 +327,7 @@ BOOST_AUTO_TEST_CASE(TypeMatrixFloat)
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Matrix);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeCols(), 3u);
   BOOST_CHECK_EQUAL (type->GetMatrixTypeRows(), 2u);
-  auto matType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (matType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (matType->GetBaseType(), s1::semantics::BaseType::Float);
+  BOOST_CHECK_EQUAL (type->GetVMBase(), s1::semantics::BaseType::Float);
 }
 
 BOOST_AUTO_TEST_CASE(TypeArray)
@@ -360,7 +344,7 @@ BOOST_AUTO_TEST_CASE(TypeArray)
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Array);
-  auto arrType = type->GetAVMBase();
+  auto arrType = type->GetArrayBase();
   BOOST_CHECK_EQUAL (arrType->GetTypeClass(), s1::semantics::Type::Base);
   BOOST_CHECK_EQUAL (arrType->GetBaseType(), s1::semantics::BaseType::Int);
 }
@@ -379,11 +363,11 @@ BOOST_AUTO_TEST_CASE(TypeArrayArray)
   BOOST_CHECK_NO_THROW ((type = parser.ParseType ()));
   BOOST_CHECK(errorHandler.parseErrors.empty());
   BOOST_CHECK_EQUAL (type->GetTypeClass(), s1::semantics::Type::Array);
-  auto arrArrType = type->GetAVMBase();
-  BOOST_CHECK_EQUAL (arrArrType->GetTypeClass(), s1::semantics::Type::Array);
-  auto arrType = arrArrType->GetAVMBase();
-  BOOST_CHECK_EQUAL (arrType->GetTypeClass(), s1::semantics::Type::Base);
-  BOOST_CHECK_EQUAL (arrType->GetBaseType(), s1::semantics::BaseType::Int);
+  auto arrType = type->GetArrayBase();
+  BOOST_CHECK_EQUAL (arrType->GetTypeClass(), s1::semantics::Type::Array);
+  auto arrArrType = arrType->GetArrayBase();
+  BOOST_CHECK_EQUAL (arrArrType->GetTypeClass(), s1::semantics::Type::Base);
+  BOOST_CHECK_EQUAL (arrArrType->GetBaseType(), s1::semantics::BaseType::Int);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

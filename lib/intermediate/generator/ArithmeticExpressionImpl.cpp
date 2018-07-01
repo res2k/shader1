@@ -50,14 +50,14 @@ namespace s1
       
       if (type1->GetTypeClass() == semantics::Type::Vector)
       {
-        baseType1 = type1->GetAVMBase();
+        baseType1 = handler->CreateType (type1->GetVMBase());
         vectorDim1 = type1->GetVectorTypeComponents();
       }
       else
         baseType1 = type1;
       if (type2->GetTypeClass() == semantics::Type::Vector)
       {
-        baseType2 = type2->GetAVMBase();
+        baseType2 = handler->CreateType (type2->GetVMBase());;
         vectorDim2 = type2->GetVectorTypeComponents();
       }
       else

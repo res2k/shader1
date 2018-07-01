@@ -49,7 +49,7 @@ namespace s1
       bool successful = true;
       SequenceBuilder& seq (*(block.GetSequenceBuilder()));
       
-      auto targetBaseType = type->GetAVMBase();
+      auto targetBaseType = handler->CreateType (type->GetVMBase());
           
       for (const auto& expr : params)
       {
@@ -72,7 +72,7 @@ namespace s1
             else
             {
               RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, srcExprReg, exprType.get());
+              auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType.get(), srcExprReg, exprType.get());
               if (srcCast.has_error ())
               {
                 ExpressionError (srcCast.error ());
@@ -86,7 +86,7 @@ namespace s1
         case semantics::Type::Vector:
           {
             // extract components
-            auto exprCompType = exprType->GetAVMBase();
+            auto exprCompType = handler->CreateType (exprType->GetVMBase());
             for (unsigned int c = 0; c < exprType->GetVectorTypeComponents(); c++)
             {
               RegisterPtr compReg (handler->AllocateRegister (seq, exprCompType, Intermediate));
@@ -99,7 +99,7 @@ namespace s1
               else
               {
                 RegisterPtr srcReg (handler->AllocateRegister (seq, targetBaseType, Intermediate));
-                auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType, compReg, exprCompType);
+                auto srcCast = handler->GenerateCast (seq, srcReg, targetBaseType.get(), compReg, exprCompType.get());
                 if (srcCast.has_error ())
                 {
                   ExpressionError (srcCast.error ());
@@ -201,11 +201,11 @@ namespace s1
             }
           }
           
-          auto targetBaseType = type->GetAVMBase();
+          auto targetBaseType = type->GetVMBase();
           
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           BasicType vecType;
-          switch (targetBaseType->GetBaseType())
+          switch (targetBaseType)
           {
           case semantics::BaseType::Bool: 	vecType = intermediate::BasicType::Bool; break;
           case semantics::BaseType::Int: 	vecType = intermediate::BasicType::Int; break;
@@ -242,7 +242,7 @@ namespace s1
           RegisterPtr targetReg (handler->AllocateRegister (seq, type, classify));
           std::vector<RegisterPtr> srcRegs;
           
-          auto targetBaseType = type->GetAVMBase();
+          auto targetBaseType = type->GetArrayBase();
 
           bool sourcesOk = true;
           for (const auto& expr : params)

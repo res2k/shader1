@@ -155,20 +155,20 @@ namespace s1
           break;
         case semantics::Type::Array:
           {
-            auto innerTypeStrs = TypeString (type->GetAVMBase (), nullptr);
+            auto innerTypeStrs = TypeString (type->GetArrayBase (), nullptr);
             return std::make_pair (std::move (innerTypeStrs.first),
                                    FormatSuffix.to<uc::String> (innerTypeStrs.second, sizeStr));
           }
           break;
         case semantics::Type::Vector:
           {
-            typeStr = FormatVector (ConvertBasicType (type->GetAVMBase ()->GetBaseType()),
+            typeStr = FormatVector (ConvertBasicType (type->GetVMBase ()),
                                     type->GetVectorTypeComponents());
           }
           break;
         case semantics::Type::Matrix:
           {
-            typeStr = FormatMatrix (ConvertBasicType (type->GetAVMBase ()->GetBaseType()),
+            typeStr = FormatMatrix (ConvertBasicType (type->GetVMBase ()),
                                     type->GetMatrixTypeRows (), type->GetMatrixTypeCols ());
           }
           break;

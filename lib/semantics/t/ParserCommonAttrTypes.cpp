@@ -68,8 +68,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeVector)
     auto typeAttr = s1::semantics::Attribute::GetType (&semanticsHandler, typeInt4.get(), attrXY);
     BOOST_CHECK_EQUAL(typeAttr->GetTypeClass(), s1::semantics::Type::Vector);
     BOOST_CHECK_EQUAL(typeAttr->GetVectorTypeComponents(), 2u);
-    s1::semantics::TypePtr typeBase = typeAttr->GetAVMBase();
-    BOOST_CHECK_EQUAL(typeBase->GetBaseType(), s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL(typeAttr->GetVMBase(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::Attribute attrGA =
@@ -77,8 +76,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeVector)
     auto typeAttr = s1::semantics::Attribute::GetType (&semanticsHandler, typeInt4.get(), attrGA);
     BOOST_CHECK_EQUAL(typeAttr->GetTypeClass(), s1::semantics::Type::Vector);
     BOOST_CHECK_EQUAL(typeAttr->GetVectorTypeComponents(), 2u);
-    s1::semantics::TypePtr typeBase = typeAttr->GetAVMBase();
-    BOOST_CHECK_EQUAL(typeBase->GetBaseType(), s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL(typeAttr->GetVMBase(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::Attribute attrXB =
@@ -109,22 +107,20 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix)
       s1::semantics::Attribute::Identify (s1::uc::String ("col"));
     auto typeAttr = s1::semantics::Attribute::GetType (&semanticsHandler, typeInt4x3.get(), attrCol);
     BOOST_CHECK_EQUAL(typeAttr->GetTypeClass(), s1::semantics::Type::Array);
-    s1::semantics::TypePtr typeArrayBase = typeAttr->GetAVMBase();
+    s1::semantics::TypePtr typeArrayBase = typeAttr->GetArrayBase();
     BOOST_CHECK_EQUAL(typeArrayBase->GetTypeClass(), s1::semantics::Type::Vector);
     BOOST_CHECK_EQUAL(typeArrayBase->GetVectorTypeComponents(), 3u);
-    s1::semantics::TypePtr typeBase = typeArrayBase->GetAVMBase();
-    BOOST_CHECK_EQUAL(typeBase->GetBaseType(), s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL(typeArrayBase->GetVMBase(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::Attribute attrRow =
       s1::semantics::Attribute::Identify (s1::uc::String ("row"));
     auto typeAttr = s1::semantics::Attribute::GetType (&semanticsHandler, typeInt4x3.get(), attrRow);
     BOOST_CHECK_EQUAL(typeAttr->GetTypeClass(), s1::semantics::Type::Array);
-    s1::semantics::TypePtr typeArrayBase = typeAttr->GetAVMBase();
+    s1::semantics::TypePtr typeArrayBase = typeAttr->GetArrayBase();
     BOOST_CHECK_EQUAL(typeArrayBase->GetTypeClass(), s1::semantics::Type::Vector);
     BOOST_CHECK_EQUAL(typeArrayBase->GetVectorTypeComponents(), 4u);
-    s1::semantics::TypePtr typeBase = typeArrayBase->GetAVMBase();
-    BOOST_CHECK_EQUAL(typeBase->GetBaseType(), s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL(typeArrayBase->GetVMBase(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::Attribute attrTransp =
@@ -133,8 +129,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix)
     BOOST_CHECK_EQUAL(typeAttr->GetTypeClass(), s1::semantics::Type::Matrix);
     BOOST_CHECK_EQUAL(typeAttr->GetMatrixTypeCols(), 3u);
     BOOST_CHECK_EQUAL(typeAttr->GetMatrixTypeRows(), 4u);
-    s1::semantics::TypePtr typeBase = typeAttr->GetAVMBase();
-    BOOST_CHECK_EQUAL(typeBase->GetBaseType(), s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL(typeAttr->GetVMBase(), s1::semantics::BaseType::Int);
   }
   {
     s1::semantics::Attribute attrInv =
@@ -161,8 +156,7 @@ BOOST_AUTO_TEST_CASE(AttrTypeMatrix2)
     BOOST_CHECK_EQUAL(typeAttr->GetTypeClass(), s1::semantics::Type::Matrix);
     BOOST_CHECK_EQUAL(typeAttr->GetMatrixTypeCols(), 3u);
     BOOST_CHECK_EQUAL(typeAttr->GetMatrixTypeRows(), 3u);
-    s1::semantics::TypePtr typeBase = typeAttr->GetAVMBase();
-    BOOST_CHECK_EQUAL(typeBase->GetBaseType(), s1::semantics::BaseType::Int);
+    BOOST_CHECK_EQUAL(typeAttr->GetVMBase(), s1::semantics::BaseType::Int);
   }
 }
 

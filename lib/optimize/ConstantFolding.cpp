@@ -104,7 +104,7 @@ namespace s1
 
       void ExtractTypeCompsAndBase (const intermediate::Sequence::TypePtr& srcType,
                                     unsigned int& nComps,
-                                    intermediate::Sequence::TypePtr& baseType);
+                                    semantics::BaseType& baseType);
       void AddConstantOps (const RegisterPtr& destination,
                            const ConstantValPtr& newVal,
                            const intermediate::Sequence::TypePtr& destType,
@@ -758,11 +758,10 @@ namespace s1
       {
         ConstantValPtr srcVal (srcConst->second);
 
-        intermediate::Sequence::TypePtr compType (source->GetOriginalType()->GetAVMBase());
-        assert (compType->GetTypeClass() == semantics::Type::Base);
+        auto compType = source->GetOriginalType()->GetVMBase();
 
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-        switch (compType->GetBaseType())
+        switch (compType)
         {
         case semantics::BaseType::Int:
           newVal->comp[0].i = srcVal->comp[comp].i;
@@ -781,7 +780,7 @@ namespace s1
         }
         constRegs[destination] = newVal;
 
-        SequenceOpPtr newOp (MakeConstOp (destination, compType->GetBaseType(), newVal->comp[0]));
+        SequenceOpPtr newOp (MakeConstOp (destination, compType, newVal->comp[0]));
         AddOpToSequence (newOp);
         seqChanged = true;
         return;
@@ -792,21 +791,21 @@ namespace s1
 
     void ConstantFolding::FoldingVisitor::ExtractTypeCompsAndBase (const intermediate::Sequence::TypePtr& srcType,
                                                                    unsigned int& nComps,
-                                                                   intermediate::Sequence::TypePtr& baseType)
+                                                                   semantics::BaseType& baseType)
     {
       switch (srcType->GetTypeClass())
       {
       case semantics::Type::Base:
         nComps = 1;
-        baseType = srcType;
+        baseType = srcType->GetBaseType();
         break;
       case semantics::Type::Vector:
         nComps = srcType->GetVectorTypeComponents();
-        baseType = srcType->GetAVMBase();
+        baseType = srcType->GetVMBase();
         break;
       case semantics::Type::Matrix:
         nComps = srcType->GetMatrixTypeCols() * srcType->GetMatrixTypeRows();
-        baseType = srcType->GetAVMBase();
+        baseType = srcType->GetVMBase();
         break;
       default:
         nComps = 0;
@@ -912,39 +911,39 @@ namespace s1
         ConstantValPtr src2Val (src2Const->second);
 
         unsigned int nComps;
-        intermediate::Sequence::TypePtr baseType;
+        semantics::BaseType baseType;
 
         intermediate::Sequence::TypePtr srcType (source1->GetOriginalType());
         ExtractTypeCompsAndBase (srcType, nComps, baseType);
         unsigned int nCompsDst;
-        intermediate::Sequence::TypePtr baseTypeDst;
+        semantics::BaseType baseTypeDst;
         ExtractTypeCompsAndBase (destination->GetOriginalType(), nCompsDst, baseTypeDst);
 
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-        switch (baseTypeDst->GetBaseType())
+        switch (baseTypeDst)
         {
         case semantics::BaseType::Int:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].i, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
+            Functor2Call (newVal->comp[c].i, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
         case semantics::BaseType::UInt:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].ui, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
+            Functor2Call (newVal->comp[c].ui, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
         case semantics::BaseType::Float:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].f, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
+            Functor2Call (newVal->comp[c].f, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
         case semantics::BaseType::Bool:
           for (size_t c = 0; c < nComps; c++)
-            Functor2Call (newVal->comp[c].b, func, src1Val->comp[c], src2Val->comp[c], baseType->GetBaseType());
+            Functor2Call (newVal->comp[c].b, func, src1Val->comp[c], src2Val->comp[c], baseType);
           break;
         default:
           S1_ASSERT_NOT_REACHED (false);
         }
         constRegs[destination] = newVal;
 
-        AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst->GetBaseType());
+        AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst);
         return true;
       }
       return false;
@@ -1053,13 +1052,13 @@ namespace s1
         ConstantValPtr srcVal (srcConst->second);
 
         unsigned int nComps;
-        intermediate::Sequence::TypePtr baseType;
+        semantics::BaseType baseType;
 
         intermediate::Sequence::TypePtr srcType (source->GetOriginalType());
         ExtractTypeCompsAndBase (srcType, nComps, baseType);
 
         ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-        switch (baseType->GetBaseType())
+        switch (baseType)
         {
         case semantics::BaseType::Int:
           for (size_t c = 0; c < nComps; c++)
@@ -1082,7 +1081,7 @@ namespace s1
         }
         constRegs[destination] = newVal;
 
-        AddConstantOps (destination, newVal, srcType, nComps, baseType->GetBaseType());
+        AddConstantOps (destination, newVal, srcType, nComps, baseType);
         return true;
       }
       return false;
@@ -1318,11 +1317,11 @@ namespace s1
                                                             const ConstantValPtr& source2)
     {
       unsigned int nComps;
-      intermediate::Sequence::TypePtr baseType;
+      semantics::BaseType baseType;
       ExtractTypeCompsAndBase (srcType, nComps, baseType);
 
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int:
         {
@@ -1359,7 +1358,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddOpToSequence (MakeConstOp (destination, baseType->GetBaseType(), newVal->comp[0]));
+      AddOpToSequence (MakeConstOp (destination, baseType, newVal->comp[0]));
       seqChanged = true;
       return true;
     }
@@ -1370,12 +1369,12 @@ namespace s1
                                                               const ConstantValPtr& source2)
     {
       unsigned int nComps;
-      intermediate::Sequence::TypePtr baseType;
+      semantics::BaseType baseType;
       ExtractTypeCompsAndBase (srcType, nComps, baseType);
       assert (nComps == 3);
 
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int:
         {
@@ -1412,7 +1411,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddConstantOps (destination, newVal, srcType, nComps, baseType->GetBaseType());
+      AddConstantOps (destination, newVal, srcType, nComps, baseType);
       seqChanged = true;
       return true;
     }
@@ -1422,14 +1421,14 @@ namespace s1
                                                                   const ConstantValPtr& source)
     {
       unsigned int nComps;
-      intermediate::Sequence::TypePtr baseType;
+      semantics::BaseType baseType;
       ExtractTypeCompsAndBase (srcType, nComps, baseType);
       unsigned int nCompsDst;
-      intermediate::Sequence::TypePtr baseTypeDst;
+      semantics::BaseType baseTypeDst;
       ExtractTypeCompsAndBase (destination->GetOriginalType(), nCompsDst, baseTypeDst);
 
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int:
         {
@@ -1467,7 +1466,7 @@ namespace s1
       constRegs[destination] = newVal;
 
       AddConstantOps (destination, newVal,
-                      destination->GetOriginalType(), nComps, baseTypeDst->GetBaseType());
+                      destination->GetOriginalType(), nComps, baseTypeDst);
       seqChanged = true;
       return true;
     }
@@ -1477,14 +1476,14 @@ namespace s1
                                                                const ConstantValPtr& source)
     {
       unsigned int nComps;
-      intermediate::Sequence::TypePtr baseType;
+      semantics::BaseType baseType;
       ExtractTypeCompsAndBase (srcType, nComps, baseType);
       unsigned int nCompsDst;
-      intermediate::Sequence::TypePtr baseTypeDst;
+      semantics::BaseType baseTypeDst;
       ExtractTypeCompsAndBase (destination->GetOriginalType(), nCompsDst, baseTypeDst);
 
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int:
         {
@@ -1531,14 +1530,14 @@ namespace s1
                                                                   /* src2Rows = src1Cols */ unsigned int src2Cols)
     {
       unsigned int nComps;
-      intermediate::Sequence::TypePtr baseType;
+      semantics::BaseType baseType;
       ExtractTypeCompsAndBase (srcType, nComps, baseType);
       unsigned int nCompsDst;
-      intermediate::Sequence::TypePtr baseTypeDst;
+      semantics::BaseType baseTypeDst;
       ExtractTypeCompsAndBase (destination->GetOriginalType(), nCompsDst, baseTypeDst);
 
       ConstantValPtr newVal = boost::make_shared<ConstantVal> ();
-      switch (baseType->GetBaseType())
+      switch (baseType)
       {
       case semantics::BaseType::Int:
         {
@@ -1602,7 +1601,7 @@ namespace s1
       }
       constRegs[destination] = newVal;
 
-      AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst->GetBaseType());
+      AddConstantOps (destination, newVal, destination->GetOriginalType(), nCompsDst, baseTypeDst);
       seqChanged = true;
       return true;
     }

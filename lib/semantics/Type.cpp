@@ -27,38 +27,75 @@ namespace s1
 {
   namespace semantics
   {
+    bool Type::CompatibleLossless (BaseType base1, BaseType base2)
+    {
+      if ((base1 == BaseType::Void) || (base2 == BaseType::Void))
+        // Void is not even compatible to itself
+        return false;
+      if (((base1 == BaseType::Int) || (base1 == BaseType::UInt))
+          && ((base2 == BaseType::Int) || (base2 == BaseType::UInt)))
+        // int and unsigned int are assumed assignable without precision loss
+        return true;
+      if (((base1 == BaseType::Int) || (base1 == BaseType::UInt))
+          && (base2 == BaseType::Float))
+        // assignment from int or unsigned int to float is assumed assignable without precision loss
+        return true;
+      // Otherwise, types must be equal
+      return base1 == base2;
+    }
+
+    bool Type::IsPrecisionHigherEqual (BaseType type, BaseType other)
+    {
+        // Void is not even of equal precision to itself...
+        if ((type == BaseType::Void) || (other == BaseType::Void))
+          return false;
+        // Treat 'int' as higher precision as 'unsigned int' (b/c 'int' has a sign)
+        if ((type == BaseType::Int)
+            && ((other == BaseType::Int) || (other == BaseType::UInt)))
+          return true;
+        // Float is considered higher precision than int or unsigned int (has fractions)
+        if ((type == BaseType::Float)
+            && ((other == BaseType::Int) || (other == BaseType::UInt)))
+          // assignment from int or unsigned int to float is assumed assignable without precision loss
+          return true;
+        // Otherwise, types must be equal
+        return type == other;
+    }
+
+    uc::String Type::ToString (BaseType base)
+    {
+      switch (base)
+      {
+        case BaseType::Invalid: return uc::String ("INVALID");
+        case BaseType::Void: return uc::String ("void");
+        case BaseType::Bool: return uc::String ("bool");
+        case BaseType::Int: return uc::String ("int");
+        case BaseType::UInt: return uc::String ("unsigned int");
+        case BaseType::Float: return uc::String ("float");
+      }
+      S1_ASSERT_NOT_REACHED (uc::String());
+    }
+
     bool Type::CompatibleLossless (const Type& to) const
     {
       if (typeClass != to.typeClass) return false;
       switch (typeClass)
       {
       case Base:
-        if ((base == BaseType::Void) || (to.base == BaseType::Void))
-          // Void is not even compatible to itself
-          return false;
-        if (((base == BaseType::Int) || (base == BaseType::UInt))
-            && ((to.base == BaseType::Int) || (to.base == BaseType::UInt)))
-          // int and unsigned int are assumed assignable without precision loss
-          return true;
-        if (((base == BaseType::Int) || (base == BaseType::UInt))
-            && (to.base == BaseType::Float))
-          // assignment from int or unsigned int to float is assumed assignable without precision loss
-          return true;
-        // Otherwise, types must be equal
-        return base == to.base;
+        return CompatibleLossless (base, to.base);
       case Sampler:
         // Samplers have to be equal
         return sampler == to.sampler;
       case Array:
         // Array assignments are compatible when the contained members are
-        return GetAVMBase()->CompatibleLossless (*(to.GetAVMBase()));
+        return GetArrayBase()->CompatibleLossless (*(to.GetArrayBase()));
       case Vector:
         // Vectors: base types must be compatible and both types have the same number of components
-        return GetAVMBase()->CompatibleLossless (*(to.GetAVMBase()))
+        return CompatibleLossless (GetVMBase(), to.GetVMBase())
           && (GetVectorTypeComponents() == to.GetVectorTypeComponents());
       case Matrix:
         // Matrices: base types must be compatible and both types have the same number of rows/cols
-        return GetAVMBase()->CompatibleLossless (*(to.GetAVMBase()))
+        return CompatibleLossless (GetVMBase(), to.GetVMBase())
           && (GetMatrixTypeCols() == to.GetMatrixTypeCols())
           && (GetMatrixTypeRows() == to.GetMatrixTypeRows());
       }
@@ -94,12 +131,12 @@ namespace s1
       case Sampler:
         return sampler == other.sampler;
       case Array:
-        return GetAVMBase()->IsEqual (*(other.GetAVMBase()));
+        return GetArrayBase()->IsEqual (*(other.GetArrayBase()));
       case Vector:
-        return GetAVMBase()->IsEqual (*(other.GetAVMBase()))
+        return (GetVMBase() == other.GetVMBase())
           && (GetVectorTypeComponents() == other.GetVectorTypeComponents());
       case Matrix:
-        return GetAVMBase()->IsEqual (*(other.GetAVMBase()))
+        return (GetVMBase() == other.GetVMBase())
           && (GetMatrixTypeCols() == other.GetMatrixTypeCols())
           && (GetMatrixTypeRows() == other.GetMatrixTypeRows());
       }
@@ -112,33 +149,20 @@ namespace s1
       switch (typeClass)
       {
       case Base:
-        // Void is not even of equal precision to itself...
-        if ((base == BaseType::Void) || (other.base == BaseType::Void))
-          return false;
-        // Treat 'int' as higher precision as 'unsigned int' (b/c 'int' has a sign)
-        if ((base == BaseType::Int)
-            && ((other.base == BaseType::Int) || (other.base == BaseType::UInt)))
-          return true;
-        // Float is considered higher precision than int or unsigned int (has fractions)
-        if ((base == BaseType::Float)
-            && ((other.base == BaseType::Int) || (other.base == BaseType::UInt)))
-          // assignment from int or unsigned int to float is assumed assignable without precision loss
-          return true;
-        // Otherwise, types must be equal
-        return base == other.base;
+        return IsPrecisionHigherEqual (base, other.base);
       case Sampler:
         // Samplers have to be equal
         return sampler == other.sampler;
       case Array:
         // Array type is higher/equal prec when the contained members are
-        return GetAVMBase()->IsPrecisionHigherEqual (*(other.GetAVMBase()));
+        return GetArrayBase()->IsPrecisionHigherEqual (*(other.GetArrayBase()));
       case Vector:
         // Vectors: base type is higher/equal prec if both types have the same number of components
-        return GetAVMBase()->IsPrecisionHigherEqual (*(other.GetAVMBase()))
+        return IsPrecisionHigherEqual (GetVMBase(), other.GetVMBase())
           && (GetVectorTypeComponents() == other.GetVectorTypeComponents());
       case Matrix:
         // Matrices: base type is higher/equal prec if both types have the same number of rows/cols
-        return GetAVMBase()->IsPrecisionHigherEqual (*(other.GetAVMBase()))
+        return IsPrecisionHigherEqual (GetVMBase(), other.GetVMBase())
           && (GetMatrixTypeCols() == other.GetMatrixTypeCols())
           && (GetMatrixTypeRows() == other.GetMatrixTypeRows());
       }
@@ -154,18 +178,7 @@ namespace s1
       switch (typeClass)
       {
       case Base:
-        {
-          switch (base)
-          {
-            case BaseType::Invalid: return uc::String ("INVALID");
-            case BaseType::Void: return uc::String ("void");
-            case BaseType::Bool: return uc::String ("bool");
-            case BaseType::Int: return uc::String ("int");
-            case BaseType::UInt: return uc::String ("unsigned int");
-            case BaseType::Float: return uc::String ("float");
-          }
-        }
-        break;
+        return ToString (base);
       case Sampler:
         {
           switch (sampler)
@@ -179,21 +192,15 @@ namespace s1
         break;
       case Array:
         {
-          uc::String s;
-          FormatArray (s, GetAVMBase()->ToString());
-          return s;
+          return FormatArray.to<uc::String> (GetArrayBase()->ToString());
         }
       case Vector:
         {
-          uc::String s;
-          FormatVector (s, GetAVMBase()->ToString(), GetVectorTypeComponents());
-          return s;
+          return FormatVector.to<uc::String> (ToString (GetVMBase()), GetVectorTypeComponents());
         }
       case Matrix:
         {
-          uc::String s;
-          FormatMatrix (s, GetAVMBase()->ToString(), GetMatrixTypeCols(), GetMatrixTypeRows());
-          return s;
+          return FormatMatrix.to<uc::String> (ToString (GetVMBase()), GetMatrixTypeCols(), GetMatrixTypeRows());
         }
       }
       S1_ASSERT_NOT_REACHED (uc::String());

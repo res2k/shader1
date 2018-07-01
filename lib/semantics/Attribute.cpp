@@ -116,17 +116,26 @@ namespace s1
         break;
       case Attribute::matrixCol:
         if (expressionType->GetTypeClass() == Type::Matrix)
+        {
+          auto baseType = handler->CreateType (expressionType->GetVMBase());
           attrType = handler->CreateArrayType (
-            handler->CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows()));
+            handler->CreateVectorType (baseType, expressionType->GetMatrixTypeRows()));
+        }
         break;
       case Attribute::matrixRow:
         if (expressionType->GetTypeClass() == Type::Matrix)
+        {
+          auto baseType = handler->CreateType (expressionType->GetVMBase());
           attrType = handler->CreateArrayType (
-            handler->CreateVectorType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeCols()));
+            handler->CreateVectorType (baseType, expressionType->GetMatrixTypeCols()));
+        }
         break;
       case Attribute::matrixTranspose:
         if (expressionType->GetTypeClass() == Type::Matrix)
-          attrType = handler->CreateMatrixType (expressionType->GetAVMBase(), expressionType->GetMatrixTypeRows(), expressionType->GetMatrixTypeCols());
+        {
+          auto baseType = handler->CreateType (expressionType->GetVMBase());
+          attrType = handler->CreateMatrixType (baseType, expressionType->GetMatrixTypeRows(), expressionType->GetMatrixTypeCols());
+        }
         break;
       case Attribute::matrixInvert:
         if ((expressionType->GetTypeClass() == Type::Matrix)
@@ -138,9 +147,12 @@ namespace s1
         {
           if (attr.swizzleCompNum == 1)
             // 1-component swizzles return the base type, not a 1-component vector
-            attrType = expressionType->GetAVMBase();
+            attrType = handler->CreateType (expressionType->GetVMBase());
           else
-            attrType = handler->CreateVectorType (expressionType->GetAVMBase(), attr.swizzleCompNum);
+          {
+            auto baseType = handler->CreateType (expressionType->GetVMBase());
+            attrType = handler->CreateVectorType (baseType, attr.swizzleCompNum);
+          }
         }
         break;
       case Attribute::Unknown:

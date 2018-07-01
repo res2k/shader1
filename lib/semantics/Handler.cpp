@@ -62,14 +62,16 @@ namespace s1
 
     TypePtr Handler::CreateVectorType (TypePtr baseType, unsigned int components)
     {
-      return make_intrusive<Type> (baseType, components);
+      S1_ASSERT(baseType->GetTypeClass() == Type::Base, nullptr);
+      return make_intrusive<Type> (baseType->GetBaseType(), components);
     }
 
     TypePtr Handler::CreateMatrixType (TypePtr baseType,
                                        unsigned int columns,
                                        unsigned int rows)
     {
-      return make_intrusive<Type> (baseType, columns, rows);
+      S1_ASSERT(baseType->GetTypeClass() == Type::Base, nullptr);
+      return make_intrusive<Type> (baseType->GetBaseType(), columns, rows);
     }
 
   } // namespace semantics

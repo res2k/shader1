@@ -238,7 +238,7 @@ public:
       if (baseType)
       {
         if (baseType->GetTypeClass() == s1::semantics::Type::Array)
-          valueType = baseType->GetAVMBase();
+          valueType = baseType->GetArrayBase();
       }
     }
     

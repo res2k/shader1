@@ -48,7 +48,7 @@ namespace s1
         ExpressionError (Error::NotAnArray);
         return nullptr;
       }
-      return exprType->GetAVMBase();
+      return exprType->GetArrayBase();
     }
     
     RegisterPtr IntermediateGeneratorSemanticsHandler::ArrayElementExpressionImpl::AddToSequence (BlockImpl& block,

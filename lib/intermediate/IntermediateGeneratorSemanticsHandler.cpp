@@ -127,20 +127,16 @@ namespace s1
       case semantics::Type::Array:
         {
           std::string s;
-          FormatTSArray (s, GetTypeString (type->GetAVMBase()));
+          FormatTSArray (s, GetTypeString (type->GetArrayBase()));
           return s;
         }
       case semantics::Type::Vector:
         {
-          auto compType = type->GetAVMBase();
-          S1_ASSERT (compType->GetTypeClass() == semantics::Type::Base, std::string());
-          return GetBaseTypeString (compType->GetBaseType(), type->GetVectorTypeComponents(), 0);
+          return GetBaseTypeString (type->GetVMBase(), type->GetVectorTypeComponents(), 0);
         }
       case semantics::Type::Matrix:
         {
-          auto compType = type->GetAVMBase();
-          S1_ASSERT (compType->GetTypeClass() == semantics::Type::Base, std::string());
-          return GetBaseTypeString (compType->GetBaseType(), type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
+          return GetBaseTypeString (type->GetVMBase(), type->GetMatrixTypeRows(), type->GetMatrixTypeCols());
         }
       }
       S1_ASSERT (false, std::string());
@@ -320,13 +316,13 @@ namespace s1
         if (typeSource->GetTypeClass() == semantics::Type::Base)
         {
           std::vector<RegisterPtr> srcVec;
-          auto destBaseType = typeDestination->GetAVMBase();
+          auto destBaseType = CreateType (typeDestination->GetVMBase());
           RegisterPtr srcReg;
           if (!destBaseType->IsEqual (*(typeSource)))
           {
             // Generate cast
             RegisterPtr srcVecReg (AllocateRegister (seqBuilder, destBaseType, Intermediate));
-            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType, castSource, typeSource);
+            auto innerCastResult = GenerateCast (seqBuilder, srcVecReg, destBaseType.get(), castSource, typeSource);
             if (innerCastResult.has_error()) return innerCastResult.error();
             srcReg = srcVecReg;
           }
