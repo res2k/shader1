@@ -69,12 +69,6 @@ namespace s1
 
     IntermediateGeneratorSemanticsHandler::IntermediateGeneratorSemanticsHandler () : completed (false)
     {
-      invalidType = new semantics::Type (semantics::BaseType::Invalid);
-      voidType = new semantics::Type (semantics::BaseType::Void);
-      boolType = new semantics::Type (semantics::BaseType::Bool);
-      intType = new semantics::Type (semantics::BaseType::Int);
-      uintType = new semantics::Type (semantics::BaseType::UInt);
-      floatType = new semantics::Type (semantics::BaseType::Float);
     }
 
     IntermediateGeneratorSemanticsHandler::~IntermediateGeneratorSemanticsHandler ()
@@ -498,43 +492,6 @@ namespace s1
         }
       }
       return newProg;
-    }
-
-    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateType (semantics::BaseType type)
-    {
-      switch (type)
-      {
-      case semantics::BaseType::Invalid: return invalidType;
-      case semantics::BaseType::Void: return voidType;
-      case semantics::BaseType::Bool: return boolType;
-      case semantics::BaseType::Int: return intType;
-      case semantics::BaseType::UInt: return uintType;
-      case semantics::BaseType::Float: return floatType;
-      }
-      S1_ASSERT_NOT_REACHED (TypePtr());
-    }
-
-    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateSamplerType (semantics::SamplerType dim)
-    {
-      return semantics::TypePtr (new semantics::Type (dim));
-    }
-
-    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateArrayType (semantics::TypePtr baseType)
-    {
-      return semantics::TypePtr (new semantics::Type (baseType));
-    }
-
-    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateVectorType (semantics::TypePtr baseType,
-                                                                                unsigned int components)
-    {
-      return semantics::TypePtr (new semantics::Type (baseType, components));
-    }
-
-    semantics::TypePtr IntermediateGeneratorSemanticsHandler::CreateMatrixType (semantics::TypePtr baseType,
-                                                                                unsigned int columns,
-                                                                                unsigned int rows)
-    {
-      return semantics::TypePtr (new semantics::Type (baseType, columns, rows));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateConstBoolExpression (bool value)

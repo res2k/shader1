@@ -2,11 +2,13 @@ set(semantics_sources
     Attribute.cpp
     CommonHandler.cpp
     CommonScope.cpp
+    Handler.cpp
     Type.cpp
     ${S1_INC}/semantics/CommonHandler.h
     ${S1_INC}/semantics/Attribute.h
     ${S1_INC}/semantics/CommonName.h
     ${S1_INC}/semantics/CommonScope.h
+    ${S1_INC}/semantics/Handler.h
     ${S1_INC}/semantics/Type.h
     )
 s1_add_library_internal(semantics

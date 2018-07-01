@@ -28,36 +28,6 @@ namespace s1
 {
   namespace semantics
   {
-    typedef TypePtr TypePtr;
-    
-    TypePtr CommonHandler::CreateType (BaseType type)
-    {
-      return TypePtr (new Type (type));
-    }
-    
-    TypePtr CommonHandler::CreateSamplerType (SamplerType dim)
-    {
-      return TypePtr (new Type (dim));
-    }
-    
-    TypePtr CommonHandler::CreateArrayType (TypePtr baseType)
-    {
-      return TypePtr (new Type (baseType));
-    }
-    
-    TypePtr CommonHandler::CreateVectorType (TypePtr baseType,
-                                                      unsigned int components)
-    {
-      return TypePtr (new Type (baseType, components));
-    }
-    
-    TypePtr CommonHandler::CreateMatrixType (TypePtr baseType,
-                                                      unsigned int columns,
-                                                      unsigned int rows)
-    {
-      return TypePtr (new Type (baseType, columns, rows));
-    }
-  
     ScopePtr CommonHandler::CreateScope (ScopePtr parentScope,
                                                              ScopeLevel scopeLevel)
     {

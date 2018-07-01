@@ -80,13 +80,6 @@ namespace s1
       /// Diagnostics handler
       diagnostics::Handler* diagnosticsHandler = nullptr;
 
-      semantics::TypePtr invalidType;
-      semantics::TypePtr voidType;
-      semantics::TypePtr boolType;
-      semantics::TypePtr intType;
-      semantics::TypePtr uintType;
-      semantics::TypePtr floatType;
-
       typedef boost::intrusive_ptr<ScopeImpl> ScopeImplPtr;
       ScopeImplPtr builtinScope;
       ScopeImplPtr globalScope;
@@ -172,15 +165,6 @@ namespace s1
 
       /**\name s1::parser::SemanticsHandler implementation
        * @{ */
-      semantics::TypePtr CreateType (semantics::BaseType type);
-      semantics::TypePtr CreateSamplerType (semantics::SamplerType dim);
-      semantics::TypePtr CreateArrayType (semantics::TypePtr baseType);
-      semantics::TypePtr CreateVectorType (semantics::TypePtr baseType,
-                                           unsigned int components);
-      semantics::TypePtr CreateMatrixType (semantics::TypePtr baseType,
-                                           unsigned int columns,
-                                           unsigned int rows);
-
       ExpressionPtr CreateConstBoolExpression (bool value);
       ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr);
       ExpressionPtr CreateVariableExpression (semantics::NamePtr name);

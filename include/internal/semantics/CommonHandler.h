@@ -33,15 +33,6 @@ namespace s1
     class CommonHandler : public Handler
     {
     public:  
-      TypePtr CreateType (BaseType type);
-      TypePtr CreateSamplerType (SamplerType dim);
-      TypePtr CreateArrayType (TypePtr baseType);
-      TypePtr CreateVectorType (TypePtr baseType,
-                                           unsigned int components);
-      TypePtr CreateMatrixType (TypePtr baseType,
-                                           unsigned int columns,
-                                           unsigned int rows);
-      
       ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel);
     };
     

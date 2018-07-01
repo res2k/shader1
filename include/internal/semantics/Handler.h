@@ -44,25 +44,34 @@ namespace s1
      * In structure of objects is, in essence, tree-like (although the exact
      * organization is up the implementation).
      */
-    struct Handler
+    class Handler
     {
-      virtual ~Handler() {}
+    protected:
+      TypePtr invalidType;
+      TypePtr voidType;
+      TypePtr boolType;
+      TypePtr intType;
+      TypePtr uintType;
+      TypePtr floatType;
+    public:
+      Handler();
+      virtual ~Handler();
 
       /**\name Types
        * @{ */
       /// Create a base type
-      virtual TypePtr CreateType (BaseType type) = 0;
+      TypePtr CreateType (BaseType type);
       /// Create a sampler type
-      virtual TypePtr CreateSamplerType (SamplerType dim) = 0;
+      TypePtr CreateSamplerType (SamplerType dim);
       /// Create an array type
-      virtual TypePtr CreateArrayType (TypePtr baseType) = 0;
+      TypePtr CreateArrayType (TypePtr baseType);
       /// Create a vector type
-      virtual TypePtr CreateVectorType (TypePtr baseType,
-                                        unsigned int components) = 0;
+      TypePtr CreateVectorType (TypePtr baseType,
+                                unsigned int components);
       /// Create a matrix type
-      virtual TypePtr CreateMatrixType (TypePtr baseType,
-                                        unsigned int columns,
-                                        unsigned int rows) = 0;
+      TypePtr CreateMatrixType (TypePtr baseType,
+                                unsigned int columns,
+                                unsigned int rows);
       /** @} */
 
       /**\name Expressions

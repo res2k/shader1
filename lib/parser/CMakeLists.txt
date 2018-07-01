@@ -57,5 +57,8 @@ s1_add_boost_test(test_Parser
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/AstMacros.h
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/print_parser_Error.h
                           ${CMAKE_CURRENT_SOURCE_DIR}/t/TestAstBuilder.h
-                  DEPENDS parser)
+                          AstBuilder.cpp # TEMPORARY to work around dependency issue
+                                         # (parser depending on semantics)
+                  DEPENDS lexer # parser
+                  )
 
