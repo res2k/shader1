@@ -122,9 +122,6 @@ namespace s1
           : semantics::Attribute (other) {}
         Attribute (semantics::Attribute&& other)
           : semantics::Attribute (std::move (other)) {}
-
-        unsigned char GetSwizzleComp (unsigned char num) const
-        { return (swizzleComps >> (num*2)) & 3; }
       };
       /** @} */
 

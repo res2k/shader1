@@ -50,6 +50,9 @@ namespace s1
           swizzleComps ((comp1 & 3) | ((comp2 & 3) << 2) | ((comp3 & 3) << 4) | ((comp4 & 3) << 6))
       {}
 
+      unsigned char GetSwizzleComp (unsigned char num) const
+      { return (swizzleComps >> (num*2)) & 3; }
+
       static Attribute Identify (const uc::String& attributeStr);
 
       /**\name Attribute utilities
