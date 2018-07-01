@@ -51,19 +51,16 @@ namespace s1
         return sampler == to.sampler;
       case Array:
         // Array assignments are compatible when the contained members are
-        return static_cast<Type*> (avmBase.get())->CompatibleLossless (
-          *(static_cast<Type*> (to.avmBase.get())));
+        return GetAVMBase()->CompatibleLossless (*(to.GetAVMBase()));
       case Vector:
         // Vectors: base types must be compatible and both types have the same number of components
-        return static_cast<Type*> (avmBase.get())->CompatibleLossless (
-          *(static_cast<Type*> (to.avmBase.get())))
-          && (vectorDim == to.vectorDim);
+        return GetAVMBase()->CompatibleLossless (*(to.GetAVMBase()))
+          && (GetVectorTypeComponents() == to.GetVectorTypeComponents());
       case Matrix:
         // Matrices: base types must be compatible and both types have the same number of rows/cols
-        return static_cast<Type*> (avmBase.get())->CompatibleLossless (
-          *(static_cast<Type*> (to.avmBase.get())))
-          && (matrixCols == to.matrixCols)
-          && (matrixRows == to.matrixRows);
+        return GetAVMBase()->CompatibleLossless (*(to.GetAVMBase()))
+          && (GetMatrixTypeCols() == to.GetMatrixTypeCols())
+          && (GetMatrixTypeRows() == to.GetMatrixTypeRows());
       }
       S1_ASSERT_NOT_REACHED (false);
     }
@@ -97,17 +94,14 @@ namespace s1
       case Sampler:
         return sampler == other.sampler;
       case Array:
-        return static_cast<Type*> (avmBase.get())->IsEqual (
-          *(static_cast<Type*> (other.avmBase.get())));
+        return GetAVMBase()->IsEqual (*(other.GetAVMBase()));
       case Vector:
-        return static_cast<Type*> (avmBase.get())->IsEqual (
-          *(static_cast<Type*> (other.avmBase.get())))
-          && (vectorDim == other.vectorDim);
+        return GetAVMBase()->IsEqual (*(other.GetAVMBase()))
+          && (GetVectorTypeComponents() == other.GetVectorTypeComponents());
       case Matrix:
-        return static_cast<Type*> (avmBase.get())->IsEqual (
-          *(static_cast<Type*> (other.avmBase.get())))
-          && (matrixCols == other.matrixCols)
-          && (matrixRows == other.matrixRows);
+        return GetAVMBase()->IsEqual (*(other.GetAVMBase()))
+          && (GetMatrixTypeCols() == other.GetMatrixTypeCols())
+          && (GetMatrixTypeRows() == other.GetMatrixTypeRows());
       }
       S1_ASSERT_NOT_REACHED (false);
     }
@@ -137,19 +131,16 @@ namespace s1
         return sampler == other.sampler;
       case Array:
         // Array type is higher/equal prec when the contained members are
-        return static_cast<Type*> (avmBase.get())->IsPrecisionHigherEqual (
-          *(static_cast<Type*> (other.avmBase.get())));
+        return GetAVMBase()->IsPrecisionHigherEqual (*(other.GetAVMBase()));
       case Vector:
         // Vectors: base type is higher/equal prec if both types have the same number of components
-        return static_cast<Type*> (avmBase.get())->IsPrecisionHigherEqual (
-          *(static_cast<Type*> (other.avmBase.get())))
-          && (vectorDim == other.vectorDim);
+        return GetAVMBase()->IsPrecisionHigherEqual (*(other.GetAVMBase()))
+          && (GetVectorTypeComponents() == other.GetVectorTypeComponents());
       case Matrix:
         // Matrices: base type is higher/equal prec if both types have the same number of rows/cols
-        return static_cast<Type*> (avmBase.get())->IsPrecisionHigherEqual (
-          *(static_cast<Type*> (other.avmBase.get())))
-          && (matrixCols == other.matrixCols)
-          && (matrixRows == other.matrixRows);
+        return GetAVMBase()->IsPrecisionHigherEqual (*(other.GetAVMBase()))
+          && (GetMatrixTypeCols() == other.GetMatrixTypeCols())
+          && (GetMatrixTypeRows() == other.GetMatrixTypeRows());
       }
       S1_ASSERT_NOT_REACHED (false);
     }
@@ -189,19 +180,19 @@ namespace s1
       case Array:
         {
           uc::String s;
-          FormatArray (s, static_cast<Type*> (avmBase.get())->ToString());
+          FormatArray (s, GetAVMBase()->ToString());
           return s;
         }
       case Vector:
         {
           uc::String s;
-          FormatVector (s, static_cast<Type*> (avmBase.get())->ToString(), vectorDim);
+          FormatVector (s, GetAVMBase()->ToString(), GetVectorTypeComponents());
           return s;
         }
       case Matrix:
         {
           uc::String s;
-          FormatMatrix (s, static_cast<Type*> (avmBase.get())->ToString(), matrixCols, matrixRows);
+          FormatMatrix (s, GetAVMBase()->ToString(), GetMatrixTypeCols(), GetMatrixTypeRows());
           return s;
         }
       }

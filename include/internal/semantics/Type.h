@@ -33,32 +33,81 @@ namespace s1
         Base, Sampler, Array, Vector, Matrix
       };
     protected:
+      struct ArrayType
+      {
+        TypePtr base;
+      };
+      struct VectorType
+      {
+        TypePtr base;
+        unsigned int dim;
+      };
+      struct MatrixType
+      {
+        TypePtr base;
+        unsigned int cols;
+        unsigned int rows;
+      };
       Class typeClass;
-      BaseType base;
-      SamplerType sampler;
-      TypePtr avmBase;
-      unsigned int vectorDim;
-      unsigned int matrixCols;
-      unsigned int matrixRows;
+      union
+      {
+        BaseType base;
+        SamplerType sampler;
+        ArrayType arrayData;
+        VectorType vecData;
+        MatrixType matData;
+      };
     public:
       Type (BaseType base) : typeClass (Base), base (base) {}
       Type (SamplerType sampler) : typeClass (Sampler), sampler (sampler) {}
-      Type (TypePtr aBase) : typeClass (Array), avmBase (aBase) {}
-      Type (TypePtr vBase, unsigned int d)
-        : typeClass (Vector), avmBase (vBase), vectorDim (d) {}
-      Type (TypePtr mBase, unsigned int c, unsigned int r)
-        : typeClass (Matrix), avmBase (mBase), matrixCols (c), matrixRows (r) {}
+      Type (TypePtr aBase) : typeClass (Array)
+      {
+        new (&arrayData) ArrayType;
+        arrayData.base = aBase;
+      }
+      Type (TypePtr vBase, unsigned int d) : typeClass (Vector)
+      {
+        new (&vecData) VectorType;
+        vecData.base = vBase;
+        vecData.dim = d;
+      }
+      Type (TypePtr mBase, unsigned int c, unsigned int r) : typeClass (Matrix)
+      {
+        new (&matData) MatrixType;
+        matData.base = mBase;
+        matData.cols = c;
+        matData.rows = r;
+      }
+
+      ~Type ()
+      {
+        if (typeClass == Array)
+          arrayData.~ArrayType();
+        else if (typeClass == Vector)
+          vecData.~VectorType();
+        else if (typeClass == Matrix)
+          matData.~MatrixType();
+      }
 
       Class GetTypeClass() const { return typeClass; }
-      BaseType GetBaseType() const { return base; }
-      SamplerType GetSamplerType() const { return sampler; }
+      BaseType GetBaseType() const { S1_ASSERT(typeClass == Base, BaseType::Invalid); return base; }
+      SamplerType GetSamplerType() const { S1_ASSERT(typeClass == Sampler, SamplerType::_2D); return sampler; }
 
-      Type* GetAVMBase() const { return avmBase.get(); }
+      Type* GetAVMBase() const
+      {
+        S1_ASSERT((typeClass == Array) || (typeClass == Vector) || (typeClass == Matrix), nullptr);
+        if (typeClass == Array)
+          return arrayData.base.get();
+        else if (typeClass == Vector)
+          return vecData.base.get();
+        else
+          return matData.base.get();
+      }
 
-      unsigned int GetVectorTypeComponents() const { return vectorDim; }
+      unsigned int GetVectorTypeComponents() const { S1_ASSERT(typeClass == Vector, 0); return vecData.dim; }
 
-      unsigned int GetMatrixTypeCols() const { return matrixCols; }
-      unsigned int GetMatrixTypeRows() const { return matrixRows; }
+      unsigned int GetMatrixTypeCols() const { S1_ASSERT(typeClass == Matrix, 0); return matData.cols; }
+      unsigned int GetMatrixTypeRows() const { S1_ASSERT(typeClass == Matrix, 0); return matData.rows; }
 
       /// Returns whether this type is losslessly assignable to \a to.
       bool CompatibleLossless (const Type& to) const;
