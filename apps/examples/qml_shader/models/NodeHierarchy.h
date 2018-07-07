@@ -29,7 +29,7 @@
 #ifndef NODEHIERARCHY_H
 #define NODEHIERARCHY_H
 
-#include "HeapSumTree.h"
+#include "OrderStatTree.h"
 
 #include <memory>
 
@@ -43,18 +43,18 @@ public:
     Node* parent = nullptr;
     int sum = 0;
 
-    typedef HeapSumTree<Node,
-                        sum_tree::intrusive::sum_member<Node, int, &Node::sum>,
-                        sum_tree::intrusive::addend_index<int>,
-                        boost::intrusive::constant_time_size<false>> ColumnsDataTree;
+    typedef OrderStatTree<Node,
+                          orderstat_tree::intrusive::sum_member<Node, int, &Node::sum>,
+                          orderstat_tree::intrusive::addend_index<int>,
+                          boost::intrusive::constant_time_size<false>> ColumnsDataTree;
     struct RowsData : public set_base_hook, public ColumnsDataTree
     {
       int sum = 0;
     };
-    typedef HeapSumTree<RowsData,
-                        sum_tree::intrusive::sum_member<RowsData, int, &RowsData::sum>,
-                        sum_tree::intrusive::addend_index<int>,
-                        boost::intrusive::constant_time_size<false>> RowsDataTree;
+    typedef OrderStatTree<RowsData,
+                          orderstat_tree::intrusive::sum_member<RowsData, int, &RowsData::sum>,
+                          orderstat_tree::intrusive::addend_index<int>,
+                          boost::intrusive::constant_time_size<false>> RowsDataTree;
     RowsDataTree rows;
   public:
     Node();

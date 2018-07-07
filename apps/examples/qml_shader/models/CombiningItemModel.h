@@ -33,7 +33,7 @@
 #include <QAbstractItemModel>
 
 #include "ModelHierarchyMirror.h"
-#include "sum_tree/intrusive.h"
+#include "orderstat_tree/intrusive.h"
 
 #include <unordered_map>
 
@@ -85,7 +85,7 @@ protected:
   struct SourceToRowTag;
   typedef boost::intrusive::set_base_hook<boost::intrusive::link_mode<boost::intrusive::normal_link>,
                                           boost::intrusive::tag<SourceToRowTag>> SourceToRowSetHook;
-  typedef sum_tree::intrusive::sum_base_hook<int> SourceToRowSumHook;
+  typedef orderstat_tree::intrusive::sum_base_hook<int> SourceToRowSumHook;
   struct SourceToModelTag;
   typedef boost::intrusive::set_base_hook<boost::intrusive::link_mode<boost::intrusive::normal_link>,
                                           boost::intrusive::tag<SourceToModelTag>> SourceToModelSetHook;
@@ -101,10 +101,10 @@ protected:
 
     bool operator<(const Model& other) const { return sourceModel < other.sourceModel;  }
   };
-  typedef sum_tree::intrusive::rbtree<Model, boost::intrusive::base_hook<SourceToRowSetHook>,
-                                      sum_tree::intrusive::sum_base<SourceToRowSumHook>,
-                                      sum_tree::intrusive::addend_member<Model, int, &Model::rowCount>,
-                                      boost::intrusive::constant_time_size<false>> SourceToRowTree;
+  typedef orderstat_tree::intrusive::rbtree<Model, boost::intrusive::base_hook<SourceToRowSetHook>,
+                                            orderstat_tree::intrusive::sum_base<SourceToRowSumHook>,
+                                            orderstat_tree::intrusive::addend_member<Model, int, &Model::rowCount>,
+                                            boost::intrusive::constant_time_size<false>> SourceToRowTree;
   SourceToRowTree sourceToRow;
   typedef boost::intrusive::rbtree<Model, boost::intrusive::base_hook<SourceToModelSetHook>,
                                    boost::intrusive::constant_time_size<false>> SourceToModelTree;

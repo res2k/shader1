@@ -24,25 +24,25 @@
 */
 
 /**\file
- * Wrapper around sum_tree::intrusive::tree<> that allocates elements on the heap
+ * Wrapper around orderstat_tree::intrusive::tree<> that allocates elements on the heap
  */
-#ifndef HEAPSUMTREE_H
-#define HEAPSUMTREE_H
+#ifndef ORDERSTATTREE_H_
+#define ORDERSTATTREE_H_
 
-#include "sum_tree/intrusive.h"
+#include "orderstat_tree/intrusive.h"
 
 template <typename T, typename... Options>
-class HeapSumTree : public sum_tree::intrusive::rbtree<T, Options...>
+class OrderStatTree : public orderstat_tree::intrusive::rbtree<T, Options...>
 {
-  typedef sum_tree::intrusive::rbtree<T, Options...> tree_type;
+  typedef orderstat_tree::intrusive::rbtree<T, Options...> tree_type;
 public:
   typedef typename tree_type::iterator iterator;
   typedef typename tree_type::const_iterator const_iterator;
 
-  HeapSumTree () {}
-  HeapSumTree (const HeapSumTree& other) = delete;
-  HeapSumTree (HeapSumTree&& other) : tree_type (std::move (other)) {}
-  ~HeapSumTree()
+  OrderStatTree () {}
+  OrderStatTree (const OrderStatTree& other) = delete;
+  OrderStatTree (OrderStatTree&& other) : tree_type (std::move (other)) {}
+  ~OrderStatTree()
   {
     clear ();
   }
@@ -66,10 +66,10 @@ public:
     return tree_type::iterator_to (*new_node);
   }
 
-  static HeapSumTree& container_from_iterator (iterator it)
-  { return static_cast<HeapSumTree&> (tree_type::container_from_iterator (it)); }
-  static const HeapSumTree& container_from_iterator (const_iterator it)
-  { return static_cast<const HeapSumTree&> (tree_type::container_from_iterator (it)); }
+  static OrderStatTree& container_from_iterator (iterator it)
+  { return static_cast<OrderStatTree&> (tree_type::container_from_iterator (it)); }
+  static const OrderStatTree& container_from_iterator (const_iterator it)
+  { return static_cast<const OrderStatTree&> (tree_type::container_from_iterator (it)); }
 };
 
-#endif // HEAPSUMTREE_H
+#endif // ORDERSTATTREE_H_

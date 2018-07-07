@@ -24,11 +24,13 @@
 */
 
 /**\file
- * Intrusive binary tree providing in-order position of elements as well as keeping
- * track of the 'sum' of a node's children
+ * Intrusive Order Statistic Tree implementation.
+ * Depending on it's configuration it can provide in-order position of elements
+ * or keeping track of the 'sum' of some values associated with the children of
+ * a node.
  */
-#ifndef SUMTREE_INTRUSIVE_H
-#define SUMTREE_INTRUSIVE_H
+#ifndef ORDER_STAT_TREE_INTRUSIVE_H_
+#define ORDER_STAT_TREE_INTRUSIVE_H_
 
 #include <assert.h>
 
@@ -40,7 +42,7 @@
 #include <boost/intrusive/pack_options.hpp>
 #include <boost/intrusive/rbtree.hpp>
 
-namespace sum_tree
+namespace orderstat_tree
 {
   namespace intrusive_impl
   {
@@ -113,7 +115,7 @@ namespace sum_tree
       static const_pointer to_value_ptr (const const_node_ptr& n) { return orig_value_traits::to_value_ptr (n); }
     };
   } // namespace intrusive_impl
-} // namespace sum_tree
+} // namespace orderstat_tree
 
 namespace boost
 {
@@ -122,13 +124,13 @@ namespace boost
     /* Specialize bstree_algorithms<> so we can 'inject' additional logic for specific
      * operations */
     template<typename N, typename S, typename A>
-    class bstree_algorithms<sum_tree::intrusive_impl::wrap_node_traits<N, S, A>>
+    class bstree_algorithms<orderstat_tree::intrusive_impl::wrap_node_traits<N, S, A>>
       : public bstree_algorithms<N>
     {
       typedef bstree_algorithms<N> base_algo;
       typedef typename base_algo::node_ptr node_ptr;
       typedef typename base_algo::node_traits node_traits;
-      typedef sum_tree::intrusive_impl::sum_tree_algo_base<node_traits, S, A> sum_tree_algo_base;
+      typedef orderstat_tree::intrusive_impl::sum_tree_algo_base<node_traits, S, A> sum_tree_algo_base;
     public:
       typedef typename base_algo::insert_commit_data insert_commit_data;
 
@@ -222,7 +224,7 @@ namespace boost
   } // namespace intrusive
 } // namespace boost
 
-namespace sum_tree
+namespace orderstat_tree
 {
   namespace intrusive
   {
@@ -550,6 +552,6 @@ namespace sum_tree
       { return static_cast<const rbtree&> (Base::container_from_iterator (it)); }
     };
   } // namespace intrusive
-} // namespace sum_tree
+} // namespace orderstat_tree
 
-#endif // SUMTREE_INTRUSIVE_H
+#endif // ORDER_STAT_TREE_INTRUSIVE_H_

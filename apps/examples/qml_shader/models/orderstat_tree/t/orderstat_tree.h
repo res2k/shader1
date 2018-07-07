@@ -25,7 +25,7 @@
 
 #include <cxxtest/TestSuite.h>
 
-#include "sum_tree/intrusive.h"
+#include "orderstat_tree/intrusive.h"
 
 #include <algorithm>
 #include <random>
@@ -34,7 +34,7 @@
 
 #include <boost/range/size.hpp>
 
-class SumTreeTestSuite : public CxxTest::TestSuite 
+class OrderStatTreeTestSuite : public CxxTest::TestSuite
 {
 public:
   void testIndexAddendInsertInOrder (void)
@@ -44,9 +44,9 @@ public:
       size_t value = 0;
       size_t sum = 0;
     };
-    typedef sum_tree::intrusive::rbtree<Node,
-                                        sum_tree::intrusive::sum_member<Node, size_t, &Node::sum>,
-                                        sum_tree::intrusive::addend_index<size_t>> tree_type;
+    typedef orderstat_tree::intrusive::rbtree<Node,
+                                              orderstat_tree::intrusive::sum_member<Node, size_t, &Node::sum>,
+                                              orderstat_tree::intrusive::addend_index<size_t>> tree_type;
     
     std::vector<Node> nodeStorage;
     tree_type tree;
@@ -86,7 +86,7 @@ public:
 
   void testIndexAddendInsertRandomOrder (void)
   {
-    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    typedef orderstat_tree::intrusive::sum_base_hook<size_t> sum_hook;
     struct Node :
       public boost::intrusive::set_base_hook<>,
       public sum_hook
@@ -96,9 +96,9 @@ public:
       bool operator< (const Node& other) const
       { return value < other.value; }
     };
-    typedef sum_tree::intrusive::rbtree<Node,
-                                        sum_tree::intrusive::sum_base<sum_hook>,
-                                        sum_tree::intrusive::addend_index<size_t>> tree_type;
+    typedef orderstat_tree::intrusive::rbtree<Node,
+                                              orderstat_tree::intrusive::sum_base<sum_hook>,
+                                              orderstat_tree::intrusive::addend_index<size_t>> tree_type;
     
     std::vector<Node> nodeStorage;
     tree_type tree;
@@ -148,7 +148,7 @@ public:
 
   void testCustomAddend (void)
   {
-    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    typedef orderstat_tree::intrusive::sum_base_hook<size_t> sum_hook;
     struct Node :
       public boost::intrusive::set_base_hook<>,
       public sum_hook
@@ -159,9 +159,9 @@ public:
       bool operator< (const Node& other) const
       { return value < other.value; }
     };
-    typedef sum_tree::intrusive::rbtree<Node,
-                                        sum_tree::intrusive::sum_base<sum_hook>,
-                                        sum_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
+    typedef orderstat_tree::intrusive::rbtree<Node,
+                                              orderstat_tree::intrusive::sum_base<sum_hook>,
+                                              orderstat_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
     
     std::vector<Node> nodeStorage;
     tree_type tree;
@@ -207,7 +207,7 @@ public:
 
   void testCustomAddend2 (void)
   {
-    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    typedef orderstat_tree::intrusive::sum_base_hook<size_t> sum_hook;
     struct Node :
       public boost::intrusive::set_base_hook<>,
       public sum_hook
@@ -218,9 +218,9 @@ public:
       bool operator< (const Node& other) const
       { return value < other.value; }
     };
-    typedef sum_tree::intrusive::rbtree<Node,
-                                        sum_tree::intrusive::sum_base<sum_hook>,
-                                        sum_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
+    typedef orderstat_tree::intrusive::rbtree<Node,
+                                              orderstat_tree::intrusive::sum_base<sum_hook>,
+                                              orderstat_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
     
     std::vector<Node> nodeStorage;
     tree_type tree;
@@ -278,16 +278,16 @@ public:
 
   void testCustomAddend2_unsorted (void)
   {
-    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    typedef orderstat_tree::intrusive::sum_base_hook<size_t> sum_hook;
     struct Node :
       public boost::intrusive::set_base_hook<>,
       public sum_hook
     {
       size_t addend = 0;
     };
-    typedef sum_tree::intrusive::rbtree<Node,
-      sum_tree::intrusive::sum_base<sum_hook>,
-      sum_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
+    typedef orderstat_tree::intrusive::rbtree<Node,
+      orderstat_tree::intrusive::sum_base<sum_hook>,
+      orderstat_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
 
     std::vector<Node> nodeStorage;
     tree_type tree;
@@ -325,7 +325,7 @@ public:
 
   void testCustomAddendChanged (void)
   {
-    typedef sum_tree::intrusive::sum_base_hook<size_t> sum_hook;
+    typedef orderstat_tree::intrusive::sum_base_hook<size_t> sum_hook;
     struct Node :
       public boost::intrusive::set_base_hook<>,
       public sum_hook
@@ -336,9 +336,9 @@ public:
       bool operator< (const Node& other) const
       { return value < other.value; }
     };
-    typedef sum_tree::intrusive::rbtree<Node,
-                                        sum_tree::intrusive::sum_base<sum_hook>,
-                                        sum_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
+    typedef orderstat_tree::intrusive::rbtree<Node,
+                                              orderstat_tree::intrusive::sum_base<sum_hook>,
+                                              orderstat_tree::intrusive::addend_member<Node, size_t, &Node::addend>> tree_type;
 
     std::vector<Node> nodeStorage;
     tree_type tree;

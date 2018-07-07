@@ -15,7 +15,7 @@ if(Qt5_FOUND)
       models/NodeHierarchy.h
       models/SubindexModel.cpp
       models/SubindexModel.h
-      models/sum_tree/intrusive.h
+      models/orderstat_tree/intrusive.h
       )
   add_library(qml_shader_models STATIC EXCLUDE_FROM_ALL
               ${qml_shader_models_sources})
@@ -24,14 +24,14 @@ if(Qt5_FOUND)
   target_compile_features(qml_shader_models PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 
   if(CXXTEST_FOUND)
-    set(sum_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/sum_tree/t/sum_tree.h)
-    S1_CXXTEST_ADD_TEST(test_sum_tree test_sum_tree.cpp
-                        ${sum_tree_test_sources})
-    set_property(SOURCE test_sum_tree.cpp PROPERTY SKIP_AUTOGEN ON)
-    target_include_directories(test_sum_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
-    set_property(TARGET test_sum_tree PROPERTY CXX_STANDARD 11)
-    set_property(TARGET test_sum_tree PROPERTY EXCLUDE_FROM_ALL YES)
-    AutoBuildTest(test_sum_tree)
+    set(orderstat_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/orderstat_tree/t/orderstat_tree.h)
+    S1_CXXTEST_ADD_TEST(test_orderstat_tree test_orderstat_tree.cpp
+                        ${orderstat_tree_test_sources})
+    set_property(SOURCE test_orderstat_tree.cpp PROPERTY SKIP_AUTOGEN ON)
+    target_include_directories(test_orderstat_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
+    set_property(TARGET test_orderstat_tree PROPERTY CXX_STANDARD 11)
+    set_property(TARGET test_orderstat_tree PROPERTY EXCLUDE_FROM_ALL YES)
+    AutoBuildTest(test_orderstat_tree)
   endif()
 
   qt5_add_resources(MATERIAL_ICONS_QRC material_icons/MaterialIcons.qrc OPTIONS --compress 9 --threshold 0)
