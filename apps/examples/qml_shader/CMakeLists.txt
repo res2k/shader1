@@ -23,17 +23,6 @@ if(Qt5_FOUND)
                         Qt5::Widgets)
   target_compile_features(qml_shader_models PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 
-  if(CXXTEST_FOUND)
-    set(orderstat_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/orderstat_tree/t/orderstat_tree.h)
-    S1_CXXTEST_ADD_TEST(test_orderstat_tree test_orderstat_tree.cpp
-                        ${orderstat_tree_test_sources})
-    set_property(SOURCE test_orderstat_tree.cpp PROPERTY SKIP_AUTOGEN ON)
-    target_include_directories(test_orderstat_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
-    set_property(TARGET test_orderstat_tree PROPERTY CXX_STANDARD 11)
-    set_property(TARGET test_orderstat_tree PROPERTY EXCLUDE_FROM_ALL YES)
-    AutoBuildTest(test_orderstat_tree)
-  endif()
-
   qt5_add_resources(MATERIAL_ICONS_QRC material_icons/MaterialIcons.qrc OPTIONS --compress 9 --threshold 0)
   set_property(SOURCE ${MATERIAL_ICONS_QRC} PROPERTY SKIP_AUTOGEN ON)
   set(qml_shader_material_icons_sources
@@ -82,4 +71,15 @@ if(Qt5_FOUND)
   target_compile_features(qml_shader PRIVATE ${S1_REQUIRED_CXX_FEATURES})
 elseif(Qt5_NOT_FOUND_MESSAGE)
   message(STATUS "Qt5 not found: ${Qt5_NOT_FOUND_MESSAGE}")
+endif()
+
+if(CXXTEST_FOUND)
+  set(orderstat_tree_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/models/orderstat_tree/t/orderstat_tree.h)
+  S1_CXXTEST_ADD_TEST(test_orderstat_tree test_orderstat_tree.cpp
+                      ${orderstat_tree_test_sources})
+  set_property(SOURCE test_orderstat_tree.cpp PROPERTY SKIP_AUTOGEN ON)
+  target_include_directories(test_orderstat_tree PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/models)
+  set_property(TARGET test_orderstat_tree PROPERTY CXX_STANDARD 11)
+  set_property(TARGET test_orderstat_tree PROPERTY EXCLUDE_FROM_ALL YES)
+  AutoBuildTest(test_orderstat_tree)
 endif()
