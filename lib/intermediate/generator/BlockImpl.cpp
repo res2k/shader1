@@ -615,9 +615,11 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (NameImpl* name,
                                                                           bool writeable)
     {
+      auto paramInfo = name->GetParamInfo();
+      bool isOutputParam = paramInfo && (paramInfo->dir == semantics::Scope::dirOut);
       bool isFromOutside = (get_static_ptr<ScopeImpl> (name->ownerScope) != innerScope);
       bool doImport = isFromOutside
-                      && ((innerScope->GetLevel() != semantics::ScopeLevel::Function) || !name->isOutputParam)
+                      && ((innerScope->GetLevel() != semantics::ScopeLevel::Function) || !isOutputParam)
                       && !writeable;
       bool doExport = isFromOutside
                       && writeable;

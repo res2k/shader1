@@ -85,11 +85,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return;
       }
-      NamePtr newName = new NameImpl (this, param.identifier,
-                                      param.type.get(),
-                                      param.defaultValue,
-                                      param.dir == dirIn,
-                                      param.dir == dirOut);
+      NamePtr newName = new NameImpl (this, param);
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
 
