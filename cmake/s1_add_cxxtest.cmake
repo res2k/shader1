@@ -6,19 +6,20 @@ macro(S1_CXXTEST_ADD_TEST _cxxtest_testname _cxxtest_outfname)
     "TEST_SOURCES;LINK_SOURCES"
     ${ARGN})
   set(_cxxtest_real_outfname ${CMAKE_CURRENT_BINARY_DIR}/${_cxxtest_outfname})
+  set(_all_sources ${S1_CXXTEST_ADD_TEST_TEST_SOURCES}
+      ${S1_CXXTEST_ADD_TEST_UNPARSED_ARGUMENTS}
+      ${S1_CXXTEST_ADD_TEST_LINK_SOURCES})
 
   add_custom_command(
       OUTPUT  ${_cxxtest_real_outfname}
-      DEPENDS ${ARGN}
+      DEPENDS ${_all_sources}
       COMMAND ${CXXTEST_TESTGEN_INTERPRETER}
       ${CXXTEST_TESTGEN_EXECUTABLE} ${CXXTEST_TESTGEN_ARGS} -o ${_cxxtest_real_outfname}
         ${S1_CXXTEST_ADD_TEST_TEST_SOURCES} ${S1_CXXTEST_ADD_TEST_UNPARSED_ARGUMENTS}
   )
 
   set_source_files_properties(${_cxxtest_real_outfname} PROPERTIES GENERATED true)
-  add_executable(${_cxxtest_testname} ${_cxxtest_real_outfname}
-                 ${S1_CXXTEST_ADD_TEST_TEST_SOURCES} ${S1_CXXTEST_ADD_TEST_UNPARSED_ARGUMENTS}
-                 ${S1_CXXTEST_ADD_TEST_LINK_SOURCES})
+  add_executable(${_cxxtest_testname} ${_cxxtest_real_outfname} ${_all_sources})
 
   add_test(NAME ${_cxxtest_testname} COMMAND ${_cxxtest_testname})
 endmacro()
