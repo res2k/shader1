@@ -20,8 +20,6 @@
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/ProgramFunction.h"
 
-#include "BlockImpl.h"
-
 namespace s1
 {
   namespace intermediate
