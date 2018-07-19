@@ -155,11 +155,11 @@ namespace s1
       for (auto global : globalVars)
       {
         auto nameImpl = get_static_ptr<NameImpl> (global);
-        if (nameImpl->varValue)
+        if (nameImpl->GetValue())
         {
           // Synthesize an expression to assign the global with the default value
           ExpressionPtr nameExpr (CreateVariableExpression (nameImpl));
-          ExpressionPtr assignExpr (CreateAssignExpression (nameExpr, nameImpl->varValue));
+          ExpressionPtr assignExpr (CreateAssignExpression (nameExpr, nameImpl->GetValue()));
           globalsInitBlock->AddExpressionCommand (assignExpr);
         }
       }
@@ -440,19 +440,19 @@ namespace s1
               {
                 semantics::Scope::FunctionFormalParameter inParam;
                 inParam.paramType = semantics::Scope::ptAutoGlobal;
-                inParam.type = global->valueType;
-                inParam.identifier = global->identifier;
+                inParam.type = global->GetValueType();
+                inParam.identifier = global->GetIdentifier();
                 inParam.dir = semantics::Scope::dirIn;
                 params.insert (boost::next (params.begin(), inputInsertPos), inParam);
                 inputInsertPos++;
               }
-              if (!global->varConstant)
+              if (!global->IsConstantVariable())
               {
                 // TODO: Better handling of constants (no need to pass them as params)
                 semantics::Scope::FunctionFormalParameter outParam;
                 outParam.paramType = semantics::Scope::ptAutoGlobal;
-                outParam.type = global->valueType;
-                outParam.identifier = global->identifier;
+                outParam.type = global->GetValueType();
+                outParam.identifier = global->GetIdentifier();
                 outParam.dir = semantics::Scope::dirOut;
                 params.insert (params.end(), outParam);
               }

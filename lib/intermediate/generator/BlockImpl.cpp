@@ -518,15 +518,15 @@ namespace s1
       {
         auto name = get_static_ptr<NameImpl> (*varIt);
         // ... check if it has initialization value ...
-        if (name->varValue)
+        if (name->GetValue())
         {
-          auto valueExpr = static_cast<ExpressionImpl*> (name->varValue.get ());
+          auto valueExpr = static_cast<ExpressionImpl*> (name->GetValue());
           const auto& context = valueExpr->GetExpressionContext ();
           // ... if so, synthesize assignment
           auto exprTarget = make_intrusive<VariableExpressionImpl> (handler, ExpressionContext (context), name);
           ExpressionPtr expr = new AssignmentExpressionImpl (handler, ExpressionContext (context),
                                                              exprTarget.get(),
-                                                             get_static_ptr<ExpressionImpl> (name->varValue));
+                                                             get_static_ptr<ExpressionImpl> (name->GetValue()));
           // Note recursion is okay as FlushNewVars() will return an empty array
           AddExpressionCommand (expr);
         }
@@ -624,7 +624,7 @@ namespace s1
       bool doExport = isFromOutside
                       && writeable;
       
-      if (doExport && name->varConstant)
+      if (doExport && name->IsConstantVariable())
       {
         return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
       }
@@ -645,34 +645,34 @@ namespace s1
             get_static_ptr<ScopeImpl> (name->ownerScope));
           if (d >= 0)
           {
-            FormatImportedReg (importName, name->identifier, d);
+            FormatImportedReg (importName, name->GetIdentifier(), d);
           }
-          reg = handler->AllocateRegister (*sequenceBuilder, name->valueType, Imported,
+          reg = handler->AllocateRegister (*sequenceBuilder, name->GetValueType(), Imported,
                                           importName);
-          if (doImport) sequenceBuilder->SetImport (reg, name->identifier);
+          if (doImport) sequenceBuilder->SetImport (reg, name->GetIdentifier());
         }
         else
         {
-          reg = handler->AllocateRegister (*sequenceBuilder, name->valueType, Variable,
-                                            name->identifier);
+          reg = handler->AllocateRegister (*sequenceBuilder, name->GetValueType(), Variable,
+                                            name->GetIdentifier());
         }
         nameReg.initiallyWriteable = writeable;
         nameReg.initialReg = reg;
-        sequenceBuilder->SetIdentifierRegister (name->identifier, reg);
+        sequenceBuilder->SetIdentifierRegister (name->GetIdentifier(), reg);
       }
       else
       {
         if (writeable)
         {
-          if (name->varConstant)
+          if (name->IsConstantVariable())
             return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
           reg = handler->AllocateRegister (*sequenceBuilder, reg);
-          sequenceBuilder->SetIdentifierRegister (name->identifier, reg);
+          sequenceBuilder->SetIdentifierRegister (name->GetIdentifier(), reg);
         }
       }
       if (doExport)
       {
-        sequenceBuilder->SetExport (name->identifier, reg);
+        sequenceBuilder->SetExport (name->GetIdentifier(), reg);
         exportedNames.insert (name);
       }
       return reg;
@@ -688,9 +688,9 @@ namespace s1
       newRegPtr->StealName (*(origRegPtr.value()));
       NameReg& nameReg = nameRegisters[name];
       nameReg.reg = newRegPtr;
-      sequenceBuilder->SetIdentifierRegister (name->identifier, newRegPtr);
+      sequenceBuilder->SetIdentifierRegister (name->GetIdentifier(), newRegPtr);
       if (nameReg.isImported)
-        sequenceBuilder->SetExport (name->identifier, newRegPtr);
+        sequenceBuilder->SetExport (name->GetIdentifier(), newRegPtr);
       return OUTCOME_V2_NAMESPACE::success ();
     }
   } // namespace intermediate

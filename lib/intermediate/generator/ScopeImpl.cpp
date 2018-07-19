@@ -265,7 +265,7 @@ namespace s1
       auto nameImpl = get_static_ptr<NameImpl> (functionName);
 
       FunctionInfoVector vec;
-      FunctionsMap::const_iterator funcIt = functions.find (nameImpl->identifier);
+      FunctionsMap::const_iterator funcIt = functions.find (nameImpl->GetIdentifier());
       if (funcIt != functions.end())
       {
         // First, look for an exact parameters type match
