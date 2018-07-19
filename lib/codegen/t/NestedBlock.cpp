@@ -54,12 +54,6 @@ public:
 
     using Superclass::sequenceBuilder;
   };
-
-  class TestNameImpl : public NameImpl
-  {
-  public:
-    typedef NameImpl Superclass;
-  };
 };
 
 class TestImportedNameResolver : public sl::ImportedNameResolver

@@ -49,12 +49,6 @@ public:
   
     using Superclass::sequenceBuilder;
   };
-
-  class TestNameImpl : public NameImpl
-  {
-  public:
-    typedef NameImpl Superclass;
-  };
 };
 
 class TestImportedNameResolver : public sl::ImportedNameResolver
@@ -131,7 +125,7 @@ BOOST_AUTO_TEST_CASE(ExprAssignConst)
   
   TestSemanticsHandler::TestBlockImpl* testBlockImpl =
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-  auto testVarB = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varB);
+  auto testVarB = varB.get();
 
   TestImportedNameResolver nameRes;
   TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
@@ -179,9 +173,9 @@ BOOST_AUTO_TEST_CASE(ExprArithVar)
   
   TestSemanticsHandler::TestBlockImpl* testBlockImpl =
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
-  auto testVarA = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varA);
-  auto testVarB = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varB);
-  auto testVarC = s1::get_static_ptr<TestSemanticsHandler::TestNameImpl> (varC);
+  auto testVarA = varA.get();
+  auto testVarB = varB.get();
+  auto testVarC = varC.get();
 
   TestImportedNameResolver nameRes;
   TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
