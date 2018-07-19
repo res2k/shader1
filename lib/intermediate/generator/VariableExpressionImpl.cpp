@@ -21,6 +21,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
+#include "semantics/Name.h"
 #include "ScopeImpl.h"
 
 namespace s1
@@ -30,15 +31,15 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::VariableExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      NameImpl* name)
+      semantics::Name* name)
        : ExpressionImpl (handler, std::move (context)), name (name)
     {
     }
       
-    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::NameSet
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameImplSet set;
+      NameSet set;
       if (asLvalue) set.insert (name);
       return set;
     }

@@ -36,7 +36,7 @@ namespace s1
                              ExpressionImpl* ifExpr,
                              ExpressionImpl* elseExpr);
       
-      NameImplSet QueryWrittenNames (bool asLvalue);
+      NameSet QueryWrittenNames (bool asLvalue);
       
       semantics::TypePtr GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

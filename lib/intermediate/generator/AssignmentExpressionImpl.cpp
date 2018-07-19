@@ -23,6 +23,7 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
+#include "semantics/Name.h"
 
 namespace s1
 {
@@ -37,13 +38,13 @@ namespace s1
     {
     }
       
-    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::NameSet
     IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameImplSet set;
-      NameImplSet targetSet (target->QueryWrittenNames (true));
+      NameSet set;
+      NameSet targetSet (target->QueryWrittenNames (true));
       set.insert (targetSet.begin(), targetSet.end());
-      NameImplSet valueSet (value->QueryWrittenNames (false));
+      NameSet valueSet (value->QueryWrittenNames (false));
       set.insert (valueSet.begin(), valueSet.end());
       return set;
     }
@@ -82,8 +83,8 @@ namespace s1
       // Evaluate 'value'
       exprDestinationReg = value->AddToSequence (block, Intermediate);
       if (!exprDestinationReg) return RegisterPtr(); // Assume error already handled
-      NameImplPtr targetName (target->GetExpressionName());
-      NameImplPtr valueName (value->GetExpressionName());
+      auto targetName = target->GetExpressionName();
+      auto valueName = value->GetExpressionName();
       if (!valueType->IsEqual (*(targetType.get())))
       {
         // Set up register for left-side value
@@ -108,7 +109,7 @@ namespace s1
         if (targetName && !valueName)
         {
           // See if we can 'force' the target register for the name's register
-          if (block.OverrideNameRegister (targetName.get(), exprDestinationReg))
+          if (block.OverrideNameRegister (targetName, exprDestinationReg))
           {
             value->AddToSequencePostAction (block, exprDestinationReg, false);
             return exprDestinationReg;

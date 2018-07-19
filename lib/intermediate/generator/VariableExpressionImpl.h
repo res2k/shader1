@@ -26,15 +26,15 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::VariableExpressionImpl : public ExpressionImpl
     {
-      NameImplPtr name;
+      semantics::NamePtr name;
     public:
       VariableExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                               ExpressionContext&& context,
-                              NameImpl* name);
+                              semantics::Name* name);
                               
-      NameImplPtr GetExpressionName() { return name; }
+      semantics::Name* GetExpressionName() override { return name.get(); }
       
-      NameImplSet QueryWrittenNames (bool asLvalue);
+      NameSet QueryWrittenNames (bool asLvalue);
       
       semantics::TypePtr GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

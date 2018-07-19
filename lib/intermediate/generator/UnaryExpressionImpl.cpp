@@ -23,6 +23,7 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpUnaryOp.h"
+#include "semantics/Name.h"
 
 namespace s1
 {
@@ -37,7 +38,7 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::NameSet
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
       return operand->QueryWrittenNames (asLvalue);

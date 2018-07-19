@@ -20,6 +20,7 @@
 #include "BinaryExpressionImpl.h"
 
 #include "BlockImpl.h"
+#include "semantics/Name.h"
 
 namespace s1
 {
@@ -34,16 +35,16 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::NameSet
     IntermediateGeneratorSemanticsHandler::BinaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameImplSet set;
+      NameSet set;
       {
-        NameImplSet op1Set (operand1->QueryWrittenNames (asLvalue));
+        NameSet op1Set (operand1->QueryWrittenNames (asLvalue));
         set.insert (op1Set.begin(), op1Set.end());
       }
       {
-        NameImplSet op2Set (operand2->QueryWrittenNames (asLvalue));
+        NameSet op2Set (operand2->QueryWrittenNames (asLvalue));
         set.insert (op2Set.begin(), op2Set.end());
       }
       return set;

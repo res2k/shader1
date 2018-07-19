@@ -22,6 +22,7 @@
 #include "intermediate/Sequence.h"
 #include "semantics/Block.h"
 
+#include <boost/optional.hpp>
 #include <outcome/outcome.hpp>
 
 namespace s1
@@ -37,10 +38,10 @@ namespace s1
       SequenceBuilderPtr sequenceBuilder;
       
       // Special, internal names
-      NameImplPtr varCondition;
-      typedef std::unordered_map<std::string, NameImplPtr> TernaryResultVarsMap;
+      semantics::NamePtr varCondition;
+      typedef std::unordered_map<std::string, semantics::NamePtr> TernaryResultVarsMap;
       TernaryResultVarsMap varsTernaryResult;
-      NameImplPtr varReturnValue;
+      semantics::NamePtr varReturnValue;
       
       /**
        * Checks for new variables since last command and synthesizes initializations,
@@ -60,13 +61,13 @@ namespace s1
         
         NameReg() : isImported (false) {}
       };
-      typedef std::unordered_map<NameImplPtr, NameReg> NameRegMap;
+      typedef std::unordered_map<semantics::NamePtr, NameReg> NameRegMap;
       NameRegMap nameRegisters;
-      NameImplSet exportedNames;
+      NameSet exportedNames;
       
       SequenceOpPtr CreateBlockSeqOp (semantics::BlockPtr block,
                                       const ExpressionContext& errorContext,
-                                      const NameImplSet& loopNames = NameImplSet());
+                                      boost::optional<const NameSet&> loopNames = boost::none);
     public:
       static const char varReturnValueName[];
       
@@ -91,14 +92,14 @@ namespace s1
       const SequencePtr& GetSequence();
       const SequenceBuilderPtr& GetSequenceBuilder();
       
-      NameImplPtr GetTernaryResultName (semantics::Type* resultType);
+      semantics::Name* GetTernaryResultName (semantics::Type* resultType);
 
       typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;
-      result_RegisterPtr GetRegisterForName (NameImpl* name, bool writeable);
+      result_RegisterPtr GetRegisterForName (semantics::Name* name, bool writeable);
       typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
-      result_void OverrideNameRegister (NameImpl* name, const RegisterPtr& reg);
+      result_void OverrideNameRegister (semantics::Name* name, const RegisterPtr& reg);
       
-      const NameImplSet& GetExportedNames() const { return exportedNames; }
+      const NameSet& GetExportedNames() const { return exportedNames; }
     };
   } // namespace intermediate
 } // namespace s1

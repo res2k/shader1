@@ -25,6 +25,7 @@
 
 #include "intermediate/Diagnostics.h"
 #include "parser/Diagnostics.h"
+#include "semantics/Name.h"
 #include "ExpressionImpl.h"
 
 #include <boost/make_shared.hpp>
@@ -84,7 +85,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return;
       }
-      NamePtr newName = new NameImpl (this, param);
+      semantics::NamePtr newName = new semantics::Name (this, param);
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
 
@@ -100,7 +101,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName = new NameImpl (this, identifier, type.get(), initialValue, constant);
+      semantics::NamePtr newName = new semantics::Name (this, identifier, type.get(), initialValue, constant);
       identifiers[identifier] = newName;
       newVars.push_back (newName);
       varsInDeclOrder.push_back (newName);
@@ -114,7 +115,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return NamePtr();
       }
-      NamePtr newName = new NameImpl (this, identifier, semantics::Name::TypeAlias, aliasedType.get());
+      semantics::NamePtr newName = new semantics::Name (this, identifier, semantics::Name::TypeAlias, aliasedType.get());
       identifiers[identifier] = newName;
       return newName;
     }
@@ -137,7 +138,7 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        NamePtr newName = new NameImpl (this, identifier, semantics::Name::Function, nullptr);
+        semantics::NamePtr newName = new semantics::Name (this, identifier, semantics::Name::Function, nullptr);
         identifiers[identifier] = newName;
       }
 
@@ -191,23 +192,23 @@ namespace s1
     semantics::Scope::result_NamePtr
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
     {
-      NameImplPtr name (ResolveIdentifierInternal (identifier));
+      auto name = ResolveIdentifierInternal (identifier);
       if (!name)
         return parser::Error::IdentifierUndeclared;
       return name;
     }
 
-    IntermediateGeneratorSemanticsHandler::NameImplPtr
+    semantics::Name*
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifierInternal (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
       if (ident != identifiers.end())
       {
-        return boost::static_pointer_cast<NameImpl> (ident->second);
+        return ident->second.get();
       }
       if (parent)
         return parent->ResolveIdentifierInternal (identifier);
-      return NameImplPtr ();
+      return nullptr;
     }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
@@ -229,7 +230,7 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        NamePtr newName = new NameImpl (this,identifier, semantics::Name::Function, nullptr);
+        semantics::NamePtr newName = new semantics::Name (this, identifier, semantics::Name::Function, nullptr);
         identifiers[identifier] = newName;
       }
 
@@ -261,10 +262,8 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
     IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (semantics::Name* functionName, const ExpressionVector& params) const
     {
-      auto nameImpl = get_static_ptr<NameImpl> (functionName);
-
       FunctionInfoVector vec;
-      FunctionsMap::const_iterator funcIt = functions.find (nameImpl->GetIdentifier());
+      FunctionsMap::const_iterator funcIt = functions.find (functionName->GetIdentifier());
       if (funcIt != functions.end())
       {
         // First, look for an exact parameters type match

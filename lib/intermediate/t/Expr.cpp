@@ -22,6 +22,7 @@
 #include "intermediate/Diagnostics.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
+#include "semantics/Name.h"
 #include "BlockImpl.h"
 #include "TestSequenceVisitor.h"
 

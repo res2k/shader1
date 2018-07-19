@@ -87,7 +87,7 @@ namespace s1
         const FunctionFormalParameters& params);
 
       Scope::result_NamePtr ResolveIdentifier (const uc::String& identifier);
-      NameImplPtr ResolveIdentifierInternal (const uc::String& identifier);
+      semantics::Name* ResolveIdentifierInternal (const uc::String& identifier);
 
       semantics::TypePtr GetFunctionReturnType() const
       {

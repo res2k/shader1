@@ -22,6 +22,7 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Diagnostics.h"
+#include "semantics/Name.h"
 
 namespace s1
 {
@@ -37,16 +38,16 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::NameSet
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameImplSet set;
+      NameSet set;
       {
-        NameImplSet op1Set (ifExpr->QueryWrittenNames (asLvalue));
+        NameSet op1Set (ifExpr->QueryWrittenNames (asLvalue));
         set.insert (op1Set.begin(), op1Set.end());
       }
       {
-        NameImplSet op2Set (elseExpr->QueryWrittenNames (asLvalue));
+        NameSet op2Set (elseExpr->QueryWrittenNames (asLvalue));
         set.insert (op2Set.begin(), op2Set.end());
       }
       return set;

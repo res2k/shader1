@@ -30,6 +30,7 @@
 #include "intermediate/SequenceOp/SequenceOpCast.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
+#include "semantics/Name.h"
 
 #include "BlockImpl.h"
 #include "FunctionCallGlobalVarAugment.h"
@@ -145,20 +146,19 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatRegPrefixName, "{0}{1}");
     DECLARE_STATIC_FORMATTER(FormatRegTmp, "{0}tmp{1}");
 
-    SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameImplSet& exportedNames)
+    SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameSet& exportedNames)
     {
       // Create a block with all assignments
       BlockPtr globalsInitBlock (CreateBlock (globalScope));
 
-      const std::vector<NamePtr>& globalVars (globalScope->GetAllVars());
+      const std::vector<semantics::NamePtr>& globalVars (globalScope->GetAllVars());
       for (auto global : globalVars)
       {
-        auto nameImpl = get_static_ptr<NameImpl> (global);
-        if (nameImpl->GetValue())
+        if (global->GetValue())
         {
           // Synthesize an expression to assign the global with the default value
-          ExpressionPtr nameExpr (CreateVariableExpression (nameImpl));
-          ExpressionPtr assignExpr (CreateAssignExpression (nameExpr, nameImpl->GetValue()));
+          ExpressionPtr nameExpr (CreateVariableExpression (global));
+          ExpressionPtr assignExpr (CreateAssignExpression (nameExpr, global->GetValue()));
           globalsInitBlock->AddExpressionCommand (assignExpr);
         }
       }
@@ -207,7 +207,7 @@ namespace s1
 
       // Create global var initialization sequence
       {
-        NameImplSet initSeqExported;
+        NameSet initSeqExported;
         SequencePtr initSeq (CreateGlobalVarInitializationSeq (initSeqExported));
 
         SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
@@ -433,9 +433,8 @@ namespace s1
               inputInsertPos++;
             }
             // Augment parameters list with global vars
-            for (const NamePtr& globalName : globalVars)
+            for (const NamePtr& global : globalVars)
             {
-              NameImplPtr global (boost::static_pointer_cast<NameImpl> (globalName));
               {
                 semantics::Scope::FunctionFormalParameter inParam;
                 inParam.paramType = semantics::Scope::ptAutoGlobal;
@@ -501,12 +500,11 @@ namespace s1
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (NamePtr name)
     {
-      auto nameImpl = get_static_ptr<NameImpl> (name);
-      switch (nameImpl->GetType())
+      switch (name->GetType())
       {
       case semantics::Name::Variable:
         {
-          return ExpressionPtr (new VariableExpressionImpl (this, ExpressionContext(), nameImpl));
+          return ExpressionPtr (new VariableExpressionImpl (this, ExpressionContext(), name.get()));
         }
         break;
       default:

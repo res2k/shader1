@@ -22,6 +22,7 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/SequenceBuilder.h"
+#include "semantics/Name.h"
 // FIXME: Tests using too much intermediate internals
 #include "BlockImpl.h"
 

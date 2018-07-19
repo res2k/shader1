@@ -34,7 +34,7 @@ namespace s1
                                 ExpressionImpl* target,
                                 ExpressionImpl* value);
       
-      NameImplSet QueryWrittenNames (bool asLvalue);
+      NameSet QueryWrittenNames (bool asLvalue);
       
       semantics::TypePtr GetValueType();
       

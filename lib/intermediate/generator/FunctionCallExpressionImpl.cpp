@@ -26,6 +26,7 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
+#include "semantics/Name.h"
 #include "ScopeImpl.h"
 
 namespace s1
@@ -46,8 +47,7 @@ namespace s1
       if (overloadSelected) return (bool)overload;
       overloadSelected = true;
 
-      auto nameImpl = get_static_ptr<NameImpl> (functionName);
-      auto funcScopeImpl = get_static_ptr<ScopeImpl> (nameImpl->GetOwnerScope());
+      auto funcScopeImpl = get_static_ptr<ScopeImpl> (functionName->GetOwnerScope());
 
       // Collect overload candidates
       ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName.get(), params));

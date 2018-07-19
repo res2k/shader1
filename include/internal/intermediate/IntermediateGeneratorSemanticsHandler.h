@@ -23,7 +23,6 @@
 #include "diagnostics/forwarddecl.h"
 #include "semantics/Attribute.h"
 #include "semantics/CommonHandler.h"
-#include "semantics/Name.h"
 #include "semantics/Scope.h"
 #include "semantics/Type.h"
 
@@ -58,7 +57,6 @@ namespace s1
       {
       };
 
-      typedef semantics::Name NameImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
       class ArrayElementExpressionImpl;
@@ -75,8 +73,7 @@ namespace s1
       class UnaryExpressionImpl;
       class VariableExpressionImpl;
 
-      typedef boost::intrusive_ptr<NameImpl> NameImplPtr;
-      typedef std::unordered_set<NameImplPtr> NameImplSet;
+      typedef std::unordered_set<semantics::NamePtr> NameSet;
 
       /// Diagnostics handler
       diagnostics::Handler* diagnosticsHandler = nullptr;
@@ -93,7 +90,7 @@ namespace s1
       void SetupBuiltins (const ScopeImplPtr& scope);
 
       /// Create a sequence containing global vars initialization
-      SequencePtr CreateGlobalVarInitializationSeq (NameImplSet& exportedNames);
+      SequencePtr CreateGlobalVarInitializationSeq (NameSet& exportedNames);
 
       ProgramFunctionPtr SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
                                                   const semantics::TypePtr& returnType,

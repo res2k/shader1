@@ -19,6 +19,7 @@
 
 #include "BlockImpl.h"
 #include "ExpressionImpl.h"
+#include "semantics/Name.h"
 
 namespace s1
 {
@@ -41,10 +42,10 @@ namespace s1
       return context;
     }
 
-    IntermediateGeneratorSemanticsHandler::NameImplSet
+    IntermediateGeneratorSemanticsHandler::NameSet
     IntermediateGeneratorSemanticsHandler::ExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      return NameImplSet ();
+      return NameSet ();
     }
      
     void IntermediateGeneratorSemanticsHandler::ExpressionImpl::AddToSequence (BlockImpl& block)
