@@ -21,6 +21,9 @@
 #include "base/uc/String.h"
 
 #include "Name.h"
+#include "Scope.h"
+
+#include <boost/optional.hpp>
 
 namespace s1
 {
@@ -28,6 +31,8 @@ namespace s1
   {
     class CommonName : public Name
     {
+      Scope* ownerScope;
+
       uc::String identifier;
       NameType type;
 
@@ -41,13 +46,24 @@ namespace s1
       // Distinguish between variable/constant
       bool varConstant;
 
+      // Parameter info, if it's originally a function parameter
+      boost::optional<Scope::FunctionFormalParameter> paramInfo;
     public:
-      CommonName (const uc::String& identifier, NameType type, semantics::TypePtr typeOfName)
-        : identifier (identifier), type (type), valueType (typeOfName) {}
-      CommonName (const uc::String& identifier, TypePtr typeOfName,
+      CommonName (Scope* ownerScope, const uc::String& identifier, NameType type, Type* typeOfName)
+        : ownerScope (ownerScope), identifier (identifier), type (type), valueType (typeOfName) {}
+      CommonName (Scope* ownerScope, const uc::String& identifier, Type* typeOfName,
                   ExpressionPtr value, bool constant)
-        : identifier (identifier), type (Variable), valueType (typeOfName),
+        : ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),
           varValue (value), varConstant (constant) {}
+      CommonName (Scope* ownerScope,
+                  const Scope::FunctionFormalParameter& param)
+        : CommonName (ownerScope, param.identifier, param.type.get(), param.defaultValue,
+                      param.dir == Scope::dirIn)
+      {
+        paramInfo = param;
+      }
+
+      Scope* GetOwnerScope() const { return ownerScope; }
 
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
@@ -56,6 +72,8 @@ namespace s1
       const uc::String& GetIdentifier () { return identifier; }
       bool IsConstantVariable () { return (type == Variable) && varConstant; }
       TypePtr GetValueType () { return valueType; }
+
+      const semantics::Scope::FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
     };
   } // namespace semantics
 } // namespace s1

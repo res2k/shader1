@@ -54,7 +54,7 @@ namespace s1
         // TODO: Error handling
         return NamePtr();
       }
-      NamePtr newName (new CommonName (identifier, type, initialValue, constant));
+      NamePtr newName (new CommonName (this, identifier, type.get(), initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -67,7 +67,7 @@ namespace s1
         // TODO: Error handling
         return NamePtr();
       }
-      NamePtr newName (new CommonName (identifier, Name::TypeAlias, aliasedType));
+      NamePtr newName (new CommonName (this, identifier, Name::TypeAlias, aliasedType.get()));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -87,7 +87,7 @@ namespace s1
         // TODO: Error handling
         return FunctionPtr();
       }
-      NamePtr newName (new CommonName (identifier, Name::Function, returnType));
+      NamePtr newName (new CommonName (this, identifier, Name::Function, returnType.get()));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);

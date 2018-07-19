@@ -20,8 +20,7 @@
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "semantics/CommonName.h"
-
-#include <boost/optional.hpp>
+#include "ScopeImpl.h"
 
 namespace s1
 {
@@ -29,28 +28,19 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::NameImpl : public semantics::CommonName
     {
-      ScopeImpl* ownerScope;
-
-      // Parameter info, if it's originally a function parameter
-      boost::optional<semantics::Scope::FunctionFormalParameter> paramInfo;
     public:
       NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier, NameType type,
                 semantics::Type* typeOfName)
-        : CommonName (identifier, type, typeOfName), ownerScope (ownerScope) {}
+        : CommonName (ownerScope, identifier, type, typeOfName) {}
       NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier,
                 semantics::Type* typeOfName,
                 ExpressionPtr value, bool constant)
-        : CommonName (identifier, typeOfName, value, constant), ownerScope (ownerScope) {}
+        : CommonName (ownerScope, identifier, typeOfName, value, constant) {}
       NameImpl (ScopeImpl* ownerScope,
                 const semantics::Scope::FunctionFormalParameter& param)
-        : CommonName (param.identifier, param.type.get(), param.defaultValue,
-                      param.dir == semantics::Scope::dirIn),
-          ownerScope (ownerScope), paramInfo (param) {}
-
-      ScopeImpl* GetOwnerScope() const { return ownerScope; }
-      const semantics::Scope::FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
+        : CommonName (ownerScope, param) {}
     };
   } // namespace intermediate
 } // namespace s1
