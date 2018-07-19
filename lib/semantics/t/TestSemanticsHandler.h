@@ -268,14 +268,14 @@ public:
     TestExpressionFunction (TestName* name, const ExpressionVector& params)
     {
       {
-        name->identifier.toUTF8String (str);
+        name->GetIdentifier().toUTF8String (str);
       }
       
       str.append (" (");
       ParamsToStr (params);
       str.append (")");
       
-      valueType = name->valueType;
+      valueType = name->GetValueType();
     }
     
     TestExpressionFunction (s1::semantics::Type* type, const ExpressionVector& params)
@@ -312,8 +312,8 @@ public:
   s1::semantics::ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)
   {
     return s1::semantics::ExpressionPtr (new TestExpressionVar (
-      static_cast<s1::semantics::CommonName*> (name.get())->identifier,
-      static_cast<s1::semantics::CommonName*> (name.get())->valueType));
+      static_cast<s1::semantics::CommonName*> (name.get())->GetIdentifier(),
+      static_cast<s1::semantics::CommonName*> (name.get())->GetValueType()));
   }
   
   s1::semantics::ExpressionPtr CreateAttributeAccess (s1::semantics::ExpressionPtr expr,
