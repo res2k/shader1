@@ -26,7 +26,6 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
-#include "NameImpl.h"
 #include "ScopeImpl.h"
 
 namespace s1

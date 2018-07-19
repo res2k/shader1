@@ -22,8 +22,6 @@
 #include "intermediate/Sequence.h"
 #include "semantics/Block.h"
 
-#include "NameImpl.h"
-
 #include <outcome/outcome.hpp>
 
 namespace s1

@@ -22,7 +22,6 @@
 
 #include "BlockImpl.h"
 #include "intermediate/Diagnostics.h"
-#include "NameImpl.h"
 
 namespace s1
 {

@@ -21,7 +21,6 @@
 
 #include "BlockImpl.h"
 #include "intermediate/SequenceOp/SequenceOpAssign.h"
-#include "NameImpl.h"
 #include "ScopeImpl.h"
 
 namespace s1

@@ -26,7 +26,6 @@
 #include "intermediate/Diagnostics.h"
 #include "parser/Diagnostics.h"
 #include "ExpressionImpl.h"
-#include "NameImpl.h"
 
 #include <boost/make_shared.hpp>
 #include <limits.h>

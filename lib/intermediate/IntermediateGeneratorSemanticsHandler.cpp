@@ -33,7 +33,6 @@
 
 #include "BlockImpl.h"
 #include "FunctionCallGlobalVarAugment.h"
-#include "NameImpl.h"
 #include "PrependGlobalsInit.h"
 #include "ScopeImpl.h"
 

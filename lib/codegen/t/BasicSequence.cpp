@@ -24,7 +24,6 @@
 #include "intermediate/SequenceBuilder.h"
 // FIXME: Tests using too much intermediate internals
 #include "BlockImpl.h"
-#include "NameImpl.h"
 
 #include "codegen/glsl/GLSLGenerator.h"
 #include "codegen/glsl/GLSLOptions.h"

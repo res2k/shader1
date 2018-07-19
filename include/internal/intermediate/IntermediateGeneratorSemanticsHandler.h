@@ -23,6 +23,7 @@
 #include "diagnostics/forwarddecl.h"
 #include "semantics/Attribute.h"
 #include "semantics/CommonHandler.h"
+#include "semantics/CommonName.h"
 #include "semantics/Scope.h"
 #include "semantics/Type.h"
 
@@ -45,7 +46,6 @@ namespace s1
 
       typedef semantics::ExpressionPtr ExpressionPtr;
 
-      class NameImpl;
       class FunctionImpl;
       class ScopeImpl;
       class BlockImpl;
@@ -58,6 +58,7 @@ namespace s1
       {
       };
 
+      typedef semantics::CommonName NameImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
       class ArrayElementExpressionImpl;

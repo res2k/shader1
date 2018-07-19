@@ -26,7 +26,6 @@
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "parser/Parser.h"
 #include "BlockImpl.h"
-#include "NameImpl.h"
 
 #include "codegen/glsl/GLSLGenerator.h"
 #include "codegen/glsl/GLSLOptions.h"

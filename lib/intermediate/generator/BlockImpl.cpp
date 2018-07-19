@@ -31,7 +31,6 @@
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
-#include "NameImpl.h"
 #include "ScopeImpl.h"
 #include "VariableExpressionImpl.h"
 

@@ -11,7 +11,6 @@ set(generator_sources
     FunctionCallExpressionImpl.h
     FunctionImpl.h
     LogicExpressionImpl.h
-    NameImpl.h
     NumericExpressionImpl.h
     ScopeImpl.h
     TernaryExpressionImpl.h
