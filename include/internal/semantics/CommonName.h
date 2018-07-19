@@ -26,7 +26,7 @@ namespace s1
 {
   namespace semantics
   {
-    struct CommonName : public Name
+    class CommonName : public Name
     {
       uc::String identifier;
       NameType type;
@@ -41,6 +41,7 @@ namespace s1
       // Distinguish between variable/constant
       bool varConstant;
 
+    public:
       CommonName (const uc::String& identifier, NameType type, semantics::TypePtr typeOfName)
         : identifier (identifier), type (type), valueType (typeOfName) {}
       CommonName (const uc::String& identifier, TypePtr typeOfName,
