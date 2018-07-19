@@ -21,10 +21,10 @@
 #include "base/intrusive_ptr.h"
 #include "semantics/Attribute.h"
 #include "semantics/Block.h"
-#include "semantics/CommonName.h"
 #include "semantics/CommonHandler.h"
 #include "semantics/Expression.h"
 #include "semantics/Function.h"
+#include "semantics/Name.h"
 #include "semantics/Scope.h"
 #include "semantics/Type.h"
 
@@ -81,7 +81,7 @@ public:
       scopeLevel));
   }
   
-  typedef s1::semantics::CommonName TestName;
+  typedef s1::semantics::Name TestName;
   
   struct TestExpressionBase : public s1::semantics::Expression
   {
@@ -311,9 +311,7 @@ public:
   
   s1::semantics::ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)
   {
-    return s1::semantics::ExpressionPtr (new TestExpressionVar (
-      static_cast<s1::semantics::CommonName*> (name.get())->GetIdentifier(),
-      static_cast<s1::semantics::CommonName*> (name.get())->GetValueType()));
+    return s1::semantics::ExpressionPtr (new TestExpressionVar (name->GetIdentifier(), name->GetValueType()));
   }
   
   s1::semantics::ExpressionPtr CreateAttributeAccess (s1::semantics::ExpressionPtr expr,

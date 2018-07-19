@@ -18,8 +18,8 @@
 #include "base/common.h"
 #include "base/intrusive_ptr.h"
 #include "parser/Diagnostics.h"
-#include "semantics/CommonName.h"
 #include "semantics/CommonHandler.h"
+#include "semantics/Name.h"
 
 #include "semantics/CommonScope.h"
 
@@ -54,7 +54,7 @@ namespace s1
         // TODO: Error handling
         return NamePtr();
       }
-      NamePtr newName (new CommonName (this, identifier, type.get(), initialValue, constant));
+      NamePtr newName (new Name (this, identifier, type.get(), initialValue, constant));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -67,7 +67,7 @@ namespace s1
         // TODO: Error handling
         return NamePtr();
       }
-      NamePtr newName (new CommonName (this, identifier, Name::TypeAlias, aliasedType.get()));
+      NamePtr newName (new Name (this, identifier, Name::TypeAlias, aliasedType.get()));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -87,7 +87,7 @@ namespace s1
         // TODO: Error handling
         return FunctionPtr();
       }
-      NamePtr newName (new CommonName (this, identifier, Name::Function, returnType.get()));
+      NamePtr newName (new Name (this, identifier, Name::Function, returnType.get()));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);

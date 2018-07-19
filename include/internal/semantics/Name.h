@@ -19,6 +19,9 @@
 #define SEMANTICS_NAME_H_
 
 #include "Base.h"
+#include "Scope.h"
+
+#include <boost/optional.hpp>
 
 namespace s1
 {
@@ -27,27 +30,68 @@ namespace s1
     /**
      * A name refers to a variable, an attribute of it or an element.
      */
-    struct Name : public Base
+    class Name : public Base
     {
-      virtual ~Name() {}
-      
+    public:
       /// Type of name (function or variable/parameter)
       enum NameType { Function, Variable, TypeAlias };
-      
+    protected:
+      Scope* ownerScope;
+
+      uc::String identifier;
+      NameType type;
+
+      /* Variables/Constants: type of variable/constant
+        * Functions: type of return value
+        * Type aliases: aliased type
+        */
+      TypePtr valueType;
+      // Variables/Constants: value
+      ExpressionPtr varValue;
+      // Distinguish between variable/constant
+      bool varConstant;
+
+      // Parameter info, if it's originally a function parameter
+      boost::optional<Scope::FunctionFormalParameter> paramInfo;
+    public:
+      Name (Scope* ownerScope, const uc::String& identifier, NameType type, Type* typeOfName)
+        : ownerScope (ownerScope), identifier (identifier), type (type), valueType (typeOfName) {}
+      Name (Scope* ownerScope, const uc::String& identifier, Type* typeOfName,
+            ExpressionPtr value, bool constant)
+        : ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),
+          varValue (value), varConstant (constant) {}
+      Name (Scope* ownerScope,
+            const Scope::FunctionFormalParameter& param)
+        :  Name (ownerScope, param.identifier, param.type.get(), param.defaultValue,
+                 param.dir == Scope::dirIn)
+      {
+        paramInfo = param;
+      }
+      virtual ~Name() {}
+
+      /// Get scope this name is declared in
+      Scope* GetOwnerScope() const { return ownerScope; }
+
       /// Get type of name
-      virtual NameType GetType() = 0;
+      NameType GetType() { return type; }
       
       /// Get aliased type
-      virtual TypePtr GetAliasedType() = 0;
+      TypePtr GetAliasedType() { return type == TypeAlias ? valueType : TypePtr (); }
+
+      /// Get initialization value for variables
+      Expression* GetValue() const { return varValue.get(); }
 
       /// Get name identifier
-      virtual const uc::String& GetIdentifier () = 0;
+      const uc::String& GetIdentifier () { return identifier; }
 
       /// Return whether a variable name is a constant
-      virtual bool IsConstantVariable () = 0;
+      bool IsConstantVariable () { return (type == Variable) && varConstant; }
 
       /// Return type of variable value
-      virtual TypePtr GetValueType () = 0;
+      TypePtr GetValueType () { return valueType; }
+
+      /// Return parameter info, if name was originally a function parameter
+      const Scope::FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
     };
   } // namespace semantics
 } // namespace s1

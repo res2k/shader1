@@ -34,7 +34,7 @@ namespace s1
 
     struct Attribute;
 
-    struct Name;
+    class Name;
     typedef boost::intrusive_ptr<Name> NamePtr;
 
     struct Expression;

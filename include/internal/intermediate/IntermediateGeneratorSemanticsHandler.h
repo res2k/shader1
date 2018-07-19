@@ -23,7 +23,7 @@
 #include "diagnostics/forwarddecl.h"
 #include "semantics/Attribute.h"
 #include "semantics/CommonHandler.h"
-#include "semantics/CommonName.h"
+#include "semantics/Name.h"
 #include "semantics/Scope.h"
 #include "semantics/Type.h"
 
@@ -58,7 +58,7 @@ namespace s1
       {
       };
 
-      typedef semantics::CommonName NameImpl;
+      typedef semantics::Name NameImpl;
       class ExpressionImpl;
       class ArithmeticExpressionImpl;
       class ArrayElementExpressionImpl;
