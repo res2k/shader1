@@ -166,7 +166,7 @@ namespace s1
              ++import)
         {
           if (!import->second.isImported) continue;
-          if ((get_static_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+          if ((get_static_ptr<ScopeImpl> (import->first->GetOwnerScope()) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
             auto reg = GetRegisterForName (import->first.get(), false);
@@ -183,7 +183,7 @@ namespace s1
              ++import)
         {
           if (!import->second.isImported) continue;
-          if ((get_static_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+          if ((get_static_ptr<ScopeImpl> (import->first->GetOwnerScope()) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
             auto reg = GetRegisterForName (import->first.get(), false);
@@ -553,7 +553,7 @@ namespace s1
              ++import)
         {
           if (!import->second.isImported) continue;
-          if ((get_static_ptr<ScopeImpl> (import->first->ownerScope) != blockScopeImpl)
+          if ((get_static_ptr<ScopeImpl> (import->first->GetOwnerScope()) != blockScopeImpl)
               && !import->second.initiallyWriteable)
           {
             auto reg = GetRegisterForName (import->first.get(), false);
@@ -617,7 +617,7 @@ namespace s1
     {
       auto paramInfo = name->GetParamInfo();
       bool isOutputParam = paramInfo && (paramInfo->dir == semantics::Scope::dirOut);
-      bool isFromOutside = (get_static_ptr<ScopeImpl> (name->ownerScope) != innerScope);
+      bool isFromOutside = (get_static_ptr<ScopeImpl> (name->GetOwnerScope()) != innerScope);
       bool doImport = isFromOutside
                       && ((innerScope->GetLevel() != semantics::ScopeLevel::Function) || !isOutputParam)
                       && !writeable;
@@ -642,7 +642,7 @@ namespace s1
           /* Add a suffix derived from the "distance" of this block's scope to the scope
             that defines 'name' in order to make local register name unique */
           int d = get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (
-            get_static_ptr<ScopeImpl> (name->ownerScope));
+            get_static_ptr<ScopeImpl> (name->GetOwnerScope()));
           if (d >= 0)
           {
             FormatImportedReg (importName, name->GetIdentifier(), d);

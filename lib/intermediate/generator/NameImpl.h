@@ -27,13 +27,13 @@ namespace s1
 {
   namespace intermediate
   {
-    struct IntermediateGeneratorSemanticsHandler::NameImpl : public semantics::CommonName
+    class IntermediateGeneratorSemanticsHandler::NameImpl : public semantics::CommonName
     {
       ScopeImpl* ownerScope;
 
       // Parameter info, if it's originally a function parameter
       boost::optional<semantics::Scope::FunctionFormalParameter> paramInfo;
-
+    public:
       NameImpl (ScopeImpl* ownerScope,
                 const uc::String& identifier, NameType type,
                 semantics::Type* typeOfName)
@@ -49,6 +49,7 @@ namespace s1
                       param.dir == semantics::Scope::dirIn),
           ownerScope (ownerScope), paramInfo (param) {}
 
+      ScopeImpl* GetOwnerScope() const { return ownerScope; }
       const semantics::Scope::FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
     };
   } // namespace intermediate

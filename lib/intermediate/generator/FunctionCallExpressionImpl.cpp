@@ -48,7 +48,7 @@ namespace s1
       overloadSelected = true;
 
       auto nameImpl = get_static_ptr<NameImpl> (functionName);
-      auto funcScopeImpl = get_static_ptr<ScopeImpl> (nameImpl->ownerScope);
+      auto funcScopeImpl = get_static_ptr<ScopeImpl> (nameImpl->GetOwnerScope());
 
       // Collect overload candidates
       ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName.get(), params));
