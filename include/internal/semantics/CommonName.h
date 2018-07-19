@@ -51,6 +51,7 @@ namespace s1
       NameType GetType() { return type; }
       TypePtr GetAliasedType()
       { return type == TypeAlias ? valueType : semantics::TypePtr (); }
+      Expression* GetValue() const { return varValue.get(); }
       const uc::String& GetIdentifier () { return identifier; }
       bool IsConstantVariable () { return (type == Variable) && varConstant; }
       TypePtr GetValueType () { return valueType; }
