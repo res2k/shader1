@@ -13,6 +13,7 @@ endif()
 
 # s1c variant we're 'publishing'. Allow it to utilize C++11 features
 ADD_EXECUTABLE(s1c ${s1c_sources})
+s1_strip_debug_symbols(s1c INSTALL_DESTINATION bin)
 target_link_libraries(s1c s1 ${_S1C_LINK_BOOST})
 set_target_properties(s1c PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 # Require C++11 features if set globally

@@ -41,6 +41,7 @@ include(s1_add_library)
 include(s1_add_cxxtest)
 include(s1_boost)
 include(s1_detect_stdlib)
+include(s1_strip_debug)
 
 if(CXXTEST_FOUND)
   include_directories(${CXXTEST_INCLUDE_DIR})
