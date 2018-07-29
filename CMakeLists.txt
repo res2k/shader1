@@ -95,6 +95,8 @@ if(NOT MSVC)
   CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-ffunction-sections")
   # Clang: Silence this warning
   CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-Qunused-arguments")
+  # gcc, Clang: Aggressively merge constant values
+  CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-fmerge-all-constants")
 endif()
 
 CxxCompilerFlagString (CXX_AS_NEEDED_FLAG "-Wl,--as-needed")
