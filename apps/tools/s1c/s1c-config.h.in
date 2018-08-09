@@ -27,6 +27,6 @@
 #define S1C_CONFIG_H_
 
 // Function attribute for unused functions
-#cmakedefine S1C_FUNCATTR_MAYBE_UNUSED    @S1C_FUNCATTR_MAYBE_UNUSED@
+#define S1C_FUNCATTR_MAYBE_UNUSED    @S1C_FUNCATTR_MAYBE_UNUSED@
 
 #endif // S1C_CONFIG_H_
