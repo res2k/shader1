@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2016 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This software is provided 'as-is', without any express or implied
@@ -22,6 +22,8 @@
       3. This notice may not be removed or altered from any source
       distribution.
 */
+
+#include "s1c-config.h"
 
 #include <iostream>
 
@@ -66,22 +68,22 @@ enum
 
 /* Helper: Convert a wide string to local 8-bit encoding.
  * Hijack a program_options function for that. */
-static inline std::string to_local (const std::wstring& orig)
+S1C_FUNCATTR_MAYBE_UNUSED static inline std::string to_local (const std::wstring& orig)
 {
   return boost::to_local_8_bit (orig);
 }
 
-static inline std::string to_local (const char* orig)
+S1C_FUNCATTR_MAYBE_UNUSED static inline std::string to_local (const char* orig)
 {
   return orig;
 }
 
-static inline std::wstring to_wide (const std::string& orig)
+S1C_FUNCATTR_MAYBE_UNUSED static inline std::wstring to_wide (const std::string& orig)
 {
   return boost::from_local_8_bit (orig);
 }
 
-static inline std::wstring to_wide (const wchar_t* orig)
+S1C_FUNCATTR_MAYBE_UNUSED static inline std::wstring to_wide (const wchar_t* orig)
 {
   return orig;
 }
