@@ -12,7 +12,7 @@ function(s1_detect_function_attribute VAR)
   endif()
   foreach(attr_variant ${dfa_UNPARSED_ARGUMENTS})
     string(MAKE_C_IDENTIFIER "${attr_variant}" attr_variant_c)
-    set(test_src_name "src_${VAR}_${attr_variant}.cxx")
+    set(test_src_name "src_${VAR}_${attr_variant_c}.cxx")
     set(SOURCE "${attr_variant} void unused() {}\n\nint main() { return 0; }")
     file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/${test_src_name}" "${SOURCE}\n")
     try_compile(try_compile_result
