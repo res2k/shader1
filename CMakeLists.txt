@@ -40,6 +40,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(s1_add_library)
 include(s1_add_cxxtest)
 include(s1_boost)
+include(s1_detect_function_attribute)
 include(s1_detect_stdlib)
 include(s1_strip_debug)
 
