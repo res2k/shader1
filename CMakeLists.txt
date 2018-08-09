@@ -81,6 +81,7 @@ function(FlagStringAppend flagvar flagstr)
   set(${flagvar} "${${flagvar}} ${flagstr} " PARENT_SCOPE)
 endfunction()
 
+CxxCompilerFlagString (CXX_WERROR_FLAG "-Werror")
 if(NOT MSVC)
   # Annoying on MSVC; lots of warnings from inside Boost
   CxxCompilerFlagStringAppend (CACHE_CXX_FLAGS "-Wall")
