@@ -20,11 +20,14 @@ function(s1_detect_function_attribute VAR)
     set(test_src_name "src_${VAR}_${attr_variant_c}.cxx")
     set(SOURCE "${attr_variant} void unused() {}\n\nint main() { return 0; }")
     file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/${test_src_name}" "${SOURCE}\n")
+    set(save_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WERROR_FLAG}")
     try_compile(try_compile_result
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/${test_src_name}
       ${try_compile_flags}
       OUTPUT_VARIABLE OUTPUT)
+    set(CMAKE_CXX_FLAGS "${save_CMAKE_CXX_FLAGS}")
     if(${try_compile_result})
       set(${VAR} "${attr_variant}" CACHE INTERNAL "Test ${VAR}")
       set(${VAR} "${attr_variant}" PARENT_SCOPE)
