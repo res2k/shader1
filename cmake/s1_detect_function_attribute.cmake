@@ -1,5 +1,10 @@
 # Detect which variant of a C++ function attribute is supported
 function(s1_detect_function_attribute VAR)
+  # Use cached result
+  if(DEFINED "${VAR}")
+    return()
+  endif()
+
   CMAKE_PARSE_ARGUMENTS(dfa
     ""
     "CXX_STANDARD"
