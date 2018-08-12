@@ -21,6 +21,8 @@
 #ifndef __S1_OBJECT_H__
 #define __S1_OBJECT_H__
 
+/* MSVC prerequisites */
+
 #include "preprocessor.h"
 
 #include "s1/defs.h"

@@ -104,6 +104,39 @@
 # endif
 #
 # endif
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Paul Mensonides 2002.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_CONTROL_IIF_HPP
+# define _S1BOOSTPP_CONTROL_IIF_HPP
+#
+#
+# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MWCC()
+#    define _S1BOOSTPP_IIF(bit, t, f) _S1BOOSTPP_IIF_I(bit, t, f)
+# else
+#    define _S1BOOSTPP_IIF(bit, t, f) _S1BOOSTPP_IIF_OO((bit, t, f))
+#    define _S1BOOSTPP_IIF_OO(par) _S1BOOSTPP_IIF_I ## par
+# endif
+#
+# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC()
+#    define _S1BOOSTPP_IIF_I(bit, t, f) _S1BOOSTPP_IIF_ ## bit(t, f)
+# else
+#    define _S1BOOSTPP_IIF_I(bit, t, f) _S1BOOSTPP_IIF_II(_S1BOOSTPP_IIF_ ## bit(t, f))
+#    define _S1BOOSTPP_IIF_II(id) id
+# endif
+#
+# define _S1BOOSTPP_IIF_0(t, f) f
+# define _S1BOOSTPP_IIF_1(t, f) t
+#
+# endif
 # /* Copyright (C) 2001
 #  * Housemarque Oy
 #  * http://www.housemarque.com
@@ -135,6 +168,334 @@
 # else
 #    define _S1BOOSTPP_CAT_I(a, b) _S1BOOSTPP_CAT_II(~, a ## b)
 #    define _S1BOOSTPP_CAT_II(p, res) res
+# endif
+#
+# endif
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Edward Diener 2014.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+#ifndef _S1BOOSTPP_DETAIL_IS_BEGIN_PARENS_HPP
+#define _S1BOOSTPP_DETAIL_IS_BEGIN_PARENS_HPP
+
+#if _S1BOOSTPP_VARIADICS_MSVC
+
+
+#define _S1BOOSTPP_DETAIL_VD_IBP_CAT(a, b) _S1BOOSTPP_DETAIL_VD_IBP_CAT_I(a, b)
+#define _S1BOOSTPP_DETAIL_VD_IBP_CAT_I(a, b) _S1BOOSTPP_DETAIL_VD_IBP_CAT_II(a ## b)
+#define _S1BOOSTPP_DETAIL_VD_IBP_CAT_II(res) res
+
+#define _S1BOOSTPP_DETAIL_IBP_SPLIT(i, ...) \
+    _S1BOOSTPP_DETAIL_VD_IBP_CAT(_S1BOOSTPP_DETAIL_IBP_PRIMITIVE_CAT(_S1BOOSTPP_DETAIL_IBP_SPLIT_,i)(__VA_ARGS__),_S1BOOSTPP_EMPTY()) \
+/**/
+
+#define _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_C(...) 1 1
+
+#else
+
+#define _S1BOOSTPP_DETAIL_IBP_SPLIT(i, ...) \
+    _S1BOOSTPP_DETAIL_IBP_PRIMITIVE_CAT(_S1BOOSTPP_DETAIL_IBP_SPLIT_,i)(__VA_ARGS__) \
+/**/
+
+#define _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_C(...) 1
+
+#endif /* _S1BOOSTPP_VARIADICS_MSVC */
+
+#define _S1BOOSTPP_DETAIL_IBP_SPLIT_0(a, ...) a
+#define _S1BOOSTPP_DETAIL_IBP_SPLIT_1(a, ...) __VA_ARGS__
+
+#define _S1BOOSTPP_DETAIL_IBP_CAT(a, ...) _S1BOOSTPP_DETAIL_IBP_PRIMITIVE_CAT(a,__VA_ARGS__)
+#define _S1BOOSTPP_DETAIL_IBP_PRIMITIVE_CAT(a, ...) a ## __VA_ARGS__
+
+#define _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_R_1 1,
+#define _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_R__S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_C 0,
+
+#endif /* _S1BOOSTPP_DETAIL_IS_BEGIN_PARENS_HPP */
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Edward Diener 2014.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_IS_BEGIN_PARENS_HPP
+# define _S1BOOSTPP_IS_BEGIN_PARENS_HPP
+
+
+#if _S1BOOSTPP_VARIADICS
+
+
+#if _S1BOOSTPP_VARIADICS_MSVC && _MSC_VER <= 1400
+
+#define _S1BOOSTPP_IS_BEGIN_PARENS(param) \
+    _S1BOOSTPP_DETAIL_IBP_SPLIT \
+      ( \
+      0, \
+      _S1BOOSTPP_DETAIL_IBP_CAT \
+        ( \
+        _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_R_, \
+        _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_C param \
+        ) \
+      ) \
+/**/
+
+#else
+
+#define _S1BOOSTPP_IS_BEGIN_PARENS(...) \
+    _S1BOOSTPP_DETAIL_IBP_SPLIT \
+      ( \
+      0, \
+      _S1BOOSTPP_DETAIL_IBP_CAT \
+        ( \
+        _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_R_, \
+        _S1BOOSTPP_DETAIL_IBP_IS_VARIADIC_C __VA_ARGS__ \
+        ) \
+      ) \
+/**/
+
+#endif /* _S1BOOSTPP_VARIADICS_MSVC && _MSC_VER <= 1400 */
+#endif /* _S1BOOSTPP_VARIADICS */
+#endif /* _S1BOOSTPP_IS_BEGIN_PARENS_HPP */
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Edward Diener 2014.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+#ifndef _S1BOOSTPP_DETAIL_IS_EMPTY_HPP
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_HPP
+
+
+#if _S1BOOSTPP_VARIADICS_MSVC
+
+# pragma warning(once:4002)
+
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_IIF_0(t, b) b
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_IIF_1(t, b) t
+
+#else
+
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_IIF_0(t, ...) __VA_ARGS__
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_IIF_1(t, ...) t
+
+#endif
+
+#if _S1BOOSTPP_VARIADICS_MSVC && _MSC_VER <= 1400
+
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_PROCESS(param) \
+	_S1BOOSTPP_IS_BEGIN_PARENS \
+    	( \
+        _S1BOOSTPP_DETAIL_IS_EMPTY_NON_FUNCTION_C param () \
+        ) \
+/**/
+
+#else
+
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_PROCESS(...) \
+	_S1BOOSTPP_IS_BEGIN_PARENS \
+        ( \
+        _S1BOOSTPP_DETAIL_IS_EMPTY_NON_FUNCTION_C __VA_ARGS__ () \
+        ) \
+/**/
+
+#endif
+
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_PRIMITIVE_CAT(a, b) a ## b
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_IIF(bit) _S1BOOSTPP_DETAIL_IS_EMPTY_PRIMITIVE_CAT(_S1BOOSTPP_DETAIL_IS_EMPTY_IIF_,bit)
+#define _S1BOOSTPP_DETAIL_IS_EMPTY_NON_FUNCTION_C(...) ()
+
+#endif /* _S1BOOSTPP_DETAIL_IS_EMPTY_HPP */
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Edward Diener 2014.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_FACILITIES_IS_EMPTY_VARIADIC_HPP
+# define _S1BOOSTPP_FACILITIES_IS_EMPTY_VARIADIC_HPP
+#
+#
+# if _S1BOOSTPP_VARIADICS
+#
+#
+#if _S1BOOSTPP_VARIADICS_MSVC && _MSC_VER <= 1400
+#
+#define _S1BOOSTPP_IS_EMPTY(param) \
+    _S1BOOSTPP_DETAIL_IS_EMPTY_IIF \
+      ( \
+      _S1BOOSTPP_IS_BEGIN_PARENS \
+        ( \
+        param \
+        ) \
+      ) \
+      ( \
+      _S1BOOSTPP_IS_EMPTY_ZERO, \
+      _S1BOOSTPP_DETAIL_IS_EMPTY_PROCESS \
+      ) \
+    (param) \
+/**/
+#define _S1BOOSTPP_IS_EMPTY_ZERO(param) 0
+# else
+#define _S1BOOSTPP_IS_EMPTY(...) \
+    _S1BOOSTPP_DETAIL_IS_EMPTY_IIF \
+      ( \
+      _S1BOOSTPP_IS_BEGIN_PARENS \
+        ( \
+        __VA_ARGS__ \
+        ) \
+      ) \
+      ( \
+      _S1BOOSTPP_IS_EMPTY_ZERO, \
+      _S1BOOSTPP_DETAIL_IS_EMPTY_PROCESS \
+      ) \
+    (__VA_ARGS__) \
+/**/
+#define _S1BOOSTPP_IS_EMPTY_ZERO(...) 0
+# endif /* _S1BOOSTPP_VARIADICS_MSVC && _MSC_VER <= 1400 */
+# endif /* _S1BOOSTPP_VARIADICS */
+# endif /* _S1BOOSTPP_FACILITIES_IS_EMPTY_VARIADIC_HPP */
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Paul Mensonides 2003.
+#  *     (C) Copyright Edward Diener 2014.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_FACILITIES_IS_EMPTY_HPP
+# define _S1BOOSTPP_FACILITIES_IS_EMPTY_HPP
+#
+#
+# if _S1BOOSTPP_VARIADICS
+#
+#
+# else
+#
+# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC() && ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MWCC()
+# else
+# endif
+#
+# /* _S1BOOSTPP_IS_EMPTY */
+#
+# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC() && ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MWCC()
+#    define _S1BOOSTPP_IS_EMPTY(x) _S1BOOSTPP_IS_EMPTY_I(x _S1BOOSTPP_IS_EMPTY_HELPER)
+#    define _S1BOOSTPP_IS_EMPTY_I(contents) _S1BOOSTPP_TUPLE_ELEM(2, 1, (_S1BOOSTPP_IS_EMPTY_DEF_ ## contents()))
+#    define _S1BOOSTPP_IS_EMPTY_DEF__S1BOOSTPP_IS_EMPTY_HELPER 1, _S1BOOSTPP_IDENTITY(1)
+#    define _S1BOOSTPP_IS_EMPTY_HELPER() , 0
+# else
+#    if _S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC()
+#        define _S1BOOSTPP_IS_EMPTY(x) _S1BOOSTPP_IS_EMPTY_I(_S1BOOSTPP_IS_EMPTY_HELPER x ())
+#        define _S1BOOSTPP_IS_EMPTY_I(test) _S1BOOSTPP_IS_EMPTY_II(_S1BOOSTPP_SPLIT(0, _S1BOOSTPP_CAT(_S1BOOSTPP_IS_EMPTY_DEF_, test)))
+#        define _S1BOOSTPP_IS_EMPTY_II(id) id
+#    else
+#        define _S1BOOSTPP_IS_EMPTY(x) _S1BOOSTPP_IS_EMPTY_I((_S1BOOSTPP_IS_EMPTY_HELPER x ()))
+#        define _S1BOOSTPP_IS_EMPTY_I(par) _S1BOOSTPP_IS_EMPTY_II ## par
+#        define _S1BOOSTPP_IS_EMPTY_II(test) _S1BOOSTPP_SPLIT(0, _S1BOOSTPP_CAT(_S1BOOSTPP_IS_EMPTY_DEF_, test))
+#    endif
+#    define _S1BOOSTPP_IS_EMPTY_HELPER() 1
+#    define _S1BOOSTPP_IS_EMPTY_DEF_1 1, _S1BOOSTPP_NIL
+#    define _S1BOOSTPP_IS_EMPTY_DEF__S1BOOSTPP_IS_EMPTY_HELPER 0, _S1BOOSTPP_NIL
+# endif
+#
+# endif /* _S1BOOSTPP_VARIADICS */
+#
+# endif /* _S1BOOSTPP_FACILITIES_IS_EMPTY_HPP */
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Paul Mensonides 2003.
+#  *     Distributed under the Boost Software License, Version 1.0. (See
+#  *     accompanying file LICENSE_1_0.txt or copy at
+#  *     http://www.boost.org/LICENSE_1_0.txt)
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_FACILITIES_IS_1_HPP
+# define _S1BOOSTPP_FACILITIES_IS_1_HPP
+#
+#
+# /* _S1BOOSTPP_IS_1 */
+#
+# define _S1BOOSTPP_IS_1(x) _S1BOOSTPP_IS_EMPTY(_S1BOOSTPP_CAT(_S1BOOSTPP_IS_1_HELPER_, x))
+# define _S1BOOSTPP_IS_1_HELPER_1
+#
+# endif
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Edward Diener 2011.                                    *
+#  *     (C) Copyright Paul Mensonides 2011.                                  *
+#  *     Distributed under the Boost Software License, Version 1.0. (See      *
+#  *     accompanying file LICENSE_1_0.txt or copy at                         *
+#  *     http://www.boost.org/LICENSE_1_0.txt)                                *
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_VARIADIC_SIZE_HPP
+# define _S1BOOSTPP_VARIADIC_SIZE_HPP
+#
+#
+# /* _S1BOOSTPP_VARIADIC_SIZE */
+#
+# if _S1BOOSTPP_VARIADICS
+#    if _S1BOOSTPP_VARIADICS_MSVC
+#        define _S1BOOSTPP_VARIADIC_SIZE(...) _S1BOOSTPP_CAT(_S1BOOSTPP_VARIADIC_SIZE_I(__VA_ARGS__, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,),)
+#    else
+#        define _S1BOOSTPP_VARIADIC_SIZE(...) _S1BOOSTPP_VARIADIC_SIZE_I(__VA_ARGS__, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,)
+#    endif
+#    define _S1BOOSTPP_VARIADIC_SIZE_I(e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18, e19, e20, e21, e22, e23, e24, e25, e26, e27, e28, e29, e30, e31, e32, e33, e34, e35, e36, e37, e38, e39, e40, e41, e42, e43, e44, e45, e46, e47, e48, e49, e50, e51, e52, e53, e54, e55, e56, e57, e58, e59, e60, e61, e62, e63, size, ...) size
+# endif
+#
+# endif
+# /* **************************************************************************
+#  *                                                                          *
+#  *     (C) Copyright Edward Diener 2011.                                    *
+#  *     (C) Copyright Paul Mensonides 2011.                                  *
+#  *     Distributed under the Boost Software License, Version 1.0. (See      *
+#  *     accompanying file LICENSE_1_0.txt or copy at                         *
+#  *     http://www.boost.org/LICENSE_1_0.txt)                                *
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_TUPLE_SIZE_HPP
+# define _S1BOOSTPP_TUPLE_SIZE_HPP
+#
+#
+# if _S1BOOSTPP_VARIADICS
+#    if _S1BOOSTPP_VARIADICS_MSVC
+#        define _S1BOOSTPP_TUPLE_SIZE(tuple) _S1BOOSTPP_CAT(_S1BOOSTPP_VARIADIC_SIZE tuple,)
+#    else
+#        define _S1BOOSTPP_TUPLE_SIZE(tuple) _S1BOOSTPP_VARIADIC_SIZE tuple
+#    endif
 # endif
 #
 # endif
@@ -216,39 +577,6 @@
 # define _S1BOOSTPP_ERROR_0x0005 _S1BOOSTPP_ERROR(0x0005, _S1BOOSTPP_SEQ_FOLD_OVERFLOW)
 # define _S1BOOSTPP_ERROR_0x0006 _S1BOOSTPP_ERROR(0x0006, _S1BOOSTPP_ARITHMETIC_OVERFLOW)
 # define _S1BOOSTPP_ERROR_0x0007 _S1BOOSTPP_ERROR(0x0007, _S1BOOSTPP_DIVISION_BY_ZERO)
-#
-# endif
-# /* **************************************************************************
-#  *                                                                          *
-#  *     (C) Copyright Paul Mensonides 2002.
-#  *     Distributed under the Boost Software License, Version 1.0. (See
-#  *     accompanying file LICENSE_1_0.txt or copy at
-#  *     http://www.boost.org/LICENSE_1_0.txt)
-#  *                                                                          *
-#  ************************************************************************** */
-#
-# /* See http://www.boost.org for most recent version. */
-#
-# ifndef _S1BOOSTPP_CONTROL_IIF_HPP
-# define _S1BOOSTPP_CONTROL_IIF_HPP
-#
-#
-# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MWCC()
-#    define _S1BOOSTPP_IIF(bit, t, f) _S1BOOSTPP_IIF_I(bit, t, f)
-# else
-#    define _S1BOOSTPP_IIF(bit, t, f) _S1BOOSTPP_IIF_OO((bit, t, f))
-#    define _S1BOOSTPP_IIF_OO(par) _S1BOOSTPP_IIF_I ## par
-# endif
-#
-# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC()
-#    define _S1BOOSTPP_IIF_I(bit, t, f) _S1BOOSTPP_IIF_ ## bit(t, f)
-# else
-#    define _S1BOOSTPP_IIF_I(bit, t, f) _S1BOOSTPP_IIF_II(_S1BOOSTPP_IIF_ ## bit(t, f))
-#    define _S1BOOSTPP_IIF_II(id) id
-# endif
-#
-# define _S1BOOSTPP_IIF_0(t, f) f
-# define _S1BOOSTPP_IIF_1(t, f) t
 #
 # endif
 # /* **************************************************************************
@@ -4071,34 +4399,6 @@
 # define _S1BOOSTPP_FOR_CHECK__S1BOOSTPP_FOR_254(s, p, o, m) 0
 # define _S1BOOSTPP_FOR_CHECK__S1BOOSTPP_FOR_255(s, p, o, m) 0
 # define _S1BOOSTPP_FOR_CHECK__S1BOOSTPP_FOR_256(s, p, o, m) 0
-#
-# endif
-# /* **************************************************************************
-#  *                                                                          *
-#  *     (C) Copyright Edward Diener 2011.                                    *
-#  *     (C) Copyright Paul Mensonides 2011.                                  *
-#  *     Distributed under the Boost Software License, Version 1.0. (See      *
-#  *     accompanying file LICENSE_1_0.txt or copy at                         *
-#  *     http://www.boost.org/LICENSE_1_0.txt)                                *
-#  *                                                                          *
-#  ************************************************************************** */
-#
-# /* See http://www.boost.org for most recent version. */
-#
-# ifndef _S1BOOSTPP_VARIADIC_SIZE_HPP
-# define _S1BOOSTPP_VARIADIC_SIZE_HPP
-#
-#
-# /* _S1BOOSTPP_VARIADIC_SIZE */
-#
-# if _S1BOOSTPP_VARIADICS
-#    if _S1BOOSTPP_VARIADICS_MSVC
-#        define _S1BOOSTPP_VARIADIC_SIZE(...) _S1BOOSTPP_CAT(_S1BOOSTPP_VARIADIC_SIZE_I(__VA_ARGS__, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,),)
-#    else
-#        define _S1BOOSTPP_VARIADIC_SIZE(...) _S1BOOSTPP_VARIADIC_SIZE_I(__VA_ARGS__, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1,)
-#    endif
-#    define _S1BOOSTPP_VARIADIC_SIZE_I(e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18, e19, e20, e21, e22, e23, e24, e25, e26, e27, e28, e29, e30, e31, e32, e33, e34, e35, e36, e37, e38, e39, e40, e41, e42, e43, e44, e45, e46, e47, e48, e49, e50, e51, e52, e53, e54, e55, e56, e57, e58, e59, e60, e61, e62, e63, size, ...) size
-# endif
 #
 # endif
 # /* **************************************************************************

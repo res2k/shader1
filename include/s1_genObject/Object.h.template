@@ -21,6 +21,11 @@
 #ifndef __S1_OBJECT_H__
 #define __S1_OBJECT_H__
 
+/* MSVC prerequisites */
+#include <boost/preprocessor/control/iif.hpp>
+#include <boost/preprocessor/facilities/is_1.hpp>
+#include <boost/preprocessor/tuple/size.hpp>
+
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/facilities/expand.hpp>
