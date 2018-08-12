@@ -24,6 +24,7 @@
 #include "Char.h"
 
 #include <algorithm>
+#include <assert.h>
 #include <atomic>
 #include <functional>
 #include <limits>
