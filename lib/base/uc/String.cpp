@@ -886,14 +886,14 @@ namespace s1
 
     void String::RefBufferData (AllocatedBufferData* data)
     {
-      data->refCount.fetch_add (1, boost::memory_order_relaxed);
+      data->refCount.fetch_add (1, std::memory_order_relaxed);
     }
     
     void String::ReleaseBufferData (AllocatedBufferData* data)
     {
-      if (data->refCount.fetch_sub (1, boost::memory_order_release) == 1)
+      if (data->refCount.fetch_sub (1, std::memory_order_release) == 1)
       {
-        boost::atomic_thread_fence(boost::memory_order_acquire);
+        std::atomic_thread_fence(std::memory_order_acquire);
         free (data);
       }
     }
