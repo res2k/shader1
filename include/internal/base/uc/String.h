@@ -250,7 +250,7 @@ namespace s1
           : length (length), capacity (capacity) { }
       } d;
 
-      typedef std::atomic<boost::uint32_t> ref_count_type;
+      typedef std::atomic<uint32_t> ref_count_type;
       // Desired size of a string instance
       BOOST_STATIC_CONSTANT(size_type, DesiredInstanceSize = 64);
       BOOST_STATIC_CONSTANT(size_type, InternalBufferSize = (DesiredInstanceSize - sizeof(Data))/sizeof(value_type));
