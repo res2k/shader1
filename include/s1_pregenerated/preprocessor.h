@@ -25,18 +25,16 @@
 # define _S1BOOSTPP_CONFIG_DMC() 0x0040
 #
 # ifndef _S1BOOSTPP_CONFIG_FLAGS
-#    if defined(__GCCXML__)
-#        define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_STRICT())
-#    elif defined(__WAVE__)
-#        define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_STRICT())
-#    elif defined(__MWERKS__) && __MWERKS__ >= 0x3200
+#    if defined(__GCCXML__) || defined(__WAVE__) || defined(__MWERKS__) && __MWERKS__ >= 0x3200
 #        define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_STRICT())
 #    elif defined(__EDG__) || defined(__EDG_VERSION__)
-#        if defined(_MSC_VER) && __EDG_VERSION__ >= 308
+#        if defined(_MSC_VER) && !defined(__clang__) && (defined(__INTELLISENSE__) || __EDG_VERSION__ >= 308)
 #            define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_MSVC())
 #        else
 #            define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_EDG() | _S1BOOSTPP_CONFIG_STRICT())
 #        endif
+#    elif defined(_MSC_VER) && defined(__clang__)
+#        define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_STRICT())
 #    elif defined(__MWERKS__)
 #        define _S1BOOSTPP_CONFIG_FLAGS() (_S1BOOSTPP_CONFIG_MWCC())
 #    elif defined(__DMC__)
@@ -70,20 +68,22 @@
 #
 # /* _S1BOOSTPP_VARIADICS */
 #
+# define _S1BOOSTPP_VARIADICS_MSVC 0
 # if !defined _S1BOOSTPP_VARIADICS
 #    /* variadic support explicitly disabled for all untested compilers */
-#    if defined __GCCXML__ || defined __CUDACC__ || defined __PATHSCALE__ || defined __clang__ || defined __DMC__ || defined __CODEGEARC__ || defined __BORLANDC__ || defined __MWERKS__ || defined __SUNPRO_CC || defined __HP_aCC && !defined __EDG__ || defined __MRC__ || defined __SC__ || defined __IBMCPP__ || defined __PGI
+#    if defined __GCCXML__ || defined __PATHSCALE__ || defined __DMC__ || defined __CODEGEARC__ || defined __BORLANDC__ || defined __MWERKS__ || ( defined __SUNPRO_CC && __SUNPRO_CC < 0x5120 ) || defined __HP_aCC && !defined __EDG__ || defined __MRC__ || defined __SC__ || defined __PGI
 #        define _S1BOOSTPP_VARIADICS 0
-#    /* VC++ (C/C++) */
-#    elif defined _MSC_VER && _MSC_VER >= 1400 && !defined __EDG__
-#        if _MSC_VER >= 1400
-#            define _S1BOOSTPP_VARIADICS 1
-#            define _S1BOOSTPP_VARIADICS_MSVC 1
-#        else
-#            define _S1BOOSTPP_VARIADICS 0
-#        endif
+#    elif defined(__CUDACC__)
+#        define _S1BOOSTPP_VARIADICS 1
+#    elif defined(_MSC_VER) && defined(__clang__)
+#        define _S1BOOSTPP_VARIADICS 1
+#    /* VC++ (C/C++) and Intel C++ Compiler >= 17.0 with MSVC */
+#    elif defined _MSC_VER && _MSC_VER >= 1400 && (!defined __EDG__ || defined(__INTELLISENSE__) || defined(__INTEL_COMPILER) && __INTEL_COMPILER >= 1700)
+#        define _S1BOOSTPP_VARIADICS 1
+#        undef _S1BOOSTPP_VARIADICS_MSVC
+#        define _S1BOOSTPP_VARIADICS_MSVC 1
 #    /* Wave (C/C++), GCC (C++) */
-#    elif defined __WAVE__ && __WAVE_HAS_VARIADICS__ || defined __GNUC__ && __GXX_EXPERIMENTAL_CXX0X__
+#    elif defined __WAVE__ && __WAVE_HAS_VARIADICS__ || defined __GNUC__ && defined __GXX_EXPERIMENTAL_CXX0X__ && __GXX_EXPERIMENTAL_CXX0X__
 #        define _S1BOOSTPP_VARIADICS 1
 #    /* EDG-based (C/C++), GCC (C), and unknown (C/C++) */
 #    elif !defined __cplusplus && __STDC_VERSION__ >= 199901L || __cplusplus >= 201103L
@@ -94,7 +94,8 @@
 # elif !_S1BOOSTPP_VARIADICS + 1 < 2
 #    undef _S1BOOSTPP_VARIADICS
 #    define _S1BOOSTPP_VARIADICS 1
-#    if defined _MSC_VER && _MSC_VER >= 1400 && !(defined __EDG__ || defined __GCCXML__ || defined __CUDACC__ || defined __PATHSCALE__ || defined __clang__ || defined __DMC__ || defined __CODEGEARC__ || defined __BORLANDC__ || defined __MWERKS__ || defined __SUNPRO_CC || defined __HP_aCC || defined __MRC__ || defined __SC__ || defined __IBMCPP__ || defined __PGI)
+#    if defined _MSC_VER && _MSC_VER >= 1400 && !defined(__clang__) && (defined(__INTELLISENSE__) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER >= 1700) || !(defined __EDG__ || defined __GCCXML__ || defined __CUDACC__ || defined __PATHSCALE__ || defined __DMC__ || defined __CODEGEARC__ || defined __BORLANDC__ || defined __MWERKS__ || defined __SUNPRO_CC || defined __HP_aCC || defined __MRC__ || defined __SC__ || defined __IBMCPP__ || defined __PGI))
+#        undef _S1BOOSTPP_VARIADICS_MSVC
 #        define _S1BOOSTPP_VARIADICS_MSVC 1
 #    endif
 # else
@@ -129,7 +130,7 @@
 #    define _S1BOOSTPP_CAT_OO(par) _S1BOOSTPP_CAT_I ## par
 # endif
 #
-# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC()
+# if (~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC()) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER >= 1700)
 #    define _S1BOOSTPP_CAT_I(a, b) a ## b
 # else
 #    define _S1BOOSTPP_CAT_I(a, b) _S1BOOSTPP_CAT_II(~, a ## b)
@@ -152,6 +153,7 @@
 #
 # ifndef _S1BOOSTPP_FACILITIES_EMPTY_HPP
 # define _S1BOOSTPP_FACILITIES_EMPTY_HPP
+#
 #
 # /* _S1BOOSTPP_EMPTY */
 #
@@ -398,7 +400,7 @@
 #  */
 #
 # /* Revised by Paul Mensonides (2002-2011) */
-# /* Revised by Edward Diener (2011) */
+# /* Revised by Edward Diener (2011,2015) */
 #
 # /* See http://www.boost.org for most recent version. */
 #
@@ -427,6 +429,15 @@
 #    endif
 #    define _S1BOOSTPP_TUPLE_EAT_I(size) _S1BOOSTPP_TUPLE_EAT_ ## size
 # endif
+#
+# if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MWCC()
+#     define _S1BOOSTPP_TUPLE_EAT_N(size) _S1BOOSTPP_TUPLE_EAT_N_I(size)
+# else
+#     define _S1BOOSTPP_TUPLE_EAT_N(size) _S1BOOSTPP_TUPLE_EAT_N_OO((size))
+#     define _S1BOOSTPP_TUPLE_EAT_N_OO(par) _S1BOOSTPP_TUPLE_EAT_N_I ## par
+# endif
+# define _S1BOOSTPP_TUPLE_EAT_N_I(size) _S1BOOSTPP_TUPLE_EAT_ ## size
+#
 # define _S1BOOSTPP_TUPLE_EAT_1(e0)
 # define _S1BOOSTPP_TUPLE_EAT_2(e0, e1)
 # define _S1BOOSTPP_TUPLE_EAT_3(e0, e1, e2)
@@ -3784,7 +3795,23 @@
 # else
 # endif
 #
-# define _S1BOOSTPP_FOR_257(s, p, o, m) _S1BOOSTPP_ERROR(0x0002)
+# if _S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_DMC()
+# define _S1BOOSTPP_FOR_257_PR(s, p) _S1BOOSTPP_BOOL(p##(257, s))
+# else
+# define _S1BOOSTPP_FOR_257_PR(s, p) _S1BOOSTPP_BOOL(p(257, s))
+# endif
+
+# define _S1BOOSTPP_FOR_257_ERROR() _S1BOOSTPP_ERROR(0x0002)
+# define _S1BOOSTPP_FOR_257(s, p, o, m) \
+	_S1BOOSTPP_IIF \
+		( \
+		_S1BOOSTPP_FOR_257_PR(s,p), \
+		_S1BOOSTPP_FOR_257_ERROR, \
+		_S1BOOSTPP_EMPTY \
+		) \
+	() \
+/**/
+// # define _S1BOOSTPP_FOR_257(s, p, o, m) _S1BOOSTPP_ERROR(0x0002)
 #
 # define _S1BOOSTPP_FOR_CHECK__S1BOOSTPP_NIL 1
 #
@@ -4099,8 +4126,32 @@
 # endif
 # /* **************************************************************************
 #  *                                                                          *
+#  *     (C) Copyright Edward Diener 2014.                                    *
+#  *     Distributed under the Boost Software License, Version 1.0. (See      *
+#  *     accompanying file LICENSE_1_0.txt or copy at                         *
+#  *     http://www.boost.org/LICENSE_1_0.txt)                                *
+#  *                                                                          *
+#  ************************************************************************** */
+#
+# /* See http://www.boost.org for most recent version. */
+#
+# ifndef _S1BOOSTPP_TUPLE_DETAIL_IS_SINGLE_RETURN_HPP
+# define _S1BOOSTPP_TUPLE_DETAIL_IS_SINGLE_RETURN_HPP
+#
+#
+# /* _S1BOOSTPP_TUPLE_IS_SINGLE_RETURN */
+#
+# if _S1BOOSTPP_VARIADICS && _S1BOOSTPP_VARIADICS_MSVC
+# define _S1BOOSTPP_TUPLE_IS_SINGLE_RETURN(sr,nsr,tuple)	\
+	_S1BOOSTPP_IIF(_S1BOOSTPP_IS_1(_S1BOOSTPP_TUPLE_SIZE(tuple)),sr,nsr) \
+	/**/
+# endif /* _S1BOOSTPP_VARIADICS && _S1BOOSTPP_VARIADICS_MSVC */
+#
+# endif /* _S1BOOSTPP_TUPLE_DETAIL_IS_SINGLE_RETURN_HPP */
+# /* **************************************************************************
+#  *                                                                          *
 #  *     (C) Copyright Paul Mensonides 2002-2011.                             *
-#  *     (C) Copyright Edward Diener 2011.                                    *
+#  *     (C) Copyright Edward Diener 2011,2013.                               *
 #  *     Distributed under the Boost Software License, Version 1.0. (See      *
 #  *     accompanying file LICENSE_1_0.txt or copy at                         *
 #  *     http://www.boost.org/LICENSE_1_0.txt)                                *
@@ -4116,6 +4167,10 @@
 # /* _S1BOOSTPP_REM */
 #
 # if _S1BOOSTPP_VARIADICS
+# 	 if _S1BOOSTPP_VARIADICS_MSVC
+		/* To be used internally when __VA_ARGS__ could be empty ( or is a single element ) */
+#    	define _S1BOOSTPP_REM_CAT(...) _S1BOOSTPP_CAT(__VA_ARGS__,)
+# 	 endif
 #    define _S1BOOSTPP_REM(...) __VA_ARGS__
 # else
 #    define _S1BOOSTPP_REM(x) x
@@ -4123,7 +4178,14 @@
 #
 # /* _S1BOOSTPP_TUPLE_REM */
 #
-# if _S1BOOSTPP_VARIADICS
+/*
+  VC++8.0 cannot handle the variadic version of _S1BOOSTPP_TUPLE_REM(size)
+*/
+# if _S1BOOSTPP_VARIADICS && !(_S1BOOSTPP_VARIADICS_MSVC && _MSC_VER <= 1400)
+# 	 if _S1BOOSTPP_VARIADICS_MSVC
+		/* To be used internally when the size could be 0 ( or 1 ) */
+#    	define _S1BOOSTPP_TUPLE_REM_CAT(size) _S1BOOSTPP_REM_CAT
+# 	 endif
 #    define _S1BOOSTPP_TUPLE_REM(size) _S1BOOSTPP_REM
 # else
 #    if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MWCC()
@@ -4134,6 +4196,7 @@
 #    endif
 #    define _S1BOOSTPP_TUPLE_REM_I(size) _S1BOOSTPP_TUPLE_REM_ ## size
 # endif
+# define _S1BOOSTPP_TUPLE_REM_0()
 # define _S1BOOSTPP_TUPLE_REM_1(e0) e0
 # define _S1BOOSTPP_TUPLE_REM_2(e0, e1) e0, e1
 # define _S1BOOSTPP_TUPLE_REM_3(e0, e1, e2) e0, e1, e2
@@ -4206,10 +4269,11 @@
 #        define _S1BOOSTPP_TUPLE_REM_CTOR(...) _S1BOOSTPP_TUPLE_REM_CTOR_I(_S1BOOSTPP_OVERLOAD(_S1BOOSTPP_TUPLE_REM_CTOR_O_, __VA_ARGS__), (__VA_ARGS__))
 #        define _S1BOOSTPP_TUPLE_REM_CTOR_I(m, args) _S1BOOSTPP_TUPLE_REM_CTOR_II(m, args)
 #        define _S1BOOSTPP_TUPLE_REM_CTOR_II(m, args) _S1BOOSTPP_CAT(m ## args,)
+#    	 define _S1BOOSTPP_TUPLE_REM_CTOR_O_1(tuple) _S1BOOSTPP_EXPAND(_S1BOOSTPP_TUPLE_IS_SINGLE_RETURN(_S1BOOSTPP_REM_CAT,_S1BOOSTPP_REM,tuple) tuple)
 #    else
 #        define _S1BOOSTPP_TUPLE_REM_CTOR(...) _S1BOOSTPP_OVERLOAD(_S1BOOSTPP_TUPLE_REM_CTOR_O_, __VA_ARGS__)(__VA_ARGS__)
+#    	 define _S1BOOSTPP_TUPLE_REM_CTOR_O_1(tuple) _S1BOOSTPP_REM tuple
 #    endif
-#    define _S1BOOSTPP_TUPLE_REM_CTOR_O_1(tuple) _S1BOOSTPP_REM tuple
 #    define _S1BOOSTPP_TUPLE_REM_CTOR_O_2(size, tuple) _S1BOOSTPP_TUPLE_REM_CTOR_O_1(tuple)
 # else
 #    if ~_S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_EDG()
@@ -4330,7 +4394,7 @@
 #  */
 #
 # /* Revised by Paul Mensonides (2002-2011) */
-# /* Revised by Edward Diener (2011) */
+# /* Revised by Edward Diener (2011,2014) */
 #
 # /* See http://www.boost.org for most recent version. */
 #
@@ -4343,10 +4407,18 @@
 #        define _S1BOOSTPP_TUPLE_ELEM(...) _S1BOOSTPP_TUPLE_ELEM_I(_S1BOOSTPP_OVERLOAD(_S1BOOSTPP_TUPLE_ELEM_O_, __VA_ARGS__), (__VA_ARGS__))
 #        define _S1BOOSTPP_TUPLE_ELEM_I(m, args) _S1BOOSTPP_TUPLE_ELEM_II(m, args)
 #        define _S1BOOSTPP_TUPLE_ELEM_II(m, args) _S1BOOSTPP_CAT(m ## args,)
+/*
+  Use _S1BOOSTPP_REM_CAT if it is a single element tuple ( which might be empty )
+  else use _S1BOOSTPP_REM. This fixes a VC++ problem with an empty tuple and _S1BOOSTPP_TUPLE_ELEM
+  functionality. See tuple_elem_bug_test.cxx.
+*/
+#    	 define _S1BOOSTPP_TUPLE_ELEM_O_2(n, tuple) \
+			_S1BOOSTPP_VARIADIC_ELEM(n, _S1BOOSTPP_EXPAND(_S1BOOSTPP_TUPLE_IS_SINGLE_RETURN(_S1BOOSTPP_REM_CAT,_S1BOOSTPP_REM,tuple) tuple)) \
+			/**/
 #    else
 #        define _S1BOOSTPP_TUPLE_ELEM(...) _S1BOOSTPP_OVERLOAD(_S1BOOSTPP_TUPLE_ELEM_O_, __VA_ARGS__)(__VA_ARGS__)
+#    	 define _S1BOOSTPP_TUPLE_ELEM_O_2(n, tuple) _S1BOOSTPP_VARIADIC_ELEM(n, _S1BOOSTPP_REM tuple)
 #    endif
-#    define _S1BOOSTPP_TUPLE_ELEM_O_2(n, tuple) _S1BOOSTPP_VARIADIC_ELEM(n, _S1BOOSTPP_REM tuple)
 #    define _S1BOOSTPP_TUPLE_ELEM_O_3(size, n, tuple) _S1BOOSTPP_TUPLE_ELEM_O_2(n, tuple)
 # else
 #    if _S1BOOSTPP_CONFIG_FLAGS() & _S1BOOSTPP_CONFIG_MSVC()
