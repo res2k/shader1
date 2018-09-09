@@ -65,6 +65,7 @@ function(s1_get_boost_link_libs VAR)
         if(BOOST_${lib_upper}_DEPENDS)
           target_link_libraries(${private_target_name} PUBLIC ${BOOST_${lib_upper}_DEPENDS})
         endif()
+        set_property(TARGET ${private_target_name} PROPERTY EXCLUDE_FROM_ALL YES)
       elseif(${Boost_${lib_upper}_FOUND})
         # Add an interface library if we don't have sources
         add_library(${private_target_name} INTERFACE)
