@@ -9,27 +9,8 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4800")
 endif()
 
-if(MSVC AND S1_STATIC_CRT)
-  # Use static VC runtime when building an S1 DLL
-  foreach(flag_var
-          CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-          CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-     if(${flag_var} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-     endif(${flag_var} MATCHES "/MD")
-  endforeach(flag_var)
-  IF((MSVC_VERSION GREATER 1800) AND S1_UCRT_DYNAMIC)
-    foreach(flag_var
-            CMAKE_SHARED_LINKER_FLAGS_RELEASE
-            CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL
-            CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO)
-      SET(${flag_var} "${${flag_var}} /nodefaultlib:libucrt.lib ucrt.lib")
-    endforeach(flag_var)
-    foreach(flag_var
-            CMAKE_SHARED_LINKER_FLAGS_DEBUG)
-      SET(${flag_var} "${${flag_var}} /nodefaultlib:libucrtd.lib ucrtd.lib")
-    endforeach(flag_var)
-  ENDIF()
+if(MSVC AND S1_STATIC_CRT AND BUILD_SHARED_LIBS)
+  s1_set_static_msvc_runtime()
 endif()
 if(MSVC AND NOT BUILD_SHARED_LIBS)
   # Static lib merging doesn't merge debug info, so manually set up a single

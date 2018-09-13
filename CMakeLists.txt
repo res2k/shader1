@@ -42,6 +42,7 @@ include(s1_add_cxxtest)
 include(s1_boost)
 include(s1_detect_function_attribute)
 include(s1_detect_stdlib)
+include(s1_set_static_msvc_runtime)
 include(s1_strip_debug)
 
 if(CXXTEST_FOUND)
@@ -290,6 +291,11 @@ if(NOT S1_BUILD_SHARED)
   # For static builds, require C++ features globally (to avoid conflicts
   # between lib and apps due to differing build flags)
   set(S1_REQUIRED_CXX_FEATURES ${ALL_REQUIRED_CXX_FEATURES})
+endif()
+
+# Static linking + static CRT: Need to change flags before building apps
+if(MSVC AND S1_STATIC_CRT AND NOT BUILD_SHARED_LIBS)
+  s1_set_static_msvc_runtime()
 endif()
 
 # S1_PREBUILT: Points to a build tree with an already built libs1, which is then
