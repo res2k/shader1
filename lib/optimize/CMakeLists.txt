@@ -27,8 +27,8 @@ set(optimize_sources
 s1_add_library(optimize
                SOURCES ${optimize_sources}
                LINK intermediate)
-IF(S1LIB_PDB)
-  target_compile_options(optimize PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(optimize PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
 if(CXXTEST_FOUND)

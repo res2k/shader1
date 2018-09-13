@@ -17,6 +17,6 @@ set(compiler_sources
 s1_add_library(compiler
                SOURCES ${compiler_sources}
                LINK lexer intermediate codegen_glsl optimize splitter diagnostics)
-IF(S1LIB_PDB)
-  target_compile_options(compiler PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(compiler PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()

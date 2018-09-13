@@ -13,6 +13,6 @@ s1_add_library(codegen_sl
                SOURCES ${codegen_sl_sources}
                LINK codegen_common)
 add_dependencies(codegen_sl generate_Diagnostics_parser)
-IF(S1LIB_PDB)
-  target_compile_options(codegen_sl PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(codegen_sl PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()

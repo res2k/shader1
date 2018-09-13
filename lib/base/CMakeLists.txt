@@ -49,8 +49,8 @@ s1_add_library(base
                LINK headers_internal)
 source_group("uc Headers" FILES ${base_sources_uc_h})
 source_group("uc Sources" FILES ${base_sources_uc_cpp})
-IF(S1LIB_PDB)
-  target_compile_options(base PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(base PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
 if(CXXTEST_FOUND)

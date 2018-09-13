@@ -34,10 +34,10 @@ s1_add_library(intermediate
                SOURCES ${intermediate_sources}
                DEPENDS generate_Diagnostics_intermediate
                LINK intermediate_generator intermediate_seqop parser)
-IF(S1LIB_PDB)
-  target_compile_options(intermediate_generator PRIVATE ${S1LIB_PDB})
-  target_compile_options(intermediate_seqop PRIVATE ${S1LIB_PDB})
-  target_compile_options(intermediate PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(intermediate_generator PRIVATE ${S1LIB_PDB_CXX_FLAGS})
+  target_compile_options(intermediate_seqop PRIVATE ${S1LIB_PDB_CXX_FLAGS})
+  target_compile_options(intermediate PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
 if(CXXTEST_FOUND)

@@ -7,8 +7,8 @@ s1_add_library(lexer
                ${S1_INC}/lexer/TokenType.h
                DEPENDS generate_Diagnostics_lexer
                LINK base)
-IF(S1LIB_PDB)
-  target_compile_options(lexer PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(lexer PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
 if(CXXTEST_FOUND)

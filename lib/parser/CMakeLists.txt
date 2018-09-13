@@ -45,8 +45,8 @@ s1_add_library(parser
                LINK lexer)
 source_group("ast Headers" FILES ${parser_sources_ast_h})
 add_dependencies(parser generate_Diagnostics_parser)
-IF(S1LIB_PDB)
-  target_compile_options(parser PRIVATE ${S1LIB_PDB})
+IF(S1LIB_PDB_CXX_FLAGS)
+  target_compile_options(parser PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
 if(CXXTEST_FOUND)
