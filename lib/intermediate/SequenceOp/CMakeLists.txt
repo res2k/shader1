@@ -61,4 +61,4 @@ set(seqop_sources
     )
 s1_add_library(intermediate_seqop
                SOURCES ${seqop_sources}
-               LINK headers_internal)
+               LINK s1_headers_internal)

@@ -51,7 +51,7 @@ ENDIF()
 
 if(CXXTEST_FOUND)
   file(GLOB parser_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
-  s1_add_library(parser_testlib STATIC SOURCES ${parser_testlib_sources} LINK headers_internal)
+  s1_add_library(parser_testlib STATIC SOURCES ${parser_testlib_sources} LINK s1_headers_internal)
   set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
   set(parser_test_sources

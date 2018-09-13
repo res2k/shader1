@@ -46,7 +46,7 @@ set(base_sources_uc_h
     )
 s1_add_library(base
                SOURCES ${base_sources} ${base_sources_uc_cpp} ${base_sources_uc_h}
-               LINK headers_internal)
+               LINK s1_headers_internal)
 source_group("uc Headers" FILES ${base_sources_uc_h})
 source_group("uc Sources" FILES ${base_sources_uc_cpp})
 IF(S1LIB_PDB_CXX_FLAGS)

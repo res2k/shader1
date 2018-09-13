@@ -39,4 +39,4 @@ set(generator_sources
 s1_add_library(intermediate_generator
                SOURCES ${generator_sources}
                DEPENDS generate_Diagnostics_intermediate generate_Diagnostics_parser
-               LINK headers_internal)
+               LINK s1_headers_internal)

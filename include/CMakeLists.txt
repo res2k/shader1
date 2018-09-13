@@ -41,8 +41,6 @@ if(NOT S1_PREBUILT)
   add_custom_target(s1_headers_deps)
   add_dependencies(s1_headers_deps generate_Object generate_ResultCode)
   add_dependencies(s1_headers s1_headers_deps)
-
-  install(TARGETS s1_headers EXPORT s1_headers)
 endif()
 
 if(CXXTEST_FOUND AND NOT S1_PREBUILT)
@@ -58,7 +56,7 @@ if(CXXTEST_FOUND AND NOT S1_PREBUILT)
   set_property(TARGET api_testlib PROPERTY EXCLUDE_FROM_ALL YES)
   target_compile_features(api_testlib PUBLIC $<TARGET_PROPERTY:outcome::hl,INTERFACE_COMPILE_FEATURES>)
   target_include_directories(api_testlib PRIVATE ${CMAKE_SOURCE_DIR}/outcome/include)
-  target_link_libraries(api_testlib headers_internal)
+  target_link_libraries(api_testlib s1_headers_internal)
 
   set(api_test_sources
        ${CMAKE_CURRENT_SOURCE_DIR}/t/ApiByteStream.h
@@ -96,12 +94,16 @@ endif()
 if(NOT S1_PREBUILT)
   add_subdirectory(internal)
 
-  add_library(headers_internal INTERFACE)
-  target_include_directories(headers_internal INTERFACE "${CMAKE_CURRENT_BINARY_DIR}/internal" "${CMAKE_CURRENT_SOURCE_DIR}/internal")
-  target_link_libraries(headers_internal INTERFACE s1_headers)
-  add_custom_target(headers_internal_deps)
-  add_dependencies(headers_internal_deps s1_headers generate_Diagnostics_fwd)
-  add_dependencies(headers_internal headers_internal_deps)
+  add_library(s1_headers_internal INTERFACE)
+  target_include_directories(s1_headers_internal INTERFACE
+                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/internal>"
+                             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/internal>")
+  target_link_libraries(s1_headers_internal INTERFACE s1_headers)
+  add_custom_target(s1_headers_internal_deps)
+  add_dependencies(s1_headers_internal_deps s1_headers generate_Diagnostics_fwd)
+  add_dependencies(s1_headers_internal s1_headers_internal_deps)
+
+  install(TARGETS s1_headers s1_headers_internal EXPORT s1_headers)
 
   install(DIRECTORY s1/ DESTINATION include/s1
           FILES_MATCHING PATTERN "*.h")

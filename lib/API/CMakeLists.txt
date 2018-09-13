@@ -93,7 +93,7 @@ if(CXXTEST_FOUND)
   endif()
   s1_add_cxxtest(test_ApiImpl
                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/StringWrapper.h
-                 DEPENDS ${_S1_TEST_DEP} headers_internal)
+                 DEPENDS ${_S1_TEST_DEP} s1_headers_internal)
   target_compile_features(test_ApiImpl PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 endif()
 
