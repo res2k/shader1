@@ -2,7 +2,7 @@
 # different build flags in different places), so we wrap it's usage.
 
 # List of all the Boost libs we use anywhere in the source tree
-set(_S1_BOOST_USED_LIBS filesystem iostreams program_options system)
+set(_S1_BOOST_USED_LIBS filesystem iostreams program_options system unit_test_framework)
 
 macro(s1_find_boost VERSION)
   if(ARGN)
@@ -25,6 +25,31 @@ if(IS_DIRECTORY ${iostreams_src})
   set(BOOST_IOSTREAMS_SOURCES
       ${iostreams_src}/file_descriptor.cpp
       ${iostreams_src}/mapped_file.cpp)
+endif()
+# Sources for boost_unit_test_framework
+set(unit_test_framework_src "${BOOST_ROOT}/libs/test/src")
+if(IS_DIRECTORY ${unit_test_framework_src})
+  set(BOOST_UNIT_TEST_FRAMEWORK_SOURCES
+      ${unit_test_framework_src}/compiler_log_formatter.cpp
+      ${unit_test_framework_src}/debug.cpp
+      ${unit_test_framework_src}/decorator.cpp
+      ${unit_test_framework_src}/execution_monitor.cpp
+      ${unit_test_framework_src}/framework.cpp
+      ${unit_test_framework_src}/junit_log_formatter.cpp
+      ${unit_test_framework_src}/plain_report_formatter.cpp
+      ${unit_test_framework_src}/progress_monitor.cpp
+      ${unit_test_framework_src}/results_collector.cpp
+      ${unit_test_framework_src}/results_reporter.cpp
+      ${unit_test_framework_src}/test_framework_init_observer.cpp
+      ${unit_test_framework_src}/test_tools.cpp
+      ${unit_test_framework_src}/test_tree.cpp
+      ${unit_test_framework_src}/unit_test_log.cpp
+      ${unit_test_framework_src}/unit_test_main.cpp
+      ${unit_test_framework_src}/unit_test_monitor.cpp
+      ${unit_test_framework_src}/unit_test_parameters.cpp
+      ${unit_test_framework_src}/xml_log_formatter.cpp
+      ${unit_test_framework_src}/xml_report_formatter.cpp
+      )
 endif()
 
 function(s1_get_boost_link_libs VAR)
