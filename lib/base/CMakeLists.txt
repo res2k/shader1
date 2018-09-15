@@ -53,22 +53,24 @@ IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(base PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
-if(CXXTEST_FOUND)
-  s1_add_cxxtest(test_Base
-                 SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/bit_scan.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/dynamic_tls.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/LibraryLastError.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/MultiOptional.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/String.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Encoder.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16to8Transcoder.h
-                         ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.h
-                 DEPENDS base)
-endif()
+s1_add_boost_test(test_Base
+                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/bit_scan.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Char.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/dynamic_tls.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Formatter_uc_String.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/LibraryLastError.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/MultiOptional.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/String.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UnicodeStream.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Decoder.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16Encoder.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Decoder.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8Encoder.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF16to8Transcoder.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/UTF8to16Transcoder.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Barrier.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/boost_check_equal_ch.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/print_uc_String.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/print_wstring.h
+                  DEPENDS base)

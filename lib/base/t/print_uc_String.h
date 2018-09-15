@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -16,44 +16,44 @@
 */
 
 /**\file
- * CxxTest trait for s1::uc::String display
+ * Helper: Define operator<< for s1::uc::String
  */
-#ifndef __UC_STRING_TRAIT_H__
-#define __UC_STRING_TRAIT_H__
 
-#include <cxxtest/ValueTraits.h>
+#ifndef PRINT_UC_STRING_H_
+#define PRINT_UC_STRING_H_
 
 #include "base/uc/String.h"
+#include "base/uc/UTF16Decoder.h"
+
+#include <iostream>
 
 #include <boost/format.hpp>
 
-namespace CxxTest
+namespace s1
 {
-  template<>
-  class ValueTraits<s1::uc::String>
+  namespace uc
   {
-    std::string as_string;
-  public:
-    ValueTraits(const s1::uc::String& str)
+    static std::ostream& operator<< (std::ostream& stream, const String& ucs)
     {
-      as_string.push_back ('"');
-      s1::uc::String::CharacterIterator idIt (str);
+      stream << "\"";
+      s1::uc::String::CharacterIterator idIt (ucs);
       while (idIt.hasNext())
       {
         s1::uc::Char32 ch = idIt.next32PostInc();
         if ((ch >= 32) && (ch < 128))
         {
-          as_string.push_back (static_cast<char> (ch));
+          stream.put (static_cast<char> (ch));
         }
         else
         {
-          as_string += (boost::format ("\\u%04x") % ch).str();
+          stream << (boost::format ("\\u%04x") % ch);
         }
       }
-      as_string.push_back ('"');
-    }
-    const char *asString(void) const { return as_string.c_str(); }
-  };
-} // namespace CxxTest
+      stream << "\"";
 
-#endif // __UC_STRING_TRAIT_H__
+      return stream;
+    }
+  } // namespace uc
+} // namespace s1
+
+#endif // PRINT_UC_STRING_H_

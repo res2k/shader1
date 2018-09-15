@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2017 Frank Richter
+    Copyright (c) 2017-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -15,8 +15,8 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
-#ifndef ASSERT_EQUALS_CH_H_
-#define ASSERT_EQUALS_CH_H_
+#ifndef BOOST_CHECK_EQUAL_CH_
+#define BOOST_CHECK_EQUAL_CH_
 
 namespace
 {
@@ -27,8 +27,8 @@ namespace
     }
 } // anonymous namespace
 
-#define TS_ASSERT_EQUALS_CH(A, B)                                     \
-  TS_ASSERT_EQUALS(static_cast<uint_least32_t> (as_unsigned (A)),     \
-                   static_cast<uint_least32_t> (B))
+#define BOOST_CHECK_EQUAL_CH(A, B)                                     \
+  BOOST_CHECK_EQUAL(static_cast<uint_least32_t> (as_unsigned (A)),     \
+                    static_cast<uint_least32_t> (B))
 
-#endif // ASSERT_EQUALS_CH_H_
+#endif // BOOST_CHECK_EQUAL_CH_
