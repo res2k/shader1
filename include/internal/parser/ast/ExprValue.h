@@ -21,6 +21,8 @@
 #ifndef S1_PARSER_AST_EXPRVALUE_H_
 #define S1_PARSER_AST_EXPRVALUE_H_
 
+#include "lexer/Token.h"
+
 #include "forwarddecl.h"
 #include "Expr.h"
 #include "VisitorExpr.h"
