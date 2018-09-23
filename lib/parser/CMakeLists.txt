@@ -49,28 +49,28 @@ IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(parser PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
-if(CXXTEST_FOUND)
-  file(GLOB parser_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
-  s1_add_library(parser_testlib STATIC SOURCES ${parser_testlib_sources} LINK s1_headers_internal)
-  set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
+file(GLOB parser_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
+s1_add_library(parser_testlib STATIC SOURCES ${parser_testlib_sources} LINK s1_headers_internal)
+set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
-  set(parser_test_sources
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlock.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlockStrict.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstExpr.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstProgram.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/AstTypes.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlock.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlockStrict.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonAttrTypes.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonTypeCompat.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserExpr.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserProgram.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserScope.h
-      ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserTypes.h
-      )
-  s1_add_cxxtest(test_Parser
-                 SOURCES ${parser_test_sources}
-                 DEPENDS parser_testlib parser)
-endif()
+s1_add_boost_test(test_Parser
+                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlock.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/AstBlockStrict.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/AstExpr.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/AstProgram.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/AstTypes.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlock.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserBlockStrict.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonAttrTypes.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserCommonTypeCompat.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserExpr.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserProgram.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserScope.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/ParserTypes.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/AstMacros.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/print_parser_Error.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/TestAstBuilder.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/TestParser.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/TestSemanticsHandler.h
+                  DEPENDS parser_testlib parser)
 
