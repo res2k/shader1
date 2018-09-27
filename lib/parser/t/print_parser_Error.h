@@ -32,7 +32,7 @@ namespace s1
   {
     static std::ostream& operator<< (std::ostream& stream, const Error& tt)
     {
-      int save_flags = stream.flags();
+      auto save_flags = stream.flags();
       stream.flags ((save_flags & ~std::ios_base::basefield) | std::ios_base::hex);
       stream << static_cast<unsigned int> (tt);
       stream.flags (save_flags);
