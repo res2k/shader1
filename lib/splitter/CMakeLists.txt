@@ -11,10 +11,6 @@ IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(splitter PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
-if(CXXTEST_FOUND)
-  file(GLOB splitter_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
-  s1_add_cxxtest(test_Splitter
-                 SOURCES ${splitter_test_sources}
-                 DEPENDS intermediate splitter)
-endif()
-
+s1_add_boost_test(test_Splitter
+                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/NestedBlock.cpp
+                  DEPENDS intermediate splitter)

@@ -21,7 +21,7 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
-static void VerifyRegsAssignedOnce (const s1::intermediate::SequencePtr& seq)
+static inline void VerifyRegsAssignedOnce (const s1::intermediate::SequencePtr& seq)
 {
   typedef std::unordered_map<s1::intermediate::RegisterPtr, size_t> AssignCountMap;
   AssignCountMap assignCount;
@@ -30,23 +30,21 @@ static void VerifyRegsAssignedOnce (const s1::intermediate::SequencePtr& seq)
   {
     s1::intermediate::SequenceOpPtr op (seq->GetOp (n));
     s1::intermediate::RegisterSet writtenRegs (op->GetWrittenRegisters());
-    BOOST_FOREACH(const s1::intermediate::RegisterPtr& reg, writtenRegs)
+    for(const s1::intermediate::RegisterPtr& reg : writtenRegs)
     {
       ++(assignCount[reg]);
     }
   }
   
-  for (AssignCountMap::const_iterator it = assignCount.begin();
-	it != assignCount.end();
-	++it)
+  for (const auto& assigned_count : assignCount)
   {
     std::string regName;
-    it->first->GetName().toUTF8String (regName);
-    TSM_ASSERT_EQUALS (regName, it->second, 1);
+    assigned_count.first->GetName().toUTF8String (regName);
+    BOOST_CHECK_MESSAGE(assigned_count.second == 1, regName << " assigned more than once (" << assigned_count.second << " time)");
   }
 }
 
-static void VerifyRegsWrittenBeforeRead (const s1::intermediate::SequencePtr& seq)
+static inline void VerifyRegsWrittenBeforeRead (const s1::intermediate::SequencePtr& seq)
 {
   s1::intermediate::RegisterSet allWrittenRegs;
   
@@ -54,13 +52,13 @@ static void VerifyRegsWrittenBeforeRead (const s1::intermediate::SequencePtr& se
   {
     s1::intermediate::SequenceOpPtr op (seq->GetOp (n));
     s1::intermediate::RegisterSet readRegs (op->GetReadRegisters());
-    BOOST_FOREACH(const s1::intermediate::RegisterPtr& reg, readRegs)
+    for(const s1::intermediate::RegisterPtr& reg : readRegs)
     {
       std::string regName;
       reg->GetName().toUTF8String (regName);
       
       s1::intermediate::RegisterSet::const_iterator writtenRegIt = allWrittenRegs.find (reg);
-      TSM_ASSERT_DIFFERS (regName, writtenRegIt, allWrittenRegs.end());
+      BOOST_CHECK_MESSAGE(writtenRegIt != allWrittenRegs.end(), regName << " not written");
     }
     s1::intermediate::RegisterSet writtenRegs (op->GetWrittenRegisters());
     allWrittenRegs.insert (writtenRegs.begin(), writtenRegs.end());
