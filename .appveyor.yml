@@ -32,11 +32,6 @@ install:
   - set PATH=C:\projects\deps\ninja;%PATH%
   - ninja --version
 
-  # Install cxxtest
-  - set CXXTEST_URL="https://github.com/CxxTest/cxxtest/releases/download/4.4/cxxtest-4.4.zip"
-  - appveyor DownloadFile %CXXTEST_URL% -FileName cxxtest.zip
-  - 7z x cxxtest.zip -oC:\projects\deps > nul
-
 
 before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
@@ -47,7 +42,7 @@ build_script:
   - "SET PATH=C:/Python36-x64;%PATH%"
   - mkdir appveyor-build
   - cd appveyor-build
-  - cmake .. -GNinja -DBOOST_ROOT=C:/Libraries/boost_%BOOST_VERSION% -DCXXTEST_INCLUDE_DIR=C:/projects/deps/cxxtest-4.4 -DCXXTEST_PYTHON_TESTGEN_EXECUTABLE=C:/projects/deps/cxxtest-4.4/bin/cxxtestgen
+  - cmake .. -GNinja -DBOOST_ROOT=C:/Libraries/boost_%BOOST_VERSION%
   - cmake --build .
   - cmake --build . --target build_tests
   - "SET PATH=C:/projects/shader1/appveyor-build/Debug;%PATH%"
