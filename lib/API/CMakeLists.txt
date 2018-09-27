@@ -81,21 +81,19 @@ if(MSVC)
 endif()
 s1_strip_debug_symbols(s1 INSTALL_DESTINATION lib)
 
-if(CXXTEST_FOUND)
-  if(BUILD_SHARED_LIBS)
-    s1_add_library(s1_test STATIC
-                   SOURCES ${s1_sources}
-                   LINK base compiler)
-    set_property(TARGET s1_test PROPERTY EXCLUDE_FROM_ALL YES)
-    set(_S1_TEST_DEP s1_test)
-  else()
-    set(_S1_TEST_DEP s1)
-  endif()
-  s1_add_cxxtest(test_ApiImpl
-                 SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/StringWrapper.h
-                 DEPENDS ${_S1_TEST_DEP} s1_headers_internal)
-  target_compile_features(test_ApiImpl PUBLIC ${S1_REQUIRED_CXX_FEATURES})
+if(BUILD_SHARED_LIBS)
+  s1_add_library(s1_test STATIC
+                  SOURCES ${s1_sources}
+                  LINK base compiler)
+  set_property(TARGET s1_test PROPERTY EXCLUDE_FROM_ALL YES)
+  set(_S1_TEST_DEP s1_test)
+else()
+  set(_S1_TEST_DEP s1)
 endif()
+s1_add_boost_test(test_ApiImpl
+                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/StringWrapper.cpp
+                  DEPENDS ${_S1_TEST_DEP} s1_headers_internal)
+target_compile_features(test_ApiImpl PUBLIC ${S1_REQUIRED_CXX_FEATURES})
 
 install(TARGETS s1
         EXPORT s1
