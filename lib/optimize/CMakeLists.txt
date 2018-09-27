@@ -31,14 +31,13 @@ IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(optimize PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
-if(CXXTEST_FOUND)
-  file(GLOB optimize_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
-  s1_add_cxxtest(test_Optimize
-                 SOURCES ${optimize_test_sources}
-                 DEPENDS optimize)
-  set_property(TARGET test_Optimize
-               APPEND
-               PROPERTY INCLUDE_DIRECTORIES
-               ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate
-               ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate/generator)
-endif()
+s1_add_boost_test(test_Optimize
+                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/ConstantFolding.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/DeadCodeElimination.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/InlineBlock.cpp
+                  DEPENDS optimize)
+set_property(TARGET test_Optimize
+             APPEND
+             PROPERTY INCLUDE_DIRECTORIES
+             ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate
+             ${CMAKE_CURRENT_SOURCE_DIR}/../intermediate/generator)
