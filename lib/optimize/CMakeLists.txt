@@ -1,29 +1,29 @@
 set(optimize_sources
-	CloningHelper.h
-	CommonSequenceVisitor.h
-	OptimizeSequenceConstantFolding.h
-	OptimizeSequenceDeadCodeEliminate.h
-	OptimizeSequenceInlineBlocks.h
-	OptimizeSequenceStep.h
-	ProgramOptimizations.h
-	SequenceOptimizations.h
-	CloningHelper.cpp
-	ConstantFolding.cpp
-	DeadCodeElimination.cpp
-	Inliner.cpp
-	Optimizer.cpp
-	OptimizeSequenceConstantFolding.cpp
-	OptimizeSequenceDeadCodeEliminate.cpp
-	OptimizeSequenceInlineBlocks.cpp
-	ProgramOptimizations.cpp
-	SequenceOptimizations.cpp
-	UnusedFunctionArgumentRemoval.cpp
-	${S1_INC}/optimize/ConstantFolding.h
-	${S1_INC}/optimize/DeadCodeElimination.h
-	${S1_INC}/optimize/Inliner.h
-	${S1_INC}/optimize/Optimizer.h
-	${S1_INC}/optimize/UnusedFunctionArgumentRemoval.h
-	)
+    CloningHelper.h
+    CommonSequenceVisitor.h
+    OptimizeSequenceConstantFolding.h
+    OptimizeSequenceDeadCodeEliminate.h
+    OptimizeSequenceInlineBlocks.h
+    OptimizeSequenceStep.h
+    ProgramOptimizations.h
+    SequenceOptimizations.h
+    CloningHelper.cpp
+    ConstantFolding.cpp
+    DeadCodeElimination.cpp
+    Inliner.cpp
+    Optimizer.cpp
+    OptimizeSequenceConstantFolding.cpp
+    OptimizeSequenceDeadCodeEliminate.cpp
+    OptimizeSequenceInlineBlocks.cpp
+    ProgramOptimizations.cpp
+    SequenceOptimizations.cpp
+    UnusedFunctionArgumentRemoval.cpp
+    ${S1_INC}/optimize/ConstantFolding.h
+    ${S1_INC}/optimize/DeadCodeElimination.h
+    ${S1_INC}/optimize/Inliner.h
+    ${S1_INC}/optimize/Optimizer.h
+    ${S1_INC}/optimize/UnusedFunctionArgumentRemoval.h
+    )
 s1_add_library(optimize
                SOURCES ${optimize_sources}
                LINK intermediate)
@@ -34,7 +34,7 @@ ENDIF()
 if(CXXTEST_FOUND)
   file(GLOB optimize_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
   s1_add_cxxtest(test_Optimize
-		 SOURCES ${optimize_test_sources}
+                 SOURCES ${optimize_test_sources}
                  DEPENDS optimize)
   set_property(TARGET test_Optimize
                APPEND
