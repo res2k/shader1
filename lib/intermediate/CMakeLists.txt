@@ -40,14 +40,15 @@ IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(intermediate PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()
 
-if(CXXTEST_FOUND)
-  file(GLOB intermediate_test_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/*.h)
-  s1_add_cxxtest(test_Intermediate
-		 SOURCES ${intermediate_test_sources}
-                 DEPENDS intermediate)
-  set_property(TARGET test_Intermediate
-               APPEND
-               PROPERTY INCLUDE_DIRECTORIES
-               ${CMAKE_CURRENT_SOURCE_DIR}/generator)
-endif()
+s1_add_boost_test(test_Intermediate
+                  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/t/Decl.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/Expr.cpp
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/CommonChecks.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/print_TestSequenceVisitor_Operation.h
+                          ${CMAKE_CURRENT_SOURCE_DIR}/t/TestSequenceVisitor.h
+                  DEPENDS intermediate)
+set_property(TARGET test_Intermediate
+             APPEND
+             PROPERTY INCLUDE_DIRECTORIES
+             ${CMAKE_CURRENT_SOURCE_DIR}/generator)
 
