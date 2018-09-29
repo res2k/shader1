@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid1)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("0.0"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -80,8 +80,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid1)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String (".0"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 3);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 3u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid2)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("0."));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -115,8 +115,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid2)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be a minus
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Minus);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 2);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 2u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
   
@@ -125,8 +125,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid2)
   // Token should be a "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("0"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 3);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 3u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid3)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("1e2"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid3)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String (".3"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 3);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 3u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -187,8 +187,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid4)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("1e2"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -197,8 +197,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid4)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("e3"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 3);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 3u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -223,8 +223,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid5)
   // Token should be an "numeric"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Numeric);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("0xa"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -232,8 +232,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid5)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be an "member"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Member);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 3);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 3u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -242,8 +242,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid5)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("e2"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 4);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 4u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -268,8 +268,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid6)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be an "member"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Member);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -278,8 +278,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid6)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("e2"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 1);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 1u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -304,8 +304,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid7)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be an "member"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Member);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -314,8 +314,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid7)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("x"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 1);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 1u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -341,8 +341,8 @@ BOOST_AUTO_TEST_CASE(NumericInvalid8)
   // Token should be invalid
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Invalid);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("0x"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 

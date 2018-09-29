@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(SimpleNestedBlock)
   glsl::Traits traits;
   traits.ConvertIdentifier (testBlockImpl->sequenceBuilder->GetIdentifierRegister ("a")->GetName ())
     .toUTF8String (substMap["A"]);
-  BOOST_CHECK_EQUAL(generateResult->Size(), 4);
+  BOOST_CHECK_EQUAL(generateResult->Size(), 4u);
   unsigned int l = 0;
   if (l >= generateResult->Size()) return;
   BOOST_CHECK_EQUAL(generateResult->Get (l++),

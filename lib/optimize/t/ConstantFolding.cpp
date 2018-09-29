@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(SimpleCast)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 2u);
   if (testVisitor.entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
   if (testVisitor.entries.size() < 2) return;
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(ArrayExtract)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 6);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 6u);
   if (testVisitor.entries.size() < 6) return;
   // Set up array
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(ArrayChange)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 10);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 10u);
   if (testVisitor.entries.size() < 10) return;
   // Set up array
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(ArrayLen)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 5);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 5u);
   if (testVisitor.entries.size() < 5) return;
   // Set up array
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(VectorExtract)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4u);
   if (testVisitor.entries.size() < 4) return;
   // Set up vector
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(ArithSimple)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 7);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 7u);
   if (testVisitor.entries.size() < 7) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(ArithVector)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 21);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 21u);
   if (testVisitor.entries.size() < 21) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -472,7 +472,7 @@ BOOST_AUTO_TEST_CASE(LogicSimple)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4u);
   if (testVisitor.entries.size() < 4) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstBool);
@@ -523,7 +523,7 @@ BOOST_AUTO_TEST_CASE(Unary)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 7);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 7u);
   if (testVisitor.entries.size() < 7) return;
   // 'x' initialization
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -591,7 +591,7 @@ BOOST_AUTO_TEST_CASE(Compare)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 15);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 15u);
   if (testVisitor.entries.size() < 15) return;
   // 'x' initialization
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
@@ -677,7 +677,7 @@ BOOST_AUTO_TEST_CASE(Block)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4u);
   if (testVisitor.entries.size() < 4) return;
   // 'x' initialization
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(Block)
   BOOST_CHECK_EQUAL (testVisitor.entries[2].op, TestSequenceVisitor::opBlock);
   // Optimized: constant instead of arith op
   BOOST_CHECK_EQUAL (testVisitor.entries[3].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL (testVisitor.entries[3].uintConst, 7);
+  BOOST_CHECK_EQUAL (testVisitor.entries[3].uintConst, 7u);
 }
 
 BOOST_AUTO_TEST_CASE(BranchNonConst)
@@ -734,7 +734,7 @@ BOOST_AUTO_TEST_CASE(BranchNonConst)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 3);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 3u);
   if (testVisitor.entries.size() < 3) return;
   // Branch op
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opBranch);
@@ -788,7 +788,7 @@ BOOST_AUTO_TEST_CASE(BranchConst)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 4u);
   if (testVisitor.entries.size() < 4) return;
   // 'c' assignment
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstBool);
@@ -798,7 +798,7 @@ BOOST_AUTO_TEST_CASE(BranchConst)
   BOOST_CHECK_EQUAL (testVisitor.entries[2].op, TestSequenceVisitor::opConstUInt);
   // Optimized: constant instead of multiplication
   BOOST_CHECK_EQUAL (testVisitor.entries[3].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL (testVisitor.entries[3].uintConst, 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[3].uintConst, 1u);
 }
 
 BOOST_AUTO_TEST_CASE(WhileNonConst)
@@ -841,7 +841,7 @@ BOOST_AUTO_TEST_CASE(WhileNonConst)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 6);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 6u);
   if (testVisitor.entries.size() < 6) return;
   // 'x' assignment
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
@@ -897,7 +897,7 @@ BOOST_AUTO_TEST_CASE(WhileConst)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 5);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 5u);
   if (testVisitor.entries.size() < 5) return;
   // 'x' assignment
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
@@ -910,7 +910,7 @@ BOOST_AUTO_TEST_CASE(WhileConst)
   BOOST_CHECK_EQUAL (testVisitor.entries[3].op, TestSequenceVisitor::opConstUInt);
   // Optimized: constant instead of multiplication
   BOOST_CHECK_EQUAL (testVisitor.entries[4].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL (testVisitor.entries[4].uintConst, 0);
+  BOOST_CHECK_EQUAL (testVisitor.entries[4].uintConst, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(BuiltinDot)
@@ -951,7 +951,7 @@ BOOST_AUTO_TEST_CASE(BuiltinDot)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 7);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 7u);
   if (testVisitor.entries.size() < 7) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1003,7 +1003,7 @@ BOOST_AUTO_TEST_CASE(BuiltinCross)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 12);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 12u);
   if (testVisitor.entries.size() < 12) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1063,7 +1063,7 @@ BOOST_AUTO_TEST_CASE(BuiltinNormalize)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 16);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 16u);
   if (testVisitor.entries.size() < 16) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1131,7 +1131,7 @@ BOOST_AUTO_TEST_CASE(BuiltinLength)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 10);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 10u);
   if (testVisitor.entries.size() < 10) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1188,7 +1188,7 @@ BOOST_AUTO_TEST_CASE(BuiltinMulMatrixMatrix)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 15);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 15u);
   if (testVisitor.entries.size() < 15) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1251,7 +1251,7 @@ BOOST_AUTO_TEST_CASE(BuiltinMulMatrixVector)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 11);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 11u);
   if (testVisitor.entries.size() < 11) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1308,7 +1308,7 @@ BOOST_AUTO_TEST_CASE(BuiltinMulVectorMatrix)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 11);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 11u);
   if (testVisitor.entries.size() < 11) return;
   // Operand assignments
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);
@@ -1371,7 +1371,7 @@ BOOST_AUTO_TEST_CASE(Min)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 13);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 13u);
   if (testVisitor.entries.size() < 13) return;
   // 'ux', 'uy' initialization
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
@@ -1388,7 +1388,7 @@ BOOST_AUTO_TEST_CASE(Min)
   BOOST_CHECK_EQUAL (testVisitor.entries[9].op, TestSequenceVisitor::opConstFloat);
   // Min - optimized: no builtin call op, const values instead
   BOOST_CHECK_EQUAL (testVisitor.entries[10].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL (testVisitor.entries[10].uintConst, 2);
+  BOOST_CHECK_EQUAL (testVisitor.entries[10].uintConst, 2u);
   // Min - optimized: no builtin call op, const values instead
   BOOST_CHECK_EQUAL (testVisitor.entries[11].op, TestSequenceVisitor::opConstInt);
   BOOST_CHECK_EQUAL (testVisitor.entries[11].intConst, -3);
@@ -1441,7 +1441,7 @@ BOOST_AUTO_TEST_CASE(Max)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 13);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 13u);
   if (testVisitor.entries.size() < 13) return;
   // 'ux', 'uy' initialization
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
@@ -1458,7 +1458,7 @@ BOOST_AUTO_TEST_CASE(Max)
   BOOST_CHECK_EQUAL (testVisitor.entries[9].op, TestSequenceVisitor::opConstFloat);
   // Max - optimized: no builtin call op, const values instead
   BOOST_CHECK_EQUAL (testVisitor.entries[10].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL (testVisitor.entries[10].uintConst, 3);
+  BOOST_CHECK_EQUAL (testVisitor.entries[10].uintConst, 3u);
   // Max - optimized: no builtin call op, const values instead
   BOOST_CHECK_EQUAL (testVisitor.entries[11].op, TestSequenceVisitor::opConstInt);
   BOOST_CHECK_EQUAL (testVisitor.entries[11].intConst, -2);
@@ -1508,7 +1508,7 @@ BOOST_AUTO_TEST_CASE(Pow)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 8);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 8u);
   if (testVisitor.entries.size() < 8) return;
   // 'x1', 'y1' initialization
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstFloat);

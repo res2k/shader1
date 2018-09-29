@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(ExprAssignConst)
   TestCodeGenerator::TestSequenceCodeGenerator seqGen (*(testBlockImpl->sequenceBuilder->GetSequence()), &nameRes);
   StringsArrayPtr generateResult (seqGen.Generate ());
   
-  BOOST_CHECK_EQUAL(generateResult->Size(), 1);
+  BOOST_CHECK_EQUAL(generateResult->Size(), 1u);
   if (generateResult->Size() < 1) return;
   auto testBlockReg = testBlockImpl->GetRegisterForName (testVarB, false);
   BOOST_CHECK (testBlockReg);
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(ExprArithVar)
   substMap["A"] = varARegName;
   substMap["B"] = varBRegName;
   substMap["C"] = varCRegName;
-  BOOST_CHECK_EQUAL(generateResult->Size(), 3);
+  BOOST_CHECK_EQUAL(generateResult->Size(), 3u);
   unsigned int l = 0;
   if (l >= generateResult->Size()) return;
   BOOST_CHECK_EQUAL(generateResult->Get (l++),

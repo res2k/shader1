@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(Empty1)
 {
   s1::uc::String empty;
   BOOST_CHECK(empty.isEmpty());
-  BOOST_CHECK_EQUAL(empty.length(), 0);
-  BOOST_CHECK_EQUAL(empty.size(), 0);
+  BOOST_CHECK_EQUAL(empty.length(), 0u);
+  BOOST_CHECK_EQUAL(empty.size(), 0u);
   BOOST_CHECK_EQUAL(empty.data()[empty.size()], 0);
 }
 
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE(Empty2)
 {
   s1::uc::String empty ("");
   BOOST_CHECK(empty.isEmpty());
-  BOOST_CHECK_EQUAL(empty.length(), 0);
-  BOOST_CHECK_EQUAL(empty.size(), 0);
+  BOOST_CHECK_EQUAL(empty.length(), 0u);
+  BOOST_CHECK_EQUAL(empty.size(), 0u);
   BOOST_CHECK_EQUAL(empty.data()[empty.size()], 0);
 }
 
@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE(Empty3)
   const s1::uc::Char nullStr[] = { 0 };
   s1::uc::String empty (nullStr);
   BOOST_CHECK(empty.isEmpty());
-  BOOST_CHECK_EQUAL(empty.length(), 0);
-  BOOST_CHECK_EQUAL(empty.size(), 0);
+  BOOST_CHECK_EQUAL(empty.length(), 0u);
+  BOOST_CHECK_EQUAL(empty.size(), 0u);
   BOOST_CHECK_EQUAL(empty.data()[empty.size()], 0);
 }
 
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(OneChar1)
 {
   s1::uc::String str ("a");
   BOOST_CHECK(!str.isEmpty());
-  BOOST_CHECK_EQUAL(str.length(), 1);
+  BOOST_CHECK_EQUAL(str.length(), 1u);
   BOOST_CHECK_EQUAL(str.data()[0], 'a');
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(OneChar2)
   const s1::uc::Char aStr[] = { 'a', 0 };
   s1::uc::String str (aStr);
   BOOST_CHECK(!str.isEmpty());
-  BOOST_CHECK_EQUAL(str.length(), 1);
+  BOOST_CHECK_EQUAL(str.length(), 1u);
   BOOST_CHECK_EQUAL(str.data()[0], 'a');
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(OneChar3)
 {
   s1::uc::String str ('a');
   BOOST_CHECK(!str.isEmpty());
-  BOOST_CHECK_EQUAL(str.length(), 1);
+  BOOST_CHECK_EQUAL(str.length(), 1u);
   BOOST_CHECK_EQUAL(str.data()[0], 'a');
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(MultiChar1)
   s1::uc::String str ("Hello");
   const s1::uc::Char chars_utf16[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 5);
+  BOOST_CHECK_EQUAL(str.length(), 5u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(MultiChar2)
   s1::uc::String str (chars_utf32);
   const s1::uc::Char chars_utf16[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 5);
+  BOOST_CHECK_EQUAL(str.length(), 5u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -136,9 +136,9 @@ BOOST_AUTO_TEST_CASE(UTF32Single)
   const s1::uc::Char chars_utf16[] = { 0xD83D, 0xDC35, 0 };
   s1::uc::String str_utf16 (chars_utf16);
   BOOST_CHECK(!str.isEmpty());
-  BOOST_CHECK_EQUAL(str.length(), 2);
+  BOOST_CHECK_EQUAL(str.length(), 2u);
   BOOST_CHECK_EQUAL(str, str_utf16);
-  BOOST_CHECK_EQUAL(str.countChar32(), 1);
+  BOOST_CHECK_EQUAL(str.countChar32(), 1u);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
 
@@ -149,9 +149,9 @@ BOOST_AUTO_TEST_CASE(UTF32Multi)
   const s1::uc::Char chars_utf16[] = { 0xD83D, 0xDC35, 0xD83D, 0xDE00, 0 };
   s1::uc::String str_utf16 (chars_utf16);
   BOOST_CHECK(!str.isEmpty());
-  BOOST_CHECK_EQUAL(str.length(), 4);
+  BOOST_CHECK_EQUAL(str.length(), 4u);
   BOOST_CHECK_EQUAL(str, str_utf16);
-  BOOST_CHECK_EQUAL(str.countChar32(), 2);
+  BOOST_CHECK_EQUAL(str.countChar32(), 2u);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
 
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(UTF8Simple)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 5);
+  BOOST_CHECK_EQUAL(str.length(), 5u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -174,10 +174,10 @@ BOOST_AUTO_TEST_CASE(UTF8Simple_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 5);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 5u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(UTF8Encoded2)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 5);
+  BOOST_CHECK_EQUAL(str.length(), 5u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -200,10 +200,10 @@ BOOST_AUTO_TEST_CASE(UTF8Encoded2_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 5);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 5u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(UTF8Encoded3)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'H', 'e', 0x1e37, 0x1e37, 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 5);
+  BOOST_CHECK_EQUAL(str.length(), 5u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -226,10 +226,10 @@ BOOST_AUTO_TEST_CASE(UTF8Encoded3_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'H', 'e', 0x1e37, 0x1e37, 'o', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 5);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 5u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(UTF8Encoded4)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 0xd83d, 0xde00, ' ', 0xd83d, 0xdca9, 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 5);
+  BOOST_CHECK_EQUAL(str.length(), 5u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -252,10 +252,10 @@ BOOST_AUTO_TEST_CASE(UTF8Encoded4_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 0xd83d, 0xde00, ' ', 0xd83d, 0xdca9, 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 5);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 5u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed1)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 3);
+  BOOST_CHECK_EQUAL(str.length(), 3u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed1_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
   BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+3));
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed2)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 3);
+  BOOST_CHECK_EQUAL(str.length(), 3u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed2_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
   BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+2));
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed2b)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 3);
+  BOOST_CHECK_EQUAL(str.length(), 3u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed2b_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
   BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+2));
@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed3)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 3);
+  BOOST_CHECK_EQUAL(str.length(), 3u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed3_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
   BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+4));
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed4)
   s1::uc::String str (s1::uc::String::fromUTF8 (chars_utf8));
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(str.length(), 3);
+  BOOST_CHECK_EQUAL(str.length(), 3u);
   BOOST_CHECK_EQUAL(str, str_utf16);
   BOOST_CHECK_EQUAL(str.data()[str.size()], 0);
 }
@@ -382,7 +382,7 @@ BOOST_AUTO_TEST_CASE(UTF8Malformed4_convert)
   auto convert_res = s1::uc::String::convertUTF8 (chars_utf8);
   const s1::uc::Char chars_utf16[] = { 'a', 0xfffd, 'b', 0 };
   s1::uc::String str_utf16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str, str_utf16);
   BOOST_CHECK_EQUAL(convert_res.str.data()[convert_res.str.size()], 0);
   BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), uintptr_t (chars_utf8+4));
@@ -394,14 +394,14 @@ BOOST_AUTO_TEST_CASE(UTF16_convert)
 {
   const s1::uc::Char16 chars_utf16[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 5);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 5u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'H');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xeb);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'l');
   BOOST_CHECK_EQUAL(convert_res.str.data()[3], 'l');
   BOOST_CHECK_EQUAL(convert_res.str.data()[4], 'o');
   BOOST_CHECK_EQUAL(convert_res.str.data()[5], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -410,13 +410,13 @@ BOOST_AUTO_TEST_CASE(UTF16Surrogates_convert)
 {
   const s1::uc::Char16 chars_utf16[] = { 'x', 0xd83d, 0xde00, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 4);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 4u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xd83d);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 0xde00);
   BOOST_CHECK_EQUAL(convert_res.str.data()[3], 'y');
   BOOST_CHECK_EQUAL(convert_res.str.data()[4], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE(UTF16Malformed1_convert)
 {
   const s1::uc::Char16 chars_utf16[] = { 'x', 0xd83d, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xfffd);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'y');
@@ -439,7 +439,7 @@ BOOST_AUTO_TEST_CASE(UTF16Malformed2_convert)
 {
   const s1::uc::Char16 chars_utf16[] = { 'x', 0xde00, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF16 (chars_utf16);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xfffd);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'y');
@@ -453,14 +453,14 @@ BOOST_AUTO_TEST_CASE(UTF32_convert)
 {
   const s1::uc::Char32 chars_utf32[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 5);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 5u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'H');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xeb);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'l');
   BOOST_CHECK_EQUAL(convert_res.str.data()[3], 'l');
   BOOST_CHECK_EQUAL(convert_res.str.data()[4], 'o');
   BOOST_CHECK_EQUAL(convert_res.str.data()[5], 0);
-  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0);
+  BOOST_CHECK_EQUAL(uintptr_t (convert_res.invalidPos), 0u);
   BOOST_CHECK_EQUAL(convert_res.error, s1::uc::String::ceSuccess);
 }
 
@@ -469,7 +469,7 @@ BOOST_AUTO_TEST_CASE(UTF32Malformed1_convert)
 {
   const s1::uc::Char32 chars_utf32[] = { 'x', 0xd83d, 0xde00, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 4);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 4u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xfffd);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 0xfffd);
@@ -484,7 +484,7 @@ BOOST_AUTO_TEST_CASE(UTF32Malformed2_convert)
 {
   const s1::uc::Char32 chars_utf32[] = { 'x', 0xd83d, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xfffd);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'y');
@@ -498,7 +498,7 @@ BOOST_AUTO_TEST_CASE(UTF32Malformed3_convert)
 {
   const s1::uc::Char32 chars_utf32[] = { 'x', 0xde00, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xfffd);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'y');
@@ -512,7 +512,7 @@ BOOST_AUTO_TEST_CASE(UTF32Malformed4_convert)
 {
   const s1::uc::Char32 chars_utf32[] = { 'x', 0xffffff, 'y', 0 };
   auto convert_res = s1::uc::String::convertUTF32 (chars_utf32);
-  BOOST_CHECK_EQUAL(convert_res.str.length(), 3);
+  BOOST_CHECK_EQUAL(convert_res.str.length(), 3u);
   BOOST_CHECK_EQUAL(convert_res.str.data()[0], 'x');
   BOOST_CHECK_EQUAL(convert_res.str.data()[1], 0xfffd);
   BOOST_CHECK_EQUAL(convert_res.str.data()[2], 'y');

@@ -34,11 +34,6 @@ static const char* TestData (size_t& dataSize)
   return data;
 }
 
-static void SetCleanupFlag (uintptr_t context, const char*)
-{
-  *(reinterpret_cast<bool*> (context)) = true;
-}
-
 struct CallbackStream
 {
   const char* dataPointer;

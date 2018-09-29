@@ -32,7 +32,13 @@ namespace s1
   {
     static std::ostream& operator<< (std::ostream& stream, const TokenType& tt)
     {
-      switch (tt)
+      int tt_value = static_cast<int> (tt);
+      #define PRINT_FLAG(X)   if ((tt_value & X) == X) { stream << #X << " | "; tt_value &= ~X; }
+      PRINT_FLAG(VecFlag)
+      PRINT_FLAG(MatFlag)
+      #undef PRINT_FLAG
+
+      switch (tt_value)
       {
       #define PRINT_TOKEN(X)  case X: stream << #X; return stream;
 
@@ -68,8 +74,44 @@ namespace s1
       PRINT_TOKEN (TernaryElse)
       PRINT_TOKEN (LogicAnd)
       PRINT_TOKEN (LogicOr)
+      PRINT_TOKEN (kwReturn)
+      PRINT_TOKEN (kwTrue)
+      PRINT_TOKEN (kwFalse)
+      PRINT_TOKEN (kwSampler1D)
+      PRINT_TOKEN (kwSampler2D)
+      PRINT_TOKEN (kwSampler3D)
+      PRINT_TOKEN (kwSamplerCUBE)
+      PRINT_TOKEN (kwTypedef)
+      PRINT_TOKEN (kwVoid)
+      PRINT_TOKEN (kwIn)
+      PRINT_TOKEN (kwOut)
+      PRINT_TOKEN (kwConst)
+      PRINT_TOKEN (kwUniform)
+      PRINT_TOKEN (kwAttribute)
+      PRINT_TOKEN (kwIf)
+      PRINT_TOKEN (kwElse)
+      PRINT_TOKEN (kwWhile)
+      PRINT_TOKEN (kwFor)
+      PRINT_TOKEN (kwBool)
+      PRINT_TOKEN (kwUnsigned)
+      PRINT_TOKEN (kwInt)
+      PRINT_TOKEN (kwFloat)
 
       #undef PRINT_TOKEN
+
+      // Flags & combinations, handled above, but here to silence warnings
+      case VecFlag:
+      case MatFlag:
+      case TypeFlagMask:
+      case kwBoolVec:
+      case kwUnsignedVec:
+      case kwIntVec:
+      case kwFloatVec:
+      case kwBoolMat:
+      case kwUnsignedMat:
+      case kwIntMat:
+      case kwFloatMat:
+        break;
       }
       stream << static_cast<int> (tt);
       return stream;

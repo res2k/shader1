@@ -92,8 +92,8 @@ BOOST_AUTO_TEST_CASE(InvalidInput)
   // Error handle should've been triggered
   BOOST_CHECK_EQUAL (errorHandler.lexerError.code,
                     static_cast<unsigned int> (s1::lexer::Error::InvalidInputSequence));
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.location.line, 0);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.location.column, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.location.line, 0u);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.location.column, 0u);
   // Invalid input sequence results in a replacement char, which is treated like an identifier
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   // Trying to forward never throws
@@ -119,8 +119,8 @@ BOOST_AUTO_TEST_CASE(InvalidInput2)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String::fromUTF8 ("a" "\xEF\xBF\xBD" "b"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(Tokens)
     // Token should be a certain token
     BOOST_CHECK_EQUAL (token.typeOrID, expectedToken);
     BOOST_CHECK_EQUAL (token.tokenString, expected[expectedIndex].str);
-    BOOST_CHECK_EQUAL (token.location.line, 0);
+    BOOST_CHECK_EQUAL (token.location.line, 0u);
     BOOST_CHECK_EQUAL (token.location.column, expected[expectedIndex].col);
     expectedToken = (s1::lexer::TokenType)(expectedToken+1);
     ++expectedIndex;
@@ -187,8 +187,8 @@ BOOST_AUTO_TEST_CASE(TokensInvalid)
   // Stray input character should result in an Invalid token
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Invalid);
   BOOST_CHECK_EQUAL (token.tokenString, "|");
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -196,8 +196,8 @@ BOOST_AUTO_TEST_CASE(TokensInvalid)
   // Stray input character should result in an Invalid token
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Invalid);
   BOOST_CHECK_EQUAL (token.tokenString, "&");
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 2);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 2u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 

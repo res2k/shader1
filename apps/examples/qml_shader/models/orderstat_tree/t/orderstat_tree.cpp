@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(CustomAddendChanged)
     tree.push_back (newNode);
   }
 
-  BOOST_CHECK_EQUAL (tree.root_sum(), 0);
+  BOOST_CHECK_EQUAL (tree.root_sum(), 0u);
 
   static const size_t nodeAddends[nodeCount] = { 3, 1, 2, 1, 4 };
 

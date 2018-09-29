@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstFloat)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
   BOOST_CHECK_EQUAL(visitor.entries[0].floatConst, 1.0f);
 }
@@ -111,9 +111,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstInt)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 2u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1u);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opCastToInt);
 }
 
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstIntNeg)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstInt);
   BOOST_CHECK_EQUAL(visitor.entries[0].intConst, -1);
 }
@@ -170,9 +170,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstUInt)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1u);
 }
 
 BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHex)
@@ -199,9 +199,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHex)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 2u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10u);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opCastToInt);
 }
 
@@ -229,9 +229,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHEX)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 2u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10u);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opCastToInt);
 }
 
@@ -259,9 +259,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHex)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10u);
 }
 
 BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHEX)
@@ -288,9 +288,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHEX)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 10u);
 }
 
 BOOST_AUTO_TEST_CASE(ExprAssignWithCast)
@@ -317,9 +317,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignWithCast)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 2u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1u);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opCastToFloat);
   BOOST_CHECK_EQUAL(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
 }
@@ -348,9 +348,9 @@ BOOST_AUTO_TEST_CASE(ExprAssignWithCastFromHex)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 2u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1u);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opCastToFloat);
   BOOST_CHECK_EQUAL(visitor.entries[1].sourceReg[0], visitor.entries[0].destReg);
 }
@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(ExprAssignVar)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 2u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
   BOOST_CHECK_EQUAL(visitor.entries[0].floatConst, 1.0f);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opAssignment);
@@ -572,7 +572,7 @@ BOOST_AUTO_TEST_CASE(ExprArithVar)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opArithAdd);
 }
 
@@ -603,7 +603,7 @@ BOOST_AUTO_TEST_CASE(ExprArithConst)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 3);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 3u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstFloat);
   BOOST_CHECK_EQUAL(visitor.entries[0].floatConst, 1.0f);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opConstFloat);
@@ -640,9 +640,9 @@ BOOST_AUTO_TEST_CASE(ExprArithConst2)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 4);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 4u);
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opConstUInt);
-  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1);
+  BOOST_CHECK_EQUAL(visitor.entries[0].uintConst, 1u);
   BOOST_CHECK_EQUAL(visitor.entries[1].op, TestSequenceVisitor::opConstFloat);
   BOOST_CHECK_EQUAL(visitor.entries[1].floatConst, 2.0f);
   BOOST_CHECK_EQUAL(visitor.entries[2].op, TestSequenceVisitor::opCastToFloat);
@@ -682,7 +682,7 @@ BOOST_AUTO_TEST_CASE(ExprArithVarAssignSelf)
     static_cast<TestSemanticsHandler::TestBlockImpl*> (testBlock.get());
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   BOOST_CHECK_NE(visitor.entries[0].destReg, visitor.entries[0].sourceReg[0]);
   BOOST_CHECK_NE(visitor.entries[0].destReg, visitor.entries[0].sourceReg[1]);
 }

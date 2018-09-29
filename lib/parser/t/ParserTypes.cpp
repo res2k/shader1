@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorBool)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3);
+  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
   TestSemanticsHandler::TestType* vecType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorInt)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3);
+  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
   TestSemanticsHandler::TestType* vecType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorUInt)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3);
+  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
   TestSemanticsHandler::TestType* vecType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(TypeVectorFloat)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Vector);
-  BOOST_CHECK_EQUAL (testType->vectorDim, 3);
+  BOOST_CHECK_EQUAL (testType->vectorDim, 3u);
   TestSemanticsHandler::TestType* vecType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (vecType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -306,8 +306,8 @@ BOOST_AUTO_TEST_CASE(TypeMatrixBool)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2);
+  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
   TestSemanticsHandler::TestType* matType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -330,8 +330,8 @@ BOOST_AUTO_TEST_CASE(TypeMatrixInt)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2);
+  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
   TestSemanticsHandler::TestType* matType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -354,8 +354,8 @@ BOOST_AUTO_TEST_CASE(TypeMatrixUInt)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2);
+  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
   TestSemanticsHandler::TestType* matType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);
@@ -378,8 +378,8 @@ BOOST_AUTO_TEST_CASE(TypeMatrixFloat)
   TestSemanticsHandler::TestType* testType = 
     static_cast<TestSemanticsHandler::TestType*> (type.get());
   BOOST_CHECK_EQUAL (testType->typeClass, TestSemanticsHandler::TestType::Matrix);
-  BOOST_CHECK_EQUAL (testType->matrixCols, 3);
-  BOOST_CHECK_EQUAL (testType->matrixRows, 2);
+  BOOST_CHECK_EQUAL (testType->matrixCols, 3u);
+  BOOST_CHECK_EQUAL (testType->matrixRows, 2u);
   TestSemanticsHandler::TestType* matType = 
     static_cast<TestSemanticsHandler::TestType*> (testType->avmBase.get());
   BOOST_CHECK_EQUAL (matType->typeClass, TestSemanticsHandler::TestType::Base);

@@ -45,8 +45,8 @@ BOOST_AUTO_TEST_CASE(Identifiers1)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("foo"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(Identifiers1)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("bar"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 4);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 4u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(Identifiers2)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("f00"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -95,8 +95,8 @@ BOOST_AUTO_TEST_CASE(Identifiers2)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("b4r"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 4);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 4u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -120,10 +120,10 @@ BOOST_AUTO_TEST_CASE(Identifiers3)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
-  BOOST_CHECK_EQUAL (token.tokenString.length(), 1);
+  BOOST_CHECK_EQUAL (token.tokenString.length(), 1u);
   BOOST_CHECK_EQUAL (token.tokenString.data()[0], 0x3b1);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -148,8 +148,8 @@ BOOST_AUTO_TEST_CASE(Identifiers4)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("_foo"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -160,8 +160,8 @@ BOOST_AUTO_TEST_CASE(Identifiers4)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("bar_"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 5);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 5u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -172,8 +172,8 @@ BOOST_AUTO_TEST_CASE(Identifiers4)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("b_az"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 10);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 10u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -198,8 +198,8 @@ BOOST_AUTO_TEST_CASE(CanonicalEquivalence)
   BOOST_CHECK_NO_THROW ((token1 = *lexer));
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token1.typeOrID, s1::lexer::Identifier);
-  BOOST_CHECK_EQUAL (token1.location.line, 0);
-  BOOST_CHECK_EQUAL (token1.location.column, 0);
+  BOOST_CHECK_EQUAL (token1.location.line, 0u);
+  BOOST_CHECK_EQUAL (token1.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -207,8 +207,8 @@ BOOST_AUTO_TEST_CASE(CanonicalEquivalence)
   BOOST_CHECK_NO_THROW ((token2 = *lexer));
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token2.typeOrID, s1::lexer::Identifier);
-  BOOST_CHECK_EQUAL (token2.location.line, 0);
-  BOOST_CHECK_EQUAL (token2.location.column, 3);
+  BOOST_CHECK_EQUAL (token2.location.line, 0u);
+  BOOST_CHECK_EQUAL (token2.location.column, 3u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
   

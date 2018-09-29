@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(DeclVarInit)
 
   TestSequenceVisitor visitor;
   testBlockImpl->sequenceBuilder->GetSequence()->Visit (visitor);
-  BOOST_CHECK_EQUAL(visitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL(visitor.entries.size(), 1u);
   if (visitor.entries.size() < 1) return;
   BOOST_CHECK_EQUAL(visitor.entries[0].op, TestSequenceVisitor::opAssignment);
 }

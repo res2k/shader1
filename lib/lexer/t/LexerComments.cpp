@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(LineComment1)
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(LineComment2)
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(LineComment2)
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(LineComment3)
@@ -92,8 +92,8 @@ BOOST_AUTO_TEST_CASE(LineComment3)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("a"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -102,15 +102,15 @@ BOOST_AUTO_TEST_CASE(LineComment3)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("b"));
-  BOOST_CHECK_EQUAL (token.location.line, 2);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 2u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(BlockComment1)
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(BlockComment1)
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(BlockComment2)
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(BlockComment2)
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(BlockComment3)
@@ -175,8 +175,8 @@ BOOST_AUTO_TEST_CASE(BlockComment3)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("a"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -185,15 +185,15 @@ BOOST_AUTO_TEST_CASE(BlockComment3)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("b"));
-  BOOST_CHECK_EQUAL (token.location.line, 2);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 2u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(BlockComment4)
@@ -212,8 +212,8 @@ BOOST_AUTO_TEST_CASE(BlockComment4)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("a"));
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -222,15 +222,15 @@ BOOST_AUTO_TEST_CASE(BlockComment4)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
   BOOST_CHECK_EQUAL (token.tokenString, s1::uc::String ("b"));
-  BOOST_CHECK_EQUAL (token.location.line, 3);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 3u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
   // Still at end
   BOOST_CHECK_NO_THROW ((token = *lexer));
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::EndOfFile);
-  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0);
+  BOOST_CHECK_EQUAL (errorHandler.lexerError.code, 0u);
 }
 
 BOOST_AUTO_TEST_CASE(LineCommentInvalidInput)

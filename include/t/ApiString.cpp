@@ -28,7 +28,7 @@ static const s1_char32 testString1_u32[] = { 'H', 'e', 'l', 'l', 'o', 0 };
 static const wchar_t testString1_wcs[] = { 'H', 'e', 'l', 'l', 'o', 0 };
 
 #define CHECK_EQUAL_STR1_U8(strData)                                     \
-  BOOST_CHECK_EQUAL(std::char_traits<char>::length ((strData)), 5);      \
+  BOOST_CHECK_EQUAL(std::char_traits<char>::length ((strData)), 5u);     \
   BOOST_CHECK_EQUAL((strData)[0], testString1_u8[0]);                    \
   BOOST_CHECK_EQUAL((strData)[1], testString1_u8[1]);                    \
   BOOST_CHECK_EQUAL((strData)[2], testString1_u8[2]);                    \
@@ -37,7 +37,7 @@ static const wchar_t testString1_wcs[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   BOOST_CHECK_EQUAL((strData)[5], testString1_u8[5]);
 
 #define CHECK_EQUAL_STR1_U16(strData)                                    \
-  BOOST_CHECK_EQUAL(std::char_traits<s1_char16>::length ((strData)), 5); \
+  BOOST_CHECK_EQUAL(std::char_traits<s1_char16>::length ((strData)), 5u);\
   BOOST_CHECK_EQUAL((strData)[0], testString1_u16[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString1_u16[1]);                   \
   BOOST_CHECK_EQUAL((strData)[2], testString1_u16[2]);                   \
@@ -46,7 +46,7 @@ static const wchar_t testString1_wcs[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   BOOST_CHECK_EQUAL((strData)[5], testString1_u16[5]);
 
 #define CHECK_EQUAL_STR1_U32(strData)                                    \
-  BOOST_CHECK_EQUAL(std::char_traits<s1_char32>::length ((strData)), 5); \
+  BOOST_CHECK_EQUAL(std::char_traits<s1_char32>::length ((strData)), 5u);\
   BOOST_CHECK_EQUAL((strData)[0], testString1_u32[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString1_u32[1]);                   \
   BOOST_CHECK_EQUAL((strData)[2], testString1_u32[2]);                   \
@@ -55,7 +55,7 @@ static const wchar_t testString1_wcs[] = { 'H', 'e', 'l', 'l', 'o', 0 };
   BOOST_CHECK_EQUAL((strData)[5], testString1_u32[5]);
 
 #define CHECK_EQUAL_STR1_WCS(strData)                                     \
-  BOOST_CHECK_EQUAL(std::char_traits<wchar_t>::length ((strData)), 5);    \
+  BOOST_CHECK_EQUAL(std::char_traits<wchar_t>::length ((strData)), 5u);   \
   BOOST_CHECK_EQUAL((strData)[0], testString1_wcs[0]);                    \
   BOOST_CHECK_EQUAL((strData)[1], testString1_wcs[1]);                    \
   BOOST_CHECK_EQUAL((strData)[2], testString1_wcs[2]);                    \
@@ -69,7 +69,7 @@ static const s1_char32 testString2_u32[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
 static const wchar_t testString2_wcs[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
 
 #define CHECK_EQUAL_STR2_U8(strData)                                     \
-  BOOST_CHECK_EQUAL(std::char_traits<char>::length ((strData)), 6);      \
+  BOOST_CHECK_EQUAL(std::char_traits<char>::length ((strData)), 6u);     \
   BOOST_CHECK_EQUAL((strData)[0], testString2_u8[0]);                    \
   BOOST_CHECK_EQUAL((strData)[1], testString2_u8[1]);                    \
   BOOST_CHECK_EQUAL((strData)[2], testString2_u8[2]);                    \
@@ -79,7 +79,7 @@ static const wchar_t testString2_wcs[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   BOOST_CHECK_EQUAL((strData)[6], testString2_u8[6]);
 
 #define CHECK_EQUAL_STR2_U16(strData)                                    \
-  BOOST_CHECK_EQUAL(std::char_traits<s1_char16>::length ((strData)), 5); \
+  BOOST_CHECK_EQUAL(std::char_traits<s1_char16>::length ((strData)), 5u);\
   BOOST_CHECK_EQUAL((strData)[0], testString2_u16[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString2_u16[1]);                   \
   BOOST_CHECK_EQUAL((strData)[2], testString2_u16[2]);                   \
@@ -88,7 +88,7 @@ static const wchar_t testString2_wcs[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   BOOST_CHECK_EQUAL((strData)[5], testString2_u16[5]);
 
 #define CHECK_EQUAL_STR2_U32(strData)                                    \
-  BOOST_CHECK_EQUAL(std::char_traits<s1_char32>::length ((strData)), 5); \
+  BOOST_CHECK_EQUAL(std::char_traits<s1_char32>::length ((strData)), 5u);\
   BOOST_CHECK_EQUAL((strData)[0], testString2_u32[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString2_u32[1]);                   \
   BOOST_CHECK_EQUAL((strData)[2], testString2_u32[2]);                   \
@@ -97,7 +97,7 @@ static const wchar_t testString2_wcs[] = { 'H', 0xeb, 'l', 'l', 'o', 0 };
   BOOST_CHECK_EQUAL((strData)[5], testString2_u32[5]);
 
 #define CHECK_EQUAL_STR2_WCS(strData)                                    \
-  BOOST_CHECK_EQUAL(std::char_traits<wchar_t>::length ((strData)), 5);   \
+  BOOST_CHECK_EQUAL(std::char_traits<wchar_t>::length ((strData)), 5u);  \
   BOOST_CHECK_EQUAL((strData)[0], testString2_wcs[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString2_wcs[1]);                   \
   BOOST_CHECK_EQUAL((strData)[2], testString2_wcs[2]);                   \
@@ -110,7 +110,7 @@ static const s1_char16 testString3_u16[] = { 0xd83d, 0xdc35, 0 };
 static const s1_char32 testString3_u32[] = { 0x1F435, 0 };
 
 #define CHECK_EQUAL_STR3_U8(strData)                                     \
-  BOOST_CHECK_EQUAL(std::char_traits<char>::length ((strData)), 4);      \
+  BOOST_CHECK_EQUAL(std::char_traits<char>::length ((strData)), 4u);     \
   BOOST_CHECK_EQUAL((strData)[0], testString3_u8[0]);                    \
   BOOST_CHECK_EQUAL((strData)[1], testString3_u8[1]);                    \
   BOOST_CHECK_EQUAL((strData)[2], testString3_u8[2]);                    \
@@ -118,13 +118,13 @@ static const s1_char32 testString3_u32[] = { 0x1F435, 0 };
   BOOST_CHECK_EQUAL((strData)[4], testString3_u8[4]);
 
 #define CHECK_EQUAL_STR3_U16(strData)                                    \
-  BOOST_CHECK_EQUAL(std::char_traits<s1_char16>::length ((strData)), 2); \
+  BOOST_CHECK_EQUAL(std::char_traits<s1_char16>::length ((strData)), 2u);\
   BOOST_CHECK_EQUAL((strData)[0], testString3_u16[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString3_u16[1]);                   \
   BOOST_CHECK_EQUAL((strData)[2], testString3_u16[2]);
 
 #define CHECK_EQUAL_STR3_U32(strData)                                   \
-  BOOST_CHECK_EQUAL(std::char_traits<s1_char32>::length ((strData)), 1); \
+  BOOST_CHECK_EQUAL(std::char_traits<s1_char32>::length ((strData)), 1u);\
   BOOST_CHECK_EQUAL((strData)[0], testString3_u32[0]);                   \
   BOOST_CHECK_EQUAL((strData)[1], testString3_u32[1]);
 

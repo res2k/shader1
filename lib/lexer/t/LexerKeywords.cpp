@@ -74,8 +74,8 @@ BOOST_AUTO_TEST_CASE(VectorMatrixKeywords)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::kwIntVec);
   BOOST_CHECK_EQUAL (token.dimension1, 2);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 0);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 0u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -85,8 +85,8 @@ BOOST_AUTO_TEST_CASE(VectorMatrixKeywords)
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::kwIntMat);
   BOOST_CHECK_EQUAL (token.dimension1, 3);
   BOOST_CHECK_EQUAL (token.dimension2, 2);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 5);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 5u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -94,8 +94,8 @@ BOOST_AUTO_TEST_CASE(VectorMatrixKeywords)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 12);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 12u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -103,8 +103,8 @@ BOOST_AUTO_TEST_CASE(VectorMatrixKeywords)
   BOOST_CHECK_NO_THROW ((token = *lexer));
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::Identifier);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 19);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 19u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
 
@@ -113,8 +113,8 @@ BOOST_AUTO_TEST_CASE(VectorMatrixKeywords)
   // Token should be an "identifier"
   BOOST_CHECK_EQUAL (token.typeOrID, s1::lexer::kwBoolVec);
   BOOST_CHECK_EQUAL (token.dimension1, 3);
-  BOOST_CHECK_EQUAL (token.location.line, 0);
-  BOOST_CHECK_EQUAL (token.location.column, 27);
+  BOOST_CHECK_EQUAL (token.location.line, 0u);
+  BOOST_CHECK_EQUAL (token.location.column, 27u);
   // Trying to forward never throws
   BOOST_CHECK_NO_THROW (++lexer);
   

@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(SimpleUnused)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0u);
 }
 
 BOOST_AUTO_TEST_CASE(SimpleUsed)
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(SimpleUsed)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
 }
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(ArithUnused)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0u);
 }
 
 BOOST_AUTO_TEST_CASE(ArithUsed)
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(ArithUsed)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 3);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 3u);
   if (testVisitor.entries.size() < 3) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opConstUInt);
   BOOST_CHECK_EQUAL (testVisitor.entries[1].op, TestSequenceVisitor::opConstUInt);
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(BranchUnused)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0u);
 }
 
 BOOST_AUTO_TEST_CASE(BranchUsed)
@@ -303,21 +303,21 @@ BOOST_AUTO_TEST_CASE(BranchUsed)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 1u);
   if (testVisitor.entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opBranch);
 
   BOOST_CHECK (testVisitor.entries[0].branchIfVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].op, TestSequenceVisitor::opBlock);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1u);
   if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
 
   BOOST_CHECK (testVisitor.entries[0].branchElseVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].op, TestSequenceVisitor::opBlock);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1u);
   if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
 }
@@ -368,21 +368,21 @@ BOOST_AUTO_TEST_CASE(BranchUsed2)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 2u);
   if (testVisitor.entries.size() < 2) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opBranch);
 
   BOOST_CHECK (testVisitor.entries[0].branchIfVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].op, TestSequenceVisitor::opBlock);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1u);
   if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
 
   BOOST_CHECK (testVisitor.entries[0].branchElseVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].op, TestSequenceVisitor::opBlock);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1u);
   if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
 }
@@ -433,23 +433,23 @@ BOOST_AUTO_TEST_CASE(BranchMixed)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 1u);
   if (testVisitor.entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opBranch);
 
   BOOST_CHECK (testVisitor.entries[0].branchIfVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].op, TestSequenceVisitor::opBlock);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size(), 1u);
   if (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
   // @@@ Slightly fragile, relies on imported regs naming
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchIfVisitor->entries[0].blockVisitor->entries[0].destReg->GetName(), s1::uc::String ("m_a_B0"));
 
   BOOST_CHECK (testVisitor.entries[0].branchElseVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries.size(), 1u);
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].op, TestSequenceVisitor::opBlock);
-  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1);
+  BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size(), 1u);
   if (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries.size() < 1) return;
   BOOST_CHECK_EQUAL (testVisitor.entries[0].branchElseVisitor->entries[0].blockVisitor->entries[0].op, TestSequenceVisitor::opConstUInt);
   // @@@ Slightly fragile, relies on imported regs naming
@@ -495,7 +495,7 @@ BOOST_AUTO_TEST_CASE(LoopUnused)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 0u);
 }
 
 BOOST_AUTO_TEST_CASE(LoopUsed)
@@ -538,7 +538,7 @@ BOOST_AUTO_TEST_CASE(LoopUsed)
   s1::intermediate::SequencePtr newSeq (newSeqBuilder->GetSequence());
   TestSequenceVisitor testVisitor;
   newSeq->Visit (testVisitor);
-  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 2);
+  BOOST_CHECK_EQUAL (testVisitor.entries.size(), 2u);
   if (testVisitor.entries.size() < 2) return;
   // Op1: condition variable assignment
   BOOST_CHECK_EQUAL (testVisitor.entries[0].op, TestSequenceVisitor::opAssignment);
