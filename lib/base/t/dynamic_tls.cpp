@@ -52,7 +52,8 @@ BOOST_AUTO_TEST_CASE(Stress)
   for (unsigned int i = 0; i < numThreads; i++)
   {
     testThreads.emplace_back (
-      [i, numThreads, &rng, &rngMutex, &tlsHandles, &correctValues]()
+      // Note: clang warns about handleCount; MSVC breaks w/o it
+      [i, numThreads, handleCount, &rng, &rngMutex, &tlsHandles, &correctValues]()
       {
         for (unsigned int h = i; h < handleCount; h += numThreads)
         {
