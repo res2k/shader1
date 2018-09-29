@@ -23,6 +23,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "base/common.h"
 #include "base/intrusive_ptr.h"
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"

@@ -20,6 +20,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/make_shared.hpp>
 
+#include "base/common.h"
 #include "base/intrusive_ptr.h"
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
