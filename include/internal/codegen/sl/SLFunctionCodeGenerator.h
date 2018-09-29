@@ -104,6 +104,7 @@ namespace s1
                                                                      const std::vector<uc::String>& outParams) const = 0;
       public:
         FunctionCodeGenerator (const Traits& traits, const Options& options);
+        virtual ~FunctionCodeGenerator() {}
 
         StringsArrayPtr Generate (const intermediate::ProgramFunctionPtr& func,
                                   const intermediate::ProgramPtr& prog,
