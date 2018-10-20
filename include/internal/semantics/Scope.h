@@ -44,6 +44,9 @@ namespace s1
 
       typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
+
+      /// Returns \c true if identifier is not registered in this or any parent scope.
+      bool CheckIdentifierUnique (const uc::String& identifier);
     public:
       Scope (Scope* parent);
       virtual ~Scope();

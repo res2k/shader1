@@ -39,18 +39,6 @@ namespace s1
     typedef semantics::BlockPtr BlockPtr;
     typedef semantics::FunctionPtr FunctionPtr;
 
-    bool IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierUnique (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        return false;
-      }
-      if (parent)
-        return static_cast<ScopeImpl*> (parent)->CheckIdentifierUnique (identifier);
-      return true;
-    }
-
     IntermediateGeneratorSemanticsHandler::ScopeImpl::result_NamePtr
     IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
     {

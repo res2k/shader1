@@ -26,18 +26,6 @@ typedef semantics::NamePtr NamePtr;
 typedef semantics::FunctionPtr FunctionPtr;
 typedef semantics::BlockPtr BlockPtr;
 
-bool TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::String& identifier)
-{
-  IdentifierMap::iterator ident = identifiers.find (identifier);
-  if (ident != identifiers.end())
-  {
-    return false;
-  }
-  if (parent)
-    return parent->CheckIdentifierUnique (identifier);
-  return true;
-}
-  
 TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
                                             TestScope* parent,
                                             s1::semantics::ScopeLevel level)

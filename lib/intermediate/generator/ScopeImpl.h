@@ -53,7 +53,6 @@ namespace s1
       FunctionsMap functions;
       std::vector<FunctionInfoPtr> functionsInDeclOrder;
 
-      bool CheckIdentifierUnique (const uc::String& identifier);
       typedef OUTCOME_V2_NAMESPACE::result<semantics::NamePtr, Error> result_NamePtr;
       result_NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
 

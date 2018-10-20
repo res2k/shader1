@@ -29,6 +29,14 @@ namespace s1
 
     Scope::~Scope() {}
 
+    bool Scope::CheckIdentifierUnique (const s1::uc::String& identifier)
+    {
+      auto ident = identifiers.find (identifier);
+      if (ident != identifiers.end()) return false;
+      if (parent) return parent->CheckIdentifierUnique (identifier);
+      return true;
+    }
+
     Scope::result_NamePtr Scope::ResolveIdentifier (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);

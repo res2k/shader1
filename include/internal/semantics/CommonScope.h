@@ -34,8 +34,6 @@ namespace s1
     {
       friend class CommonHandler;
       
-      bool CheckIdentifierUnique (const uc::String& identifier);
-      
       CommonHandler* handler;
       ScopeLevel level;
 

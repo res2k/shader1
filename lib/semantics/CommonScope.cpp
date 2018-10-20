@@ -27,18 +27,6 @@ namespace s1
 {
   namespace semantics
   {
-    bool CommonScope::CheckIdentifierUnique (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        return false;
-      }
-      if (parent)
-        return static_cast<CommonScope*> (parent)->CheckIdentifierUnique (identifier);
-      return true;
-    }
-
     CommonScope::CommonScope (CommonHandler* handler,
                                                       CommonScope* parent,
                                                       ScopeLevel level)

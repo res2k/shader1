@@ -37,8 +37,6 @@ public:
   {
     friend class TestSemanticsHandler;
     
-    bool CheckIdentifierUnique (const s1::uc::String& identifier);
-    
     TestSemanticsHandler* handler;
     boost::intrusive_ptr<TestScope> parent;
     s1::semantics::ScopeLevel level;
