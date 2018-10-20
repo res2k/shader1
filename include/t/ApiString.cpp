@@ -310,6 +310,7 @@ BOOST_AUTO_TEST_CASE(CreateUnicode1C)
     CHECK_EQUAL_STR2_U32(str_utf32);
     const wchar_t* str_wcs = s1_string_wcs (str);
     CHECK_EQUAL_STR2_WCS(str_wcs);
+    s1_release (str);
   }
   {
     s1_String* str;
@@ -323,6 +324,7 @@ BOOST_AUTO_TEST_CASE(CreateUnicode1C)
     CHECK_EQUAL_STR2_U32(str_utf32);
     const wchar_t* str_wcs = s1_string_wcs (str);
     CHECK_EQUAL_STR2_WCS(str_wcs);
+    s1_release (str);
   }
   {
     s1_String* str;
@@ -366,6 +368,7 @@ BOOST_AUTO_TEST_CASE(CreateUnicode1C)
     CHECK_EQUAL_STR2_U32(str_utf32);
     const wchar_t* str_wcs = s1_string_wcs (str);
     CHECK_EQUAL_STR2_WCS(str_wcs);
+    s1_release (str);
   }
   {
     s1_String* str;
@@ -379,6 +382,7 @@ BOOST_AUTO_TEST_CASE(CreateUnicode1C)
     CHECK_EQUAL_STR2_U32(str_utf32);
     const wchar_t* str_wcs = s1_string_wcs (str);
     CHECK_EQUAL_STR2_WCS(str_wcs);
+    s1_release (str);
   }
   {
     s1_String* str;
@@ -754,6 +758,7 @@ BOOST_AUTO_TEST_CASE(IndependentCreateUnicode1C)
     CHECK_EQUAL_STR2_U32(str_utf32);
     const wchar_t* str_wcs = s1_string_wcs (str);
     CHECK_EQUAL_STR2_WCS(str_wcs);
+    s1_release (str);
   }
   {
     s1_String* str;
@@ -768,6 +773,7 @@ BOOST_AUTO_TEST_CASE(IndependentCreateUnicode1C)
     CHECK_EQUAL_STR2_U32(str_utf32);
     const wchar_t* str_wcs = s1_string_wcs (str);
     CHECK_EQUAL_STR2_WCS(str_wcs);
+    s1_release (str);
   }
   {
     s1_String* str;
