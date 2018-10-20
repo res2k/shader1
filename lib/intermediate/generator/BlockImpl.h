@@ -38,10 +38,10 @@ namespace s1
       SequenceBuilderPtr sequenceBuilder;
       
       // Special, internal names
-      semantics::NamePtr varCondition;
-      typedef std::unordered_map<std::string, semantics::NamePtr> TernaryResultVarsMap;
+      semantics::NameVariablePtr varCondition;
+      typedef std::unordered_map<std::string, semantics::NameVariablePtr> TernaryResultVarsMap;
       TernaryResultVarsMap varsTernaryResult;
-      semantics::NamePtr varReturnValue;
+      semantics::NameVariablePtr varReturnValue;
       
       /**
        * Checks for new variables since last command and synthesizes initializations,
@@ -61,13 +61,13 @@ namespace s1
         
         NameReg() : isImported (false) {}
       };
-      typedef std::unordered_map<semantics::NamePtr, NameReg> NameRegMap;
-      NameRegMap nameRegisters;
-      NameSet exportedNames;
+      typedef std::unordered_map<semantics::NameVariablePtr, NameReg> NameVarRegMap;
+      NameVarRegMap nameRegisters;
+      NameVariableSet exportedNames;
       
       SequenceOpPtr CreateBlockSeqOp (semantics::BlockPtr block,
                                       const ExpressionContext& errorContext,
-                                      boost::optional<const NameSet&> loopNames = boost::none);
+                                      boost::optional<const NameVariableSet&> loopNames = boost::none);
     public:
       static const char varReturnValueName[];
       
@@ -92,14 +92,14 @@ namespace s1
       const SequencePtr& GetSequence();
       const SequenceBuilderPtr& GetSequenceBuilder();
       
-      semantics::Name* GetTernaryResultName (semantics::Type* resultType);
+      semantics::NameVariable* GetTernaryResultName (semantics::Type* resultType);
 
       typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;
-      result_RegisterPtr GetRegisterForName (semantics::Name* name, bool writeable);
+      result_RegisterPtr GetRegisterForName (semantics::NameVariable* name, bool writeable);
       typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
-      result_void OverrideNameRegister (semantics::Name* name, const RegisterPtr& reg);
+      result_void OverrideNameRegister (semantics::NameVariable* name, const RegisterPtr& reg);
       
-      const NameSet& GetExportedNames() const { return exportedNames; }
+      const NameVariableSet& GetExportedNames() const { return exportedNames; }
     };
   } // namespace intermediate
 } // namespace s1

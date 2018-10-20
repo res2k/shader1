@@ -52,7 +52,7 @@ namespace s1
                             ExpressionImpl* operand1,
                             ExpressionImpl* operand2);
       
-      NameSet QueryWrittenNames (bool asLvalue);
+      NameVariableSet QueryWrittenNames (bool asLvalue) override;
     };
   } // namespace intermediate
 } // namespace s1

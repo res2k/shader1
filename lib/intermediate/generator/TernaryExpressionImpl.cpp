@@ -38,16 +38,16 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameSet
+    IntermediateGeneratorSemanticsHandler::NameVariableSet
     IntermediateGeneratorSemanticsHandler::TernaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameSet set;
+      NameVariableSet set;
       {
-        NameSet op1Set (ifExpr->QueryWrittenNames (asLvalue));
+        NameVariableSet op1Set (ifExpr->QueryWrittenNames (asLvalue));
         set.insert (op1Set.begin(), op1Set.end());
       }
       {
-        NameSet op2Set (elseExpr->QueryWrittenNames (asLvalue));
+        NameVariableSet op2Set (elseExpr->QueryWrittenNames (asLvalue));
         set.insert (op2Set.begin(), op2Set.end());
       }
       return set;
@@ -80,7 +80,7 @@ namespace s1
          To get that effect, synthesize a branching op. */
       
       // Get Name object for the ternary op result
-      semantics::NamePtr destName (block.GetTernaryResultName (GetValueType().get()));
+      auto destName = block.GetTernaryResultName (GetValueType().get());
 
       auto ifBlock = handler->CreateBlock (block.GetInnerScope());
       // Synthesize assignment for 'true' case

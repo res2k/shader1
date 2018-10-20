@@ -108,7 +108,7 @@ namespace s1
         */
         // Emit initial assignment to return value output parameter
         assert (varReturnValue);
-        ExpressionPtr retValVarExpr (handler->CreateVariableExpression (varReturnValue));
+        ExpressionPtr retValVarExpr (handler->CreateVariableExpression (varReturnValue.get()));
         ExpressionPtr retValAssign (handler->CreateAssignExpression (retValVarExpr, returnValue));
         AddExpressionCommand (retValAssign);
         auto retValReg = GetRegisterForName (varReturnValue.get(), false);
@@ -161,15 +161,13 @@ namespace s1
       std::vector<RegisterPtr> readRegistersIf;
       std::vector<RegisterPtr> readRegistersElse;
       {
-        for (NameRegMap::const_iterator import = ifBlockImpl->nameRegisters.begin();
-             import != ifBlockImpl->nameRegisters.end();
-             ++import)
+        for (const auto& import : ifBlockImpl->nameRegisters)
         {
-          if (!import->second.isImported) continue;
-          if ((get_static_ptr<ScopeImpl> (import->first->GetOwnerScope()) != blockScopeImpl)
-              && !import->second.initiallyWriteable)
+          if (!import.second.isImported) continue;
+          if ((get_static_ptr<ScopeImpl> (import.first->GetOwnerScope()) != blockScopeImpl)
+              && !import.second.initiallyWriteable)
           {
-            auto reg = GetRegisterForName (import->first.get(), false);
+            auto reg = GetRegisterForName (import.first.get(), false);
             if (!reg)
             {
               ExpressionError (*branchCondition, reg.error ());
@@ -178,15 +176,13 @@ namespace s1
             readRegistersIf.push_back (reg.value());
           }
         }
-        for (NameRegMap::const_iterator import = elseBlockImpl->nameRegisters.begin();
-             import != elseBlockImpl->nameRegisters.end();
-             ++import)
+        for (const auto& import : elseBlockImpl->nameRegisters)
         {
-          if (!import->second.isImported) continue;
-          if ((get_static_ptr<ScopeImpl> (import->first->GetOwnerScope()) != blockScopeImpl)
-              && !import->second.initiallyWriteable)
+          if (!import.second.isImported) continue;
+          if ((get_static_ptr<ScopeImpl> (import.first->GetOwnerScope()) != blockScopeImpl)
+              && !import.second.initiallyWriteable)
           {
-            auto reg = GetRegisterForName (import->first.get(), false);
+            auto reg = GetRegisterForName (import.first.get(), false);
             if (!reg)
             {
               ExpressionError (*branchCondition, reg.error ());
@@ -204,7 +200,7 @@ namespace s1
          as we want the ID before that */
       Sequence::IdentifierToRegMap identifierToRegMap (sequenceBuilder->GetIdentifierToRegisterMap ());
       
-      NameSet allExportedNames (ifBlockImpl->exportedNames);
+      auto allExportedNames = ifBlockImpl->exportedNames;
       allExportedNames.insert (elseBlockImpl->exportedNames.begin(), elseBlockImpl->exportedNames.end());
       
       /* Check for names that are exported from one block but not the other.
@@ -213,15 +209,15 @@ namespace s1
       {
         if (ifBlockImpl->exportedNames.find (exportedName) == ifBlockImpl->exportedNames.end())
         {
-          ExpressionPtr targetExpr (handler->CreateVariableExpression (exportedName));
-          ExpressionPtr valueExpr (handler->CreateVariableExpression (exportedName));
+          ExpressionPtr targetExpr (handler->CreateVariableExpression (exportedName.get()));
+          ExpressionPtr valueExpr (handler->CreateVariableExpression (exportedName.get()));
           ExpressionPtr assignExpr (handler->CreateAssignExpression (targetExpr, valueExpr));
           ifBlockImpl->AddExpressionCommand (assignExpr); // FIXME: should prolly not change original block...
         }
         if (elseBlockImpl->exportedNames.find (exportedName) == elseBlockImpl->exportedNames.end())
         {
-          ExpressionPtr targetExpr (handler->CreateVariableExpression (exportedName));
-          ExpressionPtr valueExpr (handler->CreateVariableExpression (exportedName));
+          ExpressionPtr targetExpr (handler->CreateVariableExpression (exportedName.get()));
+          ExpressionPtr valueExpr (handler->CreateVariableExpression (exportedName.get()));
           ExpressionPtr assignExpr (handler->CreateAssignExpression (targetExpr, valueExpr));
           elseBlockImpl->AddExpressionCommand (assignExpr); // FIXME: should prolly not change original block...
         }
@@ -305,28 +301,26 @@ namespace s1
       
       // Emit initial assignment to loop condition var
       {
-        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition.get()));
         ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
         AddExpressionCommand (condAssign);
       }
       
       auto blockImpl = get_static_ptr<BlockImpl> (loopBlock);
       
-      NameSet loopVars;
+      NameVariableSet loopVars;
       // Condition var is implicitly read (condition check) and written (end of body)
       loopVars.insert (varCondition);
       // Look for variables that are both read+written in the body
       {
-        for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
-             import != blockImpl->nameRegisters.end();
-             ++import)
+        for (const auto& import : blockImpl->nameRegisters)
         {
-          if (!import->second.isImported) continue;
+          if (!import.second.isImported) continue;
           // If reg is not read initially it can't be looped
-          if (import->second.initiallyWriteable) continue;
-          if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
+          if (import.second.initiallyWriteable) continue;
+          if (blockImpl->exportedNames.find (import.first) != blockImpl->exportedNames.end())
           {
-            loopVars.insert (import->first);
+            loopVars.insert (import.first);
           }
         }
       }
@@ -354,7 +348,7 @@ namespace s1
          as the "condition" in the sequence op is just a simple reg */
       auto newBlock = make_intrusive<BlockImpl> (*(get_static_ptr<BlockImpl> (loopBlock)));
       {
-        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition.get()));
         ExpressionPtr condAssign (handler->CreateAssignExpression (condVarExpr, loopCond));
         newBlock->AddExpressionCommand (condAssign);
       }
@@ -399,7 +393,7 @@ namespace s1
       
       // Emit initial assignment to loop condition var
       {
-        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition.get()));
         ExpressionPtr condAssign;
         if (loopCond)
           condAssign = handler->CreateAssignExpression (condVarExpr, loopCond);
@@ -412,26 +406,24 @@ namespace s1
       
       auto blockImpl = get_static_ptr<BlockImpl> (loopBlock);
       
-      NameSet loopVars;
+      NameVariableSet loopVars;
       // Condition var is implicitly read (condition check) and written (end of body)
       loopVars.insert (varCondition);
       // Include all variables changed in the tail expression
       {
-        NameSet tailVars (tailImpl->QueryWrittenNames (false));
+        NameVariableSet tailVars (tailImpl->QueryWrittenNames (false));
         loopVars.insert (tailVars.begin(), tailVars.end());
       }
       // Look for variables that are both read+written in the body
       {
-        for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
-             import != blockImpl->nameRegisters.end();
-             ++import)
+        for (const auto& import : blockImpl->nameRegisters)
         {
-          if (!import->second.isImported) continue;
+          if (!import.second.isImported) continue;
           // If reg is not read initially it can't be looped
-          if (import->second.initiallyWriteable) continue;
-          if (blockImpl->exportedNames.find (import->first) != blockImpl->exportedNames.end())
+          if (import.second.initiallyWriteable) continue;
+          if (blockImpl->exportedNames.find (import.first) != blockImpl->exportedNames.end())
           {
-            loopVars.insert (import->first);
+            loopVars.insert (import.first);
           }
         }
       }
@@ -462,7 +454,7 @@ namespace s1
       /* Add condition expression again at the bottom of the block
          as the "condition" in the sequence op is just a simple reg */
       {
-        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition));
+        ExpressionPtr condVarExpr (handler->CreateVariableExpression (varCondition.get()));
         ExpressionPtr condAssign;
         if (loopCond)
           condAssign = handler->CreateAssignExpression (condVarExpr, loopCond);
@@ -530,7 +522,7 @@ namespace s1
     
     SequenceOpPtr IntermediateGeneratorSemanticsHandler::BlockImpl::CreateBlockSeqOp (semantics::BlockPtr block,
                                                                                       const ExpressionContext& errorContext,
-                                                                                      boost::optional<const NameSet&> loopNames)
+                                                                                      boost::optional<const NameVariableSet&> loopNames)
     {
       auto blockImpl = get_static_ptr<BlockImpl> (block);
       
@@ -538,15 +530,13 @@ namespace s1
       
       // Call GetRegisterForName for all imports as a constness check
       {
-        for (NameRegMap::const_iterator import = blockImpl->nameRegisters.begin();
-             import != blockImpl->nameRegisters.end();
-             ++import)
+        for (const auto& import : blockImpl->nameRegisters)
         {
-          if (!import->second.isImported) continue;
-          if ((get_static_ptr<ScopeImpl> (import->first->GetOwnerScope()) != blockScopeImpl)
-              && !import->second.initiallyWriteable)
+          if (!import.second.isImported) continue;
+          if ((get_static_ptr<ScopeImpl> (import.first->GetOwnerScope()) != blockScopeImpl)
+              && !import.second.initiallyWriteable)
           {
-            auto reg = GetRegisterForName (import->first.get(), false);
+            auto reg = GetRegisterForName (import.first.get(), false);
             if (!reg)
               handler->ExpressionError (errorContext, reg.error());
           }
@@ -579,7 +569,7 @@ namespace s1
 
     DECLARE_STATIC_FORMATTER(FormatTernaryResult, "$tr{0}{1}");
 
-    semantics::Name*
+    semantics::NameVariable*
     IntermediateGeneratorSemanticsHandler::BlockImpl::GetTernaryResultName (semantics::Type* resultType)
     {
       std::string typeStr (handler->GetTypeString (resultType));
@@ -598,7 +588,7 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatImportedReg, "{0}_B{1}");
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::result_RegisterPtr
-    IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (semantics::Name* name,
+    IntermediateGeneratorSemanticsHandler::BlockImpl::GetRegisterForName (semantics::NameVariable* name,
                                                                           bool writeable)
     {
       auto paramInfo = name->GetParamInfo();
@@ -610,7 +600,7 @@ namespace s1
       bool doExport = isFromOutside
                       && writeable;
       
-      if (doExport && name->IsConstantVariable())
+      if (doExport && name->IsConstant())
       {
         return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
       }
@@ -650,7 +640,7 @@ namespace s1
       {
         if (writeable)
         {
-          if (name->IsConstantVariable())
+          if (name->IsConstant())
             return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
           reg = handler->AllocateRegister (*sequenceBuilder, reg);
           sequenceBuilder->SetIdentifierRegister (name->GetIdentifier(), reg);
@@ -665,7 +655,7 @@ namespace s1
     }
 
     IntermediateGeneratorSemanticsHandler::BlockImpl::result_void
-    IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (semantics::Name* name,
+    IntermediateGeneratorSemanticsHandler::BlockImpl::OverrideNameRegister (semantics::NameVariable* name,
                                                                             const RegisterPtr& newRegPtr)
     {
       auto origRegPtr = GetRegisterForName (name, true);

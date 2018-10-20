@@ -105,21 +105,21 @@ BOOST_AUTO_TEST_CASE(ExprAssignConst)
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                s1::semantics::ExpressionPtr (),
-                                false);
-  s1::semantics::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                s1::semantics::ExpressionPtr (),
-                                false);
+  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+                                      s1::semantics::ExpressionPtr (),
+                                      false);
+  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
+                                      s1::semantics::ExpressionPtr (),
+                                      false);
   // Create a simple expression "a = 1"
-  s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
+  s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
   s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprA, expr1);
   // Add to a block
   s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
   testBlock->AddExpressionCommand (assignExpr);
   // Create a simple expression "b = a"
-  s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB);
+  s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB.get());
   s1::semantics::ExpressionPtr assignExpr2 = semanticsHandler.CreateAssignExpression (exprB, exprA);
   // Add to block
   testBlock->AddExpressionCommand (assignExpr2);
@@ -152,21 +152,21 @@ BOOST_AUTO_TEST_CASE(ExprArithVar)
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  s1::semantics::NamePtr varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                s1::semantics::ExpressionPtr (),
-                                false);
-  s1::semantics::NamePtr varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                s1::semantics::ExpressionPtr (),
-                                false);
-  s1::semantics::NamePtr varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
-                                s1::semantics::ExpressionPtr (),
-                                false);
+  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
+                                      s1::semantics::ExpressionPtr (),
+                                      false);
+  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
+                                      s1::semantics::ExpressionPtr (),
+                                      false);
+  auto varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
+                                      s1::semantics::ExpressionPtr (),
+                                      false);
   // Create a simple expression "c = a + b"
-  s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
-  s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB);
+  s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
+  s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB.get());
   s1::semantics::ExpressionPtr addExpr = semanticsHandler.CreateArithmeticExpression (TestSemanticsHandler::Add,
                                                   exprA, exprB);
-  s1::semantics::ExpressionPtr exprC = semanticsHandler.CreateVariableExpression (varC);
+  s1::semantics::ExpressionPtr exprC = semanticsHandler.CreateVariableExpression (varC.get());
   s1::semantics::ExpressionPtr assignExpr = semanticsHandler.CreateAssignExpression (exprC, addExpr);
   // Add to a block
   s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);

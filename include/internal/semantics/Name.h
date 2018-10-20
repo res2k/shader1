@@ -22,6 +22,7 @@
 #include "Scope.h"
 
 #include <boost/optional.hpp>
+#include <boost/type_traits/copy_cv.hpp>
 
 namespace s1
 {
@@ -37,61 +38,103 @@ namespace s1
       enum NameType { Function, Variable, TypeAlias };
     protected:
       Scope* ownerScope;
-
       uc::String identifier;
-      NameType type;
 
-      /* Variables/Constants: type of variable/constant
-        * Functions: type of return value
-        * Type aliases: aliased type
-        */
-      TypePtr valueType;
-      // Variables/Constants: value
-      ExpressionPtr varValue;
-      // Distinguish between variable/constant
-      bool varConstant;
+      Name (Scope* ownerScope, const uc::String& identifier) : ownerScope (ownerScope), identifier (identifier) {}
 
-      // Parameter info, if it's originally a function parameter
-      boost::optional<Scope::FunctionFormalParameter> paramInfo;
-    public:
-      Name (Scope* ownerScope, const uc::String& identifier, NameType type, Type* typeOfName)
-        : ownerScope (ownerScope), identifier (identifier), type (type), valueType (typeOfName) {}
-      Name (Scope* ownerScope, const uc::String& identifier, Type* typeOfName,
-            ExpressionPtr value, bool constant)
-        : ownerScope (ownerScope), identifier (identifier), type (Variable), valueType (typeOfName),
-          varValue (value), varConstant (constant) {}
-      Name (Scope* ownerScope,
-            const Scope::FunctionFormalParameter& param)
-        :  Name (ownerScope, param.identifier, param.type.get(), param.defaultValue,
-                 param.dir == Scope::dirIn)
+      template<typename T, NameType ExpectedType>
+      static T* internal_upcast (typename boost::copy_cv<Name, T>::type* name)
       {
-        paramInfo = param;
+        if (!name) return nullptr;
+        if (name->GetType() != ExpectedType) return nullptr;
+        return static_cast<T*> (name);
       }
+    public:
       virtual ~Name() {}
 
       /// Get scope this name is declared in
       Scope* GetOwnerScope() const { return ownerScope; }
 
       /// Get type of name
-      NameType GetType() { return type; }
-      
-      /// Get aliased type
-      TypePtr GetAliasedType() { return type == TypeAlias ? valueType : TypePtr (); }
-
-      /// Get initialization value for variables
-      Expression* GetValue() const { return varValue.get(); }
+      virtual NameType GetType() const = 0;
 
       /// Get name identifier
       const uc::String& GetIdentifier () { return identifier; }
+    };
 
-      /// Return whether a variable name is a constant
-      bool IsConstantVariable () { return (type == Variable) && varConstant; }
+    class NameFunction : public Name
+    {
+      /// type of return value
+      TypePtr returnType;
+    public:
+      NameFunction (Scope* ownerScope, const uc::String& identifier, Type* returnType)
+        : Name (ownerScope, identifier), returnType (returnType) {}
+
+      NameType GetType() const override { return Function; }
+
+      /// Return type of variable value
+      TypePtr GetReturnType () { return returnType; }
+
+      static NameFunction* upcast (Name* name) { return internal_upcast<NameFunction, Function> (name); }
+      static const NameFunction* upcast (const Name* name) { return internal_upcast<const NameFunction, Function> (name); }
+    };
+
+    class NameVariable : public Name
+    {
+      /// Type of variable/constant
+      TypePtr valueType;
+      /// value
+      ExpressionPtr varValue;
+      /// Distinguish between variable/constant
+      bool varConstant;
+
+      // Parameter info, if it's originally a function parameter
+      boost::optional<Scope::FunctionFormalParameter> paramInfo;
+    public:
+      NameVariable (Scope* ownerScope, const uc::String& identifier, Type* valueType,
+                    Expression* value, bool constant)
+        : Name (ownerScope, identifier), valueType (valueType),
+          varValue (value), varConstant (constant) {}
+      NameVariable (Scope* ownerScope, const Scope::FunctionFormalParameter& param)
+        : NameVariable (ownerScope, param.identifier, param.type.get(), param.defaultValue.get(),
+                        param.dir == Scope::dirIn)
+      {
+        paramInfo = param;
+      }
+
+      NameType GetType() const override { return Variable; }
 
       /// Return type of variable value
       TypePtr GetValueType () { return valueType; }
 
+      /// Get initialization value for variables
+      Expression* GetValue() const { return varValue.get(); }
+
+      /// Return whether a variable name is a constant
+      bool IsConstant () { return varConstant; }
+
       /// Return parameter info, if name was originally a function parameter
       const Scope::FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
+
+      static NameVariable* upcast (Name* name) { return internal_upcast<NameVariable, Variable> (name); }
+      static const NameVariable* upcast (const Name* name) { return internal_upcast<const NameVariable, Variable> (name); }
+    };
+
+    class NameTypeAlias : public Name
+    {
+      /// aliased type
+      TypePtr aliasedType;
+    public:
+      NameTypeAlias (Scope* ownerScope, const uc::String& identifier, Type* aliasedType)
+        : Name (ownerScope,  identifier), aliasedType (aliasedType) {}
+
+      NameType GetType() const override { return TypeAlias; }
+
+      /// Get aliased type
+      TypePtr GetAliasedType() { return aliasedType; }
+
+      static NameTypeAlias* upcast (Name* name) { return internal_upcast<NameTypeAlias, TypeAlias> (name); }
+      static const NameTypeAlias* upcast (const Name* name) { return internal_upcast<const NameTypeAlias, TypeAlias> (name); }
     };
   } // namespace semantics
 } // namespace s1

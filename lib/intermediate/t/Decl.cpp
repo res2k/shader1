@@ -56,13 +56,13 @@ BOOST_AUTO_TEST_CASE(DeclVarInit)
   s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  s1::semantics::NamePtr varA = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("a"),
-                                                                          s1::semantics::ExpressionPtr (),
-                                                                          false);
-  s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA);
-  s1::semantics::NamePtr varB = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("b"),
-                                                                          exprA,
-                                                                          false);
+  auto varA = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("a"),
+                                                       s1::semantics::ExpressionPtr (),
+                                                       false);
+  s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
+  auto varB = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("b"),
+                                                       exprA,
+                                                       false);
   // No further ops - initializer on 'b' should be enough to emit an op ...
 
   TestSemanticsHandler::TestBlockImpl* testBlockImpl =

@@ -68,6 +68,9 @@ Diagnostic error definitions for the various components involved in compilation.
     <error id="ExpectedTypeName">
       <descr>Expected type name</descr>
     </error>
+    <error id="ExpectedVariable">
+      <descr>Expected variable or parameter name</descr>
+    </error>
     <error id="OutParameterWithDefault">
       <descr>&lsquo;out&rsquo; parameter with default value</descr>
     </error>

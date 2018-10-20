@@ -34,7 +34,7 @@ namespace s1
                            UnaryOp op,
                            ExpressionImpl* operand);
       
-      NameSet QueryWrittenNames (bool asLvalue);
+      NameVariableSet QueryWrittenNames (bool asLvalue) override;
       
       semantics::TypePtr GetValueType();
       RegisterPtr AddToSequence (BlockImpl& block, RegisterClassification classify,

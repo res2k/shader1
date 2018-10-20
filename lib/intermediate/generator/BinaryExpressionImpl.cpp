@@ -35,16 +35,16 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameSet
+    IntermediateGeneratorSemanticsHandler::NameVariableSet
     IntermediateGeneratorSemanticsHandler::BinaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameSet set;
+      NameVariableSet set;
       {
-        NameSet op1Set (operand1->QueryWrittenNames (asLvalue));
+        NameVariableSet op1Set (operand1->QueryWrittenNames (asLvalue));
         set.insert (op1Set.begin(), op1Set.end());
       }
       {
-        NameSet op2Set (operand2->QueryWrittenNames (asLvalue));
+        NameVariableSet op2Set (operand2->QueryWrittenNames (asLvalue));
         set.insert (op2Set.begin(), op2Set.end());
       }
       return set;

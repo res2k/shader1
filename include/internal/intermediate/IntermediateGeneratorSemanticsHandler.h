@@ -74,6 +74,7 @@ namespace s1
       class VariableExpressionImpl;
 
       typedef std::unordered_set<semantics::NamePtr> NameSet;
+      typedef std::unordered_set<semantics::NameVariablePtr> NameVariableSet;
 
       /// Diagnostics handler
       diagnostics::Handler* diagnosticsHandler = nullptr;
@@ -90,7 +91,7 @@ namespace s1
       void SetupBuiltins (const ScopeImplPtr& scope);
 
       /// Create a sequence containing global vars initialization
-      SequencePtr CreateGlobalVarInitializationSeq (NameSet& exportedNames);
+      SequencePtr CreateGlobalVarInitializationSeq (NameVariableSet& exportedNames);
 
       ProgramFunctionPtr SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
                                                   const semantics::TypePtr& returnType,
@@ -165,7 +166,7 @@ namespace s1
        * @{ */
       ExpressionPtr CreateConstBoolExpression (bool value);
       ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr);
-      ExpressionPtr CreateVariableExpression (semantics::NamePtr name);
+      ExpressionPtr CreateVariableExpression (semantics::NameVariable* name);
       ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
                                            const uc::String& attr);
       ExpressionPtr CreateArrayElementAccess (ExpressionPtr arrayExpr,

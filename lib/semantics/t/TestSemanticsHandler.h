@@ -55,13 +55,13 @@ public:
 	             TestScope* parent, s1::semantics::ScopeLevel level);
     s1::semantics::ScopeLevel GetLevel() const { return level; }
     
-    s1::semantics::NamePtr AddVariable (s1::semantics::TypePtr type,
+    s1::semantics::NameVariablePtr AddVariable (s1::semantics::TypePtr type,
       const s1::uc::String& identifier,
       s1::semantics::ExpressionPtr initialValue,
-      bool constant);
+      bool constant) override;
       
-    s1::semantics::NamePtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
-      const s1::uc::String& identifier);
+    s1::semantics::NameTypeAliasPtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
+      const s1::uc::String& identifier) override;
       
     s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,
@@ -74,8 +74,6 @@ public:
       s1::get_static_ptr<TestScope> (parentScope),
       scopeLevel));
   }
-  
-  typedef s1::semantics::Name TestName;
   
   struct TestExpressionBase : public s1::semantics::Expression
   {
@@ -259,7 +257,7 @@ public:
       }
     }
     
-    TestExpressionFunction (TestName* name, const ExpressionVector& params)
+    TestExpressionFunction (s1::semantics::NameFunction* name, const ExpressionVector& params)
     {
       {
         name->GetIdentifier().toUTF8String (str);
@@ -269,7 +267,7 @@ public:
       ParamsToStr (params);
       str.append (")");
       
-      valueType = name->GetValueType();
+      valueType = name->GetReturnType();
     }
     
     TestExpressionFunction (s1::semantics::Type* type, const ExpressionVector& params)
@@ -303,7 +301,7 @@ public:
       CreateType (s1::semantics::Type::DetectNumericType (valueStr))));
   }
   
-  s1::semantics::ExpressionPtr CreateVariableExpression (s1::semantics::NamePtr name)
+  s1::semantics::ExpressionPtr CreateVariableExpression (s1::semantics::NameVariable* name)
   {
     return s1::semantics::ExpressionPtr (new TestExpressionVar (name->GetIdentifier(), name->GetValueType()));
   }
@@ -400,7 +398,7 @@ public:
                                                              const ExpressionVector& params)
   {
     return s1::semantics::ExpressionPtr (new TestExpressionFunction (
-      s1::get_static_ptr<TestName> (funcName), params));
+      s1::get_static_ptr<s1::semantics::NameFunction> (funcName), params));
   }
   
   s1::semantics::ExpressionPtr CreateTypeConstructorExpression (s1::semantics::TypePtr type,

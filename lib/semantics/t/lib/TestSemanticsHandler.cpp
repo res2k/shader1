@@ -32,28 +32,30 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : Scope (parent), handler (handler), level (level)
 {}
 
-NamePtr TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type,
-                                                      const s1::uc::String& identifier,
-                                                      s1::semantics::ExpressionPtr initialValue,
-                                                      bool constant)
+s1::semantics::NameVariablePtr
+TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type,
+                                              const s1::uc::String& identifier,
+                                              s1::semantics::ExpressionPtr initialValue,
+                                              bool constant)
 {
   if (!CheckIdentifierUnique (identifier))
   {
-    return NamePtr();
+    return s1::semantics::NameVariablePtr();
   }
-  NamePtr newName (new s1::semantics::Name (this, identifier, type.get(), initialValue, constant));
+  s1::semantics::NameVariablePtr newName (new s1::semantics::NameVariable (this, identifier, type.get(), initialValue.get(), constant));
   identifiers[identifier] = newName;
   return newName;
 }
-  
-NamePtr TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr aliasedType, const s1::uc::String& identifier)
+
+s1::semantics::NameTypeAliasPtr
+TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr aliasedType, const s1::uc::String& identifier)
 {
   if (!CheckIdentifierUnique (identifier))
   {
     // TODO: Error handling
-    return NamePtr();
+    return s1::semantics::NameTypeAliasPtr();
   }
-  NamePtr newName (new s1::semantics::Name (this, identifier, semantics::Name::TypeAlias, aliasedType.get()));
+  s1::semantics::NameTypeAliasPtr newName (new s1::semantics::NameTypeAlias (this, identifier, aliasedType.get()));
   identifiers[identifier] = newName;
   return newName;
 }
@@ -67,7 +69,7 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
     // TODO: Error handling
     return FunctionPtr();
   }
-  NamePtr newName (new s1::semantics::Name (this, identifier, semantics::Name::Function, returnType.get()));
+  NamePtr newName (new s1::semantics::NameFunction (this, identifier, returnType.get()));
   identifiers[identifier] = newName;
   s1::semantics::ScopePtr funcScope;
   funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);

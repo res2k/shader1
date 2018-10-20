@@ -36,6 +36,12 @@ namespace s1
 
     class Name;
     typedef boost::intrusive_ptr<Name> NamePtr;
+    class NameFunction;
+    typedef boost::intrusive_ptr<NameFunction> NameFunctionPtr;
+    class NameTypeAlias;
+    typedef boost::intrusive_ptr<NameTypeAlias> NameTypeAliasPtr;
+    class NameVariable;
+    typedef boost::intrusive_ptr<NameVariable> NameVariablePtr;
 
     struct Expression;
     typedef boost::intrusive_ptr<Expression> ExpressionPtr;

@@ -31,15 +31,15 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::VariableExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      semantics::Name* name)
+      semantics::NameVariable* name)
        : ExpressionImpl (handler, std::move (context)), name (name)
     {
     }
       
-    IntermediateGeneratorSemanticsHandler::NameSet
+    IntermediateGeneratorSemanticsHandler::NameVariableSet
     IntermediateGeneratorSemanticsHandler::VariableExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameSet set;
+      NameVariableSet set;
       if (asLvalue) set.insert (name);
       return set;
     }

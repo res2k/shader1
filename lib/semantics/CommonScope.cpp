@@ -33,29 +33,29 @@ namespace s1
      : Scope (parent), handler (handler), level (level)
     {}
 
-    NamePtr
+    NameVariablePtr
     CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
                                                       ExpressionPtr initialValue, bool constant)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return NamePtr();
+        return NameVariablePtr();
       }
-      NamePtr newName (new Name (this, identifier, type.get(), initialValue, constant));
+      NameVariablePtr newName (new NameVariable (this, identifier, type.get(), initialValue.get(), constant));
       identifiers[identifier] = newName;
       return newName;
     }
 
-    NamePtr
+    NameTypeAliasPtr
     CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         // TODO: Error handling
-        return NamePtr();
+        return NameTypeAliasPtr();
       }
-      NamePtr newName (new Name (this, identifier, Name::TypeAlias, aliasedType.get()));
+      NameTypeAliasPtr newName (new NameTypeAlias (this, identifier, aliasedType.get()));
       identifiers[identifier] = newName;
       return newName;
     }
@@ -75,7 +75,7 @@ namespace s1
         // TODO: Error handling
         return FunctionPtr();
       }
-      NamePtr newName (new Name (this, identifier, Name::Function, returnType.get()));
+      NamePtr newName (new NameFunction (this, identifier, returnType.get()));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);

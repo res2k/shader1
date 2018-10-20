@@ -301,11 +301,15 @@ namespace s1
         return Expression();
       }
       const auto& idName = idNameResult.value();
-      if (idName->GetType() != semantics::Name::Variable)
+      if (auto idVar = semantics::NameVariable::upcast (idName.get()))
       {
-        // TODO: Report error?
+        return semanticsHandler.CreateVariableExpression (idVar);
       }
-      return semanticsHandler.CreateVariableExpression (idName);
+      else
+      {
+        ParseError (Error::ExpectedVariable);
+        return Expression();
+      }
     }
     else if (token.typeOrID == lexer::Numeric)
     {
@@ -517,9 +521,9 @@ namespace s1
         return;
       }
       const auto& typeName = typeNameResult.value();
-      if (typeName->GetType() == semantics::Name::TypeAlias)
+      if (auto typeAlias = semantics::NameTypeAlias::upcast (typeName.get()))
       {
-        parsedType = typeName->GetAliasedType();
+        parsedType = typeAlias->GetAliasedType();
       }
       else
       {

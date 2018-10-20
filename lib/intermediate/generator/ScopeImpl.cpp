@@ -39,18 +39,22 @@ namespace s1
     typedef semantics::BlockPtr BlockPtr;
     typedef semantics::FunctionPtr FunctionPtr;
 
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::result_NamePtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::result_NameFunctionPtr
     IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);
-      if ((ident != identifiers.end()) && (ident->second->GetType() != semantics::Name::Function))
+      if (ident != identifiers.end())
       {
-        return OUTCOME_V2_NAMESPACE::failure (Error::IdentifierAlreadyDeclared);
+        auto funcName = semantics::NameFunction::upcast (ident->second.get());
+        if (!funcName)
+        {
+          return OUTCOME_V2_NAMESPACE::failure (Error::IdentifierAlreadyDeclared);
+        }
+        return funcName;
       }
-      if ((ident != identifiers.end()) && (ident->second)) return ident->second;
       if (parent)
         return static_cast<ScopeImpl*> (parent)->CheckIdentifierIsFunction (identifier);
-      return NamePtr ();
+      return semantics::NameFunctionPtr ();
     }
 
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
@@ -75,7 +79,7 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
         return;
       }
-      semantics::NamePtr newName = new semantics::Name (this, param);
+      semantics::NameVariablePtr newName = new semantics::NameVariable (this, param);
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
 
@@ -83,29 +87,31 @@ namespace s1
         outputParams.push_back (param.identifier);
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (semantics::TypePtr type, const uc::String& identifier,
-                                                                           ExpressionPtr initialValue, bool constant)
+    semantics::NameVariablePtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (semantics::TypePtr type, const uc::String& identifier,
+                                                                   ExpressionPtr initialValue, bool constant)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
-        return NamePtr();
+        return semantics::NameVariablePtr();
       }
-      semantics::NamePtr newName = new semantics::Name (this, identifier, type.get(), initialValue, constant);
+      semantics::NameVariablePtr newName = new semantics::NameVariable (this, identifier, type.get(), initialValue.get(), constant);
       identifiers[identifier] = newName;
       newVars.push_back (newName);
       varsInDeclOrder.push_back (newName);
       return newName;
     }
 
-    NamePtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (semantics::TypePtr aliasedType, const uc::String& identifier)
+    semantics::NameTypeAliasPtr
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (semantics::TypePtr aliasedType, const uc::String& identifier)
     {
       if (!CheckIdentifierUnique (identifier))
       {
         handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
-        return NamePtr();
+        return semantics::NameTypeAliasPtr();
       }
-      semantics::NamePtr newName = new semantics::Name (this, identifier, semantics::Name::TypeAlias, aliasedType.get());
+      semantics::NameTypeAliasPtr newName = new semantics::NameTypeAlias (this, identifier, aliasedType.get());
       identifiers[identifier] = newName;
       return newName;
     }
@@ -128,7 +134,7 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        semantics::NamePtr newName = new semantics::Name (this, identifier, semantics::Name::Function, nullptr);
+        semantics::NamePtr newName = new semantics::NameFunction (this, identifier, returnType.get());
         identifiers[identifier] = newName;
       }
 
@@ -197,7 +203,7 @@ namespace s1
       NamePtr funcName = std::move (funcIdentResult.value());
       if (funcName == NamePtr ())
       {
-        semantics::NamePtr newName = new semantics::Name (this, identifier, semantics::Name::Function, nullptr);
+        semantics::NamePtr newName = new semantics::NameFunction (this, identifier, builtin->GetReturnType().get());
         identifiers[identifier] = newName;
       }
 
@@ -332,14 +338,14 @@ namespace s1
       return vec;
     }
 
-    std::vector<NamePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::FlushNewVars ()
+    std::vector<semantics::NameVariablePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::FlushNewVars ()
     {
-      std::vector<NamePtr> ret (newVars);
+      std::vector<semantics::NameVariablePtr> ret (newVars);
       newVars.erase (newVars.begin(), newVars.end());
       return ret;
     }
 
-    const std::vector<NamePtr>& IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
+    const std::vector<semantics::NameVariablePtr>& IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
     {
       return varsInDeclOrder;
     }

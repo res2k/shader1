@@ -42,10 +42,10 @@ namespace s1
       return context;
     }
 
-    IntermediateGeneratorSemanticsHandler::NameSet
+    IntermediateGeneratorSemanticsHandler::NameVariableSet
     IntermediateGeneratorSemanticsHandler::ExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      return NameSet ();
+      return NameVariableSet ();
     }
      
     void IntermediateGeneratorSemanticsHandler::ExpressionImpl::AddToSequence (BlockImpl& block)

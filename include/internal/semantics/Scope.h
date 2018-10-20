@@ -61,7 +61,7 @@ namespace s1
        *  is given. Required for constants
        * \param constant Whether it is a constant variable.
        */
-      virtual NamePtr AddVariable (TypePtr type,
+      virtual NameVariablePtr AddVariable (TypePtr type,
         const uc::String& identifier,
         ExpressionPtr initialValue,
         bool constant) = 0;
@@ -71,7 +71,7 @@ namespace s1
        * \param aliasedType Type to alias.
        * \param identifier Identifier of type alias.
        */
-      virtual NamePtr AddTypeAlias (TypePtr aliasedType,
+      virtual NameTypeAliasPtr AddTypeAlias (TypePtr aliasedType,
         const uc::String& identifier) = 0;
         
       /// Type of a formal parameter

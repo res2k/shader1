@@ -38,13 +38,13 @@ namespace s1
     {
     }
       
-    IntermediateGeneratorSemanticsHandler::NameSet
+    IntermediateGeneratorSemanticsHandler::NameVariableSet
     IntermediateGeneratorSemanticsHandler::AssignmentExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
-      NameSet set;
-      NameSet targetSet (target->QueryWrittenNames (true));
+      NameVariableSet set;
+      NameVariableSet targetSet (target->QueryWrittenNames (true));
       set.insert (targetSet.begin(), targetSet.end());
-      NameSet valueSet (value->QueryWrittenNames (false));
+      NameVariableSet valueSet (value->QueryWrittenNames (false));
       set.insert (valueSet.begin(), valueSet.end());
       return set;
     }

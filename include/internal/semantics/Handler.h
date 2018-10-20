@@ -81,7 +81,7 @@ namespace s1
       /// Create an expression for a numeric value
       virtual ExpressionPtr CreateConstNumericExpression (const uc::String& valueStr) = 0;
       /// Create an expression for a variable/parameter
-      virtual ExpressionPtr CreateVariableExpression (NamePtr name) = 0;
+      virtual ExpressionPtr CreateVariableExpression (NameVariable* name) = 0;
       /// Create an expression that access an attribute of some other expression
       virtual ExpressionPtr CreateAttributeAccess (ExpressionPtr expr,
                                                    const uc::String& attr) = 0;

@@ -38,11 +38,11 @@ namespace s1
                       ExpressionContext&& context);
 
       const ExpressionContext& GetExpressionContext () const;
-      virtual semantics::Name* GetExpressionName() { return nullptr; }
+      virtual semantics::NameVariable* GetExpressionName() { return nullptr; }
       
       virtual void AddToSequence (BlockImpl& block);
       
-      virtual NameSet QueryWrittenNames (bool asLvalue);
+      virtual NameVariableSet QueryWrittenNames (bool asLvalue);
       
       virtual semantics::TypePtr GetValueType() = 0;
       virtual RegisterPtr AddToSequence (BlockImpl& block,

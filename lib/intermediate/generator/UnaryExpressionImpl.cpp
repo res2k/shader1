@@ -38,7 +38,7 @@ namespace s1
     {
     }
 
-    IntermediateGeneratorSemanticsHandler::NameSet
+    IntermediateGeneratorSemanticsHandler::NameVariableSet
     IntermediateGeneratorSemanticsHandler::UnaryExpressionImpl::QueryWrittenNames (bool asLvalue)
     {
       return operand->QueryWrittenNames (asLvalue);

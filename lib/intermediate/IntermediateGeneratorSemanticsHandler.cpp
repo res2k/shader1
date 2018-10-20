@@ -146,18 +146,18 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatRegPrefixName, "{0}{1}");
     DECLARE_STATIC_FORMATTER(FormatRegTmp, "{0}tmp{1}");
 
-    SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameSet& exportedNames)
+    SequencePtr IntermediateGeneratorSemanticsHandler::CreateGlobalVarInitializationSeq (NameVariableSet& exportedNames)
     {
       // Create a block with all assignments
       BlockPtr globalsInitBlock (CreateBlock (globalScope));
 
-      const std::vector<semantics::NamePtr>& globalVars (globalScope->GetAllVars());
+      const auto& globalVars = globalScope->GetAllVars();
       for (auto global : globalVars)
       {
         if (global->GetValue())
         {
           // Synthesize an expression to assign the global with the default value
-          ExpressionPtr nameExpr (CreateVariableExpression (global));
+          ExpressionPtr nameExpr (CreateVariableExpression (global.get()));
           ExpressionPtr assignExpr (CreateAssignExpression (nameExpr, global->GetValue()));
           globalsInitBlock->AddExpressionCommand (assignExpr);
         }
@@ -174,7 +174,7 @@ namespace s1
                                                                                        const TypePtr& returnType,
                                                                                        const semantics::Scope::FunctionFormalParameters& params)
     {
-      std::vector<NamePtr> globalVars (globalScope->GetAllVars ());
+      auto globalVars = globalScope->GetAllVars ();
       SequencePtr entryFuncSeq;
 
       // Generate a call to real entry function, forwarding parameters
@@ -207,7 +207,7 @@ namespace s1
 
       // Create global var initialization sequence
       {
-        NameSet initSeqExported;
+        NameVariableSet initSeqExported;
         SequencePtr initSeq (CreateGlobalVarInitializationSeq (initSeqExported));
 
         SequenceBuilderPtr newSeqBuilder (boost::make_shared<SequenceBuilder> ());
@@ -392,7 +392,7 @@ namespace s1
       if (globalScope)
       {
         // Collect global vars
-        std::vector<NamePtr> globalVars (globalScope->GetAllVars ());
+        auto globalVars = globalScope->GetAllVars ();
         ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions ());
         for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
              funcIt != functions.end();
@@ -433,7 +433,7 @@ namespace s1
               inputInsertPos++;
             }
             // Augment parameters list with global vars
-            for (const NamePtr& global : globalVars)
+            for (const auto& global : globalVars)
             {
               {
                 semantics::Scope::FunctionFormalParameter inParam;
@@ -444,7 +444,7 @@ namespace s1
                 params.insert (boost::next (params.begin(), inputInsertPos), inParam);
                 inputInsertPos++;
               }
-              if (!global->IsConstantVariable())
+              if (!global->IsConstant())
               {
                 // TODO: Better handling of constants (no need to pass them as params)
                 semantics::Scope::FunctionFormalParameter outParam;
@@ -498,20 +498,9 @@ namespace s1
       return ExpressionPtr (new NumericExpressionImpl (this, ExpressionContext(), valueStr));
     }
 
-    ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (NamePtr name)
+    ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateVariableExpression (semantics::NameVariable* name)
     {
-      switch (name->GetType())
-      {
-      case semantics::Name::Variable:
-        {
-          return ExpressionPtr (new VariableExpressionImpl (this, ExpressionContext(), name.get()));
-        }
-        break;
-      default:
-        // TODO: Throw or so
-        break;
-      }
-      return ExpressionPtr();
+      return ExpressionPtr (new VariableExpressionImpl (this, ExpressionContext(), name));
     }
 
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateAttributeAccess (ExpressionPtr expr,

@@ -36,7 +36,7 @@ namespace s1
     FunctionCallGlobalVarAugment::FunctionCallGlobalVarAugment (
       const SequenceBuilderPtr& newSequenceBuilder,
       const SequencePtr& oldSeq,
-      const std::vector<semantics::NamePtr>& globals,
+      const std::vector<semantics::NameVariablePtr>& globals,
       int level)
       : CloningSequenceVisitor (newSequenceBuilder), level (level), globals (globals)
     {
@@ -91,7 +91,7 @@ namespace s1
         }
 
         // Look for export of global (use as alternative original name)
-        if (!global->IsConstantVariable ())
+        if (!global->IsConstant ())
         {
           uc::String originalName;
           Sequence::RegisterExpMappings::const_iterator exp = exportsMap.find (globalIdent);
