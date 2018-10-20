@@ -38,7 +38,7 @@ namespace s1
       stream.flags (save_flags);
       return stream;
     }
-  } // namespace lexer
+  } // namespace semantics
 } // namespace s1
 
 #endif // PRINT_PARSER_ERROR_H_
