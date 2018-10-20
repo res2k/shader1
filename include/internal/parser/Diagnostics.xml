@@ -65,9 +65,6 @@ Diagnostic error definitions for the various components involved in compilation.
     <error id="ExpectedExpression">
       <descr>Expected expression, got {0}</descr>
     </error>
-    <error id="IdentifierUndeclared">
-      <descr>Identifier undeclared</descr>
-    </error>
     <error id="ExpectedTypeName">
       <descr>Expected type name</descr>
     </error>

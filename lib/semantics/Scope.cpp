@@ -16,7 +16,7 @@
 */
 
 #include "base/common.h"
-#include "parser/Diagnostics.h"
+#include "semantics/Diagnostics.h"
 #include "semantics/Name.h"
 
 #include "semantics/Scope.h"
@@ -46,7 +46,7 @@ namespace s1
       }
       if (parent)
         return parent->ResolveIdentifier (identifier);
-      return parser::Error::IdentifierUndeclared;
+      return Error::IdentifierUndeclared;
     }
   } // namespace semantics
 } // namespace s1

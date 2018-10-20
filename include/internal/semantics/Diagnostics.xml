@@ -26,5 +26,8 @@ Diagnostic error definitions for the various components involved in compilation.
 -->
 <diagnostics>
   <component name="semantics">
+    <error id="IdentifierUndeclared">
+      <descr>Identifier undeclared</descr>
+    </error>
   </component>
 </diagnostics>

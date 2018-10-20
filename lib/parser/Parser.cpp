@@ -72,6 +72,10 @@ namespace s1
                 const Lexer::Token& encountered = lexer::Invalid,
                 const Lexer::TokenType& expected = lexer::Invalid)
       : code (code), encountered (encountered), expected (expected) {}
+    ErrorInfo (semantics::Error code,
+               const Lexer::Token& encountered = lexer::Invalid,
+               const Lexer::TokenType& expected = lexer::Invalid)
+      : code (static_cast<Error> (code)), encountered (encountered), expected (expected) {}
   };
   
   Parser::Parser (Lexer& inputLexer, semantics::Handler& semanticsHandler,
@@ -93,6 +97,13 @@ namespace s1
   }
 
   void Parser::ParseError (Error code,
+                           const Lexer::Token& encountered,
+                           const Lexer::TokenType& expected)
+  {
+    diagnosticsHandler.ParseError (code, encountered, expected);
+  }
+
+  void Parser::ParseError (semantics::Error code,
                            const Lexer::Token& encountered,
                            const Lexer::TokenType& expected)
   {

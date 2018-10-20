@@ -22,6 +22,7 @@
 #include "base/uc/SimpleBufferStreamSource.h"
 #include "parser/Diagnostics.h"
 #include "parser/Parser.h"
+#include "semantics/Diagnostics.h"
 
 #include "TestSemanticsHandler.h"
 
@@ -322,7 +323,7 @@ BOOST_AUTO_TEST_CASE(ProgramFunctionDeclInvalid7)
   BOOST_CHECK_EQUAL(errorHandler.parseErrors[0].code,
                     static_cast<unsigned int> (s1::parser::Error::ExpectedIdentifier));
   BOOST_CHECK_EQUAL(errorHandler.parseErrors[1].code,
-                    static_cast<unsigned int> (s1::parser::Error::IdentifierUndeclared));
+                    static_cast<unsigned int> (s1::semantics::Error::IdentifierUndeclared));
 }
 
 BOOST_AUTO_TEST_CASE(ProgramFunctionDeclInvalid8)

@@ -23,6 +23,7 @@
 #include "diagnostics/Handler.h"
 #include "lexer/Lexer.h"
 #include "parser/Diagnostics_fwd.h"
+#include "semantics/Diagnostics_fwd.h"
 #include "semantics/Handler.h"
 #include "semantics/Scope.h"
 
@@ -53,6 +54,9 @@ namespace s1
     struct ErrorInfo;
     void ParseError (const ErrorInfo& error);
     void ParseError (parser::Error code,
+                     const Lexer::Token& encountered = lexer::Invalid,
+                     const Lexer::TokenType& expected = lexer::Invalid);
+    void ParseError (semantics::Error code,
                      const Lexer::Token& encountered = lexer::Invalid,
                      const Lexer::TokenType& expected = lexer::Invalid);
 

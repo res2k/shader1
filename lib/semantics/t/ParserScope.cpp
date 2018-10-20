@@ -21,10 +21,12 @@
 
 #include "parser/Diagnostics.h"
 #include "parser/Parser.h"
+#include "semantics/Diagnostics.h"
 
 #include "TestSemanticsHandler.h"
 
 #include "../../parser/t/print_parser_Error.h"
+#include "print_semantics_Error.h"
 
 BOOST_AUTO_TEST_SUITE(ParserScope)
 
@@ -110,7 +112,7 @@ BOOST_AUTO_TEST_CASE(IdentifierUnknown)
     varRequested =
       scope->ResolveIdentifier (s1::uc::String ("foo"))
   );
-  BOOST_CHECK_EQUAL(varRequested.error(), s1::parser::Error::IdentifierUndeclared);
+  BOOST_CHECK_EQUAL(varRequested.error(), s1::semantics::Error::IdentifierUndeclared);
 }
 
 BOOST_AUTO_TEST_CASE(IdentifierDeclareMultiple)
