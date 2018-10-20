@@ -37,9 +37,6 @@ public:
   {
     friend class TestSemanticsHandler;
     
-    typedef boost::unordered_map<s1::uc::String, s1::semantics::NamePtr> IdentifierMap;
-    IdentifierMap identifiers;
-    
     bool CheckIdentifierUnique (const s1::uc::String& identifier);
     
     TestSemanticsHandler* handler;
@@ -70,8 +67,6 @@ public:
     s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,
       const FunctionFormalParameters& params);
-  
-    result_NamePtr ResolveIdentifier (const s1::uc::String& identifier);
   };
   
   s1::semantics::ScopePtr CreateScope (s1::semantics::ScopePtr parentScope, s1::semantics::ScopeLevel scopeLevel)

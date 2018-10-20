@@ -35,14 +35,14 @@ namespace s1
         return false;
       }
       if (parent)
-        return parent->CheckIdentifierUnique (identifier);
+        return static_cast<CommonScope*> (parent.get())->CheckIdentifierUnique (identifier);
       return true;
     }
 
     CommonScope::CommonScope (CommonHandler* handler,
                                                       CommonScope* parent,
                                                       ScopeLevel level)
-     : handler (handler), parent (parent), level (level)
+     : Scope (parent), handler (handler), level (level)
     {}
 
     NamePtr
@@ -95,19 +95,6 @@ namespace s1
       funcScope = ScopePtr();
       FunctionPtr newFunction (new CommonFunction (newBlock));
       return newFunction;
-    }
-
-    CommonScope::result_NamePtr
-    CommonScope::ResolveIdentifier (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        return ident->second;
-      }
-      if (parent)
-        return parent->ResolveIdentifier (identifier);
-      return parser::Error::IdentifierUndeclared;
     }
   } // namespace semantics
 } // namespace s1

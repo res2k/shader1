@@ -45,8 +45,6 @@ namespace s1
     private:
       friend class IntermediateGeneratorSemanticsHandler;
 
-      typedef std::unordered_map<uc::String, semantics::NamePtr> IdentifierMap;
-      IdentifierMap identifiers;
       std::vector<semantics::NamePtr> newVars;
       std::vector<uc::String> outputParams;
       std::vector<semantics::NamePtr> varsInDeclOrder;
@@ -60,7 +58,6 @@ namespace s1
       result_NamePtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
-      boost::intrusive_ptr<ScopeImpl> parent;
       semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
@@ -86,21 +83,19 @@ namespace s1
         const uc::String& identifier,
         const FunctionFormalParameters& params);
 
-      Scope::result_NamePtr ResolveIdentifier (const uc::String& identifier);
-      semantics::Name* ResolveIdentifierInternal (const uc::String& identifier);
-
       semantics::TypePtr GetFunctionReturnType() const
       {
         if (funcReturnType) return funcReturnType;
-        if (parent) return parent->GetFunctionReturnType();
+        if (parent) return static_cast<const ScopeImpl*> (parent.get())->GetFunctionReturnType();
         return semantics::TypePtr ();
       }
       const std::vector<uc::String>& GetFunctionOutputParams () const
       {
-        if (!parent || (parent->level < semantics::ScopeLevel::Function))
+        auto parent_impl = static_cast<const ScopeImpl*> (parent.get());
+        if (!parent_impl || (parent_impl->level < semantics::ScopeLevel::Function))
           return outputParams;
         else
-          return parent->outputParams;
+          return parent_impl->outputParams;
       }
       int DistanceToScope (ScopeImpl* scope);
 

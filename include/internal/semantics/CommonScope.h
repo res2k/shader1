@@ -34,13 +34,9 @@ namespace s1
     {
       friend class CommonHandler;
       
-      typedef boost::unordered_map<uc::String, NamePtr> IdentifierMap;
-      IdentifierMap identifiers;
-      
       bool CheckIdentifierUnique (const uc::String& identifier);
       
       CommonHandler* handler;
-      boost::intrusive_ptr<CommonScope> parent;
       ScopeLevel level;
 
       class CommonFunction : public Function
@@ -66,8 +62,6 @@ namespace s1
       FunctionPtr AddFunction (TypePtr returnType,
         const uc::String& identifier,
         const FunctionFormalParameters& params);
-    
-      result_NamePtr ResolveIdentifier (const uc::String& identifier);
     };
   } // namespace semantics
 } // namespace s1

@@ -25,6 +25,7 @@
 #include "base/uc/String.h"
 #include "parser/Diagnostics_fwd.h"
 
+#include <unordered_map>
 #include <vector>
 
 #include <outcome/outcome.hpp>
@@ -36,9 +37,16 @@ namespace s1
     /**
      * Scope object, managing visibility of identifiers.
      */
-    struct Scope : public Base
+    class Scope : public Base
     {
-      virtual ~Scope() {}
+    protected:
+      boost::intrusive_ptr<Scope> parent;
+
+      typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
+      IdentifierMap identifiers;
+    public:
+      Scope (Scope* parent);
+      virtual ~Scope();
 
       /// Get level of the scope.
       virtual ScopeLevel GetLevel() const = 0;
@@ -120,7 +128,7 @@ namespace s1
 
       typedef OUTCOME_V2_NAMESPACE::result<NamePtr, parser::Error> result_NamePtr;
       /// Resolve an identifier to a name
-      virtual result_NamePtr ResolveIdentifier (const uc::String& identifier) = 0;
+      result_NamePtr ResolveIdentifier (const uc::String& identifier);
     };
   } // namespace semantics
 } // namespace s1

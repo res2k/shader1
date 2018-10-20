@@ -47,7 +47,7 @@ namespace s1
         return false;
       }
       if (parent)
-        return parent->CheckIdentifierUnique (identifier);
+        return static_cast<ScopeImpl*> (parent.get())->CheckIdentifierUnique (identifier);
       return true;
     }
 
@@ -61,7 +61,7 @@ namespace s1
       }
       if ((ident != identifiers.end()) && (ident->second)) return ident->second;
       if (parent)
-        return parent->CheckIdentifierIsFunction (identifier);
+        return static_cast<ScopeImpl*> (parent.get())->CheckIdentifierIsFunction (identifier);
       return NamePtr ();
     }
 
@@ -69,7 +69,7 @@ namespace s1
                                                                  ScopeImpl* parent,
                                                                  semantics::ScopeLevel level,
                                                                  semantics::Type* funcReturnType)
-     : handler (handler), parent (parent), level (level), funcReturnType (funcReturnType)
+     : Scope (parent), handler (handler), level (level), funcReturnType (funcReturnType)
     {}
 
     FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (FunctionInfoPtr funcInfo, const BlockPtr& block)
@@ -187,28 +187,6 @@ namespace s1
 
       FunctionPtr newFunction (CreateFunction (funcInfo, newBlock));
       return newFunction;
-    }
-
-    semantics::Scope::result_NamePtr
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifier (const uc::String& identifier)
-    {
-      auto name = ResolveIdentifierInternal (identifier);
-      if (!name)
-        return parser::Error::IdentifierUndeclared;
-      return name;
-    }
-
-    semantics::Name*
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::ResolveIdentifierInternal (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        return ident->second.get();
-      }
-      if (parent)
-        return parent->ResolveIdentifierInternal (identifier);
-      return nullptr;
     }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
@@ -381,12 +359,12 @@ namespace s1
     {
       if (!scope) return INT_MAX;
 
-      auto parentScope = this->parent;
+      auto parentScope = static_cast<ScopeImpl*> (this->parent.get());
       int n = 0;
       while (parentScope)
       {
         if (parentScope == scope) return n;
-        parentScope = parentScope->parent;
+        parentScope = static_cast<ScopeImpl*> (parentScope->parent.get());
         n++;
       }
       return -1;

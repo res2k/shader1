@@ -41,7 +41,7 @@ bool TestSemanticsHandler::TestScope::CheckIdentifierUnique (const s1::uc::Strin
 TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
                                             TestScope* parent,
                                             s1::semantics::ScopeLevel level)
-  : handler (handler), parent (parent), level (level)
+  : Scope (parent), handler (handler), level (level)
 {}
 
 NamePtr TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type,
@@ -88,16 +88,3 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
   FunctionPtr newFunction (new TestFunction (newBlock));
   return newFunction;
 }
-TestSemanticsHandler::TestScope::result_NamePtr
-TestSemanticsHandler::TestScope::ResolveIdentifier (const s1::uc::String& identifier)
-{
-  IdentifierMap::iterator ident = identifiers.find (identifier);
-  if (ident != identifiers.end())
-  {
-    return ident->second;
-  }
-  if (parent)
-    return parent->ResolveIdentifier (identifier);
-  return parser::Error::IdentifierUndeclared;
-}
-

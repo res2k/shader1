@@ -57,7 +57,7 @@ namespace s1
       Function
     };
 
-    struct Scope;
+    class Scope;
     typedef boost::intrusive_ptr<Scope> ScopePtr;
 
     struct Block;
