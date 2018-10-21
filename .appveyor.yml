@@ -13,6 +13,9 @@ configuration:
 
 environment:
   BOOST_VERSION: 1_67_0
+  matrix:
+    - BUILD_SHARED: on
+    - BUILD_SHARED: off
 
 branches:
   except:
@@ -42,7 +45,7 @@ build_script:
   - "SET PATH=C:/Python36-x64;%PATH%"
   - mkdir appveyor-build
   - cd appveyor-build
-  - cmake .. -GNinja -DBOOST_ROOT=C:/Libraries/boost_%BOOST_VERSION%
+  - cmake .. -GNinja -DBOOST_ROOT=C:/Libraries/boost_%BOOST_VERSION% -DS1_BUILD_SHARED=%BUILD_SHARED%
   - cmake --build .
   - cmake --build . --target build_tests
   - "SET PATH=C:/projects/shader1/appveyor-build/Debug;%PATH%"
