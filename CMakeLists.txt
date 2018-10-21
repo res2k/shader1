@@ -320,7 +320,7 @@ add_subdirectory(apps)
 
 if(NOT S1_PREBUILT)
   # Export targets so pointing S1_PREBUILT at build tree works as well
-  export(TARGETS s1_headers FILE s1_headers.cmake)
+  export(TARGETS s1_headers s1_headers_internal FILE s1_headers.cmake)
   export(TARGETS s1 FILE libs1.cmake)
   export(TARGETS s1c FILE s1c.cmake)
 
