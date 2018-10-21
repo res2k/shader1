@@ -62,6 +62,18 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-4.0
           packages:
+            - gcc-8
+            - g++-8
+      env: GCC_VERSION=8 BOOST_VERSION=default BUILD_SHARED=off
+      compiler: gcc-8
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
+          packages:
             - clang-4.0
             - libstdc++-7-dev
       env: CLANG_VERSION=4.0 BOOST_VERSION=default CMAKE_OPTIONS="-DS1_SKIP_TEST_17=on"
@@ -91,6 +103,18 @@ matrix:
       env: CLANG_VERSION=6.0 BOOST_VERSION=default
       compiler: clang-6.0
 
+      - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-6.0
+          packages:
+            - clang-6.0
+            - libstdc++-7-dev
+      env: CLANG_VERSION=6.0 BOOST_VERSION=default BUILD_SHARED=off
+      compiler: clang-6.0
+
 install:
   # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/travis-deps/
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/travis-deps"
@@ -102,6 +126,7 @@ install:
   - if [[ "${CLANG_VERSION}" != "" ]]; then export CXX="clang++-${CLANG_VERSION}"; export CC="clang-${CLANG_VERSION}"; fi
 
   - if [[ "${LTO}" != "" ]]; then CMAKE_OPTIONS+=" -DS1_BUILD_LTO=${LTO}"; fi
+  - if [[ "${BUILD_SHARED}" != "" ]]; then CMAKE_OPTIONS+=" -DS1_BUILD_SHARED=${BUILD_SHARED}"; fi
 
   # Install Boost headers
   - |
