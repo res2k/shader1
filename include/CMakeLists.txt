@@ -38,6 +38,8 @@ if(NOT S1_PREBUILT)
                              "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
                              "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
                              $<INSTALL_INTERFACE:include>)
+  # s1_headers_deps is a workaround for s1_add_library
+  # as we can't get the dependencies from add_dependencies
   add_custom_target(s1_headers_deps)
   add_dependencies(s1_headers_deps generate_Object generate_ResultCode)
   add_dependencies(s1_headers s1_headers_deps)
@@ -100,6 +102,8 @@ if(NOT S1_PREBUILT)
                              "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/internal>"
                              "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/internal>")
   target_link_libraries(s1_headers_internal INTERFACE s1_headers)
+  # s1_headers_internal_deps is a workaround for s1_add_library
+  # as we can't get the dependencies from add_dependencies
   add_custom_target(s1_headers_internal_deps)
   add_dependencies(s1_headers_internal_deps s1_headers generate_Diagnostics_fwd)
   add_dependencies(s1_headers_internal s1_headers_internal_deps)
