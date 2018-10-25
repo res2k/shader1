@@ -74,10 +74,6 @@ FUNCTION(s1_add_library TARGET)
         # Forward include dirs & defines from lib dependencies
         target_compile_definitions(${TARGET} PRIVATE $<TARGET_PROPERTY:${link_lib},INTERFACE_COMPILE_DEFINITIONS>)
         target_include_directories(${TARGET} PRIVATE $<TARGET_PROPERTY:${link_lib},INTERFACE_INCLUDE_DIRECTORIES>)
-        # Hack around inability to get MANUALLY_ADDED_DEPENDENCIES property
-        if(TARGET ${link_lib}_deps)
-          add_dependencies(${TARGET} ${link_lib}_deps)
-        endif()
       endforeach()
     ENDIF()
     if(DEPS_TARGETS)
