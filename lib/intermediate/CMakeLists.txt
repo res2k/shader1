@@ -30,10 +30,10 @@ include_directories(generator .)
 add_subdirectory(generator)
 add_subdirectory(SequenceOp)
 
-s1_add_library(intermediate
-               SOURCES ${intermediate_sources}
-               DEPENDS generate_Diagnostics_intermediate
-               LINK intermediate_generator intermediate_seqop parser)
+s1_add_library_internal(intermediate
+                        SOURCES ${intermediate_sources}
+                        DEPENDS generate_Diagnostics_intermediate
+                        LINK intermediate_generator intermediate_seqop parser)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(intermediate_generator PRIVATE ${S1LIB_PDB_CXX_FLAGS})
   target_compile_options(intermediate_seqop PRIVATE ${S1LIB_PDB_CXX_FLAGS})

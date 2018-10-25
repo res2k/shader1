@@ -4,9 +4,9 @@ set(splitter_sources
     ${CMAKE_SOURCE_DIR}/include/internal/splitter/ProgramSplitter.h
     ${CMAKE_SOURCE_DIR}/include/internal/splitter/SequenceSplitter.h
     )
-s1_add_library(splitter
-               SOURCES ${splitter_sources}
-               LINK intermediate)
+s1_add_library_internal(splitter
+                        SOURCES ${splitter_sources}
+                        LINK intermediate)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(splitter PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()

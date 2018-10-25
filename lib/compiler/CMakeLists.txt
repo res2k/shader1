@@ -14,9 +14,9 @@ set(compiler_sources
      ${S1_INC}/compiler/Program.h
      ${S1_INC}/compiler/ProgramDiagnostics.h
      )
-s1_add_library(compiler
-               SOURCES ${compiler_sources}
-               LINK lexer intermediate codegen_glsl optimize splitter diagnostics)
+s1_add_library_internal(compiler
+                        SOURCES ${compiler_sources}
+                        LINK lexer intermediate codegen_glsl optimize splitter diagnostics)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(compiler PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()

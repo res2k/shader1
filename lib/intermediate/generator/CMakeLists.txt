@@ -36,7 +36,7 @@ set(generator_sources
     UnaryExpressionImpl.cpp
     VariableExpressionImpl.cpp
    )
-s1_add_library(intermediate_generator
-               SOURCES ${generator_sources}
-               DEPENDS generate_Diagnostics_intermediate generate_Diagnostics_parser
-               LINK s1_headers_internal)
+s1_add_library_internal(intermediate_generator
+                        SOURCES ${generator_sources}
+                        DEPENDS generate_Diagnostics_intermediate generate_Diagnostics_parser
+                        LINK s1_headers_internal)

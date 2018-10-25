@@ -1,12 +1,12 @@
-s1_add_library(lexer
-               SOURCES
-               Lexer.cpp
-               ${S1_INC}/lexer/Lexer.h
-               ${S1_INC}/lexer/Token.h
-               ${S1_INC}/lexer/TokenLocation.h
-               ${S1_INC}/lexer/TokenType.h
-               DEPENDS generate_Diagnostics_lexer
-               LINK base)
+s1_add_library_internal(lexer
+                        SOURCES
+                        Lexer.cpp
+                        ${S1_INC}/lexer/Lexer.h
+                        ${S1_INC}/lexer/Token.h
+                        ${S1_INC}/lexer/TokenLocation.h
+                        ${S1_INC}/lexer/TokenType.h
+                        DEPENDS generate_Diagnostics_lexer
+                        LINK base)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(lexer PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()

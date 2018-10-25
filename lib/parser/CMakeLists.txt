@@ -40,9 +40,9 @@ set(parser_sources_ast_h
     ${S1_INC}/parser/ast/VisitorProgramStatement.h
     ${S1_INC}/parser/ast/VisitorType.h
     )
-s1_add_library(parser
-               SOURCES ${parser_sources} ${parser_sources_ast_h}
-               LINK lexer)
+s1_add_library_internal(parser
+                        SOURCES ${parser_sources} ${parser_sources_ast_h}
+                        LINK lexer)
 source_group("ast Headers" FILES ${parser_sources_ast_h})
 add_dependencies(parser generate_Diagnostics_parser)
 IF(S1LIB_PDB_CXX_FLAGS)
@@ -50,7 +50,7 @@ IF(S1LIB_PDB_CXX_FLAGS)
 ENDIF()
 
 file(GLOB parser_testlib_sources ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/t/lib/*.h)
-s1_add_library(parser_testlib STATIC SOURCES ${parser_testlib_sources} LINK s1_headers_internal)
+s1_add_library_external(parser_testlib STATIC SOURCES ${parser_testlib_sources} LINK s1_headers_internal)
 set_property(TARGET parser_testlib PROPERTY EXCLUDE_FROM_ALL YES)
 
 s1_add_boost_test(test_Parser

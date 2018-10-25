@@ -78,8 +78,8 @@ function(_s1_get_boost_link_libs VAR)
         file(GLOB_RECURSE lib_sources ${BOOST_ROOT}/libs/${lib_name}/src/*.cpp)
       endif()
       if(lib_sources)
-        s1_add_library(${private_target_name} STATIC
-                       SOURCES ${lib_sources})
+        s1_add_library_external(${private_target_name} STATIC
+                                SOURCES ${lib_sources})
         target_compile_definitions(${private_target_name} PUBLIC "-DBOOST_${lib_upper}_STATIC_LINK=1" ${BOOST_${lib_upper}_DEFS})
         # Allow specification of source-specific compile definitions
         foreach(src ${lib_sources})

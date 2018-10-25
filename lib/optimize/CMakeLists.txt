@@ -24,9 +24,9 @@ set(optimize_sources
     ${S1_INC}/optimize/Optimizer.h
     ${S1_INC}/optimize/UnusedFunctionArgumentRemoval.h
     )
-s1_add_library(optimize
-               SOURCES ${optimize_sources}
-               LINK intermediate)
+s1_add_library_internal(optimize
+                        SOURCES ${optimize_sources}
+                        LINK intermediate)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(optimize PRIVATE ${S1LIB_PDB_CXX_FLAGS})
 ENDIF()

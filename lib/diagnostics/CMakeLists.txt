@@ -43,9 +43,9 @@ set(diagnostics_sources
     ${DIAGNOSTICS_GENERATED_SRC}
     ${S1_INC}/diagnostics/common.h
    )
-s1_add_library(diagnostics
-               SOURCES ${diagnostics_sources}
-               LINK base)
+s1_add_library_internal(diagnostics
+                        SOURCES ${diagnostics_sources}
+                        LINK base)
 add_dependencies(diagnostics generate_Diagnostics)
 IF(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(diagnostics PRIVATE ${S1LIB_PDB_CXX_FLAGS})

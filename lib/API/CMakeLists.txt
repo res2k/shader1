@@ -51,14 +51,14 @@ set(s1_sources
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/s1/Object.h PROPERTIES GENERATED YES)
 include_directories(.)
 if(BUILD_SHARED_LIBS)
-  s1_add_library(s1 SHARED
-                 SOURCES ${s1_sources}
-                 LINK base compiler)
+  s1_add_library_external(s1 SHARED
+                          SOURCES ${s1_sources}
+                          LINK base compiler)
   set_property(TARGET s1 APPEND PROPERTY LINK_FLAGS "${CXX_STATIC_LIBSTDCXX_FLAG} ${CXX_LINK_HIDE_OTHER_SYMBOLS}")
 else()
-  s1_add_library(s1 STATIC 
-                 SOURCES ${s1_sources}
-                 LINK base compiler)
+  s1_add_library_external(s1 STATIC 
+                          SOURCES ${s1_sources}
+                          LINK base compiler)
 endif()
 if(S1LIB_PDB_CXX_FLAGS)
   target_compile_options(s1 PRIVATE ${S1LIB_PDB_CXX_FLAGS})
@@ -82,9 +82,9 @@ endif()
 s1_strip_debug_symbols(s1 INSTALL_DESTINATION lib)
 
 if(BUILD_SHARED_LIBS)
-  s1_add_library(s1_test STATIC
-                  SOURCES ${s1_sources}
-                  LINK base compiler)
+  s1_add_library_external(s1_test STATIC
+                          SOURCES ${s1_sources}
+                          LINK base compiler)
   set_property(TARGET s1_test PROPERTY EXCLUDE_FROM_ALL YES)
   set(_S1_TEST_DEP s1_test)
 else()

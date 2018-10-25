@@ -44,9 +44,9 @@ set(base_sources_uc_h
     ${S1_INC}/base/uc/UTF16to8Transcoder.h
     ${S1_INC}/base/uc/UTF8to16Transcoder.h
     )
-s1_add_library(base
-               SOURCES ${base_sources} ${base_sources_uc_cpp} ${base_sources_uc_h}
-               LINK s1_headers_internal)
+s1_add_library_internal(base
+                        SOURCES ${base_sources} ${base_sources_uc_cpp} ${base_sources_uc_h}
+                        LINK s1_headers_internal)
 source_group("uc Headers" FILES ${base_sources_uc_h})
 source_group("uc Sources" FILES ${base_sources_uc_cpp})
 IF(S1LIB_PDB_CXX_FLAGS)
