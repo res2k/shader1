@@ -39,29 +39,42 @@ endfunction()
 function(s1_add_library_internal TARGET)
   CMAKE_PARSE_ARGUMENTS(S1_LIB
                         ""
-                        ""
+                        "TARGET_LINK"
                         "SOURCES;DEPENDS;LINK"
                         ${ARGN})
   IF(S1_LIB_UNPARSED_ARGS)
     MESSAGE(FATAL_ERROR "Unexpected arguments to s1_add_library_internal: ${S1_LIB_UNPARSED_ARGS}")
   ENDIF()
-  ADD_LIBRARY(${TARGET} OBJECT ${S1_LIB_SOURCES})
+  if((NOT "${S1_LIB_TARGET_LINK}" STREQUAL "STATIC") AND (NOT "${S1_LIB_TARGET_LINK}" STREQUAL "SHARED"))
+    message(FATAL_ERROR "TARGET_LINK must be STATIC or SHARED, is \"${S1_LIB_TARGET_LINK}\"")
+  endif()
+  if("${S1_LIB_TARGET_LINK}" STREQUAL "STATIC")
+    # Producing a static library: need to build an object library
+    add_library(${TARGET} OBJECT ${S1_LIB_SOURCES})
+  else()
+    # Producing a shared library or executable: can build a static library
+    add_library(${TARGET} STATIC ${S1_LIB_SOURCES})
+  endif()
   # Save dependent libs and targets so S1_GET_DEPENDENCIES can pick them up
   SET_PROPERTY(TARGET ${TARGET} PROPERTY S1_LINK_LIBS ${S1_LIB_LINK})
   SET_PROPERTY(TARGET ${TARGET} PROPERTY S1_LIB_DEPENDS ${S1_LIB_DEPENDS})
-  S1_GET_DEPENDENCIES(DEPS_OBJ DEPS_LINK DEPS_TARGETS ${TARGET})
-  IF(DEPS_LINK)
-    foreach(link_lib ${DEPS_LINK})
-      # Forward include dirs & defines from lib dependencies
-      target_compile_definitions(${TARGET} PRIVATE $<TARGET_PROPERTY:${link_lib},INTERFACE_COMPILE_DEFINITIONS>)
-      target_include_directories(${TARGET} PRIVATE $<TARGET_PROPERTY:${link_lib},INTERFACE_INCLUDE_DIRECTORIES>)
-      # Hack around inability to get MANUALLY_ADDED_DEPENDENCIES property
-      # Used for s1_headers(_internal) targets
-      if(TARGET ${link_lib}_deps)
-        add_dependencies(${TARGET} ${link_lib}_deps)
-      endif()
-    endforeach()
-  ENDIF()
+  S1_GET_DEPENDENCIES(DEPS_OBJ DEPS_LINK DEPS_TARGETS ${S1_LIB_LINK})
+  if("${S1_LIB_TARGET_LINK}" STREQUAL "STATIC")
+    IF(DEPS_LINK)
+      foreach(link_lib ${DEPS_LINK})
+        # Forward include dirs & defines from lib dependencies
+        target_compile_definitions(${TARGET} PRIVATE $<TARGET_PROPERTY:${link_lib},INTERFACE_COMPILE_DEFINITIONS>)
+        target_include_directories(${TARGET} PRIVATE $<TARGET_PROPERTY:${link_lib},INTERFACE_INCLUDE_DIRECTORIES>)
+        # Hack around inability to get MANUALLY_ADDED_DEPENDENCIES property
+        # Used for s1_headers(_internal) targets
+        if(TARGET ${link_lib}_deps)
+          add_dependencies(${TARGET} ${link_lib}_deps)
+        endif()
+      endforeach()
+    ENDIF()
+  else()
+    target_link_libraries(${TARGET} PUBLIC ${DEPS_LINK})
+  endif()
   if(DEPS_TARGETS)
     ADD_DEPENDENCIES(${TARGET} ${DEPS_TARGETS})
   endif()

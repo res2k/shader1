@@ -1,4 +1,5 @@
 s1_add_library_internal(lexer
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES
                         Lexer.cpp
                         ${S1_INC}/lexer/Lexer.h

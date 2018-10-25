@@ -25,6 +25,7 @@ set(optimize_sources
     ${S1_INC}/optimize/UnusedFunctionArgumentRemoval.h
     )
 s1_add_library_internal(optimize
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${optimize_sources}
                         LINK intermediate)
 IF(S1LIB_PDB_CXX_FLAGS)

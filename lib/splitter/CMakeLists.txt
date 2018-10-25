@@ -5,6 +5,7 @@ set(splitter_sources
     ${CMAKE_SOURCE_DIR}/include/internal/splitter/SequenceSplitter.h
     )
 s1_add_library_internal(splitter
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${splitter_sources}
                         LINK intermediate)
 IF(S1LIB_PDB_CXX_FLAGS)

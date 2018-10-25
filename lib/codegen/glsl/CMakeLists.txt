@@ -13,6 +13,7 @@ set(codegen_glsl_sources
     ${S1_INC}/codegen/glsl/GLSLOptions.h
 )
 s1_add_library_internal(codegen_glsl
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${codegen_glsl_sources}
                         LINK codegen_sl)
 add_dependencies(codegen_glsl generate_Diagnostics_parser)

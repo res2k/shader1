@@ -15,6 +15,7 @@ set(compiler_sources
      ${S1_INC}/compiler/ProgramDiagnostics.h
      )
 s1_add_library_internal(compiler
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${compiler_sources}
                         LINK lexer intermediate codegen_glsl optimize splitter diagnostics)
 IF(S1LIB_PDB_CXX_FLAGS)

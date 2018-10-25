@@ -37,6 +37,7 @@ set(generator_sources
     VariableExpressionImpl.cpp
    )
 s1_add_library_internal(intermediate_generator
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${generator_sources}
                         DEPENDS generate_Diagnostics_intermediate generate_Diagnostics_parser
                         LINK s1_headers_internal)

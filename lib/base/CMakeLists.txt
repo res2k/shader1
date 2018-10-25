@@ -45,6 +45,7 @@ set(base_sources_uc_h
     ${S1_INC}/base/uc/UTF8to16Transcoder.h
     )
 s1_add_library_internal(base
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${base_sources} ${base_sources_uc_cpp} ${base_sources_uc_h}
                         LINK s1_headers_internal)
 source_group("uc Headers" FILES ${base_sources_uc_h})

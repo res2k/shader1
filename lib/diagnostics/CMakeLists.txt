@@ -44,6 +44,7 @@ set(diagnostics_sources
     ${S1_INC}/diagnostics/common.h
    )
 s1_add_library_internal(diagnostics
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${diagnostics_sources}
                         LINK base)
 add_dependencies(diagnostics generate_Diagnostics)

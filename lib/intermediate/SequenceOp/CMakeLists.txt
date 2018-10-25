@@ -60,5 +60,6 @@ set(seqop_sources
     ${S1_INC}/intermediate/SequenceOp/SequenceOpWithResult.h
     )
 s1_add_library_internal(intermediate_seqop
+                        TARGET_LINK ${S1_TARGET_LINK}
                         SOURCES ${seqop_sources}
                         LINK s1_headers_internal)

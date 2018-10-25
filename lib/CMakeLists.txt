@@ -24,6 +24,12 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/outcome/include)
 
+if(BUILD_SHARED_LIBS)
+  set(S1_TARGET_LINK SHARED)
+else()
+  set(S1_TARGET_LINK STATIC)
+endif()
+
 add_subdirectory(base)
 add_subdirectory(diagnostics)
 add_subdirectory(lexer)
