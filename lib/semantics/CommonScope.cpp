@@ -33,20 +33,6 @@ namespace s1
      : Scope (parent), handler (handler), level (level)
     {}
 
-    NameVariablePtr
-    CommonScope::AddVariable (TypePtr type, const uc::String& identifier,
-                                                      ExpressionPtr initialValue, bool constant)
-    {
-      if (!CheckIdentifierUnique (identifier))
-      {
-        // TODO: Error handling
-        return NameVariablePtr();
-      }
-      NameVariablePtr newName (new NameVariable (this, identifier, type.get(), initialValue.get(), constant));
-      identifiers[identifier] = newName;
-      return newName;
-    }
-
     NameTypeAliasPtr
     CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
     {

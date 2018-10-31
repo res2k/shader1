@@ -33,6 +33,9 @@
 
 #include "StringSubstitute.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
+#include "../../semantics/t/SimpleSemanticsDiagnosticsImpl.h"
+
 using namespace s1::intermediate;
 using namespace s1::codegen;
 
@@ -50,6 +53,8 @@ public:
   
     using Superclass::sequenceBuilder;
   };
+
+  TestDiagnosticsHandler diagnostics;
 };
 
 class TestImportedNameResolver : public sl::ImportedNameResolver
@@ -99,18 +104,17 @@ public:
 BOOST_AUTO_TEST_CASE(ExprAssignConst)
 {
   TestSemanticsHandler semanticsHandler;
-  
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
+
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
+  auto varB = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("b"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
@@ -146,21 +150,19 @@ BOOST_AUTO_TEST_CASE(ExprAssignConst)
 BOOST_AUTO_TEST_CASE(ExprArithVar)
 {
   TestSemanticsHandler semanticsHandler;
-  
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
+
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
+  auto varB = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("b"),
+                                      nullptr, false);
+  auto varC = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("c"),
+                                      nullptr, false);
   // Create a simple expression "c = a + b"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB.get());

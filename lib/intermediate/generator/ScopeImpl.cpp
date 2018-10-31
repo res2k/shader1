@@ -79,22 +79,6 @@ namespace s1
         outputParams.push_back (param.identifier);
     }
 
-    semantics::NameVariablePtr
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::AddVariable (semantics::TypePtr type, const uc::String& identifier,
-                                                                   ExpressionPtr initialValue, bool constant)
-    {
-      if (!CheckIdentifierUnique (identifier))
-      {
-        handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
-        return semantics::NameVariablePtr();
-      }
-      semantics::NameVariablePtr newName = new semantics::NameVariable (this, identifier, type.get(), initialValue.get(), constant);
-      identifiers[identifier] = newName;
-      newVars.push_back (newName);
-      varsInDeclOrder.push_back (newName);
-      return newName;
-    }
-
     semantics::NameTypeAliasPtr
     IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (semantics::TypePtr aliasedType, const uc::String& identifier)
     {
@@ -178,18 +162,6 @@ namespace s1
     std::vector<semantics::BaseFunctionPtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::GetFunctions () const
     {
       return functionsInDeclOrder;
-    }
-
-    std::vector<semantics::NameVariablePtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::FlushNewVars ()
-    {
-      std::vector<semantics::NameVariablePtr> ret (newVars);
-      newVars.erase (newVars.begin(), newVars.end());
-      return ret;
-    }
-
-    const std::vector<semantics::NameVariablePtr>& IntermediateGeneratorSemanticsHandler::ScopeImpl::GetAllVars ()
-    {
-      return varsInDeclOrder;
     }
 
     int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (ScopeImpl* scope)

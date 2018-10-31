@@ -44,6 +44,9 @@ namespace s1
       typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
 
+      std::vector<NameVariablePtr> newVars; // TODO: Needed for intermediate variable initialization
+      std::vector<NameVariablePtr> varsInDeclOrder; // TODO: Needed for global var handling
+
       /// Returns \c true if identifier is not registered in this or any parent scope.
       bool CheckIdentifierUnique (const uc::String& identifier);
     public:
@@ -52,19 +55,25 @@ namespace s1
 
       /// Get level of the scope.
       virtual ScopeLevel GetLevel() const = 0;
+
       /**
        * Add a variable or constant.
+       * \param diagnosticsHandler Diagnostics handler called in case of an issue.
        * \param type Type of variable.
        * \param identifier Identifier of variable.
        * \param initialValue Initial value of variable, can be a 0 pointer if none
        *  is given. Required for constants
        * \param constant Whether it is a constant variable.
        */
-      virtual NameVariablePtr AddVariable (TypePtr type,
-        const uc::String& identifier,
-        ExpressionPtr initialValue,
-        bool constant) = 0;
-        
+      NameVariablePtr AddVariable (SimpleDiagnostics& diagnosticsHandler,
+                                   Type* type,
+                                   const uc::String& identifier,
+                                   Expression* initialValue,
+                                   bool constant);
+
+      std::vector<NameVariablePtr> FlushNewVars (); // TODO: Needed for intermediate variable initialization
+      const std::vector<NameVariablePtr>& GetAllVars (); // TODO: Needed for global var handling
+
       /**
        * Add a type alias.
        * \param aliasedType Type to alias.

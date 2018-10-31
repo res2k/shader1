@@ -55,6 +55,7 @@
 #include "parser/Diagnostics.h"
 #include "semantics/Block.h"
 #include "semantics/Function.h"
+#include "semantics/SimpleDiagnostics.h"
 #include "semantics/Name.h"
 
 namespace s1
@@ -77,6 +78,15 @@ namespace s1
                const Lexer::TokenType& expected = lexer::Invalid)
       : code (static_cast<Error> (code)), encountered (encountered), expected (expected) {}
   };
+
+  class Parser::SimpleDiagnosticsImpl : public semantics::SimpleDiagnostics
+  {
+    Parser* parser;
+  public:
+    SimpleDiagnosticsImpl (Parser* parser) : parser (parser) {}
+
+    void Error (semantics::Error code) override { parser->diagnosticsHandler.SemanticError (code); }
+  };
   
   Parser::Parser (Lexer& inputLexer, semantics::Handler& semanticsHandler,
                   diagnostics::Handler& diagnosticsHandler)
@@ -97,13 +107,6 @@ namespace s1
   }
 
   void Parser::ParseError (Error code,
-                           const Lexer::Token& encountered,
-                           const Lexer::TokenType& expected)
-  {
-    diagnosticsHandler.ParseError (code, encountered, expected);
-  }
-
-  void Parser::ParseError (semantics::Error code,
                            const Lexer::Token& encountered,
                            const Lexer::TokenType& expected)
   {
@@ -808,6 +811,7 @@ namespace s1
 
   void Parser::ParseVarDeclare (const Scope& scope, const parser::ast::VarsDecl& astVarsDecl)
   {
+    SimpleDiagnosticsImpl diag (this);
     auto type = ParseType (astVarsDecl.type.get(), scope);
     for (const auto& astVar : astVarsDecl.vars)
     {
@@ -815,7 +819,7 @@ namespace s1
       Expression initExpr;
       if (astVar.initializer)
         initExpr = ParseExpression (scope, astVar.initializer.get());
-      scope->AddVariable (type, varIdentifier, initExpr, astVarsDecl.isConst);
+      scope->AddVariable (diag, type.get(), varIdentifier, initExpr.get(), astVarsDecl.isConst);
     }
   }
 } // namespace s1

@@ -18,6 +18,7 @@
 #include "base/common.h"
 #include "semantics/Diagnostics.h"
 #include "semantics/Name.h"
+#include "semantics/SimpleDiagnostics.h"
 
 #include "semantics/Scope.h"
 
@@ -35,6 +36,37 @@ namespace s1
       if (ident != identifiers.end()) return false;
       if (parent) return parent->CheckIdentifierUnique (identifier);
       return true;
+    }
+
+    NameVariablePtr Scope::AddVariable (SimpleDiagnostics& diagnosticsHandler,
+                                        Type* type, const uc::String& identifier,
+                                        Expression* initialValue, bool constant)
+    {
+      NameVariablePtr newName = new NameVariable (this, identifier, type, initialValue, constant);
+      if (!CheckIdentifierUnique (identifier))
+      {
+        diagnosticsHandler.Error (Error::IdentifierAlreadyDeclared);
+        // Return newName so parsing can continue, but it won't be useable.
+      }
+      else
+      {
+        identifiers[identifier] = newName;
+        newVars.push_back (newName);
+        varsInDeclOrder.push_back (newName);
+      }
+      return newName;
+    }
+
+    std::vector<NameVariablePtr> Scope::FlushNewVars ()
+    {
+      std::vector<semantics::NameVariablePtr> ret (newVars);
+      newVars.erase (newVars.begin(), newVars.end());
+      return ret;
+    }
+
+    const std::vector<NameVariablePtr>& Scope::GetAllVars ()
+    {
+      return varsInDeclOrder;
     }
 
     Scope::result_NamePtr Scope::ResolveIdentifier (const uc::String& identifier)

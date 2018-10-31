@@ -32,21 +32,6 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : Scope (parent), handler (handler), level (level)
 {}
 
-s1::semantics::NameVariablePtr
-TestSemanticsHandler::TestScope::AddVariable (s1::semantics::TypePtr type,
-                                              const s1::uc::String& identifier,
-                                              s1::semantics::ExpressionPtr initialValue,
-                                              bool constant)
-{
-  if (!CheckIdentifierUnique (identifier))
-  {
-    return s1::semantics::NameVariablePtr();
-  }
-  s1::semantics::NameVariablePtr newName (new s1::semantics::NameVariable (this, identifier, type.get(), initialValue.get(), constant));
-  identifiers[identifier] = newName;
-  return newName;
-}
-
 s1::semantics::NameTypeAliasPtr
 TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr aliasedType, const s1::uc::String& identifier)
 {

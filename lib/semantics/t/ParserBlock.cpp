@@ -23,9 +23,9 @@
 #include "parser/Diagnostics.h"
 #include "parser/Parser.h"
 
-#include "TestSemanticsHandler.h"
-
+#include "SimpleSemanticsDiagnosticsImpl.h"
 #include "TestParser.h"
+#include "TestSemanticsHandler.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
 
@@ -35,17 +35,18 @@ BOOST_AUTO_TEST_CASE(BlockExpr)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "b", nullptr, false);
 
   std::string inStr ("a = b;");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -63,17 +64,18 @@ BOOST_AUTO_TEST_CASE(BlockStatementIncomplete)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "b", nullptr, false);
 
   std::string inStr ("a = b");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -93,19 +95,20 @@ BOOST_AUTO_TEST_CASE(BlockBranch)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto boolType = semanticsHandler.CreateType (s1::semantics::BaseType::Bool);
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (boolType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, boolType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "c", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "d", nullptr, false);
 
   std::string inStr ("if (a) { c = d; }");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -126,20 +129,21 @@ BOOST_AUTO_TEST_CASE(BlockBranch2)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto boolType = semanticsHandler.CreateType (s1::semantics::BaseType::Bool);
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (boolType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "e", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, boolType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "c", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "d", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "e", nullptr, false);
 
   std::string inStr ("if (a) { c = d; } else { c = e; }");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -164,19 +168,20 @@ BOOST_AUTO_TEST_CASE(BlockWhile)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto boolType = semanticsHandler.CreateType (s1::semantics::BaseType::Bool);
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (boolType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, boolType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "c", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "d", nullptr, false);
 
   std::string inStr ("while (a) { c = d; }");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -197,19 +202,20 @@ BOOST_AUTO_TEST_CASE(BlockFor)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "b", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "c", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "d", nullptr, false);
 
   std::string inStr ("for (a; b; b = b+1) { c = d; }");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -230,17 +236,18 @@ BOOST_AUTO_TEST_CASE(BlockNested)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "b", nullptr, false);
 
   std::string inStr ("{ a = b; }");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 
@@ -260,20 +267,21 @@ BOOST_AUTO_TEST_CASE(BlockErrorRecovery)
 {
   using namespace s1::parser;
 
+  TestDiagnosticsHandler errorHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (errorHandler);
   TestSemanticsHandler semanticsHandler;
   auto intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
   auto blockScope = semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                                   s1::semantics::ScopeLevel::Global);
-  blockScope->AddVariable (intType, "a", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "b", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "error", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "c", s1::semantics::ExpressionPtr(), false);
-  blockScope->AddVariable (intType, "d", s1::semantics::ExpressionPtr(), false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "a", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "b", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "error", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "c", nullptr, false);
+  blockScope->AddVariable (semanticDiag, intType.get(), "d", nullptr, false);
 
   std::string inStr ("a = b error; c=d;");
   s1::uc::SimpleBufferStreamSource in (inStr.data(), inStr.size());
   s1::uc::Stream ustream (in);
-  TestDiagnosticsHandler errorHandler;
   s1::Lexer lexer (ustream, errorHandler);
   TestParser parser (lexer, semanticsHandler, errorHandler);
 

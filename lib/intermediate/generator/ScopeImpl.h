@@ -30,9 +30,7 @@ namespace s1
     private:
       friend class IntermediateGeneratorSemanticsHandler;
 
-      std::vector<semantics::NameVariablePtr> newVars;
       std::vector<uc::String> outputParams;
-      std::vector<semantics::NameVariablePtr> varsInDeclOrder;
 
       std::vector<semantics::BaseFunctionPtr> functionsInDeclOrder;
 
@@ -49,11 +47,6 @@ namespace s1
                  ScopeImpl* parent, semantics::ScopeLevel level,
                  semantics::Type* funcReturnType);
       semantics::ScopeLevel GetLevel() const { return level; }
-
-      semantics::NameVariablePtr AddVariable (semantics::TypePtr type,
-        const uc::String& identifier,
-        ExpressionPtr initialValue,
-        bool constant) override;
 
       semantics::NameTypeAliasPtr AddTypeAlias (semantics::TypePtr aliasedType,
         const uc::String& identifier) override;
@@ -83,9 +76,6 @@ namespace s1
                                const uc::String& identifier,
                                const semantics::FunctionFormalParameters& formalParameters);
       std::vector<semantics::BaseFunctionPtr> GetFunctions () const;
-
-      std::vector<semantics::NameVariablePtr> FlushNewVars ();
-      const std::vector<semantics::NameVariablePtr>& GetAllVars ();
     };
   } // namespace intermediate
 } // namespace s1

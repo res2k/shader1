@@ -30,6 +30,7 @@
 #include "intermediate/SequenceOp/SequenceOpReturn.h"
 #include "intermediate/SequenceOp/SequenceOpWhile.h"
 #include "semantics/Name.h"
+#include "semantics/SimpleDiagnostics.h"
 #include "AssignmentExpressionImpl.h"
 #include "ExpressionImpl.h"
 #include "ScopeImpl.h"
@@ -48,6 +49,20 @@ namespace s1
     DECLARE_STATIC_FORMATTER(FormatCondName, "$cond{0}");
     DECLARE_STATIC_FORMATTER(FormatRetvalName, "$retval{0}");
 
+    namespace
+    {
+      class DummySimpleDiagnosticsImpl : public semantics::SimpleDiagnostics
+      {
+      public:
+        DummySimpleDiagnosticsImpl () {}
+
+        void Error (semantics::Error /*code*/) override
+        {
+          S1_ASSERT_NOT_REACHED_MSG("Error produced when none should", S1_ASSERT_RET_VOID);
+        }
+      };
+    } // anonymouse namespace
+
     IntermediateGeneratorSemanticsHandler::BlockImpl::BlockImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                  semantics::Scope* innerScope)
      : handler (handler), innerScope (innerScope),
@@ -56,9 +71,11 @@ namespace s1
       uc::String newCondName;
       FormatCondName (newCondName,
                       get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope.get()));
-      varCondition = innerScope->AddVariable (handler->GetBoolType(),
+      DummySimpleDiagnosticsImpl simpleSemanticsDiag;
+      varCondition = innerScope->AddVariable (simpleSemanticsDiag,
+                                              handler->GetBoolType().get(),
                                               newCondName,
-                                              ExpressionPtr(), false);
+                                              nullptr, false);
       auto blockScopeImpl = get_static_ptr<ScopeImpl> (innerScope);
       auto retTypeImpl = blockScopeImpl->GetFunctionReturnType();
       if (retTypeImpl // @@@ retTypeImpl == 0 happens in tests; but also in real life?
@@ -67,9 +84,10 @@ namespace s1
         uc::String newRetValName;
         FormatRetvalName (newRetValName,
                           get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope.get()));
-        varReturnValue = innerScope->AddVariable (retTypeImpl,
+        varReturnValue = innerScope->AddVariable (simpleSemanticsDiag,
+                                                  retTypeImpl.get(),
                                                   newRetValName,
-                                                  ExpressionPtr(), false);
+                                                  nullptr, false);
       }
     }
 
@@ -575,12 +593,13 @@ namespace s1
       std::string typeStr (handler->GetTypeString (resultType));
       TernaryResultVarsMap::const_iterator var (varsTernaryResult.find (typeStr));
       if (var != varsTernaryResult.end()) return var->second.get();
-      
+
+      DummySimpleDiagnosticsImpl simpleSemanticsDiag;
       uc::String newVarName;
       FormatTernaryResult (newVarName,
                            get_static_ptr<ScopeImpl> (innerScope)->DistanceToScope (handler->globalScope.get()),
                            typeStr.c_str());
-      auto newVar = innerScope->AddVariable (resultType, newVarName, ExpressionPtr(), false);
+      auto newVar = innerScope->AddVariable (simpleSemanticsDiag, resultType, newVarName, nullptr, false);
       varsTernaryResult[typeStr] = newVar;
       return newVar.get();
     }

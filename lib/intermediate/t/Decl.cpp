@@ -27,6 +27,9 @@
 
 #include "print_TestSequenceVisitor_Operation.h"
 
+#include "../../diagnostics/t/TestDiagnosticsHandler.h"
+#include "../../semantics/t/SimpleSemanticsDiagnosticsImpl.h"
+
 using namespace s1::intermediate;
 
 BOOST_AUTO_TEST_SUITE(IntermediateDecl)
@@ -43,11 +46,14 @@ public:
 
     using Superclass::sequenceBuilder;
   };
+
+  TestDiagnosticsHandler diagnostics;
 };
 
 BOOST_AUTO_TEST_CASE(DeclVarInit)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
@@ -56,12 +62,11 @@ BOOST_AUTO_TEST_CASE(DeclVarInit)
   s1::semantics::BlockPtr testBlock = semanticsHandler.CreateBlock (testScope);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("a"),
-                                                       s1::semantics::ExpressionPtr (),
-                                                       false);
+  auto varA = testBlock->GetInnerScope()->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                                       nullptr, false);
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
-  auto varB = testBlock->GetInnerScope()->AddVariable (floatType, s1::uc::String ("b"),
-                                                       exprA,
+  auto varB = testBlock->GetInnerScope()->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("b"),
+                                                       exprA.get(),
                                                        false);
   // No further ops - initializer on 'b' should be enough to emit an op ...
 

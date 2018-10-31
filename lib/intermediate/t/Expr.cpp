@@ -27,6 +27,7 @@
 #include "TestSequenceVisitor.h"
 
 #include "../../diagnostics/t/TestDiagnosticsHandler.h"
+#include "../../semantics/t/SimpleSemanticsDiagnosticsImpl.h"
 
 #include "print_TestSequenceVisitor_Operation.h"
 
@@ -60,15 +61,15 @@ public:
 BOOST_AUTO_TEST_CASE(ExprAssignConstFloat)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
@@ -90,15 +91,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstFloat)
 BOOST_AUTO_TEST_CASE(ExprAssignConstInt)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-  auto varA = testScope->AddVariable (intType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, intType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
@@ -121,15 +122,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstInt)
 BOOST_AUTO_TEST_CASE(ExprAssignConstIntNeg)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-  auto varA = testScope->AddVariable (intType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, intType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("-1"));
@@ -150,15 +151,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstIntNeg)
 BOOST_AUTO_TEST_CASE(ExprAssignConstUInt)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-  auto varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, uintType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
@@ -179,15 +180,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstUInt)
 BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHex)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-  auto varA = testScope->AddVariable (intType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, intType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0xa"));
@@ -209,15 +210,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHex)
 BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHEX)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr intType = semanticsHandler.CreateType (s1::semantics::BaseType::Int);
-  auto varA = testScope->AddVariable (intType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, intType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0XA"));
@@ -239,15 +240,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstIntFromHEX)
 BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHex)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-  auto varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, uintType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0xa"));
@@ -268,15 +269,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHex)
 BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHEX)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-  auto varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, uintType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0XA"));
@@ -297,15 +298,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignConstUIntFromHEX)
 BOOST_AUTO_TEST_CASE(ExprAssignWithCast)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
@@ -328,15 +329,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignWithCast)
 BOOST_AUTO_TEST_CASE(ExprAssignWithCastFromHex)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0x1"));
@@ -359,15 +360,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignWithCastFromHex)
 BOOST_AUTO_TEST_CASE(ExprAssignMalformedEmpty)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String (""));
@@ -382,15 +383,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignMalformedEmpty)
 BOOST_AUTO_TEST_CASE(ExprAssignMalformedInput1)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-  auto varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, uintType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("0xg"));
@@ -405,15 +406,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignMalformedInput1)
 BOOST_AUTO_TEST_CASE(ExprAssignMalformedInput2)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-  auto varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, uintType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("-0x1"));
@@ -428,15 +429,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignMalformedInput2)
 BOOST_AUTO_TEST_CASE(ExprAssignMalformedInput3)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr uintType = semanticsHandler.CreateType (s1::semantics::BaseType::UInt);
-  auto varA = testScope->AddVariable (uintType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, uintType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("foo"));
@@ -451,15 +452,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignMalformedInput3)
 BOOST_AUTO_TEST_CASE(ExprAssignUIntOverflow)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   std::string overflowing_num (
@@ -477,15 +478,15 @@ BOOST_AUTO_TEST_CASE(ExprAssignUIntOverflow)
 BOOST_AUTO_TEST_CASE(ExprAssignIntUnderflow)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   std::string underflowing_num (
@@ -506,18 +507,17 @@ BOOST_AUTO_TEST_CASE(ExprAssignIntUnderflow)
 BOOST_AUTO_TEST_CASE(ExprAssignVar)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
+  auto varB = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("b"),
+                                      nullptr, false);
   // Create a simple expression "a = 1"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
@@ -543,21 +543,19 @@ BOOST_AUTO_TEST_CASE(ExprAssignVar)
 BOOST_AUTO_TEST_CASE(ExprArithVar)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varC = testScope->AddVariable (floatType, s1::uc::String ("c"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
+  auto varB = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("b"),
+                                      nullptr, false);
+  auto varC = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("c"),
+                                      nullptr, false);
   // Create a simple expression "c = a + b"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB.get());
@@ -580,15 +578,15 @@ BOOST_AUTO_TEST_CASE(ExprArithVar)
 BOOST_AUTO_TEST_CASE(ExprArithConst)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "c = a + b"
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1.0"));
   s1::semantics::ExpressionPtr expr2 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("2.0"));
@@ -617,15 +615,15 @@ BOOST_AUTO_TEST_CASE(ExprArithConst)
 BOOST_AUTO_TEST_CASE(ExprArithConst2)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
   // Create a simple expression "c = a + b"
   s1::semantics::ExpressionPtr expr1 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("1"));
   s1::semantics::ExpressionPtr expr2 = semanticsHandler.CreateConstNumericExpression (s1::uc::String ("2.0"));
@@ -656,18 +654,17 @@ BOOST_AUTO_TEST_CASE(ExprArithConst2)
 BOOST_AUTO_TEST_CASE(ExprArithVarAssignSelf)
 {
   TestSemanticsHandler semanticsHandler;
+  SimpleSemanticsDiagnosticsImpl semanticDiag (semanticsHandler.diagnostics);
 
   // Create a scope
   s1::semantics::ScopePtr testScope = semanticsHandler.CreateScope (
     s1::semantics::ScopePtr (), s1::semantics::ScopeLevel::Global);
   // Add some variables
   s1::semantics::TypePtr floatType = semanticsHandler.CreateType (s1::semantics::BaseType::Float);
-  auto varA = testScope->AddVariable (floatType, s1::uc::String ("a"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
-  auto varB = testScope->AddVariable (floatType, s1::uc::String ("b"),
-                                      s1::semantics::ExpressionPtr (),
-                                      false);
+  auto varA = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("a"),
+                                      nullptr, false);
+  auto varB = testScope->AddVariable (semanticDiag, floatType.get(), s1::uc::String ("b"),
+                                      nullptr, false);
   // Create a simple expression "a = a + b"
   s1::semantics::ExpressionPtr exprA = semanticsHandler.CreateVariableExpression (varA.get());
   s1::semantics::ExpressionPtr exprB = semanticsHandler.CreateVariableExpression (varB.get());
