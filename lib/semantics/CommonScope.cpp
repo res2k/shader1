@@ -33,19 +33,6 @@ namespace s1
      : Scope (parent), handler (handler), level (level)
     {}
 
-    NameTypeAliasPtr
-    CommonScope::AddTypeAlias (TypePtr aliasedType, const uc::String& identifier)
-    {
-      if (!CheckIdentifierUnique (identifier))
-      {
-        // TODO: Error handling
-        return NameTypeAliasPtr();
-      }
-      NameTypeAliasPtr newName (new NameTypeAlias (this, identifier, aliasedType.get()));
-      identifiers[identifier] = newName;
-      return newName;
-    }
-
     FunctionPtr
     CommonScope::AddFunction (TypePtr returnType,
                               const uc::String& identifier,

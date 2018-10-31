@@ -32,19 +32,6 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : Scope (parent), handler (handler), level (level)
 {}
 
-s1::semantics::NameTypeAliasPtr
-TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr aliasedType, const s1::uc::String& identifier)
-{
-  if (!CheckIdentifierUnique (identifier))
-  {
-    // TODO: Error handling
-    return s1::semantics::NameTypeAliasPtr();
-  }
-  s1::semantics::NameTypeAliasPtr newName (new s1::semantics::NameTypeAlias (this, identifier, aliasedType.get()));
-  identifiers[identifier] = newName;
-  return newName;
-}
-  
 FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr returnType,
 							   const s1::uc::String& identifier,
 							   const s1::semantics::FunctionFormalParameters& params)

@@ -69,6 +69,22 @@ namespace s1
       return varsInDeclOrder;
     }
 
+    NameTypeAliasPtr Scope::AddTypeAlias (SimpleDiagnostics& diagnosticsHandler,
+                                          Type* aliasedType, const uc::String& identifier)
+    {
+      NameTypeAliasPtr newName = new NameTypeAlias (this, identifier, aliasedType);
+      if (!CheckIdentifierUnique (identifier))
+      {
+        diagnosticsHandler.Error (Error::IdentifierAlreadyDeclared);
+        // Return newName so parsing can continue, but it won't be useable.
+      }
+      else
+      {
+        identifiers[identifier] = newName;
+      }
+      return newName;
+    }
+
     Scope::result_NamePtr Scope::ResolveIdentifier (const uc::String& identifier)
     {
       IdentifierMap::iterator ident = identifiers.find (identifier);

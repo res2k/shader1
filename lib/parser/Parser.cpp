@@ -704,9 +704,10 @@ namespace s1
 
   void Parser::ParseTypedef (const Scope& scope, const parser::ast::Typedef& astTypedef)
   {
+    SimpleDiagnosticsImpl diag (this);
     Type aliasedType = ParseType (astTypedef.type.get(), scope);
     // Add to scope
-    scope->AddTypeAlias (aliasedType, astTypedef.alias.GetString());
+    scope->AddTypeAlias (diag, aliasedType.get(), astTypedef.alias.GetString());
   }
 
   void Parser::ParseFuncDeclare (const Scope& scope, const ast::FunctionDecl& astFunctionDecl)

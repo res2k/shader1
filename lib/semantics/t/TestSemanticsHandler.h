@@ -45,9 +45,6 @@ public:
 	             TestScope* parent, s1::semantics::ScopeLevel level);
     s1::semantics::ScopeLevel GetLevel() const { return level; }
     
-    s1::semantics::NameTypeAliasPtr AddTypeAlias (s1::semantics::TypePtr aliasedType,
-      const s1::uc::String& identifier) override;
-      
     s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,
       const s1::semantics::FunctionFormalParameters& params);

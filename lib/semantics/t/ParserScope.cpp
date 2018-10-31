@@ -94,8 +94,9 @@ BOOST_AUTO_TEST_CASE(IdentifierAddType)
   s1::semantics::NamePtr varAdded;
   BOOST_CHECK_NO_THROW(
     varAdded =
-      scope->AddTypeAlias (semanticsHandler.CreateType (s1::semantics::BaseType::Int).get(),
-                            s1::uc::String ("a"))
+      scope->AddTypeAlias (semanticDiag,
+                           semanticsHandler.CreateType (s1::semantics::BaseType::Int).get(),
+                           s1::uc::String ("a"))
   );
   s1::semantics::NamePtr varRequested;
   BOOST_CHECK_NO_THROW(

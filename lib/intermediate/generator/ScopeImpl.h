@@ -48,9 +48,6 @@ namespace s1
                  semantics::Type* funcReturnType);
       semantics::ScopeLevel GetLevel() const { return level; }
 
-      semantics::NameTypeAliasPtr AddTypeAlias (semantics::TypePtr aliasedType,
-        const uc::String& identifier) override;
-
       semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
         const uc::String& identifier,
         const semantics::FunctionFormalParameters& params);

@@ -79,19 +79,6 @@ namespace s1
         outputParams.push_back (param.identifier);
     }
 
-    semantics::NameTypeAliasPtr
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::AddTypeAlias (semantics::TypePtr aliasedType, const uc::String& identifier)
-    {
-      if (!CheckIdentifierUnique (identifier))
-      {
-        handler->ExpressionError (ExpressionContext(), Error::IdentifierAlreadyDeclared);
-        return semantics::NameTypeAliasPtr();
-      }
-      semantics::NameTypeAliasPtr newName = new semantics::NameTypeAlias (this, identifier, aliasedType.get());
-      identifiers[identifier] = newName;
-      return newName;
-    }
-
     FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (semantics::TypePtr returnType,
                                                                                const uc::String& identifier,
                                                                                const semantics::FunctionFormalParameters& params)

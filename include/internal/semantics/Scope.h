@@ -76,11 +76,13 @@ namespace s1
 
       /**
        * Add a type alias.
+       * \param diagnosticsHandler Diagnostics handler called in case of an issue.
        * \param aliasedType Type to alias.
        * \param identifier Identifier of type alias.
        */
-      virtual NameTypeAliasPtr AddTypeAlias (TypePtr aliasedType,
-        const uc::String& identifier) = 0;
+      NameTypeAliasPtr AddTypeAlias (SimpleDiagnostics& diagnosticsHandler,
+                                     Type* aliasedType,
+                                     const uc::String& identifier);
 
       /**
        * Add a function.

@@ -40,9 +40,6 @@ namespace s1
       CommonScope (CommonHandler* handler, CommonScope* parent, ScopeLevel level);
       ScopeLevel GetLevel() const { return level; }
       
-      NameTypeAliasPtr AddTypeAlias (TypePtr aliasedType,
-        const uc::String& identifier) override;
-        
       FunctionPtr AddFunction (TypePtr returnType,
         const uc::String& identifier,
         const FunctionFormalParameters& params);
