@@ -62,6 +62,7 @@ namespace s1
       semantics::TypePtr funcReturnType;
 
       semantics::FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo,
+                                             semantics::Scope* scope,
                                              const semantics::BlockPtr& block);
 
       void AddParameter (const FunctionFormalParameter& param);
@@ -86,12 +87,12 @@ namespace s1
       semantics::TypePtr GetFunctionReturnType() const
       {
         if (funcReturnType) return funcReturnType;
-        if (parent) return static_cast<const ScopeImpl*> (parent.get())->GetFunctionReturnType();
+        if (parent) return static_cast<const ScopeImpl*> (parent)->GetFunctionReturnType();
         return semantics::TypePtr ();
       }
       const std::vector<uc::String>& GetFunctionOutputParams () const
       {
-        auto parent_impl = static_cast<const ScopeImpl*> (parent.get());
+        auto parent_impl = static_cast<const ScopeImpl*> (parent);
         if (!parent_impl || (parent_impl->level < semantics::ScopeLevel::Function))
           return outputParams;
         else

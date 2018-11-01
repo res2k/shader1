@@ -47,7 +47,7 @@ namespace s1
         return false;
       }
       if (parent)
-        return static_cast<ScopeImpl*> (parent.get())->CheckIdentifierUnique (identifier);
+        return static_cast<ScopeImpl*> (parent)->CheckIdentifierUnique (identifier);
       return true;
     }
 
@@ -61,7 +61,7 @@ namespace s1
       }
       if ((ident != identifiers.end()) && (ident->second)) return ident->second;
       if (parent)
-        return static_cast<ScopeImpl*> (parent.get())->CheckIdentifierIsFunction (identifier);
+        return static_cast<ScopeImpl*> (parent)->CheckIdentifierIsFunction (identifier);
       return NamePtr ();
     }
 
@@ -72,9 +72,11 @@ namespace s1
      : Scope (parent), handler (handler), level (level), funcReturnType (funcReturnType)
     {}
 
-    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (FunctionInfoPtr funcInfo, const BlockPtr& block)
+    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (FunctionInfoPtr funcInfo,
+                                                                                  semantics::Scope* scope,
+                                                                                  const BlockPtr& block)
     {
-      return FunctionPtr (new FunctionImpl (funcInfo, block));
+      return FunctionPtr (new FunctionImpl (funcInfo, scope, block));
     }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
@@ -150,7 +152,6 @@ namespace s1
         funcScopeImpl->AddParameter (param);
       }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
-      funcScope = semantics::ScopePtr();
 
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
@@ -185,7 +186,7 @@ namespace s1
 
       functionsInDeclOrder.push_back (funcInfo);
 
-      FunctionPtr newFunction (CreateFunction (funcInfo, newBlock));
+      FunctionPtr newFunction (CreateFunction (funcInfo, funcScope.get(), newBlock));
       return newFunction;
     }
 
@@ -359,12 +360,12 @@ namespace s1
     {
       if (!scope) return INT_MAX;
 
-      auto parentScope = static_cast<ScopeImpl*> (this->parent.get());
+      auto parentScope = static_cast<ScopeImpl*> (this->parent);
       int n = 0;
       while (parentScope)
       {
         if (parentScope == scope) return n;
-        parentScope = static_cast<ScopeImpl*> (parentScope->parent.get());
+        parentScope = static_cast<ScopeImpl*> (parentScope->parent);
         n++;
       }
       return -1;

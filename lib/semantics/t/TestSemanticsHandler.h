@@ -45,9 +45,10 @@ public:
 
     class TestFunction : public s1::semantics::Function
     {
+      s1::semantics::ScopePtr scope;
       s1::semantics::BlockPtr block;
     public:
-      TestFunction (const s1::semantics::BlockPtr& block) : block (block) {}
+      TestFunction (s1::semantics::Scope* scope, const s1::semantics::BlockPtr& block) : scope (scope), block (block) {}
       s1::semantics::BlockPtr GetBody() { return block; }
       void Finish() {}
     };

@@ -40,7 +40,7 @@ namespace s1
     class Scope : public Base
     {
     protected:
-      boost::intrusive_ptr<Scope> parent;
+      Scope* parent;
 
       typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;

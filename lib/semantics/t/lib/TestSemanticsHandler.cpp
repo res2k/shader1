@@ -84,7 +84,6 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
   s1::semantics::ScopePtr funcScope;
   funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);
   BlockPtr newBlock (handler->CreateBlock (funcScope));
-  funcScope = s1::semantics::ScopePtr();
-  FunctionPtr newFunction (new TestFunction (newBlock));
+  FunctionPtr newFunction (new TestFunction (funcScope.get(), newBlock));
   return newFunction;
 }

@@ -35,7 +35,7 @@ namespace s1
         return false;
       }
       if (parent)
-        return static_cast<CommonScope*> (parent.get())->CheckIdentifierUnique (identifier);
+        return static_cast<CommonScope*> (parent)->CheckIdentifierUnique (identifier);
       return true;
     }
 
@@ -92,7 +92,6 @@ namespace s1
       ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);
       auto newBlock = handler->CreateBlock (funcScope);
-      funcScope = ScopePtr();
       FunctionPtr newFunction (new CommonFunction (newBlock));
       return newFunction;
     }

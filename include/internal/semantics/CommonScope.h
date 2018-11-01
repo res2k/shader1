@@ -41,9 +41,10 @@ namespace s1
 
       class CommonFunction : public Function
       {
+        ScopePtr scope;
         BlockPtr block;
       public:
-        CommonFunction (const BlockPtr& block) : block (block) {}
+        CommonFunction (const BlockPtr& block) : scope (block->GetInnerScope()), block (block) {}
         BlockPtr GetBody() { return block; }
         void Finish() {}
       };
