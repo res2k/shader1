@@ -28,6 +28,8 @@ namespace s1
 {
   namespace semantics
   {
+    class CommonHandler;
+
     class CommonScope : public Scope
     {
       friend class CommonHandler;
