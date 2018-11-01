@@ -64,12 +64,6 @@ namespace s1
      : Scope (parent), handler (handler), level (level), funcReturnType (funcReturnType)
     {}
 
-    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (semantics::Scope* scope,
-                                                                                  const BlockPtr& block)
-    {
-      return FunctionPtr (new semantics::Function (scope, block.get()));
-    }
-
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
     {
       // TODO: Keep? Or allow params shadow global vars?
@@ -179,7 +173,7 @@ namespace s1
 
       functionsInDeclOrder.push_back (funcInfo);
 
-      FunctionPtr newFunction (CreateFunction (funcScope.get(), newBlock));
+      FunctionPtr newFunction = new semantics::Function (funcScope.get(), newBlock.get());
       return newFunction;
     }
 
