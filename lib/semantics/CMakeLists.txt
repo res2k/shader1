@@ -3,6 +3,7 @@ set(semantics_sources
     CommonHandler.cpp
     CommonScope.cpp
     Handler.cpp
+    Name.cpp
     Scope.cpp
     Type.cpp
     ${S1_INC}/semantics/Attribute.h

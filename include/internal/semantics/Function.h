@@ -19,6 +19,8 @@
 #define SEMANTICS_FUNCTION_H_
 
 #include "Base.h"
+#include "Block.h"
+#include "Scope.h"
 
 namespace s1
 {
@@ -28,13 +30,23 @@ namespace s1
     class Function : public Base
     {
     protected:
+      NameFunction* name;
+      Scope::FunctionFormalParameters params;
       ScopePtr scope;
-      BlockPtr block;
-    public:
-      Function (Scope* scope, Block* block) : scope (scope), block (block) {}
+      BlockPtr body;
 
+      friend class NameFunction;
+      Function (NameFunction* name,
+                const Scope::FunctionFormalParameters& params,
+                Scope* scope, Block* body)
+        : name (name), params (params), scope (scope), body (body) {}
+    public:
+      /// Return name the function is associated with
+      NameFunction* GetName() const { return name; }
+      /// Get formal parameters for function
+      const Scope::FunctionFormalParameters& GetParameters() const { return params; }
       /// Get function block to add commands to.
-      Block* GetBody() { return block.get(); }
+      Block* GetBody() const { return body.get(); }
     };
   } // namespace semantics
 } // namespace s1

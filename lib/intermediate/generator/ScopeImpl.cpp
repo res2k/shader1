@@ -124,11 +124,11 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), funcIdentResult.error());
         return FunctionPtr();
       }
-      NamePtr funcName = std::move (funcIdentResult.value());
-      if (funcName == NamePtr ())
+      semantics::NameFunctionPtr funcName = std::move (funcIdentResult.value());
+      if (!funcName)
       {
-        semantics::NamePtr newName = new semantics::NameFunction (this, identifier, returnType.get());
-        identifiers[identifier] = newName;
+        funcName = new semantics::NameFunction (this, identifier, returnType.get());
+        identifiers[identifier] = funcName;
       }
 
       semantics::ScopePtr funcScope;
@@ -173,7 +173,7 @@ namespace s1
 
       functionsInDeclOrder.push_back (funcInfo);
 
-      FunctionPtr newFunction = new semantics::Function (funcScope.get(), newBlock.get());
+      FunctionPtr newFunction = funcName->AddOverload (params, funcScope.get(), newBlock.get());
       return newFunction;
     }
 
@@ -193,11 +193,11 @@ namespace s1
         handler->ExpressionError (ExpressionContext(), funcIdentResult.error());
         return;
       }
-      NamePtr funcName = std::move (funcIdentResult.value());
-      if (funcName == NamePtr ())
+      semantics::NameFunctionPtr funcName = std::move (funcIdentResult.value());
+      if (!funcName)
       {
-        semantics::NamePtr newName = new semantics::NameFunction (this, identifier, builtin->GetReturnType().get());
-        identifiers[identifier] = newName;
+        funcName = new semantics::NameFunction (this, identifier, builtin->GetReturnType().get());
+        identifiers[identifier] = funcName;
       }
 
       FunctionInfoVector& functions = this->functions[identifier];
