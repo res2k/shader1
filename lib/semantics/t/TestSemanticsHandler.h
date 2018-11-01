@@ -40,16 +40,6 @@ public:
     TestSemanticsHandler* handler;
     boost::intrusive_ptr<TestScope> parent;
     s1::semantics::ScopeLevel level;
-
-    class TestFunction : public s1::semantics::Function
-    {
-      s1::semantics::ScopePtr scope;
-      s1::semantics::BlockPtr block;
-    public:
-      TestFunction (s1::semantics::Scope* scope, const s1::semantics::BlockPtr& block) : scope (scope), block (block) {}
-      s1::semantics::BlockPtr GetBody() { return block; }
-      void Finish() {}
-    };
   public:
     TestScope (TestSemanticsHandler* handler,
 	             TestScope* parent, s1::semantics::ScopeLevel level);

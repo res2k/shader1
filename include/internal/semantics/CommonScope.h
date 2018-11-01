@@ -36,16 +36,6 @@ namespace s1
       
       CommonHandler* handler;
       ScopeLevel level;
-
-      class CommonFunction : public Function
-      {
-        ScopePtr scope;
-        BlockPtr block;
-      public:
-        CommonFunction (const BlockPtr& block) : scope (block->GetInnerScope()), block (block) {}
-        BlockPtr GetBody() { return block; }
-        void Finish() {}
-      };
     public:
       CommonScope (CommonHandler* handler, CommonScope* parent, ScopeLevel level);
       ScopeLevel GetLevel() const { return level; }

@@ -46,7 +46,7 @@ namespace s1
     struct Expression;
     typedef boost::intrusive_ptr<Expression> ExpressionPtr;
 
-    struct Function;
+    class Function;
     typedef boost::intrusive_ptr<Function> FunctionPtr;
 
     /**

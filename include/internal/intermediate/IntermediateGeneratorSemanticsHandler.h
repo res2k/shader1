@@ -45,7 +45,6 @@ namespace s1
 
       typedef semantics::ExpressionPtr ExpressionPtr;
 
-      class FunctionImpl;
       class ScopeImpl;
       class BlockImpl;
 

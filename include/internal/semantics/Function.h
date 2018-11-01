@@ -25,12 +25,16 @@ namespace s1
   namespace semantics
   {
     /// Function
-    struct Function : public Base
+    class Function : public Base
     {
-      virtual ~Function() {}
+    protected:
+      ScopePtr scope;
+      BlockPtr block;
+    public:
+      Function (Scope* scope, Block* block) : scope (scope), block (block) {}
 
       /// Get function block to add commands to.
-      virtual BlockPtr GetBody() = 0;
+      Block* GetBody() { return block.get(); }
     };
   } // namespace semantics
 } // namespace s1

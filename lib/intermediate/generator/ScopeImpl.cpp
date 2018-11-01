@@ -20,11 +20,11 @@
 
 #include "BlockImpl.h"
 #include "Builtin.h"
-#include "FunctionImpl.h"
 #include "ScopeImpl.h"
 
 #include "intermediate/Diagnostics.h"
 #include "parser/Diagnostics.h"
+#include "semantics/Function.h"
 #include "semantics/Name.h"
 #include "ExpressionImpl.h"
 
@@ -67,7 +67,7 @@ namespace s1
     FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::CreateFunction (semantics::Scope* scope,
                                                                                   const BlockPtr& block)
     {
-      return FunctionPtr (new FunctionImpl (scope, block));
+      return FunctionPtr (new semantics::Function (scope, block.get()));
     }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)

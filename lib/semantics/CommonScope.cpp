@@ -80,7 +80,7 @@ namespace s1
       ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);
       auto newBlock = handler->CreateBlock (funcScope);
-      FunctionPtr newFunction (new CommonFunction (newBlock));
+      FunctionPtr newFunction (new Function (funcScope.get(), newBlock.get()));
       return newFunction;
     }
   } // namespace semantics

@@ -9,7 +9,6 @@ set(generator_sources
     ComparisonExpressionImpl.h
     ExpressionImpl.h
     FunctionCallExpressionImpl.h
-    FunctionImpl.h
     LogicExpressionImpl.h
     NumericExpressionImpl.h
     ScopeImpl.h
