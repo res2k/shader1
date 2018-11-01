@@ -31,12 +31,8 @@ namespace s1
     public:
       struct FunctionInfo
       {
-        uc::String originalIdentifier;
-        uc::String identifier;
-        semantics::TypePtr returnType;
-        FunctionFormalParameters params;
-        /// Function body (for user-defined functions)
-        semantics::BlockPtr block;
+        semantics::FunctionPtr functionObj;
+        uc::String decoratedIdentifier;
         /// Builtin function information
         BuiltinPtr builtin;
       };

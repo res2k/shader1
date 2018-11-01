@@ -140,9 +140,11 @@ namespace s1
       }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
 
+      FunctionPtr newFunction = funcName->AddOverload (params, funcScope.get(), newBlock.get());
+
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
-      funcInfo->originalIdentifier = identifier;
+      funcInfo->functionObj = newFunction;
       // Decorate identifier with type info (so each overload gets a unique name)
       uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
@@ -165,15 +167,11 @@ namespace s1
         decorationString.append (handler->GetTypeString (typeImpl));
         identifierDecorated.append (decorationString.c_str());
       }
-      funcInfo->identifier = identifierDecorated;
-      funcInfo->returnType = returnType;
-      funcInfo->params = params;
-      funcInfo->block = newBlock;
+      funcInfo->decoratedIdentifier = identifierDecorated;
       functions.push_back (funcInfo);
 
       functionsInDeclOrder.push_back (funcInfo);
 
-      FunctionPtr newFunction = funcName->AddOverload (params, funcScope.get(), newBlock.get());
       return newFunction;
     }
 
@@ -202,7 +200,6 @@ namespace s1
 
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
-      funcInfo->originalIdentifier = identifier;
       // Decorate identifier with type info (so each overload gets a unique name)
       uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
@@ -210,9 +207,7 @@ namespace s1
       {
         identifierDecorated.append (handler->GetTypeString (param.type.get()).c_str());
       }
-      funcInfo->identifier = identifierDecorated;
-      funcInfo->returnType = builtin->GetReturnType();
-      funcInfo->params = params;
+      funcInfo->decoratedIdentifier = identifierDecorated;
       funcInfo->builtin = builtin;
       functions.push_back (funcInfo);
 
@@ -233,22 +228,22 @@ namespace s1
       if (funcIt != functions.end())
       {
         // First, look for an exact parameters type match
-        for (FunctionInfoVector::const_iterator vecIt = funcIt->second.begin();
-             vecIt != funcIt->second.end();
-             ++vecIt)
+        for (const auto& candidate : funcIt->second)
         {
-          if (params.size() > (*vecIt)->params.size()) continue;
+          const auto& candidateParams = candidate->functionObj ? candidate->functionObj->GetParameters()
+                                                               : candidate->builtin->GetFormalParameters();
+          if (params.size() > candidateParams.size()) continue;
 
           bool abort = false;
           size_t formal = 0, actual = 0;
           for (; actual < params.size(); formal++)
           {
             // Only consider user-specified parameters for matching
-            if ((*vecIt)->params[formal].paramType != ptUser) continue;
+            if (candidateParams[formal].paramType != ptUser) continue;
 
             auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
             auto paramType = exprImpl->GetValueType ();
-            auto formalParamType = (*vecIt)->params[formal].type.get();
+            auto formalParamType = candidateParams[formal].type.get();
             // No exact type match? Skip
             if (!paramType->IsEqual (*formalParamType))
             {
@@ -258,13 +253,13 @@ namespace s1
             actual++;
           }
           if (abort) continue;
-          for (; formal < (*vecIt)->params.size(); formal++)
+          for (; formal < candidateParams.size(); formal++)
           {
             // Only consider user-specified parameters for matching
-            if ((*vecIt)->params[formal].paramType != ptUser) continue;
+            if (candidateParams[formal].paramType != ptUser) continue;
 
             // Leftover parameter + no default value? Skip
-            if (!(*vecIt)->params[formal].defaultValue)
+            if (!candidateParams[formal].defaultValue)
             {
               abort = true;
               break;
@@ -272,30 +267,30 @@ namespace s1
           }
           if (abort) continue;
 
-          vec.push_back (*vecIt);
+          vec.push_back (candidate);
         }
 
         // Second, look for a lossless parameters type match
         if (vec.size() == 0)
         {
-          for (FunctionInfoVector::const_iterator vecIt = funcIt->second.begin();
-              vecIt != funcIt->second.end();
-              ++vecIt)
+          for (const auto& candidate : funcIt->second)
           {
-            if (params.size() > (*vecIt)->params.size()) continue;
+            const auto& candidateParams = candidate->functionObj ? candidate->functionObj->GetParameters()
+                                                                 : candidate->builtin->GetFormalParameters();
+            if (params.size() > candidateParams.size()) continue;
 
             bool abort = false;
             size_t formal = 0, actual = 0;
             for (; actual < params.size(); formal++)
             {
               // Only consider user-specified parameters for matching
-              if ((*vecIt)->params[formal].paramType != ptUser) continue;
+              if (candidateParams[formal].paramType != ptUser) continue;
 
               auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
               auto paramType = exprImpl->GetValueType ();
-              auto formalParamType = (*vecIt)->params[formal].type.get();
+              auto formalParamType = candidateParams[formal].type.get();
               bool match;
-              if ((*vecIt)->params[formal].dir & dirOut)
+              if (candidateParams[formal].dir & dirOut)
                 // Output parameters must _always_ match exactly
                 match = paramType->IsEqual (*formalParamType);
               else
@@ -310,13 +305,13 @@ namespace s1
               actual++;
             }
             if (abort) continue;
-            for (; formal < (*vecIt)->params.size(); formal++)
+            for (; formal < candidateParams.size(); formal++)
             {
               // Only consider user-specified parameters for matching
-              if ((*vecIt)->params[formal].paramType != ptUser) continue;
+              if (candidateParams[formal].paramType != ptUser) continue;
 
               // Leftover parameter + no default value? Skip
-              if (!(*vecIt)->params[formal].defaultValue)
+              if (!candidateParams[formal].defaultValue)
               {
                 abort = true;
                 break;
@@ -324,7 +319,7 @@ namespace s1
             }
             if (abort) continue;
 
-            vec.push_back (*vecIt);
+            vec.push_back (candidate);
           }
         }
       }

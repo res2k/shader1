@@ -30,6 +30,7 @@
 #include "intermediate/SequenceOp/SequenceOpCast.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
 #include "intermediate/SequenceOp/SequenceOpMakeVector.h"
+#include "semantics/Function.h"
 #include "semantics/Name.h"
 
 #include "BlockImpl.h"
@@ -394,15 +395,14 @@ namespace s1
         // Collect global vars
         auto globalVars = globalScope->GetAllVars ();
         ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions ());
-        for (ScopeImpl::FunctionInfoVector::const_iterator funcIt = functions.begin();
-             funcIt != functions.end();
-             ++funcIt)
+        for (const auto& func : functions)
         {
-          if ((*funcIt)->originalIdentifier == entryFunctionName)
+          const auto& funcIdentifier = func->functionObj->GetName()->GetIdentifier();
+          if (funcIdentifier == entryFunctionName)
           {
             if (!entryFunction)
             {
-              entryFunction = *funcIt;
+              entryFunction = func;
             }
             else
             {
@@ -410,14 +410,14 @@ namespace s1
             }
           }
 
-          auto blockImpl = get_static_ptr<BlockImpl> ((*funcIt)->block);
+          auto blockImpl = get_static_ptr<BlockImpl> (func->functionObj->GetBody());
 
-          semantics::Scope::FunctionFormalParameters params ((*funcIt)->params);
-          semantics::TypePtr retType = (*funcIt)->returnType;
+          semantics::Scope::FunctionFormalParameters params (func->functionObj->GetParameters());
+          semantics::TypePtr retType = func->functionObj->GetName()->GetReturnType();
           if (!voidType->IsEqual (*retType))
           {
             semantics::Scope::FunctionFormalParameter retParam;
-            retParam.type = (*funcIt)->returnType;
+            retParam.type = retType;
             retParam.identifier = BlockImpl::varReturnValueName;
             retParam.dir = semantics::Scope::dirOut;
             params.insert (params.begin(), retParam);
@@ -470,8 +470,8 @@ namespace s1
             funcSeq = newSeqBuilder->GetSequence ();
           }
 
-          ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> ((*funcIt)->originalIdentifier,
-                                                                            (*funcIt)->identifier,
+          ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> (funcIdentifier,
+                                                                            func->decoratedIdentifier,
                                                                             params,
                                                                             funcSeq,
                                                                             false));
@@ -480,9 +480,10 @@ namespace s1
         // TODO: Err if no entry function was given
         if (entryFunction)
         {
-          newProg->AddFunction (SynthesizeEntryFunction (entryFunction->identifier,
-                                                         entryFunction->returnType,
-                                                         entryFunction->params));
+          auto entryFunctionName = entryFunction->functionObj->GetName();
+          newProg->AddFunction (SynthesizeEntryFunction (entryFunctionName->GetIdentifier(),
+                                                         entryFunctionName->GetReturnType(),
+                                                         entryFunction->functionObj->GetParameters()));
         }
       }
       return newProg;

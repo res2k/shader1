@@ -26,6 +26,7 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
+#include "semantics/Function.h"
 #include "semantics/Name.h"
 #include "ScopeImpl.h"
 
@@ -66,9 +67,11 @@ namespace s1
       }
       overload = candidates[0];
 
-      for (size_t formal = 0, actual = 0; formal < overload->params.size(); formal++)
+      const auto& formalParams = overload->functionObj ? overload->functionObj->GetParameters()
+                                                       : overload->builtin->GetFormalParameters();
+      for (size_t formal = 0, actual = 0; formal < formalParams.size(); formal++)
       {
-        const ScopeImpl::FunctionFormalParameter& param (overload->params[formal]);
+        const ScopeImpl::FunctionFormalParameter& param (formalParams[formal]);
 
         ExpressionPtr paramExpr;
         assert (param.paramType == semantics::Scope::ptUser);
@@ -87,17 +90,19 @@ namespace s1
                                                                                             PostActions& postActions)
     {
       bool result = true;
+      const auto& formalParams = overload->functionObj ? overload->functionObj->GetParameters()
+                                                       : overload->builtin->GetFormalParameters();
       for (size_t i = 0; i < actualParams.size(); i++)
       {
         RegisterPtr reg1, reg2;
         auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
-        if (overload->params[i].dir & ScopeImpl::dirIn)
+        if (formalParams[i].dir & ScopeImpl::dirIn)
         {
           reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
           if (!reg1) { result = false; continue; } // Assume error already handled
           postActions.emplace_back (paramExprImpl, reg1, false);
         }
-        if (overload->params[i].dir & ScopeImpl::dirOut)
+        if (formalParams[i].dir & ScopeImpl::dirOut)
         {
           reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
           if (!reg2) { result = false; continue; } // Assume error already handled
@@ -113,7 +118,8 @@ namespace s1
     {
       if (!SelectOverload ()) return nullptr; // Assume error already handled
 
-      return overload->returnType;
+      return overload->functionObj ? overload->functionObj->GetName()->GetReturnType()
+                                   : overload->builtin->GetReturnType();
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
@@ -124,7 +130,7 @@ namespace s1
 
       if (!SelectOverload ()) return RegisterPtr(); // Assume error already handled
 
-      if (overload->identifier.isEmpty()) return RegisterPtr();
+      if (overload->decoratedIdentifier.isEmpty()) return RegisterPtr();
 
       FetchedRegs fetchedRegs;
       PostActions postActions;
@@ -133,9 +139,11 @@ namespace s1
       bool paramsOkay = true;
       std::vector<RegisterPtr> inParams;
       std::vector<RegisterPtr> outParams;
-      for (size_t i = 0; i < overload->params.size(); i++)
+      const auto& formalParams = overload->functionObj ? overload->functionObj->GetParameters()
+                                                       : overload->builtin->GetFormalParameters();
+      for (size_t i = 0; i < formalParams.size(); i++)
       {
-        const ScopeImpl::FunctionFormalParameter& param (overload->params[i]);
+        const ScopeImpl::FunctionFormalParameter& param (formalParams[i]);
         if (param.dir & ScopeImpl::dirIn)
         {
           auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
@@ -188,7 +196,7 @@ namespace s1
       {
         if (destination)
           outParams.insert (outParams.begin(), destination);
-        seqOp = new SequenceOpFunctionCall (overload->identifier, inParams, outParams);
+        seqOp = new SequenceOpFunctionCall (overload->decoratedIdentifier, inParams, outParams);
       }
       block.GetSequenceBuilder()->AddOp (seqOp);
 
