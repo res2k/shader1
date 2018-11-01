@@ -60,8 +60,7 @@ namespace s1
       semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
-      semantics::FunctionPtr CreateFunction (ScopeImpl::FunctionInfoPtr funcInfo,
-                                             semantics::Scope* scope,
+      semantics::FunctionPtr CreateFunction (semantics::Scope* scope,
                                              const semantics::BlockPtr& block);
 
       void AddParameter (const FunctionFormalParameter& param);
