@@ -52,6 +52,8 @@ namespace s1
       typedef OUTCOME_V2_NAMESPACE::result<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
       result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
 
+      static uc::String DecorateIdentifier (const uc::String& identifier, const semantics::FunctionFormalParameters& params);
+
       IntermediateGeneratorSemanticsHandler* handler;
       semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
