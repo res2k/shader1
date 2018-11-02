@@ -4,11 +4,17 @@ set(semantics_sources
     CommonScope.cpp
     Handler.cpp
     Type.cpp
-    ${S1_INC}/semantics/CommonHandler.h
     ${S1_INC}/semantics/Attribute.h
+    ${S1_INC}/semantics/Base.h
+    ${S1_INC}/semantics/Block.h
+    ${S1_INC}/semantics/CommonHandler.h
     ${S1_INC}/semantics/CommonScope.h
+    ${S1_INC}/semantics/Expression.h
+    ${S1_INC}/semantics/forwarddecl.h
+    ${S1_INC}/semantics/Function.h
     ${S1_INC}/semantics/Handler.h
     ${S1_INC}/semantics/Name.h
+    ${S1_INC}/semantics/Scope.h
     ${S1_INC}/semantics/Type.h
     )
 s1_add_library_internal(semantics
