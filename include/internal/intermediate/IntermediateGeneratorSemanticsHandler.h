@@ -48,9 +48,6 @@ namespace s1
       class ScopeImpl;
       class BlockImpl;
 
-      class Builtin;
-      typedef boost::intrusive_ptr<Builtin> BuiltinPtr;
-
       /// Context information for expression objects. Used for error/warning reporting.
       struct ExpressionContext
       {

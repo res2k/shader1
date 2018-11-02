@@ -1,5 +1,4 @@
 set(intermediate_sources
-    Builtin.h
     FunctionCallGlobalVarAugment.h
     PrependGlobalsInit.h
     CloningSequenceVisitor.cpp

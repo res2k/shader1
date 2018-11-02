@@ -19,7 +19,6 @@
 #include "base/intrusive_ptr.h"
 
 #include "BlockImpl.h"
-#include "Builtin.h"
 #include "ScopeImpl.h"
 
 #include "intermediate/Diagnostics.h"
