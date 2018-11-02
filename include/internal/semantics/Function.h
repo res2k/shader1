@@ -27,14 +27,32 @@ namespace s1
 {
   namespace semantics
   {
-    /// Function
-    class Function : public Base
+    /// Function base
+    class BaseFunction : public Base
     {
     protected:
       NameFunction* name;
       /// type of return value
       TypePtr returnType;
       FunctionFormalParameters params;
+
+      BaseFunction (NameFunction* name,
+                    Type* returnType,
+                    const FunctionFormalParameters& params)
+        : name (name), returnType (returnType), params (params) {}
+    public:
+      /// Return name the function is associated with
+      NameFunction* GetName() const { return name; }
+      /// Return type of variable value
+      TypePtr GetReturnType () { return returnType; }
+      /// Get formal parameters for function
+      const FunctionFormalParameters& GetParameters() const { return params; }
+    };
+
+    /// User-defined Function
+    class Function : public BaseFunction
+    {
+    protected:
       ScopePtr scope;
       BlockPtr body;
 
@@ -43,16 +61,13 @@ namespace s1
                 Type* returnType,
                 const FunctionFormalParameters& params,
                 Scope* scope, Block* body)
-        : name (name), returnType (returnType), params (params), scope (scope), body (body) {}
+        : BaseFunction (name, returnType, params), scope (scope), body (body) {}
     public:
-      /// Return name the function is associated with
-      NameFunction* GetName() const { return name; }
-      /// Return type of variable value
-      TypePtr GetReturnType () { return returnType; }
-      /// Get formal parameters for function
-      const FunctionFormalParameters& GetParameters() const { return params; }
       /// Get function block to add commands to.
       Block* GetBody() const { return body.get(); }
+
+      static Function* upcast (BaseFunction* f) { return static_cast<Function*> (f); }
+      static const Function* upcast (const BaseFunction* f) { return static_cast<const Function*> (f); }
     };
   } // namespace semantics
 } // namespace s1
