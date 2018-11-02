@@ -25,10 +25,10 @@ namespace s1
   namespace intermediate
   {
     ProgramFunction::ProgramFunction (const uc::String& originalIdentifier,
-				      const uc::String& identifier,
-				      const semantics::Scope::FunctionFormalParameters& params,
-				      const SequencePtr& body,
-				      bool isEntryFunction)
+                                      const uc::String& identifier,
+                                      const semantics::Scope::FunctionFormalParameters& params,
+                                      const SequencePtr& body,
+                                      bool isEntryFunction)
      : originalIdentifier (originalIdentifier) ,identifier (identifier),
        params (params), body (body),
        isEntryFunction (isEntryFunction)
@@ -36,7 +36,7 @@ namespace s1
     }
 
     void ProgramFunction::SetTransferMapping (const uc::String& transferVal,
-					      const RegisterPtr& programReg)
+                                              const RegisterPtr& programReg)
     {
       transferMappings.emplace_back (transferVal, programReg);
     }

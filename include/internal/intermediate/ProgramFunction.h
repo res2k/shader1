@@ -36,10 +36,10 @@ namespace s1
       bool isEntryFunction;
     public:
       ProgramFunction (const uc::String& originalIdentifier,
-		       const uc::String& identifier,
-		       const semantics::Scope::FunctionFormalParameters& params,
-		       const SequencePtr& body,
-		       bool isEntryFunction);
+                       const uc::String& identifier,
+                       const semantics::Scope::FunctionFormalParameters& params,
+                       const SequencePtr& body,
+                       bool isEntryFunction);
 
       const uc::String& GetOriginalIdentifier() const
       { return originalIdentifier; }
@@ -53,7 +53,7 @@ namespace s1
       { return isEntryFunction; }
       
       void SetTransferMapping (const uc::String& transferVal,
-			       const RegisterPtr& programReg);
+                               const RegisterPtr& programReg);
       typedef std::pair<uc::String, RegisterPtr> TransferMappingPair;
       typedef std::vector<TransferMappingPair> TransferMappings;
       const TransferMappings& GetTransferMappings () const { return transferMappings; }
