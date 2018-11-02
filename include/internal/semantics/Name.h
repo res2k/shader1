@@ -19,6 +19,7 @@
 #define SEMANTICS_NAME_H_
 
 #include "Base.h"
+#include "FunctionFormalParameter.h"
 #include "Scope.h"
 
 #include <boost/optional.hpp>
@@ -79,7 +80,7 @@ namespace s1
       TypePtr GetReturnType () { return returnType; }
 
       /// Add an overload for the function name
-      semantics::Function* AddOverload (const Scope::FunctionFormalParameters& params, Scope* funcScope, Block* body);
+      semantics::Function* AddOverload (const FunctionFormalParameters& params, Scope* funcScope, Block* body);
       /// Get overloads for the function name
       const std::vector<FunctionPtr>& GetOverloads () const { return overloads; }
 
@@ -97,15 +98,15 @@ namespace s1
       bool varConstant;
 
       // Parameter info, if it's originally a function parameter
-      boost::optional<Scope::FunctionFormalParameter> paramInfo;
+      boost::optional<FunctionFormalParameter> paramInfo;
     public:
       NameVariable (Scope* ownerScope, const uc::String& identifier, Type* valueType,
                     Expression* value, bool constant)
         : Name (ownerScope, identifier), valueType (valueType),
           varValue (value), varConstant (constant) {}
-      NameVariable (Scope* ownerScope, const Scope::FunctionFormalParameter& param)
+      NameVariable (Scope* ownerScope, const FunctionFormalParameter& param)
         : NameVariable (ownerScope, param.identifier, param.type.get(), param.defaultValue.get(),
-                        param.dir == Scope::dirIn)
+                        param.dir == FunctionFormalParameter::dirIn)
       {
         paramInfo = param;
       }
@@ -122,7 +123,7 @@ namespace s1
       bool IsConstant () { return varConstant; }
 
       /// Return parameter info, if name was originally a function parameter
-      const Scope::FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
+      const FunctionFormalParameter* GetParamInfo() const { return paramInfo.get_ptr(); }
 
       static NameVariable* upcast (Name* name) { return internal_upcast<NameVariable, Variable> (name); }
       static const NameVariable* upcast (const Name* name) { return internal_upcast<const NameVariable, Variable> (name); }

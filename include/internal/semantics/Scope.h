@@ -73,51 +73,7 @@ namespace s1
        */
       virtual NameTypeAliasPtr AddTypeAlias (TypePtr aliasedType,
         const uc::String& identifier) = 0;
-        
-      /// Type of a formal parameter
-      enum FormalParameterType
-      {
-        /// User-defined parameter
-        ptUser,
-        /// Automatically generated parameter, representing a global var
-        ptAutoGlobal,
-        /// Automatically generated parameter for a transfer value
-        ptAutoTransfer,
 
-        /// All types greater or equal than this identify auto-added parameters
-        ptFirstAutoType = ptAutoGlobal
-      };
-      enum FormalParameterDirection
-      {
-        dirDefault = 0,
-        dirIn = 1,
-        dirOut = 2,
-        dirInOut = 3
-      };
-      /// User-assigned 'input frequency' qualifier for a parameter
-      enum FormalParameterFrequency
-      {
-        /// No particular frequency
-        freqAuto = 0,
-        /// Uniform qualifier
-        freqUniform = 1,
-        /// Attribute (Vertex input) qualifier
-        freqAttribute = 2
-      };
-      struct FunctionFormalParameter
-      {
-        /// Type of parameter
-        FormalParameterType paramType;
-        TypePtr type;
-        uc::String identifier;
-        ExpressionPtr defaultValue;
-        FormalParameterDirection dir;
-        FormalParameterFrequency freqQualifier;
-
-        FunctionFormalParameter() : paramType (ptUser) {}
-      };
-      typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
-        
       /**
        * Add a function.
        * \param returnType Return type of function.

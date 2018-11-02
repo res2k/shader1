@@ -749,7 +749,7 @@ BOOST_AUTO_TEST_CASE(FunctionCall)
   s1::semantics::ScopePtr scope (
     semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
           s1::semantics::ScopeLevel::Global)); 
-  s1::semantics::Scope::FunctionFormalParameters params;
+  s1::semantics::FunctionFormalParameters params;
   scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
     s1::semantics::ExpressionPtr (), false);
   scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE(FunctionCall2)
   s1::semantics::ScopePtr scope (
     semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
           s1::semantics::ScopeLevel::Global)); 
-  s1::semantics::Scope::FunctionFormalParameters params;
+  s1::semantics::FunctionFormalParameters params;
   scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("a"),
     s1::semantics::ExpressionPtr (), false);
   scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("b"),
@@ -805,7 +805,7 @@ BOOST_AUTO_TEST_CASE(FunctionCallError)
   s1::semantics::ScopePtr scope (
     semanticsHandler.CreateScope (s1::semantics::ScopePtr(),
                                   s1::semantics::ScopeLevel::Global));
-  s1::semantics::Scope::FunctionFormalParameters params;
+  s1::semantics::FunctionFormalParameters params;
   scope->AddVariable (s1::semantics::TypePtr (), s1::uc::String ("x"),
                       s1::semantics::ExpressionPtr (), false);
   scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);

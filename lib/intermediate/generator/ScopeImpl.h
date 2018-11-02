@@ -56,7 +56,7 @@ namespace s1
       semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
-      void AddParameter (const FunctionFormalParameter& param);
+      void AddParameter (const semantics::FunctionFormalParameter& param);
     public:
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                  ScopeImpl* parent, semantics::ScopeLevel level,
@@ -73,7 +73,7 @@ namespace s1
 
       semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
         const uc::String& identifier,
-        const FunctionFormalParameters& params);
+        const semantics::FunctionFormalParameters& params);
 
       semantics::TypePtr GetFunctionReturnType() const
       {

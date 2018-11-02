@@ -84,7 +84,7 @@ namespace s1
       
       void AddFreqFunction (const uc::String& funcName,
                             const intermediate::ProgramFunctionPtr& originalFunc,
-                            const semantics::Scope::FunctionFormalParameters& extraParams,
+                            const semantics::FunctionFormalParameters& extraParams,
                             const intermediate::SequencePtr& sequence,
                             int freq);
                             

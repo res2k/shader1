@@ -62,7 +62,7 @@ TestSemanticsHandler::TestScope::AddTypeAlias (s1::semantics::TypePtr aliasedTyp
   
 FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr returnType,
 							   const s1::uc::String& identifier,
-							   const FunctionFormalParameters& params)
+							   const s1::semantics::FunctionFormalParameters& params)
 {
   if (!CheckIdentifierUnique (identifier))
   {

@@ -98,7 +98,7 @@ namespace s1
     typedef semantics::FunctionPtr Function;
     void ParseFuncDeclare (const Scope& scope, const parser::ast::FunctionDecl& astFunctionDecl);
     void ParseFuncParamFormal (const Scope& scope,
-                               semantics::Scope::FunctionFormalParameters& params,
+                               semantics::FunctionFormalParameters& params,
                                const parser::ast::FunctionDecl& astFunctionDecl);
     
     // Variables

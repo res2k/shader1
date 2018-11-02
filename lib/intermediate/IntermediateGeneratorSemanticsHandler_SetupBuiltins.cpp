@@ -26,6 +26,7 @@
 #include "intermediate/SequenceOp/SequenceOpVectorLength.h"
 #include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
 #include "intermediate/SequenceVisitor.h"
+#include "semantics/FunctionFormalParameter.h"
 
 #include "Builtin.h"
 #include "ScopeImpl.h"
@@ -36,36 +37,36 @@ namespace s1
 {
   namespace intermediate
   {
-    semantics::Scope::FunctionFormalParameters
+    semantics::FunctionFormalParameters
     IntermediateGeneratorSemanticsHandler::MakeFormalParameters1 (const semantics::TypePtr& type)
     {
-      IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameters params;
+      semantics::FunctionFormalParameters params;
 
-      IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameter fp;
+      semantics::FunctionFormalParameter fp;
       fp.type = type;
       fp.identifier = uc::String ("a");
-      fp.dir = IntermediateGeneratorSemanticsHandler::ScopeImpl::dirIn;
+      fp.dir = semantics::FunctionFormalParameter::dirIn;
       params.push_back (fp);
 
       return params;
     }
 
-    semantics::Scope::FunctionFormalParameters
+    semantics::FunctionFormalParameters
     IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const semantics::TypePtr& type)
     {
       return MakeFormalParameters2 (type, type);
     }
 
-    semantics::Scope::FunctionFormalParameters
+    semantics::FunctionFormalParameters
     IntermediateGeneratorSemanticsHandler::MakeFormalParameters2 (const semantics::TypePtr& typeA,
                                                                   const semantics::TypePtr& typeB)
     {
-      IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameters params;
+      semantics::FunctionFormalParameters params;
 
-      IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionFormalParameter fp;
+      semantics::FunctionFormalParameter fp;
       fp.type = typeA;
       fp.identifier = uc::String ("a");
-      fp.dir = IntermediateGeneratorSemanticsHandler::ScopeImpl::dirIn;
+      fp.dir = semantics::FunctionFormalParameter::dirIn;
       params.push_back (fp);
 
       fp.type = typeB;

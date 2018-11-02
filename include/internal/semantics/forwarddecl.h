@@ -20,6 +20,8 @@
 
 #include <boost/smart_ptr/intrusive_ptr.hpp>
 
+#include <vector>
+
 namespace s1
 {
   namespace semantics
@@ -70,6 +72,9 @@ namespace s1
     typedef boost::intrusive_ptr<Block> BlockPtr;
 
     class Handler;
+
+    struct FunctionFormalParameter;
+    typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
   } // namespace semantics
 } // namespace s1
 

@@ -71,10 +71,10 @@ namespace s1
                                                        : overload->builtin->GetFormalParameters();
       for (size_t formal = 0, actual = 0; formal < formalParams.size(); formal++)
       {
-        const ScopeImpl::FunctionFormalParameter& param (formalParams[formal]);
+        const auto& param (formalParams[formal]);
 
         ExpressionPtr paramExpr;
-        assert (param.paramType == semantics::Scope::ptUser);
+        assert (param.paramType == semantics::FunctionFormalParameter::ptUser);
         if (actual < params.size())
           paramExpr = params[actual++];
         else
@@ -96,13 +96,13 @@ namespace s1
       {
         RegisterPtr reg1, reg2;
         auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
-        if (formalParams[i].dir & ScopeImpl::dirIn)
+        if (formalParams[i].dir & semantics::FunctionFormalParameter::dirIn)
         {
           reg1 = paramExprImpl->AddToSequence (block, Intermediate, false);
           if (!reg1) { result = false; continue; } // Assume error already handled
           postActions.emplace_back (paramExprImpl, reg1, false);
         }
-        if (formalParams[i].dir & ScopeImpl::dirOut)
+        if (formalParams[i].dir & semantics::FunctionFormalParameter::dirOut)
         {
           reg2 = paramExprImpl->AddToSequence (block, Intermediate, true);
           if (!reg2) { result = false; continue; } // Assume error already handled
@@ -143,8 +143,8 @@ namespace s1
                                                        : overload->builtin->GetFormalParameters();
       for (size_t i = 0; i < formalParams.size(); i++)
       {
-        const ScopeImpl::FunctionFormalParameter& param (formalParams[i]);
-        if (param.dir & ScopeImpl::dirIn)
+        const auto& param (formalParams[i]);
+        if (param.dir & semantics::FunctionFormalParameter::dirIn)
         {
           auto paramExprImpl = get_static_ptr<ExpressionImpl> (actualParams[i]);
           auto paramExprType = paramExprImpl->GetValueType();
@@ -166,7 +166,7 @@ namespace s1
           }
           inParams.push_back (inReg);
         }
-        if (param.dir & ScopeImpl::dirOut)
+        if (param.dir & semantics::FunctionFormalParameter::dirOut)
         {
           RegisterPtr outReg (fetchedRegs[i].second);
           if (!outReg)

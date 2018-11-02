@@ -45,7 +45,7 @@ namespace s1
 
       FunctionCodeGenerator::HandleParamResult
         FunctionCodeGenerator::HandleMainParameter (const intermediate::Program::OutputParameters& output,
-          const Scope::FunctionFormalParameter& param,
+          const semantics::FunctionFormalParameter& param,
           const size_t* arraySize) const
       {
         HandleParamResult result;
@@ -58,13 +58,13 @@ namespace s1
           typeSuffix = typeStrings.second;
         }
 
-        if (param.dir & semantics::Scope::dirIn)
+        if (param.dir & semantics::FunctionFormalParameter::dirIn)
         {
           // TODO: Emit global vars
           uc::String paramIdent;
-          if (param.paramType >= Scope::ptAutoGlobal)
+          if (param.paramType >= semantics::FunctionFormalParameter::ptAutoGlobal)
           {
-            uc::String paramIdentDecorated(param.paramType == Scope::ptAutoGlobal ? "I" : "i");
+            uc::String paramIdentDecorated(param.paramType == semantics::FunctionFormalParameter::ptAutoGlobal ? "I" : "i");
             paramIdentDecorated.append(param.identifier);
             paramIdent = traits.ConvertIdentifier(paramIdentDecorated);
           }
@@ -75,12 +75,12 @@ namespace s1
           result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
-        if (param.dir & semantics::Scope::dirOut)
+        if (param.dir & semantics::FunctionFormalParameter::dirOut)
         {
           uc::String paramIdent;
-          if (param.paramType >= Scope::ptAutoGlobal)
+          if (param.paramType >= semantics::FunctionFormalParameter::ptAutoGlobal)
           {
-            uc::String paramIdentDecorated(param.paramType == Scope::ptAutoGlobal ? "O" : "o");
+            uc::String paramIdentDecorated(param.paramType == semantics::FunctionFormalParameter::ptAutoGlobal ? "O" : "o");
             paramIdentDecorated.append(param.identifier);
             paramIdent = traits.ConvertIdentifier(paramIdentDecorated);
           }

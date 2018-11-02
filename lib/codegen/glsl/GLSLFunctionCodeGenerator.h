@@ -34,7 +34,7 @@ namespace s1
         const Options& GetOptions () const;
 
         HandleParamResult HandleMainParameter(const intermediate::Program::OutputParameters& output,
-          const Scope::FunctionFormalParameter& param,
+          const semantics::FunctionFormalParameter& param,
           const size_t* arraySize) const;
 
         void GenerateFunctionParams (const intermediate::ProgramFunctionPtr& func,

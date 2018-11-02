@@ -83,10 +83,10 @@ namespace s1
       ScopeImplPtr globalScope;
 
       // Helper functions for SetupBuiltins
-      semantics::Scope::FunctionFormalParameters MakeFormalParameters1 (const semantics::TypePtr& type);
-      semantics::Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& type);
-      semantics::Scope::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& typeA,
-                                                                        const semantics::TypePtr& typeB);
+      semantics::FunctionFormalParameters MakeFormalParameters1 (const semantics::TypePtr& type);
+      semantics::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& type);
+      semantics::FunctionFormalParameters MakeFormalParameters2 (const semantics::TypePtr& typeA,
+                                                                 const semantics::TypePtr& typeB);
       void SetupBuiltins (const ScopeImplPtr& scope);
 
       /// Create a sequence containing global vars initialization
@@ -94,7 +94,7 @@ namespace s1
 
       ProgramFunctionPtr SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
                                                   const semantics::TypePtr& returnType,
-                                                  const semantics::Scope::FunctionFormalParameters& params);
+                                                  const semantics::FunctionFormalParameters& params);
 
       /// Whether the intermediate program was marked "completed"
       bool completed;

@@ -592,7 +592,7 @@ namespace s1
                                                                           bool writeable)
     {
       auto paramInfo = name->GetParamInfo();
-      bool isOutputParam = paramInfo && (paramInfo->dir == semantics::Scope::dirOut);
+      bool isOutputParam = paramInfo && (paramInfo->dir == semantics::FunctionFormalParameter::dirOut);
       bool isFromOutside = (get_static_ptr<ScopeImpl> (name->GetOwnerScope()) != innerScope);
       bool doImport = isFromOutside
                       && ((innerScope->GetLevel() != semantics::ScopeLevel::Function) || !isOutputParam)

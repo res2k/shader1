@@ -59,10 +59,10 @@ namespace s1
       intermediate::ProgramFunctionPtr func = intermediateProg->GetFunction (i);
       if (!func->IsEntryFunction()) continue;
       
-      const semantics::Scope::FunctionFormalParameters& funcParams = func->GetParams();
-      for(const semantics::Scope::FunctionFormalParameter& param : funcParams)
+      const auto& funcParams = func->GetParams();
+      for(const auto& param : funcParams)
       {
-        if (!(param.dir & semantics::Scope::dirOut)) continue;
+        if (!(param.dir & semantics::FunctionFormalParameter::dirOut)) continue;
         
         // Look for float4 output
         if (param.type->GetTypeClass() != semantics::Type::Vector) continue;
@@ -110,13 +110,13 @@ namespace s1
       return type;
   }
 
-  static splitter::Frequency GetDefaultFreq (const semantics::Scope::FunctionFormalParameter param)
+  static splitter::Frequency GetDefaultFreq (const semantics::FunctionFormalParameter& param)
   {
     switch (param.freqQualifier)
     {
-    case semantics::Scope::freqAuto:
+    case semantics::FunctionFormalParameter::freqAuto:
       // Auto: assume 'uniform', so simply fall through
-    case semantics::Scope::freqUniform:
+    case semantics::FunctionFormalParameter::freqUniform:
       {
         if (GetBaseType (param.type)->GetTypeClass() == semantics::Type::Sampler)
           // Logically, samples are uniform. Internally, they're fragment (at least as long vertex textures aren't supported).
@@ -124,7 +124,7 @@ namespace s1
         else
           return splitter::freqUniform;
       }
-    case semantics::Scope::freqAttribute:
+    case semantics::FunctionFormalParameter::freqAttribute:
       {
         if (GetBaseType (param.type)->GetTypeClass() == semantics::Type::Sampler)
         {
@@ -177,7 +177,7 @@ namespace s1
       S1_ASSERT (entryFunc, Backend::ProgramPtr ());
       for (const auto& entryParam : entryFunc->GetParams ())
       {
-        if ((entryParam.dir & semantics::Scope::dirOut) != 0) continue;
+        if ((entryParam.dir & semantics::FunctionFormalParameter::dirOut) != 0) continue;
         defaultInputParamFreqs[entryParam.identifier] = 1 << GetDefaultFreq (entryParam);
       }
     }

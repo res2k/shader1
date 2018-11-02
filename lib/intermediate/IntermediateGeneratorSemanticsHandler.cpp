@@ -173,7 +173,7 @@ namespace s1
 
     ProgramFunctionPtr IntermediateGeneratorSemanticsHandler::SynthesizeEntryFunction (const uc::String& realEntryIdentifier,
                                                                                        const TypePtr& returnType,
-                                                                                       const semantics::Scope::FunctionFormalParameters& params)
+                                                                                       const semantics::FunctionFormalParameters& params)
     {
       auto globalVars = globalScope->GetAllVars ();
       SequencePtr entryFuncSeq;
@@ -186,13 +186,13 @@ namespace s1
         for (const auto& param : params)
         {
           RegisterPtr paramReg;
-          if ((param.dir & semantics::Scope::dirIn) != 0)
+          if ((param.dir & semantics::FunctionFormalParameter::dirIn) != 0)
           {
             paramReg = AllocateRegister (*entrySeqBuilder, param.type, Imported, param.identifier);
             entrySeqBuilder->SetImport (paramReg, param.identifier);
             inParams.push_back (paramReg);
           }
-          if ((param.dir & semantics::Scope::dirOut) != 0)
+          if ((param.dir & semantics::FunctionFormalParameter::dirOut) != 0)
           {
             if (paramReg)
               paramReg = AllocateRegister (*entrySeqBuilder, paramReg);
@@ -412,14 +412,14 @@ namespace s1
 
           auto blockImpl = get_static_ptr<BlockImpl> (func->functionObj->GetBody());
 
-          semantics::Scope::FunctionFormalParameters params (func->functionObj->GetParameters());
+          semantics::FunctionFormalParameters params (func->functionObj->GetParameters());
           semantics::TypePtr retType = func->functionObj->GetName()->GetReturnType();
           if (!voidType->IsEqual (*retType))
           {
-            semantics::Scope::FunctionFormalParameter retParam;
+            semantics::FunctionFormalParameter retParam;
             retParam.type = retType;
             retParam.identifier = BlockImpl::varReturnValueName;
-            retParam.dir = semantics::Scope::dirOut;
+            retParam.dir = semantics::FunctionFormalParameter::dirOut;
             params.insert (params.begin(), retParam);
           }
 
@@ -429,29 +429,29 @@ namespace s1
             size_t inputInsertPos = 0;
             while (inputInsertPos < params.size())
             {
-              if (params[inputInsertPos].dir != semantics::Scope::dirIn) break;
+              if (params[inputInsertPos].dir != semantics::FunctionFormalParameter::dirIn) break;
               inputInsertPos++;
             }
             // Augment parameters list with global vars
             for (const auto& global : globalVars)
             {
               {
-                semantics::Scope::FunctionFormalParameter inParam;
-                inParam.paramType = semantics::Scope::ptAutoGlobal;
+                semantics::FunctionFormalParameter inParam;
+                inParam.paramType = semantics::FunctionFormalParameter::ptAutoGlobal;
                 inParam.type = global->GetValueType();
                 inParam.identifier = global->GetIdentifier();
-                inParam.dir = semantics::Scope::dirIn;
+                inParam.dir = semantics::FunctionFormalParameter::dirIn;
                 params.insert (boost::next (params.begin(), inputInsertPos), inParam);
                 inputInsertPos++;
               }
               if (!global->IsConstant())
               {
                 // TODO: Better handling of constants (no need to pass them as params)
-                semantics::Scope::FunctionFormalParameter outParam;
-                outParam.paramType = semantics::Scope::ptAutoGlobal;
+                semantics::FunctionFormalParameter outParam;
+                outParam.paramType = semantics::FunctionFormalParameter::ptAutoGlobal;
                 outParam.type = global->GetValueType();
                 outParam.identifier = global->GetIdentifier();
-                outParam.dir = semantics::Scope::dirOut;
+                outParam.dir = semantics::FunctionFormalParameter::dirOut;
                 params.insert (params.end(), outParam);
               }
             }

@@ -26,7 +26,7 @@ namespace s1
   {
     ProgramFunction::ProgramFunction (const uc::String& originalIdentifier,
                                       const uc::String& identifier,
-                                      const semantics::Scope::FunctionFormalParameters& params,
+                                      const semantics::FunctionFormalParameters& params,
                                       const SequencePtr& body,
                                       bool isEntryFunction)
      : originalIdentifier (originalIdentifier) ,identifier (identifier),

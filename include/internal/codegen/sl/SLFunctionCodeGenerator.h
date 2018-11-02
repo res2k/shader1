@@ -39,8 +39,7 @@ namespace s1
         const Traits& traits;
         const Options& options;
 
-        typedef semantics::Scope Scope;
-        typedef Scope::FunctionFormalParameters FunctionFormalParameters;
+        typedef semantics::FunctionFormalParameters FunctionFormalParameters;
 
         typedef boost::unordered_map<uc::String, uc::String> FunctionParamsToIdentifier;
         class BlockNameResolver : public ImportedNameResolver
@@ -86,7 +85,7 @@ namespace s1
           ParamInfo inParam;
           ParamInfo outParam;
         };
-        HandleParamResult DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
+        HandleParamResult DefaultHandleParameter (const semantics::FunctionFormalParameter& param,
                                                   const size_t* arraySize,
                                                   bool userInputVerbatim) const;
 

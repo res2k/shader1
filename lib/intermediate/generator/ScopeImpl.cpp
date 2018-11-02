@@ -64,7 +64,7 @@ namespace s1
      : Scope (parent), handler (handler), level (level), funcReturnType (funcReturnType)
     {}
 
-    void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const FunctionFormalParameter& param)
+    void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const semantics::FunctionFormalParameter& param)
     {
       // TODO: Keep? Or allow params shadow global vars?
       if (!CheckIdentifierUnique (param.identifier))
@@ -76,7 +76,7 @@ namespace s1
       identifiers[param.identifier] = newName;
       newVars.push_back (newName);
 
-      if ((param.dir & dirOut) != 0)
+      if ((param.dir & semantics::FunctionFormalParameter::dirOut) != 0)
         outputParams.push_back (param.identifier);
     }
 
@@ -111,7 +111,7 @@ namespace s1
 
     FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (semantics::TypePtr returnType,
                                                                                const uc::String& identifier,
-                                                                               const FunctionFormalParameters& params)
+                                                                               const semantics::FunctionFormalParameters& params)
     {
       if (level >= semantics::ScopeLevel::Function)
       {
@@ -149,21 +149,19 @@ namespace s1
       uc::String identifierDecorated (identifier);
       identifierDecorated.append ("$");
       int lastDir = -1;
-      for (FunctionFormalParameters::const_iterator param (params.begin());
-           param != params.end();
-           ++param)
+      for (const auto& param : params)
       {
         std::string decorationString;
-        if (param->dir != lastDir)
+        if (param.dir != lastDir)
         {
           char dirStr[3] = { 0, 0, 0 };
           int c = 0;
           if (lastDir != -1) dirStr[c++] = '_';
-          dirStr[c] = param->dir + '0';
+          dirStr[c] = param.dir + '0';
           decorationString.append (dirStr);
-          lastDir = param->dir;
+          lastDir = param.dir;
         }
-        auto typeImpl = param->type.get();
+        auto typeImpl = param.type.get();
         decorationString.append (handler->GetTypeString (typeImpl));
         identifierDecorated.append (decorationString.c_str());
       }
@@ -184,7 +182,7 @@ namespace s1
       }
 
       const uc::String& identifier = builtin->GetIdentifier();
-      const FunctionFormalParameters& params = builtin->GetFormalParameters();
+      const auto& params = builtin->GetFormalParameters();
       auto funcIdentResult = CheckIdentifierIsFunction (identifier);
       if (!funcIdentResult)
       {
@@ -239,7 +237,7 @@ namespace s1
           for (; actual < params.size(); formal++)
           {
             // Only consider user-specified parameters for matching
-            if (candidateParams[formal].paramType != ptUser) continue;
+            if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
 
             auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
             auto paramType = exprImpl->GetValueType ();
@@ -256,7 +254,7 @@ namespace s1
           for (; formal < candidateParams.size(); formal++)
           {
             // Only consider user-specified parameters for matching
-            if (candidateParams[formal].paramType != ptUser) continue;
+            if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
 
             // Leftover parameter + no default value? Skip
             if (!candidateParams[formal].defaultValue)
@@ -284,13 +282,13 @@ namespace s1
             for (; actual < params.size(); formal++)
             {
               // Only consider user-specified parameters for matching
-              if (candidateParams[formal].paramType != ptUser) continue;
+              if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
 
               auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
               auto paramType = exprImpl->GetValueType ();
               auto formalParamType = candidateParams[formal].type.get();
               bool match;
-              if (candidateParams[formal].dir & dirOut)
+              if (candidateParams[formal].dir & semantics::FunctionFormalParameter::dirOut)
                 // Output parameters must _always_ match exactly
                 match = paramType->IsEqual (*formalParamType);
               else
@@ -308,7 +306,7 @@ namespace s1
             for (; formal < candidateParams.size(); formal++)
             {
               // Only consider user-specified parameters for matching
-              if (candidateParams[formal].paramType != ptUser) continue;
+              if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
 
               // Leftover parameter + no default value? Skip
               if (!candidateParams[formal].defaultValue)

@@ -57,7 +57,7 @@ namespace s1
       }
 
       FunctionCodeGenerator::HandleParamResult
-        FunctionCodeGenerator::DefaultHandleParameter (const Scope::FunctionFormalParameter& param,
+        FunctionCodeGenerator::DefaultHandleParameter (const semantics::FunctionFormalParameter& param,
                                                        const size_t* arraySize,
                                                        bool userInputVerbatim) const
       {
@@ -71,12 +71,12 @@ namespace s1
           typeSuffix = typeStrings.second;
         }
 
-        if (param.dir & semantics::Scope::dirIn)
+        if (param.dir & semantics::FunctionFormalParameter::dirIn)
         {
           uc::String paramIdent;
-          if (!userInputVerbatim || (param.paramType >= Scope::ptAutoGlobal))
+          if (!userInputVerbatim || (param.paramType >= semantics::FunctionFormalParameter::ptAutoGlobal))
           {
-            uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "I" : "i");
+            uc::String paramIdentDecorated (param.paramType == semantics::FunctionFormalParameter::ptAutoGlobal ? "I" : "i");
             paramIdentDecorated.append (param.identifier);
             paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
           }
@@ -87,12 +87,12 @@ namespace s1
           result.inParam = ParamInfo{ paramStrBase, paramIdent, typeSuffix };
         }
 
-        if (param.dir & semantics::Scope::dirOut)
+        if (param.dir & semantics::FunctionFormalParameter::dirOut)
         {
           uc::String paramIdent;
-          if (!userInputVerbatim || (param.paramType >= Scope::ptAutoGlobal))
+          if (!userInputVerbatim || (param.paramType >= semantics::FunctionFormalParameter::ptAutoGlobal))
           {
-            uc::String paramIdentDecorated (param.paramType == Scope::ptAutoGlobal ? "O" : "o");
+            uc::String paramIdentDecorated (param.paramType == semantics::FunctionFormalParameter::ptAutoGlobal ? "O" : "o");
             paramIdentDecorated.append (param.identifier);
             paramIdent = traits.ConvertIdentifier (paramIdentDecorated);
           }
@@ -122,9 +122,6 @@ namespace s1
                                                        const intermediate::ProgramPtr& prog,
                                                        int frequency)
       {
-        typedef semantics::Scope Scope;
-        typedef Scope::FunctionFormalParameters FunctionFormalParameters;
-
         const intermediate::Program::TransferValues& transferValues = prog->GetTransferValues ();
         bool doTransfer = !transferValues.empty ();
 

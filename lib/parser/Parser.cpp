@@ -720,7 +720,7 @@ namespace s1
     }
     uc::String functionIdentifier = astFunctionDecl.identifier.GetString();
     // Parse formal parameters
-    semantics::Scope::FunctionFormalParameters params;
+    semantics::FunctionFormalParameters params;
     ParseFuncParamFormal (scope, params, astFunctionDecl);
     // Add function to scope, get block
     Function func (scope->AddFunction (returnType, functionIdentifier, params));
@@ -731,45 +731,45 @@ namespace s1
   }
 
   void Parser::ParseFuncParamFormal (const Scope& scope,
-                                     semantics::Scope::FunctionFormalParameters& params,
+                                     semantics::FunctionFormalParameters& params,
                                      const parser::ast::FunctionDecl& astFunctionDecl)
   {
     params.reserve (astFunctionDecl.params.size());
     for (const auto& param : astFunctionDecl.params)
     {
       int paramDirection = 0;
-      semantics::Scope::FormalParameterFrequency freqQualifier = semantics::Scope::freqAuto;
+      semantics::FunctionFormalParameter::Frequency freqQualifier = semantics::FunctionFormalParameter::freqAuto;
       int numFreqQualifiers = 0;
       for (const auto& qualifierToken : param.qualifiers)
       {
         if (qualifierToken.typeOrID == lexer::kwIn)
         {
           // 'in' parameter
-          if ((paramDirection & semantics::Scope::dirIn) != 0)
+          if ((paramDirection & semantics::FunctionFormalParameter::dirIn) != 0)
           {
             // TODO: Warn about redundancy
           }
-          paramDirection |= semantics::Scope::dirIn;
+          paramDirection |= semantics::FunctionFormalParameter::dirIn;
         }
         else if (qualifierToken.typeOrID == lexer::kwOut)
         {
           // 'out' parameter
-          if ((paramDirection & semantics::Scope::dirOut) != 0)
+          if ((paramDirection & semantics::FunctionFormalParameter::dirOut) != 0)
           {
             // TODO: Warn about redundancy
           }
-          paramDirection |= semantics::Scope::dirOut;
+          paramDirection |= semantics::FunctionFormalParameter::dirOut;
         }
         else if (qualifierToken.typeOrID == lexer::kwUniform)
         {
           // 'uniform' qualifier
-          freqQualifier = semantics::Scope::freqUniform;
+          freqQualifier = semantics::FunctionFormalParameter::freqUniform;
           numFreqQualifiers++;
         }
         else if (qualifierToken.typeOrID == lexer::kwAttribute)
         {
           // 'attribute' qualifier
-          freqQualifier = semantics::Scope::freqAttribute;
+          freqQualifier = semantics::FunctionFormalParameter::freqAttribute;
           numFreqQualifiers++;
         }
         else
@@ -778,22 +778,22 @@ namespace s1
         }
       }
       // If no explicit direction is given, use 'in'
-      if (paramDirection == 0) paramDirection = semantics::Scope::dirIn;
-      semantics::Scope::FunctionFormalParameter newParam;
-      newParam.dir = (semantics::Scope::FormalParameterDirection)paramDirection;
+      if (paramDirection == 0) paramDirection = semantics::FunctionFormalParameter::dirIn;
+      semantics::FunctionFormalParameter newParam;
+      newParam.dir = (semantics::FunctionFormalParameter::Direction)paramDirection;
       newParam.freqQualifier = freqQualifier;
       newParam.type = ParseType (param.type.get(), scope);
       newParam.identifier = param.identifier.GetString();
       if (param.defaultValue)
       {
         // Handle default value
-        if (paramDirection == semantics::Scope::dirOut)
+        if (paramDirection == semantics::FunctionFormalParameter::dirOut)
           ParseError (Error::OutParameterWithDefault);
         else
           newParam.defaultValue = ParseExpression (scope, param.defaultValue.get());
       }
-      if ((((paramDirection & semantics::Scope::dirIn) == 0)
-          || ((paramDirection & semantics::Scope::dirOut) != 0))
+      if ((((paramDirection & semantics::FunctionFormalParameter::dirIn) == 0)
+          || ((paramDirection & semantics::FunctionFormalParameter::dirOut) != 0))
         && (numFreqQualifiers > 0))
       {
         ParseError (Error::QualifiersNotAllowed);

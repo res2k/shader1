@@ -55,7 +55,7 @@ public:
       
     s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,
-      const FunctionFormalParameters& params);
+      const s1::semantics::FunctionFormalParameters& params);
   };
   
   s1::semantics::ScopePtr CreateScope (s1::semantics::ScopePtr parentScope, s1::semantics::ScopeLevel scopeLevel)

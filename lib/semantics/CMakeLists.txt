@@ -14,6 +14,7 @@ set(semantics_sources
     ${S1_INC}/semantics/Expression.h
     ${S1_INC}/semantics/forwarddecl.h
     ${S1_INC}/semantics/Function.h
+    ${S1_INC}/semantics/FunctionFormalParameter.h
     ${S1_INC}/semantics/Handler.h
     ${S1_INC}/semantics/Name.h
     ${S1_INC}/semantics/Scope.h

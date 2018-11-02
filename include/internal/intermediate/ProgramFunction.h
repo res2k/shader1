@@ -20,6 +20,7 @@
 
 #include "intermediate/Sequence.h"
 #include "semantics/Handler.h"
+#include "semantics/FunctionFormalParameter.h"
 
 #include "forwarddecl.h"
 
@@ -31,13 +32,13 @@ namespace s1
     {
       uc::String originalIdentifier;
       uc::String identifier;
-      semantics::Scope::FunctionFormalParameters params;
+      semantics::FunctionFormalParameters params;
       SequencePtr body;
       bool isEntryFunction;
     public:
       ProgramFunction (const uc::String& originalIdentifier,
                        const uc::String& identifier,
-                       const semantics::Scope::FunctionFormalParameters& params,
+                       const semantics::FunctionFormalParameters& params,
                        const SequencePtr& body,
                        bool isEntryFunction);
 
@@ -45,7 +46,7 @@ namespace s1
       { return originalIdentifier; }
       const uc::String& GetIdentifier() const
       { return identifier; }
-      const semantics::Scope::FunctionFormalParameters& GetParams() const
+      const semantics::FunctionFormalParameters& GetParams() const
       { return params; }
       SequencePtr GetBody() const
       { return body; }

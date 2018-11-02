@@ -29,7 +29,7 @@ namespace s1
 
     NameFunction::~NameFunction () {}
 
-    semantics::Function* NameFunction::AddOverload (const Scope::FunctionFormalParameters& params, Scope* funcScope, Block* body)
+    semantics::Function* NameFunction::AddOverload (const FunctionFormalParameters& params, Scope* funcScope, Block* body)
     {
       FunctionPtr newFunc = new semantics::Function (this, params, funcScope, body);
       overloads.push_back (newFunc);
