@@ -35,5 +35,12 @@ namespace s1
       overloads.push_back (newFunc);
       return newFunc.get();
     }
+
+    semantics::BuiltinFunction* NameFunction::AddBuiltin (Type* returnType, const FunctionFormalParameters& params, Builtin which)
+    {
+      BuiltinFunctionPtr newFunc = new semantics::BuiltinFunction (this, returnType, params, which);
+      overloads.push_back (newFunc);
+      return newFunc.get();
+    }
   } // namespace semantics
 } // namespace s1

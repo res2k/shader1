@@ -41,6 +41,7 @@ namespace s1
                     const FunctionFormalParameters& params)
         : name (name), returnType (returnType), params (params) {}
     public:
+      virtual bool IsBuiltin() const = 0;
       /// Return name the function is associated with
       NameFunction* GetName() const { return name; }
       /// Return type of variable value
@@ -63,11 +64,35 @@ namespace s1
                 Scope* scope, Block* body)
         : BaseFunction (name, returnType, params), scope (scope), body (body) {}
     public:
+      bool IsBuiltin() const override { return false; }
+
       /// Get function block to add commands to.
       Block* GetBody() const { return body.get(); }
 
-      static Function* upcast (BaseFunction* f) { return static_cast<Function*> (f); }
-      static const Function* upcast (const BaseFunction* f) { return static_cast<const Function*> (f); }
+      static Function* upcast (BaseFunction* f) { return (f && !f->IsBuiltin()) ? static_cast<Function*> (f) : nullptr; }
+      static const Function* upcast (const BaseFunction* f) { return (f && !f->IsBuiltin()) ? static_cast<const Function*> (f) : nullptr; }
+    };
+
+    /// Built-in Function
+    class BuiltinFunction : public BaseFunction
+    {
+    public:
+      Builtin which;
+    protected:
+      friend class NameFunction;
+      BuiltinFunction (NameFunction* name,
+                       Type* returnType,
+                       const FunctionFormalParameters& params,
+                       Builtin which)
+        : BaseFunction (name, returnType, params), which (which)  {}
+    public:
+      bool IsBuiltin() const override { return true; }
+
+      /// Return which built-in function is represented
+      Builtin GetBuiltin() const { return which; }
+
+      static BuiltinFunction* upcast (BaseFunction* f) { return (f && f->IsBuiltin()) ? static_cast<BuiltinFunction*> (f) : nullptr; }
+      static const BuiltinFunction* upcast (const BaseFunction* f) { return (f && f->IsBuiltin()) ? static_cast<const BuiltinFunction*> (f) : nullptr; }
     };
   } // namespace semantics
 } // namespace s1

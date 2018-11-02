@@ -48,10 +48,28 @@ namespace s1
     struct Expression;
     typedef boost::intrusive_ptr<Expression> ExpressionPtr;
 
+      /// Possible built-in functions
+    enum struct Builtin
+    {
+      Pow,
+      VecDot,
+      VecCross,
+      MatrixLinAlgMul,
+      VecNormalize,
+      VecLength,
+      SampleTex1D,
+      SampleTex2D,
+      SampleTex3D,
+      SampleTexCUBE,
+      Min,
+      Max
+    };
     class BaseFunction;
     typedef boost::intrusive_ptr<BaseFunction> BaseFunctionPtr;
     class Function;
     typedef boost::intrusive_ptr<Function> FunctionPtr;
+    class BuiltinFunction;
+    typedef boost::intrusive_ptr<BuiltinFunction> BuiltinFunctionPtr;
 
     /**
      * Levels of scope.

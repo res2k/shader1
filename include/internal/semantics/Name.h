@@ -76,6 +76,8 @@ namespace s1
 
       /// Add an overload for the function name
       semantics::Function* AddOverload (Type* returnType, const FunctionFormalParameters& params, Scope* funcScope, Block* body);
+      /// Add an overload with a built-in function
+      semantics::BuiltinFunction* AddBuiltin (Type* returnType, const FunctionFormalParameters& params, Builtin which);
       /// Get overloads for the function name
       const std::vector<BaseFunctionPtr>& GetOverloads () const { return overloads; }
 
