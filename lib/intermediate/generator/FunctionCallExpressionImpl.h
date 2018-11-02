@@ -49,6 +49,9 @@ namespace s1
       typedef std::vector<PostActionInfo> PostActions;
       bool FetchRegisters (s1::intermediate::IntermediateGeneratorSemanticsHandler::BlockImpl & block,
                            FetchedRegs& fetchedRegs, PostActions& postActions);
+
+      SequenceOpPtr BuiltinOp (semantics::BuiltinFunction* builtin, RegisterPtr destination,
+                               const std::vector<RegisterPtr>& inParams);
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                   ExpressionContext&& context,

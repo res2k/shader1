@@ -31,10 +31,8 @@ namespace s1
     public:
       struct FunctionInfo
       {
-        semantics::FunctionPtr functionObj;
+        semantics::BaseFunctionPtr functionObj;
         uc::String decoratedIdentifier;
-        /// Builtin function information
-        BuiltinPtr builtin;
       };
       typedef boost::shared_ptr<FunctionInfo> FunctionInfoPtr;
       typedef std::vector<FunctionInfoPtr> FunctionInfoVector;
@@ -93,7 +91,10 @@ namespace s1
       }
       int DistanceToScope (ScopeImpl* scope);
 
-      void AddBuiltinFunction (const BuiltinPtr& builtin);
+      void AddBuiltinFunction (semantics::Builtin which,
+                               semantics::Type* returnType,
+                               const uc::String& identifier,
+                               const semantics::FunctionFormalParameters& formalParameters);
       FunctionInfoVector GetFunctions () const;
       FunctionInfoVector CollectOverloadCandidates (semantics::Name* functionName, const ExpressionVector& params) const;
 

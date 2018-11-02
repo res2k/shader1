@@ -26,6 +26,12 @@
 #include "intermediate/SequenceBuilder.h"
 #include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
 #include "intermediate/SequenceOp/SequenceOpFunctionCall.h"
+#include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
+#include "intermediate/SequenceOp/SequenceOpSampleTexture.h"
+#include "intermediate/SequenceOp/SequenceOpVectorCross.h"
+#include "intermediate/SequenceOp/SequenceOpVectorDot.h"
+#include "intermediate/SequenceOp/SequenceOpVectorLength.h"
+#include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
 #include "semantics/Function.h"
 #include "semantics/Name.h"
 #include "ScopeImpl.h"
@@ -67,8 +73,7 @@ namespace s1
       }
       overload = candidates[0];
 
-      const auto& formalParams = overload->functionObj ? overload->functionObj->GetParameters()
-                                                       : overload->builtin->GetFormalParameters();
+      const auto& formalParams = overload->functionObj->GetParameters();
       for (size_t formal = 0, actual = 0; formal < formalParams.size(); formal++)
       {
         const auto& param (formalParams[formal]);
@@ -90,8 +95,7 @@ namespace s1
                                                                                             PostActions& postActions)
     {
       bool result = true;
-      const auto& formalParams = overload->functionObj ? overload->functionObj->GetParameters()
-                                                       : overload->builtin->GetFormalParameters();
+      const auto& formalParams = overload->functionObj->GetParameters();
       for (size_t i = 0; i < actualParams.size(); i++)
       {
         RegisterPtr reg1, reg2;
@@ -114,12 +118,55 @@ namespace s1
       return result;
     }
 
+    SequenceOpPtr
+    IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::BuiltinOp (semantics::BuiltinFunction* builtin,
+                                                                                  RegisterPtr destination,
+                                                                                  const std::vector<RegisterPtr>& inParams)
+    {
+      switch (builtin->GetBuiltin())
+      {
+      case semantics::Builtin::Pow:
+        return new SequenceOpBuiltinCall (destination, intermediate::pow, inParams);
+      case semantics::Builtin::VecDot:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpVectorDot (destination, inParams[0], inParams[1]);
+      case semantics::Builtin::VecCross:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpVectorCross (destination, inParams[0], inParams[1]);
+      case semantics::Builtin::MatrixLinAlgMul:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpMatrixLinAlgMul (destination, inParams[0], inParams[1]);
+      case semantics::Builtin::VecNormalize:
+        S1_ASSERT (inParams.size () == 1, SequenceOpPtr ());
+        return new SequenceOpVectorNormalize (destination, inParams[0]);
+      case semantics::Builtin::VecLength:
+        S1_ASSERT (inParams.size () == 1, SequenceOpPtr ());
+        return new SequenceOpVectorLength (destination, inParams[0]);
+      case semantics::Builtin::SampleTex1D:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpSampleTexture (destination, SequenceVisitor::tex1D, inParams[0], inParams[1]);
+      case semantics::Builtin::SampleTex2D:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpSampleTexture (destination, SequenceVisitor::tex2D, inParams[0], inParams[1]);
+      case semantics::Builtin::SampleTex3D:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpSampleTexture (destination, SequenceVisitor::tex3D, inParams[0], inParams[1]);
+      case semantics::Builtin::SampleTexCUBE:
+        S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
+        return new SequenceOpSampleTexture (destination, SequenceVisitor::texCUBE, inParams[0], inParams[1]);
+      case semantics::Builtin::Min:
+        return new SequenceOpBuiltinCall (destination, intermediate::min, inParams);
+      case semantics::Builtin::Max:
+        return new SequenceOpBuiltinCall (destination, intermediate::max, inParams);
+      }
+      S1_ASSERT_NOT_REACHED(SequenceOpPtr());
+    }
+
     semantics::TypePtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::GetValueType ()
     {
       if (!SelectOverload ()) return nullptr; // Assume error already handled
 
-      return overload->functionObj ? overload->functionObj->GetReturnType()
-                                   : overload->builtin->GetReturnType();
+      return overload->functionObj->GetReturnType();
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
@@ -139,8 +186,7 @@ namespace s1
       bool paramsOkay = true;
       std::vector<RegisterPtr> inParams;
       std::vector<RegisterPtr> outParams;
-      const auto& formalParams = overload->functionObj ? overload->functionObj->GetParameters()
-                                                       : overload->builtin->GetFormalParameters();
+      const auto& formalParams = overload->functionObj->GetParameters();
       for (size_t i = 0; i < formalParams.size(); i++)
       {
         const auto& param (formalParams[i]);
@@ -188,9 +234,9 @@ namespace s1
         destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);
 
       SequenceOpPtr seqOp;
-      if (overload->builtin)
+      if (auto builtin = semantics::BuiltinFunction::upcast (overload->functionObj.get()))
       {
-        seqOp = overload->builtin->GetSeqOpFactory () (destination, inParams);
+        seqOp = BuiltinOp (builtin, destination, inParams);
       }
       else
       {

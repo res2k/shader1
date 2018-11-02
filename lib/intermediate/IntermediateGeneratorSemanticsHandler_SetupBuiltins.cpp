@@ -18,20 +18,10 @@
 #include "base/common.h"
 
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
-#include "intermediate/SequenceOp/SequenceOpBuiltinCall.h"
-#include "intermediate/SequenceOp/SequenceOpMatrixLinAlgMul.h"
-#include "intermediate/SequenceOp/SequenceOpSampleTexture.h"
-#include "intermediate/SequenceOp/SequenceOpVectorCross.h"
-#include "intermediate/SequenceOp/SequenceOpVectorDot.h"
-#include "intermediate/SequenceOp/SequenceOpVectorLength.h"
-#include "intermediate/SequenceOp/SequenceOpVectorNormalize.h"
 #include "intermediate/SequenceVisitor.h"
 #include "semantics/FunctionFormalParameter.h"
 
-#include "Builtin.h"
 #include "ScopeImpl.h"
-
-#include <boost/make_shared.hpp>
 
 namespace s1
 {
@@ -103,90 +93,60 @@ namespace s1
         }
       }
 
-      auto default_builtin_factory =
-        [](intermediate::BuiltinFunction what)
-        {
-          return
-            [what](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-            {
-              return new SequenceOpBuiltinCall (destination, what, inParams);
-            };
-      };
-
-      auto pow_factory = default_builtin_factory (intermediate::pow);
-      scope->AddBuiltinFunction (new Builtin (pow_factory,
-                                              floatType,
-                                              uc::String ("pow"),
-                                              MakeFormalParameters2 (floatType)));
+      scope->AddBuiltinFunction (semantics::Builtin::Pow,
+                                 floatType.get(),
+                                 uc::String ("pow"),
+                                 MakeFormalParameters2 (floatType));
 
       uc::String id_dot ("dot");
-      auto dot_factory =
-        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-        {
-          S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
-          return new SequenceOpVectorDot (destination, inParams[0], inParams[1]);
-        };
-
       for (unsigned int c = 1; c < 5; c++)
       {
-        scope->AddBuiltinFunction (new Builtin (dot_factory,
-                                                intType,
-                                                id_dot,
-                                                MakeFormalParameters2 (vecTypeInt[c])));
-        scope->AddBuiltinFunction (new Builtin (dot_factory,
-                                                uintType,
-                                                id_dot,
-                                                MakeFormalParameters2 (vecTypeUInt[c])));
-        scope->AddBuiltinFunction (new Builtin (dot_factory,
-                                                floatType,
-                                                id_dot,
-                                                MakeFormalParameters2 (vecTypeFloat[c])));
+        scope->AddBuiltinFunction (semantics::Builtin::VecDot,
+                                   intType.get(),
+                                   id_dot,
+                                   MakeFormalParameters2 (vecTypeInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::VecDot,
+                                   uintType.get(),
+                                   id_dot,
+                                   MakeFormalParameters2 (vecTypeUInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::VecDot,
+                                   floatType.get(),
+                                   id_dot,
+                                   MakeFormalParameters2 (vecTypeFloat[c]));
       }
       uc::String id_cross ("cross");
-      auto cross_factory =
-        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-        {
-          S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
-          return new SequenceOpVectorCross (destination, inParams[0], inParams[1]);
-        };
-      scope->AddBuiltinFunction (new Builtin (cross_factory,
-                                              vecTypeInt[3],
-                                              id_cross,
-                                              MakeFormalParameters2 (vecTypeInt[3])));
-      scope->AddBuiltinFunction (new Builtin (cross_factory,
-                                              vecTypeUInt[3],
-                                              id_cross,
-                                              MakeFormalParameters2 (vecTypeUInt[3])));
-      scope->AddBuiltinFunction (new Builtin (cross_factory,
-                                              vecTypeFloat[3],
-                                              id_cross,
-                                              MakeFormalParameters2 (vecTypeFloat[3])));
+      scope->AddBuiltinFunction (semantics::Builtin::VecCross,
+                                 vecTypeInt[3].get(),
+                                 id_cross,
+                                 MakeFormalParameters2 (vecTypeInt[3]));
+      scope->AddBuiltinFunction (semantics::Builtin::VecCross,
+                                 vecTypeUInt[3].get(),
+                                 id_cross,
+                                 MakeFormalParameters2 (vecTypeUInt[3]));
+      scope->AddBuiltinFunction (semantics::Builtin::VecCross,
+                                 vecTypeFloat[3].get(),
+                                 id_cross,
+                                 MakeFormalParameters2 (vecTypeFloat[3]));
 
       uc::String id_mul ("mul");
-      auto mul_factory =
-        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-        {
-          S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
-          return new SequenceOpMatrixLinAlgMul (destination, inParams[0], inParams[1]);
-        };
       for (unsigned int l = 1; l < 5; l++)
       {
         for (unsigned int m = 1; m < 5; m++)
         {
           for (unsigned int n = 1; n < 5; n++)
           {
-            scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                    matTypeInt[l][n],
-                                                    id_mul,
-                                                    MakeFormalParameters2 (matTypeInt[l][m], matTypeInt[m][n])));
-            scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                    matTypeUInt[l][n],
-                                                    id_mul,
-                                                    MakeFormalParameters2 (matTypeUInt[l][m], matTypeUInt[m][n])));
-            scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                    matTypeFloat[l][n],
-                                                    id_mul,
-                                                    MakeFormalParameters2 (matTypeFloat[l][m], matTypeFloat[m][n])));
+            scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                       matTypeInt[l][n].get(),
+                                       id_mul,
+                                       MakeFormalParameters2 (matTypeInt[l][m], matTypeInt[m][n]));
+            scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                       matTypeUInt[l][n].get(),
+                                       id_mul,
+                                       MakeFormalParameters2 (matTypeUInt[l][m], matTypeUInt[m][n]));
+            scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                       matTypeFloat[l][n].get(),
+                                       id_mul,
+                                       MakeFormalParameters2 (matTypeFloat[l][m], matTypeFloat[m][n]));
           }
         }
       }
@@ -195,18 +155,18 @@ namespace s1
       {
         for (unsigned int n = 1; n < 5; n++)
         {
-          scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                  vecTypeInt[n],
-                                                  id_mul,
-                                                  MakeFormalParameters2 (vecTypeInt[m], matTypeInt[m][n])));
-          scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                  vecTypeUInt[n],
-                                                  id_mul,
-                                                  MakeFormalParameters2 (vecTypeUInt[m], matTypeUInt[m][n])));
-          scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                  vecTypeFloat[n],
-                                                  id_mul,
-                                                  MakeFormalParameters2 (vecTypeFloat[m], matTypeFloat[m][n])));
+          scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                     vecTypeInt[n].get(),
+                                     id_mul,
+                                     MakeFormalParameters2 (vecTypeInt[m], matTypeInt[m][n]));
+          scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                     vecTypeUInt[n].get(),
+                                     id_mul,
+                                     MakeFormalParameters2 (vecTypeUInt[m], matTypeUInt[m][n]));
+          scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                     vecTypeFloat[n].get(),
+                                     id_mul,
+                                     MakeFormalParameters2 (vecTypeFloat[m], matTypeFloat[m][n]));
         }
       }
 
@@ -214,196 +174,171 @@ namespace s1
       {
         for (unsigned int m = 1; m < 5; m++)
         {
-          scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                  vecTypeInt[l],
-                                                  id_mul,
-                                                  MakeFormalParameters2 (matTypeInt[l][m], vecTypeInt[m])));
-          scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                  vecTypeUInt[l],
-                                                  id_mul,
-                                                  MakeFormalParameters2 (matTypeUInt[l][m], vecTypeUInt[m])));
-          scope->AddBuiltinFunction (new Builtin (mul_factory,
-                                                  vecTypeFloat[l],
-                                                  id_mul,
-                                                  MakeFormalParameters2 (matTypeFloat[l][m], vecTypeFloat[m])));
+          scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                     vecTypeInt[l].get(),
+                                     id_mul,
+                                     MakeFormalParameters2 (matTypeInt[l][m], vecTypeInt[m]));
+          scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                     vecTypeUInt[l].get(),
+                                     id_mul,
+                                     MakeFormalParameters2 (matTypeUInt[l][m], vecTypeUInt[m]));
+          scope->AddBuiltinFunction (semantics::Builtin::MatrixLinAlgMul,
+                                     vecTypeFloat[l].get(),
+                                     id_mul,
+                                     MakeFormalParameters2 (matTypeFloat[l][m], vecTypeFloat[m]));
         }
       }
 
       uc::String id_normalize ("normalize");
-      auto normalize_factory =
-        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-        {
-          S1_ASSERT (inParams.size () == 1, SequenceOpPtr ());
-          return new SequenceOpVectorNormalize (destination, inParams[0]);
-        };
       for (unsigned int c = 1; c < 5; c++)
       {
-        scope->AddBuiltinFunction (new Builtin (normalize_factory,
-                                                vecTypeFloat[c],
-                                                id_normalize,
-                                                MakeFormalParameters1 (vecTypeInt[c])));
-        scope->AddBuiltinFunction (new Builtin (normalize_factory,
-                                                vecTypeFloat[c],
-                                                id_normalize,
-                                                MakeFormalParameters1 (vecTypeUInt[c])));
-        scope->AddBuiltinFunction (new Builtin (normalize_factory,
-                                                vecTypeFloat[c],
-                                                id_normalize,
-                                                MakeFormalParameters1 (vecTypeFloat[c])));
+        scope->AddBuiltinFunction (semantics::Builtin::VecNormalize,
+                                   vecTypeFloat[c].get(),
+                                   id_normalize,
+                                   MakeFormalParameters1 (vecTypeInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::VecNormalize,
+                                   vecTypeFloat[c].get(),
+                                   id_normalize,
+                                   MakeFormalParameters1 (vecTypeUInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::VecNormalize,
+                                   vecTypeFloat[c].get(),
+                                   id_normalize,
+                                   MakeFormalParameters1 (vecTypeFloat[c]));
       }
 
       uc::String id_length ("length");
-      auto length_factory =
-        [](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-        {
-          S1_ASSERT (inParams.size () == 1, SequenceOpPtr ());
-          return new SequenceOpVectorLength (destination, inParams[0]);
-        };
       for (unsigned int c = 1; c < 5; c++)
       {
-        scope->AddBuiltinFunction (new Builtin (length_factory,
-                                                floatType,
-                                                id_length,
-                                                MakeFormalParameters1 (vecTypeInt[c])));
-        scope->AddBuiltinFunction (new Builtin (length_factory,
-                                                floatType,
-                                                id_length,
-                                                MakeFormalParameters1 (vecTypeUInt[c])));
-        scope->AddBuiltinFunction (new Builtin (length_factory,
-                                                floatType,
-                                                id_length,
-                                                MakeFormalParameters1 (vecTypeFloat[c])));
+        scope->AddBuiltinFunction (semantics::Builtin::VecLength,
+                                   floatType.get(),
+                                   id_length,
+                                   MakeFormalParameters1 (vecTypeInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::VecLength,
+                                   floatType.get(),
+                                   id_length,
+                                   MakeFormalParameters1 (vecTypeUInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::VecLength,
+                                   floatType.get(),
+                                   id_length,
+                                   MakeFormalParameters1 (vecTypeFloat[c]));
       }
 
-      auto sample_texture_factory =
-        [](SequenceVisitor::SampleTextureOp op)
-      {
-        return
-          [op](RegisterPtr destination, const std::vector<RegisterPtr>& inParams) -> SequenceOpPtr
-          {
-            S1_ASSERT (inParams.size () == 2, SequenceOpPtr ());
-            return new SequenceOpSampleTexture (destination, op, inParams[0], inParams[1]);
-          };
-      };
-
       uc::String id_tex1D ("tex1D");
-      auto tex1D_factory = sample_texture_factory (SequenceVisitor::tex1D);
-      scope->AddBuiltinFunction (new Builtin (tex1D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex1D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_1D), vecTypeInt[1])));
-      scope->AddBuiltinFunction (new Builtin (tex1D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex1D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_1D), vecTypeUInt[1])));
-      scope->AddBuiltinFunction (new Builtin (tex1D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex1D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_1D), vecTypeFloat[1])));
+      auto sampler_1D = CreateSamplerType (semantics::SamplerType::_1D);
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex1D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex1D,
+                                 MakeFormalParameters2 (sampler_1D, vecTypeInt[1]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex1D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex1D,
+                                 MakeFormalParameters2 (sampler_1D, vecTypeUInt[1]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex1D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex1D,
+                                 MakeFormalParameters2 (sampler_1D, vecTypeFloat[1]));
 
       uc::String id_tex2D ("tex2D");
-      auto tex2D_factory = sample_texture_factory (SequenceVisitor::tex2D);
-      scope->AddBuiltinFunction (new Builtin (tex2D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex2D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_2D), vecTypeInt[2])));
-      scope->AddBuiltinFunction (new Builtin (tex2D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex2D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_2D), vecTypeUInt[2])));
-      scope->AddBuiltinFunction (new Builtin (tex2D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex2D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_2D), vecTypeFloat[2])));
+      auto sampler_2D = CreateSamplerType (semantics::SamplerType::_2D);
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex2D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex2D,
+                                 MakeFormalParameters2 (sampler_2D, vecTypeInt[2]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex2D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex2D,
+                                 MakeFormalParameters2 (sampler_2D, vecTypeUInt[2]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex2D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex2D,
+                                 MakeFormalParameters2 (sampler_2D, vecTypeFloat[2]));
 
       uc::String id_tex3D ("tex3D");
-      auto tex3D_factory = sample_texture_factory (SequenceVisitor::tex3D);
-      scope->AddBuiltinFunction (new Builtin (tex3D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex3D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_3D), vecTypeInt[3])));
-      scope->AddBuiltinFunction (new Builtin (tex3D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex3D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_3D), vecTypeUInt[3])));
-      scope->AddBuiltinFunction (new Builtin (tex3D_factory,
-                                              vecTypeFloat[4],
-                                              id_tex3D,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::_3D), vecTypeFloat[3])));
+      auto sampler_3D = CreateSamplerType (semantics::SamplerType::_3D);
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex3D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex3D,
+                                 MakeFormalParameters2 (sampler_3D, vecTypeInt[3]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex3D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex3D,
+                                 MakeFormalParameters2 (sampler_3D, vecTypeUInt[3]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTex3D,
+                                 vecTypeFloat[4].get(),
+                                 id_tex3D,
+                                 MakeFormalParameters2 (sampler_3D, vecTypeFloat[3]));
 
       uc::String id_texCUBE ("texCUBE");
-      auto texCUBE_factory = sample_texture_factory (SequenceVisitor::texCUBE);
-      scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
-                                              vecTypeFloat[4],
-                                              id_texCUBE,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::CUBE), vecTypeInt[3])));
-      scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
-                                              vecTypeFloat[4],
-                                              id_texCUBE,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::CUBE), vecTypeUInt[3])));
-      scope->AddBuiltinFunction (new Builtin (texCUBE_factory,
-                                              vecTypeFloat[4],
-                                              id_texCUBE,
-                                              MakeFormalParameters2 (CreateSamplerType (semantics::SamplerType::CUBE), vecTypeFloat[3])));
+      auto sampler_CUBE = CreateSamplerType (semantics::SamplerType::CUBE);
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTexCUBE,
+                                 vecTypeFloat[4].get(),
+                                 id_texCUBE,
+                                 MakeFormalParameters2 (sampler_CUBE, vecTypeInt[3]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTexCUBE,
+                                 vecTypeFloat[4].get(),
+                                 id_texCUBE,
+                                 MakeFormalParameters2 (sampler_CUBE, vecTypeUInt[3]));
+      scope->AddBuiltinFunction (semantics::Builtin::SampleTexCUBE,
+                                 vecTypeFloat[4].get(),
+                                 id_texCUBE,
+                                 MakeFormalParameters2 (sampler_CUBE, vecTypeFloat[3]));
 
       uc::String id_min ("min");
-      auto min_factory = default_builtin_factory (intermediate::min);
-      scope->AddBuiltinFunction (new Builtin (min_factory,
-                                              intType,
-                                              id_min,
-                                              MakeFormalParameters2 (intType)));
-      scope->AddBuiltinFunction (new Builtin (min_factory,
-                                              uintType,
-                                              id_min,
-                                              MakeFormalParameters2 (uintType)));
-      scope->AddBuiltinFunction (new Builtin (min_factory,
-                                              floatType,
-                                              id_min,
-                                              MakeFormalParameters2 (floatType)));
+      scope->AddBuiltinFunction (semantics::Builtin::Min,
+                                 intType.get(),
+                                 id_min,
+                                 MakeFormalParameters2 (intType));
+      scope->AddBuiltinFunction (semantics::Builtin::Min,
+                                 uintType.get(),
+                                 id_min,
+                                 MakeFormalParameters2 (uintType));
+      scope->AddBuiltinFunction (semantics::Builtin::Min,
+                                 floatType.get(),
+                                 id_min,
+                                 MakeFormalParameters2 (floatType));
       for (unsigned int c = 1; c < 5; c++)
       {
-        scope->AddBuiltinFunction (new Builtin (min_factory,
-                                                vecTypeInt[c],
-                                                id_min,
-                                                MakeFormalParameters2 (vecTypeInt[c])));
-        scope->AddBuiltinFunction (new Builtin (min_factory,
-                                                vecTypeUInt[c],
-                                                id_min,
-                                                 MakeFormalParameters2 (vecTypeUInt[c])));
-        scope->AddBuiltinFunction (new Builtin (min_factory,
-                                                vecTypeFloat[c],
-                                                id_min,
-                                                MakeFormalParameters2 (vecTypeFloat[c])));
+        scope->AddBuiltinFunction (semantics::Builtin::Min,
+                                   vecTypeInt[c].get(),
+                                   id_min,
+                                   MakeFormalParameters2 (vecTypeInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::Min,
+                                   vecTypeUInt[c].get(),
+                                   id_min,
+                                   MakeFormalParameters2 (vecTypeUInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::Min,
+                                   vecTypeFloat[c].get(),
+                                   id_min,
+                                   MakeFormalParameters2 (vecTypeFloat[c]));
       }
 
       uc::String id_max ("max");
-      auto max_factory = default_builtin_factory (intermediate::max);
-      scope->AddBuiltinFunction (new Builtin (max_factory,
-                                              intType,
-                                              id_max,
-                                              MakeFormalParameters2 (intType)));
-      scope->AddBuiltinFunction (new Builtin (max_factory,
-                                              uintType,
-                                              id_max,
-                                              MakeFormalParameters2 (uintType)));
-      scope->AddBuiltinFunction (new Builtin (max_factory,
-                                              floatType,
-                                              id_max,
-                                              MakeFormalParameters2 (floatType)));
+      scope->AddBuiltinFunction (semantics::Builtin::Max,
+                                 intType.get(),
+                                 id_max,
+                                 MakeFormalParameters2 (intType));
+      scope->AddBuiltinFunction (semantics::Builtin::Max,
+                                 uintType.get(),
+                                 id_max,
+                                 MakeFormalParameters2 (uintType));
+      scope->AddBuiltinFunction (semantics::Builtin::Max,
+                                 floatType.get(),
+                                 id_max,
+                                 MakeFormalParameters2 (floatType));
       for (unsigned int c = 1; c < 5; c++)
       {
-        scope->AddBuiltinFunction (new Builtin (max_factory,
-                                                vecTypeInt[c],
-                                                id_max,
-                                                MakeFormalParameters2 (vecTypeInt[c])));
-        scope->AddBuiltinFunction (new Builtin (max_factory,
-                                                vecTypeUInt[c],
-                                                id_max,
-                                                MakeFormalParameters2 (vecTypeUInt[c])));
-        scope->AddBuiltinFunction (new Builtin (max_factory,
-                                                vecTypeFloat[c],
-                                                id_max,
-                                                MakeFormalParameters2 (vecTypeFloat[c])));
+        scope->AddBuiltinFunction (semantics::Builtin::Max,
+                                   vecTypeInt[c].get(),
+                                   id_max,
+                                   MakeFormalParameters2 (vecTypeInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::Max,
+                                   vecTypeUInt[c].get(),
+                                   id_max,
+                                   MakeFormalParameters2 (vecTypeUInt[c]));
+        scope->AddBuiltinFunction (semantics::Builtin::Max,
+                                   vecTypeFloat[c].get(),
+                                   id_max,
+                                   MakeFormalParameters2 (vecTypeFloat[c]));
       }
     }
   } // namespace intermediate

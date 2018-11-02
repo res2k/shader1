@@ -410,7 +410,9 @@ namespace s1
             }
           }
 
-          auto blockImpl = get_static_ptr<BlockImpl> (func->functionObj->GetBody());
+          auto userFunc = semantics::Function::upcast (func->functionObj.get());
+          S1_ASSERT_MSG(userFunc, "unexpected scope for builtin function", ProgramPtr ());
+          auto blockImpl = get_static_ptr<BlockImpl> (userFunc->GetBody());
 
           semantics::FunctionFormalParameters params (func->functionObj->GetParameters());
           semantics::TypePtr retType = func->functionObj->GetReturnType();

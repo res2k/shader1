@@ -178,7 +178,10 @@ namespace s1
       return newFunction;
     }
 
-    void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (const BuiltinPtr& builtin)
+    void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (semantics::Builtin which,
+                                                                               semantics::Type* returnType,
+                                                                               const uc::String& identifier,
+                                                                               const semantics::FunctionFormalParameters& formalParameters)
     {
       if (level >= semantics::ScopeLevel::Function)
       {
@@ -186,8 +189,6 @@ namespace s1
         return;
       }
 
-      const uc::String& identifier = builtin->GetIdentifier();
-      const auto& params = builtin->GetFormalParameters();
       auto funcIdentResult = CheckIdentifierIsFunction (identifier);
       if (!funcIdentResult)
       {
@@ -204,8 +205,8 @@ namespace s1
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
       // Decorate identifier with type info (so each overload gets a unique name)
-      funcInfo->decoratedIdentifier = DecorateIdentifier (identifier, params);
-      funcInfo->builtin = builtin;
+      funcInfo->decoratedIdentifier = DecorateIdentifier (identifier, formalParameters);
+      funcInfo->functionObj = funcName->AddBuiltin (returnType, formalParameters, which);
       functions.push_back (funcInfo);
 
       functionsInDeclOrder.push_back (funcInfo);
@@ -227,8 +228,7 @@ namespace s1
         // First, look for an exact parameters type match
         for (const auto& candidate : funcIt->second)
         {
-          const auto& candidateParams = candidate->functionObj ? candidate->functionObj->GetParameters()
-                                                               : candidate->builtin->GetFormalParameters();
+          const auto& candidateParams = candidate->functionObj->GetParameters();
           if (params.size() > candidateParams.size()) continue;
 
           bool abort = false;
@@ -272,8 +272,7 @@ namespace s1
         {
           for (const auto& candidate : funcIt->second)
           {
-            const auto& candidateParams = candidate->functionObj ? candidate->functionObj->GetParameters()
-                                                                 : candidate->builtin->GetFormalParameters();
+            const auto& candidateParams = candidate->functionObj->GetParameters();
             if (params.size() > candidateParams.size()) continue;
 
             bool abort = false;
