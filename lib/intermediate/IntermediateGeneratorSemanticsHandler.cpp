@@ -413,7 +413,7 @@ namespace s1
           auto blockImpl = get_static_ptr<BlockImpl> (func->functionObj->GetBody());
 
           semantics::FunctionFormalParameters params (func->functionObj->GetParameters());
-          semantics::TypePtr retType = func->functionObj->GetName()->GetReturnType();
+          semantics::TypePtr retType = func->functionObj->GetReturnType();
           if (!voidType->IsEqual (*retType))
           {
             semantics::FunctionFormalParameter retParam;
@@ -482,7 +482,7 @@ namespace s1
         {
           auto entryFunctionName = entryFunction->functionObj->GetName();
           newProg->AddFunction (SynthesizeEntryFunction (entryFunctionName->GetIdentifier(),
-                                                         entryFunctionName->GetReturnType(),
+                                                         entryFunction->functionObj->GetReturnType(),
                                                          entryFunction->functionObj->GetParameters()));
         }
       }

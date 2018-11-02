@@ -257,7 +257,7 @@ public:
       ParamsToStr (params);
       str.append (")");
       
-      valueType = name->GetReturnType();
+      // TODO: Resolve overload?
     }
     
     TestExpressionFunction (s1::semantics::Type* type, const ExpressionVector& params)

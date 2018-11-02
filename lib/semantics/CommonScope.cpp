@@ -75,12 +75,12 @@ namespace s1
         // TODO: Error handling
         return FunctionPtr();
       }
-      NameFunctionPtr newName (new NameFunction (this, identifier, returnType.get()));
+      NameFunctionPtr newName (new NameFunction (this, identifier));
       identifiers[identifier] = newName;
       ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);
       auto newBlock = handler->CreateBlock (funcScope);
-      FunctionPtr newFunction = newName->AddOverload (params, funcScope.get(), newBlock.get());
+      FunctionPtr newFunction = newName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
       return newFunction;
     }
   } // namespace semantics

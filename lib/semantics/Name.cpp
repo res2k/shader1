@@ -24,14 +24,14 @@ namespace s1
 {
   namespace semantics
   {
-    NameFunction::NameFunction (Scope* ownerScope, const uc::String& identifier, Type* returnType)
-      : Name (ownerScope, identifier), returnType (returnType) {}
+    NameFunction::NameFunction (Scope* ownerScope, const uc::String& identifier)
+      : Name (ownerScope, identifier) {}
 
     NameFunction::~NameFunction () {}
 
-    semantics::Function* NameFunction::AddOverload (const FunctionFormalParameters& params, Scope* funcScope, Block* body)
+    semantics::Function* NameFunction::AddOverload (Type* returnType, const FunctionFormalParameters& params, Scope* funcScope, Block* body)
     {
-      FunctionPtr newFunc = new semantics::Function (this, params, funcScope, body);
+      FunctionPtr newFunc = new semantics::Function (this, returnType, params, funcScope, body);
       overloads.push_back (newFunc);
       return newFunc.get();
     }

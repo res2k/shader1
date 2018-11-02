@@ -118,7 +118,7 @@ namespace s1
     {
       if (!SelectOverload ()) return nullptr; // Assume error already handled
 
-      return overload->functionObj ? overload->functionObj->GetName()->GetReturnType()
+      return overload->functionObj ? overload->functionObj->GetReturnType()
                                    : overload->builtin->GetReturnType();
     }
 

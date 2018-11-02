@@ -32,18 +32,23 @@ namespace s1
     {
     protected:
       NameFunction* name;
+      /// type of return value
+      TypePtr returnType;
       FunctionFormalParameters params;
       ScopePtr scope;
       BlockPtr body;
 
       friend class NameFunction;
       Function (NameFunction* name,
+                Type* returnType,
                 const FunctionFormalParameters& params,
                 Scope* scope, Block* body)
-        : name (name), params (params), scope (scope), body (body) {}
+        : name (name), returnType (returnType), params (params), scope (scope), body (body) {}
     public:
       /// Return name the function is associated with
       NameFunction* GetName() const { return name; }
+      /// Return type of variable value
+      TypePtr GetReturnType () { return returnType; }
       /// Get formal parameters for function
       const FunctionFormalParameters& GetParameters() const { return params; }
       /// Get function block to add commands to.

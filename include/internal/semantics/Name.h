@@ -66,21 +66,16 @@ namespace s1
     class NameFunction : public Name
     {
     protected:
-      /// type of return value
-      TypePtr returnType;
       /// Overloads for the function name
       std::vector<FunctionPtr> overloads;
     public:
-      NameFunction (Scope* ownerScope, const uc::String& identifier, Type* returnType);
+      NameFunction (Scope* ownerScope, const uc::String& identifier);
       ~NameFunction ();
 
       NameType GetType() const override { return Function; }
 
-      /// Return type of variable value
-      TypePtr GetReturnType () { return returnType; }
-
       /// Add an overload for the function name
-      semantics::Function* AddOverload (const FunctionFormalParameters& params, Scope* funcScope, Block* body);
+      semantics::Function* AddOverload (Type* returnType, const FunctionFormalParameters& params, Scope* funcScope, Block* body);
       /// Get overloads for the function name
       const std::vector<FunctionPtr>& GetOverloads () const { return overloads; }
 

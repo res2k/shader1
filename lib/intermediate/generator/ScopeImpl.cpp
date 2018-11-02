@@ -151,7 +151,7 @@ namespace s1
       semantics::NameFunctionPtr funcName = std::move (funcIdentResult.value());
       if (!funcName)
       {
-        funcName = new semantics::NameFunction (this, identifier, returnType.get());
+        funcName = new semantics::NameFunction (this, identifier);
         identifiers[identifier] = funcName;
       }
 
@@ -164,7 +164,7 @@ namespace s1
       }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
 
-      FunctionPtr newFunction = funcName->AddOverload (params, funcScope.get(), newBlock.get());
+      FunctionPtr newFunction = funcName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
 
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
@@ -197,7 +197,7 @@ namespace s1
       semantics::NameFunctionPtr funcName = std::move (funcIdentResult.value());
       if (!funcName)
       {
-        funcName = new semantics::NameFunction (this, identifier, builtin->GetReturnType().get());
+        funcName = new semantics::NameFunction (this, identifier);
         identifiers[identifier] = funcName;
       }
 

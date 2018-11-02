@@ -69,11 +69,11 @@ FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr
     // TODO: Error handling
     return FunctionPtr();
   }
-  s1::semantics::NameFunctionPtr newName (new s1::semantics::NameFunction (this, identifier, returnType.get()));
+  s1::semantics::NameFunctionPtr newName (new s1::semantics::NameFunction (this, identifier));
   identifiers[identifier] = newName;
   s1::semantics::ScopePtr funcScope;
   funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);
   BlockPtr newBlock (handler->CreateBlock (funcScope));
-  FunctionPtr newFunction = newName->AddOverload (params, funcScope.get(), newBlock.get());
+  FunctionPtr newFunction = newName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
   return newFunction;
 }
