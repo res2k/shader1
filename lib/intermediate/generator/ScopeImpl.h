@@ -84,7 +84,6 @@ namespace s1
                                const uc::String& identifier,
                                const semantics::FunctionFormalParameters& formalParameters);
       std::vector<semantics::BaseFunctionPtr> GetFunctions () const;
-      std::vector<semantics::BaseFunctionPtr> CollectOverloadCandidates (semantics::NameFunction* functionName, const ExpressionVector& params) const;
 
       std::vector<semantics::NameVariablePtr> FlushNewVars ();
       const std::vector<semantics::NameVariablePtr>& GetAllVars ();

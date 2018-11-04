@@ -65,9 +65,11 @@ namespace s1
 
     class NameFunction : public Name
     {
+    public:
+      typedef std::vector<BaseFunctionPtr> BaseFunctionPtrVec;
     protected:
       /// Overloads for the function name
-      std::vector<BaseFunctionPtr> overloads;
+      BaseFunctionPtrVec overloads;
     public:
       NameFunction (Scope* ownerScope, const uc::String& identifier);
       ~NameFunction ();
@@ -79,7 +81,9 @@ namespace s1
       /// Add an overload with a built-in function
       semantics::BuiltinFunction* AddBuiltin (Type* returnType, const FunctionFormalParameters& params, Builtin which);
       /// Get overloads for the function name
-      const std::vector<BaseFunctionPtr>& GetOverloads () const { return overloads; }
+      const BaseFunctionPtrVec& GetOverloads () const { return overloads; }
+      /// Collect overloads fitting the given parameter types
+      BaseFunctionPtrVec CollectOverloadCandidates (const std::vector<Type*>& paramTypes) const;
 
       static NameFunction* upcast (Name* name) { return internal_upcast<NameFunction, Function> (name); }
       static const NameFunction* upcast (const Name* name) { return internal_upcast<const NameFunction, Function> (name); }

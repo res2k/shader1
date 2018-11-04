@@ -42,5 +42,104 @@ namespace s1
       overloads.push_back (newFunc);
       return newFunc.get();
     }
+
+    NameFunction::BaseFunctionPtrVec NameFunction::CollectOverloadCandidates (const std::vector<Type*>& paramTypes) const
+    {
+      BaseFunctionPtrVec candidates;
+
+      // First, look for an exact parameters type match
+      for (const auto& candidate : overloads)
+      {
+        const auto& candidateParams = candidate->GetParameters();
+        if (paramTypes.size() > candidateParams.size()) continue;
+
+        bool abort = false;
+        size_t formal = 0, actual = 0;
+        for (; actual < paramTypes.size(); formal++)
+        {
+          // Only consider user-specified parameters for matching
+          if (candidateParams[formal].paramType != FunctionFormalParameter::ptUser) continue;
+
+          auto paramType = paramTypes[actual];
+          auto formalParamType = candidateParams[formal].type.get();
+          // No exact type match? Skip
+          if (!paramType->IsEqual (*formalParamType))
+          {
+            abort = true;
+            break;
+          }
+          actual++;
+        }
+        if (abort) continue;
+        for (; formal < candidateParams.size(); formal++)
+        {
+          // Only consider user-specified parameters for matching
+          if (candidateParams[formal].paramType != FunctionFormalParameter::ptUser) continue;
+
+          // Leftover parameter + no default value? Skip
+          if (!candidateParams[formal].defaultValue)
+          {
+            abort = true;
+            break;
+          }
+        }
+        if (abort) continue;
+
+        candidates.push_back (candidate);
+      }
+
+      // Second, look for a lossless parameters type match
+      if (candidates.size() == 0)
+      {
+        for (const auto& candidate : overloads)
+        {
+          const auto& candidateParams = candidate->GetParameters();
+          if (paramTypes.size() > candidateParams.size()) continue;
+
+          bool abort = false;
+          size_t formal = 0, actual = 0;
+          for (; actual < paramTypes.size(); formal++)
+          {
+            // Only consider user-specified parameters for matching
+            if (candidateParams[formal].paramType != FunctionFormalParameter::ptUser) continue;
+
+            auto paramType = paramTypes[actual];
+            auto formalParamType = candidateParams[formal].type.get();
+            bool match;
+            if (candidateParams[formal].dir & FunctionFormalParameter::dirOut)
+              // Output parameters must _always_ match exactly
+              match = paramType->IsEqual (*formalParamType);
+            else
+              // Input parameters can match losslessy
+              match = paramType->CompatibleLossless (*formalParamType);
+            // No type match? Skip
+            if (!match)
+            {
+              abort = true;
+              break;
+            }
+            actual++;
+          }
+          if (abort) continue;
+          for (; formal < candidateParams.size(); formal++)
+          {
+            // Only consider user-specified parameters for matching
+            if (candidateParams[formal].paramType != FunctionFormalParameter::ptUser) continue;
+
+            // Leftover parameter + no default value? Skip
+            if (!candidateParams[formal].defaultValue)
+            {
+              abort = true;
+              break;
+            }
+          }
+          if (abort) continue;
+
+          candidates.push_back (candidate);
+        }
+      }
+
+      return candidates;
+    }
   } // namespace semantics
 } // namespace s1

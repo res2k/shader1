@@ -56,7 +56,14 @@ namespace s1
       auto funcScopeImpl = get_static_ptr<ScopeImpl> (functionName->GetOwnerScope());
 
       // Collect overload candidates
-      auto candidates = funcScopeImpl->CollectOverloadCandidates (functionName.get(), params);
+      std::vector<semantics::Type*> paramTypes;
+      paramTypes.reserve (params.size());
+      for (const auto& param : params)
+      {
+        auto paramExprImpl = get_static_ptr<ExpressionImpl> (param);
+        paramTypes.push_back (paramExprImpl->GetValueType ().get());
+      }
+      auto candidates = functionName->CollectOverloadCandidates (paramTypes);
 
       if (candidates.size() == 0)
       {
