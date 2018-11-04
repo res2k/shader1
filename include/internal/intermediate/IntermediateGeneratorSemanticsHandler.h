@@ -93,6 +93,13 @@ namespace s1
                                                   const semantics::TypePtr& returnType,
                                                   const semantics::FunctionFormalParameters& params);
 
+      /// Decorate a function identifier according to parameters
+      static uc::String DecorateIdentifier (const uc::String& identifier, const semantics::FunctionFormalParameters& params);
+      /// Cached decorated function identifiers
+      std::unordered_map<semantics::BaseFunctionPtr, uc::String> decoratedIdentifierCache;
+      /// Obtain decorated identifier for a function
+      uc::String GetDecoratedIdentifier (semantics::BaseFunction* function);
+
       /// Whether the intermediate program was marked "completed"
       bool completed;
     public:

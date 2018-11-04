@@ -245,6 +245,42 @@ namespace s1
       return newFunc;
     }
 
+    uc::String IntermediateGeneratorSemanticsHandler::GetDecoratedIdentifier (semantics::BaseFunction* function)
+    {
+      semantics::BaseFunctionPtr funcPtr = function;
+      auto cache_it = decoratedIdentifierCache.find (funcPtr);
+      if (cache_it != decoratedIdentifierCache.end())
+        return cache_it->second;
+
+      auto decoratedIdentifier = DecorateIdentifier (function->GetName()->GetIdentifier(),
+                                                     function->GetParameters());
+      decoratedIdentifierCache[funcPtr] = decoratedIdentifier;
+      return decoratedIdentifier;
+    }
+
+    uc::String IntermediateGeneratorSemanticsHandler::DecorateIdentifier (const uc::String& identifier,
+                                                                          const semantics::FunctionFormalParameters& params)
+    {
+      auto identifierDecorated = identifier;
+      identifierDecorated.append ("$");
+      int lastDir = -1;
+      for (const auto& param : params)
+      {
+        if (param.dir != lastDir)
+        {
+          char dirStr[3] = { 0, 0, 0 };
+          int c = 0;
+          if (lastDir != -1) dirStr[c++] = '_';
+          dirStr[c] = param.dir + '0';
+          identifierDecorated.append (dirStr);
+          lastDir = param.dir;
+        }
+        auto typeImpl = param.type.get();
+        identifierDecorated.append (GetTypeString (typeImpl));
+      }
+      return identifierDecorated;
+    }
+
     RegisterPtr IntermediateGeneratorSemanticsHandler::AllocateRegister (SequenceBuilder& seqBuilder,
                                                                          const TypePtr& type,
                                                                          RegisterClassification classify,
@@ -473,7 +509,7 @@ namespace s1
           }
 
           ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> (funcIdentifier,
-                                                                            func->decoratedIdentifier,
+                                                                            GetDecoratedIdentifier (func->functionObj.get()),
                                                                             params,
                                                                             funcSeq,
                                                                             false));

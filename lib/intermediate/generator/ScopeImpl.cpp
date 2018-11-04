@@ -56,30 +56,6 @@ namespace s1
       return semantics::NameFunctionPtr ();
     }
 
-    uc::String
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::DecorateIdentifier (const uc::String& identifier,
-                                                                          const semantics::FunctionFormalParameters& params)
-    {
-      auto identifierDecorated = identifier;
-      identifierDecorated.append ("$");
-      int lastDir = -1;
-      for (const auto& param : params)
-      {
-        if (param.dir != lastDir)
-        {
-          char dirStr[3] = { 0, 0, 0 };
-          int c = 0;
-          if (lastDir != -1) dirStr[c++] = '_';
-          dirStr[c] = param.dir + '0';
-          identifierDecorated.append (dirStr);
-          lastDir = param.dir;
-        }
-        auto typeImpl = param.type.get();
-        identifierDecorated.append (IntermediateGeneratorSemanticsHandler::GetTypeString (typeImpl));
-      }
-      return identifierDecorated;
-    }
-
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                  ScopeImpl* parent,
                                                                  semantics::ScopeLevel level,
@@ -168,8 +144,6 @@ namespace s1
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
       funcInfo->functionObj = newFunction;
-      // Decorate identifier with type info (so each overload gets a unique name)
-      funcInfo->decoratedIdentifier = DecorateIdentifier (identifier, params);
       functions.push_back (funcInfo);
 
       functionsInDeclOrder.push_back (funcInfo);
@@ -203,8 +177,6 @@ namespace s1
 
       FunctionInfoVector& functions = this->functions[identifier];
       FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
-      // Decorate identifier with type info (so each overload gets a unique name)
-      funcInfo->decoratedIdentifier = DecorateIdentifier (identifier, formalParameters);
       funcInfo->functionObj = funcName->AddBuiltin (returnType, formalParameters, which);
       functions.push_back (funcInfo);
 

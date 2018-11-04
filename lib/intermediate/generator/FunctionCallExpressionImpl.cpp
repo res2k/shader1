@@ -176,8 +176,6 @@ namespace s1
 
       if (!SelectOverload ()) return RegisterPtr(); // Assume error already handled
 
-      if (overload->decoratedIdentifier.isEmpty()) return RegisterPtr();
-
       FetchedRegs fetchedRegs;
       PostActions postActions;
       if (!FetchRegisters (block, fetchedRegs, postActions)) return RegisterPtr(); // Assume error already handled
@@ -241,7 +239,7 @@ namespace s1
       {
         if (destination)
           outParams.insert (outParams.begin(), destination);
-        seqOp = new SequenceOpFunctionCall (overload->decoratedIdentifier, inParams, outParams);
+        seqOp = new SequenceOpFunctionCall (handler->GetDecoratedIdentifier (overload->functionObj.get()), inParams, outParams);
       }
       block.GetSequenceBuilder()->AddOp (seqOp);
 

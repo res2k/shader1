@@ -32,7 +32,6 @@ namespace s1
       struct FunctionInfo
       {
         semantics::BaseFunctionPtr functionObj;
-        uc::String decoratedIdentifier;
       };
       typedef boost::shared_ptr<FunctionInfo> FunctionInfoPtr;
       typedef std::vector<FunctionInfoPtr> FunctionInfoVector;
@@ -49,8 +48,6 @@ namespace s1
 
       typedef OUTCOME_V2_NAMESPACE::result<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
       result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
-
-      static uc::String DecorateIdentifier (const uc::String& identifier, const semantics::FunctionFormalParameters& params);
 
       IntermediateGeneratorSemanticsHandler* handler;
       semantics::ScopeLevel level;
