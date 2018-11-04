@@ -425,20 +425,23 @@ namespace s1
       S1_ASSERT(completed, ProgramPtr ());
 
       ProgramPtr newProg (boost::make_shared <Program> ());
-      ScopeImpl::FunctionInfoPtr entryFunction;
+      semantics::FunctionPtr entryFunction;
       if (globalScope)
       {
         // Collect global vars
         auto globalVars = globalScope->GetAllVars ();
-        ScopeImpl::FunctionInfoVector functions (globalScope->GetFunctions ());
+        auto functions = globalScope->GetFunctions ();
         for (const auto& func : functions)
         {
-          const auto& funcIdentifier = func->functionObj->GetName()->GetIdentifier();
+          auto userFunc = semantics::Function::upcast (func.get());
+          S1_ASSERT_MSG(userFunc, "unexpected scope for builtin function", ProgramPtr ());
+
+          const auto& funcIdentifier = func->GetName()->GetIdentifier();
           if (funcIdentifier == entryFunctionName)
           {
             if (!entryFunction)
             {
-              entryFunction = func;
+              entryFunction = userFunc;
             }
             else
             {
@@ -446,12 +449,10 @@ namespace s1
             }
           }
 
-          auto userFunc = semantics::Function::upcast (func->functionObj.get());
-          S1_ASSERT_MSG(userFunc, "unexpected scope for builtin function", ProgramPtr ());
           auto blockImpl = get_static_ptr<BlockImpl> (userFunc->GetBody());
 
-          semantics::FunctionFormalParameters params (func->functionObj->GetParameters());
-          semantics::TypePtr retType = func->functionObj->GetReturnType();
+          semantics::FunctionFormalParameters params (func->GetParameters());
+          semantics::TypePtr retType = func->GetReturnType();
           if (!voidType->IsEqual (*retType))
           {
             semantics::FunctionFormalParameter retParam;
@@ -509,7 +510,7 @@ namespace s1
           }
 
           ProgramFunctionPtr newFunc (boost::make_shared <ProgramFunction> (funcIdentifier,
-                                                                            GetDecoratedIdentifier (func->functionObj.get()),
+                                                                            GetDecoratedIdentifier (func.get()),
                                                                             params,
                                                                             funcSeq,
                                                                             false));
@@ -518,10 +519,10 @@ namespace s1
         // TODO: Err if no entry function was given
         if (entryFunction)
         {
-          auto entryFunctionName = entryFunction->functionObj->GetName();
+          auto entryFunctionName = entryFunction->GetName();
           newProg->AddFunction (SynthesizeEntryFunction (entryFunctionName->GetIdentifier(),
-                                                         entryFunction->functionObj->GetReturnType(),
-                                                         entryFunction->functionObj->GetParameters()));
+                                                         entryFunction->GetReturnType(),
+                                                         entryFunction->GetParameters()));
         }
       }
       return newProg;
@@ -631,7 +632,8 @@ namespace s1
     ExpressionPtr IntermediateGeneratorSemanticsHandler::CreateFunctionCallExpression (NamePtr functionName,
                                                                                        const ExpressionVector& params)
     {
-      assert (functionName->GetType() == semantics::Name::Function);
+      auto funcName = semantics::NameFunction::upcast (functionName.get());
+      S1_ASSERT(funcName, ExpressionPtr());
       for (const auto& param : params)
       {
         if (!param) return ExpressionPtr(); // Assume error already handled
@@ -639,7 +641,7 @@ namespace s1
 
       return new FunctionCallExpressionImpl (this,
                                              ExpressionContext(),
-                                             functionName.get(),
+                                             funcName,
                                              params);
     }
 

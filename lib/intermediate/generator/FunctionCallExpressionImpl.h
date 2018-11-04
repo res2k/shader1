@@ -27,11 +27,11 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl : public ExpressionImpl
     {
-      semantics::NamePtr functionName;
+      semantics::NameFunctionPtr functionName;
       ExpressionVector params;
 
       bool overloadSelected;
-      ScopeImpl::FunctionInfoPtr overload;
+      semantics::BaseFunctionPtr overload;
 
       ExpressionVector actualParams;
 
@@ -55,7 +55,7 @@ namespace s1
     public:
       FunctionCallExpressionImpl (IntermediateGeneratorSemanticsHandler* handler,
                                   ExpressionContext&& context,
-                                  semantics::Name* functionName,
+                                  semantics::NameFunction* functionName,
                                   const ExpressionVector& params);
 
       semantics::TypePtr GetValueType ();

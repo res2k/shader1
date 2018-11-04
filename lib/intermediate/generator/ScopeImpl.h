@@ -28,13 +28,6 @@ namespace s1
   {
     class IntermediateGeneratorSemanticsHandler::ScopeImpl : public semantics::Scope
     {
-    public:
-      struct FunctionInfo
-      {
-        semantics::BaseFunctionPtr functionObj;
-      };
-      typedef boost::shared_ptr<FunctionInfo> FunctionInfoPtr;
-      typedef std::vector<FunctionInfoPtr> FunctionInfoVector;
     private:
       friend class IntermediateGeneratorSemanticsHandler;
 
@@ -42,9 +35,7 @@ namespace s1
       std::vector<uc::String> outputParams;
       std::vector<semantics::NameVariablePtr> varsInDeclOrder;
 
-      typedef std::unordered_map<uc::String, FunctionInfoVector> FunctionsMap;
-      FunctionsMap functions;
-      std::vector<FunctionInfoPtr> functionsInDeclOrder;
+      std::vector<semantics::BaseFunctionPtr> functionsInDeclOrder;
 
       typedef OUTCOME_V2_NAMESPACE::result<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
       result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
@@ -92,8 +83,8 @@ namespace s1
                                semantics::Type* returnType,
                                const uc::String& identifier,
                                const semantics::FunctionFormalParameters& formalParameters);
-      FunctionInfoVector GetFunctions () const;
-      FunctionInfoVector CollectOverloadCandidates (semantics::Name* functionName, const ExpressionVector& params) const;
+      std::vector<semantics::BaseFunctionPtr> GetFunctions () const;
+      std::vector<semantics::BaseFunctionPtr> CollectOverloadCandidates (semantics::NameFunction* functionName, const ExpressionVector& params) const;
 
       std::vector<semantics::NameVariablePtr> FlushNewVars ();
       const std::vector<semantics::NameVariablePtr>& GetAllVars ();

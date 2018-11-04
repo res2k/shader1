@@ -42,7 +42,7 @@ namespace s1
     IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::FunctionCallExpressionImpl (
       IntermediateGeneratorSemanticsHandler* handler,
       ExpressionContext&& context,
-      semantics::Name* functionName,
+      semantics::NameFunction* functionName,
       const ExpressionVector& params)
        : ExpressionImpl (handler, std::move (context)), functionName (functionName), params (params), overloadSelected (false)
     {
@@ -56,7 +56,7 @@ namespace s1
       auto funcScopeImpl = get_static_ptr<ScopeImpl> (functionName->GetOwnerScope());
 
       // Collect overload candidates
-      ScopeImpl::FunctionInfoVector candidates (funcScopeImpl->CollectOverloadCandidates (functionName.get(), params));
+      auto candidates = funcScopeImpl->CollectOverloadCandidates (functionName.get(), params);
 
       if (candidates.size() == 0)
       {
@@ -72,7 +72,7 @@ namespace s1
       }
       overload = candidates[0];
 
-      const auto& formalParams = overload->functionObj->GetParameters();
+      const auto& formalParams = overload->GetParameters();
       for (size_t formal = 0, actual = 0; formal < formalParams.size(); formal++)
       {
         const auto& param (formalParams[formal]);
@@ -94,7 +94,7 @@ namespace s1
                                                                                             PostActions& postActions)
     {
       bool result = true;
-      const auto& formalParams = overload->functionObj->GetParameters();
+      const auto& formalParams = overload->GetParameters();
       for (size_t i = 0; i < actualParams.size(); i++)
       {
         RegisterPtr reg1, reg2;
@@ -165,7 +165,7 @@ namespace s1
     {
       if (!SelectOverload ()) return nullptr; // Assume error already handled
 
-      return overload->functionObj->GetReturnType();
+      return overload->GetReturnType();
     }
 
     RegisterPtr IntermediateGeneratorSemanticsHandler::FunctionCallExpressionImpl::AddToSequence (BlockImpl& block,
@@ -183,7 +183,7 @@ namespace s1
       bool paramsOkay = true;
       std::vector<RegisterPtr> inParams;
       std::vector<RegisterPtr> outParams;
-      const auto& formalParams = overload->functionObj->GetParameters();
+      const auto& formalParams = overload->GetParameters();
       for (size_t i = 0; i < formalParams.size(); i++)
       {
         const auto& param (formalParams[i]);
@@ -231,7 +231,7 @@ namespace s1
         destination = handler->AllocateRegister (*(block.GetSequenceBuilder()), retType, classify);
 
       SequenceOpPtr seqOp;
-      if (auto builtin = semantics::BuiltinFunction::upcast (overload->functionObj.get()))
+      if (auto builtin = semantics::BuiltinFunction::upcast (overload.get()))
       {
         seqOp = BuiltinOp (builtin, destination, inParams);
       }
@@ -239,7 +239,7 @@ namespace s1
       {
         if (destination)
           outParams.insert (outParams.begin(), destination);
-        seqOp = new SequenceOpFunctionCall (handler->GetDecoratedIdentifier (overload->functionObj.get()), inParams, outParams);
+        seqOp = new SequenceOpFunctionCall (handler->GetDecoratedIdentifier (overload.get()), inParams, outParams);
       }
       block.GetSequenceBuilder()->AddOp (seqOp);
 

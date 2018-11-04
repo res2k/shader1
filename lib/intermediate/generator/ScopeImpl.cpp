@@ -141,12 +141,7 @@ namespace s1
 
       FunctionPtr newFunction = funcName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
 
-      FunctionInfoVector& functions = this->functions[identifier];
-      FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
-      funcInfo->functionObj = newFunction;
-      functions.push_back (funcInfo);
-
-      functionsInDeclOrder.push_back (funcInfo);
+      functionsInDeclOrder.push_back (newFunction);
 
       return newFunction;
     }
@@ -175,31 +170,69 @@ namespace s1
         identifiers[identifier] = funcName;
       }
 
-      FunctionInfoVector& functions = this->functions[identifier];
-      FunctionInfoPtr funcInfo (boost::make_shared<FunctionInfo> ());
-      funcInfo->functionObj = funcName->AddBuiltin (returnType, formalParameters, which);
-      functions.push_back (funcInfo);
+      auto functionObj = funcName->AddBuiltin (returnType, formalParameters, which);
 
-      functionsInDeclOrder.push_back (funcInfo);
+      functionsInDeclOrder.push_back (functionObj);
     }
 
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::GetFunctions () const
+    std::vector<semantics::BaseFunctionPtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::GetFunctions () const
     {
       return functionsInDeclOrder;
     }
 
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::FunctionInfoVector
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (semantics::Name* functionName, const ExpressionVector& params) const
+    std::vector<semantics::BaseFunctionPtr>
+    IntermediateGeneratorSemanticsHandler::ScopeImpl::CollectOverloadCandidates (semantics::NameFunction* functionName, const ExpressionVector& params) const
     {
-      FunctionInfoVector vec;
-      FunctionsMap::const_iterator funcIt = functions.find (functionName->GetIdentifier());
-      if (funcIt != functions.end())
+      std::vector<semantics::BaseFunctionPtr> vec;
+
+      // First, look for an exact parameters type match
+      for (const auto& candidate : functionName->GetOverloads())
       {
-        // First, look for an exact parameters type match
-        for (const auto& candidate : funcIt->second)
+        const auto& candidateParams = candidate->GetParameters();
+        if (params.size() > candidateParams.size()) continue;
+
+        bool abort = false;
+        size_t formal = 0, actual = 0;
+        for (; actual < params.size(); formal++)
         {
-          const auto& candidateParams = candidate->functionObj->GetParameters();
+          // Only consider user-specified parameters for matching
+          if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
+
+          auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
+          auto paramType = exprImpl->GetValueType ();
+          auto formalParamType = candidateParams[formal].type.get();
+          // No exact type match? Skip
+          if (!paramType->IsEqual (*formalParamType))
+          {
+            abort = true;
+            break;
+          }
+          actual++;
+        }
+        if (abort) continue;
+        for (; formal < candidateParams.size(); formal++)
+        {
+          // Only consider user-specified parameters for matching
+          if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
+
+          // Leftover parameter + no default value? Skip
+          if (!candidateParams[formal].defaultValue)
+          {
+            abort = true;
+            break;
+          }
+        }
+        if (abort) continue;
+
+        vec.push_back (candidate);
+      }
+
+      // Second, look for a lossless parameters type match
+      if (vec.size() == 0)
+      {
+        for (const auto& candidate : functionName->GetOverloads())
+        {
+          const auto& candidateParams = candidate->GetParameters();
           if (params.size() > candidateParams.size()) continue;
 
           bool abort = false;
@@ -212,8 +245,15 @@ namespace s1
             auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
             auto paramType = exprImpl->GetValueType ();
             auto formalParamType = candidateParams[formal].type.get();
-            // No exact type match? Skip
-            if (!paramType->IsEqual (*formalParamType))
+            bool match;
+            if (candidateParams[formal].dir & semantics::FunctionFormalParameter::dirOut)
+              // Output parameters must _always_ match exactly
+              match = paramType->IsEqual (*formalParamType);
+            else
+              // Input parameters can match losslessy
+              match = paramType->CompatibleLossless (*formalParamType);
+            // No type match? Skip
+            if (!match)
             {
               abort = true;
               break;
@@ -236,58 +276,6 @@ namespace s1
           if (abort) continue;
 
           vec.push_back (candidate);
-        }
-
-        // Second, look for a lossless parameters type match
-        if (vec.size() == 0)
-        {
-          for (const auto& candidate : funcIt->second)
-          {
-            const auto& candidateParams = candidate->functionObj->GetParameters();
-            if (params.size() > candidateParams.size()) continue;
-
-            bool abort = false;
-            size_t formal = 0, actual = 0;
-            for (; actual < params.size(); formal++)
-            {
-              // Only consider user-specified parameters for matching
-              if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
-
-              auto exprImpl = get_static_ptr<ExpressionImpl> (params[actual]);
-              auto paramType = exprImpl->GetValueType ();
-              auto formalParamType = candidateParams[formal].type.get();
-              bool match;
-              if (candidateParams[formal].dir & semantics::FunctionFormalParameter::dirOut)
-                // Output parameters must _always_ match exactly
-                match = paramType->IsEqual (*formalParamType);
-              else
-                // Input parameters can match losslessy
-                match = paramType->CompatibleLossless (*formalParamType);
-              // No type match? Skip
-              if (!match)
-              {
-                abort = true;
-                break;
-              }
-              actual++;
-            }
-            if (abort) continue;
-            for (; formal < candidateParams.size(); formal++)
-            {
-              // Only consider user-specified parameters for matching
-              if (candidateParams[formal].paramType != semantics::FunctionFormalParameter::ptUser) continue;
-
-              // Leftover parameter + no default value? Skip
-              if (!candidateParams[formal].defaultValue)
-              {
-                abort = true;
-                break;
-              }
-            }
-            if (abort) continue;
-
-            vec.push_back (candidate);
-          }
         }
       }
       return vec;
