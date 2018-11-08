@@ -29,7 +29,7 @@ typedef semantics::BlockPtr BlockPtr;
 TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
                                             TestScope* parent,
                                             s1::semantics::ScopeLevel level)
-  : Scope (parent), handler (handler), level (level)
+  : Scope (parent, level), handler (handler)
 {}
 
 FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr returnType,

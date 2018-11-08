@@ -39,11 +39,9 @@ public:
     
     TestSemanticsHandler* handler;
     boost::intrusive_ptr<TestScope> parent;
-    s1::semantics::ScopeLevel level;
   public:
     TestScope (TestSemanticsHandler* handler,
 	             TestScope* parent, s1::semantics::ScopeLevel level);
-    s1::semantics::ScopeLevel GetLevel() const { return level; }
     
     s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
       const s1::uc::String& identifier,

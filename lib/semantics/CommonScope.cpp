@@ -30,7 +30,7 @@ namespace s1
     CommonScope::CommonScope (CommonHandler* handler,
                                                       CommonScope* parent,
                                                       ScopeLevel level)
-     : Scope (parent), handler (handler), level (level)
+     : Scope (parent, level), handler (handler)
     {}
 
     FunctionPtr

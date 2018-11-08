@@ -26,7 +26,7 @@ namespace s1
 {
   namespace semantics
   {
-    Scope::Scope (Scope* parent) : parent (parent) {}
+    Scope::Scope (Scope* parent, ScopeLevel level) : parent (parent), level (level) {}
 
     Scope::~Scope() {}
 

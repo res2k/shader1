@@ -35,10 +35,8 @@ namespace s1
       friend class CommonHandler;
       
       CommonHandler* handler;
-      ScopeLevel level;
     public:
       CommonScope (CommonHandler* handler, CommonScope* parent, ScopeLevel level);
-      ScopeLevel GetLevel() const { return level; }
       
       FunctionPtr AddFunction (TypePtr returnType,
         const uc::String& identifier,

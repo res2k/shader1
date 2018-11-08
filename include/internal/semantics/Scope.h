@@ -40,6 +40,7 @@ namespace s1
     {
     protected:
       Scope* parent;
+      ScopeLevel level;
 
       typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
       IdentifierMap identifiers;
@@ -50,11 +51,11 @@ namespace s1
       /// Returns \c true if identifier is not registered in this or any parent scope.
       bool CheckIdentifierUnique (const uc::String& identifier);
     public:
-      Scope (Scope* parent);
+      Scope (Scope* parent, ScopeLevel level);
       virtual ~Scope();
 
       /// Get level of the scope.
-      virtual ScopeLevel GetLevel() const = 0;
+      ScopeLevel GetLevel() const { return level; }
 
       /**
        * Add a variable or constant.

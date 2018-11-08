@@ -38,7 +38,6 @@ namespace s1
       result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
-      semantics::ScopeLevel level;
       semantics::TypePtr funcReturnType;
 
       void AddParameter (const semantics::FunctionFormalParameter& param);
@@ -46,7 +45,6 @@ namespace s1
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                  ScopeImpl* parent, semantics::ScopeLevel level,
                  semantics::Type* funcReturnType);
-      semantics::ScopeLevel GetLevel() const { return level; }
 
       semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
         const uc::String& identifier,

@@ -60,7 +60,7 @@ namespace s1
                                                                  ScopeImpl* parent,
                                                                  semantics::ScopeLevel level,
                                                                  semantics::Type* funcReturnType)
-     : Scope (parent), handler (handler), level (level), funcReturnType (funcReturnType)
+     : Scope (parent, level), handler (handler), funcReturnType (funcReturnType)
     {}
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddParameter (const semantics::FunctionFormalParameter& param)
