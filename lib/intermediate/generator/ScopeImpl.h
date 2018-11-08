@@ -64,7 +64,7 @@ namespace s1
         else
           return parent_impl->outputParams;
       }
-      int DistanceToScope (ScopeImpl* scope);
+      int DistanceToScope (Scope* scope);
 
       void AddBuiltinFunction (semantics::Builtin which,
                                semantics::Type* returnType,

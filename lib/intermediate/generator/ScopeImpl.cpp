@@ -151,16 +151,16 @@ namespace s1
       return functionsInDeclOrder;
     }
 
-    int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (ScopeImpl* scope)
+    int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (Scope* scope)
     {
       if (!scope) return INT_MAX;
 
-      auto parentScope = static_cast<ScopeImpl*> (this->GetParent());
+      auto parentScope = GetParent();
       int n = 0;
       while (parentScope)
       {
         if (parentScope == scope) return n;
-        parentScope = static_cast<ScopeImpl*> (parentScope->GetParent());
+        parentScope = parentScope->GetParent();
         n++;
       }
       return -1;
