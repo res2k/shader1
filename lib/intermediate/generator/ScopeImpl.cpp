@@ -51,8 +51,8 @@ namespace s1
         }
         return funcName;
       }
-      if (parent)
-        return static_cast<ScopeImpl*> (parent)->CheckIdentifierIsFunction (identifier);
+      if (GetParent())
+        return static_cast<ScopeImpl*> (GetParent())->CheckIdentifierIsFunction (identifier);
       return semantics::NameFunctionPtr ();
     }
 
@@ -155,12 +155,12 @@ namespace s1
     {
       if (!scope) return INT_MAX;
 
-      auto parentScope = static_cast<ScopeImpl*> (this->parent);
+      auto parentScope = static_cast<ScopeImpl*> (this->GetParent());
       int n = 0;
       while (parentScope)
       {
         if (parentScope == scope) return n;
-        parentScope = static_cast<ScopeImpl*> (parentScope->parent);
+        parentScope = static_cast<ScopeImpl*> (parentScope->GetParent());
         n++;
       }
       return -1;

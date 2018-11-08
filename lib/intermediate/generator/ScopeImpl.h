@@ -53,12 +53,12 @@ namespace s1
       semantics::TypePtr GetFunctionReturnType() const
       {
         if (funcReturnType) return funcReturnType;
-        if (parent) return static_cast<const ScopeImpl*> (parent)->GetFunctionReturnType();
+        if (GetParent()) return static_cast<const ScopeImpl*> (GetParent())->GetFunctionReturnType();
         return semantics::TypePtr ();
       }
       const std::vector<uc::String>& GetFunctionOutputParams () const
       {
-        auto parent_impl = static_cast<const ScopeImpl*> (parent);
+        auto parent_impl = static_cast<const ScopeImpl*> (GetParent());
         if (!parent_impl || (parent_impl->level < semantics::ScopeLevel::Function))
           return outputParams;
         else

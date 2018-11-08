@@ -38,8 +38,8 @@ namespace s1
      */
     class Scope : public Base
     {
-    protected:
       Scope* parent;
+    protected:
       ScopeLevel level;
 
       typedef std::unordered_map<uc::String, NamePtr> IdentifierMap;
@@ -54,6 +54,8 @@ namespace s1
       Scope (Scope* parent, ScopeLevel level);
       virtual ~Scope();
 
+      /// Get parent scope
+      Scope* GetParent() const { return parent; }
       /// Get level of the scope.
       ScopeLevel GetLevel() const { return level; }
 
