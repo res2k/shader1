@@ -20,6 +20,7 @@
 #include "parser/Diagnostics.h"
 #include "semantics/CommonHandler.h"
 #include "semantics/Name.h"
+#include "semantics/SimpleDiagnostics.h"
 
 #include "semantics/CommonScope.h"
 
@@ -33,28 +34,26 @@ namespace s1
      : Scope (parent, level), handler (handler)
     {}
 
+    namespace
+    {
+      class DummyDiagnosticsImpl : public SimpleDiagnostics
+      {
+      public:
+        void Error (semantics::Error) override { /* FIXME */ }
+      };
+    } // anonymous namespace
+
     FunctionPtr
     CommonScope::AddFunction (TypePtr returnType,
                               const uc::String& identifier,
                               const FunctionFormalParameters& params)
     {
-      if (level >= ScopeLevel::Function)
-      {
-        // TODO: Error handling
-        return FunctionPtr();
-      }
-      if (!CheckIdentifierUnique (identifier))
-      {
-        // TODO: Error handling
-        return FunctionPtr();
-      }
-      NameFunctionPtr newName (new NameFunction (this, identifier));
-      identifiers[identifier] = newName;
-      ScopePtr funcScope;
+      semantics::ScopePtr funcScope;
       funcScope = handler->CreateScope (this, ScopeLevel::Function);
-      auto newBlock = handler->CreateBlock (funcScope);
-      FunctionPtr newFunction = newName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
-      return newFunction;
+      BlockPtr newBlock (handler->CreateBlock (funcScope));
+
+      DummyDiagnosticsImpl diag;
+      return Scope::AddFunction (diag, returnType.get(), identifier, params, funcScope.get(), newBlock.get());
     }
   } // namespace semantics
 } // namespace s1

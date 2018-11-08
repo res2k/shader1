@@ -83,9 +83,6 @@ Diagnostic error definitions for the various components involved in compilation.
     <error id="IdentifierAlreadyDeclared">
       <descr>Identifier already declared</descr>
     </error>
-    <error id="DeclarationNotAllowedInScope">
-      <descr>Declaration not allowed in this scope</descr>
-    </error>
   </component>
   <component name="intermediate_internal">
     <error id="NumberParseError">

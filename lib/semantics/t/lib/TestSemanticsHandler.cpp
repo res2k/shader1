@@ -19,6 +19,7 @@
 #include "../TestSemanticsHandler.h"
 
 #include "parser/Diagnostics.h"
+#include "semantics/SimpleDiagnostics.h"
 
 using namespace s1;
 
@@ -32,20 +33,23 @@ TestSemanticsHandler::TestScope::TestScope (TestSemanticsHandler* handler,
   : Scope (parent, level), handler (handler)
 {}
 
+namespace
+{
+  class DummyDiagnosticsImpl : public s1::semantics::SimpleDiagnostics
+  {
+  public:
+    void Error (s1::semantics::Error) override { /* FIXME */ }
+  };
+} // anonymous namespace
+
 FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr returnType,
 							   const s1::uc::String& identifier,
 							   const s1::semantics::FunctionFormalParameters& params)
 {
-  if (!CheckIdentifierUnique (identifier))
-  {
-    // TODO: Error handling
-    return FunctionPtr();
-  }
-  s1::semantics::NameFunctionPtr newName (new s1::semantics::NameFunction (this, identifier));
-  identifiers[identifier] = newName;
-  s1::semantics::ScopePtr funcScope;
+  semantics::ScopePtr funcScope;
   funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);
   BlockPtr newBlock (handler->CreateBlock (funcScope));
-  FunctionPtr newFunction = newName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
-  return newFunction;
+
+  DummyDiagnosticsImpl diag;
+  return Scope::AddFunction (diag, returnType.get(), identifier, params, funcScope.get(), newBlock.get());
 }

@@ -82,6 +82,12 @@ namespace s1
         diagnosticsHandler->SemanticError (code); // TODO: Do something sensible w/ context
     }
 
+    void IntermediateGeneratorSemanticsHandler::ExpressionError (const ExpressionContext& context, semantics::Error code)
+    {
+      if (diagnosticsHandler)
+        diagnosticsHandler->SemanticError (code); // TODO: Do something sensible w/ context
+    }
+
     DECLARE_STATIC_FORMATTER(FormatTSArray, "A{0}");
 
     static inline std::string GetBaseTypeString (semantics::BaseType base, unsigned int rows, unsigned int cols)

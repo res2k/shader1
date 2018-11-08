@@ -20,22 +20,20 @@
 
 #include "base/outcome.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
+#include "semantics/SimpleDiagnostics.h"
 
 namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::ScopeImpl : public semantics::Scope
+    class IntermediateGeneratorSemanticsHandler::ScopeImpl :
+      public semantics::Scope,
+      private semantics::SimpleDiagnostics
     {
     private:
       friend class IntermediateGeneratorSemanticsHandler;
 
       std::vector<uc::String> outputParams;
-
-      std::vector<semantics::BaseFunctionPtr> functionsInDeclOrder;
-
-      typedef outcome::unchecked<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
-      result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;
       semantics::TypePtr funcReturnType;
@@ -48,7 +46,7 @@ namespace s1
 
       semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
         const uc::String& identifier,
-        const semantics::FunctionFormalParameters& params);
+        const semantics::FunctionFormalParameters& params) override;
 
       semantics::TypePtr GetFunctionReturnType() const
       {
@@ -70,7 +68,11 @@ namespace s1
                                semantics::Type* returnType,
                                const uc::String& identifier,
                                const semantics::FunctionFormalParameters& formalParameters);
-      std::vector<semantics::BaseFunctionPtr> GetFunctions () const;
+    private:
+      /**\name semantics::SimpleDiagnostics implementation
+       * @{ */
+      void Error (semantics::Error code) override;
+      /** @} */
     };
   } // namespace intermediate
 } // namespace s1

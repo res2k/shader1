@@ -17,6 +17,7 @@
 
 #include "base/common.h"
 #include "semantics/Diagnostics.h"
+#include "semantics/Function.h"
 #include "semantics/Name.h"
 #include "semantics/SimpleDiagnostics.h"
 
@@ -36,6 +37,23 @@ namespace s1
       if (ident != identifiers.end()) return false;
       if (parent) return parent->CheckIdentifierUnique (identifier);
       return true;
+    }
+
+    Scope::result_NameFunctionPtr Scope::CheckIdentifierIsFunction (const uc::String& identifier)
+    {
+      auto ident_it = identifiers.find (identifier);
+      if (ident_it != identifiers.end())
+      {
+        auto funcName = semantics::NameFunction::upcast (ident_it->second.get());
+        if (!funcName)
+        {
+          return outcome::failure (Error::IdentifierAlreadyDeclared);
+        }
+        return funcName;
+      }
+      if (GetParent())
+        return GetParent()->CheckIdentifierIsFunction (identifier);
+      return NameFunctionPtr ();
     }
 
     NameVariablePtr Scope::AddVariable (SimpleDiagnostics& diagnosticsHandler,
@@ -83,6 +101,46 @@ namespace s1
         identifiers[identifier] = newName;
       }
       return newName;
+    }
+
+    FunctionPtr Scope::AddFunction (SimpleDiagnostics& diagnosticsHandler,
+                                    Type* returnType, const uc::String& identifier,
+                                    const FunctionFormalParameters& params,
+                                    Scope* funcScope, Block* funcBlock)
+    {
+      if (level >= semantics::ScopeLevel::Function)
+      {
+        diagnosticsHandler.Error (Error::DeclarationNotAllowedInScope);
+        return FunctionPtr();
+      }
+      auto funcIdentResult = CheckIdentifierIsFunction (identifier);
+      FunctionPtr newFunction;
+      if (!funcIdentResult)
+      {
+        diagnosticsHandler.Error (funcIdentResult.error());
+        // Use dummy function parsing can continue, but it won't be useable.
+        NameFunctionPtr funcName = new semantics::NameFunction (this, identifier);
+        newFunction = funcName->AddOverload (returnType, params, funcScope, funcBlock);
+      }
+      else
+      {
+        NameFunctionPtr funcName = std::move (funcIdentResult.value());
+        if (!funcName)
+        {
+          funcName = new semantics::NameFunction (this, identifier);
+          identifiers[identifier] = funcName;
+        }
+
+        newFunction = funcName->AddOverload (returnType, params, funcScope, funcBlock);
+        functionsInDeclOrder.push_back (newFunction);
+      }
+
+      return newFunction;
+    }
+
+    std::vector<BaseFunctionPtr> Scope::GetFunctions () const
+    {
+      return functionsInDeclOrder;
     }
 
     Scope::result_NamePtr Scope::ResolveIdentifier (const uc::String& identifier)

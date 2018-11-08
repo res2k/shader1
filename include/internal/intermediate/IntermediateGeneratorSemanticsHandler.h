@@ -119,6 +119,7 @@ namespace s1
       // TODO: void Warning ()
       /// Signal an error in intermediate generation
       void ExpressionError (const ExpressionContext& context, Error code);
+      void ExpressionError (const ExpressionContext& context, semantics::Error code);
       /** @} */
 
       /**\name Basic types

@@ -48,8 +48,14 @@ namespace s1
       std::vector<NameVariablePtr> newVars; // TODO: Needed for intermediate variable initialization
       std::vector<NameVariablePtr> varsInDeclOrder; // TODO: Needed for global var handling
 
+      std::vector<BaseFunctionPtr> functionsInDeclOrder; // TODO: Used in global scope, to detect functions
+
       /// Returns \c true if identifier is not registered in this or any parent scope.
       bool CheckIdentifierUnique (const uc::String& identifier);
+
+      typedef outcome::unchecked<NameFunctionPtr, Error> result_NameFunctionPtr;
+      /// Return NameFunction if identifier is a function, error code otherwise
+      result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
     public:
       Scope (Scope* parent, ScopeLevel level);
       virtual ~Scope();
@@ -92,11 +98,19 @@ namespace s1
        * \param returnType Return type of function.
        * \param identifier Identifier of function.
        * \param params Formal parameters.
+       * \param funcScope Scope for function parameters.
+       * \param funcBlock Function block.
        * \returns Function object.
        */
+      FunctionPtr AddFunction (SimpleDiagnostics& diagnosticsHandler,
+                               Type* returnType, const uc::String& identifier,
+                               const FunctionFormalParameters& params,
+                               Scope* funcScope, Block* funcBlock);
       virtual FunctionPtr AddFunction (TypePtr returnType,
-        const uc::String& identifier,
-        const FunctionFormalParameters& params) = 0;
+                                       const uc::String& identifier,
+                                       const FunctionFormalParameters& params) = 0; // FIXME: Put into Handler?
+
+      std::vector<BaseFunctionPtr> GetFunctions () const; // TODO: Used in global scope, to detect functions
 
       typedef outcome::unchecked<NamePtr, Error> result_NamePtr;
       /// Resolve an identifier to a name

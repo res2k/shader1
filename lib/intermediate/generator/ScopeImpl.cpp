@@ -22,7 +22,7 @@
 #include "ScopeImpl.h"
 
 #include "intermediate/Diagnostics.h"
-#include "parser/Diagnostics.h"
+#include "semantics/Diagnostics.h"
 #include "semantics/Function.h"
 #include "semantics/Name.h"
 #include "ExpressionImpl.h"
@@ -37,24 +37,6 @@ namespace s1
     typedef semantics::NamePtr NamePtr;
     typedef semantics::BlockPtr BlockPtr;
     typedef semantics::FunctionPtr FunctionPtr;
-
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::result_NameFunctionPtr
-    IntermediateGeneratorSemanticsHandler::ScopeImpl::CheckIdentifierIsFunction (const uc::String& identifier)
-    {
-      IdentifierMap::iterator ident = identifiers.find (identifier);
-      if (ident != identifiers.end())
-      {
-        auto funcName = semantics::NameFunction::upcast (ident->second.get());
-        if (!funcName)
-        {
-          return outcome::failure (Error::IdentifierAlreadyDeclared);
-        }
-        return funcName;
-      }
-      if (GetParent())
-        return static_cast<ScopeImpl*> (GetParent())->CheckIdentifierIsFunction (identifier);
-      return semantics::NameFunctionPtr ();
-    }
 
     IntermediateGeneratorSemanticsHandler::ScopeImpl::ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                                                                  ScopeImpl* parent,
@@ -83,24 +65,6 @@ namespace s1
                                                                                const uc::String& identifier,
                                                                                const semantics::FunctionFormalParameters& params)
     {
-      if (level >= semantics::ScopeLevel::Function)
-      {
-        handler->ExpressionError (ExpressionContext(), Error::DeclarationNotAllowedInScope);
-        return FunctionPtr();
-      }
-      auto funcIdentResult = CheckIdentifierIsFunction (identifier);
-      if (!funcIdentResult)
-      {
-        handler->ExpressionError (ExpressionContext(), funcIdentResult.error());
-        return FunctionPtr();
-      }
-      semantics::NameFunctionPtr funcName = std::move (funcIdentResult.value());
-      if (!funcName)
-      {
-        funcName = new semantics::NameFunction (this, identifier);
-        identifiers[identifier] = funcName;
-      }
-
       semantics::ScopePtr funcScope;
       funcScope = handler->CreateScope (this, semantics::ScopeLevel::Function, returnType);
       auto funcScopeImpl = get_static_ptr<ScopeImpl> (funcScope);
@@ -110,11 +74,7 @@ namespace s1
       }
       BlockPtr newBlock (handler->CreateBlock (funcScope));
 
-      FunctionPtr newFunction = funcName->AddOverload (returnType.get(), params, funcScope.get(), newBlock.get());
-
-      functionsInDeclOrder.push_back (newFunction);
-
-      return newFunction;
+      return Scope::AddFunction (*this, returnType.get(), identifier, params, funcScope.get(), newBlock.get());
     }
 
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (semantics::Builtin which,
@@ -124,7 +84,7 @@ namespace s1
     {
       if (level >= semantics::ScopeLevel::Function)
       {
-        handler->ExpressionError (ExpressionContext(), Error::DeclarationNotAllowedInScope);
+        handler->ExpressionError (ExpressionContext(), semantics::Error::DeclarationNotAllowedInScope);
         return;
       }
 
@@ -146,11 +106,6 @@ namespace s1
       functionsInDeclOrder.push_back (functionObj);
     }
 
-    std::vector<semantics::BaseFunctionPtr> IntermediateGeneratorSemanticsHandler::ScopeImpl::GetFunctions () const
-    {
-      return functionsInDeclOrder;
-    }
-
     int IntermediateGeneratorSemanticsHandler::ScopeImpl::DistanceToScope (Scope* scope)
     {
       if (!scope) return INT_MAX;
@@ -164,6 +119,11 @@ namespace s1
         n++;
       }
       return -1;
+    }
+
+    void IntermediateGeneratorSemanticsHandler::ScopeImpl::Error (semantics::Error code)
+    {
+      handler->ExpressionError (ExpressionContext(), code);
     }
 
   } // namespace intermediate
