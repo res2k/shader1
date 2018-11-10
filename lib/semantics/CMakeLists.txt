@@ -18,6 +18,7 @@ set(semantics_sources
     ${S1_INC}/semantics/Handler.h
     ${S1_INC}/semantics/Name.h
     ${S1_INC}/semantics/Scope.h
+    ${S1_INC}/semantics/SimpleDiagnostics.h
     ${S1_INC}/semantics/Type.h
     )
 s1_add_library_internal(semantics

@@ -95,6 +95,8 @@ namespace s1
 
     struct FunctionFormalParameter;
     typedef std::vector<FunctionFormalParameter> FunctionFormalParameters;
+
+    struct SimpleDiagnostics;
   } // namespace semantics
 } // namespace s1
 
