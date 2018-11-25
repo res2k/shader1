@@ -33,27 +33,5 @@ namespace s1
                                                       ScopeLevel level)
      : Scope (parent, level), handler (handler)
     {}
-
-    namespace
-    {
-      class DummyDiagnosticsImpl : public SimpleDiagnostics
-      {
-      public:
-        void Error (semantics::Error) override { /* FIXME */ }
-      };
-    } // anonymous namespace
-
-    FunctionPtr
-    CommonScope::AddFunction (TypePtr returnType,
-                              const uc::String& identifier,
-                              const FunctionFormalParameters& params)
-    {
-      semantics::ScopePtr funcScope;
-      funcScope = handler->CreateScope (this, ScopeLevel::Function);
-      BlockPtr newBlock (handler->CreateBlock (funcScope));
-
-      DummyDiagnosticsImpl diag;
-      return Scope::AddFunction (diag, returnType.get(), identifier, params, funcScope.get(), newBlock.get());
-    }
   } // namespace semantics
 } // namespace s1

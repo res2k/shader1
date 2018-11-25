@@ -42,10 +42,6 @@ public:
   public:
     TestScope (TestSemanticsHandler* handler,
 	             TestScope* parent, s1::semantics::ScopeLevel level);
-    
-    s1::semantics::FunctionPtr AddFunction (s1::semantics::TypePtr returnType,
-      const s1::uc::String& identifier,
-      const s1::semantics::FunctionFormalParameters& params);
   };
   
   s1::semantics::ScopePtr CreateScope (s1::semantics::ScopePtr parentScope, s1::semantics::ScopeLevel scopeLevel)
@@ -581,6 +577,11 @@ public:
     s1::semantics::ScopePtr blockScope = CreateScope (parentScope, s1::semantics::ScopeLevel::Function);
     return s1::semantics::BlockPtr (new TestBlock (blockScope));
   }
+
+  s1::semantics::FunctionPtr CreateFunction (s1::semantics::Scope* parentScope,
+                                             s1::semantics::Type* returnType,
+                                             const s1::uc::String& identifier,
+                                             const s1::semantics::FunctionFormalParameters& params) override;
 };
 
 inline std::string TestSemanticsHandler::TestExpressionBase::GetExprString (s1::semantics::ExpressionPtr expr)

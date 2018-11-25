@@ -61,6 +61,20 @@ namespace s1
 {
   namespace intermediate
   {
+    class IntermediateGeneratorSemanticsHandler::SimpleDiagnosticsImpl : public semantics::SimpleDiagnostics
+    {
+      IntermediateGeneratorSemanticsHandler* handler;
+    public:
+      SimpleDiagnosticsImpl (IntermediateGeneratorSemanticsHandler* handler) : handler (handler) {}
+
+      void Error (semantics::Error code) override
+      {
+        handler->ExpressionError (IntermediateGeneratorSemanticsHandler::ExpressionContext(), code);
+      }
+    };
+
+    //-----------------------------------------------------------------------
+
     typedef semantics::NamePtr NamePtr;
     typedef semantics::FunctionPtr FunctionPtr;
     typedef semantics::ScopePtr ScopePtr;
@@ -691,5 +705,22 @@ namespace s1
       return BlockPtr (new BlockImpl (this, blockScope.get()));
     }
 
+    FunctionPtr IntermediateGeneratorSemanticsHandler::CreateFunction (semantics::Scope* parentScope,
+                                                                       semantics::Type* returnType,
+                                                                       const uc::String& identifier,
+                                                                       const semantics::FunctionFormalParameters& params)
+    {
+      semantics::ScopePtr funcScope;
+      funcScope = CreateScope (parentScope, semantics::ScopeLevel::Function, returnType);
+      auto funcScopeImpl = get_static_ptr<ScopeImpl> (funcScope);
+      for (const auto& param : params)
+      {
+        funcScopeImpl->AddParameter (param);
+      }
+      BlockPtr newBlock (CreateBlock (funcScope));
+
+      SimpleDiagnosticsImpl diag (this);
+      return parentScope->AddFunction (diag, returnType, identifier, params, funcScope.get(), newBlock.get());
+    }
   } // namespace intermediate
 } // namespace s1

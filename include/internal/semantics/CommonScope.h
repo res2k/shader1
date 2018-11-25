@@ -37,10 +37,6 @@ namespace s1
       CommonHandler* handler;
     public:
       CommonScope (CommonHandler* handler, CommonScope* parent, ScopeLevel level);
-      
-      FunctionPtr AddFunction (TypePtr returnType,
-        const uc::String& identifier,
-        const FunctionFormalParameters& params);
     };
   } // namespace semantics
 } // namespace s1

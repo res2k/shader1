@@ -138,6 +138,19 @@ namespace s1
       virtual ScopePtr CreateScope (ScopePtr parentScope, ScopeLevel scopeLevel) = 0;
 
       virtual BlockPtr CreateBlock (ScopePtr parentScope) = 0;
+
+      /**
+       * Create a function in the given scope.
+       * \param scope Containing scope.
+       * \param returnType Return type of function.
+       * \param identifier Identifier of function.
+       * \param params Formal parameters.
+       * \returns Function object.
+       */
+      virtual FunctionPtr CreateFunction (Scope* parentScope,
+                                          Type* returnType,
+                                          const uc::String& identifier,
+                                          const FunctionFormalParameters& params) = 0;
     };
   } // namespace semantics
 } // namespace s1

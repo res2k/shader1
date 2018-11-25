@@ -42,14 +42,15 @@ namespace
   };
 } // anonymous namespace
 
-FunctionPtr TestSemanticsHandler::TestScope::AddFunction (s1::semantics::TypePtr returnType,
-							   const s1::uc::String& identifier,
-							   const s1::semantics::FunctionFormalParameters& params)
+FunctionPtr TestSemanticsHandler::CreateFunction (s1::semantics::Scope* parentScope,
+                                                  s1::semantics::Type* returnType,
+                                                  const s1::uc::String& identifier,
+                                                  const s1::semantics::FunctionFormalParameters& params)
 {
   semantics::ScopePtr funcScope;
-  funcScope = handler->CreateScope (this, s1::semantics::ScopeLevel::Function);
-  BlockPtr newBlock (handler->CreateBlock (funcScope));
+  funcScope = CreateScope (parentScope, s1::semantics::ScopeLevel::Function);
+  BlockPtr newBlock (CreateBlock (funcScope));
 
   DummyDiagnosticsImpl diag;
-  return Scope::AddFunction (diag, returnType.get(), identifier, params, funcScope.get(), newBlock.get());
+  return parentScope->AddFunction (diag, returnType, identifier, params, funcScope.get(), newBlock.get());
 }

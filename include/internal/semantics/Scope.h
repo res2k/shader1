@@ -106,9 +106,6 @@ namespace s1
                                Type* returnType, const uc::String& identifier,
                                const FunctionFormalParameters& params,
                                Scope* funcScope, Block* funcBlock);
-      virtual FunctionPtr AddFunction (TypePtr returnType,
-                                       const uc::String& identifier,
-                                       const FunctionFormalParameters& params) = 0; // FIXME: Put into Handler?
 
       std::vector<BaseFunctionPtr> GetFunctions () const; // TODO: Used in global scope, to detect functions
 

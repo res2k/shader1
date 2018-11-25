@@ -26,9 +26,7 @@ namespace s1
 {
   namespace intermediate
   {
-    class IntermediateGeneratorSemanticsHandler::ScopeImpl :
-      public semantics::Scope,
-      private semantics::SimpleDiagnostics
+    class IntermediateGeneratorSemanticsHandler::ScopeImpl : public semantics::Scope
     {
     private:
       friend class IntermediateGeneratorSemanticsHandler;
@@ -43,10 +41,6 @@ namespace s1
       ScopeImpl (IntermediateGeneratorSemanticsHandler* handler,
                  ScopeImpl* parent, semantics::ScopeLevel level,
                  semantics::Type* funcReturnType);
-
-      semantics::FunctionPtr AddFunction (semantics::TypePtr returnType,
-        const uc::String& identifier,
-        const semantics::FunctionFormalParameters& params) override;
 
       semantics::TypePtr GetFunctionReturnType() const
       {
@@ -68,11 +62,6 @@ namespace s1
                                semantics::Type* returnType,
                                const uc::String& identifier,
                                const semantics::FunctionFormalParameters& formalParameters);
-    private:
-      /**\name semantics::SimpleDiagnostics implementation
-       * @{ */
-      void Error (semantics::Error code) override;
-      /** @} */
     };
   } // namespace intermediate
 } // namespace s1

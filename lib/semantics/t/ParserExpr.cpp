@@ -780,7 +780,7 @@ BOOST_AUTO_TEST_CASE(FunctionCall)
           s1::semantics::ScopeLevel::Global)); 
   s1::semantics::FunctionFormalParameters params;
   scope->AddVariable (semanticDiag, nullptr, s1::uc::String ("x"), nullptr, false);
-  scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
+  semanticsHandler.CreateFunction (scope.get(), nullptr, s1::uc::String ("Foo"), params);
 
   s1::semantics::ExpressionPtr expr;
   BOOST_CHECK_NO_THROW ((expr = parser.ParseExpression (scope)));
@@ -807,7 +807,7 @@ BOOST_AUTO_TEST_CASE(FunctionCall2)
   scope->AddVariable (semanticDiag, nullptr, s1::uc::String ("a"), nullptr, false);
   scope->AddVariable (semanticDiag, nullptr, s1::uc::String ("b"), nullptr, false);
   scope->AddVariable (semanticDiag, nullptr, s1::uc::String ("x"), nullptr, false);
-  scope->AddFunction (s1::semantics::TypePtr (), s1::uc::String ("Foo"), params);
+  semanticsHandler.CreateFunction (scope.get(), nullptr, s1::uc::String ("Foo"), params);
 
   s1::semantics::ExpressionPtr expr;
   BOOST_CHECK_NO_THROW ((expr = parser.ParseExpression (scope)));
@@ -834,7 +834,7 @@ BOOST_AUTO_TEST_CASE(FunctionCallError)
                                   s1::semantics::ScopeLevel::Global));
   s1::semantics::FunctionFormalParameters params;
   scope->AddVariable (semanticDiag, nullptr, s1::uc::String ("x"), nullptr, false);
-  scope->AddFunction (nullptr, s1::uc::String ("Foo"), params);
+  semanticsHandler.CreateFunction (scope.get(), nullptr, s1::uc::String ("Foo"), params);
 
   s1::semantics::ExpressionPtr expr;
   BOOST_CHECK_NO_THROW ((expr = parser.ParseExpression (scope)));

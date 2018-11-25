@@ -61,22 +61,6 @@ namespace s1
         outputParams.push_back (param.identifier);
     }
 
-    FunctionPtr IntermediateGeneratorSemanticsHandler::ScopeImpl::AddFunction (semantics::TypePtr returnType,
-                                                                               const uc::String& identifier,
-                                                                               const semantics::FunctionFormalParameters& params)
-    {
-      semantics::ScopePtr funcScope;
-      funcScope = handler->CreateScope (this, semantics::ScopeLevel::Function, returnType);
-      auto funcScopeImpl = get_static_ptr<ScopeImpl> (funcScope);
-      for (const auto& param : params)
-      {
-        funcScopeImpl->AddParameter (param);
-      }
-      BlockPtr newBlock (handler->CreateBlock (funcScope));
-
-      return Scope::AddFunction (*this, returnType.get(), identifier, params, funcScope.get(), newBlock.get());
-    }
-
     void IntermediateGeneratorSemanticsHandler::ScopeImpl::AddBuiltinFunction (semantics::Builtin which,
                                                                                semantics::Type* returnType,
                                                                                const uc::String& identifier,
@@ -119,11 +103,6 @@ namespace s1
         n++;
       }
       return -1;
-    }
-
-    void IntermediateGeneratorSemanticsHandler::ScopeImpl::Error (semantics::Error code)
-    {
-      handler->ExpressionError (ExpressionContext(), code);
     }
 
   } // namespace intermediate

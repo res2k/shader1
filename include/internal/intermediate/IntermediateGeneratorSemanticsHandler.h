@@ -71,6 +71,8 @@ namespace s1
       typedef std::unordered_set<semantics::NamePtr> NameSet;
       typedef std::unordered_set<semantics::NameVariablePtr> NameVariableSet;
 
+      class SimpleDiagnosticsImpl;
+
       /// Diagnostics handler
       diagnostics::Handler* diagnosticsHandler = nullptr;
 
@@ -204,6 +206,11 @@ namespace s1
       { return CreateScope (parentScope, scopeLevel, semantics::TypePtr ()); }
 
       semantics::BlockPtr CreateBlock (semantics::ScopePtr parentScope);
+
+      semantics::FunctionPtr CreateFunction (semantics::Scope* parentScope,
+                                             semantics::Type* returnType,
+                                             const uc::String& identifier,
+                                             const semantics::FunctionFormalParameters& params) override;
       /** @} */
     };
 

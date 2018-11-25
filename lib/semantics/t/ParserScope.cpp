@@ -69,8 +69,9 @@ BOOST_AUTO_TEST_CASE(IdentifierAddFunc)
                                   s1::semantics::ScopeLevel::Global));
   s1::semantics::FunctionFormalParameters params;
   BOOST_CHECK_NO_THROW(
-    scope->AddFunction (semanticsHandler.CreateType (s1::semantics::BaseType::Int).get(),
-                        s1::uc::String ("a"), params)
+    semanticsHandler.CreateFunction (scope.get(),
+                                     semanticsHandler.CreateType (s1::semantics::BaseType::Int).get(),
+                                     s1::uc::String ("a"), params)
   );
   s1::semantics::NamePtr varRequested;
   BOOST_CHECK_NO_THROW(
