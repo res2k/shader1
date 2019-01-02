@@ -1177,15 +1177,19 @@ def parse_signature(sig_text, name, pos):
     defaults = {}
 
     def get_token(pos=False):
-        try:
-            tok_type, tok_string, (srow, scol), (erow, ecol), line = next(
-                tokens)
-        except StopIteration:
-            return tokenize.ENDMARKER, ''
-        if pos:
-            return tok_type, tok_string, (srow, scol), (erow, ecol)
-        else:
-            return tok_type, tok_string
+        while 1:
+            try:
+                tok_type, tok_string, (srow, scol), (erow, ecol), line = next(
+                    tokens)
+                # sig_text should be NEWLINE-free, but either StringIO or tokenize
+                # add one implicitly since Python 3.5 or 3.6
+                if tok_type == tokenize.NEWLINE: continue
+            except StopIteration:
+                return tokenize.ENDMARKER, ''
+            if pos:
+                return tok_type, tok_string, (srow, scol), (erow, ecol)
+            else:
+                return tok_type, tok_string
     while 1:
         var_arg_type = None
         tok_type, tok_string = get_token()
