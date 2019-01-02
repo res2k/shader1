@@ -25,7 +25,9 @@
 #include "base/boost_convert_spirit.hpp"
 #include <boost/convert/strtol.hpp>
 
+#if defined(HAVE_CHARCONV_TO_CHARS_FLOAT)
 #include <charconv>
+#endif
 
 namespace s1
 {
