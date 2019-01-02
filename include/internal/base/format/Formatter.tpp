@@ -242,13 +242,11 @@ namespace s1
       class ArgHelperFloat
       {
       protected:
-        typedef boost::container::static_vector<char, 32> string_type;
+        static const size_t maxFormatted = std::numeric_limits<T>::max_digits10 + 2;
+        typedef boost::container::static_vector<char, maxFormatted + 1> string_type;
         static string_type ConvertValue (T value);
       public:
-        static size_t FormattedSize (T)
-        {
-          return std::numeric_limits<T>::max_digits10 + 2;
-        }
+        constexpr static size_t FormattedSize (T) { return maxFormatted; }
       };
 
       template<typename SinkType>

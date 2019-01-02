@@ -1,6 +1,6 @@
 /*
     Shader1
-    Copyright (c) 2010-2014 Frank Richter
+    Copyright (c) 2010-2018 Frank Richter
 
 
     This library is free software; you can redistribute it and/or
@@ -25,6 +25,8 @@
 #include "base/boost_convert_spirit.hpp"
 #include <boost/convert/strtol.hpp>
 
+#include <charconv>
+
 namespace s1
 {
   namespace format
@@ -48,12 +50,12 @@ namespace s1
       template<typename T>
       typename ArgHelperFloat<T>::string_type ArgHelperFloat<T>::ConvertValue (T value)
       {
-        using namespace boost;
-
-        optional<string_type> floatStr =
-          convert<string_type> (value, cnv::strtol ()(cnv::parameter::precision = std::numeric_limits<T>::digits10));
-        assert (floatStr);
-        return *floatStr;
+        string_type floatStr;
+        floatStr.resize (floatStr.max_size ());
+        auto convertResult = std::to_chars (floatStr.data (), floatStr.data () + floatStr.max_size (), value);
+        assert (convertResult.ec != std::errc ());
+        floatStr.resize (convertResult.ptr - floatStr.data ());
+        return floatStr;
       }
 
       template ArgHelperFloat<float>::string_type ArgHelperFloat<float>::ConvertValue(float);
