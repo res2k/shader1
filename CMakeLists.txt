@@ -283,7 +283,7 @@ endfunction()
 
 # All C++ features we require
 set(ALL_REQUIRED_CXX_FEATURES
-    cxx_std_14)
+    cxx_std_17)
 if(NOT S1_BUILD_SHARED)
   # For static builds, require C++ features globally (to avoid conflicts
   # between lib and apps due to differing build flags)
