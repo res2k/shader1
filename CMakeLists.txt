@@ -40,6 +40,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(s1_add_library)
 include(s1_add_boost_test)
 include(s1_boost)
+include(s1_detect_charconv_float)
 include(s1_detect_function_attribute)
 include(s1_detect_stdlib)
 include(s1_set_static_msvc_runtime)
@@ -161,6 +162,9 @@ CHECK_TYPE_SIZE(wchar_t CXX_SIZEOF_WCHAR_T BUILTIN_TYPES_ONLY LANGUAGE CXX)
 CHECK_SYMBOL_EXISTS(mbrtoc16 uchar.h HAVE_UCHAR_H_MBRTOC16)
 CHECK_CXX_SYMBOL_EXISTS(_msize malloc.h HAVE__MSIZE)
 CHECK_CXX_SYMBOL_EXISTS(malloc_usable_size malloc.h HAVE_MALLOC_USABLE_SIZE)
+
+# Check whether <charconv> supports std::to_chars (..., float)
+s1_detect_charconv_float(HAVE_CHARCONV_TO_CHARS_FLOAT)
 
 # If we're on a version based off the universal always prefer a dynamic UCRT component
 SET(S1_UCRT_DYNAMIC ON CACHE BOOL "Whether to always use a dynamic MSVC universal runtime")

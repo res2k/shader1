@@ -26,6 +26,8 @@
 #cmakedefine HAVE__MSIZE             @HAVE__MSIZE@
 // whether malloc_usable_size() is available
 #cmakedefine HAVE_MALLOC_USABLE_SIZE @HAVE_MALLOC_USABLE_SIZE@
+// whether <charconv> supports std::to_chars (..., float)
+#cmakedefine HAVE_CHARCONV_TO_CHARS_FLOAT @HAVE_CHARCONV_TO_CHARS_FLOAT@
 
 // whether to use critical sections instead of std::mutex with MSVC
 #cmakedefine S1_PREFER_CRITICAL_SECTIONS
