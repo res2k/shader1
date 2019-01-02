@@ -51,4 +51,10 @@ build_script:
 
 test_script:
   - "SET PATH=C:/projects/shader1/appveyor-build/Debug;%PATH%"
-  - ctest --output-on-failure
+  - ctest --output-on-failure -T Test
+  - ps: |
+      . ("C:/projects/shader1/build/appveyor-ctest-uploader/upload-ctest-report.ps1")
+      foreach($file in $(ls Testing\*\Test.xml))
+      {
+        upload-ctest-report $file
+      }
