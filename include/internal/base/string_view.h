@@ -24,7 +24,7 @@
 
 #include "base/config.h"
 
-#if defined(HAVE_STRING_VIEW)
+#if HAVE_STRING_VIEW
   #include <string_view>
 #else
   #include <boost/config.hpp>
@@ -33,13 +33,13 @@
 
 namespace s1
 {
-#if defined(HAVE_STRING_VIEW)
+#if HAVE_STRING_VIEW
   typedef std::string_view string_view;
   typedef std::wstring_view wstring_view;
 #else
   typedef boost::string_view string_view;
   typedef boost::wstring_view wstring_view;
-#endif // defined(HAVE_STRING_VIEW)
+#endif // HAVE_STRING_VIEW
 } // namespace s1
 
 #endif // BASE_STRING_VIEW_H_

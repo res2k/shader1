@@ -17,8 +17,9 @@
 
 // Hack to avoid <string_view> inclusion when building for "older" C++ standards
 #include "base/config.h"
-#if defined(HAVE_STRING_VIEW)
+#if HAVE_STRING_VIEW
 #undef HAVE_STRING_VIEW
+#define HAVE_STRING_VIEW 0
 #endif
 
 #include "base/common.h"
