@@ -28,6 +28,8 @@
 #cmakedefine01 HAVE_MALLOC_USABLE_SIZE
 // whether <charconv> supports std::to_chars (..., float)
 #cmakedefine01 HAVE_CHARCONV_TO_CHARS_FLOAT
+// whether <charconv> supports std::from_chars (..., int)
+#cmakedefine01 HAVE_CHARCONV_FROM_CHARS_INT
 // whether std::string_view is available
 #cmakedefine01 HAVE_STRING_VIEW
 
