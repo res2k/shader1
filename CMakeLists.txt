@@ -41,6 +41,7 @@ include(s1_add_library)
 include(s1_add_boost_test)
 include(s1_boost)
 include(s1_detect_charconv_float)
+include(s1_detect_cxx17_string_view)
 include(s1_detect_function_attribute)
 include(s1_detect_stdlib)
 include(s1_set_static_msvc_runtime)
@@ -165,6 +166,8 @@ CHECK_CXX_SYMBOL_EXISTS(malloc_usable_size malloc.h HAVE_MALLOC_USABLE_SIZE)
 
 # Check whether <charconv> supports std::to_chars (..., float)
 s1_detect_charconv_float(HAVE_CHARCONV_TO_CHARS_FLOAT)
+# Check whether std::string_view is available
+s1_detect_string_view(HAVE_STRING_VIEW)
 
 # If we're on a version based off the universal always prefer a dynamic UCRT component
 SET(S1_UCRT_DYNAMIC ON CACHE BOOL "Whether to always use a dynamic MSVC universal runtime")

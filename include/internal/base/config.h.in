@@ -28,6 +28,8 @@
 #cmakedefine HAVE_MALLOC_USABLE_SIZE @HAVE_MALLOC_USABLE_SIZE@
 // whether <charconv> supports std::to_chars (..., float)
 #cmakedefine HAVE_CHARCONV_TO_CHARS_FLOAT @HAVE_CHARCONV_TO_CHARS_FLOAT@
+// whether std::string_view is available
+#cmakedefine01 HAVE_STRING_VIEW
 
 // whether to use critical sections instead of std::mutex with MSVC
 #cmakedefine S1_PREFER_CRITICAL_SECTIONS
