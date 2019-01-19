@@ -44,32 +44,27 @@ namespace s1
        * Parse an argument index from a string
        * @{ */
       boost::optional<size_t> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd);
-      boost::optional<size_t> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd);
       /** @} */
     } // namespace detail
 
-    template<typename FormatStringType>
-    bool Formatter<FormatStringType>::FormatPart::IsStringPart() const
+    inline bool Formatter::FormatPart::IsStringPart() const
     {
       return strBegin != nullptr;
     }
 
-    template<typename FormatStringType>
-    const typename Formatter<FormatStringType>::CharType* Formatter<FormatStringType>::FormatPart::GetPartString() const
+    inline const char* Formatter::FormatPart::GetPartString() const
     {
       assert (IsStringPart());
       return strBegin;
     }
 
-    template<typename FormatStringType>
-    size_t Formatter<FormatStringType>::FormatPart::GetPartStringLen() const
+    inline size_t Formatter::FormatPart::GetPartStringLen() const
     {
       assert (IsStringPart());
       return strLen;
     }
 
-    template<typename FormatStringType>
-    size_t Formatter<FormatStringType>::FormatPart::GetArgIndex() const
+    inline size_t Formatter::FormatPart::GetArgIndex() const
     {
       assert (!IsStringPart());
       return argIndex;
@@ -77,9 +72,8 @@ namespace s1
 
     //-----------------------------------------------------------------------
 
-    template<typename FormatStringType>
     template<typename SinkType>
-    void Formatter<FormatStringType>::EmitPartString (SinkType& sink, const FormatPart& part) const
+    void Formatter::EmitPartString (SinkType& sink, const FormatPart& part) const
     {
       sink.append (part.GetPartString(), part.GetPartStringLen());
     }
@@ -386,80 +380,8 @@ namespace s1
       };
     } // namespace detail
 
-    template<typename FormatStringType>
-    template<typename FormatIt>
-    void Formatter<FormatStringType>::ParseFormat (FormatIt fmtBegin, FormatIt fmtEnd)
-    {
-      const CharType* p = fmtBegin;
-      const CharType* partStart = p;
-      while (p != fmtEnd)
-      {
-        if (*p == '{')
-        {
-          p++;
-          if (*p)
-          {
-            if (*p == '{')
-            {
-              // '{{' -> emit a single '{' in output
-              parts.push_back (FormatPart (partStart, p - partStart));
-              p++;
-              partStart = p;
-              continue;
-            }
-            else
-            {
-              // Part up to '{'
-              if ((p - 1) > partStart)
-              {
-                parts.push_back (FormatPart (partStart, p - 1 - partStart));
-              }
-              // Parse format argument
-              const CharType* argEnd = p;
-              while (*argEnd && (*argEnd != '}')) argEnd++;
-              // Parse index
-              if (argEnd > p)
-              {
-                boost::optional<size_t> index (detail::ParseArgumentIndex (p, argEnd));
-                if (!index) throw std::logic_error ("Invalid format placeholder");
-                parts.push_back (FormatPart (*index));
-              }
-              // else: assert or so?
-              // Continue after '}'
-              p = argEnd;
-              if (*p) p++;
-              partStart = p;
-              continue;
-            }
-          }
-        }
-        else if (*p == '}')
-        {
-          p++;
-          parts.push_back (FormatPart (partStart, p - partStart));
-          /* Collapse '}}' as to a single '}' for symmetry with '}'
-           * (but accept lone '}' as well) */
-          if (*p && *p == '}')
-            p++;
-          partStart = p;
-          continue;
-        }
-        p++;
-      }
-
-      if (p > partStart)
-        parts.push_back (FormatPart (partStart, p - partStart));
-    }
-
-    template<typename FormatStringType>
-    Formatter<FormatStringType>::Formatter (FormatStringType format)
-    {
-      ParseFormat (format, format + std::char_traits<CharType>::length (format));
-    }
-
-    template<typename FormatStringType>
     template<typename DestType, typename ...Args>
-    void Formatter<FormatStringType>::operator() (DestType& dest, const Args&... a) const
+    void Formatter::operator() (DestType& dest, const Args&... a) const
     {
       static_assert (sizeof...(Args) <= FORMATTER_MAX_ARGS, "Unsupported formatter argument count");
 

@@ -27,7 +27,7 @@
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/stringize.hpp>
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {
@@ -83,7 +83,7 @@ namespace s1
       {
         static uc::String FormatArg (const std::vector<T>& vec)
         {
-          format::Formatter<> fmtItem ("{0}");
+          format::Formatter fmtItem ("{0}");
           uc::String result ("[");
           bool first = true;
           for (const T& item : vec)

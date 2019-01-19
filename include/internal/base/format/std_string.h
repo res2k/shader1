@@ -16,7 +16,7 @@
 */
 
 /**\file
- * s1::format::Formatter<> support for std::string destinations.
+ * s1::format::Formatter support for std::string destinations.
  */
 #ifndef __BASE_FORMAT_STD_STRING_H__
 #define __BASE_FORMAT_STD_STRING_H__

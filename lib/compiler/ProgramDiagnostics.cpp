@@ -26,7 +26,7 @@
 #include "diagnostics/common.h"
 #include "lexer/Lexer.h"
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {
@@ -68,7 +68,7 @@ namespace s1
     auto descr_str = diagnostics::GetDescriptionString (entry.code);
     uc::String empty_str;
     S1_ASSERT_MSG (descr_str, "A diagnostic code is invalid", empty_str);
-    format::Formatter<> formatDescription (descr_str);
+    format::Formatter formatDescription (descr_str);
     return formatDescription.to<uc::String> (entry.info.value_or<0> (empty_str),
                                              entry.info.value_or<1> (empty_str));
   }

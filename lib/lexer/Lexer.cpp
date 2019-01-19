@@ -25,7 +25,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {

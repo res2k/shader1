@@ -22,7 +22,7 @@
 #include "base/format/Formatter.h"
 #include "base/format/uc_String.h"
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {

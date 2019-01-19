@@ -18,7 +18,7 @@ set(base_sources
     ${S1_INC}/base/ResultCode_internal.h
     ${S1_INC}/base/format/Sink.h
     ${S1_INC}/base/format/Formatter.h
-    ${S1_INC}/base/format/Formatter.tpp
+    ${S1_INC}/base/format/Formatter.ipp
     )
 set(base_sources_uc_cpp
     uc/Char.cpp

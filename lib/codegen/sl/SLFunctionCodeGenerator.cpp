@@ -29,7 +29,7 @@
 #include <string>
 #include <sstream>
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {

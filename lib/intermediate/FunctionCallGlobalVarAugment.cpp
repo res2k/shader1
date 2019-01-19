@@ -25,7 +25,7 @@
 #include "intermediate/SequenceOp/SequenceOpBlock.h"
 #include "semantics/Name.h"
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {

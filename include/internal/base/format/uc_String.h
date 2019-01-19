@@ -16,7 +16,7 @@
 */
 
 /**\file
- * s1::format::Formatter<> support for s1::uc::String destinations.
+ * s1::format::Formatter support for s1::uc::String destinations.
  */
 #ifndef __BASE_FORMAT_UC_STRING_H__
 #define __BASE_FORMAT_UC_STRING_H__

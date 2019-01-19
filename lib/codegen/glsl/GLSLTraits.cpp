@@ -27,7 +27,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include <boost/convert.hpp>
 #include "base/boost_convert_spirit.hpp"
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 #include <assert.h>
 

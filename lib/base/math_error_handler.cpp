@@ -25,7 +25,7 @@ LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 #include <boost/convert/strtol.hpp>
 #include <boost/math/policies/error_handling.hpp>
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {
@@ -81,12 +81,12 @@ namespace s1
     void RaiseRoundingError (const char* function, const char* message, const char* typeStr, const char* valStr)
     {
       std::string functionStr;
-      format::Formatter<> (ConvertFormat (function).c_str ()) (functionStr, typeStr);
+      format::Formatter (ConvertFormat (function)) (functionStr, typeStr);
       std::string messageStr;
-      format::Formatter<> (ConvertFormat (message).c_str ()) (messageStr, valStr);
+      format::Formatter (ConvertFormat (message)) (messageStr, valStr);
 
       std::string exceptStr;
-      format::Formatter<> ("Error in {0}: {1}") (exceptStr, functionStr, messageStr);
+      format::Formatter ("Error in {0}: {1}") (exceptStr, functionStr, messageStr);
       throw boost::math::rounding_error (exceptStr);
     }
   } // namespace detail

@@ -27,8 +27,6 @@
 #include <atomic>
 #include <vector>
 
-#include "FormatStringTraits.h"
-
 #define FORMATTER_MAX_ARGS      BOOST_PP_INC(12) /* arbitrary, increase as necessary */
 
 namespace s1
@@ -37,21 +35,18 @@ namespace s1
   {
     /**
      * Simple string formatter.
-     * Takes format strings of type \a FormatStringType.
+     * Takes format strings of type const char*.
      * Placeholder style is \c {N} where \c N is the zero-based argument number.
      */
-    template<typename FormatStringType = const char*>
     class Formatter
     {
     protected:
-      typedef typename FormatStringTraits<FormatStringType>::CharType CharType;
-
       // A parsed format string part.
       struct FormatPart
       {
       private:
         /// Begin of format string part, or \c nullptr if index
-        const CharType* strBegin;
+        const char* strBegin;
         union
         {
           /// String part len
@@ -60,20 +55,19 @@ namespace s1
           size_t argIndex;
         };
       public:
-        FormatPart (const CharType* str, size_t len)
+        FormatPart (const char* str, size_t len)
           : strBegin (str), strLen (len) {}
         FormatPart (size_t index)
           : strBegin (nullptr), argIndex (index) {}
 
         bool IsStringPart() const;
-        const CharType* GetPartString() const;
+        const char* GetPartString() const;
         size_t GetPartStringLen() const;
         size_t GetArgIndex() const;
       };
 
       std::vector<FormatPart> parts;
-      template<typename FormatIt>
-      void ParseFormat (FormatIt fmtBegin, FormatIt fmtEnd);
+      void ParseFormat (std::string_view format);
 
       template<typename SinkType>
       void EmitPartString (SinkType& sink, const FormatPart& part) const;
@@ -82,7 +76,7 @@ namespace s1
        * Construct a formatter.
        * \param format Format string. Must be constant over the lifetime of the formatter!
        */
-      Formatter (FormatStringType format);
+      Formatter (std::string_view format);
 
       /**
        * Helper function to reduce the storage of the internal parsed format representation.
@@ -120,16 +114,16 @@ namespace s1
     template<const char* const Format>
     class StaticFormatter
     {
-      std::atomic<Formatter<>*> formatter;
+      std::atomic<Formatter*> formatter;
 
-      const Formatter<>& GetFormatter (const char* format)
+      const Formatter& GetFormatter (const char* format)
       {
-        Formatter<>* fmtPtr = formatter.load (std::memory_order_acquire);
+        Formatter* fmtPtr = formatter.load (std::memory_order_acquire);
         if (!fmtPtr)
         {
-          fmtPtr = new Formatter<> (format);
+          fmtPtr = new Formatter (format);
           fmtPtr->CompactParsedFormat ();
-          Formatter<>* expectedPtr = nullptr;
+          Formatter* expectedPtr = nullptr;
           if (!formatter.compare_exchange_strong (expectedPtr, fmtPtr))
           {
             delete fmtPtr;
@@ -138,7 +132,7 @@ namespace s1
         }
         return *fmtPtr;
       }
-      const Formatter<>& GetFormatter ()
+      const Formatter& GetFormatter ()
       {
         return GetFormatter (Format);
       }

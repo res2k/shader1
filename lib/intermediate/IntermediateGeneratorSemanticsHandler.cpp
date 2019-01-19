@@ -54,7 +54,7 @@
 #include <boost/next_prior.hpp>
 #include <boost/make_shared.hpp>
 
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 
 namespace s1
 {

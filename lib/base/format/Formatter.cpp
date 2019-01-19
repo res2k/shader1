@@ -18,7 +18,7 @@
 #include "base/common.h"
 
 #include "base/format/Formatter.h"
-#include "base/format/Formatter.tpp"
+#include "base/format/Formatter.ipp"
 #include "base/math_error_handler.h"
 
 #include <boost/convert.hpp>
@@ -40,11 +40,6 @@ namespace s1
       boost::optional<size_t> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd)
       {
         return boost::convert<size_t> (boost::cnv::range<const char*> (indexStrBegin, indexStrEnd), default_cnv_type ());
-      }
-
-      boost::optional<size_t> ParseArgumentIndex (const wchar_t* indexStrBegin, const wchar_t* indexStrEnd)
-      {
-        return boost::convert<size_t> (boost::cnv::range<const wchar_t*> (indexStrBegin, indexStrEnd), default_cnv_type ());
       }
 
       //---------------------------------------------------------------------
@@ -71,5 +66,75 @@ namespace s1
 
       template ArgHelperFloat<float>::string_type ArgHelperFloat<float>::ConvertValue(float);
     } // namespace detail
+
+    void Formatter::ParseFormat (std::string_view format)
+    {
+      const char* p = format.data();
+      const char* fmtEnd = p + format.size();
+      const char* partStart = p;
+      while (p != fmtEnd)
+      {
+        if (*p == '{')
+        {
+          p++;
+          if (*p)
+          {
+            if (*p == '{')
+            {
+              // '{{' -> emit a single '{' in output
+              parts.push_back (FormatPart (partStart, p - partStart));
+              p++;
+              partStart = p;
+              continue;
+            }
+            else
+            {
+              // Part up to '{'
+              if ((p - 1) > partStart)
+              {
+                parts.push_back (FormatPart (partStart, p - 1 - partStart));
+              }
+              // Parse format argument
+              const char* argEnd = p;
+              while (*argEnd && (*argEnd != '}')) argEnd++;
+              // Parse index
+              if (argEnd > p)
+              {
+                boost::optional<size_t> index (detail::ParseArgumentIndex (p, argEnd));
+                if (!index) throw std::logic_error ("Invalid format placeholder");
+                parts.push_back (FormatPart (*index));
+              }
+              // else: assert or so?
+              // Continue after '}'
+              p = argEnd;
+              if (*p) p++;
+              partStart = p;
+              continue;
+            }
+          }
+        }
+        else if (*p == '}')
+        {
+          p++;
+          parts.push_back (FormatPart (partStart, p - partStart));
+          /* Collapse '}}' as to a single '}' for symmetry with '}'
+           * (but accept lone '}' as well) */
+          if (*p && *p == '}')
+            p++;
+          partStart = p;
+          continue;
+        }
+        p++;
+      }
+
+      if (p > partStart)
+        parts.push_back (FormatPart (partStart, p - partStart));
+    }
+
+    Formatter::Formatter (std::string_view format)
+    {
+      ParseFormat (format);
+    }
+
   } // namespace format
 } // namespace s1
