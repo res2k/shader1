@@ -21,7 +21,7 @@
 // sizeof(wchar_t)
 #cmakedefine CXX_SIZEOF_WCHAR_T	@CXX_SIZEOF_WCHAR_T@
 // whether mbrtoc16 is in uchar.h
-#cmakedefine HAVE_UCHAR_H_MBRTOC16   @HAVE_UCHAR_H_MBRTOC16@
+#cmakedefine01 HAVE_UCHAR_H_MBRTOC16
 // whether _msize() is available
 #cmakedefine01 HAVE__MSIZE
 // whether malloc_usable_size() is available
