@@ -67,7 +67,7 @@ namespace s1
       template ArgHelperFloat<float>::string_type ArgHelperFloat<float>::ConvertValue(float);
     } // namespace detail
 
-    void Formatter::ParseFormat (std::string_view format)
+    void Formatter::ParseFormat (string_view format)
     {
       const char* p = format.data();
       const char* fmtEnd = p + format.size();
@@ -131,7 +131,7 @@ namespace s1
         parts.push_back (FormatPart (partStart, p - partStart));
     }
 
-    Formatter::Formatter (std::string_view format)
+    Formatter::Formatter (string_view format)
     {
       ParseFormat (format);
     }

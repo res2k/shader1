@@ -15,6 +15,12 @@
     LICENCE-wxWindows.txt and LICENCE-LGPL.txt.
 */
 
+// Hack to avoid <string_view> inclusion when building for "older" C++ standards
+#include "base/config.h"
+#if defined(HAVE_STRING_VIEW)
+#undef HAVE_STRING_VIEW
+#endif
+
 #include "base/common.h"
 #include "base/ResultCode_internal.h"
 #include "s1/ResultCode_defs_base.h"

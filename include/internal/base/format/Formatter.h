@@ -25,8 +25,9 @@
 #include <boost/preprocessor/inc.hpp>
 
 #include <atomic>
-#include <string_view>
 #include <vector>
+
+#include "../string_view.h"
 
 #define FORMATTER_MAX_ARGS      BOOST_PP_INC(12) /* arbitrary, increase as necessary */
 
@@ -68,7 +69,7 @@ namespace s1
       };
 
       std::vector<FormatPart> parts;
-      void ParseFormat (std::string_view format);
+      void ParseFormat (string_view format);
 
       template<typename SinkType>
       void EmitPartString (SinkType& sink, const FormatPart& part) const;
@@ -77,7 +78,7 @@ namespace s1
        * Construct a formatter.
        * \param format Format string. Must be constant over the lifetime of the formatter!
        */
-      Formatter (std::string_view format);
+      Formatter (string_view format);
 
       /**
        * Helper function to reduce the storage of the internal parsed format representation.

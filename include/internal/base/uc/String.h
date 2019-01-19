@@ -31,8 +31,7 @@
 #include <string>
 #include <string.h>
 
-#include <boost/config.hpp>
-#include <boost/utility/string_view.hpp>
+#include "../string_view.h"
 
 namespace s1
 {
@@ -49,7 +48,7 @@ namespace s1
 
       inline String ();
       inline String (const char* s);
-      inline String (boost::string_view s);
+      inline String (string_view s);
       inline String (const Char* s);
       String (const String& s);
       inline String (const String& s, size_type start);
@@ -57,10 +56,10 @@ namespace s1
       inline String (const Char32* s);
       inline String (String&& s);
       inline String (const Char* begin, const Char* end);
-      inline String (boost::wstring_view s);
+      inline String (wstring_view s);
       ~String ();
 
-      inline String& append (boost::string_view s);
+      inline String& append (string_view s);
       inline String& append (const char* s);
       String& append (const char* s, size_t n);
       template<size_t N> String& append (const char (&s)[N]) { return append (s, N); }
@@ -367,9 +366,9 @@ namespace s1
       internalBuffer[0] = 0;
     }
 
-    String::String (const char* s) : String (boost::string_view (s)) { }
+    String::String (const char* s) : String (string_view (s)) { }
 
-    String::String (boost::string_view s) : String ()
+    String::String (string_view s) : String ()
     {
       append (s);
     }
@@ -417,7 +416,7 @@ namespace s1
       append (begin, end - begin);
     }
 
-    String::String (boost::wstring_view s) : String ()
+    String::String (wstring_view s) : String ()
     {
     #if defined(S1_WCHAR_IS_UTF16)
       append (reinterpret_cast<const s1_char16*> (s.data()), s.size());
@@ -426,14 +425,14 @@ namespace s1
     #endif
     }
 
-    String& String::append (boost::string_view s)
+    String& String::append (string_view s)
     {
       return append (s.data(), s.size());
     }
 
     String& String::append (const char* s)
     {
-      return append (boost::string_view (s));
+      return append (string_view (s));
     }
 
     String& String::append (const Char32* s)
