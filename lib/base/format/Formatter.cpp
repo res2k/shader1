@@ -21,11 +21,13 @@
 #include "base/format/Formatter.ipp"
 #include "base/math_error_handler.h"
 
+#if !HAVE_CHARCONV_TO_CHARS_FLOAT && !HAVE_CHARCONV_FROM_CHARS_INT
 #include <boost/convert.hpp>
 #include "base/boost_convert_spirit.hpp"
 #include <boost/convert/strtol.hpp>
+#endif
 
-#if HAVE_CHARCONV_TO_CHARS_FLOAT
+#if HAVE_CHARCONV_TO_CHARS_FLOAT || HAVE_CHARCONV_FROM_CHARS_INT
 #include <charconv>
 #endif
 
@@ -35,11 +37,18 @@ namespace s1
   {
     namespace detail
     {
-      typedef boost::cnv::spirit default_cnv_type;
-
       boost::optional<size_t> ParseArgumentIndex (const char* indexStrBegin, const char* indexStrEnd)
       {
+      #if HAVE_CHARCONV_FROM_CHARS_INT
+        size_t value;
+        auto fromCharsResult = std::from_chars (indexStrBegin, indexStrEnd, value);
+        if (fromCharsResult.ptr != indexStrEnd) return boost::none;
+        return value;
+      #else
+        typedef boost::cnv::spirit default_cnv_type;
+
         return boost::convert<size_t> (boost::cnv::range<const char*> (indexStrBegin, indexStrEnd), default_cnv_type ());
+      #endif
       }
 
       //---------------------------------------------------------------------
