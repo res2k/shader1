@@ -23,9 +23,9 @@
 // whether mbrtoc16 is in uchar.h
 #cmakedefine HAVE_UCHAR_H_MBRTOC16   @HAVE_UCHAR_H_MBRTOC16@
 // whether _msize() is available
-#cmakedefine HAVE__MSIZE             @HAVE__MSIZE@
+#cmakedefine01 HAVE__MSIZE
 // whether malloc_usable_size() is available
-#cmakedefine HAVE_MALLOC_USABLE_SIZE @HAVE_MALLOC_USABLE_SIZE@
+#cmakedefine01 HAVE_MALLOC_USABLE_SIZE
 // whether <charconv> supports std::to_chars (..., float)
 #cmakedefine01 HAVE_CHARCONV_TO_CHARS_FLOAT
 // whether std::string_view is available

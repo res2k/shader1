@@ -854,9 +854,9 @@ namespace s1
     String::size_type String::BufferAvailableChars (AllocatedBufferData* data, size_t allocSize)
     {
       size_t availSize;
-    #if defined(HAVE__MSIZE)
+    #if HAVE__MSIZE
       availSize = _msize (data);
-    #elif defined(HAVE_MALLOC_USABLE_SIZE)
+    #elif HAVE_MALLOC_USABLE_SIZE
       availSize = malloc_usable_size (data);
     #else
       availSize = allocSize;
