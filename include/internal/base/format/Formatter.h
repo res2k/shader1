@@ -25,6 +25,7 @@
 #include <boost/preprocessor/inc.hpp>
 
 #include <atomic>
+#include <string_view>
 #include <vector>
 
 #define FORMATTER_MAX_ARGS      BOOST_PP_INC(12) /* arbitrary, increase as necessary */
