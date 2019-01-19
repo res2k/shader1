@@ -25,7 +25,6 @@
 
 #include "TestSemanticsHandler.h"
 
-#include "../../parser/t/print_parser_Error.h"
 #include "print_semantics_Error.h"
 
 BOOST_AUTO_TEST_SUITE(ParserScope)
