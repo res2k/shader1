@@ -27,7 +27,7 @@
 // whether malloc_usable_size() is available
 #cmakedefine HAVE_MALLOC_USABLE_SIZE @HAVE_MALLOC_USABLE_SIZE@
 // whether <charconv> supports std::to_chars (..., float)
-#cmakedefine HAVE_CHARCONV_TO_CHARS_FLOAT @HAVE_CHARCONV_TO_CHARS_FLOAT@
+#cmakedefine01 HAVE_CHARCONV_TO_CHARS_FLOAT
 // whether std::string_view is available
 #cmakedefine01 HAVE_STRING_VIEW
 

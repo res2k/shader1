@@ -25,7 +25,7 @@
 #include "base/boost_convert_spirit.hpp"
 #include <boost/convert/strtol.hpp>
 
-#if defined(HAVE_CHARCONV_TO_CHARS_FLOAT)
+#if HAVE_CHARCONV_TO_CHARS_FLOAT
 #include <charconv>
 #endif
 
@@ -47,7 +47,7 @@ namespace s1
       template<typename T>
       typename ArgHelperFloat<T>::string_type ArgHelperFloat<T>::ConvertValue (T value)
       {
-      #if defined(HAVE_CHARCONV_TO_CHARS_FLOAT)
+      #if HAVE_CHARCONV_TO_CHARS_FLOAT
         string_type floatStr;
         floatStr.resize (floatStr.max_size ());
         auto convertResult = std::to_chars (floatStr.data (), floatStr.data () + floatStr.max_size (), value);
@@ -61,7 +61,7 @@ namespace s1
           convert<string_type> (value, cnv::strtol ()(cnv::parameter::precision = std::numeric_limits<T>::digits10));
         assert (floatStr);
         return *floatStr;
-     #endif
+     #endif // HAVE_CHARCONV_TO_CHARS_FLOAT
       }
 
       template ArgHelperFloat<float>::string_type ArgHelperFloat<float>::ConvertValue(float);
