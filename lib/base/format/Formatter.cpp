@@ -21,9 +21,15 @@
 #include "base/format/Formatter.ipp"
 #include "base/math_error_handler.h"
 
-#if !HAVE_CHARCONV_TO_CHARS_FLOAT && !HAVE_CHARCONV_FROM_CHARS_INT
+#if !HAVE_CHARCONV_TO_CHARS_FLOAT || !HAVE_CHARCONV_FROM_CHARS_INT
 #include <boost/convert.hpp>
+#endif
+
+#if !HAVE_CHARCONV_FROM_CHARS_INT
 #include "base/boost_convert_spirit.hpp"
+#endif
+
+#if !HAVE_CHARCONV_TO_CHARS_FLOAT
 #include <boost/convert/strtol.hpp>
 #endif
 
