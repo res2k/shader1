@@ -94,9 +94,9 @@ namespace s1
       
       semantics::NameVariable* GetTernaryResultName (semantics::Type* resultType);
 
-      typedef OUTCOME_V2_NAMESPACE::result<RegisterPtr, Error> result_RegisterPtr;
+      typedef OUTCOME_V2_NAMESPACE::unchecked<RegisterPtr, Error> result_RegisterPtr;
       result_RegisterPtr GetRegisterForName (semantics::NameVariable* name, bool writeable);
-      typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
+      typedef OUTCOME_V2_NAMESPACE::unchecked<void, Error> result_void;
       result_void OverrideNameRegister (semantics::NameVariable* name, const RegisterPtr& reg);
       
       const NameVariableSet& GetExportedNames() const { return exportedNames; }

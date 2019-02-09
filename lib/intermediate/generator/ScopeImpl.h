@@ -37,7 +37,7 @@ namespace s1
 
       std::vector<semantics::BaseFunctionPtr> functionsInDeclOrder;
 
-      typedef OUTCOME_V2_NAMESPACE::result<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
+      typedef OUTCOME_V2_NAMESPACE::unchecked<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
       result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;

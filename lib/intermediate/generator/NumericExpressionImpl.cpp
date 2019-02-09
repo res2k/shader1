@@ -50,9 +50,9 @@ namespace s1
     }
 
     template<typename T, T Base, bool Negative>
-    static OUTCOME_V2_NAMESPACE::result<T, Error> ParseNumber (const uc::String& str,
-                                                               uc::String::size_type begin,
-                                                               uc::String::size_type end)
+    static OUTCOME_V2_NAMESPACE::unchecked<T, Error> ParseNumber (const uc::String& str,
+                                                                  uc::String::size_type begin,
+                                                                  uc::String::size_type end)
     {
       T val (0);
       for (uc::String::size_type i = begin; i < end; i++)
@@ -104,7 +104,7 @@ namespace s1
     }
 
     template<typename T>
-    static OUTCOME_V2_NAMESPACE::result<T, Error> ParseInteger (const uc::String& str)
+    static OUTCOME_V2_NAMESPACE::unchecked<T, Error> ParseInteger (const uc::String& str)
     {
       if (str.isEmpty())
       {
@@ -125,7 +125,7 @@ namespace s1
       }
     }
 
-    static OUTCOME_V2_NAMESPACE::result<float, Error> ParseFloat (const uc::String& str)
+    static OUTCOME_V2_NAMESPACE::unchecked<float, Error> ParseFloat (const uc::String& str)
     {
       // Convert string to ASCII
       uc::String::size_type strLen = str.length();

@@ -502,7 +502,7 @@ namespace s1
     Parser& parent;
     const Scope& scope;
   public:
-    typedef OUTCOME_V2_NAMESPACE::result<Parser::Type, ErrorInfo> result_Type;
+    typedef OUTCOME_V2_NAMESPACE::unchecked<Parser::Type, ErrorInfo> result_Type;
     result_Type parsedType;
 
     VisitorTypeImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope), parsedType (Parser::Type ()) {}
