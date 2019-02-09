@@ -22,13 +22,12 @@
 #include "Expression.h"
 #include "Type.h"
 
+#include "base/outcome.h"
 #include "base/uc/String.h"
 #include "semantics/Diagnostics_fwd.h"
 
 #include <unordered_map>
 #include <vector>
-
-#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -85,7 +84,7 @@ namespace s1
         const uc::String& identifier,
         const FunctionFormalParameters& params) = 0;
 
-      typedef OUTCOME_V2_NAMESPACE::unchecked<NamePtr, Error> result_NamePtr;
+      typedef outcome::unchecked<NamePtr, Error> result_NamePtr;
       /// Resolve an identifier to a name
       result_NamePtr ResolveIdentifier (const uc::String& identifier);
     };

@@ -602,7 +602,7 @@ namespace s1
       
       if (doExport && name->IsConstant())
       {
-        return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
+        return outcome::failure (Error::AssignmentTargetIsNotAnLvalue);
       }
       
       NameReg& nameReg = nameRegisters[name];
@@ -641,7 +641,7 @@ namespace s1
         if (writeable)
         {
           if (name->IsConstant())
-            return OUTCOME_V2_NAMESPACE::failure (Error::AssignmentTargetIsNotAnLvalue);
+            return outcome::failure (Error::AssignmentTargetIsNotAnLvalue);
           reg = handler->AllocateRegister (*sequenceBuilder, reg);
           sequenceBuilder->SetIdentifierRegister (name->GetIdentifier(), reg);
         }
@@ -659,7 +659,7 @@ namespace s1
                                                                             const RegisterPtr& newRegPtr)
     {
       auto origRegPtr = GetRegisterForName (name, true);
-      if (!origRegPtr) return OUTCOME_V2_NAMESPACE::failure (origRegPtr.error ());
+      if (!origRegPtr) return outcome::failure (origRegPtr.error ());
 
       newRegPtr->StealName (*(origRegPtr.value()));
       NameReg& nameReg = nameRegisters[name];
@@ -667,7 +667,7 @@ namespace s1
       sequenceBuilder->SetIdentifierRegister (name->GetIdentifier(), newRegPtr);
       if (nameReg.isImported)
         sequenceBuilder->SetExport (name->GetIdentifier(), newRegPtr);
-      return OUTCOME_V2_NAMESPACE::success ();
+      return outcome::success ();
     }
   } // namespace intermediate
 } // namespace s1

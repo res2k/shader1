@@ -26,8 +26,6 @@
 
 #include <vector>
 
-#include <outcome/outcome.hpp>
-
 namespace s1
 {
   namespace semantics

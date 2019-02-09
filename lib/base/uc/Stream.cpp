@@ -87,11 +87,11 @@ namespace uc
   {
     if (currentDecodeResult != UTF8Decoder::drSuccess)
     {
-      return OUTCOME_V2_NAMESPACE::failure (static_cast<Error> (currentDecodeResult));
+      return outcome::failure (static_cast<Error> (currentDecodeResult));
     }
     else if (!(*this))
     {
-      return OUTCOME_V2_NAMESPACE::failure (Error::EndOfInput);
+      return outcome::failure (Error::EndOfInput);
     }
     else
     {

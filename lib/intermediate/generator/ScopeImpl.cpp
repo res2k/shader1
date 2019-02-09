@@ -47,7 +47,7 @@ namespace s1
         auto funcName = semantics::NameFunction::upcast (ident->second.get());
         if (!funcName)
         {
-          return OUTCOME_V2_NAMESPACE::failure (Error::IdentifierAlreadyDeclared);
+          return outcome::failure (Error::IdentifierAlreadyDeclared);
         }
         return funcName;
       }

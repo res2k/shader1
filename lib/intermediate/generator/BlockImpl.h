@@ -18,12 +18,12 @@
 #ifndef __INTERMEDIATE_BLOCKIMPL_H__
 #define __INTERMEDIATE_BLOCKIMPL_H__
 
+#include "base/outcome.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
 #include "intermediate/Sequence.h"
 #include "semantics/Block.h"
 
 #include <boost/optional.hpp>
-#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -94,9 +94,9 @@ namespace s1
       
       semantics::NameVariable* GetTernaryResultName (semantics::Type* resultType);
 
-      typedef OUTCOME_V2_NAMESPACE::unchecked<RegisterPtr, Error> result_RegisterPtr;
+      typedef outcome::unchecked<RegisterPtr, Error> result_RegisterPtr;
       result_RegisterPtr GetRegisterForName (semantics::NameVariable* name, bool writeable);
-      typedef OUTCOME_V2_NAMESPACE::unchecked<void, Error> result_void;
+      typedef outcome::unchecked<void, Error> result_void;
       result_void OverrideNameRegister (semantics::NameVariable* name, const RegisterPtr& reg);
       
       const NameVariableSet& GetExportedNames() const { return exportedNames; }

@@ -502,7 +502,7 @@ namespace s1
     Parser& parent;
     const Scope& scope;
   public:
-    typedef OUTCOME_V2_NAMESPACE::unchecked<Parser::Type, ErrorInfo> result_Type;
+    typedef outcome::unchecked<Parser::Type, ErrorInfo> result_Type;
     result_Type parsedType;
 
     VisitorTypeImpl (Parser& parent, const Scope& scope) : parent (parent), scope (scope), parsedType (Parser::Type ()) {}
@@ -517,7 +517,7 @@ namespace s1
       auto typeNameResult = scope->ResolveIdentifier (type.value.GetString());
       if (typeNameResult.has_error())
       {
-        parsedType = OUTCOME_V2_NAMESPACE::failure (ErrorInfo (typeNameResult.error()));
+        parsedType = outcome::failure (ErrorInfo (typeNameResult.error()));
         return;
       }
       const auto& typeName = typeNameResult.value();
@@ -527,7 +527,7 @@ namespace s1
       }
       else
       {
-        parsedType = OUTCOME_V2_NAMESPACE::failure (ErrorInfo (Error::ExpectedTypeName, type.value.token));
+        parsedType = outcome::failure (ErrorInfo (Error::ExpectedTypeName, type.value.token));
       }
     }
     void operator() (const ast::TypeWellKnown& type) override

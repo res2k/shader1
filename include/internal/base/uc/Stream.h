@@ -18,10 +18,10 @@
 #ifndef __BASE_UC_STREAM_H__
 #define __BASE_UC_STREAM_H__
 
+#include "base/outcome.h"
+
 #include "Char.h"
 #include "UTF8Decoder.h"
-
-#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -89,9 +89,9 @@ namespace uc
     /// Advance stream
     Stream& operator++() noexcept;
 
-    class FetchResult : public OUTCOME_V2_NAMESPACE::unchecked<Char32, Error>
+    class FetchResult : public outcome::unchecked<Char32, Error>
     {
-      typedef OUTCOME_V2_NAMESPACE::unchecked<Char32, Error> base_type;
+      typedef outcome::unchecked<Char32, Error> base_type;
     public:
       FetchResult () : base_type (0) {}
       template<typename... Arg>

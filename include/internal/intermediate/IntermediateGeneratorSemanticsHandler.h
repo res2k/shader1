@@ -18,6 +18,7 @@
 #ifndef __INTERMEDIATE_INTERMEDIATEGENERATORSEMANTICSHANDLER_H__
 #define __INTERMEDIATE_INTERMEDIATEGENERATORSEMANTICSHANDLER_H__
 
+#include "base/outcome.h"
 #include "base/uc/String.h"
 
 #include "diagnostics/forwarddecl.h"
@@ -28,8 +29,6 @@
 
 #include "forwarddecl.h"
 #include "Sequence.h"
-
-#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -154,7 +153,7 @@ namespace s1
       static RegisterPtr AllocateRegister (SequenceBuilder& seqBuilder, const RegisterPtr& oldReg);
       /** @} */
 
-      typedef OUTCOME_V2_NAMESPACE::result<void, Error> result_void;
+      typedef outcome::unchecked<void, Error> result_void;
       result_void GenerateCast (SequenceBuilder& seqBuilder,
                                 const RegisterPtr& castDestination,
                                 semantics::Type* typeDestination,

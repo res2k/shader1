@@ -18,9 +18,8 @@
 #ifndef __INTERMEDIATE_SCOPEIMPL_H__
 #define __INTERMEDIATE_SCOPEIMPL_H__
 
+#include "base/outcome.h"
 #include "intermediate/IntermediateGeneratorSemanticsHandler.h"
-
-#include <outcome/outcome.hpp>
 
 namespace s1
 {
@@ -37,7 +36,7 @@ namespace s1
 
       std::vector<semantics::BaseFunctionPtr> functionsInDeclOrder;
 
-      typedef OUTCOME_V2_NAMESPACE::unchecked<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
+      typedef outcome::unchecked<semantics::NameFunctionPtr, Error> result_NameFunctionPtr;
       result_NameFunctionPtr CheckIdentifierIsFunction (const uc::String& identifier);
 
       IntermediateGeneratorSemanticsHandler* handler;

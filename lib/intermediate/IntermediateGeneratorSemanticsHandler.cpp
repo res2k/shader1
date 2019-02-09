@@ -337,7 +337,7 @@ namespace s1
           if (seqOp)
           {
             seqBuilder.AddOp (seqOp);
-            return OUTCOME_V2_NAMESPACE::success();
+            return outcome::success();
           }
           break;
         }
@@ -396,7 +396,7 @@ namespace s1
           if (seqOp)
           {
             seqBuilder.AddOp (seqOp);
-            return OUTCOME_V2_NAMESPACE::success();
+            return outcome::success();
           }
           break;
         }

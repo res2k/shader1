@@ -104,7 +104,7 @@ namespace s1
     }
 
     template<typename T, typename U, typename V>
-    static inline void SetParseResultLocation (OUTCOME_V2_NAMESPACE::result<T, U, V>& value,
+    static inline void SetParseResultLocation (outcome::result<T, U, V>& value,
                                                lexer::TokenLocation&& startLocation,
                                                lexer::TokenLocation&& endLocation)
     {
